@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="ListSubImpegno_IntegSubImpegno" wildcard="false">
+		<!--  ho dovuto impostare il wildcard="false" perchè altrimenti lo stato operativo del sub sovrasscriveva quello dell'impegno -->
+		<!--  mappo a no i dati che prima si mappavano per nome uguale -->
+		
+		<class-a>it.csi.siac.siacfinser.model.SubImpegno</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.SubImpegno</class-b>
+
+		
+		<field>
+			<a>numero</a>
+			<b>codice</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>descrizione</b>
+		</field>
+		
+		<field>
+			<a>cig</a>
+			<b>cig</b>
+		</field>
+		
+		<field>
+			<a>cup</a>
+			<b>cup</b>
+		</field>
+
+		<field>
+			<a>parereFinanziario</a>
+			<b>parereFinanziario</b>
+		</field>
+
+		<field>
+			<a>annoMovimento</a>
+			<b>annoSubImpegno</b>
+		</field>
+
+		<!-- viene visualizzato gia nel codice -->
+		<field 
+			custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+			<a>numero</a>
+			<b>numeroSubImpegno</b>
+		</field>
+
+		<field>
+			<a>statoOperativoMovimentoGestioneSpesa</a>
+			<b>stato.codice</b>
+		</field>
+
+		<field>
+			<a>descrizioneStatoOperativoMovimentoGestioneSpesa</a>
+			<b>stato.descrizione</b>
+		</field>
+
+		<field>
+			<a>importoAttuale</a>
+			<b>importo</b>
+		</field>
+		
+		<field>
+			<a>disponibilitaLiquidare</a>
+			<b>disponibilitaLiquidare</b>
+		</field>
+
+		<field>
+			<a>soggetto.codiceSoggetto</a>
+			<b>codiceSoggetto</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.anno</a>
+			<b>provvedimento.annoProvvedimento</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.numero</a>
+			<b>provvedimento.numeroProvvedimento</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.statoOperativo</a>
+			<b>provvedimento.statoProvvedimento</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.strutturaAmmContabile.codice</a>
+			<b>provvedimento.sac.codice</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.strutturaAmmContabile.descrizione</a>
+			<b>provvedimento.sac.descrizione</b>
+		</field>
+
+	</mapping>
+
+</mappings>

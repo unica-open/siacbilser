@@ -1,0 +1,58 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/fin2/svc/1.0">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:emetteOrdinativiDiPagamentoDaElencoSync>
+		  <dataOra>2015-09-15T15:28:54.371+02:00</dataOra>
+            <!-- Optional -->
+            <richiedente>
+				   
+				<account>
+					<stato>VALIDO</stato>
+					<uid>757</uid>
+					<!--<nome>Demo 24</nome>
+					<descrizione>Demo 24 - ACCOUNT  - AMMINISTRATORE - Città di Torino</descrizione>
+					<indirizzoMail>email</indirizzoMail>
+					<ente>
+						<stato>VALIDO</stato>
+						<uid>13</uid>
+						<gestioneLivelli>
+							<entry>
+								<key>LIVELLO_GESTIONE_BILANCIO</key>
+								<value>GESTIONE_UEB</value>
+							</entry>
+							<entry>
+								<key>GESTIONE_PARERE_FINANZIARIO</key>
+								<value>GESTIONE_PARERE_FINANZIARIO</value>
+							</entry>
+						</gestioneLivelli>
+						<nome>Città di Torino</nome>
+					</ente>-->
+				</account>
+				<operatore>
+					<stato>VALIDO</stato>
+					<uid>0</uid>
+					<codiceFiscale>AAAAAA00A11E000M</codiceFiscale>
+					<cognome>CSI PIEMONTE</cognome>
+					<nome>DEMO24</nome>
+				</operatore>
+    	   </richiedente>
+
+            <!-- Optional -->
+            <bilancio>
+                <!--<dataCancellazione>[dateTime?]</dataCancellazione>
+                <dataCreazione>[dateTime?]</dataCreazione>
+                <dataFineValidita>[dateTime?]</dataFineValidita>
+                <dataInizioValidita>[dateTime?]</dataInizioValidita>
+                <dataModifica>[dateTime?]</dataModifica>
+                <loginOperazione>[string?]</loginOperazione>
+                <stato>[string?]</stato>
+                <uid>55</uid>-->
+                <anno>2016</anno>
+            </bilancio>
+            
+            <flagConvalidaManuale>false</flagConvalidaManuale>
+			
+       
+      </ns:emetteOrdinativiDiPagamentoDaElencoSync>
+   </soapenv:Body>
+</soapenv:Envelope>

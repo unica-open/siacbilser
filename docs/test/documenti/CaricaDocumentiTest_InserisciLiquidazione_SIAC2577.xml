@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<elenchiDocumentiAllegato>
+	<elenchi>
+<!--
+		<elenco saltaInserimento="true">
+-->
+		<elenco>
+			<annoSysEsterno>2015</annoSysEsterno>
+			<numeroSysEsterno>123</numeroSysEsterno>
+
+			<allegatoAtto>
+				<uid>-1</uid>
+				<causale>mia causale allegato atto</causale>
+				<datiSensibili>false</datiSensibili>
+				<attoAmministrativo>
+					<anno>2015</anno>
+					<numero>1557</numero>
+					<tipoAtto>
+						<codice>DPCI</codice>
+					</tipoAtto>
+				</attoAmministrativo>
+			</allegatoAtto>
+			<subdocumenti>
+				<subdocumentoSpesa>
+					<documentoSpesa>
+						<uid>-1</uid>
+						<!-- Questo uid deve essere univoco per ogni documentoSpesa all'interno del flusso xml. 
+										   Alla prima occorrenza di un documentoSpesa (ovvero questa) vengono specificati tutti i dettagli (anno, numero, imoporto, documenti figli, ecc...
+										   campi indicati di seguito), mentre nelle successive occorrenze potr�ssere riportato SOLO l'uid.
+										   (Questo numero deve essere compreso tra -1 e -2147483648)
+										-->
+
+						<tipoDocumento> 
+							<codice>FAT</codice>
+							<tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+						</tipoDocumento>
+						<anno>2015</anno>		<!-- Documenti di spesa - Anno -->
+						<numero>26719</numero>	<!-- Documenti di spesa - Numero -->
+						<importo>20</importo>
+						<arrotondamento>-1</arrotondamento>
+						<descrizione>descrizione OBBLIGATORIA</descrizione>
+						<dataEmissione>2015-09-27T14:30:05+02:00</dataEmissione>
+						<dataScadenza>2015-12-31T14:30:05+02:00</dataScadenza>
+						
+<!-- obbligatorio: se manca indica "non inizializzato" -->
+<!-- è diverso da quello dell'impegno -->						
+						<soggetto>													<!-- Soggetto - Codice -->
+							<codiceSoggetto>77</codiceSoggetto>
+						</soggetto>
+
+					</documentoSpesa>
+
+					<!--  <dataScadenza>2014-06-19T14:30:05+02:00</dataScadenza>	Documenti di spesa - Altri dati - Data scadenza -->
+					<!--  <descrizione>FATT SYST ESTERNO S1</descrizione>			Quote - Quota - Descrizione -->
+
+					<!--
+					<ente>
+						<codice>CSI</codice>
+					</ente>
+					-->
+
+					<!-- <flagEsproprio>false</flagEsproprio>					Quote - Altri dati - Esproprio -->
+					<!-- <flagOrdinativoSingolo>false</flagOrdinativoSingolo>	Quote - Altri dati - Ordinativo singolo -->
+					<importo>10</importo>									<!-- Dati IVA - Importi - Importo rilevante IVA -->
+					<!-- <importoDaDedurre>1</importoDaDedurre> -->
+					<!-- <note>PROVA INSERIMENTO QUOTA</note>					Quote - Altri dati - Note -->
+					<!-- <noteTesoriere>										Quote - Altri dati - Note al tesoriere
+						<codice>01</codice>
+					</noteTesoriere> -->
+<!--
+					<tipoAvviso>
+						<codice>TESORIERE</codice>
+					</tipoAvviso>
+-->
+<!--
+					<causaleOrdinativo>mia causale ordinativo SERVIZIO CARICA DOCUMENTI</causaleOrdinativo>
+-->					
+					<impegno>
+						<annoMovimento>2015</annoMovimento>	 
+<!--					<numero>520</numero> con sub -->				  
+						<numero>244</numero>
+ 					</impegno>
+
+<!--
+					<subImpegno>
+						<annoMovimento>2015</annoMovimento> 7 
+						<numero>2</numero>
+					</subImpegno>
+-->
+					<commissioniDocumento>ESENTE</commissioniDocumento>
+<!-- necessario: per mancanza errore gestito -->
+<!-- accetta mdp annullate -->
+					<modalitaPagamentoSoggetto>
+						<codiceModalitaPagamento>1</codiceModalitaPagamento>
+					</modalitaPagamentoSoggetto>
+<!--
+					<sedeSecondariaSoggetto>	<!- - Certo non viene controllato in quanto il soggetto provato non 
+												aveva sedi secondarie e comunque non potrebbe avere quel codice - ->
+						<codiceSedeSecondaria>myCodieceSede</codiceSedeSecondaria>
+					</sedeSecondariaSoggetto>
+-->
+				</subdocumentoSpesa>
+			</subdocumenti>
+			
+		</elenco>
+	</elenchi>
+</elenchiDocumentiAllegato>

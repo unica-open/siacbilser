@@ -1,0 +1,117 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<gestisciDettaglioVariazioneComponenteImportoCapitolo>
+	<annoBilancio>2020</annoBilancio>
+	<dataOra>2019-12-09T14:37:20.203+01:00</dataOra>
+	<dettaglioVariazioneImportoCapitolo>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+		<capitolo>
+			<stato>VALIDO</stato>
+			<uid>202044</uid>
+			<uidCapitoloEquivalente>0</uidCapitoloEquivalente>
+			<uidExCapitolo>0</uidExCapitolo>
+		</capitolo>
+		<listaDettaglioVariazioneComponenteImportoCapitolo>
+			<dettaglioVariazioneComponenteImportoCapitolo>
+				<stato>VALIDO</stato>
+				<uid>0</uid>
+				<componenteImportiCapitolo>
+					<stato>VALIDO</stato>
+					<uid>0</uid>
+					<listaDettaglioComponenteImportiCapitolo/>
+					<tipoComponenteImportiCapitolo>
+						<loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>96</uid>
+						<listaDettaglioComponenteImportiCapitolo/>
+						<ambitoComponenteImportiCapitolo>AUTONOMO</ambitoComponenteImportiCapitolo>
+						<anno>2020</anno>
+						<codice>05</codice>
+						<descrizione>FRESCO - Default previsione 2020</descrizione>
+						<macrotipoComponenteImportiCapitolo>FRESCO</macrotipoComponenteImportiCapitolo>
+						<propostaDefaultComponenteImportiCapitolo>SI</propostaDefaultComponenteImportiCapitolo>
+						<statoTipoComponenteImportiCapitolo>VALIDO</statoTipoComponenteImportiCapitolo>
+						<tipoGestioneComponenteImportiCapitolo>MANUALE</tipoGestioneComponenteImportiCapitolo>
+					</tipoComponenteImportiCapitolo>
+				</componenteImportiCapitolo>
+				<flagEliminaComponenteCapitolo>false</flagEliminaComponenteCapitolo>
+				<flagNuovaComponenteCapitolo>false</flagNuovaComponenteCapitolo>
+				<importo>1.00</importo>
+				<tipoDettaglioComponenteImportiCapitolo>STANZIAMENTO</tipoDettaglioComponenteImportiCapitolo>
+			</dettaglioVariazioneComponenteImportoCapitolo>
+		</listaDettaglioVariazioneComponenteImportoCapitolo>
+		<listaDettaglioVariazioneComponenteImportoCapitolo1>
+			<dettaglioVariazioneComponenteImportoCapitolo>
+				<stato>VALIDO</stato>
+				<uid>0</uid>
+				<componenteImportiCapitolo>
+					<stato>VALIDO</stato>
+					<uid>0</uid>
+					<listaDettaglioComponenteImportiCapitolo/>
+					<tipoComponenteImportiCapitolo>
+						<loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>96</uid>
+						<listaDettaglioComponenteImportiCapitolo/>
+						<ambitoComponenteImportiCapitolo>AUTONOMO</ambitoComponenteImportiCapitolo>
+						<anno>2020</anno>
+						<codice>05</codice>
+						<descrizione>FRESCO - Default previsione 2020</descrizione>
+						<macrotipoComponenteImportiCapitolo>FRESCO</macrotipoComponenteImportiCapitolo>
+						<propostaDefaultComponenteImportiCapitolo>SI</propostaDefaultComponenteImportiCapitolo>
+						<statoTipoComponenteImportiCapitolo>VALIDO</statoTipoComponenteImportiCapitolo>
+						<tipoGestioneComponenteImportiCapitolo>MANUALE</tipoGestioneComponenteImportiCapitolo>
+					</tipoComponenteImportiCapitolo>
+				</componenteImportiCapitolo>
+				<flagEliminaComponenteCapitolo>false</flagEliminaComponenteCapitolo>
+				<flagNuovaComponenteCapitolo>false</flagNuovaComponenteCapitolo>
+				<importo>2.00</importo>
+				<tipoDettaglioComponenteImportiCapitolo>STANZIAMENTO</tipoDettaglioComponenteImportiCapitolo>
+			</dettaglioVariazioneComponenteImportoCapitolo>
+		</listaDettaglioVariazioneComponenteImportoCapitolo1>
+		<listaDettaglioVariazioneComponenteImportoCapitolo2>
+			<dettaglioVariazioneComponenteImportoCapitolo>
+				<stato>VALIDO</stato>
+				<uid>0</uid>
+				<componenteImportiCapitolo>
+					<stato>VALIDO</stato>
+					<uid>0</uid>
+					<listaDettaglioComponenteImportiCapitolo/>
+					<tipoComponenteImportiCapitolo>
+						<loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>96</uid>
+						<listaDettaglioComponenteImportiCapitolo/>
+						<ambitoComponenteImportiCapitolo>AUTONOMO</ambitoComponenteImportiCapitolo>
+						<anno>2020</anno>
+						<codice>05</codice>
+						<descrizione>FRESCO - Default previsione 2020</descrizione>
+						<macrotipoComponenteImportiCapitolo>FRESCO</macrotipoComponenteImportiCapitolo>
+						<propostaDefaultComponenteImportiCapitolo>SI</propostaDefaultComponenteImportiCapitolo>
+						<statoTipoComponenteImportiCapitolo>VALIDO</statoTipoComponenteImportiCapitolo>
+						<tipoGestioneComponenteImportiCapitolo>MANUALE</tipoGestioneComponenteImportiCapitolo>
+					</tipoComponenteImportiCapitolo>
+				</componenteImportiCapitolo>
+				<flagEliminaComponenteCapitolo>false</flagEliminaComponenteCapitolo>
+				<flagNuovaComponenteCapitolo>false</flagNuovaComponenteCapitolo>
+				<importo>3.00</importo>
+				<tipoDettaglioComponenteImportiCapitolo>STANZIAMENTO</tipoDettaglioComponenteImportiCapitolo>
+			</dettaglioVariazioneComponenteImportoCapitolo>
+		</listaDettaglioVariazioneComponenteImportoCapitolo2>
+		<flagAnnullaCapitolo>false</flagAnnullaCapitolo>
+		<flagNuovoCapitolo>false</flagNuovoCapitolo>
+		<fondoPluriennaleVinc>0</fondoPluriennaleVinc>
+		<stanziamento>1.00</stanziamento>
+		<stanziamento1>4.00</stanziamento1>
+		<stanziamento2>6.00</stanziamento2>
+		<stanziamentoCassa>1.00</stanziamentoCassa>
+		<stanziamentoResiduo>0.00</stanziamentoResiduo>
+		<variazioneImportoCapitolo>
+			<stato>VALIDO</stato>
+			<uid>1250</uid>
+		</variazioneImportoCapitolo>
+	</dettaglioVariazioneImportoCapitolo>
+</gestisciDettaglioVariazioneComponenteImportoCapitolo>

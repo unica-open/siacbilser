@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+	<mapping map-id="SiacDCausale_CausaleEntrata" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.CausaleEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDCausale</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>codice</a>
+			<b>causCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>causDesc</b>
+		</field>
+		
+		<field>
+			<a>dataAnnullamento</a>
+			<b>dataCancellazione</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>dataFineValidita</b>
+		</field>
+		
+		<!-- <field custom-converter-id="causaleModelloConverter">
+			<a>this</a> 
+ 			<b>this</b> 
+		</field> -->
+		
+		<field custom-converter-id="causaleStatoConverter">
+		<!-- imposta anche dataCompletamento, dataDefinizione e dataAnnullamento -->
+			<a>this</a> 
+ 			<b>this</b> 
+		</field>
+		
+		<field custom-converter-id="causaleTipoConverter">
+			<a>this</a> <!-- tipoCausale  -->
+ 			<b>this</b> <!-- SiacRCausaleTipo -->
+		</field>
+		
+		<field custom-converter-id="causaleClassifConverter">		
+			<a>this</a> <!--  strutturaAmministrativoContabile -->
+ 			<b>this</b> <!--  SiacRCausaleClass -->
+		</field>
+		
+		<field custom-converter-id="causaleAttoAmmConverter">
+			<a>this</a> <!-- attoAmministrativo -->
+ 			<b>this</b> <!-- SiacRCausaleAttoAmm -->
+		</field>
+		
+		<field custom-converter-id="causaleSoggConverter">
+			<a>this</a> <!-- soggetto -->
+ 			<b>this</b> <!-- SiacRCausaleSog -->
+		</field>
+		
+		<field custom-converter-id="causaleModelloConverter">
+			<a>this</a> 
+ 			<b>this</b> 
+		</field>
+		
+		<field custom-converter-id="causaleEntrataCapitoloConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="causaleEntrataAccertamentoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.CausaleEntrataDistintaConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+						
+	</mapping>
+	
+	<mapping map-id="SiacDCausale_CausaleEntrata_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.CausaleEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDCausale</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>codice</a>
+			<b>causCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>causDesc</b>
+		</field>
+		
+		<field custom-converter-id="causaleStatoConverter">
+		<!-- imposta anche dataCompletamento, dataDefinizione e dataAnnullamento -->
+			<a>this</a> <!-- statoOperativoCausale  -->
+ 			<b>this</b> <!-- SiacRCausaleStato -->
+		</field>
+		
+		<field custom-converter-id="causaleTipoConverter">
+			<a>this</a> <!-- tipoCausale  -->
+ 			<b>this</b> <!-- SiacRCausaleTipo -->
+		</field>
+		
+		<field custom-converter-id="causaleClassifConverter">		
+			<a>this</a> <!--  strutturaAmministrativoContabile -->
+ 			<b>this</b> <!--  SiacRCausaleClass -->
+		</field>
+		
+		<field custom-converter-id="causaleAttoAmmConverter">
+			<a>this</a> <!-- attoAmministrativo -->
+ 			<b>this</b> <!-- SiacRCausaleAttoAmm -->
+		</field>
+		
+		<field custom-converter-id="causaleSoggConverter">
+			<a>this</a> <!-- soggetto -->
+ 			<b>this</b> <!-- SiacRCausaleSog -->
+		</field>
+		
+		<field custom-converter-id="causaleEntrataCapitoloConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="causaleEntrataAccertamentoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+						
+	</mapping>
+	
+	
+	<mapping map-id="SiacDCausale_CausaleEntrata_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.CausaleEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDCausale</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>codice</a>
+			<b>causCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>causDesc</b>
+		</field>
+		
+		<field custom-converter-id="causaleStatoConverter">
+		<!-- imposta anche dataCompletamento, dataDefinizione e dataAnnullamento -->
+			<a>this</a> <!-- statoOperativoCausale  -->
+ 			<b>this</b> <!-- SiacRCausaleStato -->
+		</field>
+		
+		<field custom-converter-id="causaleTipoConverter">
+			<a>this</a> <!-- tipoCausale  -->
+ 			<b>this</b> <!-- SiacRCausaleTipo -->
+		</field>
+								
+	</mapping>
+</mappings>

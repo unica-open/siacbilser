@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTPredoc_PreDocumentoEntrata" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.PreDocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPredoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>numero</a>
+			<b>predocNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>predocDesc</b>
+		</field>
+		
+		<field>
+			<a>note</a>
+			<b>predocNote</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>predocImporto</b>
+		</field>
+		
+		<field>
+			<a>periodoCompetenza</a>
+			<b>predocPeriodoCompetenza</b>
+		</field>
+		
+		<field>
+			<a>dataCompetenza</a>
+			<b>predocDataCompetenza</b>
+		</field>
+		
+		<field>
+			<a>dataDocumento</a>
+			<b>predocData</b>
+		</field>
+		
+		<field>
+			<a>codiceIUV</a>
+			<b>predocCodiceIuv</b>
+		</field>
+		
+		<field>
+			<a>dataTrasmissione</a>
+			<b>predocDataTrasmissione</b>
+		</field>
+		
+<!-- 		<field> -->
+<!-- 			<a>flagManuale</a> -->
+<!-- 			<b>?</b> -->
+<!-- 		</field> -->
+
+		<field custom-converter-id="preDocumentoEntrataDatiAnagraficiConverter">
+			<a>this</a> <!-- datiAnagraficiPreDocumento  -->
+ 			<b>this</b> <!-- siacTPredocAnagrs[0] -->
+		</field>
+		
+		<field custom-converter-id="preDocumentoStatoConverter">
+			<a>this</a> <!-- statoOperativoPreDocumento, dataCompletamento, dataDefinizione e dataAnnullamento  -->
+ 			<b>this</b> <!-- SiacRPredocStato -->
+		</field>
+		
+		<field custom-converter-id="preDocumentoEntrataClassifConverter">
+		<!-- imposta anche dataCompletamento, dataDefinizione e dataAnnullamento -->
+			<a>this</a> <!--  strutturaAmministrativoContabile  e conto corrente-->
+ 			<b>this</b> <!--  SiacRPredocClass -->
+		</field>
+		
+		<field custom-converter-id="preDocumentoAttoAmmConverter">
+			<a>this</a> <!-- attoAmministrativo -->
+ 			<b>this</b> <!-- SiacRPredocAttoAmm -->
+		</field>
+		
+		<field custom-converter-id="preDocumentoSoggConverter">
+			<a>this</a> <!-- soggetto -->
+ 			<b>this</b> <!-- SiacRPredocSog -->
+		</field>
+		
+		<field custom-converter-id="preDocumentoEntrataCapitoloConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="preDocumentoEntrataAccertamentoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="preDocumentoEntrataCausaleConverter">
+			<a>this</a> 
+ 			<b>this</b> 
+		</field>
+		
+		
+		<!-- <field custom-converter-id="preDocumentoEntrataModPagContocorrenteConverter">
+			<a>this</a> 
+ 			<b>this</b>  CR-4885
+		</field> -->
+		
+		<field custom-converter-id="preDocumentoEntrataSubDocumentoConverter">
+			<a>this</a> 
+ 			<b>this</b> 
+		</field>
+		
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.PreDocumentoProvvisorioDiCassaConverter">
+			<a>this</a> 
+ 			<b>this</b> 
+		</field>
+		
+		<!-- SIAC-5001 -->
+		<field custom-converter-id="preDocumentoElencoDocumentiAllegatoConverter">
+			<a>this</a> 
+ 			<b>this</b> 
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacTPredoc_PreDocumentoEntrata_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.PreDocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPredoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>numero</a>
+			<b>predocNumero</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>predocImporto</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>predocDesc</b>
+		</field>
+		
+		<field>
+			<a>dataCompetenza</a>
+			<b>predocDataCompetenza</b>
+		</field>
+		
+		<field>
+			<a>dataDocumento</a>
+			<b>predocData</b>
+		</field>
+		
+		<field>
+			<a>dataTrasmissione</a>
+			<b>predocDataTrasmissione</b>
+		</field>
+		
+		<field custom-converter-id="preDocumentoStatoConverter">
+			<a>this</a> <!-- statoOperativoPreDocumento, dataCompletamento, dataDefinizione e dataAnnullamento  -->
+ 			<b>this</b> <!-- SiacRPredocStato -->
+		</field>
+		
+		<field custom-converter-id="preDocumentoEntrataClassifConverter">
+		<!-- imposta anche dataCompletamento, dataDefinizione e dataAnnullamento -->
+			<a>this</a> <!--  strutturaAmministrativoContabile -->
+ 			<b>this</b> <!--  SiacRPredocClass -->
+		</field>
+	
+		<field custom-converter-id="preDocumentoSoggConverter">
+			<a>this</a> <!-- soggetto -->
+ 			<b>this</b> <!-- SiacRPredocSog -->
+		</field>
+		
+		
+		<field custom-converter-id="preDocumentoEntrataCausaleConverter">
+			<a>this</a> 
+ 			<b>this</b> 
+		</field>
+		
+		<field custom-converter-id="preDocumentoEntrataSubDocumentoConverter">
+			<a>this</a> 
+ 			<b>this</b> 
+		</field>
+		
+		<field custom-converter-id="preDocumentoEntrataDatiAnagraficiConverter">
+			<a>this</a> <!-- datiAnagraficiPreDocumento  -->
+ 			<b>this</b> <!-- siacTPredocAnagrs[0] -->
+		</field>
+						
+	</mapping>
+	
+	<mapping map-id="SiacTPredoc_PreDocumentoEntrata_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.PreDocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPredoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>numero</a>
+			<b>predocNumero</b>
+		</field>
+		<field>
+			<a>importo</a>
+			<b>predocImporto</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>predocDesc</b>
+		</field>
+		<field>
+			<a>dataCompetenza</a>
+			<b>predocDataCompetenza</b>
+		</field>
+		<field>
+			<a>dataDocumento</a>
+			<b>predocData</b>
+		</field>
+		<field>
+			<a>dataTrasmissione</a>
+			<b>predocDataTrasmissione</b>
+		</field>
+		<field>
+			<a>note</a>
+			<b>predocNote</b>
+		</field>
+		<field>
+			<a>periodoCompetenza</a>
+			<b>predocPeriodoCompetenza</b>
+		</field>
+		<field>
+			<a>codiceIUV</a>
+			<b>predocCodiceIuv</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTPredocAnagr_DatiAnagraficiPreDocumentoEntrata" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.DatiAnagraficiPreDocumento</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPredocAnagr</class-b>
+				
+		<field>
+			<a>codiceFiscale</a>
+			<b>predocanCodiceFiscale</b>
+		</field>
+		
+		<field>
+			<a>partitaIva</a>
+			<b>predocanPartitaIva</b>
+		</field>
+		
+		<field>
+			<a>ragioneSociale</a>
+			<b>predocanRagioneSociale</b>
+		</field>
+		
+		<field>
+			<a>nome</a>
+			<b>predocanNome</b>
+		</field>
+		
+		<field>
+			<a>cognome</a>
+			<b>predocanCognome</b>
+		</field>
+		
+		<field>
+			<a>dataNascita</a>
+			<b>predocanNascitaData</b>
+		</field>
+		<field>
+			<a>comuneNascita</a>
+			<b>predocanNascitaComune</b>
+		</field>
+		
+		<field>
+			<a>nazioneNascita</a>
+			<b>predocanNascitaNazione</b>
+		</field>
+		
+		<field>
+			<a>sesso</a>
+			<b>predocanSesso</b>
+		</field>
+		
+		<field>
+			<a>indirizzo</a>
+			<b>predocanIndirizzo</b>
+		</field>
+		
+		<field>
+			<a>comuneIndirizzo</a>
+			<b>predocanIndirizzoComune</b>
+		</field>
+		
+		<field>
+			<a>nazioneIndirizzo</a>
+			<b>predocanIndirizzoNazione</b>
+		</field>
+		
+		<field>
+			<a>indirizzoEmail</a>
+			<b>predocanEmail</b>
+		</field>
+		
+		<field>
+			<a>numTelefono</a>
+			<b>predocanTelefono</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTModpag_ContoCorrente" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ContoCorrente</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTModpag</class-b>
+		
+		<!-- <field>
+			<a>descrizione</a>
+			<b></b>
+		</field>
+		
+		<field>
+			<a>denominazioneSede</a>
+			<b></b>
+		</field>  -->
+		
+		<field map-id="SiacDAccreditoTipo_ModalitaAccreditoSoggetto">
+			<a>modalitaAccreditoSoggetto</a>
+			<b>siacDAccreditoTipo</b>
+		</field>
+	</mapping>
+		
+	<mapping map-id="SiacDAccreditoTipo_ModalitaAccreditoSoggetto" wildcard="true">	
+		<class-a>it.csi.siac.siacfinser.model.codifiche.ModalitaAccreditoSoggetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDAccreditoTipo</class-b>
+			
+		<field>
+			<a>codice</a>
+			<b>accreditoTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>accreditoTipoDesc</b>
+		</field>
+		
+	</mapping>		
+		
+</mappings>

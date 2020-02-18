@@ -1,0 +1,634 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+﻿<stampaRicevutaRichiestaEconomaleReportModel>
+    <dataStampa>2016-01-12T16:01:44.079+01:00</dataStampa>
+    <importo>0</importo>
+    <richiestaEconomale>
+        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>162</uid>
+        <giustificativi/>
+        <subdocumenti>
+            <subdocumentoSpesa>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>876</uid>
+                <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                <documentoSpesa>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>710</uid>
+                    <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                    <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                    <documentiSpesaFiglio/>
+                    <documentiEntrataFiglio/>
+                    <documentiSpesaPadre/>
+                    <documentiEntrataPadre/>
+                    <anno>2015</anno>
+                    <arrotondamento>0</arrotondamento>
+                    <codiceBollo>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>11</uid>
+                        <codice>99</codice>
+                        <descrizione>ESENTE DA BOLLO</descrizione>
+                    </codiceBollo>
+                    <contabilizzaGenPcc>true</contabilizzaGenPcc>
+                    <dataCreazioneDocumento>2016-01-08T15:23:19.133+01:00</dataCreazioneDocumento>
+                    <dataEmissione>2015-01-09T00:00:00+01:00</dataEmissione>
+                    <dataInizioValiditaStato>2016-01-08T15:25:30.643+01:00</dataInizioValiditaStato>
+                    <dataModificaDocumento>2016-01-08T15:23:19.133+01:00</dataModificaDocumento>
+                    <descrizione>cec  ered</descrizione>
+                    <ente>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <importo>12.00</importo>
+                    <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                    <numero>131313</numero>
+                    <soggetto>
+                        <stato>VALIDO</stato>
+                        <uid>14</uid>
+                        <avviso>false</avviso>
+                        <codiceFiscale>01583880685     </codiceFiscale>
+                        <codiceSoggetto>5</codiceSoggetto>
+                        <controlloSuSoggetto>true</controlloSuSoggetto>
+                        <denominazione>CENTRO SOCIALE</denominazione>
+                        <partitaIva>XXXXXXXX</partitaIva>
+                        <residenteEstero>false</residenteEstero>
+                        <uidSoggettoPadre>0</uidSoggettoPadre>
+                    </soggetto>
+                    <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                    <tipoDocumento>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>6</uid>
+                        <codice>FAT</codice>
+                        <descrizione>FATTURA FORNITORE</descrizione>
+                        <codiceGruppo>FAT</codiceGruppo>
+                        <flagAttivaGEN>true</flagAttivaGEN>
+                        <flagIVA>true</flagIVA>
+                        <flagNotaCredito>true</flagNotaCredito>
+                        <flagPenaleAltro>true</flagPenaleAltro>
+                        <flagRegolarizzazione>false</flagRegolarizzazione>
+                        <flagRitenute>true</flagRitenute>
+                        <flagSpesaCollegata>true</flagSpesaCollegata>
+                        <flagSubordinato>false</flagSubordinato>
+                        <tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+                    </tipoDocumento>
+                    <collegatoCEC>true</collegatoCEC>
+                    <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                </documentoSpesa>
+                <dataScadenza>2015-01-09T00:00:00+01:00</dataScadenza>
+                <descrizione>cec  ered</descrizione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <flagAvviso>false</flagAvviso>
+                <flagEsproprio>false</flagEsproprio>
+                <flagOrdinativoManuale>false</flagOrdinativoManuale>
+                <flagOrdinativoSingolo>false</flagOrdinativoSingolo>
+                <flagRilevanteIVA>false</flagRilevanteIVA>
+                <importo>10.00</importo>
+                <importoDaDedurre>0.00</importoDaDedurre>
+                <note></note>
+                <numero>2</numero>
+                <numeroRegistrazioneIVA></numeroRegistrazioneIVA>
+                <listaRegistriComunicazioniPCC/>
+                <causaleOrdinativo>DOCUMENTO N. 131313 DEL 09/01/2015</causaleOrdinativo>
+                <causaleSospensione></causaleSospensione>
+                <cig></cig>
+                <cup></cup>
+                <dataPagamentoCEC>2016-01-12T12:23:07.288+01:00</dataPagamentoCEC>
+                <datiCertificazioneCrediti>
+                    <stato>VALIDO</stato>
+                    <uid>0</uid>
+                    <annotazione></annotazione>
+                    <flagCertificazione>false</flagCertificazione>
+                    <noteCertificazione></noteCertificazione>
+                    <numeroCertificazione></numeroCertificazione>
+                </datiCertificazioneCrediti>
+                <pagatoInCEC>true</pagatoInCEC>
+            </subdocumentoSpesa>
+        </subdocumenti>
+        <bilancio>
+            <loginOperazione>admin</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>16</uid>
+            <anno>2015</anno>
+            <faseEStatoAttualeBilancio>
+                <stato>VALIDO</stato>
+                <uid>0</uid>
+                <faseBilancio>GESTIONE</faseBilancio>
+            </faseEStatoAttualeBilancio>
+        </bilancio>
+        <caricataDaProceduraEsterna>false</caricataDaProceduraEsterna>
+        <cassaEconomale>
+            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>2</uid>
+            <codice>02</codice>
+            <descrizione>CASSA GESTIONE FATTUREEEEEEEEE</descrizione>
+            <ente>
+                <loginOperazione>admin</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>1</uid>
+                <codiceFiscale>aaaa</codiceFiscale>
+                <gestioneLivelli/>
+                <nome>Città di Torino</nome>
+            </ente>
+            <limiteImporto>1.00</limiteImporto>
+            <numeroContoCorrente>S8D76F87S68DF</numeroContoCorrente>
+            <operazioniCassaEconomale>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>1</uid>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <dataOperazione>2015-05-12T00:00:00+02:00</dataOperazione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <importo>25000.00</importo>
+                <note></note>
+                <numeroOperazione>3</numeroOperazione>
+            </operazioniCassaEconomale>
+            <operazioniCassaEconomale>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>2</uid>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <dataOperazione>2015-09-14T00:00:00+02:00</dataOperazione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <importo>100.00</importo>
+                <note></note>
+                <numeroOperazione>4</numeroOperazione>
+            </operazioniCassaEconomale>
+            <operazioniCassaEconomale>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>3</uid>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <dataOperazione>2015-09-21T00:00:00+02:00</dataOperazione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <importo>100.00</importo>
+                <note></note>
+                <numeroOperazione>5</numeroOperazione>
+            </operazioniCassaEconomale>
+            <operazioniCassaEconomale>
+                <loginOperazione>Demo 24 - Città di Torino - AMM.</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>4</uid>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <dataOperazione>2015-09-22T00:00:00+02:00</dataOperazione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <importo>150.00</importo>
+                <note></note>
+                <numeroOperazione>6</numeroOperazione>
+            </operazioniCassaEconomale>
+            <operazioniCassaEconomale>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>6</uid>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <dataOperazione>2015-09-28T00:00:00+02:00</dataOperazione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <importo>123.00</importo>
+                <note></note>
+                <numeroOperazione>8</numeroOperazione>
+            </operazioniCassaEconomale>
+            <operazioniCassaEconomale>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>7</uid>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <dataOperazione>2015-09-29T00:00:00+02:00</dataOperazione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <importo>125.00</importo>
+                <note></note>
+                <numeroOperazione>9</numeroOperazione>
+            </operazioniCassaEconomale>
+            <operazioniCassaEconomale>
+                <loginOperazione>Demo 24 - Città di Torino - AMM.</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>5</uid>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <dataOperazione>2015-09-28T00:00:00+02:00</dataOperazione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <importo>150.00</importo>
+                <note></note>
+                <numeroOperazione>7</numeroOperazione>
+            </operazioniCassaEconomale>
+            <operazioniCassaEconomale>
+                <loginOperazione>Demo 24 - Città di Torino - AMM.</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>9</uid>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <dataOperazione>2015-11-28T00:00:00+01:00</dataOperazione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <importo>10.00</importo>
+                <note></note>
+                <numeroOperazione>10</numeroOperazione>
+            </operazioniCassaEconomale>
+            <operazioniCassaEconomale>
+                <loginOperazione>Demo 24 - Città di Torino - AMM.</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>10</uid>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <dataOperazione>2015-09-28T00:00:00+02:00</dataOperazione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <importo>10.00</importo>
+                <note></note>
+                <numeroOperazione>11</numeroOperazione>
+            </operazioniCassaEconomale>
+            <responsabile>Verdi GiovanniIIIIIIII</responsabile>
+            <statoOperativoCassaEconomale>VALIDA</statoOperativoCassaEconomale>
+            <tipoDiCassa>CONTO_CORRENTE_BANCARIO</tipoDiCassa>
+            <variabiliStampa>
+                <stato>VALIDO</stato>
+                <uid>0</uid>
+                <intestazioneCitta>citta cassa 2</intestazioneCitta>
+                <intestazioneDirezione>direzione cassa 2</intestazioneDirezione>
+                <intestazioneSettore>settore cassa 2</intestazioneSettore>
+                <intestazioneUfficio>ufficio cassa 2</intestazioneUfficio>
+            </variabiliStampa>
+        </cassaEconomale>
+        <codiceBeneficiario>5</codiceBeneficiario>
+        <codiceFiscale>01583880685     </codiceFiscale>
+        <cognome>CENTRO SOCIALE</cognome>
+        <dataCreazioneRichiestaEconomale>2016-01-12T12:23:07.270+01:00</dataCreazioneRichiestaEconomale>
+        <dataModificaRichiestaEconomale>2016-01-12T12:23:07.270+01:00</dataModificaRichiestaEconomale>
+        <delegatoAllIncasso></delegatoAllIncasso>
+        <descrizioneDellaRichiesta>Pagamento FATTURA FORNITORE Numero 131313 Quota 2  Beneficiario 5 CENTRO SOCIALE</descrizioneDellaRichiesta>
+        <ente>
+            <loginOperazione>admin</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>1</uid>
+            <codiceFiscale>aaaa</codiceFiscale>
+            <gestioneLivelli/>
+            <nome>Città di Torino</nome>
+        </ente>
+        <impegno>
+            <stato>VALIDO</stato>
+            <uid>41028</uid>
+            <annoCapitoloOrigine>2015</annoCapitoloOrigine>
+            <annoMovimento>2015</annoMovimento>
+            <annoOriginePlur>0</annoOriginePlur>
+            <annoRiaccertato>0</annoRiaccertato>
+            <attoAmministrativo>
+                <loginOperazione>Demo 24 - Città di Torino - AMM.</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>59</uid>
+                <anno>2015</anno>
+                <note>note - provvedimento n.11</note>
+                <numero>11</numero>
+                <oggetto>delibera di giunta numero 11</oggetto>
+                <strutturaAmmContabile>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>505</uid>
+                    <codice>004</codice>
+                    <descrizione>VDG SERVIZI AMMINISTRATIVI</descrizione>
+                    <livello>1</livello>
+                    <tipoClassificatore>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <codice>CDR</codice>
+                        <descrizione>Centro di Respondabilità (Direzione)</descrizione>
+                    </tipoClassificatore>
+                </strutturaAmmContabile>
+                <tipoAtto>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>27</uid>
+                    <codice>DG</codice>
+                    <descrizione>DELIBERA DI GIUNTA</descrizione>
+                    <progressivoAutomatico>false</progressivoAutomatico>
+                </tipoAtto>
+            </attoAmministrativo>
+            <dataEmissione>2015-03-18T14:17:29.264+01:00</dataEmissione>
+            <descrizione>IMPEGNO INSERITO DA IRENE PER PROVARE LA CASSA ECONOMALE</descrizione>
+            <flagAttivaGsa>false</flagAttivaGsa>
+            <flagDaRiaccertamento>false</flagDaRiaccertamento>
+            <importoAttuale>5000</importoAttuale>
+            <importoIniziale>5000</importoIniziale>
+            <numero>496</numero>
+            <numeroArticoloOrigine>0</numeroArticoloOrigine>
+            <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+            <numeroUEBOrigine>0</numeroUEBOrigine>
+            <parereFinanziario>false</parereFinanziario>
+            <validato>true</validato>
+            <annoFinanziamento>0</annoFinanziamento>
+            <chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+            <descrizioneStatoOperativoMovimentoGestioneSpesa>DEFINITIVO</descrizioneStatoOperativoMovimentoGestioneSpesa>
+            <numeroAccFinanziamento>0</numeroAccFinanziamento>
+            <statoOperativoMovimentoGestioneSpesa>D</statoOperativoMovimentoGestioneSpesa>
+            <capitoloUscitaGestione>
+                <loginOperazione>migr_capitoli_p</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>14240</uid>
+                <annoCapitolo>2015</annoCapitolo>
+                <bilancio>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <categoriaCapitolo>
+                    <stato>VALIDO</stato>
+                    <uid>2</uid>
+                    <codice>STD</codice>
+                    <descrizione>Standard</descrizione>
+                </categoriaCapitolo>
+                <descrizione>SERVIZI SOCIO-ASSISTENZIALI DECENTRATI - FITTI REALI DEI LOCALI E SPESE INERENTI</descrizione>
+                <elementoPianoDeiConti>
+                    <stato>VALIDO</stato>
+                    <uid>125674</uid>
+                    <codice>U.1.03.02.07.001</codice>
+                    <descrizione>Locazione di beni immobili</descrizione>
+                    <livello>0</livello>
+                    <tipoClassificatore>
+                        <stato>VALIDO</stato>
+                        <uid>25</uid>
+                        <codice>PDC_V</codice>
+                    </tipoClassificatore>
+                </elementoPianoDeiConti>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <flagRilevanteIva>false</flagRilevanteIva>
+                <numeroArticolo>0</numeroArticolo>
+                <numeroCapitolo>87000</numeroCapitolo>
+                <numeroUEB>100080000</numeroUEB>
+                <statoOperativoElementoDiBilancio>VALIDO</statoOperativoElementoDiBilancio>
+                <tipoCapitolo>CAPITOLO_USCITA_GESTIONE</tipoCapitolo>
+                <uidCapitoloEquivalente>0</uidCapitoloEquivalente>
+                <uidExCapitolo>0</uidExCapitolo>
+                <macroaggregato>
+                    <stato>VALIDO</stato>
+                    <uid>118919</uid>
+                    <codice>1030000</codice>
+                    <descrizione>Acquisto di beni e servizi</descrizione>
+                    <livello>0</livello>
+                    <tipoClassificatore>
+                        <stato>VALIDO</stato>
+                        <uid>4</uid>
+                        <codice>MACROAGGREGATO</codice>
+                    </tipoClassificatore>
+                </macroaggregato>
+            </capitoloUscitaGestione>
+        </impegno>
+        <importo>10.00</importo>
+        <matricola></matricola>
+        <movimento>
+            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>255</uid>
+            <bic></bic>
+            <contoCorrente></contoCorrente>
+            <dataMovimento>2016-01-12T00:00:00+01:00</dataMovimento>
+            <dettaglioPagamento></dettaglioPagamento>
+            <ente>
+                <loginOperazione>admin</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>1</uid>
+                <codiceFiscale>aaaa</codiceFiscale>
+                <gestioneLivelli/>
+                <nome>Città di Torino</nome>
+            </ente>
+            <modalitaPagamentoCassa>
+                <loginOperazione>admin</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>1</uid>
+                <codice>CC</codice>
+                <descrizione>Conto Corrente Bancario</descrizione>
+                <ente>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <tipoDiCassa>CONTO_CORRENTE_BANCARIO</tipoDiCassa>
+            </modalitaPagamentoCassa>
+            <modalitaPagamentoDipendente>
+                <loginOperazione>admin</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>4</uid>
+                <codice>CON</codice>
+                <descrizione>Contanti</descrizione>
+                <modalitaAccreditoSoggetto>
+                    <stato>VALIDO</stato>
+                    <uid>2</uid>
+                    <codice>CON</codice>
+                    <descrizione>Contanti</descrizione>
+                    <priorita>0</priorita>
+                </modalitaAccreditoSoggetto>
+            </modalitaPagamentoDipendente>
+            <numeroMovimento>160</numeroMovimento>
+        </movimento>
+        <note></note>
+        <numeroRichiesta>99</numeroRichiesta>
+        <soggetto>
+            <stato>VALIDO</stato>
+            <uid>14</uid>
+            <avviso>false</avviso>
+            <codiceFiscale>01583880685     </codiceFiscale>
+            <codiceSoggetto>5</codiceSoggetto>
+            <controlloSuSoggetto>true</controlloSuSoggetto>
+            <denominazione>CENTRO SOCIALE</denominazione>
+            <partitaIva>XXXXXXXX</partitaIva>
+            <residenteEstero>false</residenteEstero>
+            <uidSoggettoPadre>0</uidSoggettoPadre>
+        </soggetto>
+        <statoOperativoRichiestaEconomale>EVASA</statoOperativoRichiestaEconomale>
+        <tipoRichiestaEconomale>
+            <loginOperazione>admin</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>2</uid>
+            <codice>PAGAMENTO_FATTURE</codice>
+            <descrizione>Pagamento fatture</descrizione>
+            <rendiconto>false</rendiconto>
+        </tipoRichiestaEconomale>
+    </richiestaEconomale>
+    <valutaDefault>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>49</uid>
+        <codice>EUR</codice>
+        <descrizione>Euro</descrizione>
+    </valutaDefault>
+</stampaRicevutaRichiestaEconomaleReportModel>

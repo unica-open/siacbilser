@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     
+   <mapping map-id="SiacTPrimaNota_PrimaNota_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.PrimaNota</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPrimaNota</class-b>
+		
+		<field>
+			<a>numero</a>
+			<b>pnotaNumero</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>pnotaDesc</b>
+		</field>
+		<field>
+			<a>dataRegistrazione</a>
+			<b>pnotaData</b>
+		</field>
+		
+		<field>
+			<a>numeroRegistrazioneLibroGiornale</a>
+			<b>pnotaProgressivogiornale</b>
+		</field>
+		
+		<field>
+			<a>dataRegistrazioneLibroGiornale</a>
+			<b>pnotaDataregistrazionegiornale</b>
+		</field>
+	</mapping>
+     
+     <mapping map-id="SiacTPrimaNota_PrimaNota_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.PrimaNota</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPrimaNota</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>pnotaNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>pnotaDesc</b>
+		</field>
+		
+		<field custom-converter-id="primaNotaTipoCausaleConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field>
+			<a>dataRegistrazione</a>
+			<b>pnotaData</b>
+		</field>
+		
+		<field>
+			<a>numeroRegistrazioneLibroGiornale</a>
+			<b>pnotaProgressivogiornale</b>
+		</field>
+		
+		<field>
+			<a>dataRegistrazioneLibroGiornale</a>
+			<b>pnotaDataregistrazionegiornale</b>
+		</field>
+  	</mapping>
+  	
+  	 <mapping map-id="SiacTPrimaNota_PrimaNota_Base" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.PrimaNota</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPrimaNota</class-b>
+	
+		<field map-id="SiacTPrimaNota_PrimaNota_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="primaNotaAmbitoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="primaNotaStatoOperativoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="primaNotaRateoRiscontoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTSoggetto_Soggetto">
+			<a>soggetto</a>
+			<b>siacTSoggetto</b>
+		</field>
+		
+  	</mapping>
+     
+     
+  	<mapping map-id="SiacTPrimaNota_PrimaNota" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.PrimaNota</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPrimaNota</class-b>
+	
+		<field map-id="SiacTPrimaNota_PrimaNota_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+<!-- 		<field custom-converter-id="primaNotaTipoCausaleConverter">  -->
+<!-- 			<a>this</a> -->
+<!-- 			<b>this</b> -->
+<!-- 		</field> -->
+		
+		<field custom-converter-id="primaNotaMovimentiEpConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="primeNoteCollegateConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="primaNotaIsCollegataAMovimentoResiduoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="primaNotaClassificatoreGSAConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="primaNotaStatoAccettazionePrimaNotaProvvisoriaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="primaNotaStatoAccettazionePrimaNotaDefinitivaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTPrimaNota_PrimaNota_DettaglioConto" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.PrimaNota</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPrimaNota</class-b>
+	
+		<field map-id="SiacTPrimaNota_PrimaNota_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+<!-- 		<field custom-converter-id="primaNotaTipoCausaleConverter">  -->
+<!-- 			<a>this</a> -->
+<!-- 			<b>this</b> -->
+<!-- 		</field> -->
+		
+		<field custom-converter-id="primaNotaMovimentiEpDettaglioContoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="primeNoteCollegateConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="primaNotaIsCollegataAMovimentoResiduoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="primaNotaClassificatoreGSAConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTMovEp_MovimentoEP_Base" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.MovimentoEP</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovEp</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>movepCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movepDesc</b>
+		</field>
+		
+		<field custom-converter-id="movimentoEPAmbitoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+  	</mapping>
+  	
+  	<mapping map-id="SiacTMovEp_MovimentoEP_Medium" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.MovimentoEP</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovEp</class-b>
+	
+		<field map-id="SiacTMovEp_MovimentoEP_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field  map-id="SiacTPrimaNota_PrimaNota_Base">
+			<a>primaNota</a>
+			<b>siacTPrimaNota</b>
+		</field>
+		
+	<!-- 	<field map-id="SiacTCausaleEp_CausaleEP_Minimal"> 
+			<a>causaleEP</a>
+			<b>siacTCausaleEp</b>
+		</field> -->
+		
+		<field map-id="SiacTRegMovfin_RegistrazioneMovFin_Minimal"> 
+			<a>registrazioneMovFin</a>
+			<b>siacTRegMovfin</b>
+		</field>
+		
+		<field custom-converter-id="movimentoEPMovimentoDettaglioConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+  	</mapping>
+	
+	
+	<mapping map-id="SiacTMovEp_MovimentoEP" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.MovimentoEP</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovEp</class-b>
+	
+		<field map-id="SiacTMovEp_MovimentoEP_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field  map-id="SiacTPrimaNota_PrimaNota_Base">
+			<a>primaNota</a>
+			<b>siacTPrimaNota</b>
+		</field>
+		
+		<field >
+			<a>causaleEP.dataInizioValiditaFiltro</a>
+			<b>dataInizioValidita</b>
+		</field>
+		
+		<field map-id="SiacTCausaleEp_CausaleEP_Minimal_Con_Evento"> 
+			<a>causaleEP</a>
+			<b>siacTCausaleEp</b>
+		</field>
+		
+		<field map-id="SiacTRegMovfin_RegistrazioneMovFin_Base"> 
+			<a>registrazioneMovFin</a>
+			<b>siacTRegMovfin</b>
+		</field>
+		
+		<field custom-converter-id="movimentoEPMovimentoDettaglioConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+  	</mapping>
+  	
+  	<mapping map-id="SiacTMovEp_MovimentoEP_DettaglioConto" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.MovimentoEP</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovEp</class-b>
+	
+		<field map-id="SiacTMovEp_MovimentoEP_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field  map-id="SiacTPrimaNota_PrimaNota_Base">
+			<a>primaNota</a>
+			<b>siacTPrimaNota</b>
+		</field>
+		
+		<field >
+			<a>causaleEP.dataInizioValiditaFiltro</a>
+			<b>dataInizioValidita</b>
+		</field>
+		
+		<field map-id="SiacTCausaleEp_CausaleEP_Minimal_Con_Evento"> 
+			<a>causaleEP</a>
+			<b>siacTCausaleEp</b>
+		</field>
+		
+		<field map-id="SiacTRegMovfin_RegistrazioneMovFin_Base"> 
+			<a>registrazioneMovFin</a>
+			<b>siacTRegMovfin</b>
+		</field>
+		
+		<field custom-converter-id="movimentoEPMovimentoDettaglioContoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+  	</mapping>
+ 
+ 
+ 	<mapping map-id="SiacTMovEpDet_MovimentoDettaglio_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.MovimentoDettaglio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovEpDet</class-b>
+		<field>
+			<a>numeroRiga</a>
+			<b>movepDetCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movepDetDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>movepDetImporto</b>
+		</field>
+	</mapping>
+ 
+ 	<mapping map-id="SiacTMovEpDet_MovimentoDettaglio" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.MovimentoDettaglio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovEpDet</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTMovEp_MovimentoEP_Base">
+			<a>movimentoEP</a>
+			<b>siacTMovEp</b>
+		</field>
+		
+		<field>
+			<a>numeroRiga</a>
+			<b>movepDetCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movepDetDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>movepDetImporto</b>
+		</field>
+		
+		<field custom-converter-id="movimentoDettaglioAmbitoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="movimentoDettaglioSegnoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field  map-id="SiacTMovEp_MovimentoEP_Base">
+			<a>movimentoEP</a>
+			<b>siacTMovEp</b>
+		</field>
+		
+		<field  map-id="SiacTPdceConto_Conto_Minimal">
+			<a>conto</a>
+			<b>siacTPdceConto</b>
+		</field>
+		
+		<field custom-converter-id="movimentoDettaglioClassifConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+  	</mapping>
+  	<mapping map-id="SiacTMovEpDet_MovimentoDettaglio_DettaglioConto" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.MovimentoDettaglio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovEpDet</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTMovEp_MovimentoEP_Base">
+			<a>movimentoEP</a>
+			<b>siacTMovEp</b>
+		</field>
+		
+		<field>
+			<a>numeroRiga</a>
+			<b>movepDetCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movepDetDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>movepDetImporto</b>
+		</field>
+		
+		<field custom-converter-id="movimentoDettaglioAmbitoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="movimentoDettaglioSegnoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field  map-id="SiacTMovEp_MovimentoEP_Base">
+			<a>movimentoEP</a>
+			<b>siacTMovEp</b>
+		</field>
+		
+		<field  map-id="SiacTPdceConto_Conto_Base">
+			<a>conto</a>
+			<b>siacTPdceConto</b>
+		</field>
+		
+		<field custom-converter-id="movimentoDettaglioClassifConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+  	</mapping>
+  	
+  	<mapping map-id="SiacDPrimaNotaRelTipo_TipoRelazionePrimaNota" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.TipoRelazionePrimaNota</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDPrimaNotaRelTipo</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>pnotaRelTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>pnotaRelTipoDesc</b>
+		</field>
+		
+		<field> 
+			<a>relazioneUtilizzabile</a>
+			<b>pnotaRelUtilizzabile</b>
+		</field>
+  	</mapping>
+  	
+  	<mapping map-id="SiacTPrimaNotaRateiRisconti_Rateo" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.Rateo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPrimaNotaRateiRisconti</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>anno</a>
+			<b>anno</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>importo</b>
+		</field>
+		
+		<field map-id="SiacTPrimaNota_PrimaNota_Minimal">
+			<a>primaNota</a>
+			<b>siacTPrimaNota</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTPrimaNotaRateiRisconti_Risconto" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.Risconto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPrimaNotaRateiRisconti</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>anno</a>
+			<b>anno</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>importo</b>
+		</field>
+		
+		<field map-id="SiacTPrimaNota_PrimaNota_Minimal">
+			<a>primaNota</a>
+			<b>siacTPrimaNota</b>
+		</field>
+		
+	</mapping>
+	
+</mappings>

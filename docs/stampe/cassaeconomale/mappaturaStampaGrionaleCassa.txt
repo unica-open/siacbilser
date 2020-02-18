@@ -1,0 +1,112 @@
+﻿GIORNALE CASSA
+
+
+NOTA: per distinguere cosa stampare in base al tipo di cassa utilizzare:
+<stampaGiornaleCassaReportModel/tipoDiCassa/@codice> :
+MI (MISTA)
+CC (Conto CORRENTE)
+CO (CONTANTI)
+
+NOTA: per distinguere la modalita pagamento dipendente:
+<stampaGiornaleCassaReportModel/movimenti/movimento/modalitaPagamentoDipendente/codice> :
+CON (CONTANTI)
+CC (Conto CORRENTE)
+
+NOTA:- per capire se il movimento è un rendiconto deve essere presente 
+</stampaGiornaleCassaReportModel/movimenti/movimento/rendicontoRichiesta>
+
+NOTA:
+Per B1 è necessario come da analisi, abbreviare la descrizione
+ANTICIPO_SPESE                Ant.sp.
+ANTICIPO_SPESE_MISSIONE       Ant.sp. miss.
+ANTICIPO_TRASFERTA_DIPENDENTI Ant.sp. trasf.
+RIMBORSO_FATTURE              Rimborso
+PAGAMENTO_FATTURE             Pagam.fatture
+se rendiconto
+ANTICIPO_SPESE                Ant.sp. - rendiconto
+ANTICIPO_SPESE_MISSIONE       Ant.sp. miss. - rendiconto
+
+
+MAPPATURA
+
+TIPOSTAMPA	</stampaGiornaleCassaReportModel/intestazione/tipoStampa>
+NUMERO PAGINA 	</stampaGiornaleCassaReportModel/intestazione/numeroDiPagina>
+ENTE 	</stampaGiornaleCassaReportModel/intestazione/ente/nome>
+DIREZIONE: 	</stampaGiornaleCassaReportModel/intestazione/direzione>
+SETTORE: 	</stampaGiornaleCassaReportModel/intestazione/settore>
+CODICE CASSA: 	</stampaGiornaleCassaReportModel/intestazione/riferimentoCassaEconomale>
+DATASTAMPAGIORNALE: 	</stampaGiornaleCassaReportModel/intestazione/dataStampaGiornale>
+ANNO ESERCIZIO: 	</stampaGiornaleCassaReportModel/intestazione/annoDiRiferimentoContabile>
+
+
+Ciclare su 
+</stampaGiornaleCassaReportModel/movimenti/movimento>
+
+
+
+A1: </stampaGiornaleCassaReportModel/movimenti/movimento/numeroMovimento>
+B1: </stampaGiornaleCassaReportModel/movimenti/movimento/richiestaEconomale/tipoRichiestaEconomale/descrizione>
+
+il sospeso potrebbe non esserci in quanto non tutte le richieste lo prevedono come valore
+C1: </stampaGiornaleCassaReportModel/movimenti/movimento/richiestaEconomale/sospeso/numeroSospeso> 
+
+D1: </stampaGiornaleCassaReportModel/movimenti/movimento/denominazioneSoggetto>
+  
+E1: </stampaGiornaleCassaReportModel/movimenti/movimento/richiestaEconomale/descrizioneDellaRichiesta>
+
+F1: </stampaGiornaleCassaReportModel/movimenti/movimento/modalitaPagamentoPerStampa>
+
+G1: </stampaGiornaleCassaReportModel/movimenti/movimento/annoCapitoloPerStampa>/</stampaGiornaleCassaReportModel/movimenti/movimento/numeroCapitoloPerStampa> </stampaGiornaleCassaReportModel/movimenti/movimento/articoloCapitoloPerStampa> 
+
+H1: </stampaGiornaleCassaReportModel/movimenti/movimento/richiestaEconomale/impegno/annoMovimento>/</stampaGiornaleCassaReportModel/movimenti/movimento/richiestaEconomale/impegno/numero>
+
+
+I1: </stampaGiornaleCassaReportModel/movimenti/movimento/importoMovEntrataCC> 
+L1: </stampaGiornaleCassaReportModel/movimenti/movimento/importoMovUscitaCC> 
+M1: </stampaGiornaleCassaReportModel/movimenti/movimento/importoMovEntrataCO> 
+N1: </stampaGiornaleCassaReportModel/movimenti/movimento/importoMovUscitaCO> 
+  
+--fine ciclo
+
+Ciclare su 
+</stampaGiornaleCassaReportModel/operazioniCassa/operazioneCassa>
+
+DESCRIZIONE: </stampaGiornaleCassaReportModel/OperazioniCassa/operazioneCassa/descrizione> 
+
+
+I2: </stampaGiornaleCassaReportModel/OperazioniCassa/operazioneCassa/importoOpEntrataCC> 
+
+L2: </stampaGiornaleCassaReportModel/OperazioniCassa/operazioneCassa/importoOpUscitaCC> 
+
+M2: </stampaGiornaleCassaReportModel/OperazioniCassa/operazioneCassa/importoOpEntrataCO> 
+
+N2: </stampaGiornaleCassaReportModel/OperazioniCassa/operazioneCassa/importoOpUscitaCO> 
+ 
+--fine ciclo
+I3: </stampaGiornaleCassaReportModel/totaliCC/totaleEntrate>
+L3: </stampaGiornaleCassaReportModel/totaliCC/totaleUscite>
+M3: </stampaGiornaleCassaReportModel/totaliCO/totaleEntrate>
+N3: </stampaGiornaleCassaReportModel/totaliCO/totaleUscite>
+O1: </stampaGiornaleCassaReportModel/totaliCC/saldoTotale>
+O2: </stampaGiornaleCassaReportModel/totaliCO/saldoTotale>
+
+P1: </stampaGiornaleCassaReportModel/dataUltimaStampaDef> Se non presente non ci sono stampe definitive salvate su db
+P2: </stampaGiornaleCassaReportModel/totaliCC/ultTotaleCassaEntrate>
+P3: </stampaGiornaleCassaReportModel/totaliCC/ultTotaleCassaUscite>
+P4: </stampaGiornaleCassaReportModel/totaliCO/ultTotaleCassaEntrate>
+P5: </stampaGiornaleCassaReportModel/totaliCO/ultTotaleCassaUscite>
+
+Q1: </stampaGiornaleCassaReportModel/totaliCC/totaleRipEntrate>
+Q2: </stampaGiornaleCassaReportModel/totaliCC/totaleRipUscite>
+Q3: </stampaGiornaleCassaReportModel/totaliCO/totaleRipEntrate>
+Q4: </stampaGiornaleCassaReportModel/totaliCO/totaleRipUscite>
+R1: </stampaGiornaleCassaReportModel/totaliCC/saldoRiporto>
+R2: </stampaGiornaleCassaReportModel/totaliCO/saldoRiporto>
+
+S1: </stampaGiornaleCassaReportModel/totaleFondoCassa>
+S2: </stampaGiornaleCassaReportModel/totaleDisponibilitaCassaCO>
+S3: </stampaGiornaleCassaReportModel/totaleDisponibilitaCassaCC>
+
+
+
+

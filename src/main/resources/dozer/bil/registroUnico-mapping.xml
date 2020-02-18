@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+   
+	
+	
+	<mapping map-id="SiacTRegistrounicoDoc_RegistroUnico" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.RegistroUnico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRegistrounicoDoc</class-b>
+	
+		<field>
+			<a>anno</a>
+			<b>rudocRegistrazioneAnno</b>
+		</field>
+		
+		<field>
+			<a>dateRegistro</a>
+			<b>rudocRegistrazioneData</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>rudocRegistrazioneNumero</b>
+		</field>
+		
+		<field map-id="SiacTDoc_DocumentoSpesa_Minimal">
+			<a>documentoSpesa</a>
+			<b>siacTDoc</b>
+		</field>
+		
+	</mapping>
+	
+	
+	
+</mappings>

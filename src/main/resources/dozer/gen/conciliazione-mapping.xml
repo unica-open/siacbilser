@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacRConciliazioneTitolo_ConciliazionePerTitolo" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.ConciliazionePerTitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacRConciliazioneTitolo</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTPdceConto_Conto_Minimal_WithPianoDeiConti">
+			<a>conto</a>
+			<b>siacTPdceConto</b>
+		</field>
+		<field custom-converter-id="conciliazionePerTitoloClassificatoreConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="conciliazionePerTitoloClasseDiConciliazioneConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacRConciliazioneCapitolo_ConciliazionePerCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.ConciliazionePerCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacRConciliazioneCapitolo</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTPdceConto_Conto_Minimal_WithPianoDeiConti">
+			<a>conto</a>
+			<b>siacTPdceConto</b>
+		</field>
+		<field custom-converter-id="conciliazionePerCapitoloCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="conciliazionePerCapitoloClasseDiConciliazioneConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacRConciliazioneBeneficiario_ConciliazionePerBeneficiario" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.ConciliazionePerBeneficiario</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacRConciliazioneBeneficiario</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTPdceConto_Conto_Minimal_WithPianoDeiConti">
+			<a>conto</a>
+			<b>siacTPdceConto</b>
+		</field>
+		<field custom-converter-id="conciliazionePerBeneficiarioCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="conciliazionePerBeneficiarioSoggettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="conciliazionePerBeneficiarioClasseDiConciliazioneConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+</mappings>

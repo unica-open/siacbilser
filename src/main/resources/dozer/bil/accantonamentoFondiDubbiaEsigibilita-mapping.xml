@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilita_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAccFondiDubbiaEsig</class-b>
+		<field>
+			<a>percentualeAccantonamentoFondi</a>
+			<b>percAccFondi</b>
+		</field>
+		<field>
+			<a>percentualeAccantonamentoFondi1</a>
+			<b>percAccFondi1</b>
+		</field>
+		<field>
+			<a>percentualeAccantonamentoFondi2</a>
+			<b>percAccFondi2</b>
+		</field>
+		<field>
+			<a>percentualeAccantonamentoFondi3</a>
+			<b>percAccFondi3</b>
+		</field>
+		<field>
+			<a>percentualeAccantonamentoFondi4</a>
+			<b>percAccFondi4</b>
+		</field>
+		<field>
+			<a>percentualeDelta</a>
+			<b>percDelta</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilita" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAccFondiDubbiaEsig</class-b>
+		<field map-id="SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilita_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+</mappings>

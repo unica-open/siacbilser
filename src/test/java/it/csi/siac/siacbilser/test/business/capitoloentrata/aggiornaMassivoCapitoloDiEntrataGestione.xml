@@ -1,0 +1,204 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<aggiornaMassivoCapitoloDiEntrataGestione>
+		    <dataOra>2015-10-01T11:02:37.513+02:00</dataOra>
+		    <richiedente>
+		        <account>
+		            <stato>VALIDO</stato>
+		            <uid>1</uid>
+		            <nome>Demo 21</nome>
+		            <descrizione>Demo 21 - Città di Torino</descrizione>
+		            <indirizzoMail>email</indirizzoMail>
+		            <ente>
+		                <stato>VALIDO</stato>
+		                <uid>1</uid>
+		                <gestioneLivelli>
+		                    <entry>
+		                        <key>LIVELLO_GESTIONE_BILANCIO</key>
+		                        <value>GESTIONE_UEB</value>
+		                    </entry>
+		                </gestioneLivelli>
+		                <nome>Città di Torino</nome>
+		            </ente>
+		        </account>
+		        <operatore>
+		            <stato>VALIDO</stato>
+		            <uid>0</uid>
+		            <codiceFiscale>AAAAAA00A11B000J</codiceFiscale>
+		            <cognome>AAAAAA00A11B000J</cognome>
+		            <nome>Demo</nome>
+		        </operatore>
+		    </richiedente>
+		    <capitoloEntrataGestione>
+		        <stato>VALIDO</stato>
+		        <uid>18393</uid>
+		        <annoCapitolo>2015</annoCapitolo>
+		        <bilancio>
+		            <stato>VALIDO</stato>
+		            <uid>16</uid>
+		            <anno>2015</anno>
+		        </bilancio>
+		        <categoriaCapitolo>
+		            <stato>VALIDO</stato>
+		            <uid>2</uid>
+		        </categoriaCapitolo>
+		        <classificatoriGenerici>
+		            <dataCreazione>2015-03-10T16:53:29.958+01:00</dataCreazione>
+		            <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+		            <dataModifica>2015-03-10T16:53:29.956+01:00</dataModifica>
+		            <loginOperazione>migr_capitoli_p</loginOperazione>
+		            <stato>VALIDO</stato>
+		            <uid>454137</uid>
+		            <codice>32</codice>
+		            <descrizione>MENSE COMPRESE QUELLE AD USO SCOLASTICO</descrizione>
+		            <tipoClassificatore>
+		                <stato>VALIDO</stato>
+		                <uid>0</uid>
+		                <codice>CLASSIFICATORE_36</codice>
+		                <descrizione>Allegati bilancio di previsione</descrizione>
+		            </tipoClassificatore>
+		        </classificatoriGenerici>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici>
+		            <loginOperazione>migr_capitoli_p</loginOperazione>
+		            <stato>VALIDO</stato>
+		            <uid>453910</uid>
+		            <codice>630</codice>
+		            <descrizione>MOBILITA'</descrizione>
+		            <tipoClassificatore>
+		                <stato>VALIDO</stato>
+		                <uid>0</uid>
+		                <codice>CLASSIFICATORE_39</codice>
+		                <descrizione>Aree</descrizione>
+		            </tipoClassificatore>
+		        </classificatoriGenerici>
+		        <classificatoriGenerici>
+		            <loginOperazione>migr_capitoli_p</loginOperazione>
+		            <stato>VALIDO</stato>
+		            <uid>453849</uid>
+		            <codice>04</codice>
+		            <descrizione>VIABILITA'-INFRASTRUTTURE E TRASPORTI-MOBILITA' CLAUDIO LUBATTI</descrizione>
+		            <tipoClassificatore>
+		                <stato>VALIDO</stato>
+		                <uid>0</uid>
+		                <codice>CLASSIFICATORE_40</codice>
+		                <descrizione>Assessorati</descrizione>
+		            </tipoClassificatore>
+		        </classificatoriGenerici>
+		        <classificatoriGenerici>
+		            <loginOperazione>migr_capitoli_p</loginOperazione>
+		            <stato>VALIDO</stato>
+		            <uid>453850</uid>
+		            <codice>0000</codice>
+		            <descrizione> </descrizione>
+		            <tipoClassificatore>
+		                <stato>VALIDO</stato>
+		                <uid>0</uid>
+		                <codice>CLASSIFICATORE_41</codice>
+		                <descrizione>Coel</descrizione>
+		            </tipoClassificatore>
+		        </classificatoriGenerici>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <classificatoriGenerici xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+		        <descrizione>REGIONE PIEMONTE - CONTRIBUTI VARI</descrizione>
+		        <descrizioneArticolo></descrizioneArticolo>
+		        <ente>
+		            <stato>VALIDO</stato>
+		            <uid>1</uid>
+		            <gestioneLivelli>
+		                <entry>
+		                    <key>LIVELLO_GESTIONE_BILANCIO</key>
+		                    <value>GESTIONE_UEB</value>
+		                </entry>
+		            </gestioneLivelli>
+		            <nome>Città di Torino</nome>
+		        </ente>
+		        <flagImpegnabile>true</flagImpegnabile>
+		        <flagRilevanteIva>false</flagRilevanteIva>
+		        <note></note>
+		        <numeroArticolo>0</numeroArticolo>
+		        <numeroCapitolo>8300</numeroCapitolo>
+		        <statoOperativoElementoDiBilancio>VALIDO</statoOperativoElementoDiBilancio>
+		        <tipoCapitolo>CAPITOLO_ENTRATA_GESTIONE</tipoCapitolo>
+		        <tipoFinanziamento>
+		            <dataCreazione>2013-06-03T00:00:00+02:00</dataCreazione>
+		            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+		            <dataModifica>2013-06-03T00:00:00+02:00</dataModifica>
+		            <loginOperazione>admin</loginOperazione>
+		            <stato>VALIDO</stato>
+		            <uid>26</uid>
+		            <codice>02</codice>
+		            <descrizione>Tipo fin 2</descrizione>
+		            <tipoClassificatore>
+		                <stato>VALIDO</stato>
+		                <uid>0</uid>
+		                <codice>TIPO_FINANZIAMENTO</codice>
+		                <descrizione>Tipo Finanziamento</descrizione>
+		            </tipoClassificatore>
+		        </tipoFinanziamento>
+		        <uidCapitoloEquivalente>0</uidCapitoloEquivalente>
+		        <uidExCapitolo>0</uidExCapitolo>
+		        <categoriaTipologiaTitolo>
+		            <dataCreazione>2014-11-13T13:01:29.140+01:00</dataCreazione>
+		            <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+		            <dataModifica>2014-11-13T13:01:29.140+01:00</dataModifica>
+		            <loginOperazione>pentaho_TTC_20141113_1</loginOperazione>
+		            <stato>VALIDO</stato>
+		            <uid>119539</uid>
+		            <codice>4040200</codice>
+		            <descrizione>Cessione di Terreni e di beni materiali non prodotti</descrizione>
+		            <livello>3</livello>
+		            <tipoClassificatore>
+		                <stato>VALIDO</stato>
+		                <uid>0</uid>
+		                <codice>CATEGORIA</codice>
+		                <descrizione>Categoria</descrizione>
+		            </tipoClassificatore>
+		        </categoriaTipologiaTitolo>
+		        <tipologiaTitolo>
+		            <dataCreazione>2014-11-13T13:01:29.140+01:00</dataCreazione>
+		            <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+		            <dataModifica>2014-11-13T13:01:29.140+01:00</dataModifica>
+		            <loginOperazione>pentaho_TTC_20141113_1</loginOperazione>
+		            <stato>VALIDO</stato>
+		            <uid>119537</uid>
+		            <codice>4040000</codice>
+		            <descrizione>Tipologia 400: Entrate da alienazione di beni materiali e immateriali</descrizione>
+		            <livello>2</livello>
+		            <tipoClassificatore>
+		                <stato>VALIDO</stato>
+		                <uid>0</uid>
+		                <codice>TIPOLOGIA</codice>
+		                <descrizione>Tipologia</descrizione>
+		            </tipoClassificatore>
+		            <tipologiaFoglia>false</tipologiaFoglia>
+		        </tipologiaTitolo>
+		        <titoloEntrata>
+		            <dataCreazione>2014-11-13T13:01:29.140+01:00</dataCreazione>
+		            <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+		            <dataModifica>2014-11-13T13:01:29.140+01:00</dataModifica>
+		            <loginOperazione>pentaho_TTC_20141113_1</loginOperazione>
+		            <stato>VALIDO</stato>
+		            <uid>119511</uid>
+		            <codice>4</codice>
+		            <descrizione>ENTRATE IN CONTO CAPITALE</descrizione>
+		            <livello>1</livello>
+		            <tipoClassificatore>
+		                <stato>VALIDO</stato>
+		                <uid>0</uid>
+		                <codice>TITOLO_ENTRATA</codice>
+		                <descrizione>Titolo Entrata</descrizione>
+		            </tipoClassificatore>
+		        </titoloEntrata>
+		    </capitoloEntrataGestione>
+		</aggiornaMassivoCapitoloDiEntrataGestione>

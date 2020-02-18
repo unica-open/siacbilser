@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTIvaRegistroTotale_ProgressiviIva" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ProgressiviIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaRegistroTotale</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>totaleImponibileProvvisorio</a>
+			<b>totimponibileprovv</b>
+		</field>
+		<field>
+			<a>totaleImponibileDefinitivo</a>
+			<b>totimponibiledef</b>
+		</field>
+		<field>
+			<a>totaleIvaProvvisorio</a>
+			<b>totivaprovv</b>
+		</field>
+		<field>
+			<a>totaleIvaDefinitivo</a>
+			<b>totivadef</b>
+		</field>
+		<field>
+			<a>totaleIvaIndetraibileProvvisorio</a>
+			<b>totivaindetraibileprovv</b>
+		</field>
+		<field>
+			<a>totaleIvaIndetraibileDefinitivo</a>
+			<b>totivaindetraibiledef</b>
+		</field>
+		<field>
+			<a>totaleIvaDetraibileProvvisorio</a>
+			<b>totivadetraibileprovv</b>
+		</field>
+		<field>
+			<a>totaleIvaDetraibileDefinitivo</a>
+			<b>totivadetraibiledef</b>
+		</field>
+		
+		<field map-id="SiacTIvaRegistro_RegistroIva_Base">
+			<a>registroIva</a>
+			<b>siacTIvaRegistro</b>
+		</field>
+		<field map-id="SiacTIvaAttivita_AttivitaIva_Minimal">
+			<a>attivitaIva</a>
+			<b>siacTIvaAttivita</b>
+		</field>
+		<field map-id="SiacTIvaAliquota_AliquotaIva">
+			<a>aliquotaIva</a>
+			<b>siacTIvaAliquota</b>
+		</field>
+		<field custom-converter-id="progressiviIvaPeriodoConverter">
+			<a>this</a><!-- annoEsercizio + periodo -->
+			<b>siacTPeriodo</b>
+		</field>
+		
+	</mapping>
+	
+</mappings>

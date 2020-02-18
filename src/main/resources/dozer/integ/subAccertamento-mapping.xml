@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="ListSubAccertamento_IntegSubAccertamento" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.SubAccertamento</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.SubAccertamento</class-b>
+
+		<field>
+			<a>numero</a>
+			<b>codice</b>
+		</field>
+
+		<field>
+			<a>annoMovimento</a>
+			<b>annoSubAccertamento</b>
+		</field>
+
+		<field
+			custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+			<a>numero</a>
+			<b>numeroSubAccertamento</b>
+		</field>
+
+		<field>
+			<a>statoOperativoMovimentoGestioneEntrata</a>
+			<b>stato.codice</b>
+		</field>
+
+		<field>
+			<a>descrizioneStatoOperativoMovimentoGestioneEntrata</a>
+			<b>stato.descrizione</b>
+		</field>
+
+		<field>
+			<a>importoAttuale</a>
+			<b>importo</b>
+		</field>
+
+		<field>
+			<a>soggetto.codiceSoggetto</a>
+			<b>codiceSoggetto</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.anno</a>
+			<b>provvedimento.annoProvvedimento</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.numero</a>
+			<b>provvedimento.numeroProvvedimento</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.statoOperativo</a>
+			<b>provvedimento.statoProvvedimento</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.strutturaAmmContabile.codice</a>
+			<b>provvedimento.sac.codice</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativo.strutturaAmmContabile.descrizione</a>
+			<b>provvedimento.sac.descrizione</b>
+		</field>
+		
+		<field>
+			<a>disponibilitaIncassare</a>
+			<b>disponibilitaIncassare</b>
+		</field>
+
+	</mapping>
+
+</mappings>

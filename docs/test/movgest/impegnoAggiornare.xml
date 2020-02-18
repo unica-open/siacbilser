@@ -1,0 +1,97 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<impegno>
+	<stato>VALIDO</stato>
+	<uid>55727</uid>
+	<codCapitoloSanitarioSpesa>3</codCapitoloSanitarioSpesa>
+	<codClassGen12>TR_PAT-PALUNI</codClassGen12>
+	<codClassGen13>SEDE UNICA</codClassGen13>
+	<codCofog>01.3</codCofog>
+	<codPdc>U.2.02.01.09.002</codPdc>
+	<codRicorrenteSpesa>4</codRicorrenteSpesa>
+	<codSiope>YYYY</codSiope>
+	<codTransazioneEuropeaSpesa>8</codTransazioneEuropeaSpesa>
+	<annoCapitoloOrigine>2017</annoCapitoloOrigine>
+	<annoMovimento>2016</annoMovimento>
+	<annoOriginePlur>0</annoOriginePlur>
+	<annoRiaccertato>0</annoRiaccertato>
+	<attoAmministrativo>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+		<anno>2012</anno>
+		<numero>82</numero>
+		<parereRegolaritaContabile>false</parereRegolaritaContabile>
+		<statoOperativo>DEFINITIVO</statoOperativo>
+		<strutturaAmmContabile>
+			<stato>VALIDO</stato>
+			<uid>1719525</uid>
+			<codice>DB0700</codice>
+			<descrizione>RISORSE UMANE E PATRIMONIO</descrizione>
+			<livello>0</livello>
+		</strutturaAmmContabile>
+		<tipoAtto>
+			<loginOperazione>admin</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>306</uid>
+			<codice>AD</codice>
+			<descrizione>ATTO DIRIGENZIALE</descrizione>
+			<progressivoAutomatico>false</progressivoAutomatico>
+		</tipoAtto>
+	</attoAmministrativo>
+	<byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+	<collegatoALiquidazioni>false</collegatoALiquidazioni>
+	<collegatoAOrdinativi>false</collegatoAOrdinativi>
+	<descrizione>REIMPUT. RSR 2012/33 SPESE PER LA REALIZZAZIONE DEL PROGETTO "PALAZZO PER GLI UFFICI DELLA REGIONE PIEMONTE". IMPEGNO E PRENOTAZIONE SUL BILANCIO PLURIENNALE 2011-2013
+SUL CAP 203450.</descrizione>
+	<flagAttivaGsa>false</flagAttivaGsa>
+	<flagDaRiaccertamento>false</flagDaRiaccertamento>
+	<importoAttuale>100.00</importoAttuale>
+	<importoIniziale>100</importoIniziale>
+	<numero>418</numero>
+
+	<numeroArticoloOrigine>0</numeroArticoloOrigine>
+	<numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+	<numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+	<numeroUEBOrigine>0</numeroUEBOrigine>
+	<parereFinanziario>true</parereFinanziario>
+	<presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+	<siopeTipoDebito>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+		<codice>NC</codice>
+		<descrizione>Non commerciale</descrizione>
+	</siopeTipoDebito>
+	<soggetto>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+		<avviso>false</avviso>
+		<controlloSuSoggetto>true</controlloSuSoggetto>
+		<residenteEstero>false</residenteEstero>
+		<uidSoggettoPadre>0</uidSoggettoPadre>
+	</soggetto>
+	<validato>true</validato>
+	<annoFinanziamento>0</annoFinanziamento>
+	<chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+	<flagCassaEconomale>false</flagCassaEconomale>
+	<flagFrazionabile>false</flagFrazionabile>
+	<flagPrenotazione>false</flagPrenotazione>
+	<flagPrenotazioneLiquidabile>false</flagPrenotazioneLiquidabile>
+	<flagSDF>false</flagSDF>
+	<frazionabileValorizzato>false</frazionabileValorizzato>
+	<numeroAccFinanziamento>0</numeroAccFinanziamento>
+	<statoOperativoMovimentoGestioneSpesa>VALIDO</statoOperativoMovimentoGestioneSpesa>
+	<tipoImpegno>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+		<codice>SVI</codice>
+	</tipoImpegno>
+	<capitoloUscitaGestione>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+		<tipoCapitolo>CAPITOLO_USCITA_GESTIONE</tipoCapitolo>
+		<uidCapitoloEquivalente>0</uidCapitoloEquivalente>
+		<uidExCapitolo>0</uidExCapitolo>
+	</capitoloUscitaGestione>
+</impegno>

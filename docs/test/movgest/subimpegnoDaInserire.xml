@@ -1,0 +1,88 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<subimpegno>
+	<stato>VALIDO</stato>
+	<uid>0</uid>
+	<codCapitoloSanitarioSpesa>3</codCapitoloSanitarioSpesa>
+	<codCofog>01.3</codCofog>
+	<codPdc>U.2.02.01.09.002</codPdc>
+	<codRicorrenteSpesa>4</codRicorrenteSpesa>
+	<codSiope>YYYY</codSiope>
+	<codTransazioneEuropeaSpesa>8</codTransazioneEuropeaSpesa>
+	<cup/>
+	<annoCapitoloOrigine>0</annoCapitoloOrigine>
+	<annoMovimento>0</annoMovimento>
+	<annoOriginePlur>0</annoOriginePlur>
+	<annoRiaccertato>0</annoRiaccertato>
+	<attoAmministrativo>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+		<anno>2012</anno>
+		<numero>82</numero>
+		<parereRegolaritaContabile>false</parereRegolaritaContabile>
+		<statoOperativo>DEFINITIVO</statoOperativo>
+		<strutturaAmmContabile>
+			<stato>VALIDO</stato>
+			<uid>1719525</uid>
+			<codice>DB0700</codice>
+			<descrizione>RISORSE UMANE E PATRIMONIO</descrizione>
+			<livello>0</livello>
+		</strutturaAmmContabile>
+		<tipoAtto>
+			<loginOperazione>admin</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>306</uid>
+			<codice>AD</codice>
+			<descrizione>ATTO DIRIGENZIALE</descrizione>
+			<progressivoAutomatico>false</progressivoAutomatico>
+		</tipoAtto>
+	</attoAmministrativo>
+	<byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+	<collegatoALiquidazioni>false</collegatoALiquidazioni>
+	<collegatoAOrdinativi>false</collegatoAOrdinativi>
+	<descrizione/>
+	<flagAttivaGsa>false</flagAttivaGsa>
+	<flagDaRiaccertamento>false</flagDaRiaccertamento>
+	<importoAttuale>1.00</importoAttuale>
+	<importoIniziale>1.00</importoIniziale>
+	<numeroArticoloOrigine>0</numeroArticoloOrigine>
+	<numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+	<numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+	<numeroUEBOrigine>0</numeroUEBOrigine>
+	<parereFinanziario>false</parereFinanziario>
+	<presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+	<siopeTipoDebito>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+		<codice>NC</codice>
+		<descrizione>Non commerciale</descrizione>
+	</siopeTipoDebito>
+	<soggetto>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+		<avviso>false</avviso>
+		<codiceSoggetto>10508</codiceSoggetto>
+		<controlloSuSoggetto>true</controlloSuSoggetto>
+		<residenteEstero>false</residenteEstero>
+		<uidSoggettoPadre>0</uidSoggettoPadre>
+	</soggetto>
+	<validato>true</validato>
+	<annoFinanziamento>0</annoFinanziamento>
+	<chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+	<cig/>
+	<flagCassaEconomale>false</flagCassaEconomale>
+	<flagFrazionabile>false</flagFrazionabile>
+	<flagPrenotazione>false</flagPrenotazione>
+	<flagPrenotazioneLiquidabile>false</flagPrenotazioneLiquidabile>
+	<flagSDF>false</flagSDF>
+	<frazionabileValorizzato>false</frazionabileValorizzato>
+	<numeroAccFinanziamento>0</numeroAccFinanziamento>
+	<progetto>
+		<stato>VALIDO</stato>
+		<uid>0</uid>
+	</progetto>
+	<statoOperativoMovimentoGestioneSpesa>D</statoOperativoMovimentoGestioneSpesa>
+	<annoImpegnoPadre>0</annoImpegnoPadre>
+</subimpegno>

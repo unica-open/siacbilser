@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+  <mapping map-id="SiacTQuadroEconomico_QuadroEconomico_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.QuadroEconomico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTQuadroEconomico</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>quadroEconomicoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>quadroEconomicoDesc</b>
+		</field>
+	
+		<field>
+			<a>livello</a>
+			<b>livello</b>
+		</field>		
+	</mapping>
+	
+	<mapping map-id="SiacTQuadroEconomico_QuadroEconomico_Base" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.QuadroEconomico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTQuadroEconomico</class-b>
+	
+		<field map-id="SiacTQuadroEconomico_QuadroEconomico_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="quadroEconomicoStatoConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field custom-converter-id="quadroEconomicoParteConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTQuadroEconomico_QuadroEconomico" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.QuadroEconomico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTQuadroEconomico</class-b>
+	
+		<field map-id="SiacTQuadroEconomico_QuadroEconomico_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="quadroEconomicoQuadroEconomicoPadreConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTQuadroEconomico_QuadroEconomico_All" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.QuadroEconomico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTQuadroEconomico</class-b>
+	
+		<field map-id="SiacTQuadroEconomico_QuadroEconomico">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="quadroEconomicoQuadroEconomicoFigliConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTQuadroEconomico_QuadroEconomico_AllValidi" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.QuadroEconomico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTQuadroEconomico</class-b>
+	
+		<field map-id="SiacTQuadroEconomico_QuadroEconomico">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="quadroEconomicoQuadroEconomicoFigliValidiConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+</mappings>

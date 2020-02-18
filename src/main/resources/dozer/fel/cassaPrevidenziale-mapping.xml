@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SirfelTCassaPrevidenziale_CassaPrevidenzialeFEL_Minimal" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.CassaPrevidenzialeFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTCassaPrevidenziale</class-b>
+		
+		<field-exclude>
+			<a>ritenuta</a>
+			<b>ritenuta</b>
+		</field-exclude>
+		
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStringSiNoConverter">
+			<a>ritenuta</a>
+			<b>ritenuta</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SirfelTCassaPrevidenziale_CassaPrevidenzialeFEL" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.CassaPrevidenzialeFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTCassaPrevidenziale</class-b>
+		
+		<field-exclude>
+			<a>ritenuta</a>
+			<b>ritenuta</b>
+		</field-exclude>
+		
+		<field map-id="SirfelTCassaPrevidenziale_CassaPrevidenzialeFEL_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="cassaPrevidenzialeFELTipoCassaFELConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="cassaPrevidenzialeFELNaturaFELConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="cassaPrevidenzialeFELFatturaFELConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+
+</mappings>

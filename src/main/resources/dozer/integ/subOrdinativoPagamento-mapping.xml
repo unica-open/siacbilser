@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="ListSubOrdinativoPagamento_IntegSubOrdinativoPagamento" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoPagamento</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.SubOrdinativoPagamento</class-b>
+
+		<field>
+			<a>liquidazione.annoLiquidazione</a>
+			<b>annoLiquidazione</b>
+		</field>
+		<field>
+			<a>liquidazione.numeroLiquidazione</a>
+			<b>numeroLiquidazione</b>
+		</field>
+
+		<field>
+			<a>liquidazione.impegno.annoMovimento</a>
+			<b>annoImpegno</b>
+		</field>
+
+		<field
+			custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+			<a>liquidazione.impegno.numero</a>
+			<b>numeroImpegno</b>
+		</field>
+
+		<field>
+			<a>importoAttuale</a>
+			<b>importo</b>
+		</field>
+
+	</mapping>
+</mappings>

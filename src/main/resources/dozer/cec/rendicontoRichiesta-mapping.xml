@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     
+     <mapping map-id="SiacTGiustificativo_RendicontoRichiesta_Base" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.RendicontoRichiesta</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGiustificativo</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>note</a>
+			<b>rendNote</b>
+		</field>
+		
+		<field>
+			<a>dataRendiconto</a>
+			<b>rendData</b>
+		</field>
+		
+		<field>
+			<a>importoRestituito</a>
+			<b>rendImportoRestituito</b>
+		</field>
+		
+		<field>
+			<a>importoIntegrato</a>
+			<b>rendImportoIntegrato</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTGiustificativo_RendicontoRichiesta_Medium" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.RendicontoRichiesta</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGiustificativo</class-b>
+	
+		<field map-id="SiacTGiustificativo_RendicontoRichiesta_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTRichiestaEcon_RichiestaEconomale_Medium">
+			<a>richiestaEconomale</a>
+			<b>siacTRichiestaEcon</b>
+		</field>
+		
+		<field custom-converter-id="rendicontoRichiestaImpegnoSubimpegnoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTGiustificativo_RendicontoRichiesta" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.RendicontoRichiesta</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGiustificativo</class-b>
+	
+		<field map-id="SiacTGiustificativo_RendicontoRichiesta_Medium">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="rendicontoRichiestaGiustificativiConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="rendicontoRichiestaMovimentiConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="rendicontoRichiestaDatiStampaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTGiustificativo_RendicontoRichiesta_Base_Movimento" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.RendicontoRichiesta</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGiustificativo</class-b>
+	
+		<field map-id="SiacTGiustificativo_RendicontoRichiesta_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		
+		<field custom-converter-id="rendicontoRichiestaMovimentiBaseConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+	</mapping>
+	
+</mappings>

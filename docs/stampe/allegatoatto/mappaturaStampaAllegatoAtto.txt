@@ -1,0 +1,105 @@
+INTESTAZIONE
+	(SIAC-4201: aggiunto Ente)
+	- Ente: /stampaAllegatoAttoReportModel/soggettoProponente/denominazione
+	- Direzione: /stampaAllegatoAttoReportModel/strutturaAmministrativoContabileCDR (/codice, /descrizione)
+	- Settore: /stampaAllegatoAttoReportModel/strutturaAmministrativoContabileCDC (/codice, /descrizione) [ATTENZIONE! Il campo potrebbe non essere sempre presente]
+
+	- AnnoAtto: /stampaAllegatoAttoReportModel/allegatoAtto/attoAmministrativo/anno
+	- NumAtto: /stampaAllegatoAttoReportModel/allegatoAtto/attoAmministrativo/numero
+	(SIAC-4201: aggiunto TipoAtto)
+	- TipoAtto: /stampaAllegatoAttoReportModel/allegatoAtto/attoAmministrativo/tipoAtto/codice
+	- Causale: /stampaAllegatoAttoReportModel/allegatoAtto/causale
+	- Ver: /stampaAllegatoAttoReportModel/allegatoAtto/versioneInvioFirma
+	(SIAC-4800: aggiunto DataIns, DataCompl, modifica DataScad)
+	(SIAC-5271: tolta DataScad)
+	(SIAC-5446: reinserita DataScad)
+	- DataScad: /stampaAllegatoAttoReportModel/dataScadenza
+	- DataIns: /stampaAllegatoAttoReportModel/dataInserimento
+	- DataCompl: /stampaAllegatoAttoReportModel/dataCompletamento
+	(SIAC-4201: aggiunti TotAtto, TotSI, TotSC, TotRC, flag <Ritenute>)
+	- TotAtto: /stampaAllegatoAttoReportModel/totaleAtto
+	- TotSI: /stampaAllegatoAttoReportModel/totaleSplitIstituzionale
+	- TotSC: /stampaAllegatoAttoReportModel/totaleSplitCommerciale
+	- TotRC: /stampaAllegatoAttoReportModel/totaleReverseChange
+	- <Ritenute>: /stampaAllegatoAttoReportModel/hasRitenute [flag, se true allora esistono delle ritenute, se false non esistono delle ritenute]
+
+SOGGETTI + MODALITA' PAGAMENTO SOGGETTO
+	(Ciclare su /stampaAllegatoAttoReportModel/elenchi/elenco)
+	(SIAC-4201: rimosso NEle)
+	- ImpForn: /stampaAllegatoAttoReportModel/elenchi/elenco/totaleImpegni
+	- ImpDaDedurre: /stampaAllegatoAttoReportModel/elenchi/elenco/totaleImportoDaDedurre
+	- CodSogg: /stampaAllegatoAttoReportModel/elenchi/elenco/soggetto/codiceSoggetto
+	- DenominazioneSogg: /stampaAllegatoAttoReportModel/elenchi/elenco/soggetto/denominazione
+	(SIAC-6190)
+	- Sede secondaria: /stampaAllegatoAttoReportModel/elenchi/elenco/sedeSecondariaSoggetto/denominazione
+	
+		(SIAC-4632: modificata la lettura dell'indirizzo)
+	- Indirizzo: /stampaAllegatoAttoReportModel/elenchi/elenco/indirizzoSoggetto/denominazione
+	- Sedime: /stampaAllegatoAttoReportModel/elenchi/elenco/indirizzoSoggetto/sedime
+	- num_civico: /stampaAllegatoAttoReportModel/elenchi/elenco/indirizzoSoggetto/numeroCivico
+	- Cap: /stampaAllegatoAttoReportModel/elenchi/elenco/indirizzoSoggetto/cap
+	- Citta: /stampaAllegatoAttoReportModel/elenchi/elenco/indirizzoSoggetto/comune
+	- Prov: /stampaAllegatoAttoReportModel/elenchi/elenco/indirizzoSoggetto/provincia
+	
+	- CodFisc: /stampaAllegatoAttoReportModel/elenchi/elenco/soggetto/codiceFiscale
+	- PIva: /stampaAllegatoAttoReportModel/elenchi/elenco/soggetto/partitaIva
+	- ModPag: /stampaAllegatoAttoReportModel/elenchi/elenco/modalitaPagamentoSoggetto/descrizione [ATTENZIONE! Campo formattato automaticamente. Nel caso la formattazione non sia quelle desiderata, si confronti ??? per la formattazione da applicare]
+	- Conto: /stampaAllegatoAttoReportModel/elenchi/elenco/modalitaPagamentoSoggetto/contoCorrente
+	- Iban: /stampaAllegatoAttoReportModel/elenchi/elenco/modalitaPagamentoSoggetto/iban
+	(SIAC-4201: rimossi Cin, Bic; aggiunti Cessione, NomeCessione)
+	- Cessione: (Se presente il campo NomeCessione [/stampaAllegatoAttoReportModel/elenchi/elenco/soggettoCessione, vedasi sotto])
+	- NomeCessione: /stampaAllegatoAttoReportModel/elenchi/elenco/soggettoCessione (/codiceSoggetto, /denominazione)
+	SIAC--6433
+	-data fine validita durc cessione: /stampaAllegatoAttoReportModel/elenchi/elenco/soggettoCessione/dataFineValiditaDurc
+	--
+	-data fine validita durc:         /stampaAllegatoAttoReportModel/elenchi/elenco/soggetto/dataFineValiditaDurc
+	
+	
+	IMPEGNI
+		(Ciclare su /stampaAllegatoAttoReportModel/elenchi/elenco/impegniSubimpegni/impegnoSubimpegno)
+		- ProvImp = /stampaAllegatoAttoReportModel/elenchi/elenco/impegniSubimpegni/impegnoSubimpegno/impegno/attoAmministrativo (/anno, /numero, /tipoAtto/codice, Se presente SAC, /strutturaAmmContabile/codice)
+		- Capitolo = /stampaAllegatoAttoReportModel/elenchi/elenco/impegniSubimpegni/impegnoSubimpegno/impegno/capitoloUscitaGestione (/numeroCapitolo, /numeroArticolo)
+		- Impegno = /stampaAllegatoAttoReportModel/elenchi/elenco/impegniSubimpegni/impegnoSubimpegno/impegno (
+			#SIAC-6036
+		    /annoMovimento, 
+		    /numero, 
+		    Se presente subimpegno, /../subImpegno(
+		      /numero,
+		      /siopeAssenzaMotivazione
+			)
+		  )
+		- ImpImp = /stampaAllegatoAttoReportModel/elenchi/elenco/impegniSubimpegni/impegnoSubimpegno/importo
+		
+		(SIAC-4865 modifica lettura campi <CigI> <CupI>)
+		- <CigI> = /stampaAllegatoAttoReportModel/elenchi/elenco/impegniSubimpegni/impegnoSubimpegno/cig
+		- <CupI> = /stampaAllegatoAttoReportModel/elenchi/elenco/impegniSubimpegni/impegnoSubimpegno/cup
+		(SIAC-6269)
+		- <SiopeAssenzaMotivazioneDescr> = /stampaAllegatoAttoReportModel/elenchi/elenco/impegniSubimpegni/impegnoSubimpegno/siopeAssenzaMotivazioneDescr
+		
+		- TotImpImp = /stampaAllegatoAttoReportModel/elenchi/elenco/totaleImpegni
+		- ImpDaDedurre: /stampaAllegatoAttoReportModel/elenchi/elenco/impegniSubimpegni/impegnoSubimpegno/totaleImportoDaDedurre
+	
+	FATTURE
+		(SIAC-4201: cambiata chiave di ciclo)
+		(Ciclare su /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento)
+		- NFat: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/subdocumentoSpesa/documentoSpesa (/tipoDocumento/codice, /anno, /numero)
+		- Quota: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/subdocumentoSpesa/numero
+		- ImpeQuota: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/subdocumentoSpesa/impegno (/annoMovimento, /numero, Se presente subimpegno, /../subImpegno/numero)
+		- DataFat = /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/subdocumentoSpesa/documentoSpesa/dataEmissione
+		- ScadFat = /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/subdocumentoSpesa/documentoSpesa/dataScadenza
+		- tipo split reverse = /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/subdocumentoSpesa/tipoIvaSplitReverse (/@descrizione se si vuole la descrizione, /@codice se si vuole il codice)
+		- importo split reverse = /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/subdocumentoSpesa/documentoSpesa/importoSplitReverse
+		- ImpQuota = /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/importo
+		(SIAC-4201, aggiunti <NCD>, <PNL>, <CCN>, <Provv>, ImpeQuota, LiqQuota, RIT, CodRIT)
+		- <NCD>: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/estremiNoteCredito
+		- <PNL>: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/estremiPenali
+		- <CCN>: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/estremiCartaContabile
+		- <Provv>: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/estremiProvvisorioCassa
+		- ImpeQuota: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/estremiImpegno
+		- LiqQuota: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/estremiLiquidazione
+		- RIT: (Se presente il campo CodRIT [/stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/estremiRitenute, vedasi sotto])
+		- CodRIT: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/estremiRitenute
+		(SIAC-5271: aggiunta DataScad)
+		- DataScad: /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/dataScadenza
+		(SIAC-5900)
+		- siopeAssenzaMotivazione = /stampaAllegatoAttoReportModel/elenchi/elenco/subdocumenti/subdocumento/siopeAssenzaMotivazione

@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+   <!-- CONVERT SOGGETTO CLASSE -->
+   <mapping map-id="SiacDSoggettoClasse_ClasseSoggetto">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.ClasseSoggetto</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDSoggettoClasseFin</class-b>
+		<field>
+			<a>descrizione</a>
+			<b>soggettoClasseDesc</b>
+		</field>
+		<!--  -->
+		
+   </mapping>
+   <mapping map-id="SiacDSoggettoClasse_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDSoggettoClasseFin</class-b>
+		<field>
+			<a>id</a>
+			<b>soggettoClasseId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>soggettoClasseCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>soggettoClasseDesc</b>
+		</field>
+   </mapping>
+   
+    <!--  CONVERT DI NAZIONE -->
+
+	<mapping map-id="SiacTNazione_Nazione">
+		<class-a>it.csi.siac.siacfinser.model.Nazione</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTNazioneFin
+		</class-b>
+
+		<field>
+			<a>codice</a>
+			<b>nazioneCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>nazioneDesc</b>
+		</field>
+		<!-- <field custom-converter="it.csi.siac.siaccorser.integration.entitymapping.converter.StringFormatConverter" 
+			custom-converter-param="%05d" type="one-way"> <a>numeroCapitolo</a> Integer 
+			<b>ordine</b> String - </field> <field> <a>numeroArticolo</a> <b>elemCode3</b> 
+			</field> <field custom-converter="it.csi.siac.siaccorser.integration.entitymapping.converter.YearDateConverter"> 
+			<a>annoCreazioneCapitolo</a> - Integer - <b>dataCreazione</b> java.util.Date 
+			- </field> -->
+	</mapping>
+	<mapping map-id="SiacTNazione_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTNazioneFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>nazioneId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>nazioneCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>nazioneDesc</b>
+		</field>
+	</mapping>
+
+
+
+	<!-- CONVERT DI NATURA FORMA GIURIDICA -->
+	<mapping map-id="SiacTFormaNaturaGiuridica_NaturaGiuridicaSoggetto">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.NaturaGiuridicaSoggetto
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTFormaGiuridicaFin
+		</class-b>
+
+		<field>
+			<a>soggettoTipoCode</a>
+			<b>formaGiuridicaId</b>
+		</field>
+		<field>
+			<a>soggettoTipoDesc</a>
+			<b>formaGiuridicaDesc</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacTFormaNaturaGiuridica_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTFormaGiuridicaFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>formaGiuridicaId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>formaGiuridicaIstatCodice</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>formaGiuridicaDesc</b>
+		</field>
+		<!-- 
+		<field>
+			<a>codice</a>
+			<b>formaGiuridicaIstatCodice</b>
+		</field>
+		-->
+	</mapping>
+
+
+	<!-- CONVERT DI COMUNI DI NASCITA da fare !!! -->
+	<mapping map-id="SiacTComune_ComuneNascita">
+		<class-a>it.csi.siac.siacfinser.integration.entity.SiacTComuneFin
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.ComuneNascita</class-b>
+
+		<field>
+			<a>comuneDesc</a>
+			<b>descrizione</b>
+		</field>
+		<!-- <field> <a>siglaProvincia</a> <b>siacRComuneProvincias.siacTProvincia.siglaAutomobilistica</b> 
+			</field> -->
+
+		<field
+			custom-converter="it.csi.siac.siacfinser.integration.entity.converter.SiglaProvinciaConverter"
+			type="one-way">
+			<a>this</a>
+			<b>siglaProvincia</b>
+		</field>
+
+
+		<field>
+			<a>siacTNazione.nazioneCode</a>
+			<b>nazioneCode</b>
+		</field>
+
+
+		<field>
+			<a>siacTNazione.nazioneDesc</a>
+			<b>nazioneDesc</b>
+		</field>
+
+
+	</mapping>
+
+	<mapping map-id="SiacTEnteProprietario_Ente_GestioneLivelliFin">
+		<class-a>it.csi.siac.siaccorser.model.Ente</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTEnteProprietarioFin</class-b>
+				
+		<field map-id="SiacTEnteProprietario_Ente">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="enteGestioneLivelliFinConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+	</mapping>
+
+
+	<mapping map-id="SiacTEnteProprietario_Ente">
+		<class-a>it.csi.siac.siaccorser.model.Ente</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTEnteProprietarioFin
+		</class-b>
+		<field>
+			<a>nome</a>
+			<b>enteDenominazione</b>
+		</field>
+	</mapping>
+
+
+	<mapping map-id="SiacTSoggetto_Ente" wildcard="false">
+		<class-a>it.csi.siac.siaccorser.model.Ente</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin
+		</class-b>
+
+		<field map-id="SiacTEnteProprietario_Ente">
+			<a>this</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	</mapping>
+
+	<mapping map-id="SiacTPersonaFisica_Ente" wildcard="false">
+		<class-a>it.csi.siac.siaccorser.model.Ente</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTPersonaFisicaFin
+		</class-b>
+
+		<field map-id="SiacTEnteProprietario_Ente">
+			<a>this</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	</mapping>
+
+	<!-- CONVERT DI NATURA GIURIDICA <mapping map-id="SiacDSoggettoTipo_NaturaGiuridica"> 
+		<class-a>it.csi.siac.siacfinser.model.NaturaGiuridica</class-a> <class-b>it.csi.siac.siacfinser.integration.entity.SiacDSoggettoTipoFin</class-b> 
+		<field> <a>codice</a> <b>soggettoTipoCode</b> </field> <field> <a>descrizione</a> 
+		<b>soggettoTipoDesc</b> </field> </mapping> -->
+
+
+
+	<mapping map-id="SiacDSoggettoTipo_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaExtFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDSoggettoTipoFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>soggettoTipoId</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>soggettoTipoDesc</b>
+		</field>
+		
+	  
+		<field>
+			<a>codice</a>
+			<b>soggettoTipoCode</b>
+		</field>
+	
+	</mapping>
+	
+	<mapping map-id="SiacDIndirizzoTipo_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDIndirizzoTipoFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>indirizzoTipoId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>indirizzoTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>indirizzoTipoDesc</b>
+		</field>
+	</mapping>
+	
+	
+	
+	<mapping map-id="SiacDSoggettoStato_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDSoggettoStatoFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>soggettoStatoId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>soggettoStatoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>soggettoStatoDesc</b>
+		</field>
+	</mapping>	
+
+	
+	<mapping map-id="SiacDMovgestStato_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDMovgestStatoFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>movgestStatoId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>movgestStatoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>movgestStatoDesc</b>
+		</field>
+	</mapping>	
+	
+	
+	<mapping map-id="SiacDFormaGiuridicaTipo_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDFormaGiuridicaTipoFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>formaGiuridicaTipoId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>formaGiuridicaTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>formaGiuridicaTipoDesc</b>
+		</field>
+	</mapping>	
+	
+	
+	<mapping map-id="SiacDRecapitoModo_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDRecapitoModoFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>recapitoModoId</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>recapitoModoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>recapitoModoCode</b>
+		</field>
+	</mapping>	
+	
+	
+	<mapping map-id="SiacDOnere_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDOnereFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>onereId</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>onereCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>onereDesc</b>
+		</field>
+	</mapping>
+
+	<mapping map-id="SiacDModificaTipo_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDModificaTipoFin
+		</class-b>
+
+		<field>
+			<a>id</a>
+			<b>modTipoId</b>
+		</field>
+
+		<field>
+			<a>codice</a>
+			<b>modTipoCode</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>modTipoDesc</b>
+		</field>
+	</mapping>	
+	
+	<mapping map-id="SiacDTipoAccredito_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDAccreditoTipoFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>accreditoTipoId</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>accreditoTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>accreditoTipoDesc</b>
+		</field>
+	</mapping>		
+	
+	
+	
+	<mapping map-id="SiacDViaTipo_CodificaExtFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaExtFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDViaTipoFin</class-b>
+
+		<field>
+			<a>descrizione</a>
+			<b>viaTipoDesc</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>viaTipoCode</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacDRelazTipo_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDRelazTipoFin</class-b>
+
+		<field>
+			<a>descrizione</a>
+			<b>relazTipoDesc</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>relazTipoCode</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDMovgestTipo_CodificaExtFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaExtFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDMovgestTipoFin</class-b>
+		<field>
+			<a>descrizione</a>
+			<b>movgestTipoDesc</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>movgestTipoCode</b>
+		</field>
+		<field>
+			<a>id</a>
+			<b>movgestTipoId</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacTClass_CodificaExtFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaExtFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTClassFin</class-b>
+		<field>
+			<a>descrizione</a>
+			<b>classifDesc</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>classifCode</b>
+		</field>
+		<field>
+			<a>id</a>
+			<b>classifId</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDSiopeAssenzaMotivazioneFin_CodificaExtFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaExtFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDSiopeAssenzaMotivazioneFin</class-b>
+		<field>
+			<a>descrizione</a>
+			<b>siopeAssenzaMotivazioneDesc</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>siopeAssenzaMotivazioneCode</b>
+		</field>
+		<field>
+			<a>id</a>
+			<b>siopeAssenzaMotivazioneId</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTProgramma_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTProgrammaFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>programmaId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>programmaCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>programmaDesc</b>
+		</field>
+	</mapping>	
+	
+		<mapping map-id="SiacDMutuoTipo_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDMutuoTipoFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>mutTipoId</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>mutTipoDesc</b>
+		</field>
+		
+	  
+		<field>
+			<a>codice</a>
+			<b>mutTipoCode</b>
+		</field>
+	
+	</mapping>
+	
+	
+	<mapping map-id="SiacDContoTesoreria_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDContotesoreriaFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>contotesId</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>contotesDesc</b>
+		</field>
+		
+	  
+		<field>
+			<a>codice</a>
+			<b>contotesCode</b>
+		</field>
+	
+	</mapping>
+	
+	<mapping map-id="SiacDNoteTesoriere_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDNoteTesoriereFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>notetesId</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>notetesDesc</b>
+		</field>				
+	  
+		<field>
+			<a>codice</a>
+			<b>notetesCode</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacDDistinta_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDDistintaFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>distId</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>distDesc</b>
+		</field>
+		
+	  
+		<field>
+			<a>codice</a>
+			<b>distCode</b>
+		</field>
+	
+	</mapping>
+	
+	<mapping map-id="SiacDOrdinativoStato_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDOrdinativoStatoFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>ordStatoId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>ordStatoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>ordStatoDesc</b>
+		</field>
+	</mapping>	
+	
+	
+	
+	<mapping map-id="SiacDCartaContStato_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDCartacontStatoFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>cartacStatoId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>cartacStatoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>cartacStatoDesc</b>
+		</field>
+	</mapping>	
+	
+	<mapping map-id="SiacDValuta_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDValutaFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>valutaId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>valutaCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>valutaDesc</b>
+		</field>
+	</mapping>	
+	
+	<mapping map-id="SiacDCommissioniestero_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDCommissioniesteroFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>commestTipoId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>commestTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>commestTipoDesc</b>
+		</field>
+	</mapping>	
+	
+	<mapping map-id="SiacDDocumentoTipo_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDDocTipoFin</class-b>
+		
+		<field>
+			<a>id</a>
+			<b>docTipoId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>docTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>docTipoDesc</b>
+		</field>
+	</mapping>	
+	
+	
+	<mapping map-id="SiacTBil_Bilancio">
+		<class-a>it.csi.siac.siaccorser.model.Bilancio</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTBilFin</class-b>	
+		<field>
+			<a>anno</a>
+			<b>siacTPeriodo.anno</b>
+		</field>
+		
+		<field custom-converter-id="bilancioFaseFinConverter">
+			<a>faseEStatoAttualeBilancio.faseBilancio</a> <!-- enum FaseBilancio -->
+			<b>siacRBilFaseOperativas</b>
+		</field>
+		
+		<field custom-converter-id="bilancioStatoFinConverter">
+			<a>faseEStatoAttualeBilancio.statoBilancio</a> <!-- enum FaseBilancio -->
+			<b>siacRBilStatoOps</b>
+		</field>
+		<!-- field>
+			<a>stato</a>
+			<b>siacRBilStatoOps[0].siacDBilStatoOp.bilStatoOpCode</b>
+		</field -->
+	</mapping>
+		
+
+	
+</mappings>

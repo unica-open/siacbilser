@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 
+ 	
+
+  	<mapping map-id="SiacDCodiceBollo_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDCodicebolloFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>codbolloId</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>codbolloDesc</b>
+		</field>
+	  
+		<field>
+			<a>codice</a>
+			<b>codbolloCode</b>
+		</field>
+	
+	</mapping>
+  	
+  	<mapping map-id="SiacDCommissioni_CodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDCommissioneTipoFin</class-b>
+
+		<field>
+			<a>id</a>
+			<b>commTipoId</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>commTipoDesc</b>
+		</field>
+	  
+		<field>
+			<a>codice</a>
+			<b>commTipoCode</b>
+		</field>
+	
+	</mapping>
+  	
+	<mapping map-id="SiacTOrdinativo_OrdinativoPagamento">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoFin</class-b>
+		
+		<field>
+			<a>idOrdinativo</a>
+			<b>ordId</b>
+		</field>
+  	
+		<field>
+			<a>anno</a>
+			<b>ordAnno</b>
+		</field>
+		
+		<field>
+			<a>annoBilancio</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+  	
+		<field>
+			<a>descrizione</a>
+			<b>ordDesc</b>
+		</field>
+  	
+		<field>
+			<a>numero</a>
+			<b>ordNumero</b>
+		</field>
+  	
+		<field>
+			<a>dataEmissione</a>
+			<b>ordEmissioneData</b>
+		</field>
+		
+		<field>
+			<a>dataVariazione</a>
+			<b>ordVariazioneData</b>
+		</field>
+		
+		<field>
+			<a>dataSpostamento</a>
+			<b>ordSpostamentoData</b>
+		</field>
+		
+		<field>
+			<a>flagBeneficiMultiplo</a>
+			<b>ordBeneficiariomult</b>
+		</field>
+		
+		<field>
+			<a>flagDaTrasmettere</a>
+			<b>ordDaTrasmettere</b>
+		</field>
+		
+		
+		
+        
+  	</mapping>
+  	
+  	
+  	<mapping map-id="SiacTOrdinativo_OrdinativoPagamento_Base">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoFin</class-b>
+		
+		<field>
+			<a>idOrdinativo</a>
+			<b>ordId</b>
+		</field>
+  	
+		<field>
+			<a>anno</a>
+			<b>ordAnno</b>
+		</field>
+		
+		<field>
+			<a>annoBilancio</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+  	
+		<field>
+			<a>descrizione</a>
+			<b>ordDesc</b>
+		</field>
+  	
+		<field>
+			<a>numero</a>
+			<b>ordNumero</b>
+		</field>
+  	
+  	
+  		<!--
+		<field>
+			<a>dataEmissione</a>
+			<b>ordEmissioneData</b>
+		</field>
+		
+		<field>
+			<a>dataVariazione</a>
+			<b>ordVariazioneData</b>
+		</field>
+		
+		<field>
+			<a>dataSpostamento</a>
+			<b>ordSpostamentoData</b>
+		</field>
+		
+		<field>
+			<a>flagBeneficiMultiplo</a>
+			<b>ordBeneficiariomult</b>
+		</field>
+		 -->
+        
+  	</mapping>
+  	
+ 
+  	<mapping map-id="SiacDCodiceBollo_CodiceBollo">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CodiceBollo</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDCodicebolloFin</class-b>
+
+		<field>
+			<a>uid</a>
+			<b>codbolloId</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>codbolloDesc</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>codbolloCode</b>
+		</field>
+	
+	</mapping>
+	
+	<mapping map-id="SiacDNoteTesoriere_NoteTesoriere">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.NoteTesoriere</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDNoteTesoriereFin</class-b>
+
+		<field>
+			<a>uid</a>
+			<b>notetesId</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>notetesCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>notetesDesc</b>
+		</field>
+		
+  	</mapping>
+  
+	<mapping map-id="SiacDCommissioneTipo_CommissioneDocumento">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.CommissioneDocumento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDCommissioneTipoFin</class-b>
+
+		<field>
+			<a>uid</a>
+			<b>commTipoId</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>commTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>commTipoDesc</b>
+		</field>		
+
+  	</mapping>
+  	
+  	<mapping map-id="SiacTOrdinativoT_SubOrdinativoPagamento_Medium">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoPagamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin</class-b>
+		
+		<field>
+			<a>idSubOrdinativo</a>
+			<b>ordTsId</b>
+		</field>
+  		
+  		<field>
+			<a>numero</a>
+			<b>ordTsCode</b>
+		</field>
+  		
+  		<field>
+			<a>descrizione</a>
+			<b>ordTsDesc</b>
+		</field>
+  		
+		<!-- <field>
+			<a>idOrdinativo</a>
+			<b>ordId</b>
+		</field> -->
+  		
+		<field>
+			<a>dataEsecuzionePagamento</a>
+			<b>ordTsDataScadenza</b>
+		</field>
+		
+		<!-- SIAC-6914 -->
+		<!-- <field map-id="SiacTSubdocFin_SubdocumentoSpesa">
+			<a>subDocumentoSpesa</a> 
+			<b>siacRSubdocOrdinativoTs[0].siacTSubdoc</b> 
+		</field>  -->
+		<field custom-converter-id="subOrdinativoPagamentoSubdocumentoSpesaFinConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+        
+  	</mapping>
+  	
+  	<mapping map-id="SiacTOrdinativoT_SubOrdinativoPagamento">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoPagamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin</class-b>
+		
+		<field map-id="SiacTOrdinativoT_SubOrdinativoPagamento_Medium">
+			<a>this</a> 
+			<b>this</b> 
+		</field>
+		
+		<!-- SIAC-6914 -->
+<!-- 		<field map-id="SiacTLiquidazione_Liquidazione_Base"> -->
+<!-- 			<a>liquidazione</a>  -->
+<!-- 			<b>siacRLiquidazioneOrds[0].siacTLiquidazione</b>  -->
+<!-- 		</field> -->
+		<field custom-converter-id="subOrdinativoPagamentoLiquidazioneFinConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+  	</mapping>
+  	
+  	<!-- NON DEVE INCLUDERE I MAPPING VERSO OGGETTI IN RELAZIONE MULTIPLA  CHE VANNO TRATTATI DAL CHIAMANTE -->
+  	<mapping map-id="SiacTOrdinativoT_SubOrdinativoPagamento_Minimo">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoPagamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin</class-b>
+		
+		<field>
+			<a>idSubOrdinativo</a>
+			<b>ordTsId</b>
+		</field>
+  		
+  		<field>
+			<a>numero</a>
+			<b>ordTsCode</b>
+		</field>
+  		
+  		<field>
+			<a>descrizione</a>
+			<b>ordTsDesc</b>
+		</field>
+  		
+		<!-- <field>
+			<a>idOrdinativo</a>
+			<b>ordId</b>
+		</field> -->
+  		
+		<field>
+			<a>dataEsecuzionePagamento</a>
+			<b>ordTsDataScadenza</b>
+		</field>
+        
+  	</mapping>
+  	
+	<mapping map-id="SiacTOrdinativo_OrdinativoIncasso">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.OrdinativoIncasso</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoFin</class-b>
+		
+		<field>
+			<a>idOrdinativo</a>
+			<b>ordId</b>
+		</field>
+  	
+		<field>
+			<a>anno</a>
+			<b>ordAnno</b>
+		</field>
+		
+		<field>
+			<a>annoBilancio</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+  	
+		<field>
+			<a>descrizione</a>
+			<b>ordDesc</b>
+		</field>
+  	
+		<field>
+			<a>numero</a>
+			<b>ordNumero</b>
+		</field>
+  	
+		<field>
+			<a>dataEmissione</a>
+			<b>ordEmissioneData</b>
+		</field>
+		
+		<field>
+			<a>dataVariazione</a>
+			<b>ordVariazioneData</b>
+		</field>
+		
+		<field>
+			<a>dataSpostamento</a>
+			<b>ordSpostamentoData</b>
+		</field>
+		
+		<field>
+			<a>flagBeneficiMultiplo</a>
+			<b>ordBeneficiariomult</b>
+		</field>
+        
+		<field>
+			<a>flagDaTrasmettere</a>
+			<b>ordDaTrasmettere</b>
+		</field>
+		
+        
+  	</mapping>
+  	
+  	<mapping map-id="SiacTOrdinativoT_SubOrdinativoIncasso_ModelDetail">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoIncasso</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin</class-b>
+		
+		<field>
+			<a>idSubOrdinativo</a>
+			<b>ordTsId</b>
+		</field>
+  		
+  		<field>
+			<a>numero</a>
+			<b>ordTsCode</b>
+		</field>
+  		
+  		<field>
+			<a>descrizione</a>
+			<b>ordTsDesc</b>
+		</field>
+  		
+		<field>
+			<a>dataScadenza</a>
+			<b>ordTsDataScadenza</b>
+		</field>
+        
+  	</mapping>
+  	
+  	
+  	<mapping map-id="SiacTOrdinativoT_SubOrdinativoIncasso">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoIncasso</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin</class-b>
+		
+		<field map-id="SiacTOrdinativoT_SubOrdinativoIncasso_ModelDetail">
+			<a>this</a> 
+			<b>this</b> 
+		</field>
+  		
+		<!-- SIAC-6914 
+		<field map-id="SiacTSubdocFin_SubdocumentoEntrata">
+			<a>subDocumentoEntrata</a> 
+			<b>siacRSubdocOrdinativoTs[0].siacTSubdoc</b> 
+		</field> -->
+		<field custom-converter-id="subOrdinativoIncassoSubdocumentoEntrataFinConverter">
+			<a>this</a> 
+			<b>this</b> 
+		</field>
+        
+  	</mapping>
+  	
+  	<mapping map-id="SiacTOrdinativoT_SubOrdinativoPagamento_ConOrdinativo">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoPagamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin</class-b>
+		
+		
+		<field map-id="SiacTOrdinativoT_SubOrdinativoPagamento">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+		
+		<field map-id="SiacTOrdinativo_OrdinativoPagamento">
+			<a>ordinativoPagamento</a>
+			<b>siacTOrdinativo</b>
+		</field>
+		
+        
+  	</mapping>
+  	
+	<mapping map-id="SiacTOrdinativoT_SubOrdinativoIncasso_ConOrdinativo">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoIncasso</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin</class-b>
+		
+		
+		<field map-id="SiacTOrdinativoT_SubOrdinativoIncasso">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+		
+		<field map-id="SiacTOrdinativo_OrdinativoIncasso">
+			<a>ordinativoIncasso</a>
+			<b>siacTOrdinativo</b>
+		</field>
+		
+        
+  	</mapping>
+
+</mappings>

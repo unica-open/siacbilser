@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="SiacTBilElemDet_DettaglioImportoCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.utils.DettaglioImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElemDet</class-b>
+		<field>
+			<a>flag</a>
+			<b>elemDetFlag</b>
+		</field>
+		<field>
+			<a>importo</a>
+			<b>elemDetImporto</b>
+		</field>
+		<field map-id="SiacDBilElemDetTipo_TipoImportoCapitolo">
+			<a>tipoImportoCapitolo</a>
+			<b>siacDBilElemDetTipo</b>
+		</field>
+		<field map-id="SiacTBilElem_Capitolo_Minimal">
+			<a>capitolo</a>
+			<b>siacTBilElem</b>
+		</field>
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		<field custom-converter-id="dettaglioImportoCapitoloAnnoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDBilElemDetTipo_TipoImportoCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.utils.TipoImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDBilElemDetTipo</class-b>
+		<field>
+			<a>codice</a>
+			<b>elemDetTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>elemDetTipoDesc</b>
+		</field>
+	</mapping>
+	
+</mappings>

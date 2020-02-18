@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+		http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTCespitiVariazione_VariazioneCespite" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.VariazioneCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiVariazione</class-b>
+		
+		<field map-id="SiacTCespitiVariazione_VariazioneCespite_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneCespiteStatoVariazioneCespiteConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field custom-converter-id="variazioneCespiteCespiteConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+	</mapping>
+	
+	<mapping map-id="SiacTCespitiVariazione_VariazioneCespite_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.VariazioneCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiVariazione</class-b>
+		<field>
+			<a>descrizione</a>
+			<b>cesVarDesc</b>
+		</field>
+		<field>
+			<a>annoVariazione</a>
+			<b>cesVarAnno</b>
+		</field>
+		<field>
+			<a>dataVariazione</a>
+			<b>cesVarData</b>
+		</field>
+		<field>
+			<a>importo</a>
+			<b>cesVarImporto</b>
+		</field>
+		<field>
+			<a>flagTipoVariazioneIncremento</a>
+			<b>flgTipoVariazioneIncr</b>
+		</field>
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	</mapping>
+	
+</mappings>

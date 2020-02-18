@@ -1,0 +1,46 @@
+﻿INTESTAZIONE RICEVUTA
+-	<<Ente>>:  </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/ente/nome>
+-	<<direzione>>: </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneDirezione>
+-	<<settore>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneSettore>
+-	<<ufficio>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneUfficio>
+-	<<codice cassa>>: </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/codice> 
+-	<<descrizione  cassa>>:</stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/descrizione>
+
+-	<<anno sospeso>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/bilancio/anno>
+-	<<numero sospeso>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/sospeso/numeroSospeso>
+
+-	<<capitolo>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/impegno/capitoloUscitaGestione/numeroCapitolo> / </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/impegno/capitoloUscitaGestione/numeroArticolo>
+-	<<impegno>>: </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/impegno/numero>
+
+RIMBORSO SPESE
+
+A1 : </stampaRicevutaRichiestaEconomaleReportModel/denominazioneRichiedente>
+B1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/matricola>
+C1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/strutturaDiAppartenenza>
+
+D1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneSettore>
+E1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneUfficio>
+F1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/responsabile>
+
+G1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/valutaDefault/descrizione>
+H1 : </stampaRicevutaRichiestaEconomaleReportModel/importo>
+I1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/documentoSpesa/numero> 
+
+
+L1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/descrizioneDellaRichiesta>
+
+H1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/tipoRichiestaEconomale/descrizione>
+
+
+M1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/movimento/numeroMovimento>
+
+
+N1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/movimento/dataMovimento>
+
+O1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/modalitaPagamentoDipendente/descrizione>
+
+P1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneCitta>
+Q1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/dataStampa>
+
+SIAC-5255
+</stampaRicevutaRendicontoRichiestaEconomaleReportModel/richiestaEconomale/movimento/dettaglioPagamento>

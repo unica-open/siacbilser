@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	    http://www.springframework.org/schema/context
+	    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	    http://www.springframework.org/schema/util
+	    http://www.springframework.org/schema/util/spring-util.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+
+
+	<bean name="provvedimentoService" class="it.csi.siac.siacbilser.frontend.webservice.ProvvedimentoServiceImpl" />
+
+	<bean name="capitoloUscitaGestioneService" class="it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneServiceImpl" />
+
+	<bean name="capitoloEntrataGestioneService" class="it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneServiceImpl" />
+
+	<bean name="documentoSpesaService" class="it.csi.siac.siacbilser.frontend.webservice.DocumentoSpesaServiceImpl" />
+
+	<bean name="documentoEntrataService" class="it.csi.siac.siacbilser.frontend.webservice.DocumentoEntrataServiceImpl" />
+
+	<bean name="preDocumentoSpesaService" class="it.csi.siac.siacbilser.frontend.webservice.PreDocumentoSpesaServiceImpl" />
+	
+	<bean name="preDocumentoEntrataService" class="it.csi.siac.siacbilser.frontend.webservice.PreDocumentoEntrataServiceImpl" />
+
+
+
+	
+	<bean id="iMissioniService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	    <property name="serviceInterface" value="it.csi.srvpers.rapws.interfaccecxf.services.missioni.IMissioniService" />
+	    <property name="wsdlDocumentUrl" value="${HR.wsdlDocumentUrl}" />
+	    <property name="namespaceUri" value="http://missioni.services.interfaccecxf.rapws.srvpers.csi.it/" />
+	    <property name="serviceName" value="MissioniServiceService" />
+	    <property name="endpointAddress" value="${HR.endpointAddress}" />
+	    <property name="lookupServiceOnStartup" value="false" />
+	    <property name="handlerResolver">
+			<bean id="missioniServiceHandlerResolver" class="it.csi.siac.siacbilser.business.utility.WSO2HandlerResolver">
+			    <property name="tokenRenewalUrl" value="${HR.tokenRenewalUrl}" />
+			    <property name="consumerKey" value="${HR.consumerKey}" />
+			    <property name="consumerSecret" value="${HR.consumerSecret}" />
+			</bean>
+	    </property>
+	</bean>
+	  
+	
+ 
+	  
+  
+</beans>

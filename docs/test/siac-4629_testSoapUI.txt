@@ -1,0 +1,185 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">
+   <soapenv:Header/>
+   <soapenv:Body>
+       <ns:ricercaEstesaLiquidazioni> 
+         <!--Optional:--> 
+         <annoBilancio>2016</annoBilancio> 
+         <!--Optional:--> 
+         <codiceEnte>REGP</codiceEnte> 
+         <!--Optional:--> 
+         <codiceFruitore>PBANDI</codiceFruitore> 
+        
+         <!--Optional: -->
+         <annoProvvedimento>2016</annoProvvedimento> 
+          <!--Optional:--> 
+         <numeroProvvedimento>120</numeroProvvedimento> 
+         <!--Optional: 
+        <codiceStruttura>001</codiceStruttura>--> 
+         <!-- Optional:--> 
+         <codiceTipoProvvedimento>ALG</codiceTipoProvvedimento> 
+         <!--Optional: -->
+         <codiceStruttura>A1906A</codiceStruttura>
+         <codiceTipoStruttura>CDC</codiceTipoStruttura>
+        
+      </ns:ricercaEstesaLiquidazioni> 
+   </soapenv:Body>
+</soapenv:Envelope>
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:ricercaEstesaLiquidazioniResponse xmlns:ns2="http://siac.csi.it/ricerche/svc/1.0">
+         <esito>SUCCESSO</esito>
+         <liquidazioni>
+            <stato>
+               <codice>PROVVISORIO</codice>
+            </stato>
+            <annoImpegno>2016</annoImpegno>
+            <annoLiquidazione>2016</annoLiquidazione>
+            <importoLiquidazione>92.16</importoLiquidazione>
+            <numeroImpegno>254</numeroImpegno>
+            <numeroLiquidazione>64008</numeroLiquidazione>
+            <annoEsercizio>2016</annoEsercizio>
+            <atto>
+               <annoProvvedimento>2016</annoProvvedimento>
+               <codiceTipoProvvedimento>ALG</codiceTipoProvvedimento>
+               <numeroProvvedimento>120</numeroProvvedimento>
+               <sac>
+                  <codice>A1906A</codice>
+                  <codiceTipoStruttura>CDC</codiceTipoStruttura>
+               </sac>
+            </atto>
+            <beneficiario>15494-COMUNE DI CHERASCO</beneficiario>
+            <numeroArticolo>0</numeroArticolo>
+            <numeroCapitolo>177746</numeroCapitolo>
+         </liquidazioni>
+         <liquidazioni>
+            <stato>
+               <codice>PROVVISORIO</codice>
+            </stato>
+            <annoImpegno>2016</annoImpegno>
+            <annoLiquidazione>2016</annoLiquidazione>
+            <importoLiquidazione>28.7</importoLiquidazione>
+            <numeroImpegno>315</numeroImpegno>
+            <numeroLiquidazione>64007</numeroLiquidazione>
+            <annoEsercizio>2016</annoEsercizio>
+            <atto>
+               <annoProvvedimento>2016</annoProvvedimento>
+               <codiceTipoProvvedimento>ALG</codiceTipoProvvedimento>
+               <numeroProvvedimento>120</numeroProvvedimento>
+               <sac>
+                  <codice>A1906A</codice>
+                  <codiceTipoStruttura>CDC</codiceTipoStruttura>
+               </sac>
+            </atto>
+            <beneficiario>15494-COMUNE DI CHERASCO</beneficiario>
+            <numeroArticolo>0</numeroArticolo>
+            <numeroCapitolo>108798</numeroCapitolo>
+         </liquidazioni>
+         <liquidazioni>
+            <stato>
+               <codice>PROVVISORIO</codice>
+            </stato>
+            <annoImpegno>2016</annoImpegno>
+            <annoLiquidazione>2016</annoLiquidazione>
+            <importoLiquidazione>79.14</importoLiquidazione>
+            <numeroImpegno>253</numeroImpegno>
+            <numeroLiquidazione>64006</numeroLiquidazione>
+            <annoEsercizio>2016</annoEsercizio>
+            <atto>
+               <annoProvvedimento>2016</annoProvvedimento>
+               <codiceTipoProvvedimento>ALG</codiceTipoProvvedimento>
+               <numeroProvvedimento>120</numeroProvvedimento>
+               <sac>
+                  <codice>A1906A</codice>
+                  <codiceTipoStruttura>CDC</codiceTipoStruttura>
+               </sac>
+            </atto>
+            <beneficiario>15494-COMUNE DI CHERASCO</beneficiario>
+            <numeroArticolo>0</numeroArticolo>
+            <numeroCapitolo>177743</numeroCapitolo>
+         </liquidazioni>
+         <numeroTotaleLiqudazioniTrovate>3</numeroTotaleLiqudazioniTrovate>
+      </ns2:ricercaEstesaLiquidazioniResponse>
+   </soap:Body>
+</soap:Envelope>
+
+
+RESPONSE CON INPUT IN REQUEST 2016 / 148/ A1906A/ ALG
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:ricercaEstesaLiquidazioniResponse xmlns:ns2="http://siac.csi.it/ricerche/svc/1.0">
+         <esito>SUCCESSO</esito>
+         <liquidazioni>
+            <stato>
+               <codice>PROVVISORIO</codice>
+            </stato>
+            <annoImpegno>2016</annoImpegno>
+            <annoLiquidazione>2016</annoLiquidazione>
+            <importoLiquidazione>28.7</importoLiquidazione>
+            <numeroImpegno>315</numeroImpegno>
+            <numeroLiquidazione>64090</numeroLiquidazione>
+            <annoEsercizio>2016</annoEsercizio>
+            <atto>
+               <annoProvvedimento>2016</annoProvvedimento>
+               <codiceTipoProvvedimento>ALG</codiceTipoProvvedimento>
+               <numeroProvvedimento>148</numeroProvvedimento>
+               <sac>
+                  <codice>A1906A</codice>
+                  <codiceTipoStruttura>CDC</codiceTipoStruttura>
+               </sac>
+            </atto>
+            <beneficiario>15494-COMUNE DI CHERASCO</beneficiario>
+            <numeroArticolo>0</numeroArticolo>
+            <numeroCapitolo>108798</numeroCapitolo>
+         </liquidazioni>
+         <liquidazioni>
+            <stato>
+               <codice>PROVVISORIO</codice>
+            </stato>
+            <annoImpegno>2016</annoImpegno>
+            <annoLiquidazione>2016</annoLiquidazione>
+            <importoLiquidazione>92.16</importoLiquidazione>
+            <numeroImpegno>254</numeroImpegno>
+            <numeroLiquidazione>64091</numeroLiquidazione>
+            <annoEsercizio>2016</annoEsercizio>
+            <atto>
+               <annoProvvedimento>2016</annoProvvedimento>
+               <codiceTipoProvvedimento>ALG</codiceTipoProvvedimento>
+               <numeroProvvedimento>148</numeroProvvedimento>
+               <sac>
+                  <codice>A1906A</codice>
+                  <codiceTipoStruttura>CDC</codiceTipoStruttura>
+               </sac>
+            </atto>
+            <beneficiario>15494-COMUNE DI CHERASCO</beneficiario>
+            <numeroArticolo>0</numeroArticolo>
+            <numeroCapitolo>177746</numeroCapitolo>
+         </liquidazioni>
+         <liquidazioni>
+            <stato>
+               <codice>PROVVISORIO</codice>
+            </stato>
+            <annoImpegno>2016</annoImpegno>
+            <annoLiquidazione>2016</annoLiquidazione>
+            <importoLiquidazione>79.14</importoLiquidazione>
+            <numeroImpegno>253</numeroImpegno>
+            <numeroLiquidazione>64092</numeroLiquidazione>
+            <annoEsercizio>2016</annoEsercizio>
+            <atto>
+               <annoProvvedimento>2016</annoProvvedimento>
+               <codiceTipoProvvedimento>ALG</codiceTipoProvvedimento>
+               <numeroProvvedimento>148</numeroProvvedimento>
+               <sac>
+                  <codice>A1906A</codice>
+                  <codiceTipoStruttura>CDC</codiceTipoStruttura>
+               </sac>
+            </atto>
+            <beneficiario>15494-COMUNE DI CHERASCO</beneficiario>
+            <numeroArticolo>0</numeroArticolo>
+            <numeroCapitolo>177743</numeroCapitolo>
+         </liquidazioni>
+         <numeroTotaleLiqudazioniTrovate>3</numeroTotaleLiqudazioniTrovate>
+      </ns2:ricercaEstesaLiquidazioniResponse>
+   </soap:Body>
+</soap:Envelope>

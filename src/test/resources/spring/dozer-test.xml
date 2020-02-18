@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+
+<!-- Configurazione di dozer (http://dozer.sourceforge.net) Permette una trasformazione configurabile dei java bean. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="dozerBeanMapper" primary="true" class="it.csi.siac.siaccorser.util.ExtendedDozerBeanMapperFactoryBean">
+		<!-- i file di configurazione di dozer si trovano nella cartella dozer 
+			sotto il classpath e finiscono in -mapping.xml -->
+		<property name="mappingFiles">
+			<list>
+					<value>classpath*:/dozer/att/*-mapping.xml</value>
+					<value>classpath*:/dozer/bil/*-mapping.xml</value>
+					<value>classpath*:/dozer/cec/*-mapping.xml</value>
+					<value>classpath*:/dozer/fel/*-mapping.xml</value>
+					<value>classpath*:/dozer/fin/*-mapping.xml</value>
+					<value>classpath*:/dozer/gen/*-mapping.xml</value>
+					<value>classpath*:/dozer/cesp/*-mapping.xml</value>
+					<!-- escludo integ!!!! -->
+			</list>
+		</property>
+		
+		<property name="customConverterMask" value="it\.csi\.siac(.)+Converter" />
+		
+	</bean>
+
+</beans>

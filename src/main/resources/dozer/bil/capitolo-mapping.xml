@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+        
+    
+    <mapping map-id="SiacTBilElem_Capitolo_Minimal" wildcard="true">  
+		<class-a>it.csi.siac.siacbilser.model.Capitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		
+		<field>
+			<a>numeroCapitolo</a>
+			<b>elemCode</b>
+		</field>		
+		<field>
+			<a>numeroArticolo</a>
+			<b>elemCode2</b>
+		</field>
+		<field>
+			<a>numeroUEB</a>
+			<b>elemCode3</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>elemDesc</b>
+		</field>	
+		<field>
+			<a>descrizioneArticolo</a>
+			<b>elemDesc2</b>
+		</field>
+		
+		<field>
+			<a>annoCapitolo</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+		
+	</mapping>
+    
+     <mapping map-id="SiacTBilElem_Capitolo_Base" wildcard="true">  
+     	<!-- Utilizzato solo per avere le info di base contenute nella superclasse Capitolo -->
+		<class-a>it.csi.siac.siacbilser.model.Capitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field>
+			<a>numeroCapitolo</a>
+			<b>elemCode</b>
+		</field>		
+		<field>
+			<a>numeroArticolo</a>
+			<b>elemCode2</b>
+		</field>
+		<field>
+			<a>numeroUEB</a>
+			<b>elemCode3</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>elemDesc</b>
+		</field>	
+		<field>
+			<a>descrizioneArticolo</a>
+			<b>elemDesc2</b>
+		</field>
+		
+		<field>
+			<a>annoCapitolo</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+		
+		<field custom-converter-id="bilElemStatoConverter">
+			<a>this</a><!-- StatoOperativoElementoDiBilancio -->
+			<b>this</b><!-- SiacRBilElemStato -->
+		</field>
+		
+		<field custom-converter-id="bilElemCategoriaConverter">
+			<a>categoriaCapitolo</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTBilElem_Bilancio" wildcard="false">
+		<class-a>it.csi.siac.siaccorser.model.Bilancio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+
+		<field map-id="SiacTBil_Bilancio">
+			<a>this</a>
+			<b>siacTBil</b>
+		</field>
+	</mapping>
+
+
+
+	<mapping map-id="SiacTBilElem_Ente" wildcard="false">
+		<class-a>it.csi.siac.siaccorser.model.Ente</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>this</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacTBilElem_ClassificatoriGenerici" wildcard="false" map-null="false" >
+		<class-a>java.util.List</class-a><!-- it.csi.siac.siaccorser.model.ClassificatoreGenerico -->
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		<field map-id="SiacTClass_ClassificatoreGenerico" >
+			<a>this</a>
+			<b set-method="addSiacTClass(it.csi.siac.siacbilser.integration.entity.SiacTClass)" type="iterate">codifiche</b>
+			<b-hint>it.csi.siac.siacbilser.integration.entity.SiacTClass</b-hint>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacTBilElem_ClassificatoreGenerico" wildcard="false" map-null="false" >
+		<class-a>it.csi.siac.siaccorser.model.ClassificatoreGenerico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		<field map-id="SiacTClass_ClassificatoreGenerico">
+			<a>this</a>
+			<b set-method="addSiacTClass(it.csi.siac.siacbilser.integration.entity.SiacTClass)">siacRBilElemClasses</b>
+			<b-hint>it.csi.siac.siacbilser.integration.entity.SiacTClass</b-hint>
+		</field>
+	</mapping>	
+	
+	<mapping map-id="SiacTBilElem_ClassificatoreGerarchico" wildcard="false" map-null="false" >
+		<class-a>it.csi.siac.siaccorser.model.ClassificatoreGerarchico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		<field map-id="SiacTClass_ClassificatoreGerarchico" >
+			<a>this</a>
+			<b set-method="addSiacTClass(it.csi.siac.siacbilser.integration.entity.SiacTClass)">siacRBilElemClasses</b>
+			<b-hint>it.csi.siac.siacbilser.integration.entity.SiacTClass</b-hint>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDBilElemCategoria_CategoriaCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.CategoriaCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDBilElemCategoria</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>elemCatCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>elemCatDesc</b>
+		</field>
+	</mapping>
+	
+</mappings>

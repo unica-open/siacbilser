@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+		
+		
+	<mapping map-id="SiacTOrdinativo_Ordinativo_Minimal">
+			<class-a>it.csi.siac.siacfinser.model.ordinativo.Ordinativo</class-a>
+			<class-b>it.csi.siac.siacbilser.integration.entity.SiacTOrdinativo</class-b>
+			
+			<field>
+				<a>idOrdinativo</a>
+				<b>ordId</b>
+			</field>
+	  	
+			<field>
+				<a>anno</a>
+				<b>ordAnno</b>
+			</field>
+	  	
+			<field>
+				<a>descrizione</a>
+				<b>ordDesc</b>
+			</field>
+	  	
+			<field>
+				<a>numero</a>
+				<b>ordNumero</b>
+			</field>
+	  	
+			<field>
+				<a>dataSpostamento</a>
+				<b>ordSpostamentoData</b>
+			</field>
+
+	  	</mapping>
+	  	
+	  	<mapping map-id="SiacTOrdinativo_Ordinativo_Soggetto">
+			<class-a>it.csi.siac.siacfinser.model.ordinativo.Ordinativo</class-a>
+			<class-b>it.csi.siac.siacbilser.integration.entity.SiacTOrdinativo</class-b>
+			
+			<field map-id="SiacTOrdinativo_Ordinativo_Minimal">
+				<a>this</a>
+				<b>this</b>
+			</field>
+			
+			<field custom-converter-id="ordinativoSoggettoConverter">
+				<a>this</a>
+				<b>this</b>
+			</field>
+	  	</mapping>
+	  
+		
+	
+	<mapping map-id="SiacTOrdinativo_Ordinativo">
+			<class-a>it.csi.siac.siacfinser.model.ordinativo.Ordinativo</class-a>
+			<class-b>it.csi.siac.siacbilser.integration.entity.SiacTOrdinativo</class-b>
+			
+			<field map-id="SiacTOrdinativo_Ordinativo_Minimal">
+				<a>this</a>
+				<b>this</b>
+			</field>
+			
+			<field>
+				<a>dataEmissione</a>
+				<b>ordEmissioneData</b>
+			</field>
+			
+			<field>
+				<a>dataVariazione</a>
+				<b>ordVariazioneData</b>
+			</field>
+			
+			<field>
+				<a>dataSpostamento</a>
+				<b>ordSpostamentoData</b>
+			</field>
+			
+			<field>
+				<a>flagBeneficiMultiplo</a>
+				<b>ordBeneficiariomult</b>
+			</field>
+			
+			<field custom-converter-id="ordinativoImportoConverter">
+				<a>this</a>
+				<b>this</b>
+			</field>
+			
+			<field custom-converter-id="ordinativoStatoConverter">
+				<a>this</a>
+				<b>this</b>
+			</field>
+			
+			<field custom-converter-id="ordinativoSoggettoConverter">
+				<a>this</a>
+				<b>this</b>
+			</field>
+			
+	  	</mapping>
+	  
+		
+		
+	</mappings>

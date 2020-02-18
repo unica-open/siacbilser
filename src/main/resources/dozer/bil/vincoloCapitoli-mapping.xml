@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+	<mapping map-id="SiacTVincolo_Vincolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.Vincolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVincolo</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+				
+<!-- 		<field map-id="SiacTBil_Bilancio"> -->
+<!-- 			<a>bilancio</a> -->
+<!-- 			<b>siacTBil</b> -->
+<!-- 		</field> -->
+	
+		<field >
+			<a>codice</a>
+			<b>vincoloCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>vincoloDesc</b>
+		</field>
+		
+		<field type="one-way">
+			<a>ente.uid</a>
+			<b>siacDVincoloTipo.siacTEnteProprietario.uid</b>
+		</field>
+		
+		<!-- Il bilancio ora e' un parametro passato dall'esterno!!! vedi jira: 1724 -->
+		<field custom-converter-id="vincoloBilancioPeriodoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="vincoloTipoConverter">
+			<a>tipoVincoloCapitoli</a>
+			<b>siacDVincoloTipo</b>
+		</field>
+		
+		<field custom-converter-id="vincoloStatoConverter">
+			<a>statoOperativo</a>
+			<b>this</b> <!--.siacRVincoloStatos[0].siacDVincoloStato  -->
+		</field>
+		
+		<field custom-converter-id="vincoloAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<!-- SIAC-5076 -->
+		<field custom-converter-id="vincoloGenereVincoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	
+	<mapping map-id="SiacTVincolo_VincoloCapitoli" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VincoloCapitoli</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVincolo</class-b>
+		
+		<field map-id="SiacTVincolo_Vincolo">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="vincoloCapitoliConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDVincoloGenere_GenereVincolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.GenereVincolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDVincoloGenere</class-b>
+	
+		<field >
+			<a>codice</a>
+			<b>vincoloGenCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>vincoloGenDesc</b>
+		</field>
+	</mapping>
+	
+</mappings>

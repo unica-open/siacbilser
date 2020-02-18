@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="RicercaCapitoloUscitaGestione_RicercaSinteticaCapitoloUscitaGestione" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.capitolo.RicercaCapitoloUscitaGestione</class-a>
+		<class-b>it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestione </class-b>
+		
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>annoBilancio</a>
+			<b>ricercaSinteticaCapitoloUGest.annoEsercizio</b>
+		</field>
+		
+		<field>
+			<a>numeroCapitolo</a>
+			<b>ricercaSinteticaCapitoloUGest.numeroCapitolo</b>
+		</field>
+		
+		<field>
+			<a>numeroArticolo</a>
+			<b>ricercaSinteticaCapitoloUGest.numeroArticolo</b>
+		</field>
+		
+		<field>
+			<a>numeroUEB</a>
+			<b>ricercaSinteticaCapitoloUGest.numeroUEB</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="ListCapitoloUscitaGestione_IntegCapitoloUscitaGestione" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.CapitoloUscitaGestione</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.CapitoloUscitaGestione</class-b>
+		
+		<field>
+			<a>statoOperativoElementoDiBilancio.codice</a>
+			<b>stato.codice</b>
+		</field>
+		
+		
+		<field>
+			<a>strutturaAmministrativoContabile.tipoClassificatore.codice</a>
+			<b>sac.codiceTipoStruttura</b>
+		</field>
+		
+		<field>
+			<a>strutturaAmministrativoContabile.codice</a>
+			<b>sac.codice</b>
+		</field>
+		
+		<field>
+			<a>strutturaAmministrativoContabile.descrizione</a>
+			<b>sac.descrizione</b>
+		</field>
+		
+		<field>
+			<a>elementoPianoDeiConti.codice</a>
+			<b>pianoDeiContiFinanziario.codice</b>
+		</field>
+		
+		<field>
+			<a>elementoPianoDeiConti.descrizione</a>
+			<b>pianoDeiContiFinanziario.descrizione</b>
+		</field>
+		
+		<field>
+			<a>titoloSpesa.codice</a>
+			<b>titolo.codice</b>
+		</field>
+		
+		<field>
+			<a>titoloSpesa.descrizione</a>
+			<b>titolo.descrizione</b>
+		</field>
+		
+		<field>
+			<a>flagRilevanteIva</a>
+			<b>rilevanteIva</b>
+		</field>
+
+		
+	</mapping>
+	
+	<mapping map-id="ImportiCapitoloUG_ImportoCapitoloUscitaGestione" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.ImportiCapitoloUG</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.ImportoCapitoloUscitaGestione</class-b>
+		
+		<field>
+			<a>disponibilitaImpegnareAnno1</a>
+			<b>disponibilitaImpegnare </b>
+		</field>
+	</mapping>
+	
+	
+</mappings>

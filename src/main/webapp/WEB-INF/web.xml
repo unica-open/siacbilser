@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>SIAC BIL server</display-name>
+
+	<!-- I file di configurazione di ContextLoaderListener di Spring sono tutti 
+		i file *.xml sotto la cartella spring del classpath. -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:spring/*.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>it.csi.siac.siaccommonser.business.util.threadlocal.ThreadLocalCleanerListener</listener-class>
+	</listener>
+
+<!-- 	<servlet> -->
+<!-- 		<servlet-name>VoceDiBilancioService</servlet-name> -->
+<!-- 		<servlet-class>it.csi.siac.siacbilser.frontend.webservice.VoceDiBilancioServiceImpl</servlet-class> -->
+<!-- 	</servlet> -->
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>VoceDiBilancioService</servlet-name> -->
+<!-- 		<url-pattern>/VoceDiBilancioService</url-pattern> -->
+<!-- 	</servlet-mapping> -->
+
+</web-app>

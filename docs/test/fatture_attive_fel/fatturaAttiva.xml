@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<ns3:FatturaElettronica xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xmlns:xsi="http://www.w3.o
+rg/2001/XMLSchema-instance" versione="FPR12" xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazi
+one/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+    <FatturaElettronicaHeader>
+        <DatiTrasmissione>
+            <IdTrasmittente>
+                <IdPaese>IT</IdPaese>
+                <IdCodice>80004230092</IdCodice>
+            </IdTrasmittente>
+            <ProgressivoInvio>78865</ProgressivoInvio>
+            <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+            <CodiceDestinatario>0000000</CodiceDestinatario>
+            <ContattiTrasmittente>
+                <Telefono>0113168111</Telefono>
+                <Email>assistenza.fel@csi.it</Email>
+            </ContattiTrasmittente>
+            <PECDestinatario>fdnsdn@pec.it</PECDestinatario>
+        </DatiTrasmissione>
+        <CedentePrestatore>
+            <DatiAnagrafici>
+                <IdFiscaleIVA>
+                    <IdPaese>IT</IdPaese>
+                    <IdCodice>80087670016</IdCodice>
+                </IdFiscaleIVA>
+                <Anagrafica>
+                    <Denominazione>Regione Piemonte</Denominazione>
+                </Anagrafica>
+                <RegimeFiscale>RF01</RegimeFiscale>
+            </DatiAnagrafici>
+            <Sede>
+                <Indirizzo>Piazza CASTELLO,165</Indirizzo>
+                <CAP>10121</CAP>
+                <Comune>Torino</Comune>
+                <Provincia>TO</Provincia>
+                <Nazione>IT</Nazione>
+            </Sede>
+        </CedentePrestatore>
+		 <DatiAnagrafici>
+                <CodiceFiscale>80004230092</CodiceFiscale>
+                <Anagrafica>
+                    <Denominazione>CONGREGAZIONE FIGLIE DI NOSTRA SIGNORA DELLA NEVE</Denominazione>
+                </Anagrafica>
+            </DatiAnagrafici>
+            <Sede>
+                <Indirizzo>ARNALDO DA BRESCIA</Indirizzo>
+                <NumeroCivico>9</NumeroCivico>
+                <CAP>10134</CAP>
+                <Comune>Torino</Comune>
+                <Provincia>TO</Provincia>
+                <Nazione>IT</Nazione>
+            </Sede>
+        </CessionarioCommittente>
+    </FatturaElettronicaHeader>
+    <FatturaElettronicaBody>
+        <DatiGenerali>
+            <DatiGeneraliDocumento>
+                <TipoDocumento>TD01</TipoDocumento>
+                <Divisa>EUR</Divisa>
+                <Data>2019-09-10</Data>
+                <Numero>1009-12/VI001</Numero>
+                <ImportoTotaleDocumento>10.00</ImportoTotaleDocumento>
+            </DatiGeneraliDocumento>
+        </DatiGenerali>
+        <DatiBeniServizi>
+            <DettaglioLinee>
+                <NumeroLinea>1</NumeroLinea>
+                <Descrizione>TEST</Descrizione>
+                <PrezzoUnitario>9.00</PrezzoUnitario>
+                <PrezzoTotale>9.00</PrezzoTotale>
+                <AliquotaIVA>4.00</AliquotaIVA>
+            </DettaglioLinee>
+            <DatiRiepilogo>
+                <AliquotaIVA>4.00</AliquotaIVA>
+                <ImponibileImporto>9.00</ImponibileImporto>
+                <Imposta>1.00</Imposta>
+                <EsigibilitaIVA>I</EsigibilitaIVA>
+            </DatiRiepilogo>
+        </DatiBeniServizi>
+        <DatiPagamento>
+            <DettaglioPagamento>
+			 <CodicePagamento>012345678952325698</CodicePagamento>
+            </DettaglioPagamento>
+        </DatiPagamento>
+    </FatturaElettronicaBody>
+</ns3:FatturaElettronica>

@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTSubdoc_SubdocumentoSpesa_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoSpesa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTSubdoc_SubdocumentoSpesa_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTDoc_DocumentoSpesa_Minimal">
+			<a>documento</a> 
+			<b>siacTDoc</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTSubdoc_SubdocumentoSpesa_Medium" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoSpesa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTSubdoc_SubdocumentoSpesa_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacDNoteTesoriere_NoteTesoriere">
+			<a>noteTesoriere</a>
+			<b>siacDNoteTesoriere</b>
+		</field>
+		
+		<field map-id="SiacDContotesoreria_ContoTesoreria_Fin2">
+			<a>contoTesoreria</a>
+			<b>siacDContotesoreria</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaAttoAmmConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaImpegnoSubimpegnoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaLiquidazioneMinimalStatoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaPredocumentoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTSubdoc_SubdocumentoSpesa" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoSpesa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTSubdoc_SubdocumentoSpesa_Medium">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaCommissioniDocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaClassifConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaModPagConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaSedeSecondariaSoggettoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaSubdocumentoIvaConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaElencoDocumentiConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaProvvisorioDiCassaConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaOrdinativoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaVoceMutuoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaRegistroComunicazioniPCCConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaTipoIvaSplitReverseConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaSiopeTipoDebitoConverter" >
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoSpesaSiopeAssenzaMotivazioneConverter" >
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoSpesaSiopeScadenzaMotivoConverter" >
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoSpesaSospensioneSubdocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTSubdoc_SubdocumentoSpesa_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoSpesa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>subdocNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>subdocDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>subdocImporto</b>
+		</field>
+		
+		<field>
+			<a>importoDaDedurre</a>
+			<b>subdocImportoDaDedurre</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>subdocDataScadenza</b>
+		</field>
+		
+		<field>
+			<a>dataPagamentoCEC</a>
+			<b>subdocDataPagamentoCec</b>
+		</field>
+		
+		<field>
+			<a>pagatoInCEC</a>
+			<b>subdocPagatoCec</b>
+		</field>
+		
+		<field>
+			<a>importoSplitReverse</a>
+			<b>subdocSplitreverseImporto</b>
+		</field>
+				
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStringManualeAutomaticoConverter">
+			<a>flagConvalidaManuale</a>
+			<b>subdocConvalidaManuale</b>
+		</field>
+		
+		<field>
+			<a>numeroRegistrazioneIVA</a>
+			<b>subdocNregIva</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacTSubdoc_SubdocumentoSpesa_Allegato" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoSpesa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTSubdoc_SubdocumentoSpesa_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaImpegnoSubimpegnoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaLiquidazioneConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaOrdinativoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field map-id="SiacDContotesoreria_ContoTesoreria_Fin2">
+			<a>contoTesoreria</a>
+			<b>siacDContotesoreria</b>
+		</field>
+		
+		<field map-id="SiacDNoteTesoriere_NoteTesoriere">
+			<a>noteTesoriere</a>
+			<b>siacDNoteTesoriere</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaTipoIvaSplitReverseConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaHasRitenuteConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaHasSubordinatiConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaIsSubordinatoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaAttoAmmConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoSpesaProvvisorioDiCassaConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<!-- SIAC-4765 -->
+		<field custom-converter-id="subdocumentoSpesaHasRitenuteDiverseSplitConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoSpesaHasSubordinatiPNLConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<!-- SIAC-5021 -->
+		<field custom-converter-id="subdocumentoSpesaModPagConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		<!-- SIAC-5574 -->
+		<field custom-converter-id="subdocumentoSpesaSiopeAssenzaMotivazioneConverter" >
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		<!-- SIAC-5574 -->
+		<field custom-converter-id="subdocumentoSpesaDocFigliConverter" >
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoSpesaDocPadreConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacDNoteTesoriere_NoteTesoriere" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.NoteTesoriere</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDNoteTesoriere</class-b>
+	
+		<field>
+			<a>uid</a>
+			<b>notetesId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>notetesCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>notetesDesc</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTSubdoc_SubdocumentoSpesa_Emettitore" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoSpesa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTSubdoc_SubdocumentoSpesa_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTDoc_DocumentoSpesa_ModelDetail">
+			<a>documento</a> 
+			<b>siacTDoc</b>
+		</field>		
+		<field map-id="SiacDNoteTesoriere_NoteTesoriere">
+			<a>noteTesoriere</a>
+			<b>siacDNoteTesoriere</b>
+		</field>
+		
+		<field map-id="SiacDContotesoreria_ContoTesoreria_Fin2">
+			<a>contoTesoreria</a>
+			<b>siacDContotesoreria</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaAttoAmmConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaLiquidazioneConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>		
+		
+		<field custom-converter-id="subdocumentoSpesaModPagConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaSedeSecondariaSoggettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaSubdocumentoIvaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+		<field custom-converter-id="subdocumentoSpesaProvvisorioDiCassaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>		
+				
+		<field custom-converter-id="subdocumentoSpesaTipoIvaSplitReverseConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoSpesaCommissioniDocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTSubdocSospensione_SospensioneSubdocumento" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SospensioneSubdocumento</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdocSospensione</class-b>
+		
+		<field>
+			<a>dataSospensione</a>
+			<b>subdocSospData</b>
+		</field>
+		<field>
+			<a>causaleSospensione</a>
+			<b>subdocSospCausale</b>
+		</field>
+		<field>
+			<a>dataRiattivazione</a>
+			<b>subdocSospDataRiattivazione</b>
+		</field>
+	</mapping>
+	
+</mappings>

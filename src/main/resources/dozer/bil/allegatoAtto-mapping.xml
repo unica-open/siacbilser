@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	
+	
+	<mapping map-id="SiacTAttoAllegato_AllegatoAtto_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AllegatoAtto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAttoAllegato</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>causale</a>
+			<b>attoalCausale</b>
+		</field>
+		<field>
+			<a>dataScadenza</a>
+			<b>attoalDataScadenza</b>
+		</field>
+		<field>
+			<a>responsabileContabile</a>
+			<b>attoalResponsabileCon</b>
+		</field>
+		<field>
+			<a>annotazioni</a>
+			<b>attoalAnnotazioni</b>
+		</field>
+		<field>
+			<a>responsabileAmministrativo</a>
+			<b>attoalResponsabileAmm</b>
+		</field>
+		<field>
+			<a>note</a>
+			<b>attoalNote</b>
+		</field>
+		<field>
+			<a>altriAllegati</a>
+			<b>attoalAltriallegati</b>
+		</field>
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStringConverter">
+			<a>datiSensibili</a>
+			<b>attoalDatiSensibili</b>
+		</field>
+		<field>
+			<a>pratica</a>
+			<b>attoalPratica</b>
+		</field>
+		<field>
+			<a>annoTitolario</a>
+			<b>attoalTitolarioAnno</b>
+		</field>
+		<field>
+			<a>titolario</a>
+			<b>attoalTitolarioNumero</b>
+		</field>
+		<field>
+			<a>versioneInvioFirma</a>
+			<b>attoalVersioneInvioFirma</b>
+		</field>
+		<field>
+			<a>dataVersioneInvioFirma</a>
+			<b>attoalDataInvioFirma</b>
+		</field>
+		<field>
+			<a>utenteVersioneInvioFirma</a>
+			<b>attoalLoginInvioFirma</b>
+		</field>
+		<field>
+			<a>flagRitenute</a>
+			<b>attoalFlagRitenute</b>
+		</field>
+		 <field map-id="SiacTAttoAmm_AttoAmministrativo">
+			<a>attoAmministrativo</a>
+			<b>siacTAttoAmm</b>
+		</field> 
+		
+		<field custom-converter-id="allegatoAttoStatoConverter">
+			<a>statoOperativoAllegatoAtto</a>
+			<b>this</b>
+		</field>
+				
+	</mapping>
+	
+	<mapping map-id="SiacTAttoAllegato_AllegatoAtto_Medium" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AllegatoAtto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAttoAllegato</class-b>
+		
+		<field map-id="SiacTAttoAllegato_AllegatoAtto_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="allegatoAttoIsAssociatoAdUnDocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="allegatoAttoIsAssociatoAdAlmenoUnaQuotaSpesaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>	
+          
+	<mapping map-id="SiacTAttoAllegato_AllegatoAtto" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AllegatoAtto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAttoAllegato</class-b>
+				
+				
+		<field map-id="SiacTAttoAllegato_AllegatoAtto_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="allegatoAttoDatiSoggettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="allegatoAttoElencoDocumentiConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="allegatoAttoDataInizioValiditaStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacRAttoAllegatoSog_DatiSoggettoAllegato" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.DatiSoggettoAllegato</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacRAttoAllegatoSog</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>dataSospensione</a>
+			<b>attoalSogDataSosp</b>
+		</field>
+		<field>
+			<a>causaleSospensione</a>
+			<b>attoalSogCausaleSosp</b>
+		</field>
+		<field>
+			<a>dataRiattivazione</a>
+			<b>attoalSogDataRiatt</b>
+		</field>
+		<field>
+			<a>allegatoAtto.uid</a>
+			<b>SiacTAttoAllegato.uid</b>
+		</field>
+		<field map-id="SiacTSoggetto_Soggetto">
+			<a>soggetto</a>
+			<b>siacTSoggetto</b>
+		</field>
+	</mapping>
+	
+</mappings>

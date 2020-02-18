@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     <mapping map-id="SiacTCassaEconOperaz_OperazioneCassa_Base" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.OperazioneCassa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCassaEconOperaz</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field>
+			<a>numeroOperazione</a>
+			<b>cassaeconopNumero</b>
+		</field>
+		
+		<field>
+			<a>dataOperazione</a>
+			<b>dataInizioValidita</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>cassaeconopImporto</b>
+		</field>
+		
+		<field>
+			<a>note</a>
+			<b>cassaeconopNote</b>
+		</field>
+		
+	</mapping>
+	
+     
+     <mapping map-id="SiacTCassaEconOperaz_OperazioneCassa" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.OperazioneCassa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCassaEconOperaz</class-b>
+	
+		<field map-id="SiacTCassaEconOperaz_OperazioneCassa_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacDCassaEconModpagTipo_ModalitaPagamentoCassa">
+			<a>modalitaPagamentoCassa</a>
+			<b>siacDCassaEconModpagTipo</b>
+		</field>
+		
+		<field map-id="SiacTCassaEcon_CassaEconomale_Minimal">
+			<a>cassaEconomale</a>
+			<b>siacTCassaEcon</b>
+		</field>
+		
+		<field map-id="SiacTAttoAmm_AttoAmministrativo">
+			<a>attoAmministrativo</a>
+			<b>siacTAttoAmm</b>
+		</field>
+		
+		<field custom-converter-id="operazioneCassaTipoOperazioneConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="operazioneCassaStatoOperativoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	 <mapping map-id="SiacDCassaEconModpagTipo_ModalitaPagamentoCassa" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.ModalitaPagamentoCassa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDCassaEconModpagTipo</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>cassamodpagTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>cassamodpagTipoDesc</b>
+		</field>
+		
+		<field custom-converter-id="modPagCassaTipoDiCassaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+	</mapping>
+	
+</mappings>

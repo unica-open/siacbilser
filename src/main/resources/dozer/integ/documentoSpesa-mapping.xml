@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="RicercaDocumentoSpesa_RicercaSinteticaDocumentoSpesa" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.documenti.RicercaDocumentoSpesa</class-a>
+		<class-b>it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaDocumentoSpesa</class-b>
+		
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>annoDocumento</a>
+			<b>documentoSpesa.anno</b>
+		</field>
+		
+		<field>
+			<a>numeroDocumento</a>
+			<b>documentoSpesa.numero</b>
+		</field>
+		
+		<field>
+			<a>tipoDocumento</a>
+			<b>documentoSpesa.tipoDocumento.codice</b>
+		</field>
+		
+		<field>
+			<a>codiceSoggetto</a>
+			<b>documentoSpesa.soggetto.codiceSoggetto</b>
+		</field>
+
+		<!--  mappatura richiesta da SIAC-2798  -->
+		
+		<field>
+			<a>annoRepertorio</a>
+			<b>documentoSpesa.annoRepertorio</b>
+		</field>
+		
+		<field>
+			<a>dataRepertorio</a>
+			<b>documentoSpesa.dataRepertorio</b>
+		</field>
+		
+		<field>
+			<a>numeroRepertorio</a>
+			<b>documentoSpesa.numeroRepertorio</b>
+		</field>
+		
+<!--
+		FIXME: Dove mappa l'anno di bilancio (se mappa) ?  		
+		<field>
+			<a>annoBilancio</a>
+			<b>documentoSpesa.anno</b>
+		</field>
+ -->		
+		<field custom-converter="it.csi.siac.siacintegser.business.service.util.converter.NumeroPaginaToNumeroPaginaBilConverter">
+			<a>numeroPagina</a>
+			<b>parametriPaginazione.numeroPagina</b>
+		</field>
+		
+		<field>
+			<a>numeroElementiPerPagina</a>
+			<b>parametriPaginazione.elementiPerPagina</b>
+		</field> 
+	
+	</mapping>
+	
+	
+	<mapping map-id="ListDocumentiSpesa_IntegDocumentiSpesa" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.DocumentoSpesa</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.DocumentoSpesa</class-b>
+		
+		<field>
+			<a>numero</a>
+			<b>numeroDocumento</b>
+		</field>
+		
+		<field>
+			<a>anno</a>
+			<b>annoDocumento</b>
+		</field>
+		
+			
+		<field>
+			<a>tipoDocumento.codice</a>
+			<b>tipoDocumento</b>
+		</field>
+		
+		<field>
+			<a>soggetto.codiceSoggetto</a>
+			<b>codiceSoggetto</b>
+		</field> 
+		
+		<field>
+			<a>importo</a>
+			<b>importoDocumento</b>
+		</field>
+		
+		<field custom-converter-id="documentoSpesaImportoNettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>statoOperativoDocumento.codice</a>
+			<b>stato.codice</b>
+		</field>
+		<field>
+			<a>statoOperativoDocumento.descrizione</a>
+			<b>stato.descrizione</b>
+		</field> 
+		
+		
+		<field map-id="Ordini_NumeriOrdine">
+			<a>ordini</a>
+			<b>elencoOrdini</b>
+		</field> 
+		
+	</mapping>
+	
+	
+	<mapping map-id="Ordini_NumeriOrdine" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.Ordine</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.Ordine</class-b>
+
+		
+
+	</mapping>
+	
+	
+	
+</mappings>

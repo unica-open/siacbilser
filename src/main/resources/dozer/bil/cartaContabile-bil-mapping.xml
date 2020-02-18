@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTCartacont_CartaContabile_BIL" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.carta.CartaContabile</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCartacont</class-b>
+		<field>
+			<a>idCartaContabile</a>
+			<b>cartacId</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>cartacNumero</b>
+		</field>
+	  
+		<field>
+			<a>oggetto</a>
+			<b>cartacOggetto</b>
+		</field>
+
+		<field>
+			<a>causale</a>
+			<b>cartacCausale</b>
+		</field>
+	
+		<field>
+			<a>numRegistrazione</a>
+			<b>cartacNumeroReg</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>cartacImporto</b>
+		</field>
+
+		<field>
+			<a>importoValuta</a>
+			<b>cartacImportoValuta</b>
+		</field>
+		
+		<field>
+			<a>dataEsecuzionePagamento</a>
+			<b>cartacDataPagamento</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>cartacDataScadenza</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+ 	</mapping>
+		
+</mappings>

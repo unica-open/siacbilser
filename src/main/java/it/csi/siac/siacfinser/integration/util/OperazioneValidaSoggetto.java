@@ -1,0 +1,15 @@
+/*
+*SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+*SPDX-License-Identifier: EUPL-1.2
+*/
+package it.csi.siac.siacfinser.integration.util;
+
+public enum OperazioneValidaSoggetto {
+	UNDEFINED, 
+	VALIDA_DA_SOSPESO,
+	VALIDA_DA_BLOCCATO,
+	VALIDA_DA_PROVVISORIO,
+	VALIDA_DA_IN_MODIFICA;
+	
+	
+}

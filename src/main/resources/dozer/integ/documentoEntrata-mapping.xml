@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="RicercaDocumentoEntrata_RicercaSinteticaDocumentoEntrata" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.documenti.RicercaDocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaDocumentoEntrata</class-b>
+		
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>annoDocumento</a>
+			<b>documentoEntrata.anno</b>
+		</field>
+		
+		<field>
+			<a>numeroDocumento</a>
+			<b>documentoEntrata.numero</b>
+		</field>
+		
+		<!--
+		FIXME: va smarcato su cosa viene impostato l'anno di bilancio 
+		<field>
+			<a>annoBilancio</a>
+			<b>accertamento.annoMovimento</b>
+		</field>-->
+		
+		<!--  mappatura richiesta da SIAC-2798  -->
+		
+		<field>
+			<a>annoRepertorio</a>
+			<b>documentoEntrata.annoRepertorio</b>
+		</field>
+		
+		<field>
+			<a>dataRepertorio</a>
+			<b>documentoEntrata.dataRepertorio</b>
+		</field>
+		
+		<field>
+			<a>numeroRepertorio</a>
+			<b>documentoEntrata.numeroRepertorio</b>
+		</field>
+		
+		<field>
+			<a>tipoDocumento</a>
+			<b>documentoEntrata.tipoDocumento.codice</b>
+		</field>
+		
+		<field>
+			<a>codiceSoggetto</a>
+			<b>documentoEntrata.soggetto.codiceSoggetto</b>
+		</field>
+		
+	    <field custom-converter="it.csi.siac.siacintegser.business.service.util.converter.NumeroPaginaToNumeroPaginaBilConverter">
+			<a>numeroPagina</a>
+			<b>parametriPaginazione.numeroPagina</b>
+		</field>
+		
+		<field>
+			<a>numeroElementiPerPagina</a>
+			<b>parametriPaginazione.elementiPerPagina</b>
+		</field> 
+	
+	</mapping>
+	
+	
+	<mapping map-id="ListDocumentiEntrata_IntegDocumentiEntrata" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.DocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.DocumentoEntrata</class-b>
+		
+		<field>
+			<a>numero</a>
+			<b>numeroDocumento</b>
+		</field>
+		
+		<field>
+			<a>anno</a>
+			<b>annoDocumento</b>
+		</field>
+		
+			
+		<field>
+			<a>tipoDocumento.codice</a>
+			<b>tipoDocumento</b>
+		</field>
+		
+		<field>
+			<a>soggetto.codiceSoggetto</a>
+			<b>codiceSoggetto</b>
+		</field> 
+		
+		<field>
+			<a>importo</a>
+			<b>importoDocumento</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataImportoNettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+		
+		<field>
+			<a>statoOperativoDocumento.codice</a>
+			<b>stato.codice</b>
+		</field>
+		<field>
+			<a>statoOperativoDocumento.descrizione</a>
+			<b>stato.descrizione</b>
+		</field> 
+		
+		
+		
+	</mapping>
+</mappings>

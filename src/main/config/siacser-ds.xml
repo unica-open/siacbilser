@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<datasources xmlns="http://docs.jboss.org/ironjacamar/schema/datasources_1_1.xsd">
+  <datasource jta="true" jndi-name="${datasource.jndi-url}" pool-name="${datasource.pool-name}" enabled="true" use-ccm="false">
+		<connection-url>@@URL_DB@@</connection-url>
+			<driver-class>org.postgresql.Driver</driver-class>
+			<datasource-class>org.postgresql.ds.PGPoolingDataSource</datasource-class>
+			<connection-property name="connectTimeout">
+					5
+			</connection-property>
+			<connection-property name="socketTimeout">
+					180
+			</connection-property>
+			<driver>postgresql</driver>
+			<pool>
+				<min-pool-size>5</min-pool-size>
+				<max-pool-size>25</max-pool-size>
+			</pool>
+			<security>
+			<!-- user e pwd db li sostituisce la ricetta -->
+				<user-name>@@USER_DB@@</user-name>
+                <password>@@PASSWD_DB@@</password>
+            </security>
+			<validation>
+				<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+				<validate-on-match>true</validate-on-match>
+				<background-validation>false</background-validation>
+			</validation>
+			<statement>
+				<share-prepared-statements>false</share-prepared-statements>
+			</statement>
+    </datasource>
+</datasources>

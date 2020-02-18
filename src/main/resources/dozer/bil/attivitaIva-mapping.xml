@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTIvaAttivita_AttivitaIva_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AttivitaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaAttivita</class-b>
+		
+		<field>
+			<a>uid</a>
+			<b>ivaattId</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>ivaattCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>ivaattDesc</b>
+		</field>
+		
+	    <field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field> 
+	</mapping>
+	
+	<mapping map-id="SiacTIvaAttivita_AttivitaIva_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AttivitaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaAttivita</class-b>
+		
+		<field map-id="SiacTIvaAttivita_AttivitaIva_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="attivitaIvaAttrConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="attivitaIvaGruppoAttivitaIvaConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>		
+	</mapping>
+	
+	
+	
+	
+	<mapping map-id="SiacTIvaAttivita_AttivitaIva" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AttivitaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaAttivita</class-b>
+		
+		<field map-id="SiacTIvaAttivita_AttivitaIva_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="attivitaIvaCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	
+	
+	
+</mappings>

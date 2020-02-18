@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SirfelTRiepilogoBeni_RiepilogoBeniFEL_Base" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.RiepilogoBeniFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTRiepilogoBeni</class-b>
+		
+		<field custom-converter-id="riepilogoBeniFELNaturaFELConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SirfelTRiepilogoBeni_RiepilogoBeniFEL" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.RiepilogoBeniFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTRiepilogoBeni</class-b>
+		
+		<field map-id="SirfelTRiepilogoBeni_RiepilogoBeniFEL_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="riepilogoBeniFELFatturaFELConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+
+</mappings>

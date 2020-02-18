@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 
+	<mapping map-id="SiacTMovgest_Impegno" >
+		<class-a>it.csi.siac.siacfinser.model.Impegno</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin</class-b>
+
+		<field>
+			<a>annoMovimento</a>
+			<b>movgestAnno</b>
+		</field>
+
+		<field>
+			<a>numero</a>
+			<b>movgestNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movgestDesc</b>
+		</field>
+		
+		<field>
+			<a>tipoMovimento</a>
+			<b>siacDMovgestTipo.movgestTipoCode</b>
+		</field>
+		
+		<field>
+			<a>tipoMovimentoDesc</a>
+			<b>siacDMovgestTipo.movgestTipoDesc</b>
+		</field>		
+				
+  	</mapping>
+  	
+   	
+	<mapping map-id="SiacTMovgest_Accertamento">
+		<class-a>it.csi.siac.siacfinser.model.Accertamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin</class-b>
+
+		<field>
+			<a>annoMovimento</a>
+			<b>movgestAnno</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>movgestNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movgestDesc</b>
+		</field>
+
+		<field>
+			<a>tipoMovimento</a>
+			<b>siacDMovgestTipo.movgestTipoCode</b>
+		</field>
+		
+		<field>
+			<a>tipoMovimentoDesc</a>
+			<b>siacDMovgestTipo.movgestTipoDesc</b>
+		</field>		
+				
+  	</mapping>  	  	
+
+
+    <mapping map-id="SiacTMovgestTs_SubAccertamento">
+		<class-a>it.csi.siac.siacfinser.model.SubAccertamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin</class-b>
+
+		<field>
+			<a>numero</a>
+			<b>movgestTsCode</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>movgestTsDesc</b>
+		</field>
+
+		<!-- <field>
+			<a>tipoMovimento</a>
+			<b>siacDMovgestTipo.movgestTipoCode</b>
+		</field>		 -->
+  	</mapping>  	
+
+	<mapping map-id="SiacTMovgestTs_SubImpegno">
+		<class-a>it.csi.siac.siacfinser.model.SubImpegno</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin</class-b>
+
+		<field>
+			<a>numero</a>
+			<b>movgestTsCode</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>movgestTsDesc</b>
+		</field>
+
+		<field>
+			<a>idMovimentoPadre</a>
+			<b>siacTMovgest.movgestId</b>
+		</field>
+
+		<!-- <field>
+			<a>tipoMovimento</a>
+			<b>siacDMovgestTipo.movgestTipoCode</b>
+		</field>		 -->
+  	</mapping>  	
+
+	<mapping map-id="SiacTModifica_ModificaMovimentoGestioneSpesa">
+		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesa</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTModificaFin</class-b>
+
+		<field>
+			<a>idModificaMovimentoGestione</a>
+			<b>modId</b>
+		</field>
+
+		<field>
+			<a>numeroModificaMovimentoGestione</a>
+			<b>modNum</b>
+		</field>
+
+		<field>
+			<a>descrizioneModificaMovimentoGestione</a>
+			<b>modDesc</b>
+		</field>
+
+		<field>
+			<a>dataModificaMovimentoGestione</a>
+			<b>modData</b>
+		</field>
+
+		<field>
+			<a>utenteCreazione</a>
+			<b>loginOperazione</b>
+		</field>
+
+		<field>
+			<a>utenteModifica</a>
+			<b>loginOperazione</b>
+		</field>
+
+		<field>
+			<a>utenteCancellazione</a>
+			<b>loginOperazione</b>
+		</field>
+
+		<field>
+			<a>dataAnnullamento</a>
+			<b>dataCancellazione</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoAnno</a>
+			<b>siacTAttoAmm.attoammAnno</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoNumero</a>
+			<b>siacTAttoAmm.attoammNumero</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoTipoCode</a>
+			<b>siacTAttoAmm.siacDAttoAmmTipo.attoammTipoCode</b>
+		</field>
+		
+  	</mapping>  	
+
+	<mapping map-id="SiacTModifica_ModificaMovimentoGestioneEntrata">
+		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneEntrata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTModificaFin</class-b>
+
+		<field>
+			<a>idModificaMovimentoGestione</a>
+			<b>modId</b>
+		</field>
+
+		<field>
+			<a>numeroModificaMovimentoGestione</a>
+			<b>modNum</b>
+		</field>
+
+		<field>
+			<a>descrizioneModificaMovimentoGestione</a>
+			<b>modDesc</b>
+		</field>
+
+		<field>
+			<a>dataModificaMovimentoGestione</a>
+			<b>modData</b>
+		</field>
+
+		<field>
+			<a>utenteCreazione</a>
+			<b>loginOperazione</b>
+		</field>
+
+		<field>
+			<a>utenteModifica</a>
+			<b>loginOperazione</b>
+		</field>
+
+		<field>
+			<a>utenteCancellazione</a>
+			<b>loginOperazione</b>
+		</field>
+
+		<field>
+			<a>dataAnnullamento</a>
+			<b>dataCancellazione</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoAnno</a>
+			<b>siacTAttoAmm.attoammAnno</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoNumero</a>
+			<b>siacTAttoAmm.attoammNumero</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoTipoCode</a>
+			<b>siacTAttoAmm.siacDAttoAmmTipo.attoammTipoCode</b>
+		</field>
+		
+  	</mapping>
+  	
+  	
+  	<mapping map-id="SiacTAvanzovincoloFin_Avanzovincolo">
+		<class-a>it.csi.siac.siacfinser.model.Avanzovincolo</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTAvanzovincoloFin</class-b>
+
+
+<!-- 		<field> -->
+<!-- 			<a>tipoAvanzovincolo.codice</a> -->
+<!-- 			<b>siacDAvanzovincoloTipo.avavTipoCode</b> -->
+<!-- 		</field> -->
+		
+<!-- 		<field> -->
+<!-- 			<a>tipoAvanzovincolo.descrizione</a> -->
+<!-- 			<b>siacDAvanzovincoloTipo.avavTipoDesc</b> -->
+<!-- 		</field> -->
+		
+<!-- 		<field> -->
+<!-- 			<a>tipoAvanzovincolo.uid</a> -->
+<!-- 			<b>siacDAvanzovincoloTipo.uid</b> -->
+<!-- 		</field> -->
+		
+  	</mapping>
+  	
+  	
+  	
+  	
+  	
+  	
+</mappings>

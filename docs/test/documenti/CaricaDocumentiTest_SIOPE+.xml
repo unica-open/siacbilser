@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<elenchiDocumentiAllegato>
+	<elenchi>
+		<elenco>
+			<subdocumenti>
+				<subdocumentoSpesa>
+					<documentoSpesa>
+						<uid>-1</uid>
+						<anno>2017</anno>
+						<arrotondamento>0</arrotondamento>
+						<codiceBollo>
+							<codice>99</codice>
+						</codiceBollo>
+						<dataEmissione>2017-10-25T14:30:05+02:00</dataEmissione>
+						<descrizione>FATTURA SPESA SISTEMA ESTERNO SIOPE+</descrizione>
+						<importo>1</importo>
+						<importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+						<numero>5311_EXT_SIOPE+</numero>
+						<soggetto>
+							<codiceSoggetto>4183</codiceSoggetto>
+						</soggetto>
+						<terminePagamento>1</terminePagamento>
+						<tipoDocumento>
+							<codice>FAT</codice>
+							<tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+						</tipoDocumento>
+						<flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+						<tipoImpresa>
+							<codice>ATI</codice>
+						</tipoImpresa>
+					</documentoSpesa>
+					<dataScadenza>2017-10-26T14:30:05+02:00</dataScadenza>
+					<descrizione>FATT SPESA SISTEMA ESTERNO SIOPE+ SUBDOC1</descrizione>
+					<ente>
+						<codice>COTO</codice>
+						<gestioneLivelli />
+					</ente>
+					<flagEsproprio>false</flagEsproprio>
+					<flagOrdinativoSingolo>false</flagOrdinativoSingolo>
+					<importo>0.5</importo>
+					<importoDaDedurre>0</importoDaDedurre>
+					<note>PROVA INSERIMENTO QUOTA</note>
+					<noteTesoriere>
+						<codice>01</codice>
+					</noteTesoriere>
+					<tipoAvviso>
+						<codice>TESORIERE</codice>
+					</tipoAvviso>
+					<causaleOrdinativo>mia causale ordinativo SERVIZIO CARICA DOCUMENTI</causaleOrdinativo>
+					<commissioniDocumento>ESENTE</commissioniDocumento>
+					<datiCertificazioneCrediti>
+						<annotazione>mia annotazione</annotazione>
+						<dataCertificazione>2014-09-01T00:00:00+02:00</dataCertificazione>
+						<flagCertificazione>false</flagCertificazione>
+						<noteCertificazione>mie note certificazione</noteCertificazione>
+						<numeroCertificazione>mio numero certificazione</numeroCertificazione>
+					</datiCertificazioneCrediti>
+					<impegno>
+						<annoMovimento>2017</annoMovimento>
+						<numero>524</numero>
+					</impegno>
+					<modalitaPagamentoSoggetto>
+						<codiceModalitaPagamento>2</codiceModalitaPagamento>
+					</modalitaPagamentoSoggetto>
+				</subdocumentoSpesa>
+			</subdocumenti>
+			<subdocumentiIva />
+			<allegatoAtto>
+				<uid>-1</uid>
+				<attoAmministrativo>
+					<anno>2017</anno>
+					<numero>5311</numero>
+					<tipoAtto>
+						<codice>DP</codice>
+					</tipoAtto>
+					<strutturaAmmContabile>
+						<codice>A05</codice>
+						<livello>0</livello>
+					</strutturaAmmContabile>
+				</attoAmministrativo>
+				<causale>mia causale allegato atto</causale>
+				<datiSensibili>false</datiSensibili>
+				<ente>
+					<codice>COTO</codice>
+					<gestioneLivelli />
+				</ente>
+			</allegatoAtto>
+			<annoSysEsterno>2017</annoSysEsterno>
+			<numeroSysEsterno>20171024</numeroSysEsterno>
+		</elenco>
+	</elenchi>
+</elenchiDocumentiAllegato>

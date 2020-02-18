@@ -1,0 +1,59 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<ricercaSinteticaCapitoloUscitaGestione>
+    <dataOra>2015-10-20T16:13:35.580+02:00</dataOra>
+    <richiedente>
+        <account>
+            <stato>VALIDO</stato>
+            <uid>1</uid>
+            <nome>Demo 21</nome>
+            <descrizione>Demo 21 - CittÃ  di Torino</descrizione>
+            <indirizzoMail>email</indirizzoMail>
+            <ente>
+                <stato>VALIDO</stato>
+                <uid>1</uid>
+                <gestioneLivelli>
+                    <entry>
+                        <key>LIVELLO_GESTIONE_BILANCIO</key>
+                        <value>GESTIONE_UEB</value>
+                    </entry>
+                </gestioneLivelli>
+                <nome>CittÃ  di Torino</nome>
+            </ente>
+        </account>
+        <operatore>
+            <stato>VALIDO</stato>
+            <uid>0</uid>
+            <codiceFiscale>AAAAAA00A11B000J</codiceFiscale>
+            <cognome>AAAAAA00A11B000J</cognome>
+            <nome>Demo</nome>
+        </operatore>
+    </richiedente>
+    <importiDerivatiRichiesti/>
+    <ente>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <gestioneLivelli>
+            <entry>
+                <key>LIVELLO_GESTIONE_BILANCIO</key>
+                <value>GESTIONE_UEB</value>
+            </entry>
+        </gestioneLivelli>
+        <nome>CittÃ  di Torino</nome>
+    </ente>
+    <parametriPaginazione>
+        <elementiPerPagina>10</elementiPerPagina>
+        <numeroPagina>1</numeroPagina>
+    </parametriPaginazione>
+    <ricercaSinteticaCapitoloUGest>
+        <annoEsercizio>2015</annoEsercizio>
+        <categoriaCapitolo>
+            <stato>VALIDO</stato>
+            <uid>0</uid>
+        </categoriaCapitolo>
+        <codiceStrutturaAmmCont>001</codiceStrutturaAmmCont>
+        <codiceTipoStrutturaAmmCont>CDR</codiceTipoStrutturaAmmCont>
+    </ricercaSinteticaCapitoloUGest>
+</ricercaSinteticaCapitoloUscitaGestione>

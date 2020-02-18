@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 
+ 
+   <mapping map-id="SiacDMutuoTipo_ClassificatoreGenerico">
+		<class-a>it.csi.siac.siaccorser.model.ClassificatoreGenerico</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDMutuoTipoFin</class-b>
+
+<!-- 		<field> -->
+<!-- 			<a>id</a> -->
+<!-- 			<b>mutTipoId</b> -->
+<!-- 		</field> -->
+		<field>
+			<a>descrizione</a>
+			<b>mutTipoDesc</b>
+		</field>
+		
+	  
+		<field>
+			<a>codice</a>
+			<b>mutTipoCode</b>
+		</field>
+	
+	</mapping>
+ 
+ 
+  	<mapping map-id="SiacTMutuo_Mutuo_Minimo">
+		<class-a>it.csi.siac.siacfinser.model.mutuo.Mutuo</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMutuoFin</class-b>
+
+		<field>
+			<a>idMutuo</a>
+			<b>mutId</b>
+		</field>
+		<field>
+			<a>codiceMutuo</a>
+			<b>mutCode</b>
+		</field>
+		<field>
+			<a>dataInizioMutuo</a>
+			<b>mutDataInizio</b>
+		</field>		
+		<field>
+			<a>dataFineMutuo</a>
+			<b>mutDataFine</b>
+		</field>		
+		<field>
+			<a>descrizioneMutuo</a>
+			<b>mutDesc</b>
+		</field>		
+		<field>
+			<a>durataMutuo</a>
+			<b>mutDurata</b>
+		</field>		
+		<field>
+			<a>importoInizialeMutuo</a>
+			<b>mutImportoIniziale</b>
+		</field>		
+		<field>
+			<a>importoAttualeMutuo</a>
+			<b>mutImportoAttuale</b>
+		</field>		
+		<field>
+			<a>numeroRegistrazioneMutuo</a>
+			<b>mutNumRegistrazione</b>
+		</field>		
+		<field>
+			<a>noteMutuo</a>
+			<b>mutNote</b>
+		</field>	
+  		
+  		<field custom-converter-id="mutuoTipoConverter">
+  			 <a>tipoMutuo</a>
+   			 <b>siacDMutuoTipo</b>
+  		</field>
+  		
+		<field map-id="SiacDMutuoTipo_ClassificatoreGenerico">
+			<a>classificatoreTipoMutuo</a>
+			<b>siacDMutuoTipo</b>
+		</field>
+		
+  	</mapping>
+ 
+ 
+ 	<mapping map-id="SiacTMutuo_Mutuo">
+		<class-a>it.csi.siac.siacfinser.model.mutuo.Mutuo</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMutuoFin</class-b>
+
+		<field>
+			<a>idMutuo</a>
+			<b>mutId</b>
+		</field>
+		<field>
+			<a>codiceMutuo</a>
+			<b>mutCode</b>
+		</field>
+		<field>
+			<a>dataInizioMutuo</a>
+			<b>mutDataInizio</b>
+		</field>		
+		<field>
+			<a>dataFineMutuo</a>
+			<b>mutDataFine</b>
+		</field>		
+		<field>
+			<a>descrizioneMutuo</a>
+			<b>mutDesc</b>
+		</field>		
+		<field>
+			<a>durataMutuo</a>
+			<b>mutDurata</b>
+		</field>		
+		<field>
+			<a>importoInizialeMutuo</a>
+			<b>mutImportoIniziale</b>
+		</field>		
+		<field>
+			<a>importoAttualeMutuo</a>
+			<b>mutImportoAttuale</b>
+		</field>		
+		<field>
+			<a>numeroRegistrazioneMutuo</a>
+			<b>mutNumRegistrazione</b>
+		</field>		
+		<field>
+			<a>noteMutuo</a>
+			<b>mutNote</b>
+		</field>	
+		
+		<field custom-converter-id="mutuoAttoAmmConverter">
+  			 <a>this</a>
+   			 <b>this</b> 
+  		</field>
+  		
+  		<field custom-converter-id="mutuoSoggettoConverter">
+  			 <a>this</a>
+   			 <b>this</b> 
+  		</field>
+  		
+<!--   		a: it.csi.siac.siacfinser.model.mutuo.Mutuo</class-a> -->
+<!-- 		b: it.csi.siac.siacfinser.integration.entity.SiacTMutuoFin-->
+  		
+  		
+  		
+  		<field custom-converter-id="mutuoStatoConverter">
+  			 <a>this</a>
+   			 <b>this</b>
+  		</field>
+  		
+  		<field custom-converter-id="mutuoTipoConverter">
+  			 <a>tipoMutuo</a>
+   			 <b>siacDMutuoTipo</b>
+  		</field>
+  		
+		<field map-id="SiacDMutuoTipo_ClassificatoreGenerico">
+			<a>classificatoreTipoMutuo</a>
+			<b>siacDMutuoTipo</b>
+		</field>
+		
+		
+		
+  	</mapping>
+
+	<mapping map-id="SiacTMutuoVoce_VoceMutuo">
+		<class-a>it.csi.siac.siacfinser.model.mutuo.VoceMutuo</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMutuoVoceFin</class-b>
+
+		<field>
+			<a>idVoceMutuo</a>
+			<b>mutVoceId</b>
+		</field>
+		
+		<field>
+			<a>numeroVoceMutuo</a>
+			<b>mutVoceCode</b>
+		</field>
+		
+		<field>
+			<a>idMutuo</a>
+			<b>siacTMutuo.mutId</b>
+		</field>
+
+		<field>
+			<a>numeroMutuo</a>
+			<b>siacTMutuo.mutCode</b>
+		</field>
+		
+		<field>
+			<a>descrizioneVoceMutuo</a>
+			<b>mutVoceDesc</b>
+		</field>
+		
+		<field>
+			<a>importoAttualeVoceMutuo</a>
+			<b>mutVoceImportoAttuale</b>
+		</field>
+		
+		<field>
+			<a>importoInizialeVoceMutuo</a>
+			<b>mutVoceImportoIniziale</b>
+		</field>
+
+  	</mapping>
+
+	<mapping map-id="SiacTMutuoVoceVar_VariazioneImportoVoceMutuo">
+		<class-a>it.csi.siac.siacfinser.model.mutuo.VariazioneImportoVoceMutuo</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMutuoVoceVarFin</class-b>
+	
+		<field>
+			<a>idVariazioneVoceMutuo</a>
+			<b>mutVoceVarId</b>
+		</field>
+		<field>
+			<a>importoVariazioneVoceMutuo</a>
+			<b>mutVoceVarImporto</b>
+		</field>
+
+  	</mapping>  	
+</mappings>

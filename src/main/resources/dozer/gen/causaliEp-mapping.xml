@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+          
+    <mapping map-id="SiacTCausaleEp_CausaleEP_Minimal_Without_Ente" wildcard="false">
+		<class-a>it.csi.siac.siacgenser.model.CausaleEP</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCausaleEp</class-b>
+		<field>
+			<a>uid</a>
+			<b>uid</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>causaleEpCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>causaleEpDesc</b>
+		</field>
+		<field>
+			<a>causaleDiDefault</a>
+			<b>causaleEpDefault</b>
+		</field>
+	</mapping>
+	
+    <mapping map-id="SiacTCausaleEp_CausaleEP_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.CausaleEP</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCausaleEp</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>causaleEpCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>causaleEpDesc</b>
+		</field>
+		
+		<field>
+			<a>causaleDiDefault</a>
+			<b>causaleEpDefault</b>
+		</field>
+		
+<!-- 		<field custom-converter-id="causaleEPClasseConciliazioneConverter"> -->
+<!-- 			<a>this</a> -->
+<!-- 			<b>this</b> -->
+<!-- 		</field> -->
+		
+	</mapping>
+          
+    <mapping map-id="SiacTCausaleEp_CausaleEP_Minimal_Con_Evento" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.CausaleEP</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCausaleEp</class-b>
+	
+		<field map-id="SiacTCausaleEp_CausaleEP_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="causaleEPEventoConverter">
+			<a>this</a> <!-- eventi -->
+			<b>this</b>
+		</field>
+		
+	</mapping>
+          
+    <mapping map-id="SiacTCausaleEp_CausaleEP_Base" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.CausaleEP</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCausaleEp</class-b>
+	
+		<field map-id="SiacTCausaleEp_CausaleEP_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="causaleEPTipoConverter">
+			<a>this</a> <!-- tipoCausale -->
+			<b>this</b> <!-- siacDCausaleEpTipo -->
+		</field>
+		
+		<field custom-converter-id="causaleEPStatoConverter">
+			<a>this</a> <!-- statoOperativoCausaleEP -->
+			<b>this</b>
+		</field>
+
+		<field custom-converter-id="causaleEPContoConverter">
+			<a>this</a> <!-- contiTipoOperazione -->
+			<b>this</b> <!-- siacRCausaleEpPdceContos,   -->
+		</field>
+		
+		<field custom-converter-id="causaleEPClassifConverter">
+			<a>this</a> <!-- classificatoriEP -->
+			<b>this</b> <!-- siacRCausaleEpClasses -->
+		</field>
+		
+		<field custom-converter-id="causaleEPAmbitoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="causaleEPEventoConverter">
+			<a>this</a> <!-- eventi -->
+			<b>this</b>
+		</field>
+		
+	</mapping>
+     
+  	<mapping map-id="SiacTCausaleEp_CausaleEP" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.CausaleEP</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCausaleEp</class-b>
+	
+		<field map-id="SiacTCausaleEp_CausaleEP_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="causaleEPTipoConverter">
+			<a>this</a> <!-- tipoCausale -->
+			<b>this</b> <!-- siacDCausaleEpTipo -->
+		</field>
+		
+		<field custom-converter-id="causaleEPStatoConverter">
+			<a>this</a> <!-- statoOperativoCausaleEP -->
+			<b>this</b>
+		</field>
+
+		<field custom-converter-id="causaleEPContoMediumConverter">
+			<a>this</a> <!-- contiTipoOperazione -->
+			<b>this</b> <!-- siacRCausaleEpPdceContos,   -->
+		</field>
+		
+		<field custom-converter-id="causaleEPSoggettoConverter">
+			<a>this</a> <!-- soggetto -->
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="causaleEPEventoConverter">
+			<a>this</a> <!-- eventi -->
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="causaleEPClassifConverter">
+			<a>this</a> <!-- classificatoriEP -->
+			<b>this</b> <!-- siacRCausaleEpClasses -->
+		</field>
+		
+		<field custom-converter-id="causaleEPMovConverter">
+			<a>this</a> <!-- ??? -->
+ 			<b>this</b> <!--siacTMovEps --> 
+		</field>
+		
+		<field custom-converter-id="causaleEPAmbitoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+	</mapping>
+	
+	<!-- ##################################### -->
+ 
+ 
+ 	<mapping map-id="SiacDEvento_Evento" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.Evento</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDEvento</class-b>
+		
+		
+		<field>
+			<a>codice</a>
+			<b>eventoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>eventoDesc</b>
+		</field>
+		
+		<field map-id="SiacDEventoTipo_TipoEvento">
+			<a>tipoEvento</a>
+			<b>siacDEventoTipo</b>
+		</field>
+		
+		<field custom-converter-id="eventoTipoCollegamentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+ 
+ 
+ 	<mapping map-id="SiacDEventoTipo_TipoEvento" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.TipoEvento</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDEventoTipo</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>eventoTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>eventoTipoDesc</b>
+		</field>
+		
+		<field custom-converter-id="tipoEventoFamigliaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="tipoEventoTipoCausaleEPConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+	</mapping>
+ 
+	
+	
+	
+</mappings>

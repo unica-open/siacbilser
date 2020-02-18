@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	
+	<mapping map-id="SiacTIndirizzo_IndirizzoSoggetto">
+		<class-a>it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTIndirizzoSoggettoFin</class-b>
+		
+		<field>
+			<a>idComune</a>
+			<b>siacTComune.comuneId</b>
+		</field>
+		
+		<field>
+			<a>comune</a>
+			<b>siacTComune.comuneDesc</b>
+		</field>
+		
+		<field>
+			<a>provincia</a>
+			<b>siacTComune.siacRComuneProvincias[0].siacTProvincia.siglaAutomobilistica</b>
+		</field>
+		
+		<field>
+			<a>codiceNazione</a>
+			<b>siacTComune.siacTNazione.nazioneCode</b>
+		</field>
+		
+		<field>
+			<a>nazione</a>
+			<b>siacTComune.siacTNazione.nazioneDesc</b>
+		</field>
+		
+		<field>
+			<a>sedime</a>
+			<b>siacDViaTipo.viaTipoDesc</b>
+		</field>
+		
+		<field-exclude>
+			<a>principale</a>
+			<b>principale</b>
+		</field-exclude>
+		
+		<field-exclude>
+			<a>avviso</a>
+			<b>avviso</b>
+		</field-exclude>	
+		 
+		<field>
+			<a>numeroCivico</a>
+			<b>numeroCivico</b>
+		</field>	
+			
+		<field>
+			<a>cap</a>
+			<b>zipCode</b>
+		</field>
+		
+		<field>
+			<a>denominazione</a>
+			<b>toponimo</b>
+		</field>
+  	</mapping>  	
+  	
+  	<mapping map-id="SiacTIndirizzoMod_IndirizzoSoggetto">
+		<class-a>it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTIndirizzoSoggettoModFin</class-b>
+
+		<field>
+			<a>indirizzoId</a>
+			<b>indirizzoModId</b>
+		</field>
+		
+		<field>
+			<a>idComune</a>
+			<b>siacTComune.comuneId</b>
+		</field>
+		
+		<field>
+			<a>comune</a>
+			<b>siacTComune.comuneDesc</b>
+		</field>
+		
+		<field>
+			<a>provincia</a>
+			<b>siacTComune.siacRComuneProvincias[0].siacTProvincia.siglaAutomobilistica</b>
+		</field>
+		
+		<field>
+			<a>codiceNazione</a>
+			<b>siacTComune.siacTNazione.nazioneCode</b>
+		</field>
+		
+		<field>
+			<a>nazione</a>
+			<b>siacTComune.siacTNazione.nazioneDesc</b>
+		</field>		
+		
+		<field>
+			<a>sedime</a>
+			<b>siacDViaTipo.viaTipoDesc</b>
+		</field>
+		
+		<field-exclude>
+			<a>principale</a>
+			<b>principale</b>
+		</field-exclude>
+		
+		<field-exclude>
+			<a>avviso</a>
+			<b>avviso</b>
+		</field-exclude>	
+		 
+		<field>
+			<a>numeroCivico</a>
+			<b>numeroCivico</b>
+		</field>	
+			
+		<field>
+			<a>cap</a>
+			<b>zipCode</b>
+		</field>
+		
+		<field>
+			<a>denominazione</a>
+			<b>toponimo</b>
+		</field>
+  	</mapping>  	
+
+	<mapping map-id="SiacTModPag_ModalitaPagamentoSoggetto">
+		<class-a>it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTModpagFin</class-b>
+		
+		<field>
+			<a>bic</a>
+			<b>bic</b>
+		</field>
+		
+		<field>
+			<a>iban</a>
+			<b>iban</b>
+		</field>
+		
+		<field>
+			<a>contoCorrente</a>
+			<b>contocorrente</b>
+		</field>
+		
+		<field>
+			<a>intestazioneConto</a>
+			<b>contocorrenteIntestazione</b>
+		</field>
+	
+		<field>
+			<a>denominazioneBanca</a>
+			<b>denominazioneBanca</b>
+		</field>
+	
+		<field>
+			<a>perStipendi</a>
+			<b>perStipendi</b>
+		</field>
+	
+		<field>
+			<a>soggettoQuietanzante</a>
+			<b>quietanziante</b>
+		</field>
+
+		<field>
+			<a>codiceFiscaleQuietanzante</a>
+			<b>quietanzianteCodiceFiscale</b>
+		</field>
+		
+		<field>
+			<a>luogoNascitaQuietanzante</a>
+			<b>quietanzianteNascitaLuogo</b>
+		</field>
+		
+		<field>
+			<a date-format="dd/MM/yyyy">dataNascitaQuietanzante</a>
+			<b>quietanzanteNascitaData</b>
+		</field>
+		
+		<field>
+			<a>statoNascitaQuietanzante</a>
+			<b>quietanzianteNascitaStato</b>
+		</field>
+			
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>dataFineValidita</b>
+		</field>
+
+		<field-exclude type="one-way"> 
+		  <a>dataFineValidita</a> 
+		  <b>dataFineValidita</b> 
+		</field-exclude>           
+		
+		<field>
+			<a>modalitaAccreditoSoggetto.codice</a>
+			<b>siacDAccreditoTipo.accreditoTipoCode</b>
+		</field>
+
+		<field>
+			<a>modalitaAccreditoSoggetto.descrizione</a>
+			<b>siacDAccreditoTipo.accreditoTipoDesc</b>
+		</field>		
+  	</mapping>
+  	
+  	
+  	
+	<mapping map-id="SiacTModPagMod_ModalitaPagamentoSoggetto">
+		<class-a>it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTModpagModFin</class-b>
+		
+		<field>
+			<a>contoCorrente</a>
+			<b>contocorrente</b>
+		</field>
+	
+		<field>
+			<a>soggettoQuietanzante</a>
+			<b>quietanziante</b>
+		</field>
+
+		<field>
+			<a>codiceFiscaleQuietanzante</a>
+			<b>quietanzianteCodiceFiscale</b>
+		</field>
+		
+		<field>
+			<a>modalitaAccreditoSoggetto.codice</a>
+			<b>siacDAccreditoTipo.accreditoTipoCode</b>
+		</field>
+
+		<field>
+			<a>modalitaAccreditoSoggetto.descrizione</a>
+			<b>siacDAccreditoTipo.accreditoTipoDesc</b>
+		</field>		
+  	</mapping>  	
+  	
+	
+	<mapping map-id="SiacTSoggetto_Soggetto" >
+		<class-a>it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.Soggetto</class-b>
+		
+		<field>
+			<a>soggettoCode</a>
+			<b>codiceSoggetto</b>
+		</field>	
+		
+		<field>
+			<a>dataInizioValidita</a>
+			<b>dataValidita</b>
+		</field>
+		
+		<field>
+			<a>loginModifica</a>
+			<b>loginControlloPerModifica</b>
+		</field>
+		
+		<field>
+			<a>dataModifica</a>
+			<b>dataModifica</b>
+		</field>
+		
+		<field>
+			<a>loginModifica</a>
+			<b>loginModifica</b>
+		</field>
+		
+		<!-- 
+		<field>
+			<a>siacTPersonaFisica.nascitaData</a>
+			<b>dataNascita</b>
+		</field>
+		
+		<field>
+			<a>siacTPersonaFisica.cognome</a>
+			<b>cognome</b>
+		</field>
+		
+		<field>
+			<a>siacTPersonaFisica.nome</a>
+			<b>nome</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siacfinser.integration.entity.converter.SessoConverter">
+			<a>siacTPersonaFisica.sesso</a>  
+			<b>this</b> 
+		</field>		
+		 -->
+		 
+		<field>
+			<a>soggettoDesc</a>
+			<b>denominazione</b>
+		</field>
+		
+		<!-- 
+		<field>
+			<a>siacRSoggettoStatos.siacDSoggettoStato.soggettoStatoId</a>
+			<b>idStatoOperativoAnagrafica</b>
+		</field>
+    
+		<field>
+			<a>siacRSoggettoStatos.siacDSoggettoStato.soggettoStatoDesc</a>
+			<b>descrizioneStatoOperativoAnagrafica</b>
+		</field>	
+		-->		
+	</mapping>
+	
+	<mapping map-id="SiacTPersonaFisica_Soggetto" >
+		<class-a>it.csi.siac.siacfinser.integration.entity.SiacTPersonaFisicaFin</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.Soggetto</class-b>
+			<field>
+				<a>dataInizioValidita</a>
+				<b>dataValidita</b>
+			</field>
+			<field>
+				<a>nascitaData</a>
+				<b>dataNascita</b>
+			</field>
+			
+			<field custom-converter="it.csi.siac.siacfinser.integration.entity.converter.SessoConverter">
+				<a>sesso</a>  
+				<b>this</b> 
+		</field>			
+	</mapping>
+	
+	<mapping map-id="SiacTSoggetto_SedeSecondariaSoggetto" >
+		<class-a>it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.sedesecondaria.SedeSecondariaSoggetto</class-b>
+		
+		<field>
+			<a>soggettoDesc</a>
+			<b>denominazione</b>
+		</field>		
+		<field>
+			<a>soggettoCode</a>
+			<b>codiceSedeSecondaria</b>
+		</field>
+		
+		<field>
+			<a>loginCreazione</a>
+			<b>utenteCreazione</b>
+		</field>
+		
+		<field>
+			<a>loginModifica</a>
+			<b>utenteModifica</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTSoggettoMod_SedeSecondariaSoggetto" >
+		<class-a>it.csi.siac.siacfinser.integration.entity.SiacTSoggettoModFin</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.sedesecondaria.SedeSecondariaSoggetto</class-b>
+		<field>
+			<a>soggettoDesc</a>
+			<b>denominazione</b>
+		</field>		
+		<field>
+			<a>soggettoCode</a>
+			<b>codiceSedeSecondaria</b>
+		</field>
+		<field>
+			<a>loginOperazione</a>
+			<b>utenteCreazione</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTSoggettoMod_Soggetto" >
+		<class-a>it.csi.siac.siacfinser.integration.entity.SiacTSoggettoModFin</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.Soggetto</class-b>
+		
+		<field>
+			<a>soggettoCode</a>
+			<b>codiceSoggetto</b>
+		</field>	
+		
+		<field>
+			<a>dataInizioValidita</a>
+			<b>dataValidita</b>
+		</field>
+		
+		<!-- 
+		 <field>
+			<a>siacTPersonaFisicaMods.nascitaData</a>
+			<b>dataNascita</b>
+		</field>
+		
+		<field>
+			<a>siacTPersonaFisicaMods.cognome</a>
+			<b>cognome</b>
+		</field>
+		
+		<field>
+			<a>siacTPersonaFisicaMods.nome</a>
+			<b>nome</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siacfinser.integration.entity.converter.SessoConverter">
+			<a>siacTPersonaFisicaMods.sesso</a>  
+			<b>this</b> 
+		</field>		
+		 -->
+		 
+		<field>
+			<a>soggettoDesc</a>
+			<b>denominazione</b>
+		</field>
+		
+	</mapping>
+	
+	
+	
+	
+		<mapping map-id="SiacTCab_Banca" >
+		<class-a>it.csi.siac.siacfinser.integration.entity.SiacTCabFin</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.modpag.Banca</class-b>
+		<field>
+			<a>abi.codice</a>
+			<b>abi</b>
+		</field>		
+
+		<field>
+			<a>codice</a>
+			<b>cab</b>
+		</field>		
+
+		<field>
+			<a>abi.descrizione</a>
+			<b>descrizione</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>descrizioneFiliale</b>
+		</field>
+		
+	</mapping>
+	
+	
+	
+	
+	
+</mappings>

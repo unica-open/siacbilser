@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="BaseRicercaSoggetti_RicercaSoggetti">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.BaseRicercaSoggetti
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggetti
+		</class-b>
+
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>codice</a>
+			<b>parametroRicercaSoggetto.codiceSoggetto</b>
+		</field>
+		
+		<field>
+			<a>partitaIva</a>
+			<b>parametroRicercaSoggetto.partitaIva</b>
+		</field>
+
+		<field>
+			<a>codiceFiscale</a>
+			<b>parametroRicercaSoggetto.codiceFiscale</b>
+		</field>
+	</mapping>
+
+
+	<mapping map-id="RicercaSinteticaSoggetti_RicercaSoggetti">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.RicercaSinteticaSoggetti
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggetti
+		</class-b>
+
+		<field map-id="BaseRicercaSoggetti_RicercaSoggetti">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>denominazione</a>
+			<b>parametroRicercaSoggetto.denominazione</b>
+		</field>
+
+		<field>
+			<a>stato</a>
+			<b>parametroRicercaSoggetto.statoSoggetto</b>
+		</field>
+
+	</mapping>
+
+
+
+
+	<mapping map-id="RicercaDettaglioSoggetti_RicercaSoggettoPerChiave">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.RicercaDettaglioSoggetti
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave
+		</class-b>
+
+		<field map-id="BaseRicercaSoggetti_RicercaSoggetti">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		
+
+	</mapping>
+
+
+
+	<mapping map-id="RicercaSinteticaSoggettiResponse_RicercaSoggettiResponse"
+		wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.RicercaSinteticaSoggettiResponse
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettiResponse
+		</class-b>
+
+		<field map-id="BaseResponse_ServiceResponse">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field map-id="Soggetto_Soggetto">
+			<a>soggetti</a>
+			<b>soggetti</b>
+		</field>
+	</mapping>
+
+
+	<mapping map-id="RicercaDettaglioSoggettiResponse_RicercaSoggettiResponse"
+		wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.RicercaDettaglioSoggettiResponse
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettiResponse
+		</class-b>
+
+		<field map-id="BaseResponse_ServiceResponse">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field map-id="Soggetto_Soggetto">
+			<a>soggetti</a>
+			<b>soggetti</b>
+		</field>
+	</mapping>
+
+
+
+	<mapping map-id="RicercaDettaglioSoggettiResponse_RicercaSoggettoPerChiaveResponse"
+		wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.RicercaDettaglioSoggettiResponse
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse
+		</class-b>
+
+		<field map-id="BaseResponse_ServiceResponse">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field map-id="Soggetto_Soggetto">
+			<a>soggetti[0]</a>
+			<b>soggetto</b>
+			<a-hint>it.csi.siac.siacintegser.model.integ.Soggetto</a-hint>
+		</field>
+	</mapping>
+
+
+
+
+
+
+	<mapping map-id="Soggetto_Soggetto" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.model.integ.Soggetto
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.Soggetto
+		</class-b>
+
+		<field map-id="EntitaBase_Entita">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>codice</a>
+			<b>codiceSoggetto</b>
+		</field>
+
+		<field>
+			<a>naturaGiuridica.codice</a>
+			<b>tipoSoggetto.soggettoTipoCode</b>
+		</field>
+
+		<field>
+			<a>naturaGiuridica.descrizione</a>
+			<b>tipoSoggetto.soggettoTipoDesc</b>
+		</field>
+
+		<field>
+			<a>sesso</a>
+			<b>sesso</b>
+		</field>
+
+		<field>
+			<a>codiceFiscale</a>
+			<b>codiceFiscale</b>
+		</field>
+
+		<field>
+			<a>codiceFiscaleEstero</a>
+			<b>codiceFiscaleEstero</b>
+		</field>
+
+		<field>
+			<a>partitaIva</a>
+			<b>partitaIva</b>
+		</field>
+
+
+		<field>
+			<a>cognome</a>
+			<b>cognome</b>
+		</field>
+
+
+		<field>
+			<a>nome</a>
+			<b>nome</b>
+		</field>
+
+
+		<field>
+			<a>stato.codice</a>
+			<b create-method="valueOf">statoOperativo</b>
+		</field>
+
+		<field>
+			<a>dataNascita</a>
+			<b>dataNascita</b>
+		</field>
+
+
+		<field>
+			<a>ragioneSociale</a>
+			<b>denominazione</b>
+		</field>
+
+
+		<field map-id="Contatto_ListContatti">
+			<a>contatti</a>
+			<b>contatti</b>
+		</field>
+
+
+		<field map-id="Recapito_ListIndirizziSoggetto">
+			<a>indirizzoPrincipale</a>
+			<b>indirizzi</b>
+		</field>
+
+		<field map-id="Sede_SedeSecondariaSoggetto">
+			<a>elencoSedi</a>
+			<b>sediSecondarie</b>
+		</field>
+
+
+		<field map-id="ModalitaPagamento_ModalitaPagamentoSoggetto">
+			<a>elencoModalitaPagamento</a>
+			<b>modalitaPagamentoList</b>
+		</field>
+
+		<field
+			custom-converter="it.csi.siac.siacintegser.business.service.util.converter.ListStringListSoggettiConverter">
+			<a>codiciSoggettiCollegatiPrecedenti</a>
+			<b>elencoSoggettiPrecedenti</b>
+		</field>
+
+		<field map-id="String_Soggetto"
+			custom-converter="it.csi.siac.siacintegser.business.service.util.converter.ListStringListSoggettiConverter">
+			<a>codiciSoggettiCollegatiSuccessivi</a>
+			<b>elencoSoggettiSuccessivi</b>
+		</field>
+	</mapping>
+
+
+	<mapping map-id="Contatto_ListContatti" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.model.integ.Contatti
+		</class-a>
+		<class-b>java.util.List
+		</class-b>
+
+
+		<field
+			custom-converter="it.csi.siac.siacintegser.business.service.util.converter.ContattiListContattoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+	</mapping>
+
+
+	<mapping map-id="Recapito_ListIndirizziSoggetto" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.model.integ.Recapito
+		</class-a>
+		<class-b>java.util.List
+		</class-b>
+
+
+		<field
+			custom-converter="it.csi.siac.siacintegser.business.service.util.converter.RecapitoListIndirizzoSoggettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+	</mapping>
+
+
+	<mapping map-id="Sede_SedeSecondariaSoggetto" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.model.integ.Sede
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.sedesecondaria.SedeSecondariaSoggetto
+		</class-b>
+
+		<field map-id="EntitaBase_Entita">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>denominazione</b>
+		</field>
+	
+		<field >
+			<a>recapito.sedime</a>
+			<b>indirizzoSoggettoPrincipale.sedime</b>
+		</field>
+		
+		<field >
+			<a>recapito.indirizzo</a>
+			<b>indirizzoSoggettoPrincipale.denominazione</b>
+		</field>		
+		
+		<field >
+			<a>recapito.numeroCivico</a>
+			<b>indirizzoSoggettoPrincipale.numeroCivico</b>
+		</field>
+		
+		<field >
+			<a>recapito.cap</a>
+			<b>indirizzoSoggettoPrincipale.cap</b>
+		</field>
+		
+		<field >
+			<a>recapito.comune</a>
+			<b>indirizzoSoggettoPrincipale.comune</b>
+		</field>
+		
+			
+		<field >
+			<a>recapito.codiceIstatComune</a>
+			<b>indirizzoSoggettoPrincipale.idComune</b>
+		</field>
+		
+		<field >
+			<a>recapito.provincia</a>
+			<b>indirizzoSoggettoPrincipale.provincia</b>
+		</field>
+		
+		<field >
+			<a>stato.codice</a>
+			<b>statoOperativoSedeSecondaria</b>
+		</field>
+	</mapping>
+
+
+
+	<mapping map-id="Recapito_IndirizzoSoggetto" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.model.integ.Recapito
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto
+		</class-b>
+
+		<field map-id="EntitaBase_Entita">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>sedime</a>
+			<b>sedime</b>
+		</field>
+
+		<field>
+			<a>indirizzo</a>
+			<b>denominazione</b>
+		</field>
+
+		<field>
+			<a>numeroCivico</a>
+			<b>numeroCivico</b>
+		</field>
+		
+		<field>
+			<a>cap</a>
+			<b>cap</b>
+		</field>
+		
+		<field>
+			<a>comune</a>
+			<b>comune</b>
+		</field>
+		
+		<field>
+			<a>provincia</a>
+			<b>provincia</b>
+		</field>
+		
+		<field>
+			<a>codiceIstatComune</a>
+			<b>idComune</b>
+		</field>
+		
+		<field>
+			<a>codiceNazione</a>
+			<b>codiceNazione</b>
+		</field>
+		
+		<field>
+			<a>descrizioneNazione</a>
+			<b>nazione</b>
+		</field>
+		
+	</mapping>
+
+
+
+	<mapping map-id="ModalitaPagamento_ModalitaPagamentoSoggetto" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.model.integ.ModalitaPagamento
+		</class-a>
+		<class-b>it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto
+		</class-b>
+
+		<field map-id="EntitaBase_Entita">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>codice</a>
+			<b>codiceModalitaPagamento</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>descrizione</b>
+		</field>
+
+		<field>
+			<a>codiceTipoAccredito</a>
+			<b>modalitaAccreditoSoggetto.codice</b>
+		</field>
+
+		<field>
+			<a>descrizioneTipoAccredito</a>
+			<b>modalitaAccreditoSoggetto.descrizione</b>
+		</field>
+
+		<field>
+			<a>sede.descrizione</a>
+			<b>associatoA</b>
+		</field>
+
+		<field>
+			<a>stato.codice</a>
+			<b>descrizioneStatoModalitaPagamento</b>
+		</field>
+	</mapping>
+
+
+
+
+
+
+</mappings>

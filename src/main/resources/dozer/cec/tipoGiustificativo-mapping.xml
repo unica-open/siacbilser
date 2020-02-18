@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     
+     <mapping map-id="SiacDGiustificativo_TipoGiustificativo" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.TipoGiustificativo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDGiustificativo</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>giustCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>giustDesc</b>
+		</field>
+		
+		<field>
+			<a>percentualeAnticipoTrasferta</a>
+			<b>giustAntTrasfertaPerc</b>
+		</field>
+		
+		<field>
+			<a>percentualeAnticipoMissione</a>
+			<b>giustAntMissionePerc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>giustImporto</b>
+		</field>
+		
+		<field custom-converter-id="tipoGiustificativoTipologiaGiustificativoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoGiustificativoStatoOperativoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<!-- Lotto M -->
+		<field custom-converter-id="tipoGiustificativoCassaEconomaleConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+</mappings>

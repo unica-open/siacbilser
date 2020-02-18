@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 
+  	
+	<mapping map-id="SiacTProvCassa_ProvvisorioDiCassa">
+		<class-a>it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTProvCassaFin</class-b>
+		
+		<field>
+			<a>idProvvisorioDiCassa</a>
+			<b>provcId</b>
+		</field>
+  	
+		<field>
+			<a>anno</a>
+			<b>provcAnno</b>
+		</field>
+  	
+		<field>
+			<a>numero</a>
+			<b>provcNumero</b>
+		</field>
+  	
+		<field>
+			<a>dataEmissione</a>
+			<b>provcDataEmissione</b>
+		</field>
+  	
+		<field>
+			<a>dataTrasmissione</a>
+			<b>provcDataTrasmissione</b>
+		</field>
+	  	
+		<field>
+			<a>accettato</a>
+			<b>accettato</b>
+		</field>
+	  	
+		<field>
+			<a>note</a>
+			<b>note</b>
+		</field>
+	  	
+		<field>
+			<a>dataAnnullamento</a>
+			<b>provcDataAnnullamento</b>
+		</field>
+		
+		<field>
+			<a>dataConvalida</a>
+			<b>provcDataConvalida</b>
+		</field>
+			
+		<field>
+			<a>importo</a>
+			<b>provcImporto</b>
+		</field>
+		
+		<field>
+			<a>causale</a>
+			<b>provcCausale</b>
+		</field>
+		
+		<field>
+			<a>denominazioneSoggetto</a>
+			<b>provcDenomSoggetto</b>
+		</field>
+		
+		<field>
+			<a>subCausale</a>
+			<b>provcSubcausale</b>
+		</field>
+
+		<field>
+			<a>dataInvioServizio</a>
+			<b>provcDataInvioServizio</b>
+		</field>
+		
+		<field>
+			<a>dataPresaInCaricoServizio</a>
+			<b>provcDataPresaInCaricoServizio</b>
+		</field>
+		
+		<field>
+			<a>dataRifiutoErrataAttribuzione</a>
+			<b>provcDataRifiutoErrataAttribuzione</b>
+		</field>
+
+  	</mapping>
+  
+
+</mappings>

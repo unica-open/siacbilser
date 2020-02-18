@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacDPccCodice_CodicePCC_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.CodicePCC</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDPccCodice</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>pcccodCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>pcccodDesc</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacDPccCodice_CodicePCC" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.CodicePCC</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDPccCodice</class-b>
+		
+		<field map-id="SiacDPccCodice_CodicePCC_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="codicePCCStrutturaAmministrativoContabileConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+</mappings>

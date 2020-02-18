@@ -1,0 +1,1546 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<stampaRicevutaRendicontoRichiestaEconomaleReportModel>
+    <dataStampa>2015-11-10T11:46:05.548+01:00</dataStampa>
+    <denominazioneRichiedente>NEIROTTI FLORIANA</denominazioneRichiedente>
+    <modalitaPagamentoPerStampa>Conto corrente bancario</modalitaPagamentoPerStampa>
+    <rendicontoRichiesta>
+        <dataCreazione>2015-10-15T15:05:58.294+02:00</dataCreazione>
+        <dataInizioValidita>2015-10-15T15:05:58.294+02:00</dataInizioValidita>
+        <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>54</uid>
+        <giustificativi>
+            <giustificativo>
+                <dataCreazione>2015-10-30T11:23:33.410+01:00</dataCreazione>
+                <dataInizioValidita>2015-10-30T11:23:33.410+01:00</dataInizioValidita>
+                <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>427</uid>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>15</uid>
+                    <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Ente Test copia da 1</nome>
+                </ente>
+                <flagInclusoNelPagamento>true</flagInclusoNelPagamento>
+                <importoGiustificativo>65.13</importoGiustificativo>
+                <numeroGiustificativo></numeroGiustificativo>
+                <rendicontoRichiesta>
+                    <dataCreazione>2015-10-15T15:05:58.294+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-15T15:05:58.294+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>54</uid>
+                    <giustificativi/>
+                    <dataRendiconto>2015-10-30T11:23:30.605+01:00</dataRendiconto>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <importoIntegrato>41.8300</importoIntegrato>
+                    <importoRestituito>0</importoRestituito>
+                    <note></note>
+                </rendicontoRichiesta>
+                <statoOperativoGiustificativi>VALIDO</statoOperativoGiustificativi>
+                <tipoGiustificativo>
+                    <dataCreazione>2015-10-13T11:11:15.041+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-13T11:11:15.041+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-13T11:11:15.041+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>48</uid>
+                    <codice>R-5</codice>
+                    <descrizione>Scontrino fiscale</descrizione>
+                    <cassaEconomale>
+                        <dataCreazione>2015-07-17T10:38:47+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-07-17T17:07:18.477+02:00</dataModifica>
+                        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>18</uid>
+                        <codice>05</codice>
+                        <descrizione>CASSA TEST FLORIANA</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>15</uid>
+                            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Ente Test copia da 1</nome>
+                        </ente>
+                    </cassaEconomale>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <percentualeAnticipoMissione>70.00</percentualeAnticipoMissione>
+                    <percentualeAnticipoTrasferta>80.00</percentualeAnticipoTrasferta>
+                    <statoOperativoTipoGiustificativo>VALIDO</statoOperativoTipoGiustificativo>
+                    <tipologiaGiustificativo>RIMBORSO</tipologiaGiustificativo>
+                </tipoGiustificativo>
+                <valuta>
+                    <dataCreazione>2014-05-23T09:43:54.834+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2014-05-23T09:43:54.834+02:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>2389</uid>
+                    <codice>EUR</codice>
+                    <descrizione>Euro</descrizione>
+                </valuta>
+            </giustificativo>
+            <giustificativo>
+                <dataCreazione>2015-10-30T11:23:33.410+01:00</dataCreazione>
+                <dataInizioValidita>2015-10-30T11:23:33.410+01:00</dataInizioValidita>
+                <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>428</uid>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>15</uid>
+                    <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Ente Test copia da 1</nome>
+                </ente>
+                <flagInclusoNelPagamento>true</flagInclusoNelPagamento>
+                <importoGiustificativo>123.00</importoGiustificativo>
+                <numeroGiustificativo></numeroGiustificativo>
+                <rendicontoRichiesta>
+                    <dataCreazione>2015-10-15T15:05:58.294+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-15T15:05:58.294+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>54</uid>
+                    <giustificativi/>
+                    <dataRendiconto>2015-10-30T11:23:30.605+01:00</dataRendiconto>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <importoIntegrato>41.8300</importoIntegrato>
+                    <importoRestituito>0</importoRestituito>
+                    <note></note>
+                </rendicontoRichiesta>
+                <statoOperativoGiustificativi>VALIDO</statoOperativoGiustificativi>
+                <tipoGiustificativo>
+                    <dataCreazione>2015-10-13T11:08:54.079+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-13T11:08:54.079+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-13T11:08:54.079+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>45</uid>
+                    <codice>R-2</codice>
+                    <descrizione>Biglietto aereo</descrizione>
+                    <cassaEconomale>
+                        <dataCreazione>2015-07-17T10:38:47+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-07-17T17:07:18.477+02:00</dataModifica>
+                        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>18</uid>
+                        <codice>05</codice>
+                        <descrizione>CASSA TEST FLORIANA</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>15</uid>
+                            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Ente Test copia da 1</nome>
+                        </ente>
+                    </cassaEconomale>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <percentualeAnticipoMissione>100.00</percentualeAnticipoMissione>
+                    <percentualeAnticipoTrasferta>100.00</percentualeAnticipoTrasferta>
+                    <statoOperativoTipoGiustificativo>VALIDO</statoOperativoTipoGiustificativo>
+                    <tipologiaGiustificativo>RIMBORSO</tipologiaGiustificativo>
+                </tipoGiustificativo>
+                <valuta>
+                    <dataCreazione>2014-05-23T09:43:54.834+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2014-05-23T09:43:54.834+02:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>2389</uid>
+                    <codice>EUR</codice>
+                    <descrizione>Euro</descrizione>
+                </valuta>
+            </giustificativo>
+            <giustificativo>
+                <dataCreazione>2015-10-30T11:23:33.410+01:00</dataCreazione>
+                <dataInizioValidita>2015-10-30T11:23:33.410+01:00</dataInizioValidita>
+                <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>429</uid>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>15</uid>
+                    <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Ente Test copia da 1</nome>
+                </ente>
+                <flagInclusoNelPagamento>true</flagInclusoNelPagamento>
+                <importoGiustificativo>112.00</importoGiustificativo>
+                <numeroGiustificativo></numeroGiustificativo>
+                <rendicontoRichiesta>
+                    <dataCreazione>2015-10-15T15:05:58.294+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-15T15:05:58.294+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>54</uid>
+                    <giustificativi/>
+                    <dataRendiconto>2015-10-30T11:23:30.605+01:00</dataRendiconto>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <importoIntegrato>41.8300</importoIntegrato>
+                    <importoRestituito>0</importoRestituito>
+                    <note></note>
+                </rendicontoRichiesta>
+                <statoOperativoGiustificativi>VALIDO</statoOperativoGiustificativi>
+                <tipoGiustificativo>
+                    <dataCreazione>2015-10-13T11:10:33.742+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-13T11:10:33.742+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-13T11:10:33.742+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>47</uid>
+                    <codice>R-4</codice>
+                    <descrizione>Fattura</descrizione>
+                    <cassaEconomale>
+                        <dataCreazione>2015-07-17T10:38:47+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-07-17T17:07:18.477+02:00</dataModifica>
+                        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>18</uid>
+                        <codice>05</codice>
+                        <descrizione>CASSA TEST FLORIANA</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>15</uid>
+                            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Ente Test copia da 1</nome>
+                        </ente>
+                    </cassaEconomale>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <percentualeAnticipoMissione>70.00</percentualeAnticipoMissione>
+                    <percentualeAnticipoTrasferta>100.00</percentualeAnticipoTrasferta>
+                    <statoOperativoTipoGiustificativo>VALIDO</statoOperativoTipoGiustificativo>
+                    <tipologiaGiustificativo>RIMBORSO</tipologiaGiustificativo>
+                </tipoGiustificativo>
+                <valuta>
+                    <dataCreazione>2014-05-23T09:43:54.834+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2014-05-23T09:43:54.834+02:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>2389</uid>
+                    <codice>EUR</codice>
+                    <descrizione>Euro</descrizione>
+                </valuta>
+            </giustificativo>
+        </giustificativi>
+        <dataRendiconto>2015-10-30T11:23:30.605+01:00</dataRendiconto>
+        <ente>
+            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>15</uid>
+            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+            <gestioneLivelli/>
+            <nome>Ente Test copia da 1</nome>
+        </ente>
+        <impegno>
+            <stato>VALIDO</stato>
+            <uid>47885</uid>
+            <annoCapitoloOrigine>2015</annoCapitoloOrigine>
+            <annoMovimento>2015</annoMovimento>
+            <annoOriginePlur>0</annoOriginePlur>
+            <annoRiaccertato>0</annoRiaccertato>
+            <attoAmministrativo>
+                <dataCreazione>2015-05-18T10:32:35.042+02:00</dataCreazione>
+                <dataInizioValidita>2015-05-18T10:32:35.042+02:00</dataInizioValidita>
+                <dataModifica>2015-05-18T10:32:35.042+02:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>16</uid>
+                <anno>2015</anno>
+                <note>sdfgsdfg</note>
+                <numero>1</numero>
+                <oggetto>drtertertert</oggetto>
+                <tipoAtto>
+                    <dataCreazione>2014-10-29T17:02:13.969+01:00</dataCreazione>
+                    <dataInizioValidita>2014-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2014-10-29T17:02:13.969+01:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>114</uid>
+                    <codice>DCID</codice>
+                    <descrizione>DELIBERA DI CIRCOSCRIZIONE DELEGATA</descrizione>
+                    <progressivoAutomatico>false</progressivoAutomatico>
+                </tipoAtto>
+            </attoAmministrativo>
+            <flagDaRiaccertamento>false</flagDaRiaccertamento>
+            <importoAttuale>2000.00</importoAttuale>
+            <numero>401</numero>
+            <numeroArticoloOrigine>0</numeroArticoloOrigine>
+            <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+            <numeroUEBOrigine>0</numeroUEBOrigine>
+            <parereFinanziario>false</parereFinanziario>
+            <validato>true</validato>
+            <annoFinanziamento>0</annoFinanziamento>
+            <chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+            <descrizioneStatoOperativoMovimentoGestioneSpesa>DEFINITIVO NON LIQUIDABILE</descrizioneStatoOperativoMovimentoGestioneSpesa>
+            <numeroAccFinanziamento>0</numeroAccFinanziamento>
+            <statoOperativoMovimentoGestioneSpesa>N</statoOperativoMovimentoGestioneSpesa>
+            <capitoloUscitaGestione>
+                <dataCreazione>2015-10-12T14:41:18.074+02:00</dataCreazione>
+                <dataInizioValidita>2015-10-12T14:41:18.074+02:00</dataInizioValidita>
+                <dataModifica>2015-10-12T14:41:18.074+02:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>55953</uid>
+                <annoCapitolo>2015</annoCapitolo>
+                <bilancio>
+                    <dataCreazione>2015-04-20T10:57:10.400+02:00</dataCreazione>
+                    <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2015-04-20T10:57:10.400+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>46</uid>
+                    <anno>2015</anno>
+                    <faseEStatoAttualeBilancio>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <faseBilancio>GESTIONE</faseBilancio>
+                    </faseEStatoAttualeBilancio>
+                </bilancio>
+                <categoriaCapitolo>
+                    <stato>VALIDO</stato>
+                    <uid>78</uid>
+                    <codice>STD</codice>
+                    <descrizione>Standard</descrizione>
+                </categoriaCapitolo>
+                <descrizione>Cap U 12101/1</descrizione>
+                <descrizioneArticolo>Cap U 12101/1</descrizioneArticolo>
+                <elementoPianoDeiConti>
+                    <stato>VALIDO</stato>
+                    <uid>1707830</uid>
+                    <codice>U.1.03.02.02.001</codice>
+                    <descrizione>Rimborso per viaggio e trasloco</descrizione>
+                    <livello>0</livello>
+                    <tipoClassificatore>
+                        <stato>VALIDO</stato>
+                        <uid>1288</uid>
+                        <codice>PDC_V</codice>
+                    </tipoClassificatore>
+                </elementoPianoDeiConti>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>15</uid>
+                    <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Ente Test copia da 1</nome>
+                </ente>
+                <flagRilevanteIva>false</flagRilevanteIva>
+                <numeroArticolo>1</numeroArticolo>
+                <numeroCapitolo>12101</numeroCapitolo>
+                <numeroUEB>1</numeroUEB>
+                <statoOperativoElementoDiBilancio>VALIDO</statoOperativoElementoDiBilancio>
+                <tipoCapitolo>CAPITOLO_USCITA_GESTIONE</tipoCapitolo>
+                <uidCapitoloEquivalente>0</uidCapitoloEquivalente>
+                <uidExCapitolo>0</uidExCapitolo>
+            </capitoloUscitaGestione>
+        </impegno>
+        <importoIntegrato>41.8300</importoIntegrato>
+        <importoRestituito>0</importoRestituito>
+        <movimento>
+            <dataCreazione>2015-10-30T11:23:33.410+01:00</dataCreazione>
+            <dataInizioValidita>2015-10-30T11:23:33.410+01:00</dataInizioValidita>
+            <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+            <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>443</uid>
+            <bic></bic>
+            <contoCorrente></contoCorrente>
+            <dataMovimento>2015-10-15T00:00:00+02:00</dataMovimento>
+            <dettaglioPagamento>IT76H0105425900000000715296</dettaglioPagamento>
+            <ente>
+                <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>15</uid>
+                <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                <gestioneLivelli/>
+                <nome>Ente Test copia da 1</nome>
+            </ente>
+            <modalitaPagamentoCassa>
+                <dataCreazione>2014-10-29T11:18:08.374+01:00</dataCreazione>
+                <dataInizioValidita>2014-01-01T00:00:00+01:00</dataInizioValidita>
+                <dataModifica>2014-10-29T11:18:08.374+01:00</dataModifica>
+                <loginOperazione>admin</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>27</uid>
+                <codice>CC</codice>
+                <descrizione>Conto Corrente Bancario</descrizione>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>15</uid>
+                    <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Ente Test copia da 1</nome>
+                </ente>
+                <tipoDiCassa>CONTO_CORRENTE_BANCARIO</tipoDiCassa>
+            </modalitaPagamentoCassa>
+            <modalitaPagamentoDipendente>
+                <dataCreazione>2015-04-22T11:54:40.682+02:00</dataCreazione>
+                <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                <dataModifica>2015-04-22T11:54:40.682+02:00</dataModifica>
+                <loginOperazione>admin</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>76</uid>
+                <codice>CCB</codice>
+                <descrizione>Conto corrente bancario</descrizione>
+                <modalitaAccreditoSoggetto>
+                    <stato>VALIDO</stato>
+                    <uid>214</uid>
+                    <codice>CCB</codice>
+                    <descrizione>Conto corrente bancario</descrizione>
+                    <priorita>0</priorita>
+                </modalitaAccreditoSoggetto>
+            </modalitaPagamentoDipendente>
+            <numeroMovimento>10</numeroMovimento>
+        </movimento>
+        <note></note>
+        <richiestaEconomale>
+            <dataCreazione>2015-10-14T18:32:05.783+02:00</dataCreazione>
+            <dataInizioValidita>2015-10-14T18:32:05.783+02:00</dataInizioValidita>
+            <dataModifica>2015-10-30T11:23:33.486+01:00</dataModifica>
+            <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>287</uid>
+            <giustificativi>
+                <giustificativo>
+                    <dataCreazione>2015-10-14T18:32:05.783+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-14T18:32:05.783+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-14T18:32:05.783+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>386</uid>
+                    <dataEmissione>2015-10-14T18:31:36.907+02:00</dataEmissione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <flagInclusoNelPagamento>true</flagInclusoNelPagamento>
+                    <importoGiustificativo>34.00</importoGiustificativo>
+                    <importoSpettanteGiustificativo>23.80</importoSpettanteGiustificativo>
+                    <statoOperativoGiustificativi>VALIDO</statoOperativoGiustificativi>
+                    <tipoGiustificativo>
+                        <dataCreazione>2015-10-13T11:13:00.624+02:00</dataCreazione>
+                        <dataInizioValidita>2015-10-13T11:13:00.624+02:00</dataInizioValidita>
+                        <dataModifica>2015-10-13T11:13:00.624+02:00</dataModifica>
+                        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>51</uid>
+                        <codice>A-3</codice>
+                        <descrizione>Mezzi pubblici</descrizione>
+                        <cassaEconomale>
+                            <dataCreazione>2015-07-17T10:38:47+02:00</dataCreazione>
+                            <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2015-07-17T17:07:18.477+02:00</dataModifica>
+                            <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>18</uid>
+                            <codice>05</codice>
+                            <descrizione>CASSA TEST FLORIANA</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+<stato>VALIDO</stato>
+<uid>15</uid>
+<codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+<gestioneLivelli/>
+<nome>Ente Test copia da 1</nome>
+                            </ente>
+                        </cassaEconomale>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>15</uid>
+                            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Ente Test copia da 1</nome>
+                        </ente>
+                        <percentualeAnticipoMissione>70.00</percentualeAnticipoMissione>
+                        <percentualeAnticipoTrasferta>80.00</percentualeAnticipoTrasferta>
+                        <statoOperativoTipoGiustificativo>VALIDO</statoOperativoTipoGiustificativo>
+                        <tipologiaGiustificativo>ANTICIPO</tipologiaGiustificativo>
+                    </tipoGiustificativo>
+                    <valuta>
+                        <dataCreazione>2014-05-23T09:43:54.834+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-05-23T09:43:54.834+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>2389</uid>
+                        <codice>EUR</codice>
+                        <descrizione>Euro</descrizione>
+                    </valuta>
+                </giustificativo>
+                <giustificativo>
+                    <dataCreazione>2015-10-14T18:32:05.783+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-14T18:32:05.783+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-14T18:32:05.783+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>385</uid>
+                    <dataEmissione>2015-10-14T18:31:22.150+02:00</dataEmissione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <flagInclusoNelPagamento>true</flagInclusoNelPagamento>
+                    <importoGiustificativo>90.00</importoGiustificativo>
+                    <importoSpettanteGiustificativo>63.00</importoSpettanteGiustificativo>
+                    <statoOperativoGiustificativi>VALIDO</statoOperativoGiustificativi>
+                    <tipoGiustificativo>
+                        <dataCreazione>2015-10-13T11:14:03.279+02:00</dataCreazione>
+                        <dataInizioValidita>2015-10-13T11:14:03.279+02:00</dataInizioValidita>
+                        <dataModifica>2015-10-13T11:14:03.279+02:00</dataModifica>
+                        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>53</uid>
+                        <codice>A-5</codice>
+                        <descrizione>Pasti</descrizione>
+                        <cassaEconomale>
+                            <dataCreazione>2015-07-17T10:38:47+02:00</dataCreazione>
+                            <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2015-07-17T17:07:18.477+02:00</dataModifica>
+                            <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>18</uid>
+                            <codice>05</codice>
+                            <descrizione>CASSA TEST FLORIANA</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+<stato>VALIDO</stato>
+<uid>15</uid>
+<codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+<gestioneLivelli/>
+<nome>Ente Test copia da 1</nome>
+                            </ente>
+                        </cassaEconomale>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>15</uid>
+                            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Ente Test copia da 1</nome>
+                        </ente>
+                        <percentualeAnticipoMissione>70.00</percentualeAnticipoMissione>
+                        <percentualeAnticipoTrasferta>80.00</percentualeAnticipoTrasferta>
+                        <statoOperativoTipoGiustificativo>VALIDO</statoOperativoTipoGiustificativo>
+                        <tipologiaGiustificativo>ANTICIPO</tipologiaGiustificativo>
+                    </tipoGiustificativo>
+                    <valuta>
+                        <dataCreazione>2014-05-23T09:43:54.834+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-05-23T09:43:54.834+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>2389</uid>
+                        <codice>EUR</codice>
+                        <descrizione>Euro</descrizione>
+                    </valuta>
+                </giustificativo>
+                <giustificativo>
+                    <dataCreazione>2015-10-14T18:32:05.783+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-14T18:32:05.783+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-14T18:32:05.783+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>384</uid>
+                    <dataEmissione>2015-10-14T18:30:59.299+02:00</dataEmissione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <flagInclusoNelPagamento>true</flagInclusoNelPagamento>
+                    <importoGiustificativo>180.00</importoGiustificativo>
+                    <importoSpettanteGiustificativo>126.00</importoSpettanteGiustificativo>
+                    <statoOperativoGiustificativi>VALIDO</statoOperativoGiustificativi>
+                    <tipoGiustificativo>
+                        <dataCreazione>2015-10-13T11:13:29.837+02:00</dataCreazione>
+                        <dataInizioValidita>2015-10-13T11:13:29.837+02:00</dataInizioValidita>
+                        <dataModifica>2015-10-13T11:13:29.837+02:00</dataModifica>
+                        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>52</uid>
+                        <codice>A-4</codice>
+                        <descrizione>Pernottamento</descrizione>
+                        <cassaEconomale>
+                            <dataCreazione>2015-07-17T10:38:47+02:00</dataCreazione>
+                            <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2015-07-17T17:07:18.477+02:00</dataModifica>
+                            <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>18</uid>
+                            <codice>05</codice>
+                            <descrizione>CASSA TEST FLORIANA</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+<stato>VALIDO</stato>
+<uid>15</uid>
+<codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+<gestioneLivelli/>
+<nome>Ente Test copia da 1</nome>
+                            </ente>
+                        </cassaEconomale>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>15</uid>
+                            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Ente Test copia da 1</nome>
+                        </ente>
+                        <percentualeAnticipoMissione>70.00</percentualeAnticipoMissione>
+                        <percentualeAnticipoTrasferta>80.00</percentualeAnticipoTrasferta>
+                        <statoOperativoTipoGiustificativo>VALIDO</statoOperativoTipoGiustificativo>
+                        <tipologiaGiustificativo>ANTICIPO</tipologiaGiustificativo>
+                    </tipoGiustificativo>
+                    <valuta>
+                        <dataCreazione>2014-05-23T09:43:54.834+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-05-23T09:43:54.834+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>2389</uid>
+                        <codice>EUR</codice>
+                        <descrizione>Euro</descrizione>
+                    </valuta>
+                </giustificativo>
+                <giustificativo>
+                    <dataCreazione>2015-10-14T18:32:05.783+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-14T18:32:05.783+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-14T18:32:05.783+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>383</uid>
+                    <dataEmissione>2015-10-14T18:30:42.881+02:00</dataEmissione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <flagInclusoNelPagamento>true</flagInclusoNelPagamento>
+                    <importoGiustificativo>65.00</importoGiustificativo>
+                    <importoSpettanteGiustificativo>45.50</importoSpettanteGiustificativo>
+                    <statoOperativoGiustificativi>VALIDO</statoOperativoGiustificativi>
+                    <tipoGiustificativo>
+                        <dataCreazione>2015-10-13T11:11:51.505+02:00</dataCreazione>
+                        <dataInizioValidita>2015-10-13T11:11:51.505+02:00</dataInizioValidita>
+                        <dataModifica>2015-10-13T11:11:51.505+02:00</dataModifica>
+                        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>49</uid>
+                        <codice>A-1</codice>
+                        <descrizione>Viaggio aereo</descrizione>
+                        <cassaEconomale>
+                            <dataCreazione>2015-07-17T10:38:47+02:00</dataCreazione>
+                            <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2015-07-17T17:07:18.477+02:00</dataModifica>
+                            <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>18</uid>
+                            <codice>05</codice>
+                            <descrizione>CASSA TEST FLORIANA</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+<stato>VALIDO</stato>
+<uid>15</uid>
+<codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+<gestioneLivelli/>
+<nome>Ente Test copia da 1</nome>
+                            </ente>
+                        </cassaEconomale>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>15</uid>
+                            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Ente Test copia da 1</nome>
+                        </ente>
+                        <percentualeAnticipoMissione>70.00</percentualeAnticipoMissione>
+                        <percentualeAnticipoTrasferta>80.00</percentualeAnticipoTrasferta>
+                        <statoOperativoTipoGiustificativo>VALIDO</statoOperativoTipoGiustificativo>
+                        <tipologiaGiustificativo>ANTICIPO</tipologiaGiustificativo>
+                    </tipoGiustificativo>
+                    <valuta>
+                        <dataCreazione>2014-05-23T09:43:54.834+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-05-23T09:43:54.834+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>2389</uid>
+                        <codice>EUR</codice>
+                        <descrizione>Euro</descrizione>
+                    </valuta>
+                </giustificativo>
+            </giustificativi>
+            <subdocumenti/>
+            <bilancio>
+                <dataCreazione>2015-04-20T10:57:10.400+02:00</dataCreazione>
+                <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                <dataModifica>2015-04-20T10:57:10.400+02:00</dataModifica>
+                <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>46</uid>
+                <anno>2015</anno>
+                <faseEStatoAttualeBilancio>
+                    <stato>VALIDO</stato>
+                    <uid>0</uid>
+                    <faseBilancio>GESTIONE</faseBilancio>
+                </faseEStatoAttualeBilancio>
+            </bilancio>
+            <caricataDaProceduraEsterna>false</caricataDaProceduraEsterna>
+            <cassaEconomale>
+                <dataCreazione>2015-04-20T14:24:43.223+02:00</dataCreazione>
+                <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                <dataModifica>2015-11-02T11:03:27.047+01:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>13</uid>
+                <codice>01</codice>
+                <descrizione>CASSA ECONOMALE 01 ENTE 15</descrizione>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>15</uid>
+                    <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Ente Test copia da 1</nome>
+                </ente>
+                <numeroContoCorrente>000040777563</numeroContoCorrente>
+                <operazioniCassaEconomale>
+                    <dataCreazione>2015-10-29T09:35:41.254+01:00</dataCreazione>
+                    <dataModifica>2015-10-29T09:35:41.254+01:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>55</uid>
+                    <bilancio>
+                        <dataCreazione>2015-04-20T10:57:10.400+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-04-20T10:57:10.400+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>46</uid>
+                        <anno>2015</anno>
+                        <faseEStatoAttualeBilancio>
+                            <stato>VALIDO</stato>
+                            <uid>0</uid>
+                            <faseBilancio>GESTIONE</faseBilancio>
+                        </faseEStatoAttualeBilancio>
+                    </bilancio>
+                    <dataOperazione>2015-10-29T00:00:00+01:00</dataOperazione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <importo>2000.00</importo>
+                    <note></note>
+                    <numeroOperazione>32</numeroOperazione>
+                </operazioniCassaEconomale>
+                <operazioniCassaEconomale>
+                    <dataCreazione>2015-11-09T15:46:36.330+01:00</dataCreazione>
+                    <dataModifica>2015-11-09T17:10:14.840+01:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>58</uid>
+                    <bilancio>
+                        <dataCreazione>2015-04-20T10:57:10.400+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-04-20T10:57:10.400+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>46</uid>
+                        <anno>2015</anno>
+                        <faseEStatoAttualeBilancio>
+                            <stato>VALIDO</stato>
+                            <uid>0</uid>
+                            <faseBilancio>GESTIONE</faseBilancio>
+                        </faseEStatoAttualeBilancio>
+                    </bilancio>
+                    <dataOperazione>2015-11-09T00:00:00+01:00</dataOperazione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <importo>120.00</importo>
+                    <note></note>
+                    <numeroOperazione>33</numeroOperazione>
+                </operazioniCassaEconomale>
+                <operazioniCassaEconomale>
+                    <dataCreazione>2015-10-13T14:56:28.477+02:00</dataCreazione>
+                    <dataModifica>2015-10-13T14:56:28.477+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>47</uid>
+                    <bilancio>
+                        <dataCreazione>2015-04-20T10:57:10.400+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-04-20T10:57:10.400+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>46</uid>
+                        <anno>2015</anno>
+                        <faseEStatoAttualeBilancio>
+                            <stato>VALIDO</stato>
+                            <uid>0</uid>
+                            <faseBilancio>GESTIONE</faseBilancio>
+                        </faseEStatoAttualeBilancio>
+                    </bilancio>
+                    <dataOperazione>2015-10-13T00:00:00+02:00</dataOperazione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <importo>734.00</importo>
+                    <note>Test Operazioni di Cassa</note>
+                    <numeroOperazione>30</numeroOperazione>
+                </operazioniCassaEconomale>
+                <operazioniCassaEconomale>
+                    <dataCreazione>2015-10-29T09:34:33.819+01:00</dataCreazione>
+                    <dataModifica>2015-10-29T09:34:33.819+01:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>54</uid>
+                    <bilancio>
+                        <dataCreazione>2015-04-20T10:57:10.400+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-04-20T10:57:10.400+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>46</uid>
+                        <anno>2015</anno>
+                        <faseEStatoAttualeBilancio>
+                            <stato>VALIDO</stato>
+                            <uid>0</uid>
+                            <faseBilancio>GESTIONE</faseBilancio>
+                        </faseEStatoAttualeBilancio>
+                    </bilancio>
+                    <dataOperazione>2015-10-29T00:00:00+01:00</dataOperazione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <importo>1500.00</importo>
+                    <note></note>
+                    <numeroOperazione>31</numeroOperazione>
+                </operazioniCassaEconomale>
+                <operazioniCassaEconomale>
+                    <dataCreazione>2015-10-13T14:53:12.181+02:00</dataCreazione>
+                    <dataModifica>2015-10-13T14:53:12.181+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>46</uid>
+                    <bilancio>
+                        <dataCreazione>2015-04-20T10:57:10.400+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-04-20T10:57:10.400+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>46</uid>
+                        <anno>2015</anno>
+                        <faseEStatoAttualeBilancio>
+                            <stato>VALIDO</stato>
+                            <uid>0</uid>
+                            <faseBilancio>GESTIONE</faseBilancio>
+                        </faseEStatoAttualeBilancio>
+                    </bilancio>
+                    <dataOperazione>2015-10-13T00:00:00+02:00</dataOperazione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <importo>450.00</importo>
+                    <note>Test Operazione di Cassa - Entrate</note>
+                    <numeroOperazione>29</numeroOperazione>
+                </operazioniCassaEconomale>
+                <responsabile>CognomeResponsabile NomeResponsabile</responsabile>
+                <statoOperativoCassaEconomale>VALIDA</statoOperativoCassaEconomale>
+                <tipoDiCassa>MISTA</tipoDiCassa>
+                <variabiliStampa>
+                    <stato>VALIDO</stato>
+                    <uid>0</uid>
+                    <intestazioneCitta>Torino</intestazioneCitta>
+                    <intestazioneDirezione>Direzione Risorse Umane e Patrimonio cassa 1</intestazioneDirezione>
+                    <intestazioneSettore>Settore economato - Cassa economale e beni mobili cassa 1</intestazioneSettore>
+                    <intestazioneUfficio>Ufficio misterioso</intestazioneUfficio>
+                </variabiliStampa>
+            </cassaEconomale>
+            <codiceFiscale>NRTFRN57S67H355I</codiceFiscale>
+            <cognome>NEIROTTI</cognome>
+            <dataCreazioneRichiestaEconomale>2015-10-14T18:32:05.783+02:00</dataCreazioneRichiestaEconomale>
+            <dataModificaRichiestaEconomale>2015-10-30T11:23:33.486+01:00</dataModificaRichiestaEconomale>
+            <datiTrasfertaMissione>
+                <dataCreazione>2015-10-14T18:32:05.783+02:00</dataCreazione>
+                <dataInizioValidita>2015-10-14T18:32:05.783+02:00</dataInizioValidita>
+                <dataModifica>2015-10-14T18:32:05.783+02:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>95</uid>
+                <mezziDiTrasporto>
+                    <mezzoDiTrasporto>
+                        <dataCreazione>2015-03-04T15:49:52.185+01:00</dataCreazione>
+                        <dataInizioValidita>2014-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-03-04T15:49:52.185+01:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>78</uid>
+                        <codice>Aereo</codice>
+                        <descrizione>Aereo</descrizione>
+                    </mezzoDiTrasporto>
+                </mezziDiTrasporto>
+                <codice></codice>
+                <dataFine>2015-10-22T00:00:00+02:00</dataFine>
+                <dataInizio>2015-10-19T00:00:00+02:00</dataInizio>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>15</uid>
+                    <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Ente Test copia da 1</nome>
+                </ente>
+                <flagEstero>false</flagEstero>
+                <luogo>ROMA</luogo>
+                <motivo>Test post inizializzazione tabelle CEC</motivo>
+                <richiestaEconomale>
+                    <dataCreazione>2015-10-14T18:32:05.783+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-14T18:32:05.783+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-30T11:23:33.486+01:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>287</uid>
+                    <giustificativi/>
+                    <subdocumenti/>
+                    <bilancio>
+                        <dataCreazione>2015-04-20T10:57:10.400+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-04-20T10:57:10.400+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>46</uid>
+                        <anno>2015</anno>
+                        <faseEStatoAttualeBilancio>
+                            <stato>VALIDO</stato>
+                            <uid>0</uid>
+                            <faseBilancio>GESTIONE</faseBilancio>
+                        </faseEStatoAttualeBilancio>
+                    </bilancio>
+                    <caricataDaProceduraEsterna>false</caricataDaProceduraEsterna>
+                    <cassaEconomale>
+                        <dataCreazione>2015-04-20T14:24:43.223+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-11-02T11:03:27.047+01:00</dataModifica>
+                        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>13</uid>
+                        <codice>01</codice>
+                        <descrizione>CASSA ECONOMALE 01 ENTE 15</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>15</uid>
+                            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Ente Test copia da 1</nome>
+                        </ente>
+                    </cassaEconomale>
+                    <codiceFiscale>NRTFRN57S67H355I</codiceFiscale>
+                    <cognome>NEIROTTI</cognome>
+                    <dataCreazioneRichiestaEconomale>2015-10-14T18:32:05.783+02:00</dataCreazioneRichiestaEconomale>
+                    <dataModificaRichiestaEconomale>2015-10-30T11:23:33.486+01:00</dataModificaRichiestaEconomale>
+                    <delegatoAllIncasso>Neirotti Floriana</delegatoAllIncasso>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <importo>258.3000</importo>
+                    <matricola>70044</matricola>
+                    <nome>FLORIANA</nome>
+                    <note></note>
+                    <numeroRichiesta>5</numeroRichiesta>
+                    <rendicontoRichiesta>
+                        <dataCreazione>2015-10-15T15:05:58.294+02:00</dataCreazione>
+                        <dataInizioValidita>2015-10-15T15:05:58.294+02:00</dataInizioValidita>
+                        <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+                        <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>54</uid>
+                        <giustificativi/>
+                        <dataRendiconto>2015-10-30T11:23:30.605+01:00</dataRendiconto>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>15</uid>
+                            <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Ente Test copia da 1</nome>
+                        </ente>
+                        <importoIntegrato>41.8300</importoIntegrato>
+                        <importoRestituito>0</importoRestituito>
+                        <note></note>
+                    </rendicontoRichiesta>
+                    <statoOperativoRichiestaEconomale>EVASA</statoOperativoRichiestaEconomale>
+                    <strutturaDiAppartenenza>Test post inizializzazione tabelle CEC</strutturaDiAppartenenza>
+                    <tipoRichiestaEconomale>
+                        <dataCreazione>2015-01-27T14:54:59.390+01:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-27T14:54:59.390+01:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>92</uid>
+                        <codice>ANTICIPO_SPESE_MISSIONE</codice>
+                        <descrizione>Anticipo spese missione</descrizione>
+                        <rendiconto>true</rendiconto>
+                    </tipoRichiestaEconomale>
+                </richiestaEconomale>
+            </datiTrasfertaMissione>
+            <delegatoAllIncasso>Neirotti Floriana</delegatoAllIncasso>
+            <ente>
+                <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>15</uid>
+                <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                <gestioneLivelli/>
+                <nome>Ente Test copia da 1</nome>
+            </ente>
+            <impegno>
+                <stato>VALIDO</stato>
+                <uid>47885</uid>
+                <annoCapitoloOrigine>2015</annoCapitoloOrigine>
+                <annoMovimento>2015</annoMovimento>
+                <annoOriginePlur>0</annoOriginePlur>
+                <annoRiaccertato>0</annoRiaccertato>
+                <attoAmministrativo>
+                    <dataCreazione>2015-05-18T10:32:35.042+02:00</dataCreazione>
+                    <dataInizioValidita>2015-05-18T10:32:35.042+02:00</dataInizioValidita>
+                    <dataModifica>2015-05-18T10:32:35.042+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>16</uid>
+                    <anno>2015</anno>
+                    <note>sdfgsdfg</note>
+                    <numero>1</numero>
+                    <oggetto>drtertertert</oggetto>
+                    <tipoAtto>
+                        <dataCreazione>2014-10-29T17:02:13.969+01:00</dataCreazione>
+                        <dataInizioValidita>2014-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-10-29T17:02:13.969+01:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>114</uid>
+                        <codice>DCID</codice>
+                        <descrizione>DELIBERA DI CIRCOSCRIZIONE DELEGATA</descrizione>
+                        <progressivoAutomatico>false</progressivoAutomatico>
+                    </tipoAtto>
+                </attoAmministrativo>
+                <flagDaRiaccertamento>false</flagDaRiaccertamento>
+                <importoAttuale>2000.00</importoAttuale>
+                <numero>401</numero>
+                <numeroArticoloOrigine>0</numeroArticoloOrigine>
+                <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+                <numeroUEBOrigine>0</numeroUEBOrigine>
+                <parereFinanziario>false</parereFinanziario>
+                <validato>true</validato>
+                <annoFinanziamento>0</annoFinanziamento>
+                <chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+                <descrizioneStatoOperativoMovimentoGestioneSpesa>DEFINITIVO NON LIQUIDABILE</descrizioneStatoOperativoMovimentoGestioneSpesa>
+                <numeroAccFinanziamento>0</numeroAccFinanziamento>
+                <statoOperativoMovimentoGestioneSpesa>N</statoOperativoMovimentoGestioneSpesa>
+                <capitoloUscitaGestione>
+                    <dataCreazione>2015-10-12T14:41:18.074+02:00</dataCreazione>
+                    <dataInizioValidita>2015-10-12T14:41:18.074+02:00</dataInizioValidita>
+                    <dataModifica>2015-10-12T14:41:18.074+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>55953</uid>
+                    <annoCapitolo>2015</annoCapitolo>
+                    <bilancio>
+                        <dataCreazione>2015-04-20T10:57:10.400+02:00</dataCreazione>
+                        <dataInizioValidita>2015-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2015-04-20T10:57:10.400+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>46</uid>
+                        <anno>2015</anno>
+                        <faseEStatoAttualeBilancio>
+                            <stato>VALIDO</stato>
+                            <uid>0</uid>
+                            <faseBilancio>GESTIONE</faseBilancio>
+                        </faseEStatoAttualeBilancio>
+                    </bilancio>
+                    <categoriaCapitolo>
+                        <stato>VALIDO</stato>
+                        <uid>78</uid>
+                        <codice>STD</codice>
+                        <descrizione>Standard</descrizione>
+                    </categoriaCapitolo>
+                    <descrizione>Cap U 12101/1</descrizione>
+                    <descrizioneArticolo>Cap U 12101/1</descrizioneArticolo>
+                    <elementoPianoDeiConti>
+                        <stato>VALIDO</stato>
+                        <uid>1707830</uid>
+                        <codice>U.1.03.02.02.001</codice>
+                        <descrizione>Rimborso per viaggio e trasloco</descrizione>
+                        <livello>0</livello>
+                        <tipoClassificatore>
+                            <stato>VALIDO</stato>
+                            <uid>1288</uid>
+                            <codice>PDC_V</codice>
+                        </tipoClassificatore>
+                    </elementoPianoDeiConti>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <flagRilevanteIva>false</flagRilevanteIva>
+                    <numeroArticolo>1</numeroArticolo>
+                    <numeroCapitolo>12101</numeroCapitolo>
+                    <numeroUEB>1</numeroUEB>
+                    <statoOperativoElementoDiBilancio>VALIDO</statoOperativoElementoDiBilancio>
+                    <tipoCapitolo>CAPITOLO_USCITA_GESTIONE</tipoCapitolo>
+                    <uidCapitoloEquivalente>0</uidCapitoloEquivalente>
+                    <uidExCapitolo>0</uidExCapitolo>
+                </capitoloUscitaGestione>
+            </impegno>
+            <importo>258.3000</importo>
+            <matricola>70044</matricola>
+            <movimento>
+                <dataCreazione>2015-10-14T18:32:05.783+02:00</dataCreazione>
+                <dataInizioValidita>2015-10-14T18:32:05.783+02:00</dataInizioValidita>
+                <dataModifica>2015-10-14T18:32:05.783+02:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>404</uid>
+                <bic></bic>
+                <contoCorrente></contoCorrente>
+                <dataMovimento>2015-10-14T00:00:00+02:00</dataMovimento>
+                <dettaglioPagamento>IT76H0105425900000000715296</dettaglioPagamento>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>15</uid>
+                    <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Ente Test copia da 1</nome>
+                </ente>
+                <modalitaPagamentoCassa>
+                    <dataCreazione>2014-10-29T11:18:08.374+01:00</dataCreazione>
+                    <dataInizioValidita>2014-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2014-10-29T11:18:08.374+01:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>27</uid>
+                    <codice>CC</codice>
+                    <descrizione>Conto Corrente Bancario</descrizione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>15</uid>
+                        <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Ente Test copia da 1</nome>
+                    </ente>
+                    <tipoDiCassa>CONTO_CORRENTE_BANCARIO</tipoDiCassa>
+                </modalitaPagamentoCassa>
+                <modalitaPagamentoDipendente>
+                    <dataCreazione>2015-04-22T11:54:40.682+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2015-04-22T11:54:40.682+02:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>76</uid>
+                    <codice>CCB</codice>
+                    <descrizione>Conto corrente bancario</descrizione>
+                    <modalitaAccreditoSoggetto>
+                        <stato>VALIDO</stato>
+                        <uid>214</uid>
+                        <codice>CCB</codice>
+                        <descrizione>Conto corrente bancario</descrizione>
+                        <priorita>0</priorita>
+                    </modalitaAccreditoSoggetto>
+                </modalitaPagamentoDipendente>
+                <modalitaPagamentoSoggetto>
+                    <dataCreazione>2015-09-11T13:51:17.621+02:00</dataCreazione>
+                    <dataInizioValidita>2015-09-11T13:51:17.621+02:00</dataInizioValidita>
+                    <dataModifica>2015-09-11T13:51:17.368+02:00</dataModifica>
+                    <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>147775</uid>
+                    <associatoA></associatoA>
+                    <bic></bic>
+                    <codiceStatoModalitaPagamento>VALIDO</codiceStatoModalitaPagamento>
+                    <contoCorrente></contoCorrente>
+                    <denominazioneBanca></denominazioneBanca>
+                    <descrizione>iban IT76H0105425900000000715296</descrizione>
+                    <descrizioneStatoModalitaPagamento>VALIDO</descrizioneStatoModalitaPagamento>
+                    <iban>IT76H0105425900000000715296</iban>
+                    <idStatoModalitaPagamento>62</idStatoModalitaPagamento>
+                    <inModifica>false</inModifica>
+                    <loginCreazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginCreazione>
+                    <loginModifica>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginModifica>
+                    <modalitaAccreditoSoggetto>
+                        <stato>VALIDO</stato>
+                        <uid>214</uid>
+                        <codice>CCB</codice>
+                        <descrizione>Conto corrente bancario</descrizione>
+                        <priorita>0</priorita>
+                    </modalitaAccreditoSoggetto>
+                    <modificaPropriaOccorrenza>false</modificaPropriaOccorrenza>
+                    <note></note>
+                </modalitaPagamentoSoggetto>
+                <numeroMovimento>7</numeroMovimento>
+            </movimento>
+            <nome>FLORIANA</nome>
+            <note></note>
+            <numeroRichiesta>5</numeroRichiesta>
+            <rendicontoRichiesta>
+                <dataCreazione>2015-10-15T15:05:58.294+02:00</dataCreazione>
+                <dataInizioValidita>2015-10-15T15:05:58.294+02:00</dataInizioValidita>
+                <dataModifica>2015-10-30T11:23:33.410+01:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>54</uid>
+                <giustificativi/>
+                <dataRendiconto>2015-10-30T11:23:30.605+01:00</dataRendiconto>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>15</uid>
+                    <codiceFiscale>849d9ec1c8c2c3a6</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Ente Test copia da 1</nome>
+                </ente>
+                <importoIntegrato>41.8300</importoIntegrato>
+                <importoRestituito>0</importoRestituito>
+                <note></note>
+            </rendicontoRichiesta>
+            <soggetto>
+                <dataCreazione>2015-04-23T11:29:00.393+02:00</dataCreazione>
+                <dataInizioValidita>2015-04-23T11:29:00.393+02:00</dataInizioValidita>
+                <dataModifica>2015-09-11T13:51:17.368+02:00</dataModifica>
+                <loginOperazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>42</uid>
+                <avviso>false</avviso>
+                <codiceFiscale>NRTFRN57S67H355I</codiceFiscale>
+                <codiceSoggetto>3</codiceSoggetto>
+                <controlloSuSoggetto>true</controlloSuSoggetto>
+                <dataModifica>2015-09-11T13:51:17.368+02:00</dataModifica>
+                <denominazione>NEIROTTI FLORIANA</denominazione>
+                <loginCreazione>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginCreazione>
+                <loginModifica>1 - ACCOUNT  - AMMINISTRATORE - Ente 15</loginModifica>
+                <matricola>70044</matricola>
+                <residenteEstero>false</residenteEstero>
+                <uidSoggettoPadre>0</uidSoggettoPadre>
+            </soggetto>
+            <sospeso>
+                <stato>VALIDO</stato>
+                <uid>0</uid>
+                <numeroSospeso>4</numeroSospeso>
+            </sospeso>
+            <statoOperativoRichiestaEconomale>EVASA</statoOperativoRichiestaEconomale>
+            <strutturaDiAppartenenza>Test post inizializzazione tabelle CEC</strutturaDiAppartenenza>
+            <subImpegno>
+                <stato>VALIDO</stato>
+                <uid>67241</uid>
+                <annoCapitoloOrigine>0</annoCapitoloOrigine>
+                <annoMovimento>0</annoMovimento>
+                <annoOriginePlur>0</annoOriginePlur>
+                <annoRiaccertato>0</annoRiaccertato>
+                <flagDaRiaccertamento>false</flagDaRiaccertamento>
+                <importoAttuale>1200.00</importoAttuale>
+                <numero>1</numero>
+                <numeroArticoloOrigine>0</numeroArticoloOrigine>
+                <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+                <numeroUEBOrigine>0</numeroUEBOrigine>
+                <parereFinanziario>false</parereFinanziario>
+                <validato>true</validato>
+                <annoFinanziamento>0</annoFinanziamento>
+                <chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+                <descrizioneStatoOperativoMovimentoGestioneSpesa>DEFINITIVO</descrizioneStatoOperativoMovimentoGestioneSpesa>
+                <numeroAccFinanziamento>0</numeroAccFinanziamento>
+                <statoOperativoMovimentoGestioneSpesa>D</statoOperativoMovimentoGestioneSpesa>
+                <annoImpegnoPadre>0</annoImpegnoPadre>
+            </subImpegno>
+            <tipoRichiestaEconomale>
+                <dataCreazione>2015-01-27T14:54:59.390+01:00</dataCreazione>
+                <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                <dataModifica>2015-01-27T14:54:59.390+01:00</dataModifica>
+                <loginOperazione>admin</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>92</uid>
+                <codice>ANTICIPO_SPESE_MISSIONE</codice>
+                <descrizione>Anticipo spese missione</descrizione>
+                <rendiconto>true</rendiconto>
+            </tipoRichiestaEconomale>
+        </richiestaEconomale>
+        <subImpegno>
+            <stato>VALIDO</stato>
+            <uid>67241</uid>
+            <annoCapitoloOrigine>0</annoCapitoloOrigine>
+            <annoMovimento>0</annoMovimento>
+            <annoOriginePlur>0</annoOriginePlur>
+            <annoRiaccertato>0</annoRiaccertato>
+            <flagDaRiaccertamento>false</flagDaRiaccertamento>
+            <importoAttuale>1200.00</importoAttuale>
+            <numero>1</numero>
+            <numeroArticoloOrigine>0</numeroArticoloOrigine>
+            <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+            <numeroUEBOrigine>0</numeroUEBOrigine>
+            <parereFinanziario>false</parereFinanziario>
+            <validato>true</validato>
+            <annoFinanziamento>0</annoFinanziamento>
+            <chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+            <descrizioneStatoOperativoMovimentoGestioneSpesa>DEFINITIVO</descrizioneStatoOperativoMovimentoGestioneSpesa>
+            <numeroAccFinanziamento>0</numeroAccFinanziamento>
+            <statoOperativoMovimentoGestioneSpesa>D</statoOperativoMovimentoGestioneSpesa>
+            <annoImpegnoPadre>0</annoImpegnoPadre>
+        </subImpegno>
+    </rendicontoRichiesta>
+    <valutaDefault>
+        <dataCreazione>2014-05-23T09:43:54.834+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2014-05-23T09:43:54.834+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>2389</uid>
+        <codice>EUR</codice>
+        <descrizione>Euro</descrizione>
+    </valutaDefault>
+</stampaRicevutaRendicontoRichiestaEconomaleReportModel>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<con:soapui-workspace name="SIAC-simple-test" soapui-version="5.2.0" projectRoot="${workspaceDir}" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings/>
+  <con:project name="SIAC_INTEG">SIAC-INTEG-soapui-project.xml</con:project>
+  <con:project name="SIAC_TEST">Siac-Test-soapui-project.xml</con:project>
+  <con:collectInfoForSupport>false</con:collectInfoForSupport>
+</con:soapui-workspace>

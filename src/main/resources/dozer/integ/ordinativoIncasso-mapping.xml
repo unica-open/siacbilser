@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="RicercaOrdinativoIncasso_RicercaOrdinativo" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.ordinativo.RicercaOrdinativoIncasso</class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativo</class-b>
+		
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>annoBilancio</a>
+			<b>parametroRicercaOrdinativoIncasso.annoEsercizio</b>
+		</field>
+		
+		<field>
+			<a>annoProvvedimento</a>
+			<b>parametroRicercaOrdinativoIncasso.annoProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>numeroProvvedimento</a>
+			<b>parametroRicercaOrdinativoIncasso.numeroProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>numeroPagina</a>
+			<b>numPagina</b>
+		</field>
+		
+		<field>
+			<a>numeroElementiPerPagina</a>
+			<b>numRisultatiPerPagina</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="ListOrdinativoIncasso_IntegOrdinativoIncasso" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.ordinativo.OrdinativoIncasso</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.OrdinativoIncasso</class-b>
+		
+		<field>
+			<a>numero</a>
+			<b>numeroOrdinativo</b>
+		</field>
+		
+		<field>
+			<a>capitoloEntrataGestione.numeroCapitolo</a>
+			<b>numeroCapitolo</b>
+		</field>
+		
+		<field>
+			<a>soggetto.codiceSoggetto</a>
+			<b>codiceSoggetto</b>
+		</field>
+		
+		
+		<field>
+			<a>soggetto.denominazione</a>
+			<b>denominazioneSoggetto</b>
+		</field>
+		
+		<!-- <field>
+			<a>dataEmissione</a>
+			<b>dataEmissione</b>
+		</field>  -->
+		
+		<!-- SIAC-3982 aggiungo data quietanza ordinativoPagamento.datiOrdinativoTrasmesso.dataQuietanza-->
+		<field>
+			<a>datiOrdinativoTrasmesso.dataQuietanza</a>
+			<b>dataQuietanza</b>
+		</field>
+		
+		<field>
+			<a>codStatoOperativoOrdinativo</a>
+			<b>codiceStato</b>
+		</field>
+
+		<field map-id="ListSubOrdinativoIncasso_IntegSubOrdinativoIncasso">
+			<a>elencoSubOrdinativiDiIncasso</a>
+			<b>quoteIncasso</b>
+		</field> 
+		
+	</mapping>
+	
+	
+
+</mappings>

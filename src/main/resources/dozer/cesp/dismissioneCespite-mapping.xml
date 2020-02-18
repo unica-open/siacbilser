@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+	<mapping map-id="SiacTCespitiDismissioni_DismissioneCespite" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.DismissioneCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiDismissioni</class-b>
+		
+		<field map-id="SiacTCespitiDismissioni_DismissioneCespite_ModelDetail">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		
+		<field custom-converter-id="dismissioneCespiteAttoAmmConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter-id="dismissioneCespiteCausaleEPConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.DismissioneCespiteEventoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter-id="dismissioneCespiteStatoDismissioneCespiteConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+
+	</mapping>
+	
+	<mapping map-id="SiacTCespitiDismissioni_DismissioneCespite_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.DismissioneCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiDismissioni</class-b>
+		<field>
+			<a>descrizione</a>
+			<b>cesDismissioniDesc</b>
+		</field>	
+		<field>
+			<a>numeroElenco</a>
+			<b>elencoDismissioniNumero</b>
+		</field>	
+		<field>
+			<a>annoElenco</a>
+			<b>elencoDismissioniAnno</b>
+		</field>	
+		<field>
+			<a>dataCessazione</a>
+			<b>dataCessazione</b>
+		</field>
+		<field>
+			<a>descrizioneStatoCessazione</a>
+			<b>dismissioniDescStato</b>
+		</field>
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	</mapping>
+</mappings>

@@ -1,0 +1,43 @@
+INTESTAZIONE RICEVUTA
+-	<<Ente>>:  </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/ente/nome>
+-	<<direzione>>: </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneDirezione>
+-	<<settore>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneSettore>
+-	<<ufficio>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneUfficio>
+-	<<codice cassa>>: </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/codice> 
+-	<<descrizione  cassa>>:</stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/descrizione>
+
+-	<<anno sospeso>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/bilancio/anno>
+-	<<numero sospeso>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/sospeso/numeroSospeso>
+
+-	<<capitolo>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/impegno/capitoloUscitaGestione/numeroCapitolo> / </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/impegno/capitoloUscitaGestione/numeroArticolo>
+-	<<impegno>>: </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/impegno/numero>
+
+PAGAMENTO
+
+A1 : </stampaRicevutaRichiestaEconomaleReportModel/denominazioneRichiedente>
+
+
+D1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneSettore>
+E1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneUfficio>
+F1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/responsabile>
+
+G1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/descrizioneDellaRichiesta>
+
+H1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/tipoRichiestaEconomale/descrizione>
+
+Ciclare su </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/giustificativi/giustificativo>
+I1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/giustificativi/giustificativo/tipoGiustificativo/descrizione>
+L1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/giustificativi/giustificativo/valuta/descrizione>
+M1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/giustificativi/giustificativo/importoGiustificativo>
+
+
+N1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/importo>
+
+O1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/movimento/numeroMovimento>
+P1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/movimento/dataMovimento>
+Q1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/movimento/modalitaPagamentoDipendente/descrizione>
+R1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneCitta>
+S1 : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/dataStampa>
+
+SIAC-5255
+</stampaRicevutaRendicontoRichiestaEconomaleReportModel/richiestaEconomale/movimento/dettaglioPagamento>

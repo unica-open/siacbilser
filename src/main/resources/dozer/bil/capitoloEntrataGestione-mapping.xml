@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+    <mapping map-id="SiacTBilElem_CapitoloEntrataGestione_Chiave">
+		<class-a>it.csi.siac.siacbilser.model.CapitoloEntrataGestione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		
+		<field>
+			<a>numeroCapitolo</a>
+			<b>elemCode</b>
+		</field>		
+		<field>
+			<a>numeroArticolo</a>
+			<b>elemCode2</b>
+		</field>
+		<field>
+			<a>numeroUEB</a>
+			<b>elemCode3</b>
+		</field>		
+		<field>
+			<a>annoCapitolo</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+	</mapping>
+
+	<mapping map-id="SiacTBilElem_CapitoloEntrataGestione">
+		<class-a>it.csi.siac.siacbilser.model.CapitoloEntrataGestione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>	
+
+		<field>
+			<a>numeroCapitolo</a>
+			<b>elemCode</b>
+		</field>		
+		<field>
+			<a>numeroArticolo</a>
+			<b>elemCode2</b>
+		</field>
+		<field>
+			<a>numeroUEB</a>
+			<b>elemCode3</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>elemDesc</b>
+		</field>	
+		<field>
+			<a>descrizioneArticolo</a>
+			<b>elemDesc2</b>
+		</field>
+		<field custom-converter="it.csi.siac.siaccommonser.business.dtomapping.converter.StringFormatConverter" custom-converter-param="%05d"
+			type="one-way">
+			<a>numeroCapitolo</a> <!-- Integer -->
+			<b>ordine</b><!-- String -->
+		</field>	
+		<field custom-converter="it.csi.siac.siaccommonser.business.dtomapping.converter.YearDateConverter">
+			<a>annoCreazioneCapitolo</a> <!-- Integer -->
+			<b>dataCreazione</b><!-- java.util.Date -->
+		</field>
+		<field>
+			<a>annoCapitolo</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+		<field custom-converter-id="bilElemStatoConverter">
+			<a>this</a><!-- StatoOperativoElementoDiBilancio -->
+			<b>this</b><!-- SiacRBilElemStato -->
+		</field>
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BilElemDataAnnullamentoConverter">
+			<a>this</a><!-- StatoOperativoElementoDiBilancio -->
+			<b>this</b><!-- SiacRBilElemStato -->
+		</field>
+		
+		<field custom-converter-id="capitoloExCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="bilElemCategoriaConverter">
+			<a>categoriaCapitolo</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTBilElem_CapitoloEntrataGestione_ModelDetail">
+		<class-a>it.csi.siac.siacbilser.model.CapitoloEntrataGestione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		
+		<field>
+			<a>numeroCapitolo</a>
+			<b>elemCode</b>
+		</field>		
+		<field>
+			<a>numeroArticolo</a>
+			<b>elemCode2</b>
+		</field>
+		<field>
+			<a>numeroUEB</a>
+			<b>elemCode3</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>elemDesc</b>
+		</field>	
+		<field>
+			<a>descrizioneArticolo</a>
+			<b>elemDesc2</b>
+		</field>
+		<field custom-converter="it.csi.siac.siaccommonser.business.dtomapping.converter.StringFormatConverter" custom-converter-param="%05d"
+			type="one-way">
+			<a>numeroCapitolo</a> <!-- Integer -->
+			<b>ordine</b><!-- String -->
+		</field>	
+		<field custom-converter="it.csi.siac.siaccommonser.business.dtomapping.converter.YearDateConverter">
+			<a>annoCreazioneCapitolo</a> <!-- Integer -->
+			<b>dataCreazione</b><!-- java.util.Date -->
+		</field>
+		<field>
+			<a>annoCapitolo</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+	</mapping>
+
+
+
+	<mapping map-id="SiacTBilElem_CapitoloEntrataGestione_ImportiCapitolo" wildcard="false">
+		<class-a>java.util.List</class-a><!-- List<it.csi.siac.siacbilser.model.ImportiCapitoloUP> -->
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		<field custom-converter-id="importiCapitoloEGConverter">
+			<a>this</a> <!-- List<ImportiCapitoloUP>  -->
+			<b>this</b><!-- getDettagliElementoBilancio() -> Set<DettaglioElementoBilancioDto> -->
+		</field>
+	</mapping>	
+	
+	<mapping map-id="CapitoloMassivaEntrataGestione_CapitoloEntrataGestione" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.CapitoloEntrataGestione</class-a>
+		<class-b>it.csi.siac.siacbilser.model.CapitoloMassivaEntrataGestione</class-b>
+		
+		<field>
+			<a>listaImportiCapitolo</a>
+			<b>listaImportiCapitolo</b>
+			<a-hint>it.csi.siac.siacbilser.model.ImportiCapitoloEG</a-hint>
+			<b-hint>it.csi.siac.siacbilser.model.ImportiCapitoloEG</b-hint>
+		</field>
+	</mapping>
+	
+
+</mappings>

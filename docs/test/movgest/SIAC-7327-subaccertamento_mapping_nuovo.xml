@@ -1,0 +1,130 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+SubImpegno_uid_171848
+<subAccertamento>
+    <dataCreazione>2020-01-17T15:02:50.452+01:00</dataCreazione>
+    <dataInizioValidita>2020-01-17T15:02:50.452+01:00</dataInizioValidita>
+    <dataModifica>2020-01-17T15:02:50.452+01:00</dataModifica>
+    <loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>171848</uid>
+    <annoCapitoloOrigine>0</annoCapitoloOrigine>
+    <annoMovimento>2019</annoMovimento>
+    <annoOriginePlur>0</annoOriginePlur>
+    <annoRiaccertato>0</annoRiaccertato>
+    <byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+    <collegatoALiquidazioni>false</collegatoALiquidazioni>
+    <collegatoAOrdinativi>false</collegatoAOrdinativi>
+    <dataModifica>2020-01-17T15:02:50.452+01:00</dataModifica>
+    <descrizione>SUB</descrizione>
+    <flagAttivaGsa>false</flagAttivaGsa>
+    <flagDaRiaccertamento>false</flagDaRiaccertamento>
+    <flagSoggettoDurc>false</flagSoggettoDurc>
+    <importoAttuale>1.00</importoAttuale>
+    <importoIniziale>1.00</importoIniziale>
+    <numero>1</numero>
+    <numeroArticoloOrigine>0</numeroArticoloOrigine>
+    <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+    <numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+    <numeroUEBOrigine>0</numeroUEBOrigine>
+    <parereFinanziario>false</parereFinanziario>
+    <presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+    <validato>true</validato>
+    <automatico>false</automatico>
+    <chiaveCapitoloEntrataGestione>0</chiaveCapitoloEntrataGestione>
+    <disponibilitaIncassare>1.00</disponibilitaIncassare>
+    <flagCorrispettivo>false</flagCorrispettivo>
+    <flagFattura>false</flagFattura>
+    <motivazioneDisponibilitaIncassare>Disponibilita calcolata dalla function</motivazioneDisponibilitaIncassare>
+    <annoAccertamentoPadre>2019</annoAccertamentoPadre>
+    <numeroAccertamentoPadre>474</numeroAccertamentoPadre>
+</subAccertamento>
+SubImpegno_uid_171851
+<subAccertamento>
+    <dataCreazione>2020-01-17T15:08:49.589+01:00</dataCreazione>
+    <dataInizioValidita>2020-01-17T15:08:49.589+01:00</dataInizioValidita>
+    <dataModifica>2020-01-17T15:08:49.589+01:00</dataModifica>
+    <loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>171851</uid>
+    <annoCapitoloOrigine>0</annoCapitoloOrigine>
+    <annoMovimento>2019</annoMovimento>
+    <annoOriginePlur>0</annoOriginePlur>
+    <annoRiaccertato>0</annoRiaccertato>
+    <byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+    <collegatoALiquidazioni>false</collegatoALiquidazioni>
+    <collegatoAOrdinativi>false</collegatoAOrdinativi>
+    <dataModifica>2020-01-17T15:08:49.589+01:00</dataModifica>
+    <descrizione>SUB</descrizione>
+    <flagAttivaGsa>false</flagAttivaGsa>
+    <flagDaRiaccertamento>false</flagDaRiaccertamento>
+    <flagSoggettoDurc>false</flagSoggettoDurc>
+    <importoAttuale>2.57</importoAttuale>
+    <importoIniziale>2.57</importoIniziale>
+    <numero>4</numero>
+    <numeroArticoloOrigine>0</numeroArticoloOrigine>
+    <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+    <numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+    <numeroUEBOrigine>0</numeroUEBOrigine>
+    <parereFinanziario>false</parereFinanziario>
+    <presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+    <validato>true</validato>
+    <automatico>false</automatico>
+    <chiaveCapitoloEntrataGestione>0</chiaveCapitoloEntrataGestione>
+    <disponibilitaIncassare>2.57</disponibilitaIncassare>
+    <flagCorrispettivo>false</flagCorrispettivo>
+    <flagFattura>false</flagFattura>
+    <motivazioneDisponibilitaIncassare>Disponibilita calcolata dalla function</motivazioneDisponibilitaIncassare>
+    <annoAccertamentoPadre>2019</annoAccertamentoPadre>
+    <numeroAccertamentoPadre>474</numeroAccertamentoPadre>
+</subAccertamento>
+SubImpegno_uid_125131
+<subAccertamento>
+    <dataCreazione>2019-03-20T10:12:56.140+01:00</dataCreazione>
+    <dataInizioValidita>2019-03-20T10:12:56.140+01:00</dataInizioValidita>
+    <dataModifica>2019-03-20T10:12:56.140+01:00</dataModifica>
+    <loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>125131</uid>
+    <annoCapitoloOrigine>0</annoCapitoloOrigine>
+    <annoMovimento>2019</annoMovimento>
+    <annoOriginePlur>0</annoOriginePlur>
+    <annoRiaccertato>0</annoRiaccertato>
+    <byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+    <collegatoALiquidazioni>false</collegatoALiquidazioni>
+    <collegatoAOrdinativi>false</collegatoAOrdinativi>
+    <dataModifica>2019-03-20T10:12:56.140+01:00</dataModifica>
+    <descrizione>TEST SOG 108278</descrizione>
+    <flagAttivaGsa>false</flagAttivaGsa>
+    <flagDaRiaccertamento>false</flagDaRiaccertamento>
+    <flagSoggettoDurc>false</flagSoggettoDurc>
+    <importoAttuale>10000.00</importoAttuale>
+    <importoIniziale>10000.00</importoIniziale>
+    <numero>2</numero>
+    <numeroArticoloOrigine>0</numeroArticoloOrigine>
+    <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+    <numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+    <numeroUEBOrigine>0</numeroUEBOrigine>
+    <parereFinanziario>false</parereFinanziario>
+    <presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+    <soggetto>
+        <stato>VALIDO</stato>
+        <uid>127284</uid>
+        <avviso>false</avviso>
+        <codiceSoggetto>123754</codiceSoggetto>
+        <controlloSuSoggetto>true</controlloSuSoggetto>
+        <residenteEstero>false</residenteEstero>
+        <uidSoggettoPadre>0</uidSoggettoPadre>
+    </soggetto>
+    <validato>true</validato>
+    <automatico>false</automatico>
+    <chiaveCapitoloEntrataGestione>0</chiaveCapitoloEntrataGestione>
+    <disponibilitaIncassare>8509.00</disponibilitaIncassare>
+    <flagCorrispettivo>false</flagCorrispettivo>
+    <flagFattura>false</flagFattura>
+    <motivazioneDisponibilitaIncassare>Disponibilita calcolata dalla function</motivazioneDisponibilitaIncassare>
+    <annoAccertamentoPadre>2019</annoAccertamentoPadre>
+    <numeroAccertamentoPadre>235</numeroAccertamentoPadre>
+</subAccertamento>

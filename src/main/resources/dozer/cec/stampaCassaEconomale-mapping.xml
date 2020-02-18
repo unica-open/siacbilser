@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     <mapping map-id="SiacTCassaEconStampa_StampeCassaFile_Base" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.StampeCassaFile</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCassaEconStampa</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field> 
+		
+ 		<field>
+			<a>annoEsercizio</a>
+ 			<b>cestAnno</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>cestCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>cestDesc</b>
+		</field>
+		<field map-id="SiacTCassaEcon_CassaEconomale_Minimal">
+			<a>cassaEconomale</a>
+			<b>siacTCassaEcon</b>
+		</field>
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field custom-converter-id="stampeCassaFileTipoDocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stampeCassaFileStatoStampaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stampeCassaFileValoreConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="stampeCassaFileFileConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="stampeCassaFileOperazioneCassaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="stampeCassaFileMovimentoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="stampeCassaFileAllegatoAttoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTCassaEconStampa_StampeCassaFile_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.StampeCassaFile</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCassaEconStampa</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field> 
+		
+ 		<field>
+			<a>annoEsercizio</a>
+ 			<b>cestAnno</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>cestCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>cestDesc</b>
+		</field>
+	</mapping>
+	
+</mappings>

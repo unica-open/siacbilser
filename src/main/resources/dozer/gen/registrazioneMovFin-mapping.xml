@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+     <mapping map-id="SiacTRegMovfin_RegistrazioneMovFin_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.RegistrazioneMovFin</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRegMovfin</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field custom-converter-id="registrazioneMovFinAmbitoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+  	</mapping>    
+     
+     
+  	 <mapping map-id="SiacTRegMovfin_RegistrazioneMovFin_Base" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.RegistrazioneMovFin</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRegMovfin</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field map-id="SiacTPdceConto_Conto_Minimal">
+			<a>conto</a>
+			<b>siacTPdceConto</b>
+		</field>
+		
+		<field map-id="SiacTClass_ElementoPianoDeiConti">
+			<a>elementoPianoDeiContiAggiornato</a>
+			<b>siacTClass1</b>
+		</field>
+		
+		<field map-id="SiacTClass_ElementoPianoDeiConti">
+			<a>elementoPianoDeiContiIniziale</a>
+			<b>siacTClass2</b>
+		</field>
+		
+		<field custom-converter-id="registrazioneMovFinEventoMovimentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="registrazioneMovFinAmbitoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+  	</mapping>
+  	
+  	
+  	<mapping map-id="SiacTRegMovfin_RegistrazioneMovFinLight_Base" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.RegistrazioneMovFin</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRegMovfin</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field map-id="SiacTPdceConto_Conto_Minimal">
+			<a>conto</a>
+			<b>siacTPdceConto</b>
+		</field>
+		
+		<field map-id="SiacTClass_ElementoPianoDeiConti">
+			<a>elementoPianoDeiContiIniziale</a>
+			<b>siacTClass2</b>
+		</field>
+		
+		<field map-id="SiacTClass_ElementoPianoDeiConti">
+			<a>elementoPianoDeiContiAggiornato</a>
+			<b>siacTClass1</b>
+		</field>
+		
+		<field custom-converter-id="registrazioneMovFinEventoMovimentoLightConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="registrazioneMovFinAmbitoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+  	</mapping>
+  	
+  	
+  	<mapping map-id="SiacTRegMovfin_RegistrazioneMovFin" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.RegistrazioneMovFin</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRegMovfin</class-b>
+		
+		<field map-id="SiacTRegMovfin_RegistrazioneMovFin_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+		<field custom-converter-id="registrazioneMovFinStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="registrazioneMovFinMovimentiEPConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+			
+		<field custom-converter-id="registrazioneMovFinIsCollegataAMovimentoResiduoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>		
+	
+  	</mapping>
+  	
+  	  	<mapping map-id="SiacTRegMovfin_RegistrazioneMovFinLight" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.RegistrazioneMovFin</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRegMovfin</class-b>
+		
+		<field map-id="SiacTRegMovfin_RegistrazioneMovFinLight_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+		<field custom-converter-id="registrazioneMovFinStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="registrazioneMovFinMovimentiEPConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+					
+	
+  	</mapping>
+  	
+  	
+  	<mapping map-id="SiacTClass_ElementoPianoDeiConti" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.ElementoPianoDeiConti</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTClass</class-b>
+	
+		<field>
+			<a>codice</a>
+			<b>classifCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>classifDesc</b>
+		</field>
+		
+		<field >
+			<a>tipoClassificatore.codice</a>
+			<b>siacDClassTipo.classifTipoCode</b>
+		</field>
+		
+		<field >
+			<a>tipoClassificatore.descrizione</a>
+			<b>siacDClassTipo.classifTipoDesc</b>
+		</field>
+		<field>
+			<a>livello</a>
+			<b>siacRClassFamTreesFiglio[0].livello</b>
+		</field>
+
+  	</mapping>
+  	
+  	
+</mappings>

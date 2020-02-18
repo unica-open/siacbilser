@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 	
+	<mapping map-id="SiacDCespitiBeneTipo_TipoBeneCespite" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.TipoBeneCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDCespitiBeneTipo</class-b>
+	
+		<field map-id="SiacDCespitiBeneTipo_TipoBeneCespite_ModelDetail">
+			<a>this</a>
+   			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+  		<field custom-converter-id="tipoBeneCespiteCategoriaCespitiConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteContoPatrimonialeConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteEventoAmmortamentoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteCausaleEPAmmortamentoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteContoAmmortamentoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteContoFondoAmmortamentoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteContoPlusvalenzaConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteContoMinusvalenzaConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteEventoIncrementoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteCausaleEPIncrementoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteContoIncrementoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field> 
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteEventoDecrementoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteCausaleEPDecrementoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>		
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteContoDecrementoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteContoAlienazioneConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		
+  		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.cespiti.TipoBeneCespiteContoDonazioneConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		<field custom-converter-id="tipoBeneCespiteFlagAnnullatoConverter">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacDCespitiBeneTipo_TipoBeneCespite_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.TipoBeneCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDCespitiBeneTipo</class-b>		
+		<field>
+			<a>codice</a>
+			<b>cesBeneTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>cesBeneTipoDesc</b>
+		</field>
+
+		<field>
+			<a>testoScritturaAmmortamento</a>
+			<b>testoScritturaAmmortamento</b>
+		</field>		
+
+	</mapping>
+
+	
+</mappings>
+
+
+

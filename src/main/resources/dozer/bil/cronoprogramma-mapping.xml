@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+    <mapping map-id="SiacTCronop_Cronoprogramma_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.Cronoprogramma</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCronop</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+				
+		<field >
+			<a>codice</a>
+			<b>cronopCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>cronopDesc</b>
+		</field>
+		
+		<field>
+			<a>progetto.uid</a>
+			<b>siacTProgramma.uid</b>
+		</field>
+		
+		<field>
+			<a>usatoPerFpv</a>
+			<b>usatoPerFpv</b>
+		</field>
+		
+		<field>
+			<a>dataApprovazioneFattibilita</a>
+			<b>cronopDataApprovazioneFattibilita</b>
+		</field>
+		
+		<field>
+			<a>dataApprovazioneProgettoDefinitivo</a>
+			<b>cronopDataApprovazioneProgrammaDef</b>
+		</field>
+		
+		<field>
+			<a>dataApprovazioneProgettoEsecutivo</a>
+			<b>cronopDataApprovazioneProgrammaEsec</b>
+		</field>
+		
+		<field>
+			<a>dataAvvioProcedura</a>
+			<b>cronopDataAvvioProcedura</b>
+		</field>
+		
+		<field>
+			<a>dataAggiudicazioneLavori</a>
+			<b>cronopDataAggiudicazioneLavori</b>
+		</field>
+		
+		<field>
+			<a>dataInizioLavori</a>
+			<b>cronopDataInizioLavori</b>
+		</field>
+		
+		<field>
+			<a>dataFineLavori</a>
+			<b>cronopDataGaraIndizione</b>
+		</field>
+		
+		<field>
+			<a>dataCollaudo</a>
+			<b>cronopDataCollaudo</b>
+		</field>
+		
+		<field>
+			<a>durataInGiorni</a>
+			<b>cronopGiorniDurata</b>
+		</field>	
+	</mapping>
+          
+	<mapping map-id="SiacTCronop_Cronoprogramma" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.Cronoprogramma</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCronop</class-b>
+		
+		<field map-id="SiacTCronop_Cronoprogramma_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+				
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+	
+		<field >
+			<a>codice</a>
+			<b>cronopCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>cronopDesc</b>
+		</field>
+		
+		<field>
+			<a>progetto.uid</a>
+			<b>siacTProgramma.uid</b>
+		</field>
+		
+		<field>
+			<a>usatoPerFpv</a>
+			<b>usatoPerFpv</b>
+		</field>
+		
+		<field>
+			<a>dataApprovazioneFattibilita</a>
+			<b>cronopDataApprovazioneFattibilita</b>
+		</field>
+		
+		<field>
+			<a>dataApprovazioneProgettoDefinitivo</a>
+			<b>cronopDataApprovazioneProgrammaDef</b>
+		</field>
+		
+		<field>
+			<a>dataApprovazioneProgettoEsecutivo</a>
+			<b>cronopDataApprovazioneProgrammaEsec</b>
+		</field>
+		
+		<field>
+			<a>dataAvvioProcedura</a>
+			<b>cronopDataAvvioProcedura</b>
+		</field>
+		
+		<field>
+			<a>dataAggiudicazioneLavori</a>
+			<b>cronopDataAggiudicazioneLavori</b>
+		</field>
+		
+		<field>
+			<a>dataInizioLavori</a>
+			<b>cronopDataInizioLavori</b>
+		</field>
+		
+		<field>
+			<a>dataFineLavori</a>
+			<b>cronopDataGaraIndizione</b>
+		</field>
+		
+		<field>
+			<a>dataCollaudo</a>
+			<b>cronopDataCollaudo</b>
+		</field>
+		
+		<field>
+			<a>durataInGiorni</a>
+			<b>cronopGiorniDurata</b>
+		</field>	
+		
+		<field custom-converter-id="cronoprogrammaStatoConverter">
+			<a>statoOperativoCronoprogramma</a>
+			<b>this</b> <!--.siacRVincoloStatos[0].siacDVincoloStato  -->
+		</field>
+		
+		<field custom-converter-id="cronoprogrammaAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="cronoprogrammaAttoAmministrativoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>				
+	</mapping>
+	
+	
+	<mapping map-id="SiacTCronopElem_DettaglioEntrataCronoprogramma" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.DettaglioEntrataCronoprogramma</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCronopElem</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>numeroCapitolo</a>
+			<b>cronopElemCode</b>
+		</field>
+		<field>
+			<a>numeroArticolo</a>
+			<b>cronopElemCode2</b>
+		</field>		
+		<field>
+			<a>numeroUEB</a>
+			<b>cronopElemCode3</b>
+		</field>	
+		<field>
+			<a>descrizioneCapitolo</a>
+			<b>cronopElemDesc</b>
+		</field>		
+		<field>
+			<a>descrizioneArticolo</a>
+			<b>cronopElemDesc2</b>
+		</field>
+		
+		<field>
+			<a>cronoprogramma.uid</a>
+			<b>siacTCronop.cronopId</b>
+		</field>
+		
+		<field>
+			<a>isAvanzoAmministrazione</a>
+			<b>cronopElemIsAvaAmm</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siaccommonser.business.dtomapping.converter.StringFormatConverter" custom-converter-param="%05d"
+			type="one-way">
+			<a>numeroCapitolo</a> <!-- Integer -->
+			<b>ordine</b><!-- String -->
+		</field>
+		
+		<field custom-converter-id="dettaglioCronoprogrammaEntrataClassifConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="dettaglioCronoprogrammaEntrataBilElemConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="dettaglioCronoprogrammaEntrataImportiConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTCronopElem_DettaglioUscitaCronoprogramma" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.DettaglioUscitaCronoprogramma</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCronopElem</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>numeroCapitolo</a>
+			<b>cronopElemCode</b>
+		</field>
+		<field>
+			<a>numeroArticolo</a>
+			<b>cronopElemCode2</b>
+		</field>		
+		<field>
+			<a>numeroUEB</a>
+			<b>cronopElemCode3</b>
+		</field>	
+		<field>
+			<a>descrizioneCapitolo</a>
+			<b>cronopElemDesc</b>
+		</field>		
+		<field>
+			<a>descrizioneArticolo</a>
+			<b>cronopElemDesc2</b>
+		</field>
+		
+		<field>
+			<a>cronoprogramma.uid</a>
+			<b>siacTCronop.cronopId</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siaccommonser.business.dtomapping.converter.StringFormatConverter" custom-converter-param="%05d"
+			type="one-way">
+			<a>numeroCapitolo</a> <!-- Integer -->
+			<b>ordine</b><!-- String -->
+		</field>
+		
+		<field custom-converter-id="dettaglioCronoprogrammaUscitaClassifConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="dettaglioCronoprogrammaUscitaBilElemConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="dettaglioCronoprogrammaUscitaImportiConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+	</mapping>
+	
+	
+	
+	
+</mappings>

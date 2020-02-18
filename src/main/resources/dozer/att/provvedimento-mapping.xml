@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	
+	<mapping map-id="SiacTAttoAmm" wildcard="true">
+		<class-a>it.csi.siac.siacattser.model.AttoAmministrativo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAttoAmm</class-b>
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		<field>
+			<a>anno</a>
+			<b>attoammAnno</b>
+		</field>
+		<field>
+			<a>note</a>
+			<b>attoammNote</b>
+		</field>
+		<field>
+			<a>oggetto</a>
+			<b>attoammOggetto</b>
+		</field>
+		<field>
+			<a>numero</a>
+			<b>attoammNumero</b>
+		</field>
+		
+		<field>
+			<a>parereRegolaritaContabile</a>
+			<b>parereRegolaritaContabile</b>
+		</field>
+		
+		<field>
+			<a>bloccoRagioneria</a>
+			<b>attoammBlocco</b>
+		</field>
+		
+		<field>
+			<a>provenienza</a>
+			<b>attoammProvenienza</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTAttoAmm_AttoAmministrativo" wildcard="true">
+		<class-a>it.csi.siac.siacattser.model.AttoAmministrativo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAttoAmm</class-b>
+
+		<field map-id="SiacTAttoAmm">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacDAttoAmmTipo_TipoAtto">
+			<a>tipoAtto</a>
+			<b>siacDAttoAmmTipo</b>
+		</field>
+		
+		<field custom-converter-id="attoAmministrativoSacConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	
+	</mapping>
+	
+	<mapping map-id="SiacDAttoAmmTipo_TipoAtto" wildcard="true">
+		<class-a>it.csi.siac.siacattser.model.TipoAtto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDAttoAmmTipo</class-b>
+
+		<field>
+			<a>codice</a>
+			<b>attoammTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>attoammTipoDesc</b>
+		</field>
+		<field>
+			<a>progressivoAutomatico</a>
+			<b>attoammProgressivoAuto</b>
+		</field>
+	</mapping>
+	
+	
+</mappings>

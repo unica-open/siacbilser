@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Completo" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTElencoDoc</class-b>
+		
+		<field map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocAttoAllegatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocSubdocumentiDettaglioConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+	</mapping>
+	
+	<mapping map-id="SiacTElencoDoc_ElencoDocumentiAllegato" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTElencoDoc</class-b>
+		
+		<field map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocAttoAllegatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocSubdocumentiConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Minimal_AllegatoAtto" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTElencoDoc</class-b>
+		
+		<field map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocAttoAllegatoExtendedConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTElencoDoc</class-b>
+		
+		<field map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocTotaleDaPagareIncassareConverter" >
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocTotaleQuoteSpesaEntrataConverter" >
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocContieneQuoteACoperturaConverter" >
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocSubdocumentiTotaleConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="elencoDocTotaleDaConvalidareSpesaEntrataConverter" >
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+
+	<mapping map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Base_PagatoIncassato" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTElencoDoc</class-b>
+
+		<field map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="elencoDocTotalePagatoIncassatoConverter" >
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTElencoDoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		<field>
+			<a>anno</a>
+			<b>eldocAnno</b>
+		</field>
+		<field>
+			<a>numero</a>
+			<b>eldocNumero</b>
+		</field>
+		<field>
+			<a>dataTrasmissione</a>
+			<b>eldocDataTrasmissione</b>
+		</field>
+		<field>
+			<a>annoSysEsterno</a>
+			<b>eldocSysesternoAnno</b>
+		</field>
+		<field>
+			<a>numeroSysEsterno</a>
+			<b>eldocSysesternoNumero</b>
+		</field>
+		<field>
+			<a>sysEsterno</a>
+			<b>eldocSysesterno</b>
+		</field>
+		<field custom-converter-id="elencoDocStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacTElencoDoc_ElencoDocumentiAllegato_Minimal_light" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTElencoDoc</class-b>
+		
+		<field>
+			<a>anno</a>
+			<b>eldocAnno</b>
+		</field>
+		<field>
+			<a>numero</a>
+			<b>eldocNumero</b>
+		</field>
+		<field>
+			<a>dataTrasmissione</a>
+			<b>eldocDataTrasmissione</b>
+		</field>
+		<field>
+			<a>annoSysEsterno</a>
+			<b>eldocSysesternoAnno</b>
+		</field>
+		<field>
+			<a>numeroSysEsterno</a>
+			<b>eldocSysesternoNumero</b>
+		</field>
+		<field>
+			<a>sysEsterno</a>
+			<b>eldocSysesterno</b>
+		</field>
+	</mapping>
+</mappings>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+	<mapping map-id="SiacTProgramma_Progetto" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.Progetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTProgramma</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>programmaCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>programmaDesc</b>
+		</field>
+		
+		<field custom-converter-id="progettoStatoConverter">
+			<a>statoOperativoProgetto</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>dataIndizioneGara</a>
+			<b>programmaDataGaraIndizione</b>
+		</field>
+		
+		<field>
+			<a>dataAggiudicazioneGara</a>
+			<b>programmaDataGaraAggiudicazione</b>
+		</field>
+		
+		<field>
+			<a>responsabileUnico</a>
+			<b>programmaResponsabileUnico</b>
+		</field>
+		<field>
+			<a>spaziFinanziari</a>
+			<b>programmaSpaziFinanziari</b>
+		</field>
+		<field>
+			<a>investimentoInCorsoDiDefinizione</a>
+			<b>investimentoInDefinizione</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.ProgettoAttoAmministrativoConverter">
+			<a>attoAmministrativo</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="progettoAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="progettoClassifConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="progettoModalitaAffidamentoProgettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="progettoTipoProgettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacDProgrammaAffidamento_ModalitaAffidamentoProgetto" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.ModalitaAffidamentoProgetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDProgrammaAffidamento</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>programmaAffidamentoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>programmaAffidamentoDesc</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDProgrammaTipo_TipoProgetto" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.TipoProgetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDProgrammaTipo</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>programmaTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>programmaTipoDesc</b>
+		</field>
+	</mapping>
+	
+</mappings>

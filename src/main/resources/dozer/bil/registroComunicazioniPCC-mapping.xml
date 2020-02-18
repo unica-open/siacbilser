@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTRegistroPcc_RegistroComunicazioniPCC" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.RegistroComunicazioniPCC</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRegistroPcc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>dataEmissioneOrdinativo</a>
+			<b>ordinativoDataEmissione</b>
+		</field>
+		<field>
+			<a>numeroOrdinativo</a>
+			<b>ordinativoNumero</b>
+		</field>
+		
+		<field>
+			<a>annoProvvisorioCassa</a>
+			<b>provvisorioCassaAnno</b>
+		</field>
+		<field>
+			<a>numeroProvvisorioCassa</a>
+			<b>provvisorioCassaNumero</b>
+		</field>
+		
+		<field>
+			<a>dataInvio</a>
+			<b>rpccRegistrazioneData</b>
+		</field>
+		
+		<field>
+			<a>statoRichiesta</a>
+			<b>rpccRichiestaStato</b>
+		</field>
+		
+		<field>
+			<a>dataEsito</a>
+			<b>rpccEsitoData</b>
+		</field>
+		
+		<field>
+			<a>codiceEsito</a>
+			<b>rpccEsitoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizioneEsito</a>
+			<b>rpccEsitoDesc</b>
+		</field>
+		
+		<field>
+			<a>dataQuietanza</a>
+			<b>rpccQuietanzaData</b>
+		</field>
+		
+		<field>
+			<a>numeroQuietanza</a>
+			<b>rpccQuietanzaNumero</b>
+		</field>
+		
+		<field>
+			<a>importoQuietanza</a>
+			<b>rpccQuietanzaImporto</b>
+		</field>
+		
+		<field map-id="SiacDPccCausale_CausalePCC">
+			<a>causalePCC</a>
+			<b>siacDPccCausale</b>
+		</field>
+		<field map-id="SiacDPccDebitoStato_StatoDebito">
+			<a>statoDebito</a>
+			<b>siacDPccDebitoStato</b>
+		</field>
+		<field map-id="SiacDPccOperazioneTipo_TipoOperazionePCC">
+			<a>tipoOperazionePCC</a>
+			<b>siacDPccOperazioneTipo</b>
+		</field>
+		
+		<field custom-converter-id="registroComunicazioniPCCSubdocumentoSpesaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="registroComunicazioniPCCDocumentoSpesaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDPccCausale_CausalePCC" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.CausalePCC</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDPccCausale</class-b>
+		<field>
+			<a>codice</a>
+			<b>pcccauCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>pcccauDesc</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacDPccDebitoStato_StatoDebito" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.StatoDebito</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDPccDebitoStato</class-b>
+		<field>
+			<a>codice</a>
+			<b>pccdebStatoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>pccdebStatoDesc</b>
+		</field>
+		<field custom-converter-id="statoDebitoCausaliPCCConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacDPccOperazioneTipo_TipoOperazionePCC" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.TipoOperazionePCC</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDPccOperazioneTipo</class-b>
+		<field>
+			<a>codice</a>
+			<b>pccopTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>pccopTipoDesc</b>
+		</field>
+	</mapping>
+	
+	
+
+</mappings>

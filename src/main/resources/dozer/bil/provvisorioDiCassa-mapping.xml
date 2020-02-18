@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+		
+	
+	<mapping map-id="SiacTProvCassa_ProvvisorioDiCassa">
+			<class-a>it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa</class-a>
+			<class-b>it.csi.siac.siacbilser.integration.entity.SiacTProvCassa</class-b>
+			
+			<field>
+				<a>idProvvisorioDiCassa</a>
+				<b>provcId</b>
+			</field>
+	  	
+			<field>
+				<a>anno</a>
+				<b>provcAnno</b>
+			</field>
+	  	
+			<field>
+				<a>numero</a>
+				<b>provcNumero</b>
+			</field>
+	  	
+			<field>
+				<a>dataEmissione</a>
+				<b>provcDataEmissione</b>
+			</field>
+	  	
+			<field>
+				<a>dataAnnullamento</a>
+				<b>provcDataAnnullamento</b>
+			</field>
+			
+			<field>
+				<a>dataConvalida</a>
+				<b>provcDataConvalida</b>
+			</field>
+				
+			<field>
+				<a>importo</a>
+				<b>provcImporto</b>
+			</field>
+			
+			<field>
+				<a>causale</a>
+				<b>provcCausale</b>
+			</field>
+			
+			<field>
+				<a>denominazioneSoggetto</a>
+				<b>provcDenomSoggetto</b>
+			</field>
+			
+			<field>
+				<a>subCausale</a>
+				<b>provcSubcausale</b>
+			</field>
+			
+			<field custom-converter-id="provvisorioImportoDaRegolarizzareConverter">
+				<a>this</a>
+				<b>this</b>
+			</field>
+			
+	  	</mapping>
+	  
+		
+		
+	</mappings>

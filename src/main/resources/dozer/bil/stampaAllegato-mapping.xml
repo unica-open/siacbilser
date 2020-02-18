@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTAttoAllegatoStampa_AllegatoAttoStampa" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AllegatoAttoStampa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAttoAllegatoStampa</class-b>
+		
+		<field>
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>annoEsercizio</a>
+			<b>attoalstAnno</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>attoalstCode</b>
+		</field>
+	
+		<field>
+			<a>descrizione</a>
+			<b>attoalstDesc</b>
+		</field>
+		
+		<field>
+			<a>versioneInvioFirma</a>
+			<b>attoalVersioneInvioFirma</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field custom-converter-id="allegatoAttoStampaAllegatoAttoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>			
+		
+		<field custom-converter-id="allegatoAttoStampaFileConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="allegatoAttoStampaStatoOperativoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="allegatoAttoStampaTipoConverter" >
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+		
+</mappings>

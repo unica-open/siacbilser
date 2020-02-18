@@ -1,0 +1,1650 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<con:soapui-project id="8be547a4-e147-4318-8c14-253615706902" activeEnvironment="Default" name="tst-srv1-forn2.bilancio.csi" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="fe2f119f-f70e-4b9f-9723-c5d82df48053" wsaVersion="NONE" name="RicercaServiceSoapBinding" type="wsdl" bindingName="{http://siac.csi.it/ricerche/svc/1.0}RicercaServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://tst-srv1-forn2.bilancio.csi.it/siacbilser/RicercaService?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://tst-srv1-forn2.bilancio.csi.it/siacbilser/RicercaService?wsdl"><con:part><con:url>http://tst-srv1-forn2.bilancio.csi.it/siacbilser/RicercaService?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="RicercaService" targetNamespace="http://siac.csi.it/ricerche/svc/1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://siac.csi.it/ricerche/svc/1.0" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://siac.csi.it/ricerche/svc/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://siac.csi.it/integ/data/1.0" xmlns:ns0="http://siac.csi.it/documenti/svc/1.0">
+      <xs:import namespace="http://siac.csi.it/integ/data/1.0"/>
+      <xs:import namespace="http://siac.csi.it/documenti/svc/1.0"/>
+      <xs:complexType name="ricercaOrdinativoIncasso">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoProvvedimento" type="xs:int"/>
+              <xs:element minOccurs="0" name="codiceStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoProvvedimento" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroProvvedimento" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaOrdinativoIncassoResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="ordinativiIncasso" nillable="true" type="ns1:ordinativoIncasso"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaCapitoloEntrataGestione">
+        <xs:complexContent>
+          <xs:extension base="tns:ricercaCapitolo">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaCapitolo">
+        <xs:complexContent>
+          <xs:extension base="ns1:baseRicercaRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="numeroArticolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroCapitolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroUEB" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaCapitoloEntrataGestioneResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:baseRicercaResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="capitoliEntrataGestione" nillable="true" type="ns1:capitoloEntrataGestione"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaSinteticaSoggetti">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaSoggetti">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="denominazione" type="xs:string"/>
+              <xs:element minOccurs="0" name="stato" type="ns1:stato"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseRicercaSoggetti">
+        <xs:complexContent>
+          <xs:extension base="ns1:baseRicercaRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="codice" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceFiscale" type="xs:string"/>
+              <xs:element minOccurs="0" name="partitaIva" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaSinteticaSoggettiResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaSoggettiResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseRicercaSoggettiResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:baseRicercaResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="soggetti" nillable="true" type="ns1:soggetto"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaDocumentoSpesa">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaDocumento">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseRicercaDocumento">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoDocumento" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoRepertorio" type="xs:int"/>
+              <xs:element minOccurs="0" name="codiceSoggetto" type="xs:string"/>
+              <xs:element minOccurs="0" name="dataRepertorio" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="numeroDocumento" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroRepertorio" type="xs:string"/>
+              <xs:element minOccurs="0" name="registroRepertorio" type="xs:string"/>
+              <xs:element minOccurs="0" name="tipoDocumento" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaEstesaOrdinativiSpesa">
+        <xs:complexContent>
+          <xs:extension base="ns1:baseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoProvvedimento" type="xs:int"/>
+              <xs:element minOccurs="0" name="codiceStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoProvvedimento" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroProvvedimento" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaEstesaOrdinativiSpesaResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:baseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="mandatiDiPagamento" nillable="true" type="ns1:mandatoDiPagamento"/>
+              <xs:element minOccurs="0" name="numeroTotaleOrdinativiSpesaTrovati" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaImpegno">
+        <xs:complexContent>
+          <xs:extension base="tns:ricercaMovimentoGestione">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroImpegno" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaMovimentoGestione">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoProvvedimento" type="xs:int"/>
+              <xs:element minOccurs="0" name="codiceStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoProvvedimento" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroProvvedimento" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaImpegnoResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="impegni" nillable="true" type="ns1:impegno"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaOrdinativoSpesa">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoProvvedimento" type="xs:int"/>
+              <xs:element minOccurs="0" name="codiceStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoProvvedimento" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroProvvedimento" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaOrdinativoSpesaResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="ordinativiPagamento" nillable="true" type="ns1:ordinativoPagamento"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaDettaglioSoggetti">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaSoggetti">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaDettaglioSoggettiResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaSoggettiResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaProvvisoriDiCassa">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annullato" type="ns1:siNoIndifferenteEnum"/>
+              <xs:element minOccurs="0" name="daRegolarizzare" type="ns1:siNoEnum"/>
+              <xs:element minOccurs="0" name="dataA" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="dataDa" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="descrizioneCausale" type="xs:string"/>
+              <xs:element minOccurs="0" name="importoA" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="importoDa" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numeroProvvisorio" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroQuietanza" type="xs:int"/>
+              <xs:element minOccurs="0" name="tipoProvvisorioDiCassa" type="ns1:tipoProvvisorioDiCassa"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaCapitoloUscitaGestione">
+        <xs:complexContent>
+          <xs:extension base="tns:ricercaCapitolo">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaCapitoloUscitaGestioneResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:baseRicercaResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="capitoliUscitaGestione" nillable="true" type="ns1:capitoloUscitaGestione"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaAccertamento">
+        <xs:complexContent>
+          <xs:extension base="tns:ricercaMovimentoGestione">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoAccertamento" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroAccertamento" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaAccertamentoResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="accertamenti" nillable="true" type="ns1:accertamento"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaLiquidazione">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoProvvedimento" type="xs:int"/>
+              <xs:element minOccurs="0" name="codiceStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoProvvedimento" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroProvvedimento" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaLiquidazioneResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:ricercaPaginataResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="liquidazioni" nillable="true" type="ns1:liquidazione"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaEstesaLiquidazioni">
+        <xs:complexContent>
+          <xs:extension base="ns1:baseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoProvvedimento" type="xs:int"/>
+              <xs:element minOccurs="0" name="codiceStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoProvvedimento" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceTipoStruttura" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroProvvedimento" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaEstesaLiquidazioniResponse">
+        <xs:complexContent>
+          <xs:extension base="ns1:baseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="liquidazioni" nillable="true" type="ns1:liquidazioneAtti"/>
+              <xs:element minOccurs="0" name="numeroTotaleLiqudazioniTrovate" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaDocumentoEntrata">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaDocumento">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="ricercaOrdinativoIncasso" nillable="true" type="tns:ricercaOrdinativoIncasso"/>
+      <xs:element name="ricercaOrdinativoIncassoResponse" nillable="true" type="tns:ricercaOrdinativoIncassoResponse"/>
+      <xs:element name="ricercaCapitoloEntrataGestione" nillable="true" type="tns:ricercaCapitoloEntrataGestione"/>
+      <xs:element name="ricercaCapitoloEntrataGestioneResponse" nillable="true" type="tns:ricercaCapitoloEntrataGestioneResponse"/>
+      <xs:element name="ricercaSinteticaSoggetti" nillable="true" type="tns:ricercaSinteticaSoggetti"/>
+      <xs:element name="ricercaSinteticaSoggettiResponse" nillable="true" type="tns:ricercaSinteticaSoggettiResponse"/>
+      <xs:element name="ricercaDocumentoSpesa" nillable="true" type="tns:ricercaDocumentoSpesa"/>
+      <xs:element name="ricercaDocumentoSpesaResponse" nillable="true" type="ns0:ricercaDocumentoSpesaResponse"/>
+      <xs:element name="ricercaEstesaOrdinativiSpesa" nillable="true" type="tns:ricercaEstesaOrdinativiSpesa"/>
+      <xs:element name="ricercaEstesaOrdinativiSpesaResponse" nillable="true" type="tns:ricercaEstesaOrdinativiSpesaResponse"/>
+      <xs:element name="ricercaImpegno" nillable="true" type="tns:ricercaImpegno"/>
+      <xs:element name="ricercaImpegnoResponse" nillable="true" type="tns:ricercaImpegnoResponse"/>
+      <xs:element name="ricercaOrdinativoSpesa" nillable="true" type="tns:ricercaOrdinativoSpesa"/>
+      <xs:element name="ricercaOrdinativoSpesaResponse" nillable="true" type="tns:ricercaOrdinativoSpesaResponse"/>
+      <xs:element name="ricercaDettaglioSoggetto" nillable="true" type="tns:ricercaDettaglioSoggetti"/>
+      <xs:element name="ricercaDettaglioSoggettoResponse" nillable="true" type="tns:ricercaDettaglioSoggettiResponse"/>
+      <xs:element name="ricercaProvvisoriDiCassa" nillable="true" type="tns:ricercaProvvisoriDiCassa"/>
+      <xs:element name="ricercaProvvisoriDiCassaResponse" nillable="true" type="ns0:ricercaProvvisoriDiCassaResponse"/>
+      <xs:element name="ricercaCapitoloUscitaGestione" nillable="true" type="tns:ricercaCapitoloUscitaGestione"/>
+      <xs:element name="ricercaCapitoloUscitaGestioneResponse" nillable="true" type="tns:ricercaCapitoloUscitaGestioneResponse"/>
+      <xs:element name="ricercaAccertamento" nillable="true" type="tns:ricercaAccertamento"/>
+      <xs:element name="ricercaAccertamentoResponse" nillable="true" type="tns:ricercaAccertamentoResponse"/>
+      <xs:element name="ricercaLiquidazione" nillable="true" type="tns:ricercaLiquidazione"/>
+      <xs:element name="ricercaLiquidazioneResponse" nillable="true" type="tns:ricercaLiquidazioneResponse"/>
+      <xs:element name="ricercaEstesaLiquidazioni" nillable="true" type="tns:ricercaEstesaLiquidazioni"/>
+      <xs:element name="ricercaEstesaLiquidazioniResponse" nillable="true" type="tns:ricercaEstesaLiquidazioniResponse"/>
+      <xs:element name="ricercaDocumentoEntrata" nillable="true" type="tns:ricercaDocumentoEntrata"/>
+      <xs:element name="ricercaDocumentoEntrataResponse" nillable="true" type="ns0:ricercaDocumentoEntrataResponse"/>
+    </xs:schema>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://siac.csi.it/ricerche/data/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://siac.csi.it/ricerche/data/1.0" xmlns:ns1="http://siac.csi.it/integ/data/1.0">
+      <xs:import namespace="http://siac.csi.it/integ/data/1.0"/>
+      <xs:complexType name="documentoSpesa">
+        <xs:complexContent>
+          <xs:extension base="tns:documento">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="elencoOrdini" nillable="true" type="tns:ordine"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="documento">
+        <xs:complexContent>
+          <xs:extension base="ns1:entitaCodificataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoDocumento" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoRepertorio" type="xs:int"/>
+              <xs:element minOccurs="0" name="arrotondamento" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="codiceSoggetto" type="xs:string"/>
+              <xs:element minOccurs="0" name="dataRepertorio" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="importoDocumento" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="importoNettoDocumento" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numeroDocumento" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroRepertorio" type="xs:string"/>
+              <xs:element minOccurs="0" name="registroRepertorio" type="xs:string"/>
+              <xs:element minOccurs="0" name="tipoDocumento" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ordine">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="numeroOrdine" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="provvisorioDiCassa">
+        <xs:complexContent>
+          <xs:extension base="ns1:entitaCodificataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="anno" type="xs:int"/>
+              <xs:element minOccurs="0" name="annullato" type="ns1:siNoEnum"/>
+              <xs:element minOccurs="0" name="causale" type="xs:string"/>
+              <xs:element minOccurs="0" name="data" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="importo" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="importoDaEmettere" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="importoDaRegolarizzare" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numero" type="xs:int"/>
+              <xs:element minOccurs="0" name="tipoProvvisorioDiCassa" type="ns1:tipoProvvisorioDiCassa"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="documentoEntrata">
+        <xs:complexContent>
+          <xs:extension base="tns:documento">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema targetNamespace="http://siac.csi.it/integ/data/1.0" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://siac.csi.it/integ/data/1.0">
+      <xs:complexType abstract="true" name="ricercaPaginataRequest">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="numeroElementiPerPagina" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroPagina" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseRicercaRequest">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRequest">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="annoBilancio" type="xs:int"/>
+          <xs:element minOccurs="0" name="codiceEnte" type="xs:string"/>
+          <xs:element minOccurs="0" name="codiceFruitore" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="ricercaPaginataResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="totaleRisultati" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseRicercaResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ente" type="tns:ente"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="errori" nillable="true" type="tns:errore"/>
+          <xs:element minOccurs="0" name="esito" type="tns:esito"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="messaggi" nillable="true" type="tns:messaggio"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ordinativoIncasso">
+        <xs:complexContent>
+          <xs:extension base="tns:ordinativo">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="quoteIncasso" nillable="true" type="tns:subOrdinativoIncasso"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ordinativo">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="codiceSoggetto" type="xs:string"/>
+              <xs:element minOccurs="0" name="dataEmissione" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="dataQuietanza" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="denominazioneSoggetto" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroCapitolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroOrdinativo" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="entitaBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="codice" type="xs:string"/>
+          <xs:element minOccurs="0" name="stato" type="tns:stato"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="subOrdinativoIncasso">
+        <xs:complexContent>
+          <xs:extension base="tns:ordinativo">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoAccertamento" type="xs:int"/>
+              <xs:element minOccurs="0" name="importo" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numeroAccertamento" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="stato">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="entitaCodificataBase">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="descrizione" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ente">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="errore">
+        <xs:complexContent>
+          <xs:extension base="tns:messaggioBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="messaggioBase">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="messaggio">
+        <xs:complexContent>
+          <xs:extension base="tns:messaggioBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="capitoloEntrataGestione">
+        <xs:complexContent>
+          <xs:extension base="tns:capitolo">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="categoria" type="tns:categoria"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="listaImportiCapitoloEG" nillable="true" type="tns:importoCapitoloEntrataGestione"/>
+              <xs:element minOccurs="0" name="tipologia" type="tns:tipologia"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="capitolo">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoEsercizio" type="xs:int"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="classificatoriGenerici" nillable="true" type="tns:classificatoreGenerico"/>
+              <xs:element minOccurs="0" name="descrizione" type="xs:string"/>
+              <xs:element minOccurs="0" name="descrizioneArticolo" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroArticolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroCapitolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroUEB" type="xs:int"/>
+              <xs:element minOccurs="0" name="pianoDeiContiFinanziario" type="tns:pianoDeiContiFinanziario"/>
+              <xs:element minOccurs="0" name="rilevanteIva" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="sac" type="tns:strutturaAmministrativa"/>
+              <xs:element minOccurs="0" name="tipoFinanziamento" type="tns:tipoFinanziamento"/>
+              <xs:element minOccurs="0" name="tipoFondo" type="tns:tipoFondo"/>
+              <xs:element minOccurs="0" name="titolo" type="tns:titolo"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="categoria">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="importoCapitoloEntrataGestione">
+        <xs:complexContent>
+          <xs:extension base="tns:importo">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="disponibilitaAccertare" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="stanziamento" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="stanziamentoCassa" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="stanziamentoResiduo" type="xs:decimal"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="importo">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoCompetenza" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="tipologia">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="classificatoreGenerico">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="tipoCodifica" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="pianoDeiContiFinanziario">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="strutturaAmministrativa">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="codiceTipoStruttura" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="tipoFinanziamento">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="tipoFondo">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="titolo">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="soggetto">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="codiceFiscale" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceFiscaleEstero" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="codiciSoggettiCollegatiPrecedenti" nillable="true" type="xs:string"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="codiciSoggettiCollegatiSuccessivi" nillable="true" type="xs:string"/>
+              <xs:element minOccurs="0" name="cognome" type="xs:string"/>
+              <xs:element minOccurs="0" name="contatti" type="tns:contatti"/>
+              <xs:element minOccurs="0" name="dataNascita" type="xs:dateTime"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="elencoModalitaPagamento" nillable="true" type="tns:modalitaPagamento"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="elencoSedi" nillable="true" type="tns:sede"/>
+              <xs:element minOccurs="0" name="indirizzoPrincipale" type="tns:recapito"/>
+              <xs:element minOccurs="0" name="naturaGiuridica" type="tns:naturaGiuridica"/>
+              <xs:element minOccurs="0" name="nome" type="xs:string"/>
+              <xs:element minOccurs="0" name="partitaIva" type="xs:string"/>
+              <xs:element minOccurs="0" name="ragioneSociale" type="xs:string"/>
+              <xs:element minOccurs="0" name="sesso" type="tns:sesso"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="contatti">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="cellulare" type="xs:string"/>
+              <xs:element minOccurs="0" name="email" type="xs:string"/>
+              <xs:element minOccurs="0" name="fax" type="xs:string"/>
+              <xs:element minOccurs="0" name="pec" type="xs:string"/>
+              <xs:element minOccurs="0" name="telefono" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="modalitaPagamento">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="codiceTipoAccredito" type="xs:string"/>
+              <xs:element minOccurs="0" name="descrizioneTipoAccredito" type="xs:string"/>
+              <xs:element minOccurs="0" name="sede" type="tns:sede"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="sede">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="descrizione" type="xs:string"/>
+              <xs:element minOccurs="0" name="recapito" type="tns:recapito"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="recapito">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="cap" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceIstatComune" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceNazione" type="xs:string"/>
+              <xs:element minOccurs="0" name="comune" type="xs:string"/>
+              <xs:element minOccurs="0" name="descrizioneNazione" type="xs:string"/>
+              <xs:element minOccurs="0" name="indirizzo" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroCivico" type="xs:string"/>
+              <xs:element minOccurs="0" name="provincia" type="xs:string"/>
+              <xs:element minOccurs="0" name="sedime" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="naturaGiuridica">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="mandatoDiPagamento">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoEsercizio" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoLiquidazione" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoOrdinativo" type="xs:int"/>
+              <xs:element minOccurs="0" name="codiceSubOrdinativo" type="xs:string"/>
+              <xs:element minOccurs="0" name="creditore" type="xs:string"/>
+              <xs:element minOccurs="0" name="dataEmissione" type="xs:dateTime"/>
+              <xs:element minOccurs="0" name="importoOrdinativo" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numeroArticolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroCapitolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroLiquidazione" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroOrdinativo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroSubImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="provvedimento" type="tns:provvedimento"/>
+              <xs:element minOccurs="0" name="quietanza" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="provvedimento">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoProvvedimento" type="xs:int"/>
+              <xs:element minOccurs="0" name="codiceTipoProvvedimento" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroProvvedimento" type="xs:int"/>
+              <xs:element minOccurs="0" name="sac" type="tns:strutturaAmministrativa"/>
+              <xs:element minOccurs="0" name="statoProvvedimento" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="impegno">
+        <xs:complexContent>
+          <xs:extension base="tns:movimentoGestione">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoImpegnoOrigine" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoImpegnoRiaccertato" type="xs:int"/>
+              <xs:element minOccurs="0" name="disponibilitaLiquidare" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numImpegnoOrigine" type="xs:int"/>
+              <xs:element minOccurs="0" name="numImpegnoRiaccertato" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroImpegno" type="xs:int"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="subImpegni" nillable="true" type="tns:subImpegno"/>
+              <xs:element minOccurs="0" name="tipoImpegno" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="movimentoGestione">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="cig" type="xs:string"/>
+              <xs:element minOccurs="0" name="codiceSoggetto" type="xs:string"/>
+              <xs:element minOccurs="0" name="cup" type="xs:string"/>
+              <xs:element minOccurs="0" name="importo" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numeroArticolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroCapitolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroUEB" type="xs:int"/>
+              <xs:element minOccurs="0" name="parereFinanziario" type="xs:boolean"/>
+              <xs:element minOccurs="0" name="pdc" type="tns:pianoDeiContiFinanziario"/>
+              <xs:element minOccurs="0" name="provvedimento" type="tns:provvedimento"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="subImpegno">
+        <xs:complexContent>
+          <xs:extension base="tns:movimentoGestione">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoSubImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="disponibilitaLiquidare" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numeroSubImpegno" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ordinativoPagamento">
+        <xs:complexContent>
+          <xs:extension base="tns:ordinativo">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="quotePagamento" nillable="true" type="tns:subOrdinativoPagamento"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="subOrdinativoPagamento">
+        <xs:complexContent>
+          <xs:extension base="tns:ordinativo">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoLiquidazione" type="xs:int"/>
+              <xs:element minOccurs="0" name="importo" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numeroImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroLiquidazione" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="capitoloUscitaGestione">
+        <xs:complexContent>
+          <xs:extension base="tns:capitolo">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="importiUG" nillable="true" type="tns:importoCapitoloUscitaGestione"/>
+              <xs:element minOccurs="0" name="macroaggregato" type="tns:macroaggregato"/>
+              <xs:element minOccurs="0" name="missione" type="tns:missione"/>
+              <xs:element minOccurs="0" name="programma" type="tns:programma"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="importoCapitoloUscitaGestione">
+        <xs:complexContent>
+          <xs:extension base="tns:importo">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="disponibilitaImpegnare" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="stanziamento" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="stanziamentoCassa" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="stanziamentoResiduo" type="xs:decimal"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="macroaggregato">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="missione">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="programma">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaCodificataBase">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="accertamento">
+        <xs:complexContent>
+          <xs:extension base="tns:movimentoGestione">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoAccertamento" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoAccertamentoOrigine" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoAccertamentoRiaccertato" type="xs:int"/>
+              <xs:element minOccurs="0" name="disponibilitaIncassare" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numAccertamentoOrigine" type="xs:int"/>
+              <xs:element minOccurs="0" name="numAccertamentoRiaccertato" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroAccertamento" type="xs:int"/>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="subAccertamenti" nillable="true" type="tns:subAccertamento"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="subAccertamento">
+        <xs:complexContent>
+          <xs:extension base="tns:movimentoGestione">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoSubAccertamento" type="xs:int"/>
+              <xs:element minOccurs="0" name="disponibilitaIncassare" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numeroSubAccertamento" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="liquidazione">
+        <xs:complexContent>
+          <xs:extension base="tns:entitaBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="annoLiquidazione" type="xs:int"/>
+              <xs:element minOccurs="0" name="importoLiquidazione" type="xs:decimal"/>
+              <xs:element minOccurs="0" name="numeroImpegno" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroLiquidazione" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroSubImpegno" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="liquidazioneAtti">
+        <xs:complexContent>
+          <xs:extension base="tns:liquidazione">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="annoEsercizio" type="xs:int"/>
+              <xs:element minOccurs="0" name="atto" type="tns:provvedimento"/>
+              <xs:element minOccurs="0" name="beneficiario" type="xs:string"/>
+              <xs:element minOccurs="0" name="numeroArticolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroCapitolo" type="xs:int"/>
+              <xs:element minOccurs="0" name="numeroLiquidazionePrecedente" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="esito">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SUCCESSO"/>
+          <xs:enumeration value="FALLIMENTO"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="sesso">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="MASCHIO"/>
+          <xs:enumeration value="FEMMINA"/>
+          <xs:enumeration value="NON_DEFINITO"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="siNoIndifferenteEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SI"/>
+          <xs:enumeration value="NO"/>
+          <xs:enumeration value="INDIFFERENTE"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="siNoEnum">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SI"/>
+          <xs:enumeration value="NO"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="tipoProvvisorioDiCassa">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ENTRATA"/>
+          <xs:enumeration value="SPESA"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://siac.csi.it/documenti/svc/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://siac.csi.it/documenti/svc/1.0" xmlns:ns2="http://siac.csi.it/integ/data/1.0" xmlns:ns1="http://siac.csi.it/ricerche/data/1.0">
+      <xs:import namespace="http://siac.csi.it/ricerche/data/1.0"/>
+      <xs:import namespace="http://siac.csi.it/integ/data/1.0"/>
+      <xs:complexType name="ricercaDocumentoSpesaResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaDocumentoResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="documentiSpesa" nillable="true" type="ns1:documentoSpesa"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType abstract="true" name="baseRicercaDocumentoResponse">
+        <xs:complexContent>
+          <xs:extension base="ns2:ricercaPaginataResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaProvvisoriDiCassaResponse">
+        <xs:complexContent>
+          <xs:extension base="ns2:ricercaPaginataResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="provvisoriDiCassa" nillable="true" type="ns1:provvisorioDiCassa"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ricercaDocumentoEntrataResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:baseRicercaDocumentoResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="documentiEntrata" nillable="true" type="ns1:documentoEntrata"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="ricercaLiquidazioneResponse">
+    <wsdl:part element="tns:ricercaLiquidazioneResponse" name="ricercaLiquidazioneResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaOrdinativoIncasso">
+    <wsdl:part element="tns:ricercaOrdinativoIncasso" name="ricercaOrdinativoIncasso"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaDocumentoEntrata">
+    <wsdl:part element="tns:ricercaDocumentoEntrata" name="ricercaDocumentoEntrata"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaOrdinativoIncassoResponse">
+    <wsdl:part element="tns:ricercaOrdinativoIncassoResponse" name="ricercaOrdinativoIncassoResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaSinteticaSoggetti">
+    <wsdl:part element="tns:ricercaSinteticaSoggetti" name="ricercaSinteticaSoggetti"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaCapitoloEntrataGestione">
+    <wsdl:part element="tns:ricercaCapitoloEntrataGestione" name="ricercaCapitoloEntrataGestione"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaCapitoloUscitaGestione">
+    <wsdl:part element="tns:ricercaCapitoloUscitaGestione" name="ricercaCapitoloUscitaGestione"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaDocumentoSpesa">
+    <wsdl:part element="tns:ricercaDocumentoSpesa" name="ricercaDocumentoSpesa"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaLiquidazione">
+    <wsdl:part element="tns:ricercaLiquidazione" name="ricercaLiquidazione"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaSinteticaSoggettiResponse">
+    <wsdl:part element="tns:ricercaSinteticaSoggettiResponse" name="ricercaSinteticaSoggettiResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaEstesaOrdinativiSpesa">
+    <wsdl:part element="tns:ricercaEstesaOrdinativiSpesa" name="ricercaEstesaOrdinativiSpesa"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaDocumentoSpesaResponse">
+    <wsdl:part element="tns:ricercaDocumentoSpesaResponse" name="ricercaDocumentoSpesaResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaEstesaOrdinativiSpesaResponse">
+    <wsdl:part element="tns:ricercaEstesaOrdinativiSpesaResponse" name="ricercaEstesaOrdinativiSpesaResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaAccertamentoResponse">
+    <wsdl:part element="tns:ricercaAccertamentoResponse" name="ricercaAccertamentoResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaDettaglioSoggettoResponse">
+    <wsdl:part element="tns:ricercaDettaglioSoggettoResponse" name="ricercaDettaglioSoggettoResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaImpegno">
+    <wsdl:part element="tns:ricercaImpegno" name="ricercaImpegno"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaOrdinativoSpesa">
+    <wsdl:part element="tns:ricercaOrdinativoSpesa" name="ricercaOrdinativoSpesa"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaCapitoloUscitaGestioneResponse">
+    <wsdl:part element="tns:ricercaCapitoloUscitaGestioneResponse" name="ricercaCapitoloUscitaGestioneResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaEstesaLiquidazioni">
+    <wsdl:part element="tns:ricercaEstesaLiquidazioni" name="ricercaEstesaLiquidazioni"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaCapitoloEntrataGestioneResponse">
+    <wsdl:part element="tns:ricercaCapitoloEntrataGestioneResponse" name="ricercaCapitoloEntrataGestioneResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaAccertamento">
+    <wsdl:part element="tns:ricercaAccertamento" name="ricercaAccertamento"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaDettaglioSoggetto">
+    <wsdl:part element="tns:ricercaDettaglioSoggetto" name="ricercaDettaglioSoggetto"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaOrdinativoSpesaResponse">
+    <wsdl:part element="tns:ricercaOrdinativoSpesaResponse" name="ricercaOrdinativoSpesaResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaImpegnoResponse">
+    <wsdl:part element="tns:ricercaImpegnoResponse" name="ricercaImpegnoResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaProvvisoriDiCassaResponse">
+    <wsdl:part element="tns:ricercaProvvisoriDiCassaResponse" name="ricercaProvvisoriDiCassaResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaDocumentoEntrataResponse">
+    <wsdl:part element="tns:ricercaDocumentoEntrataResponse" name="ricercaDocumentoEntrataResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaProvvisoriDiCassa">
+    <wsdl:part element="tns:ricercaProvvisoriDiCassa" name="ricercaProvvisoriDiCassa"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ricercaEstesaLiquidazioniResponse">
+    <wsdl:part element="tns:ricercaEstesaLiquidazioniResponse" name="ricercaEstesaLiquidazioniResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="RicercaService">
+    <wsdl:operation name="ricercaOrdinativoIncasso">
+      <wsdl:input message="tns:ricercaOrdinativoIncasso" name="ricercaOrdinativoIncasso"></wsdl:input>
+      <wsdl:output message="tns:ricercaOrdinativoIncassoResponse" name="ricercaOrdinativoIncassoResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaCapitoloEntrataGestione">
+      <wsdl:input message="tns:ricercaCapitoloEntrataGestione" name="ricercaCapitoloEntrataGestione"></wsdl:input>
+      <wsdl:output message="tns:ricercaCapitoloEntrataGestioneResponse" name="ricercaCapitoloEntrataGestioneResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaSinteticaSoggetti">
+      <wsdl:input message="tns:ricercaSinteticaSoggetti" name="ricercaSinteticaSoggetti"></wsdl:input>
+      <wsdl:output message="tns:ricercaSinteticaSoggettiResponse" name="ricercaSinteticaSoggettiResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaDocumentoSpesa">
+      <wsdl:input message="tns:ricercaDocumentoSpesa" name="ricercaDocumentoSpesa"></wsdl:input>
+      <wsdl:output message="tns:ricercaDocumentoSpesaResponse" name="ricercaDocumentoSpesaResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaEstesaOrdinativiSpesa">
+      <wsdl:input message="tns:ricercaEstesaOrdinativiSpesa" name="ricercaEstesaOrdinativiSpesa"></wsdl:input>
+      <wsdl:output message="tns:ricercaEstesaOrdinativiSpesaResponse" name="ricercaEstesaOrdinativiSpesaResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaImpegno">
+      <wsdl:input message="tns:ricercaImpegno" name="ricercaImpegno"></wsdl:input>
+      <wsdl:output message="tns:ricercaImpegnoResponse" name="ricercaImpegnoResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaOrdinativoSpesa">
+      <wsdl:input message="tns:ricercaOrdinativoSpesa" name="ricercaOrdinativoSpesa"></wsdl:input>
+      <wsdl:output message="tns:ricercaOrdinativoSpesaResponse" name="ricercaOrdinativoSpesaResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaDettaglioSoggetto">
+      <wsdl:input message="tns:ricercaDettaglioSoggetto" name="ricercaDettaglioSoggetto"></wsdl:input>
+      <wsdl:output message="tns:ricercaDettaglioSoggettoResponse" name="ricercaDettaglioSoggettoResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaProvvisoriDiCassa">
+      <wsdl:input message="tns:ricercaProvvisoriDiCassa" name="ricercaProvvisoriDiCassa"></wsdl:input>
+      <wsdl:output message="tns:ricercaProvvisoriDiCassaResponse" name="ricercaProvvisoriDiCassaResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaCapitoloUscitaGestione">
+      <wsdl:input message="tns:ricercaCapitoloUscitaGestione" name="ricercaCapitoloUscitaGestione"></wsdl:input>
+      <wsdl:output message="tns:ricercaCapitoloUscitaGestioneResponse" name="ricercaCapitoloUscitaGestioneResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaAccertamento">
+      <wsdl:input message="tns:ricercaAccertamento" name="ricercaAccertamento"></wsdl:input>
+      <wsdl:output message="tns:ricercaAccertamentoResponse" name="ricercaAccertamentoResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaLiquidazione">
+      <wsdl:input message="tns:ricercaLiquidazione" name="ricercaLiquidazione"></wsdl:input>
+      <wsdl:output message="tns:ricercaLiquidazioneResponse" name="ricercaLiquidazioneResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaEstesaLiquidazioni">
+      <wsdl:input message="tns:ricercaEstesaLiquidazioni" name="ricercaEstesaLiquidazioni"></wsdl:input>
+      <wsdl:output message="tns:ricercaEstesaLiquidazioniResponse" name="ricercaEstesaLiquidazioniResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaDocumentoEntrata">
+      <wsdl:input message="tns:ricercaDocumentoEntrata" name="ricercaDocumentoEntrata"></wsdl:input>
+      <wsdl:output message="tns:ricercaDocumentoEntrataResponse" name="ricercaDocumentoEntrataResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="RicercaServiceSoapBinding" type="tns:RicercaService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="ricercaCapitoloEntrataGestione">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaCapitoloEntrataGestione">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaCapitoloEntrataGestioneResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaOrdinativoIncasso">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaOrdinativoIncasso">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaOrdinativoIncassoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaSinteticaSoggetti">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaSinteticaSoggetti">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaSinteticaSoggettiResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaEstesaOrdinativiSpesa">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaEstesaOrdinativiSpesa">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaEstesaOrdinativiSpesaResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaDocumentoSpesa">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaDocumentoSpesa">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaDocumentoSpesaResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaImpegno">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaImpegno">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaImpegnoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaOrdinativoSpesa">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaOrdinativoSpesa">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaOrdinativoSpesaResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaDettaglioSoggetto">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaDettaglioSoggetto">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaDettaglioSoggettoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaCapitoloUscitaGestione">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaCapitoloUscitaGestione">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaCapitoloUscitaGestioneResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaProvvisoriDiCassa">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaProvvisoriDiCassa">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaProvvisoriDiCassaResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaAccertamento">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaAccertamento">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaAccertamentoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaEstesaLiquidazioni">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaEstesaLiquidazioni">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaEstesaLiquidazioniResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaLiquidazione">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaLiquidazione">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaLiquidazioneResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ricercaDocumentoEntrata">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="ricercaDocumentoEntrata">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ricercaDocumentoEntrataResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="RicercaService">
+    <wsdl:port binding="tns:RicercaServiceSoapBinding" name="RicercaServicePort">
+      <soap:address location="http://10.202.52.46:10510/siacbilser/RicercaService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint></con:endpoints><con:operation id="bce576a1-0660-452b-9fa0-fa5937a4cf52" isOneWay="false" action="" name="ricercaAccertamento" bindingOperationName="ricercaAccertamento" type="Request-Response" outputName="ricercaAccertamentoResponse" inputName="ricercaAccertamento" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="36ed5a81-d506-4d62-9079-94ab38e258ca" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaAccertamento>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroElementiPerPagina>?</numeroElementiPerPagina>\r
+         <!--Optional:-->\r
+         <numeroPagina>?</numeroPagina>\r
+         <!--Optional:-->\r
+         <annoProvvedimento>?</annoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceStruttura>?</codiceStruttura>\r
+         <!--Optional:-->\r
+         <codiceTipoProvvedimento>?</codiceTipoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceTipoStruttura>?</codiceTipoStruttura>\r
+         <!--Optional:-->\r
+         <numeroProvvedimento>?</numeroProvvedimento>\r
+         <!--Optional:-->\r
+         <annoAccertamento>?</annoAccertamento>\r
+         <!--Optional:-->\r
+         <numeroAccertamento>?</numeroAccertamento>\r
+      </ns:ricercaAccertamento>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaAccertamento"/></con:call></con:operation><con:operation id="3385ac42-8472-4e2b-8e02-5db6d095ec79" isOneWay="false" action="" name="ricercaCapitoloEntrataGestione" bindingOperationName="ricercaCapitoloEntrataGestione" type="Request-Response" outputName="ricercaCapitoloEntrataGestioneResponse" inputName="ricercaCapitoloEntrataGestione" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2f23dde8-0f22-440f-9b53-d61a51ea2b7b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaCapitoloEntrataGestione>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroArticolo>?</numeroArticolo>\r
+         <!--Optional:-->\r
+         <numeroCapitolo>?</numeroCapitolo>\r
+         <!--Optional:-->\r
+         <numeroUEB>?</numeroUEB>\r
+      </ns:ricercaCapitoloEntrataGestione>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaCapitoloEntrataGestione"/></con:call></con:operation><con:operation id="6784f3ac-7019-4450-9195-8b06b56ad761" isOneWay="false" action="" name="ricercaCapitoloUscitaGestione" bindingOperationName="ricercaCapitoloUscitaGestione" type="Request-Response" outputName="ricercaCapitoloUscitaGestioneResponse" inputName="ricercaCapitoloUscitaGestione" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ea176d19-7eac-43e5-922f-0e33515b2631" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaCapitoloUscitaGestione>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroArticolo>?</numeroArticolo>\r
+         <!--Optional:-->\r
+         <numeroCapitolo>?</numeroCapitolo>\r
+         <!--Optional:-->\r
+         <numeroUEB>?</numeroUEB>\r
+      </ns:ricercaCapitoloUscitaGestione>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaCapitoloUscitaGestione"/></con:call></con:operation><con:operation id="f1e3d649-8e8f-4918-98d6-55904685a16d" isOneWay="false" action="" name="ricercaDettaglioSoggetto" bindingOperationName="ricercaDettaglioSoggetto" type="Request-Response" outputName="ricercaDettaglioSoggettoResponse" inputName="ricercaDettaglioSoggetto" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="246c04ad-2a15-4a1c-be77-87927d80206f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaDettaglioSoggetto>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <codice>?</codice>\r
+         <!--Optional:-->\r
+         <codiceFiscale>?</codiceFiscale>\r
+         <!--Optional:-->\r
+         <partitaIva>?</partitaIva>\r
+      </ns:ricercaDettaglioSoggetto>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaDettaglioSoggetto"/></con:call></con:operation><con:operation id="8826b200-6258-4491-841b-f4121456f61c" isOneWay="false" action="" name="ricercaDocumentoEntrata" bindingOperationName="ricercaDocumentoEntrata" type="Request-Response" outputName="ricercaDocumentoEntrataResponse" inputName="ricercaDocumentoEntrata" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="6c957dba-56b1-4a0c-83b4-183a9deb6472" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaDocumentoEntrata>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroElementiPerPagina>?</numeroElementiPerPagina>\r
+         <!--Optional:-->\r
+         <numeroPagina>?</numeroPagina>\r
+         <!--Optional:-->\r
+         <annoDocumento>?</annoDocumento>\r
+         <!--Optional:-->\r
+         <annoRepertorio>?</annoRepertorio>\r
+         <!--Optional:-->\r
+         <codiceSoggetto>?</codiceSoggetto>\r
+         <!--Optional:-->\r
+         <dataRepertorio>?</dataRepertorio>\r
+         <!--Optional:-->\r
+         <numeroDocumento>?</numeroDocumento>\r
+         <!--Optional:-->\r
+         <numeroRepertorio>?</numeroRepertorio>\r
+         <!--Optional:-->\r
+         <registroRepertorio>?</registroRepertorio>\r
+         <!--Optional:-->\r
+         <tipoDocumento>?</tipoDocumento>\r
+      </ns:ricercaDocumentoEntrata>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaDocumentoEntrata"/></con:call></con:operation><con:operation id="741bb543-8fea-4091-94b5-e48b390422b5" isOneWay="false" action="" name="ricercaDocumentoSpesa" bindingOperationName="ricercaDocumentoSpesa" type="Request-Response" outputName="ricercaDocumentoSpesaResponse" inputName="ricercaDocumentoSpesa" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="277205d4-66e0-4fe0-b228-61f338197453" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaDocumentoSpesa>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroElementiPerPagina>?</numeroElementiPerPagina>\r
+         <!--Optional:-->\r
+         <numeroPagina>?</numeroPagina>\r
+         <!--Optional:-->\r
+         <annoDocumento>?</annoDocumento>\r
+         <!--Optional:-->\r
+         <annoRepertorio>?</annoRepertorio>\r
+         <!--Optional:-->\r
+         <codiceSoggetto>?</codiceSoggetto>\r
+         <!--Optional:-->\r
+         <dataRepertorio>?</dataRepertorio>\r
+         <!--Optional:-->\r
+         <numeroDocumento>?</numeroDocumento>\r
+         <!--Optional:-->\r
+         <numeroRepertorio>?</numeroRepertorio>\r
+         <!--Optional:-->\r
+         <registroRepertorio>?</registroRepertorio>\r
+         <!--Optional:-->\r
+         <tipoDocumento>?</tipoDocumento>\r
+      </ns:ricercaDocumentoSpesa>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaDocumentoSpesa"/></con:call></con:operation><con:operation id="b075588d-ddcb-436a-a455-978d6b78ae03" isOneWay="false" action="" name="ricercaEstesaLiquidazioni" bindingOperationName="ricercaEstesaLiquidazioni" type="Request-Response" outputName="ricercaEstesaLiquidazioniResponse" inputName="ricercaEstesaLiquidazioni" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="f1b2f54b-d6d6-4088-abf9-e2c5b63f92d5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaEstesaLiquidazioni>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <annoProvvedimento>?</annoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceStruttura>?</codiceStruttura>\r
+         <!--Optional:-->\r
+         <codiceTipoProvvedimento>?</codiceTipoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceTipoStruttura>?</codiceTipoStruttura>\r
+         <!--Optional:-->\r
+         <numeroProvvedimento>?</numeroProvvedimento>\r
+      </ns:ricercaEstesaLiquidazioni>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaEstesaLiquidazioni"/></con:call></con:operation><con:operation id="7f3e0188-b824-4db7-9717-3a294c83d47a" isOneWay="false" action="" name="ricercaEstesaOrdinativiSpesa" bindingOperationName="ricercaEstesaOrdinativiSpesa" type="Request-Response" outputName="ricercaEstesaOrdinativiSpesaResponse" inputName="ricercaEstesaOrdinativiSpesa" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="30ffc5dd-eac6-4c92-9351-024b333d876c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaEstesaOrdinativiSpesa>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <annoProvvedimento>?</annoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceStruttura>?</codiceStruttura>\r
+         <!--Optional:-->\r
+         <codiceTipoProvvedimento>?</codiceTipoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceTipoStruttura>?</codiceTipoStruttura>\r
+         <!--Optional:-->\r
+         <numeroProvvedimento>?</numeroProvvedimento>\r
+      </ns:ricercaEstesaOrdinativiSpesa>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaEstesaOrdinativiSpesa"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="76a32657-da9a-4650-9e77-b69f083d2932" isOneWay="false" action="" name="ricercaImpegno" bindingOperationName="ricercaImpegno" type="Request-Response" outputName="ricercaImpegnoResponse" inputName="ricercaImpegno" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8e04f202-a95b-4b40-90d2-97558ee65517" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaImpegno>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroElementiPerPagina>?</numeroElementiPerPagina>\r
+         <!--Optional:-->\r
+         <numeroPagina>?</numeroPagina>\r
+         <!--Optional:-->\r
+         <annoProvvedimento>?</annoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceStruttura>?</codiceStruttura>\r
+         <!--Optional:-->\r
+         <codiceTipoProvvedimento>?</codiceTipoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceTipoStruttura>?</codiceTipoStruttura>\r
+         <!--Optional:-->\r
+         <numeroProvvedimento>?</numeroProvvedimento>\r
+         <!--Optional:-->\r
+         <annoImpegno>?</annoImpegno>\r
+         <!--Optional:-->\r
+         <numeroImpegno>?</numeroImpegno>\r
+      </ns:ricercaImpegno>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaImpegno"/></con:call></con:operation><con:operation id="de2ce1a4-6ff4-4a39-a1a7-c3efc80213de" isOneWay="false" action="" name="ricercaLiquidazione" bindingOperationName="ricercaLiquidazione" type="Request-Response" outputName="ricercaLiquidazioneResponse" inputName="ricercaLiquidazione" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c0413b67-f022-40be-9c6d-b74193adb7fe" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaLiquidazione>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroElementiPerPagina>?</numeroElementiPerPagina>\r
+         <!--Optional:-->\r
+         <numeroPagina>?</numeroPagina>\r
+         <!--Optional:-->\r
+         <annoProvvedimento>?</annoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceStruttura>?</codiceStruttura>\r
+         <!--Optional:-->\r
+         <codiceTipoProvvedimento>?</codiceTipoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceTipoStruttura>?</codiceTipoStruttura>\r
+         <!--Optional:-->\r
+         <numeroProvvedimento>?</numeroProvvedimento>\r
+      </ns:ricercaLiquidazione>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaLiquidazione"/></con:call></con:operation><con:operation id="8cd5274c-094b-4983-8f22-ef58b05f28bd" isOneWay="false" action="" name="ricercaOrdinativoIncasso" bindingOperationName="ricercaOrdinativoIncasso" type="Request-Response" outputName="ricercaOrdinativoIncassoResponse" inputName="ricercaOrdinativoIncasso" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="25ec8424-f016-42b6-9aa8-a8c3440905e2" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaOrdinativoIncasso>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroElementiPerPagina>?</numeroElementiPerPagina>\r
+         <!--Optional:-->\r
+         <numeroPagina>?</numeroPagina>\r
+         <!--Optional:-->\r
+         <annoProvvedimento>?</annoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceStruttura>?</codiceStruttura>\r
+         <!--Optional:-->\r
+         <codiceTipoProvvedimento>?</codiceTipoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceTipoStruttura>?</codiceTipoStruttura>\r
+         <!--Optional:-->\r
+         <numeroProvvedimento>?</numeroProvvedimento>\r
+      </ns:ricercaOrdinativoIncasso>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaOrdinativoIncasso"/></con:call></con:operation><con:operation id="f4c57768-1490-46f3-b49a-7a6becfdada2" isOneWay="false" action="" name="ricercaOrdinativoSpesa" bindingOperationName="ricercaOrdinativoSpesa" type="Request-Response" outputName="ricercaOrdinativoSpesaResponse" inputName="ricercaOrdinativoSpesa" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c8e86e96-5649-413a-9f01-618782a88c58" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaOrdinativoSpesa>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroElementiPerPagina>?</numeroElementiPerPagina>\r
+         <!--Optional:-->\r
+         <numeroPagina>?</numeroPagina>\r
+         <!--Optional:-->\r
+         <annoProvvedimento>?</annoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceStruttura>?</codiceStruttura>\r
+         <!--Optional:-->\r
+         <codiceTipoProvvedimento>?</codiceTipoProvvedimento>\r
+         <!--Optional:-->\r
+         <codiceTipoStruttura>?</codiceTipoStruttura>\r
+         <!--Optional:-->\r
+         <numeroProvvedimento>?</numeroProvvedimento>\r
+      </ns:ricercaOrdinativoSpesa>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaOrdinativoSpesa"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="6bd8c17f-27e5-4192-99e7-9b51a9d11c48" isOneWay="false" action="" name="ricercaProvvisoriDiCassa" bindingOperationName="ricercaProvvisoriDiCassa" type="Request-Response" outputName="ricercaProvvisoriDiCassaResponse" inputName="ricercaProvvisoriDiCassa" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="90e9de55-9eca-415d-b090-aeac4f583b33" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaProvvisoriDiCassa>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <numeroElementiPerPagina>?</numeroElementiPerPagina>\r
+         <!--Optional:-->\r
+         <numeroPagina>?</numeroPagina>\r
+         <!--Optional:-->\r
+         <annullato>?</annullato>\r
+         <!--Optional:-->\r
+         <daRegolarizzare>?</daRegolarizzare>\r
+         <!--Optional:-->\r
+         <dataA>?</dataA>\r
+         <!--Optional:-->\r
+         <dataDa>?</dataDa>\r
+         <!--Optional:-->\r
+         <descrizioneCausale>?</descrizioneCausale>\r
+         <!--Optional:-->\r
+         <importoA>?</importoA>\r
+         <!--Optional:-->\r
+         <importoDa>?</importoDa>\r
+         <!--Optional:-->\r
+         <numeroProvvisorio>?</numeroProvvisorio>\r
+         <!--Optional:-->\r
+         <numeroQuietanza>?</numeroQuietanza>\r
+         <!--Optional:-->\r
+         <tipoProvvisorioDiCassa>?</tipoProvvisorioDiCassa>\r
+      </ns:ricercaProvvisoriDiCassa>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaProvvisoriDiCassa"/></con:call></con:operation><con:operation id="eb810f67-2574-46bd-959c-c176429e51e8" isOneWay="false" action="" name="ricercaSinteticaSoggetti" bindingOperationName="ricercaSinteticaSoggetti" type="Request-Response" outputName="ricercaSinteticaSoggettiResponse" inputName="ricercaSinteticaSoggetti" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b32b596b-f450-4779-90d5-2373d55c362d" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.202.52.46:10510/siacbilser/RicercaService</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://siac.csi.it/ricerche/svc/1.0">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ns:ricercaSinteticaSoggetti>\r
+         <!--Optional:-->\r
+         <annoBilancio>?</annoBilancio>\r
+         <!--Optional:-->\r
+         <codiceEnte>?</codiceEnte>\r
+         <!--Optional:-->\r
+         <codiceFruitore>?</codiceFruitore>\r
+         <!--Optional:-->\r
+         <codice>?</codice>\r
+         <!--Optional:-->\r
+         <codiceFiscale>?</codiceFiscale>\r
+         <!--Optional:-->\r
+         <partitaIva>?</partitaIva>\r
+         <!--Optional:-->\r
+         <denominazione>?</denominazione>\r
+         <!--Optional:-->\r
+         <stato>\r
+            <!--Optional:-->\r
+            <codice>?</codice>\r
+            <!--Optional:-->\r
+            <stato/>\r
+            <!--Optional:-->\r
+            <descrizione>?</descrizione>\r
+         </stato>\r
+      </ns:ricercaSinteticaSoggetti>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://siac.csi.it/ricerche/svc/1.0/RicercaService/ricercaSinteticaSoggetti"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

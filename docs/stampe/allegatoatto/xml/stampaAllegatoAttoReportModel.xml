@@ -1,0 +1,376 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<stampaAllegatoAttoReportModel>
+	<elenchi>
+		<elenco>
+			<impegniSubimpegni>
+				<impegnoSubimpegno>
+					<cig/>
+					<cup/>
+					<hasQuoteDaNonEsporre>true</hasQuoteDaNonEsporre>
+					<impegno>
+						<stato>VALIDO</stato>
+						<uid>57478</uid>
+						<annoCapitoloOrigine>2017</annoCapitoloOrigine>
+						<annoMovimento>2017</annoMovimento>
+						<annoOriginePlur>0</annoOriginePlur>
+						<annoRiaccertato>0</annoRiaccertato>
+						<attoAmministrativo>
+							<loginOperazione>migr_impacc</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>26015</uid>
+							<anno>2011</anno>
+							<ente>
+								<loginOperazione>admin</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>2</uid>
+								<codiceFiscale>80087670016</codiceFiscale>
+								<gestioneLivelli/>
+								<nome>Regione Piemonte</nome>
+							</ente>
+							<numero>314</numero>
+							<oggetto>L.R. n. 52 del 01.08.1996 - Impegno di Euro 831.801,80 sul capitolo di spesa 233419 del bilancio 2011 per la realizzazione del Programma Urbano dei Parcheggi di Torino. </oggetto>
+							<parereRegolaritaContabile>false</parereRegolaritaContabile>
+							<strutturaAmmContabile>
+								<loginOperazione>adminsac</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>1719530</uid>
+								<codice>DB1200</codice>
+								<descrizione>TRASPORTI, INFRASTRUTTURE, MOBILITA' E LOGISTICA</descrizione>
+								<livello>1</livello>
+								<tipoClassificatore>
+									<stato>VALIDO</stato>
+									<uid>0</uid>
+									<codice>CDR</codice>
+									<descrizione>Centro di Respondabilità (Direzione)</descrizione>
+								</tipoClassificatore>
+							</strutturaAmmContabile>
+							<tipoAtto>
+								<stato>VALIDO</stato>
+								<uid>306</uid>
+								<codice>AD</codice>
+								<descrizione>ATTO DIRIGENZIALE</descrizione>
+								<progressivoAutomatico>false</progressivoAutomatico>
+							</tipoAtto>
+						</attoAmministrativo>
+						<byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+						<collegatoALiquidazioni>false</collegatoALiquidazioni>
+						<collegatoAOrdinativi>false</collegatoAOrdinativi>
+						<dataEmissione>2017-02-03T15:45:20.031+01:00</dataEmissione>
+						<descrizione>REIMPUT. ROR 2016 2015/3742 REIMPUT. RSR 2011/4807 PER LA CREAZIONE DI PARCHEGGI FINALIZZATI ALL'INTERSCAMBIO CON I SISTEMI DI TRASPORTO COLLETTIVO VOLTI A FAVORIRE IL DECONGESTIONAMENTO DEI CENTRI URBANI DI CUI ALL'ART.6 DELLA LEGGE 122/1989 E DI CUI ALLA L.R.52/1996, COME INDIVIDUATI CON D.G.R. 19/10/2009 N.11-12358</descrizione>
+						<flagAttivaGsa>false</flagAttivaGsa>
+						<flagDaRiaccertamento>false</flagDaRiaccertamento>
+						<importoAttuale>397437.77</importoAttuale>
+						<importoIniziale>397437.77</importoIniziale>
+						<numero>226</numero>
+						<numeroArticoloOrigine>0</numeroArticoloOrigine>
+						<numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+						<numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+						<numeroUEBOrigine>0</numeroUEBOrigine>
+						<parereFinanziario>false</parereFinanziario>
+						<presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+						<siopeTipoDebito>
+							<loginOperazione>admin</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>4</uid>
+							<codice>NC</codice>
+							<descrizione>Non commerciale</descrizione>
+							<descrizioneBancaItalia>NON_COMMERCIALE</descrizioneBancaItalia>
+						</siopeTipoDebito>
+						<validato>true</validato>
+						<annoFinanziamento>0</annoFinanziamento>
+						<chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+						<descrizioneStatoOperativoMovimentoGestioneSpesa>DEFINITIVO</descrizioneStatoOperativoMovimentoGestioneSpesa>
+						<flagCassaEconomale>false</flagCassaEconomale>
+						<flagFrazionabile>false</flagFrazionabile>
+						<flagPrenotazione>false</flagPrenotazione>
+						<flagPrenotazioneLiquidabile>false</flagPrenotazioneLiquidabile>
+						<flagSDF>false</flagSDF>
+						<frazionabileValorizzato>false</frazionabileValorizzato>
+						<numeroAccFinanziamento>0</numeroAccFinanziamento>
+						<statoOperativoMovimentoGestioneSpesa>D</statoOperativoMovimentoGestioneSpesa>
+						<capitoloUscitaGestione>
+							<loginOperazione>batch</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>59203</uid>
+							<annoCapitolo>2017</annoCapitolo>
+							<bilancio>
+								<loginOperazione>admin</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>131</uid>
+								<anno>2017</anno>
+								<faseEStatoAttualeBilancio>
+									<stato>VALIDO</stato>
+									<uid>0</uid>
+									<faseBilancio>ESERCIZIO_PROVVISORIO</faseBilancio>
+								</faseEStatoAttualeBilancio>
+							</bilancio>
+							<categoriaCapitolo>
+								<stato>VALIDO</stato>
+								<uid>3</uid>
+								<codice>STD</codice>
+								<descrizione>Standard</descrizione>
+							</categoriaCapitolo>
+							<descrizione>CONTRIBUTI AL COMUNE DI TORINO PER LA CREAZIONE DI PARCHEGGI FINALIZZATI ALL'INTERSCAMBIO CON SISTEMI DI  TRASPORTO COLLETTIVO VOLTI A FAVORIRE IL DECONGESTIONAMENTO DEI CENTRI URBANI (L.R. 52/96).</descrizione>
+							<elementoPianoDeiConti>
+								<stato>VALIDO</stato>
+								<uid>129798</uid>
+								<codice>U.2.03.01.02.000</codice>
+								<descrizione>Contributi agli investimenti a Amministrazioni Locali</descrizione>
+								<livello>0</livello>
+								<tipoClassificatore>
+									<stato>VALIDO</stato>
+									<uid>37</uid>
+									<codice>PDC_IV</codice>
+								</tipoClassificatore>
+							</elementoPianoDeiConti>
+							<ente>
+								<loginOperazione>admin</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>2</uid>
+								<codiceFiscale>80087670016</codiceFiscale>
+								<gestioneLivelli/>
+								<nome>Regione Piemonte</nome>
+							</ente>
+							<flagRilevanteIva>false</flagRilevanteIva>
+							<numeroArticolo>0</numeroArticolo>
+							<numeroCapitolo>233419</numeroCapitolo>
+							<numeroUEB>1</numeroUEB>
+							<statoOperativoElementoDiBilancio>VALIDO</statoOperativoElementoDiBilancio>
+							<tipoCapitolo>CAPITOLO_USCITA_GESTIONE</tipoCapitolo>
+							<uidCapitoloEquivalente>0</uidCapitoloEquivalente>
+							<uidExCapitolo>0</uidExCapitolo>
+							<macroaggregato>
+								<stato>VALIDO</stato>
+								<uid>118962</uid>
+								<codice>2030000</codice>
+								<descrizione>Contributi agli investimenti</descrizione>
+								<livello>0</livello>
+								<tipoClassificatore>
+									<stato>VALIDO</stato>
+									<uid>48</uid>
+									<codice>MACROAGGREGATO</codice>
+								</tipoClassificatore>
+							</macroaggregato>
+						</capitoloUscitaGestione>
+					</impegno>
+					<importo>0.05</importo>
+					<totaleImportoDaDedurre>0</totaleImportoDaDedurre>
+				</impegnoSubimpegno>
+			</impegniSubimpegni>
+			<subdocumenti/>
+			 <indirizzoSoggetto>
+                <loginOperazione>migr_soggetti</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>109445</uid>
+                <cap>10122</cap>
+                <denominazione>Racconigi</denominazione>
+                <numeroCivico>30</numeroCivico>
+                <sedime>C.SO</sedime>
+                <avviso>false</avviso>
+                <checkAvviso>false</checkAvviso>
+                <checkPrincipale>false</checkPrincipale>
+                <comune>Torino</comune>
+                <indirizzoId>109445</indirizzoId>
+                <principale>false</principale>
+                <provincia>TO</provincia>
+            </indirizzoSoggetto>
+			<modalitaPagamentoSoggetto>
+				<stato>VALIDO</stato>
+				<uid>143262</uid>
+				<codiceStatoModalitaPagamento>VALIDO</codiceStatoModalitaPagamento>
+				<contoCorrente>0061212</contoCorrente>
+				<descrizione>Conto: 0061212 - Tipo accredito: GF - GIRO FONDI</descrizione>
+				<descrizioneInfo>
+					<descrizioneArricchita>Tipo accredito: GF - GIRO FONDI - Conto: 0061212</descrizioneArricchita>
+				</descrizioneInfo>
+				<descrizioneStatoModalitaPagamento>valido</descrizioneStatoModalitaPagamento>
+				<inModifica>false</inModifica>
+				<modalitaAccreditoSoggetto>
+					<stato>VALIDO</stato>
+					<uid>431</uid>
+					<codice>GF</codice>
+					<descrizione>GIRO FONDI</descrizione>
+					<priorita>0</priorita>
+				</modalitaAccreditoSoggetto>
+				<modificaPropriaOccorrenza>false</modificaPropriaOccorrenza>
+				<soggettoCessione>
+					<stato>VALIDO</stato>
+					<uid>0</uid>
+					<avviso>false</avviso>
+					<controlloSuSoggetto>true</controlloSuSoggetto>
+					<residenteEstero>false</residenteEstero>
+					<uidSoggettoPadre>0</uidSoggettoPadre>
+				</soggettoCessione>
+			</modalitaPagamentoSoggetto>
+			<soggetto>
+				<loginOperazione>REGP-MZZMRC61A70L219V</loginOperazione>
+				<stato>VALIDO</stato>
+				<uid>130617</uid>
+				<avviso>false</avviso>
+				<codiceFiscale>00514490010     </codiceFiscale>
+				<codiceSoggetto>30322</codiceSoggetto>
+				<controlloSuSoggetto>true</controlloSuSoggetto>
+				<dataModifica>2017-04-18T15:16:27.258+02:00</dataModifica>
+				<denominazione>COMUNE DI TORINO</denominazione>
+				<indirizzi>
+					<loginOperazione>migr_soggetti</loginOperazione>
+					<stato>VALIDO</stato>
+					<uid>108489</uid>
+					<cap>10100</cap>
+					<denominazione>MILANO, 1</denominazione>
+					<sedime>Via</sedime>
+					<avviso>true</avviso>
+					<checkAvviso>true</checkAvviso>
+					<checkPrincipale>true</checkPrincipale>
+					<comune>Torino</comune>
+					<indirizzoId>108489</indirizzoId>
+					<principale>true</principale>
+					<provincia>TO</provincia>
+				</indirizzi>
+				<loginCreazione>migr_soggetti</loginCreazione>
+				<loginModifica>REGP-MZZMRC61A70L219V</loginModifica>
+				<partitaIva>00514490010</partitaIva>
+				<residenteEstero>false</residenteEstero>
+				<uidSoggettoPadre>0</uidSoggettoPadre>
+			</soggetto>
+			<totaleImpegni>0.05</totaleImpegni>
+			<totaleImportoDaDedurre>0</totaleImportoDaDedurre>
+		</elenco>
+	</elenchi>
+	<allegatoAtto>
+		<loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+		<stato>VALIDO</stato>
+		<uid>11330</uid>
+		<loginCreazione>2 -  ACCOUNT  - AMMINISTRATORE</loginCreazione>
+		<loginModifica>2 -  ACCOUNT  - AMMINISTRATORE</loginModifica>
+		<altriAllegati/>
+		<annotazioni/>
+		<attoAmministrativo>
+			<loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>44096</uid>
+			<anno>2017</anno>
+			<ente>
+				<loginOperazione>admin</loginOperazione>
+				<stato>VALIDO</stato>
+				<uid>2</uid>
+				<codiceFiscale>80087670016</codiceFiscale>
+				<gestioneLivelli/>
+				<nome>Regione Piemonte</nome>
+			</ente>
+			<numero>4563</numero>
+			<oggetto>test per la SIAC-6191</oggetto>
+			<parereRegolaritaContabile>false</parereRegolaritaContabile>
+			<strutturaAmmContabile>
+				<loginOperazione>adminsac</loginOperazione>
+				<stato>VALIDO</stato>
+				<uid>1719637</uid>
+				<codice>A1302A</codice>
+				<descrizione>ATTIVITÀ LEGISLATIVA E CONSULENZA GIURIDICA</descrizione>
+				<livello>2</livello>
+				<tipoClassificatore>
+					<stato>VALIDO</stato>
+					<uid>0</uid>
+					<codice>CDC</codice>
+					<descrizione>Cdc(Settore)</descrizione>
+				</tipoClassificatore>
+			</strutturaAmmContabile>
+			<tipoAtto>
+				<loginOperazione>admin</loginOperazione>
+				<stato>VALIDO</stato>
+				<uid>285</uid>
+				<codice>ALG</codice>
+				<descrizione>ALLEGATO ATTO AUTOMATICO</descrizione>
+				<progressivoAutomatico>true</progressivoAutomatico>
+			</tipoAtto>
+		</attoAmministrativo>
+		<causale>test per la SIAC-6191</causale>
+		<dataInizioValiditaStato>2018-05-23T14:50:11.470+02:00</dataInizioValiditaStato>
+		<datiSensibili>false</datiSensibili>
+		<elenchiDocumentiAllegato>
+			<loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>11603</uid>
+			<subdocumenti/>
+			<subdocumentiIva/>
+			<anno>2017</anno>
+			<contieneQuoteACopertura>false</contieneQuoteACopertura>
+			<ente>
+				<loginOperazione>admin</loginOperazione>
+				<stato>VALIDO</stato>
+				<uid>2</uid>
+				<codiceFiscale>80087670016</codiceFiscale>
+				<gestioneLivelli/>
+				<nome>Regione Piemonte</nome>
+			</ente>
+			<numero>11603</numero>
+			<numeroQuoteInElenco>1</numeroQuoteInElenco>
+			<statoOperativoElencoDocumenti>BOZZA</statoOperativoElencoDocumenti>
+			<totaleDaConvalidareEntrata>0</totaleDaConvalidareEntrata>
+			<totaleDaConvalidareSpesa>0.05</totaleDaConvalidareSpesa>
+			<totaleDaIncassare>0</totaleDaIncassare>
+			<totaleDaPagare>0</totaleDaPagare>
+			<totaleQuoteEntrate>0</totaleQuoteEntrate>
+			<totaleQuoteSpese>0.05</totaleQuoteSpese>
+		</elenchiDocumentiAllegato>
+		<ente>
+			<loginOperazione>admin</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>2</uid>
+			<codiceFiscale>80087670016</codiceFiscale>
+			<gestioneLivelli/>
+			<nome>Regione Piemonte</nome>
+		</ente>
+		<flagRitenute>false</flagRitenute>
+		<note/>
+		<pratica/>
+		<responsabileAmministrativo/>
+		<responsabileContabile/>
+		<statoOperativoAllegatoAtto>DA_COMPLETARE</statoOperativoAllegatoAtto>
+	</allegatoAtto>
+	<dataInserimento>2018-05-23T14:50:11.470+02:00</dataInserimento>
+	<hasRitenute>false</hasRitenute>
+	<soggettoProponente>
+		<stato>VALIDO</stato>
+		<uid>138499</uid>
+		<avviso>false</avviso>
+		<codiceSoggetto>15207</codiceSoggetto>
+		<controlloSuSoggetto>true</controlloSuSoggetto>
+		<denominazione>REGIONE PIEMONTE</denominazione>
+		<residenteEstero>false</residenteEstero>
+		<uidSoggettoPadre>0</uidSoggettoPadre>
+	</soggettoProponente>
+	<strutturaAmministrativoContabileCDC>
+		<loginOperazione>adminsac</loginOperazione>
+		<stato>VALIDO</stato>
+		<uid>1719637</uid>
+		<codice>A1302A</codice>
+		<descrizione>ATTIVITÀ LEGISLATIVA E CONSULENZA GIURIDICA</descrizione>
+		<livello>2</livello>
+		<tipoClassificatore>
+			<stato>VALIDO</stato>
+			<uid>0</uid>
+			<codice>CDC</codice>
+		</tipoClassificatore>
+	</strutturaAmministrativoContabileCDC>
+	<strutturaAmministrativoContabileCDR>
+		<loginOperazione>adminsac</loginOperazione>
+		<stato>VALIDO</stato>
+		<uid>1719547</uid>
+		<codice>A13000</codice>
+		<descrizione>AFFARI ISTITUZIONALI E AVVOCATURA</descrizione>
+		<livello>1</livello>
+		<tipoClassificatore>
+			<stato>VALIDO</stato>
+			<uid>0</uid>
+			<codice>CDR</codice>
+		</tipoClassificatore>
+	</strutturaAmministrativoContabileCDR>
+	<totaleAtto>0.05</totaleAtto>
+	<totaleReverseChange>0</totaleReverseChange>
+	<totaleSplitCommerciale>0</totaleSplitCommerciale>
+	<totaleSplitIstituzionale>0</totaleSplitIstituzionale>
+</stampaAllegatoAttoReportModel>

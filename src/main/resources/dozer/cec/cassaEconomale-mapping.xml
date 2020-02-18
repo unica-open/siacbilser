@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     <mapping map-id="SiacTCassaEcon_CassaEconomale_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.CassaEconomale</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCassaEcon</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>codice</a>
+			<b>cassaeconCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>cassaeconDesc</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTCassaEcon_CassaEconomale" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.CassaEconomale</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCassaEcon</class-b>
+	
+		<field map-id="SiacTCassaEcon_CassaEconomale_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+		<field>
+			<a>responsabile</a>
+			<b>cassaeconResp</b>
+		</field>
+		
+		<field>
+			<a>numeroContoCorrente</a>
+			<b>cassaeconCc</b>
+		</field>
+		
+		<field>
+			<a>limiteImporto</a>
+			<b>cassaeconLimiteimporto</b>
+		</field>
+		
+		<field map-id="SiacTSoggetto_Soggetto">
+			<a>soggetto</a>
+			<b>siacTSoggetto</b>
+		</field>
+		
+		<field custom-converter-id="tipoCassaEconomaleConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="cassaEconomaleStatoOperativoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<!--field custom-converter-id="cassaEconomaleImportiConverter">
+		SPOSTARE IN UN MAPPING APPOSITO
+			<a>this</a>
+			<b>this</b>
+		</field-->
+		
+		<field custom-converter-id="cassaEconomaleOperazioniCassaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="cassaEconomaleAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+          
+	
+	
+</mappings>

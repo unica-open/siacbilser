@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	
+	<mapping map-id="SirfelTPrestatore_PrestatoreFEL_Base" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.PrestatoreFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTPrestatore</class-b>
+		
+		<field-exclude>
+			<a>regimeFiscale</a>
+			<b>regimeFiscale</b>
+		</field-exclude>
+	</mapping>
+	
+	<mapping map-id="SirfelTPrestatore_PrestatoreFEL" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.PrestatoreFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTPrestatore</class-b>
+		
+		<field-exclude>
+			<a>regimeFiscale</a>
+			<b>regimeFiscale</b>
+		</field-exclude>
+		
+		<!--field>
+			<a>idPrestatore</a>
+			<b>id.idPrestatore</b>
+		</field>
+		<field>
+			<a>ente.uid</a>
+			<b>id.enteProprietarioId</b>
+		</field-->
+		
+		<field custom-converter-id="prestatoreFELRegimeFiscaleConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+</mappings>

@@ -1,0 +1,9 @@
+[14:40:57] Domenico Lisi: ed abbiamo fatto l'esecuzione acincrona sfruttando Spring...
+[14:41:02] Domenico Lisi: abbiamo 2 modalità di esecuzione:
+[14:41:32] Domenico Lisi: 1) la modalità asincrona pura: crea un nuovo thread ed n esecuzione parallere creano n thread...
+[14:42:17] Domenico Lisi: 2) la modalità asincrona accodata: c'è un unico thread ed n esecuzioni vengono accodate.
+[14:42:38] Domenico Lisi: quindi dipende dai punti abbiamo utilizzato o una o l'altra..
+[14:43:28] Domenico Lisi: ...ad esempio il pezzo che inserisce le prime note di GEN utilizza la 2!
+[14:43:28 | Modificato 14:43:51] Domenico Lisi: mentre i servizi asincroni che estendono AsyncBaseService la 1!
+
+però occhio che la soluzione 2 è ben più "fragile" rispetto al vero accodamento che avremmo avuto tramite JMS...ovvero: se il server va in crash con JMS tu non perdi i messaggi in coda, e quindi al riavvio riparte ad elaborare la coda...invece con la soluzione che abbiamo con Spring se il server va in crash hai perso anche la coda...

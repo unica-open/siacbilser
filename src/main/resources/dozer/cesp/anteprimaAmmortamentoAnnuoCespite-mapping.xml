@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     <mapping map-id="SiacTCespitiElabAmmortamenti_AnteprimaAmmortamentoAnnuoCespite_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.AnteprimaAmmortamentoAnnuoCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiElabAmmortamenti</class-b>
+		<field>
+			<a>statoAnteprima</a>
+			<b>statoElaborazione</b>
+		</field>
+		<field>
+			<a>dataAnteprima</a>
+			<b>dataElaborazione</b>
+		</field>	
+	</mapping>
+     
+     
+     <mapping map-id="SiacTCespitiElabAmmortamenti_AnteprimaAmmortamentoAnnuoCespite" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.AnteprimaAmmortamentoAnnuoCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiElabAmmortamenti</class-b>
+		
+		<field map-id="SiacTCespitiElabAmmortamenti_AnteprimaAmmortamentoAnnuoCespite_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="anteprimaAmmortamentoAnnuoCespiteDettaglioAnteprimaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>	
+	</mapping>
+	
+	<mapping map-id="SiacTCespitiElabAmmortamentiDett_DettaglioAnteprimaAmmortamentoAnnuoCespite_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.DettaglioAnteprimaAmmortamentoAnnuoCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiElabAmmortamentiDett</class-b>
+		<field>
+			<a>importo</a>
+			<b>elabDetImporto</b>
+		</field>	
+	</mapping>
+    
+	<mapping map-id="SiacTCespitiElabAmmortamentiDett_DettaglioAnteprimaAmmortamentoAnnuoCespite" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.AmmortamentoAnnuoCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiAmmortamento</class-b>
+		
+		<field map-id="SiacTCespitiElabAmmortamentiDett_DettaglioAnteprimaAmmortamentoAnnuoCespite_ModelDetail">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		
+		<field custom-converter-id="dettaglioAnteprimaAmmortamentoAnnuoCespiteSegnoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="dettaglioAnteprimaAmmortamentoAnnuoCespiteAnteprimaConverter">
+  			<a>this</a>
+  			<b>this</b>
+		</field>
+
+	</mapping>
+	
+</mappings>

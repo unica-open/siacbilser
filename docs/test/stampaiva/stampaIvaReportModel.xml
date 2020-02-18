@@ -1,0 +1,1050 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<stampaRegistroIvaReportModel>
+	<listaRiepilogo>
+		<riepilogo>
+			<riepiloghiIva>
+				<riepilogoIva>
+					<aliquotaSubdocumentoIva>
+						<loginOperazione>AL1-TSNGNN57D59A182B</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>32157</uid>
+						<aliquotaIva>
+							<loginOperazione>INC000000874709</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>316</uid>
+							<codice>21</codice>
+							<descrizione>Aliquota I.v.a. 21%</descrizione>
+							<aliquotaIvaTipo>COMMERCIALE</aliquotaIvaTipo>
+							<ente>
+								<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>29</uid>
+								<codiceFiscale>00429440068</codiceFiscale>
+								<gestioneLivelli/>
+								<nome>Comune di Alessandria</nome>
+							</ente>
+							<percentualeAliquota>21</percentualeAliquota>
+							<percentualeIndetraibilita>0</percentualeIndetraibilita>
+							<tipoOperazioneIva codice="I" descrizione="Imponibile">IMPONIBILE</tipoOperazioneIva>
+						</aliquotaIva>
+						<ente>
+							<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>29</uid>
+							<codiceFiscale>00429440068</codiceFiscale>
+							<gestioneLivelli/>
+							<nome>Comune di Alessandria</nome>
+						</ente>
+						<imponibile>28.23</imponibile>
+						<imposta>5.93</imposta>
+						<impostaDetraibile>5.93</impostaDetraibile>
+						<impostaIndetraibile>0.00</impostaIndetraibile>
+						<totale>34.16</totale>
+					</aliquotaSubdocumentoIva>
+					<imponibile>28.23</imponibile>
+					<iva>5.93</iva>
+					<progressivoImponibile>28.23</progressivoImponibile>
+					<progressivoIva>5.93</progressivoIva>
+					<totale>34.16</totale>
+					<totaleProgressivo>34.16</totaleProgressivo>
+				</riepilogoIva>
+			</riepiloghiIva>
+			<ivaIndetraibileCausaProRata>5.34</ivaIndetraibileCausaProRata>
+			<percProrata>90.00</percProrata>
+			<periodo>MAGGIO</periodo>
+			<totaleIVA>5.93</totaleIVA>
+			<totaleIVADetraibile>5.93</totaleIVADetraibile>
+			<totaleIVAIndetraibile>0.00</totaleIVAIndetraibile>
+			<totaleImponibile>28.23</totaleImponibile>
+			<totaleImponibileDetraibile>28.23</totaleImponibileDetraibile>
+			<totaleImponibileEsente>0</totaleImponibileEsente>
+			<totaleImponibileIndetraibile>0.00</totaleImponibileIndetraibile>
+			<totaleProgressivoImponibile>28.23</totaleProgressivoImponibile>
+			<totaleProgressivoImponibileDetraibile>28.23</totaleProgressivoImponibileDetraibile>
+			<totaleProgressivoImponibileEsente>0</totaleProgressivoImponibileEsente>
+			<totaleProgressivoImponibileIndetraibile>0.00</totaleProgressivoImponibileIndetraibile>
+			<totaleProgressivoIva>5.93</totaleProgressivoIva>
+			<totaleProgressivoIvaDetraibile>5.93</totaleProgressivoIvaDetraibile>
+			<totaleProgressivoIvaIndetraibile>0.00</totaleProgressivoIvaIndetraibile>
+			<totaleTotale>34.16</totaleTotale>
+			<totaleTotaleProgressivo>34.16</totaleTotaleProgressivo>
+		</riepilogo>
+		<riepilogo>
+			<riepiloghiIva/>
+			<ivaIndetraibileCausaProRata>0.00</ivaIndetraibileCausaProRata>
+			<percProrata>90.00</percProrata>
+			<periodo>APRILE</periodo>
+			<totaleIVA>0</totaleIVA>
+			<totaleIVADetraibile>0</totaleIVADetraibile>
+			<totaleIVAIndetraibile>0</totaleIVAIndetraibile>
+			<totaleImponibile>0</totaleImponibile>
+			<totaleImponibileDetraibile>0</totaleImponibileDetraibile>
+			<totaleImponibileEsente>0</totaleImponibileEsente>
+			<totaleImponibileIndetraibile>0</totaleImponibileIndetraibile>
+			<totaleProgressivoImponibile>0</totaleProgressivoImponibile>
+			<totaleProgressivoImponibileDetraibile>0</totaleProgressivoImponibileDetraibile>
+			<totaleProgressivoImponibileEsente>0</totaleProgressivoImponibileEsente>
+			<totaleProgressivoImponibileIndetraibile>0</totaleProgressivoImponibileIndetraibile>
+			<totaleProgressivoIva>0</totaleProgressivoIva>
+			<totaleProgressivoIvaDetraibile>0</totaleProgressivoIvaDetraibile>
+			<totaleProgressivoIvaIndetraibile>0</totaleProgressivoIvaIndetraibile>
+			<totaleTotale>0</totaleTotale>
+			<totaleTotaleProgressivo>0</totaleTotaleProgressivo>
+		</riepilogo>
+		<riepilogo>
+			<riepiloghiIva>
+				<riepilogoIva>
+					<aliquotaSubdocumentoIva>
+						<loginOperazione>AL1-BLLFLV58T57A182L</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>30711</uid>
+						<aliquotaIva>
+							<loginOperazione>INC000000874709</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>307</uid>
+							<codice>EB</codice>
+							<descrizione>Art. 74 Commerciale</descrizione>
+							<aliquotaIvaTipo>COMMERCIALE</aliquotaIvaTipo>
+							<ente>
+								<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>29</uid>
+								<codiceFiscale>00429440068</codiceFiscale>
+								<gestioneLivelli/>
+								<nome>Comune di Alessandria</nome>
+							</ente>
+							<percentualeAliquota>0</percentualeAliquota>
+							<percentualeIndetraibilita>0</percentualeIndetraibilita>
+							<tipoOperazioneIva codice="FCI" descrizione="Escluso (FCI)">ESCLUSO_FCI</tipoOperazioneIva>
+						</aliquotaIva>
+						<ente>
+							<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>29</uid>
+							<codiceFiscale>00429440068</codiceFiscale>
+							<gestioneLivelli/>
+							<nome>Comune di Alessandria</nome>
+						</ente>
+						<imponibile>287.50</imponibile>
+						<imposta>0.00</imposta>
+						<impostaDetraibile>0.00</impostaDetraibile>
+						<impostaIndetraibile>0.00</impostaIndetraibile>
+						<totale>287.50</totale>
+					</aliquotaSubdocumentoIva>
+					<imponibile>0</imponibile>
+					<iva>0</iva>
+					<progressivoImponibile>287.50</progressivoImponibile>
+					<progressivoIva>0.00</progressivoIva>
+					<totale>0</totale>
+					<totaleProgressivo>287.50</totaleProgressivo>
+				</riepilogoIva>
+			</riepiloghiIva>
+			<ivaIndetraibileCausaProRata>0.00</ivaIndetraibileCausaProRata>
+			<percProrata>90.00</percProrata>
+			<periodo>MARZO</periodo>
+			<totaleIVA>0.00</totaleIVA>
+			<totaleIVADetraibile>0.00</totaleIVADetraibile>
+			<totaleIVAIndetraibile>0.00</totaleIVAIndetraibile>
+			<totaleImponibile>287.50</totaleImponibile>
+			<totaleImponibileDetraibile>287.50</totaleImponibileDetraibile>
+			<totaleImponibileEsente>287.50</totaleImponibileEsente>
+			<totaleImponibileIndetraibile>0.00</totaleImponibileIndetraibile>
+			<totaleProgressivoImponibile>287.50</totaleProgressivoImponibile>
+			<totaleProgressivoImponibileDetraibile>287.50</totaleProgressivoImponibileDetraibile>
+			<totaleProgressivoImponibileEsente>287.50</totaleProgressivoImponibileEsente>
+			<totaleProgressivoImponibileIndetraibile>0.00</totaleProgressivoImponibileIndetraibile>
+			<totaleProgressivoIva>0.00</totaleProgressivoIva>
+			<totaleProgressivoIvaDetraibile>0.00</totaleProgressivoIvaDetraibile>
+			<totaleProgressivoIvaIndetraibile>0.00</totaleProgressivoIvaIndetraibile>
+			<totaleTotale>287.50</totaleTotale>
+			<totaleTotaleProgressivo>287.50</totaleTotaleProgressivo>
+		</riepilogo>
+		<riepilogo>
+			<riepiloghiIva/>
+			<ivaIndetraibileCausaProRata>0.00</ivaIndetraibileCausaProRata>
+			<percProrata>90.00</percProrata>
+			<periodo>FEBBRAIO</periodo>
+			<totaleIVA>0</totaleIVA>
+			<totaleIVADetraibile>0</totaleIVADetraibile>
+			<totaleIVAIndetraibile>0</totaleIVAIndetraibile>
+			<totaleImponibile>0</totaleImponibile>
+			<totaleImponibileDetraibile>0</totaleImponibileDetraibile>
+			<totaleImponibileEsente>0</totaleImponibileEsente>
+			<totaleImponibileIndetraibile>0</totaleImponibileIndetraibile>
+			<totaleProgressivoImponibile>0</totaleProgressivoImponibile>
+			<totaleProgressivoImponibileDetraibile>0</totaleProgressivoImponibileDetraibile>
+			<totaleProgressivoImponibileEsente>0</totaleProgressivoImponibileEsente>
+			<totaleProgressivoImponibileIndetraibile>0</totaleProgressivoImponibileIndetraibile>
+			<totaleProgressivoIva>0</totaleProgressivoIva>
+			<totaleProgressivoIvaDetraibile>0</totaleProgressivoIvaDetraibile>
+			<totaleProgressivoIvaIndetraibile>0</totaleProgressivoIvaIndetraibile>
+			<totaleTotale>0</totaleTotale>
+			<totaleTotaleProgressivo>0</totaleTotaleProgressivo>
+		</riepilogo>
+		<riepilogo>
+			<riepiloghiIva/>
+			<ivaIndetraibileCausaProRata>0.00</ivaIndetraibileCausaProRata>
+			<percProrata>90.00</percProrata>
+			<periodo>GENNAIO</periodo>
+			<totaleIVA>0</totaleIVA>
+			<totaleIVADetraibile>0</totaleIVADetraibile>
+			<totaleIVAIndetraibile>0</totaleIVAIndetraibile>
+			<totaleImponibile>0</totaleImponibile>
+			<totaleImponibileDetraibile>0</totaleImponibileDetraibile>
+			<totaleImponibileEsente>0</totaleImponibileEsente>
+			<totaleImponibileIndetraibile>0</totaleImponibileIndetraibile>
+			<totaleProgressivoImponibile>0</totaleProgressivoImponibile>
+			<totaleProgressivoImponibileDetraibile>0</totaleProgressivoImponibileDetraibile>
+			<totaleProgressivoImponibileEsente>0</totaleProgressivoImponibileEsente>
+			<totaleProgressivoImponibileIndetraibile>0</totaleProgressivoImponibileIndetraibile>
+			<totaleProgressivoIva>0</totaleProgressivoIva>
+			<totaleProgressivoIvaDetraibile>0</totaleProgressivoIvaDetraibile>
+			<totaleProgressivoIvaIndetraibile>0</totaleProgressivoIvaIndetraibile>
+			<totaleTotale>0</totaleTotale>
+			<totaleTotaleProgressivo>0</totaleTotaleProgressivo>
+		</riepilogo>
+	</listaRiepilogo>
+	<datiIva>
+		<acquistiVendite>
+			<acquisto>
+				<aliquotaSubdocumentoIva>
+					<loginOperazione>AL1-TSNGNN57D59A182B</loginOperazione>
+					<stato>VALIDO</stato>
+					<uid>32157</uid>
+					<aliquotaIva>
+						<loginOperazione>INC000000874709</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>316</uid>
+						<codice>21</codice>
+						<descrizione>Aliquota I.v.a. 21%</descrizione>
+						<aliquotaIvaTipo>COMMERCIALE</aliquotaIvaTipo>
+						<ente>
+							<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>29</uid>
+							<codiceFiscale>00429440068</codiceFiscale>
+							<gestioneLivelli/>
+							<nome>Comune di Alessandria</nome>
+						</ente>
+						<percentualeAliquota>21</percentualeAliquota>
+						<percentualeIndetraibilita>0</percentualeIndetraibilita>
+						<tipoOperazioneIva codice="I" descrizione="Imponibile">IMPONIBILE</tipoOperazioneIva>
+					</aliquotaIva>
+					<ente>
+						<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>29</uid>
+						<codiceFiscale>00429440068</codiceFiscale>
+						<gestioneLivelli/>
+						<nome>Comune di Alessandria</nome>
+					</ente>
+					<imponibile>28.23</imponibile>
+					<imposta>5.93</imposta>
+					<impostaDetraibile>5.93</impostaDetraibile>
+					<impostaIndetraibile>0.00</impostaIndetraibile>
+					<totale>34.16</totale>
+				</aliquotaSubdocumentoIva>
+				<documento xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://siac.csi.it/fin2/data/1.0" xsi:type="ns3:documentoSpesa">
+					<loginOperazione>AL1-BRNSRA72L48A052Q-INC000002142529</loginOperazione>
+					<stato>VALIDO</stato>
+					<uid>23248</uid>
+					<loginCreazione>MIGR</loginCreazione>
+					<loginModifica>AL1-BRNSRA72L48A052Q</loginModifica>
+					<documentiSpesaFiglio/>
+					<documentiEntrataFiglio/>
+					<documentiSpesaPadre/>
+					<documentiEntrataPadre/>
+					<anno>2013</anno>
+					<arrotondamento>0.00</arrotondamento>
+					<codiceBollo>
+						<loginOperazione>admin</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>80</uid>
+						<codice>77</codice>
+						<descrizione>IVA ASSOLTA</descrizione>
+					</codiceBollo>
+					<collegatoAdAllegatoAtto>true</collegatoAdAllegatoAtto>
+					<contabilizzaGenPcc>true</contabilizzaGenPcc>
+					<dataCreazioneDocumento>2016-06-21T12:22:26.138+02:00</dataCreazioneDocumento>
+					<dataEmissione>2013-08-12T00:00:00+02:00</dataEmissione>
+					<dataInizioValiditaStato>2018-05-08T11:42:40.440+02:00</dataInizioValiditaStato>
+					<dataModificaDocumento>2017-11-24T15:48:04.027+01:00</dataModificaDocumento>
+					<dataRicezionePortale>2014-01-21T00:00:00+01:00</dataRicezionePortale>
+					<dataScadenza>2013-09-12T00:00:00+02:00</dataScadenza>
+					<descrizione>2013 Gestione calore stagione 2012/2013 - svincolo ritenute - 01/04 - 15/04/2013 - Ludoteca</descrizione>
+					<ente>
+						<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>29</uid>
+						<codiceFiscale>00429440068</codiceFiscale>
+						<gestioneLivelli/>
+						<nome>Comune di Alessandria</nome>
+					</ente>
+					<flagDisabilitaRegistrazioneResidui>false</flagDisabilitaRegistrazioneResidui>
+					<importo>34.16</importo>
+					<importoDaDedurreSuFattura>0</importoDaDedurreSuFattura>
+					<importoTotaleDaDedurreSuFatturaNoteCollegate>0</importoTotaleDaDedurreSuFatturaNoteCollegate>
+					<importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+					<note> - N3000</note>
+					<numero>90023</numero>
+					<numeroRepertorio/>
+					<registroRepertorio/>
+					<soggetto>
+						<stato>VALIDO</stato>
+						<uid>28972</uid>
+						<avviso>false</avviso>
+						<codiceFiscale>01830160063     </codiceFiscale>
+						<codiceSoggetto>9263</codiceSoggetto>
+						<controlloSuSoggetto>true</controlloSuSoggetto>
+						<denominazione>A.M.A.G. S.P.A. - AZIENDA MULTIUTILITY ACQUA GAS</denominazione>
+						<partitaIva>01830160063</partitaIva>
+						<residenteEstero>false</residenteEstero>
+						<uidSoggettoPadre>0</uidSoggettoPadre>
+					</soggetto>
+					<statoOperativoDocumento>EMESSO</statoOperativoDocumento>
+					<terminePagamento>0</terminePagamento>
+					<tipoDocumento>
+						<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>1638</uid>
+						<codice>FAT</codice>
+						<descrizione>FATTURA FORNITORE</descrizione>
+						<codiceGruppo>FAT</codiceGruppo>
+						<flagAggiornaQuoteDaElenco>true</flagAggiornaQuoteDaElenco>
+						<flagAttivaGEN>true</flagAttivaGEN>
+						<flagComunicaPCC>true</flagComunicaPCC>
+						<flagIVA>true</flagIVA>
+						<flagNotaCredito>true</flagNotaCredito>
+						<flagPenaleAltro>true</flagPenaleAltro>
+						<flagRegistroUnico>true</flagRegistroUnico>
+						<flagRitenute>true</flagRitenute>
+						<flagSpesaCollegata>true</flagSpesaCollegata>
+						<tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+					</tipoDocumento>
+					<registriComunicazioniPCC>
+						<registroComunicazioniPCC>
+							<stato>VALIDO</stato>
+							<uid>135005</uid>
+						</registroComunicazioniPCC>
+						<registroComunicazioniPCC>
+							<stato>VALIDO</stato>
+							<uid>135006</uid>
+						</registroComunicazioniPCC>
+					</registriComunicazioniPCC>
+					<causaleSospensione/>
+					<codiceFiscalePignorato/>
+					<codicePCC>
+						<loginOperazione>admin</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>171</uid>
+						<codice>00-0AN</codice>
+						<descrizione>Comune di Alessandria: Direzione Servizi Finanziari</descrizione>
+					</codicePCC>
+					<collegatoCEC>false</collegatoCEC>
+					<datiFatturaPagataIncassata>
+						<stato>VALIDO</stato>
+						<uid>0</uid>
+						<flagPagataIncassata>false</flagPagataIncassata>
+						<notePagamentoIncasso/>
+					</datiFatturaPagataIncassata>
+					<flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+					<ritenuteDocumento>
+						<stato>VALIDO</stato>
+						<uid>0</uid>
+						<importoCassaPensioni>0</importoCassaPensioni>
+						<importoEsente>0</importoEsente>
+						<importoIVA>0</importoIVA>
+						<importoRivalsa>0</importoRivalsa>
+					</ritenuteDocumento>
+					<siopeDocumentoTipo>
+						<loginOperazione>admin</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>53</uid>
+						<codice>A</codice>
+						<descrizione>Analogico</descrizione>
+						<descrizioneBancaItalia>ANALOGICO</descrizioneBancaItalia>
+					</siopeDocumentoTipo>
+					<siopeDocumentoTipoAnalogico>
+						<loginOperazione>admin</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>53</uid>
+						<codice>DE</codice>
+						<descrizione>Documento equivalente</descrizione>
+						<descrizioneBancaItalia>DOC_EQUIVALENTE</descrizioneBancaItalia>
+						<siopeDocumentoTipo>
+							<loginOperazione>admin</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>53</uid>
+							<codice>A</codice>
+							<descrizione>Analogico</descrizione>
+							<descrizioneBancaItalia>ANALOGICO</descrizioneBancaItalia>
+						</siopeDocumentoTipo>
+					</siopeDocumentoTipoAnalogico>
+				</documento>
+				<subdocumento xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://siac.csi.it/fin2/data/1.0" xsi:type="ns3:subdocumentoSpesa">
+					<loginOperazione>AL1-PNNLSU58E67A182P-INC000002480612</loginOperazione>
+					<stato>VALIDO</stato>
+					<uid>76232</uid>
+					<loginCreazione>AL1-BRNSRA72L48A052Q</loginCreazione>
+					<loginModifica>AL1-PNNLSU58E67A182P</loginModifica>
+					<documentoSpesa>
+						<loginOperazione>AL1-BRNSRA72L48A052Q-INC000002142529</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>23248</uid>
+						<loginCreazione>MIGR</loginCreazione>
+						<loginModifica>AL1-BRNSRA72L48A052Q</loginModifica>
+						<documentiSpesaFiglio/>
+						<documentiEntrataFiglio/>
+						<documentiSpesaPadre/>
+						<documentiEntrataPadre/>
+						<anno>2013</anno>
+						<arrotondamento>0</arrotondamento>
+						<codiceBollo>
+							<loginOperazione>admin</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>80</uid>
+							<codice>77</codice>
+							<descrizione>IVA ASSOLTA</descrizione>
+						</codiceBollo>
+						<contabilizzaGenPcc>true</contabilizzaGenPcc>
+						<dataCreazioneDocumento>2016-06-21T12:22:26.138+02:00</dataCreazioneDocumento>
+						<dataEmissione>2013-08-12T00:00:00+02:00</dataEmissione>
+						<dataInizioValiditaStato>2018-05-08T11:42:40.440+02:00</dataInizioValiditaStato>
+						<dataModificaDocumento>2017-11-24T15:48:04.027+01:00</dataModificaDocumento>
+						<dataScadenza>2013-09-12T00:00:00+02:00</dataScadenza>
+						<descrizione>2013 Gestione calore stagione 2012/2013 - svincolo ritenute - 01/04 - 15/04/2013 - Ludoteca</descrizione>
+						<ente>
+							<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>29</uid>
+							<codiceFiscale>00429440068</codiceFiscale>
+							<gestioneLivelli/>
+							<nome>Comune di Alessandria</nome>
+						</ente>
+						<importo>34.16</importo>
+						<importoDaDedurreSuFattura>0</importoDaDedurreSuFattura>
+						<importoTotaleDaDedurreSuFatturaNoteCollegate>0</importoTotaleDaDedurreSuFatturaNoteCollegate>
+						<importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+						<numero>90023</numero>
+						<soggetto>
+							<stato>VALIDO</stato>
+							<uid>28972</uid>
+							<avviso>false</avviso>
+							<codiceFiscale>01830160063     </codiceFiscale>
+							<codiceSoggetto>9263</codiceSoggetto>
+							<controlloSuSoggetto>true</controlloSuSoggetto>
+							<denominazione>A.M.A.G. S.P.A. - AZIENDA MULTIUTILITY ACQUA GAS</denominazione>
+							<partitaIva>01830160063</partitaIva>
+							<residenteEstero>false</residenteEstero>
+							<uidSoggettoPadre>0</uidSoggettoPadre>
+						</soggetto>
+						<statoOperativoDocumento>EMESSO</statoOperativoDocumento>
+						<tipoDocumento>
+							<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>1638</uid>
+							<codice>FAT</codice>
+							<descrizione>FATTURA FORNITORE</descrizione>
+							<codiceGruppo>FAT</codiceGruppo>
+							<flagAggiornaQuoteDaElenco>true</flagAggiornaQuoteDaElenco>
+							<flagAttivaGEN>true</flagAttivaGEN>
+							<flagComunicaPCC>true</flagComunicaPCC>
+							<flagIVA>true</flagIVA>
+							<flagNotaCredito>true</flagNotaCredito>
+							<flagPenaleAltro>true</flagPenaleAltro>
+							<flagRegistroUnico>true</flagRegistroUnico>
+							<flagRitenute>true</flagRitenute>
+							<flagSpesaCollegata>true</flagSpesaCollegata>
+							<tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+						</tipoDocumento>
+						<collegatoCEC>false</collegatoCEC>
+						<flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+					</documentoSpesa>
+					<dataScadenza>2013-09-12T00:00:00+02:00</dataScadenza>
+					<descrizione>2013 Gestione calore stagione 2012/2013 - svincolo ritenute - 01/04 - 15/04/2013 - Ludoteca</descrizione>
+					<ente>
+						<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>29</uid>
+						<codiceFiscale>00429440068</codiceFiscale>
+						<gestioneLivelli/>
+						<nome>Comune di Alessandria</nome>
+					</ente>
+					<flagAvviso>false</flagAvviso>
+					<flagConvalidaManuale>true</flagConvalidaManuale>
+					<flagEsproprio>false</flagEsproprio>
+					<flagOrdinativoManuale>false</flagOrdinativoManuale>
+					<flagOrdinativoSingolo>false</flagOrdinativoSingolo>
+					<flagRilevanteIVA>true</flagRilevanteIVA>
+					<importo>34.16</importo>
+					<importoDaDedurre>0.00</importoDaDedurre>
+					<note/>
+					<numero>1</numero>
+					<numeroRegistrazioneIVA>2016/293</numeroRegistrazioneIVA>
+					<listaRegistriComunicazioniPCC/>
+					<sospensioni/>
+					<causaleOrdinativo>DOCUMENTO N. 90023 DEL 12/08/2013</causaleOrdinativo>
+					<causaleSospensione/>
+					<cig/>
+					<cup/>
+					<datiCertificazioneCrediti>
+						<stato>VALIDO</stato>
+						<uid>0</uid>
+						<annotazione/>
+						<flagCertificazione>false</flagCertificazione>
+						<noteCertificazione/>
+						<numeroCertificazione/>
+					</datiCertificazioneCrediti>
+					<pagatoInCEC>false</pagatoInCEC>
+				</subdocumento>
+				<subdocumentoIva xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://siac.csi.it/fin2/data/1.0" xsi:type="ns3:subdocumentoIvaSpesa">
+					<loginOperazione>AL1-TSNGNN57D59A182B</loginOperazione>
+					<stato>VALIDO</stato>
+					<uid>3934</uid>
+					<subdocumentoSpesa>
+						<loginOperazione>AL1-PNNLSU58E67A182P-INC000002480612</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>76232</uid>
+						<loginCreazione>AL1-BRNSRA72L48A052Q</loginCreazione>
+						<loginModifica>AL1-PNNLSU58E67A182P</loginModifica>
+						<documentoSpesa>
+							<loginOperazione>AL1-BRNSRA72L48A052Q-INC000002142529</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>23248</uid>
+							<loginCreazione>MIGR</loginCreazione>
+							<loginModifica>AL1-BRNSRA72L48A052Q</loginModifica>
+							<documentiSpesaFiglio/>
+							<documentiEntrataFiglio/>
+							<documentiSpesaPadre/>
+							<documentiEntrataPadre/>
+							<anno>2013</anno>
+							<arrotondamento>0</arrotondamento>
+							<codiceBollo>
+								<loginOperazione>admin</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>80</uid>
+								<codice>77</codice>
+								<descrizione>IVA ASSOLTA</descrizione>
+							</codiceBollo>
+							<contabilizzaGenPcc>true</contabilizzaGenPcc>
+							<dataCreazioneDocumento>2016-06-21T12:22:26.138+02:00</dataCreazioneDocumento>
+							<dataEmissione>2013-08-12T00:00:00+02:00</dataEmissione>
+							<dataInizioValiditaStato>2018-05-08T11:42:40.440+02:00</dataInizioValiditaStato>
+							<dataModificaDocumento>2017-11-24T15:48:04.027+01:00</dataModificaDocumento>
+							<dataScadenza>2013-09-12T00:00:00+02:00</dataScadenza>
+							<descrizione>2013 Gestione calore stagione 2012/2013 - svincolo ritenute - 01/04 - 15/04/2013 - Ludoteca</descrizione>
+							<ente>
+								<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>29</uid>
+								<codiceFiscale>00429440068</codiceFiscale>
+								<gestioneLivelli/>
+								<nome>Comune di Alessandria</nome>
+							</ente>
+							<importo>34.16</importo>
+							<importoDaDedurreSuFattura>0</importoDaDedurreSuFattura>
+							<importoTotaleDaDedurreSuFatturaNoteCollegate>0</importoTotaleDaDedurreSuFatturaNoteCollegate>
+							<importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+							<numero>90023</numero>
+							<soggetto>
+								<stato>VALIDO</stato>
+								<uid>28972</uid>
+								<avviso>false</avviso>
+								<codiceFiscale>01830160063     </codiceFiscale>
+								<codiceSoggetto>9263</codiceSoggetto>
+								<controlloSuSoggetto>true</controlloSuSoggetto>
+								<denominazione>A.M.A.G. S.P.A. - AZIENDA MULTIUTILITY ACQUA GAS</denominazione>
+								<partitaIva>01830160063</partitaIva>
+								<residenteEstero>false</residenteEstero>
+								<uidSoggettoPadre>0</uidSoggettoPadre>
+							</soggetto>
+							<statoOperativoDocumento>EMESSO</statoOperativoDocumento>
+							<tipoDocumento>
+								<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>1638</uid>
+								<codice>FAT</codice>
+								<descrizione>FATTURA FORNITORE</descrizione>
+								<codiceGruppo>FAT</codiceGruppo>
+								<flagAggiornaQuoteDaElenco>true</flagAggiornaQuoteDaElenco>
+								<flagAttivaGEN>true</flagAttivaGEN>
+								<flagComunicaPCC>true</flagComunicaPCC>
+								<flagIVA>true</flagIVA>
+								<flagNotaCredito>true</flagNotaCredito>
+								<flagPenaleAltro>true</flagPenaleAltro>
+								<flagRegistroUnico>true</flagRegistroUnico>
+								<flagRitenute>true</flagRitenute>
+								<flagSpesaCollegata>true</flagSpesaCollegata>
+								<tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+							</tipoDocumento>
+							<collegatoCEC>false</collegatoCEC>
+							<flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+						</documentoSpesa>
+						<dataScadenza>2013-09-12T00:00:00+02:00</dataScadenza>
+						<descrizione>2013 Gestione calore stagione 2012/2013 - svincolo ritenute - 01/04 - 15/04/2013 - Ludoteca</descrizione>
+						<ente>
+							<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>29</uid>
+							<codiceFiscale>00429440068</codiceFiscale>
+							<gestioneLivelli/>
+							<nome>Comune di Alessandria</nome>
+						</ente>
+						<flagAvviso>false</flagAvviso>
+						<flagConvalidaManuale>true</flagConvalidaManuale>
+						<flagEsproprio>false</flagEsproprio>
+						<flagOrdinativoManuale>false</flagOrdinativoManuale>
+						<flagOrdinativoSingolo>false</flagOrdinativoSingolo>
+						<flagRilevanteIVA>true</flagRilevanteIVA>
+						<importo>34.16</importo>
+						<importoDaDedurre>0.00</importoDaDedurre>
+						<note/>
+						<numero>1</numero>
+						<numeroRegistrazioneIVA>2016/293</numeroRegistrazioneIVA>
+						<listaRegistriComunicazioniPCC/>
+						<sospensioni/>
+						<causaleOrdinativo>DOCUMENTO N. 90023 DEL 12/08/2013</causaleOrdinativo>
+						<causaleSospensione/>
+						<cig/>
+						<cup/>
+						<datiCertificazioneCrediti>
+							<stato>VALIDO</stato>
+							<uid>0</uid>
+							<annotazione/>
+							<flagCertificazione>false</flagCertificazione>
+							<noteCertificazione/>
+							<numeroCertificazione/>
+						</datiCertificazioneCrediti>
+						<pagatoInCEC>false</pagatoInCEC>
+					</subdocumentoSpesa>
+					<aliquote>
+						<aliquotaSubdocumentoIva>
+							<loginOperazione>AL1-TSNGNN57D59A182B</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>32157</uid>
+							<aliquotaIva>
+								<loginOperazione>INC000000874709</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>316</uid>
+								<codice>21</codice>
+								<descrizione>Aliquota I.v.a. 21%</descrizione>
+								<aliquotaIvaTipo>COMMERCIALE</aliquotaIvaTipo>
+								<ente>
+									<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+									<stato>VALIDO</stato>
+									<uid>29</uid>
+									<codiceFiscale>00429440068</codiceFiscale>
+									<gestioneLivelli/>
+									<nome>Comune di Alessandria</nome>
+								</ente>
+								<percentualeAliquota>21</percentualeAliquota>
+								<percentualeIndetraibilita>0</percentualeIndetraibilita>
+								<tipoOperazioneIva codice="I" descrizione="Imponibile">IMPONIBILE</tipoOperazioneIva>
+							</aliquotaIva>
+							<ente>
+								<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>29</uid>
+								<codiceFiscale>00429440068</codiceFiscale>
+								<gestioneLivelli/>
+								<nome>Comune di Alessandria</nome>
+							</ente>
+							<imponibile>28.23</imponibile>
+							<imposta>5.93</imposta>
+							<impostaDetraibile>5.93</impostaDetraibile>
+							<impostaIndetraibile>0.00</impostaIndetraibile>
+							<totale>34.16</totale>
+						</aliquotaSubdocumentoIva>
+					</aliquote>
+					<annoEsercizio>2016</annoEsercizio>
+					<dataOrdinativoDocumento>2018-05-08T11:42:04.882+02:00</dataOrdinativoDocumento>
+					<dataProtocolloDefinitivo>2018-05-08T11:42:04.882+02:00</dataProtocolloDefinitivo>
+					<dataProtocolloProvvisorio>2014-01-21T00:00:00+01:00</dataProtocolloProvvisorio>
+					<dataRegistrazione>2014-01-21T00:00:00+01:00</dataRegistrazione>
+					<ente>
+						<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>29</uid>
+						<codiceFiscale>00429440068</codiceFiscale>
+						<gestioneLivelli/>
+						<nome>Comune di Alessandria</nome>
+					</ente>
+					<flagIntracomunitario>false</flagIntracomunitario>
+					<flagNotaCredito>false</flagNotaCredito>
+					<flagRegistrazioneIva>false</flagRegistrazioneIva>
+					<flagRilevanteIRAP>false</flagRilevanteIRAP>
+					<importoInValuta>0</importoInValuta>
+					<numeroOrdinativoDocumento>3658</numeroOrdinativoDocumento>
+					<numeroProtocolloDefinitivo>2</numeroProtocolloDefinitivo>
+					<numeroProtocolloProvvisorio>958</numeroProtocolloProvvisorio>
+					<progressivoIVA>293</progressivoIVA>
+					<registroIva>
+						<loginOperazione>CSIMLISRG67P19L219J-COAL</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>119</uid>
+						<codice>ED033</codice>
+						<descrizione>fatture esigibiità differita ludoteca</descrizione>
+						<ente>
+							<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>29</uid>
+							<codiceFiscale>00429440068</codiceFiscale>
+							<gestioneLivelli/>
+							<nome>Comune di Alessandria</nome>
+						</ente>
+						<flagBloccato>false</flagBloccato>
+						<gruppoAttivitaIva>
+							<loginOperazione>COAL-CSI72348</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>352</uid>
+							<codice>033</codice>
+							<descrizione>ludoteca</descrizione>
+							<ente>
+								<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>29</uid>
+								<codiceFiscale>00429440068</codiceFiscale>
+								<gestioneLivelli/>
+								<nome>Comune di Alessandria</nome>
+							</ente>
+							<listaAttivitaIva>
+								<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>159</uid>
+								<codice>02</codice>
+								<descrizione>Cultura</descrizione>
+								<ente>
+									<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+									<stato>VALIDO</stato>
+									<uid>29</uid>
+									<codiceFiscale>00429440068</codiceFiscale>
+									<gestioneLivelli/>
+									<nome>Comune di Alessandria</nome>
+								</ente>
+								<flagRilevanteIRAP>false</flagRilevanteIRAP>
+							</listaAttivitaIva>
+							<listaProRataEChiusuraGruppoIva>
+								<stato>VALIDO</stato>
+								<uid>90</uid>
+								<annoEsercizio>2016</annoEsercizio>
+								<ivaPrecedente>0.00</ivaPrecedente>
+								<percentualeProRata>88.00</percentualeProRata>
+							</listaProRataEChiusuraGruppoIva>
+							<listaProRataEChiusuraGruppoIva>
+								<stato>VALIDO</stato>
+								<uid>111</uid>
+								<annoEsercizio>2017</annoEsercizio>
+								<ivaPrecedente>0.00</ivaPrecedente>
+								<percentualeProRata>96.00</percentualeProRata>
+							</listaProRataEChiusuraGruppoIva>
+							<listaProRataEChiusuraGruppoIva>
+								<stato>VALIDO</stato>
+								<uid>128</uid>
+								<annoEsercizio>2018</annoEsercizio>
+								<ivaPrecedente>0.00</ivaPrecedente>
+								<percentualeProRata>90.00</percentualeProRata>
+							</listaProRataEChiusuraGruppoIva>
+							<listaRegistroIva>
+								<loginOperazione>CSIMLISRG67P19L219J-COAL</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>121</uid>
+								<codice>CR033</codice>
+								<descrizione>corrispettivi ludoteca</descrizione>
+								<ente>
+									<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+									<stato>VALIDO</stato>
+									<uid>29</uid>
+									<codiceFiscale>00429440068</codiceFiscale>
+									<gestioneLivelli/>
+									<nome>Comune di Alessandria</nome>
+								</ente>
+								<flagBloccato>false</flagBloccato>
+								<tipoRegistroIva codice="CI" descrizione="Corrispettivi">CORRISPETTIVI</tipoRegistroIva>
+							</listaRegistroIva>
+							<listaRegistroIva>
+								<loginOperazione>CSIMLISRG67P19L219J-COAL</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>120</uid>
+								<codice>EI033</codice>
+								<descrizione>fatture esigibiità immediata ludoteca</descrizione>
+								<ente>
+									<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+									<stato>VALIDO</stato>
+									<uid>29</uid>
+									<codiceFiscale>00429440068</codiceFiscale>
+									<gestioneLivelli/>
+									<nome>Comune di Alessandria</nome>
+								</ente>
+								<flagBloccato>false</flagBloccato>
+								<tipoRegistroIva codice="AI" descrizione="Acquisti iva immediata">ACQUISTI_IVA_IMMEDIATA</tipoRegistroIva>
+							</listaRegistroIva>
+							<listaRegistroIva>
+								<loginOperazione>AL1-PNNLSU58E67A182P</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>220</uid>
+								<codice>NEF33</codice>
+								<descrizione>Nota di entrata fittizia - ludoteca</descrizione>
+								<ente>
+									<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+									<stato>VALIDO</stato>
+									<uid>29</uid>
+									<codiceFiscale>00429440068</codiceFiscale>
+									<gestioneLivelli/>
+									<nome>Comune di Alessandria</nome>
+								</ente>
+								<flagBloccato>false</flagBloccato>
+								<tipoRegistroIva codice="CI" descrizione="Corrispettivi">CORRISPETTIVI</tipoRegistroIva>
+							</listaRegistroIva>
+							<listaRegistroIva>
+								<loginOperazione>AL1-PNNLSU58E67A182P</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>181</uid>
+								<codice>RCD33</codice>
+								<descrizione>Reverse charge  fatt. esigibilità differita ludoteca</descrizione>
+								<ente>
+									<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+									<stato>VALIDO</stato>
+									<uid>29</uid>
+									<codiceFiscale>00429440068</codiceFiscale>
+									<gestioneLivelli/>
+									<nome>Comune di Alessandria</nome>
+								</ente>
+								<flagBloccato>false</flagBloccato>
+								<tipoRegistroIva codice="AD" descrizione="Acquisti iva differita">ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+							</listaRegistroIva>
+							<listaRegistroIva>
+								<loginOperazione>AL1-PNNLSU58E67A182P</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>179</uid>
+								<codice>SPD33</codice>
+								<descrizione>Split payment  fatt. esigibilità differita ludoteca</descrizione>
+								<ente>
+									<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+									<stato>VALIDO</stato>
+									<uid>29</uid>
+									<codiceFiscale>00429440068</codiceFiscale>
+									<gestioneLivelli/>
+									<nome>Comune di Alessandria</nome>
+								</ente>
+								<flagBloccato>false</flagBloccato>
+								<tipoRegistroIva codice="AD" descrizione="Acquisti iva differita">ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+							</listaRegistroIva>
+							<listaRegistroIva>
+								<loginOperazione>CSIMLISRG67P19L219J-COAL</loginOperazione>
+								<stato>VALIDO</stato>
+								<uid>119</uid>
+								<codice>ED033</codice>
+								<descrizione>fatture esigibiità differita ludoteca</descrizione>
+								<ente>
+									<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+									<stato>VALIDO</stato>
+									<uid>29</uid>
+									<codiceFiscale>00429440068</codiceFiscale>
+									<gestioneLivelli/>
+									<nome>Comune di Alessandria</nome>
+								</ente>
+								<flagBloccato>false</flagBloccato>
+								<tipoRegistroIva codice="AD" descrizione="Acquisti iva differita">ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+							</listaRegistroIva>
+							<tipoAttivita>COMMERCIALE</tipoAttivita>
+							<tipoChiusura>MENSILE</tipoChiusura>
+						</gruppoAttivitaIva>
+						<tipoRegistroIva codice="AD" descrizione="Acquisti iva differita">ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+					</registroIva>
+					<statoSubdocumentoIva>PROVVISORIO_DEFINITIVO</statoSubdocumentoIva>
+					<tipoRegistrazioneIva>
+						<loginOperazione>admin</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>55</uid>
+						<codice>01</codice>
+						<descrizione>NORMALE</descrizione>
+						<ente>
+							<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+							<stato>VALIDO</stato>
+							<uid>29</uid>
+							<codiceFiscale>00429440068</codiceFiscale>
+							<gestioneLivelli/>
+							<nome>Comune di Alessandria</nome>
+						</ente>
+						<flagTipoRegistrazioneIvaEntrata>true</flagTipoRegistrazioneIvaEntrata>
+						<flagTipoRegistrazioneIvaSpesa>true</flagTipoRegistrazioneIvaSpesa>
+					</tipoRegistrazioneIva>
+					<totaleMovimentiIva>34.16</totaleMovimentiIva>
+					<dataOrdinativoDocumentoSI>2018-05-08T11:42:04.882+02:00</dataOrdinativoDocumentoSI>
+					<dataProtocolloDefinitivoSI>2018-05-08T11:42:04.882+02:00</dataProtocolloDefinitivoSI>
+					<dataProtocolloProvvisorioSI>2014-01-21T00:00:00+01:00</dataProtocolloProvvisorioSI>
+					<dataRegistrazioneSI>2014-01-21T00:00:00+01:00</dataRegistrazioneSI>
+				</subdocumentoIva>
+				<totale>34.16</totale>
+			</acquisto>
+		</acquistiVendite>
+		<totaleImponibile>28.23</totaleImponibile>
+		<totaleImposta>5.93</totaleImposta>
+		<totaleTotale>34.16</totaleTotale>
+	</datiIva>
+	<intestazione>
+		<annoDiRiferimentoContabile>2018</annoDiRiferimentoContabile>
+		<ente>
+			<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>29</uid>
+			<codiceFiscale>00429440068</codiceFiscale>
+			<gestioneLivelli/>
+			<nome>Comune di Alessandria</nome>
+			<partitaIva>00429440068</partitaIva>
+		</ente>
+		<indirizzoSoggetto>
+			<loginOperazione>AL1-TSNGNN57D59A182B</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>28626</uid>
+			<cap>15121</cap>
+			<denominazione>LIBERTA'</denominazione>
+			<numeroCivico>1</numeroCivico>
+			<sedime>Piazza</sedime>
+			<avviso>false</avviso>
+			<checkAvviso>false</checkAvviso>
+			<checkPrincipale>true</checkPrincipale>
+			<comune>Alessandria</comune>
+			<indirizzoId>28626</indirizzoId>
+			<principale>true</principale>
+			<provincia>AL</provincia>
+		</indirizzoSoggetto>
+		<numeroDiPagina>1</numeroDiPagina>
+		<soggetto>
+			<loginOperazione>AL1-TSNGNN57D59A182B</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>32606</uid>
+			<avviso>false</avviso>
+			<codiceFiscale>00429440068     </codiceFiscale>
+			<codiceSoggetto>100288</codiceSoggetto>
+			<controlloSuSoggetto>true</controlloSuSoggetto>
+			<dataModifica>2016-05-09T13:21:56.774+02:00</dataModifica>
+			<denominazione>COMUNE DI ALESSANDRIA</denominazione>
+			<loginCreazione>AL1-TSNGNN57D59A182B</loginCreazione>
+			<loginModifica>AL1-TSNGNN57D59A182B</loginModifica>
+			<partitaIva>00429440068</partitaIva>
+			<residenteEstero>false</residenteEstero>
+			<uidSoggettoPadre>0</uidSoggettoPadre>
+		</soggetto>
+		<tipoStampa>BOZZA</tipoStampa>
+	</intestazione>
+	<titolo>
+		<annoContabile>2018</annoContabile>
+		<gruppoAttivitaIva>
+			<loginOperazione>COAL-CSI72348</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>352</uid>
+			<codice>033</codice>
+			<descrizione>ludoteca</descrizione>
+			<ente>
+				<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+				<stato>VALIDO</stato>
+				<uid>29</uid>
+				<codiceFiscale>00429440068</codiceFiscale>
+				<gestioneLivelli/>
+				<nome>Comune di Alessandria</nome>
+			</ente>
+			<listaProRataEChiusuraGruppoIva>
+				<stato>VALIDO</stato>
+				<uid>90</uid>
+				<annoEsercizio>2016</annoEsercizio>
+				<ivaPrecedente>0.00</ivaPrecedente>
+				<percentualeProRata>88.00</percentualeProRata>
+			</listaProRataEChiusuraGruppoIva>
+			<listaProRataEChiusuraGruppoIva>
+				<stato>VALIDO</stato>
+				<uid>111</uid>
+				<annoEsercizio>2017</annoEsercizio>
+				<ivaPrecedente>0.00</ivaPrecedente>
+				<percentualeProRata>96.00</percentualeProRata>
+			</listaProRataEChiusuraGruppoIva>
+			<listaProRataEChiusuraGruppoIva>
+				<stato>VALIDO</stato>
+				<uid>128</uid>
+				<annoEsercizio>2018</annoEsercizio>
+				<ivaPrecedente>0.00</ivaPrecedente>
+				<percentualeProRata>90.00</percentualeProRata>
+			</listaProRataEChiusuraGruppoIva>
+			<tipoAttivita>COMMERCIALE</tipoAttivita>
+			<tipoChiusura>MENSILE</tipoChiusura>
+		</gruppoAttivitaIva>
+		<periodo codice="M05" descrizione="Maggio">MAGGIO</periodo>
+		<registroIva>
+			<loginOperazione>CSIMLISRG67P19L219J-COAL</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>119</uid>
+			<codice>ED033</codice>
+			<descrizione>fatture esigibiità differita ludoteca</descrizione>
+			<ente>
+				<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+				<stato>VALIDO</stato>
+				<uid>29</uid>
+				<codiceFiscale>00429440068</codiceFiscale>
+				<gestioneLivelli/>
+				<nome>Comune di Alessandria</nome>
+			</ente>
+			<flagBloccato>false</flagBloccato>
+			<gruppoAttivitaIva>
+				<loginOperazione>COAL-CSI72348</loginOperazione>
+				<stato>VALIDO</stato>
+				<uid>352</uid>
+				<codice>033</codice>
+				<descrizione>ludoteca</descrizione>
+				<ente>
+					<loginOperazione>fnc_siac_bko_crea_ente_da_modello</loginOperazione>
+					<stato>VALIDO</stato>
+					<uid>29</uid>
+					<codiceFiscale>00429440068</codiceFiscale>
+					<gestioneLivelli/>
+					<nome>Comune di Alessandria</nome>
+				</ente>
+				<listaProRataEChiusuraGruppoIva>
+					<stato>VALIDO</stato>
+					<uid>90</uid>
+					<annoEsercizio>2016</annoEsercizio>
+					<ivaPrecedente>0.00</ivaPrecedente>
+					<percentualeProRata>88.00</percentualeProRata>
+				</listaProRataEChiusuraGruppoIva>
+				<listaProRataEChiusuraGruppoIva>
+					<stato>VALIDO</stato>
+					<uid>111</uid>
+					<annoEsercizio>2017</annoEsercizio>
+					<ivaPrecedente>0.00</ivaPrecedente>
+					<percentualeProRata>96.00</percentualeProRata>
+				</listaProRataEChiusuraGruppoIva>
+				<listaProRataEChiusuraGruppoIva>
+					<stato>VALIDO</stato>
+					<uid>128</uid>
+					<annoEsercizio>2018</annoEsercizio>
+					<ivaPrecedente>0.00</ivaPrecedente>
+					<percentualeProRata>90.00</percentualeProRata>
+				</listaProRataEChiusuraGruppoIva>
+				<tipoAttivita>COMMERCIALE</tipoAttivita>
+				<tipoChiusura>MENSILE</tipoChiusura>
+			</gruppoAttivitaIva>
+			<tipoRegistroIva codice="AD" descrizione="Acquisti iva differita">ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+		</registroIva>
+	</titolo>
+</stampaRegistroIvaReportModel>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

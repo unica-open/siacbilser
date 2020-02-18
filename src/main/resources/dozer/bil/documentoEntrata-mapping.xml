@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+	<mapping map-id="SiacTDoc_DocumentoEntrata" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.DocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTDoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>anno</a>
+			<b>docAnno</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>docNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>docDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>docImporto</b>
+		</field>
+		
+		<field>
+			<a>dataEmissione</a>
+			<b>docDataEmissione</b>
+		</field>
+		
+		<field>
+			<a>dataOperazione</a>
+			<b>docDataOperazione</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>docDataScadenza</b>
+		</field>
+		
+		<field>
+			<a>flagDebitoreMultiplo</a>
+			<b>docBeneficiariomult</b>
+		</field>	
+		
+		<field>
+			<a>contabilizzaGenPcc</a>
+			<b>docContabilizzaGenpcc</b>
+		</field>
+		
+		<field map-id="SiacDCodicebollo_CodiceBollo">
+			<a>codiceBollo</a>
+			<b>siacDCodicebollo</b>
+		</field>
+		
+		<field custom-converter-id="documentoTipoDocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataStatoConverter">
+			<a>this</a>
+ 			<b>this</b> <!--.siacRDocStatos[0].siacDDocStato  -->
+		</field>
+		
+		<field custom-converter-id="documentoEntrataClassifConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataSoggConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataDataInizioValiditaStatoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataDocumentiCollegatiConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataSubdocumentoIvaConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataSubdocumentoEntrataConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTDoc_DocumentoEntrata_Medium" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.DocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTDoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>anno</a>
+			<b>docAnno</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>docNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>docDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>docImporto</b>
+		</field>
+		
+		<field>
+			<a>dataEmissione</a>
+			<b>docDataEmissione</b>
+		</field>
+		
+		<field>
+			<a>dataOperazione</a>
+			<b>docDataOperazione</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>docDataScadenza</b>
+		</field>
+		
+		<field>
+			<a>flagDebitoreMultiplo</a>
+			<b>docBeneficiariomult</b>
+		</field>	
+		
+		<field>
+			<a>contabilizzaGenPcc</a>
+			<b>docContabilizzaGenpcc</b>
+		</field>
+		
+		<field map-id="SiacDCodicebollo_CodiceBollo">
+			<a>codiceBollo</a>
+			<b>siacDCodicebollo</b>
+		</field>
+		
+		<field custom-converter-id="documentoTipoDocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<!-- <field custom-converter-id="documentoEntrataStatoConverter">
+			<a>this</a>
+ 			<b>this</b> .siacRDocStatos[0].siacDDocStato 
+		</field>
+		
+		<field custom-converter-id="documentoEntrataClassifConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field> -->
+		
+		<field custom-converter-id="documentoEntrataSoggConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<!-- <field custom-converter-id="documentoEntrataDataInizioValiditaStatoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field> -->
+		
+		<field custom-converter-id="documentoEntrataDocumentiCollegatiConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataSubdocumentoIvaConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTDoc_DocumentoEntrata_Collegati" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.DocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTDoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field custom-converter-id="documentoEntrataDocumentiCollegatiConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTDoc_DocumentoEntrata_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.DocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTDoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>anno</a>
+			<b>docAnno</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>docNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>docDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>docImporto</b>
+		</field>
+		
+		<field>
+			<a>dataEmissione</a>
+			<b>docDataEmissione</b>
+		</field>
+		
+		<field>
+			<a>dataOperazione</a>
+			<b>docDataOperazione</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>docDataScadenza</b>
+		</field>
+		
+		<field>
+			<a>flagDebitoreMultiplo</a>
+			<b>docBeneficiariomult</b>
+		</field>	
+		
+		<field>
+			<a>contabilizzaGenPcc</a>
+			<b>docContabilizzaGenpcc</b>
+		</field>
+		
+		<field map-id="SiacDCodicebollo_CodiceBollo">
+			<a>codiceBollo</a>
+			<b>siacDCodicebollo</b>
+		</field>
+		
+		<field custom-converter-id="documentoTipoDocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataStatoConverter">
+			<a>this</a>
+ 			<b>this</b> <!--.siacRDocStatos[0].siacDDocStato  -->
+		</field>
+		
+		<field custom-converter-id="documentoEntrataClassifConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataSoggConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataDataInizioValiditaStatoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		
+						
+	</mapping>
+	
+	
+	<mapping map-id="SiacTDoc_DocumentoEntrata_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.integration.entity.SiacTDoc</class-a>
+		<class-b>it.csi.siac.siacfin2ser.model.DocumentoEntrata</class-b>
+		
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>siacTEnteProprietario</a>
+			<b>ente</b>
+		</field>
+	
+		<field>
+			<a>docAnno</a>
+			<b>anno</b>
+		</field>
+		
+		<field>
+			<a>docNumero</a>
+			<b>numero</b>
+		</field>
+		
+		<field>
+			<a>docDesc</a>
+			<b>descrizione</b>
+		</field>
+		
+		<field>
+			<a>docImporto</a>
+			<b>importo</b>
+		</field>
+		
+		<field>
+			<a>docDataEmissione</a>
+			<b>dataEmissione</b>
+		</field>
+		
+		<field>
+			<a>docDataOperazione</a>
+			<b>dataOperazione</b>
+		</field>
+		
+		<field>
+			<a>docDataScadenza</a>
+			<b>dataScadenza</b>
+		</field>
+		
+		<field>
+			<a>docContabilizzaGenpcc</a>
+			<b>contabilizzaGenPcc</b>
+		</field>		
+		
+		<field custom-converter-id="documentoTipoDocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="documentoEntrataStatoConverter" type="one-way">
+ 			<a>this</a> <!--.siacRDocStatos[0].siacDDocStato  -->
+			<b>this</b>
+		</field>
+					
+		<field custom-converter-id="documentoSoggConverter" type="one-way">
+			<a>this</a>
+ 			<b>this</b>
+		</field>		
+		
+		<field map-id="SiacDCodicebollo_CodiceBollo">
+			<a>siacDCodicebollo</a>
+			<b>codiceBollo</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTDoc_DocumentoEntrata_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.integration.entity.SiacTDoc</class-a>
+		<class-b>it.csi.siac.siacfin2ser.model.DocumentoEntrata</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>siacTEnteProprietario</a>
+			<b>ente</b>
+		</field>
+	
+		<field>
+			<a>docAnno</a>
+			<b>anno</b>
+		</field>
+		
+		<field>
+			<a>docNumero</a>
+			<b>numero</b>
+		</field>
+		
+		<field>
+			<a>docDesc</a>
+			<b>descrizione</b>
+		</field>
+		
+		<field>
+			<a>docImporto</a>
+			<b>importo</b>
+		</field>
+		
+		<field>
+			<a>docDataEmissione</a>
+			<b>dataEmissione</b>
+		</field>
+		
+		<field>
+			<a>docDataOperazione</a>
+			<b>dataOperazione</b>
+		</field>
+		
+		<field>
+			<a>docDataScadenza</a>
+			<b>dataScadenza</b>
+		</field>
+		
+		<field>
+			<a>docContabilizzaGenpcc</a>
+			<b>contabilizzaGenPcc</b>
+		</field>
+		
+		<field map-id="SiacDCodicebollo_CodiceBollo">
+			<a>siacDCodicebollo</a>
+			<b>codiceBollo</b>
+		</field>
+		
+	</mapping>
+	
+	
+	
+	
+	
+</mappings>

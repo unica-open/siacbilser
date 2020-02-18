@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	
+	<mapping map-id="SiacTVariazione_VariazioneImportoCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VariazioneImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+		
+		<field map-id="SiacTVariazione_VariazioneImportoCapitolo_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacTVariazione_VariazioneImportoCapitolo_Medium" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VariazioneImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+		
+		<field map-id="SiacTVariazione_VariazioneImportoCapitolo_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneImportoCapitoloDataInizioValiditaStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacTVariazione_VariazioneImportoCapitolo_Base" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VariazioneImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+		
+		<field map-id="SiacTVariazione_VariazioneImportoCapitolo_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		<!-- SIAC-6884 -->
+		<field map-id="SiacTClass_StrutturaAmministrativoContabile">
+			<a>direzioneProponente</a>
+			<b>siacTClass</b>
+		</field>
+
+		<field custom-converter-id="variazioniTipoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneApplicazioneConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioniStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioniAttoAmmConverter">
+			<a>attoAmministrativo</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioniAttoAmmVarbilConverter">
+			<a>attoAmministrativoVariazioneBilancio</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTVariazione_VariazioneImportoCapitolo_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VariazioneImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+		
+		<field >
+			<a>numero</a>
+			<b>variazioneNum</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>variazioneDesc</b>
+		</field>
+		<field>
+			<a>data</a>
+			<b>variazioneData</b>
+		</field>
+		<field>
+			<a>flagConsiglio</a>
+			<b>flagConsiglio</b>
+		</field>
+		<field>
+			<a>flagGiunta</a>
+			<b>flagGiunta</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SiacTBilElem_DettaglioVariazioneImportoCapitolo" wildcard="false">
+		<class-a>it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+		
+		<field custom-converter-id="dettaglioVariazioneImportoCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<!-- TODO: da rimuovere con la cancellazione delle UEB -->
+	<mapping map-id="SiacTVariazione_StornoUEB" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.StornoUEB</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+
+		<field >
+			<a>numero</a>
+			<b>variazioneNum</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>variazioneDesc</b>
+		</field>
+		<field>
+			<a>data</a>
+			<b>variazioneData</b>
+		</field>
+		
+		<field custom-converter-id="variazioniTipoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="variazioneApplicazioneConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>	
+		
+		<field custom-converter-id="variazioniStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="variazioneImportiCapitoloStornoConverter">
+			<a>listaDettaglioVariazioneImporto</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="variazioniAttoAmmConverter">
+			<a>attoAmministrativo</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stornoCapitoliConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	
+	<mapping map-id="SiacTVariazione_VariazioneCodificaCapitolo_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		<field >
+			<a>numero</a>
+			<b>variazioneNum</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>variazioneDesc</b>
+		</field>
+		<field>
+			<a>data</a>
+			<b>variazioneData</b>
+		</field>
+		<!-- SIAC-6884 -->
+		<field>
+			<a>flagConsiglio</a>
+			<b>flagConsiglio</b>
+		</field>
+		<field>
+			<a>flagGiunta</a>
+			<b>flagGiunta</b>
+		</field>
+		<field custom-converter-id="variazioniStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioniTipoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioniAttoAmmConverter">
+			<a>attoAmministrativo</a>
+			<b>this</b>
+		</field>
+	</mapping>
+
+	<mapping map-id="SiacTVariazione_VariazioneCodificaCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+
+		<field map-id="SiacTVariazione_VariazioneCodificaCapitolo_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field type="one-way">
+			<a>ente.uid</a>
+			<b>siacDVariazioneTipo.siacTEnteProprietario.uid</b>
+		</field>
+		<field custom-converter-id="variazioniStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneCodificheCapitoloConverter">
+			<!-- NB: necessita che prima sia stato eseguito variazioniStatoConverter -->
+			<a>listaDettaglioVariazioneCodifica</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTVariazione_AttoAmministrativo" wildcard="false">
+		<class-a>it.csi.siac.siacattser.model.AttoAmministrativo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+
+		<field>
+			<a>uid</a>
+			<b>siacRVariazioneStatos[0].siacTAttoAmm.uid</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTVariazione_Bilancio" wildcard="false">
+		<class-a>it.csi.siac.siaccorser.model.Bilancio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+
+		<field map-id="SiacTBil_Bilancio">
+			<a>this</a>
+			<b>siacTBil</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTVariazione_Ente" wildcard="false">
+		<class-a>it.csi.siac.siaccorser.model.Ente</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>this</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="ListOfObjectArrayTotale_RiepilogoDatiVariazioneImportoCapitoloAnno" wildcard="false">
+		<class-a>it.csi.siac.siacbilser.model.RiepilogoDatiVariazioneImportoCapitoloAnno</class-a>
+		<class-b>java.util.List</class-b>
+		
+		<field custom-converter-id="riepilogoDatiVariazioneImportoCapitoloAnnoTotaleConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	<mapping map-id="ListOfObjectArrayCount_RiepilogoDatiVariazioneImportoCapitoloAnno" wildcard="false">
+		<class-a>it.csi.siac.siacbilser.model.RiepilogoDatiVariazioneImportoCapitoloAnno</class-a>
+		<class-b>java.util.List</class-b>
+		
+		<field custom-converter-id="riepilogoDatiVariazioneImportoCapitoloAnnoCountConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTVariazione_VariazioneDiBilancio_Base" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VariazioneDiBilancio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		<field map-id="SiacTClass_StrutturaAmministrativoContabile">
+			<a>direzioneProponente</a>
+			<b>siacTClass</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>variazioneDesc</b>
+		</field>
+		<field>
+			<a>data</a>
+			<b>variazioneData</b>
+		</field>
+		<field >
+			<a>numero</a>
+			<b>variazioneNum</b>
+		</field>
+		<field custom-converter-id="variazioniTipoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioniStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTVariazione_VariazioneImportoSingoloCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VariazioneImportoSingoloCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+		
+		<field map-id="SiacTVariazione_VariazioneDiBilancio_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneApplicazioneSingoloCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneImportoSingoloCapitoloAttoAmministrativoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneImportoSingoloCapitoloAttoAmministrativoVarBilConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneImportiSingoloCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTBilElemVar_DettaglioVariazioneCodificaCapitolo">
+		<!-- Mapping utilizzato dal servizio RicercaStoricoVariazioniCodificheCapitoloService -->
+		<class-a>it.csi.siac.siacbilser.model.DettaglioVariazioneCodificaCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElemVar</class-b>
+		
+		<field custom-converter-id="dettaglioVariazioneCodificaCapitoloAllConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field map-id="SiacTVariazione_VariazioneCodificaCapitolo_Minimal">
+			<a>variazioneCodificaCapitolo</a>
+			<b>siacRVariazioneStato.siacTVariazione</b>
+		</field>
+	</mapping>
+	
+</mappings>

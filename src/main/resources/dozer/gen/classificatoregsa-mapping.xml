@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+  <mapping map-id="SiacTGsaClassif_ClassificatoreGSA_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.ClassificatoreGSA</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGsaClassif</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>gsaClassifCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>gsaClassifDesc</b>
+		</field>
+	
+		<field>
+			<a>livello</a>
+			<b>livello</b>
+		</field>		
+	</mapping>
+	
+	<mapping map-id="SiacTGsaClassif_ClassificatoreGSA_Base" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.ClassificatoreGSA</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGsaClassif</class-b>
+	
+		<field map-id="SiacTGsaClassif_ClassificatoreGSA_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="classificatoreGSAAmbitoConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="classificatoreGSAStatoConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTGsaClassif_ClassificatoreGSA" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.ClassificatoreGSA</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGsaClassif</class-b>
+	
+		<field map-id="SiacTGsaClassif_ClassificatoreGSA_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="classificatoreGSAClassificatoreGSAPadreConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTGsaClassif_ClassificatoreGSA_All" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.ClassificatoreGSA</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGsaClassif</class-b>
+	
+		<field map-id="SiacTGsaClassif_ClassificatoreGSA">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="classificatoreGSAClassificatoreGSAFigliConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTGsaClassif_ClassificatoreGSA_AllValidi" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.ClassificatoreGSA</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGsaClassif</class-b>
+	
+		<field map-id="SiacTGsaClassif_ClassificatoreGSA">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="classificatoreGSAClassificatoreGSAFigliValidiConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+</mappings>

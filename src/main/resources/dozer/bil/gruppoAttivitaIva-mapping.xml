@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     <mapping map-id="SiacTIvaGruppo_GruppoAttivitaIva_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.GruppoAttivitaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaGruppo</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>uid</a>
+			<b>ivagruId</b>
+		</field>
+	
+		<field>
+			<a>codice</a>
+			<b>ivagruCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>ivagruDesc</b>
+		</field>
+		
+		<!--field>
+			<a>ivaPrecedente</a>
+			<b>ivagruIvaprecedente</b>
+		</field-->
+		
+		<field custom-converter-id="gruppoAttivitaIvaTipoChiusuraConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+	</mapping>
+     
+          
+	<mapping map-id="SiacTIvaGruppo_GruppoAttivitaIva_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.GruppoAttivitaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaGruppo</class-b>
+		
+		<field map-id="SiacTIvaGruppo_GruppoAttivitaIva_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="gruppoAttivitaIvaTipoAttivitaConverter">
+			<a>tipoAttivita</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="gruppoAttivitaIvaProrataEChiusuraConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTIvaGruppo_GruppoAttivitaIva" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.GruppoAttivitaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaGruppo</class-b>
+		
+		<field map-id="SiacTIvaGruppo_GruppoAttivitaIva_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="gruppoAttivitaIvaRegistroIvaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="gruppoAttivitaIvaAttivitaIvaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+  </mapping>
+	
+</mappings>

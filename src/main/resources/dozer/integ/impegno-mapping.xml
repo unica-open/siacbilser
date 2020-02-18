@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="RicercaImpegno_RicercaImpegniSubImpegni" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.movimentoGestione.RicercaImpegno </class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegniSubImpegni </class-b>
+		
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>numeroImpegno</a>
+			<b>parametroRicercaImpSub.numeroImpegno</b>
+		</field>
+		
+		<field>
+			<a>annoBilancio</a>
+			<b>parametroRicercaImpSub.annoEsercizio</b>
+		</field>
+		
+		<field>
+			<a>annoImpegno</a>
+			<b>parametroRicercaImpSub.annoImpegno</b>
+		</field>
+				
+		<field>
+			<a>annoProvvedimento</a>
+			<b>parametroRicercaImpSub.annoProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>numeroProvvedimento</a>
+			<b>parametroRicercaImpSub.numeroProvvedimento</b>
+		</field>
+		
+		 <field>
+			<a>numeroPagina</a>
+			<b>numPagina</b>
+		</field>
+		
+		<field>
+			<a>numeroElementiPerPagina</a>
+			<b>numRisultatiPerPagina</b>
+		</field> 
+	
+	</mapping>
+	
+	
+	<mapping map-id="ListImpegno_IntegImpegno" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.Impegno</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.Impegno</class-b>
+		
+		<field>
+			<a>numero</a>
+			<b>codice</b>
+		</field>
+		
+		<field>
+			<a>annoMovimento</a>
+			<b>annoImpegno</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+			<a>numero</a>
+			<b>numeroImpegno</b>
+		</field>
+		
+		<field>
+			<a>tipoImpegno.codice</a>
+			<b>tipoImpegno</b>
+		</field>
+		
+		<field>
+			<a>statoOperativoMovimentoGestioneSpesa</a>
+			<b>stato.codice</b>
+		</field>
+		
+		<field>
+			<a>descrizioneStatoOperativoMovimentoGestioneSpesa</a>
+			<b>stato.descrizione</b>
+		</field> 
+		
+		<field>
+			<a>importoAttuale</a>
+			<b>importo</b>
+		</field>
+		
+		<field>
+			<a>capitoloUscitaGestione.numeroCapitolo</a>
+			<b>numeroCapitolo</b>
+		</field>
+		
+		<field>
+			<a>capitoloUscitaGestione.numeroArticolo</a>
+			<b>numeroArticolo</b>
+		</field>
+		
+		<field>
+			<a>capitoloUscitaGestione.numeroUEB</a>
+			<b>numeroUEB</b>
+		</field>
+		
+		
+		<field>
+			<a>soggetto.codiceSoggetto</a>
+			<b>codiceSoggetto</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativo.anno</a>
+			<b>provvedimento.annoProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativo.numero</a>
+			<b>provvedimento.numeroProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativo.tipoAtto.codice</a>
+			<b>provvedimento.codiceTipoProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativo.statoOperativo</a>
+			<b>provvedimento.statoProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativo.strutturaAmmContabile.codice</a>
+			<b>provvedimento.sac.codice</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativo.strutturaAmmContabile.descrizione</a>
+			<b>provvedimento.sac.descrizione</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativo.strutturaAmmContabile.tipoClassificatore.codice</a>
+			<b>provvedimento.sac.codiceTipoStruttura</b>
+		</field>
+		
+		
+		<field>
+			<a>codPdc</a>
+			<b>pdc.codice</b>
+		</field>
+		
+		<field>
+			<a>descPdc</a>
+			<b>pdc.descrizione</b>
+		</field>
+		
+		
+		<!-- <field>
+			<a>capitoloUscitaGestione.elementoPianoDeiConti.codice</a>
+			<b>pdc.codice</b>
+		</field>
+		
+		<field>
+			<a>capitoloUscitaGestione.elementoPianoDeiConti.descrizione</a>
+			<b>pdc.descrizione</b>
+		</field> -->
+		
+		
+		<field>
+			<a>annoRiaccertato</a>
+			<b>annoImpegnoRiaccertato</b>
+		</field>
+		
+		<field>
+			<a>numeroRiaccertato</a>
+			<b>numImpegnoRiaccertato</b>
+		</field>
+		
+		
+		<field>
+			<a>annoOriginePlur</a>
+			<b>annoImpegnoOrigine</b>
+		</field>
+		
+		<field>
+			<a>numeroOriginePlur</a>
+			<b>numImpegnoOrigine</b>
+		</field>
+		
+		<field map-id="ListSubImpegno_IntegSubImpegno">
+			<a>elencoSubImpegni</a>
+			<b>subImpegni</b>
+		</field> 
+		
+	</mapping>
+</mappings>

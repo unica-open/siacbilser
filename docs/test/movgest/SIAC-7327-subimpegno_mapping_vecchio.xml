@@ -1,0 +1,168 @@
+SubImpegno_uid_145194
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<subImpegno>
+    <dataCreazione>2019-12-04T10:27:39.150+01:00</dataCreazione>
+    <dataInizioValidita>2019-12-04T10:27:39.150+01:00</dataInizioValidita>
+    <dataModifica>2019-12-04T10:27:39.150+01:00</dataModifica>
+    <loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>145194</uid>
+    <annoCapitoloOrigine>0</annoCapitoloOrigine>
+    <annoMovimento>2019</annoMovimento>
+    <annoOriginePlur>0</annoOriginePlur>
+    <annoRiaccertato>0</annoRiaccertato>
+    <byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+    <collegatoALiquidazioni>false</collegatoALiquidazioni>
+    <collegatoAOrdinativi>false</collegatoAOrdinativi>
+    <dataModifica>2019-12-04T10:27:39.150+01:00</dataModifica>
+    <descrizione>108297</descrizione>
+    <flagAttivaGsa>false</flagAttivaGsa>
+    <flagDaRiaccertamento>false</flagDaRiaccertamento>
+    <flagSoggettoDurc>false</flagSoggettoDurc>
+    <importoAttuale>1.00</importoAttuale>
+    <importoIniziale>1.00</importoIniziale>
+    <numero>1</numero>
+    <numeroArticoloOrigine>0</numeroArticoloOrigine>
+    <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+    <numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+    <numeroUEBOrigine>0</numeroUEBOrigine>
+    <parereFinanziario>false</parereFinanziario>
+    <presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+    <siopeAssenzaMotivazione>
+        <stato>VALIDO</stato>
+        <uid>0</uid>
+        <descrizioneBancaItalia>Acquisto locazione</descrizioneBancaItalia>
+    </siopeAssenzaMotivazione>
+    <validato>true</validato>
+    <annoFinanziamento>0</annoFinanziamento>
+    <chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+    <disponibilitaLiquidare>0.70</disponibilitaLiquidare>
+    <flagCassaEconomale>false</flagCassaEconomale>
+    <flagFrazionabile>false</flagFrazionabile>
+    <flagPrenotazione>false</flagPrenotazione>
+    <flagPrenotazioneLiquidabile>false</flagPrenotazioneLiquidabile>
+    <flagSDF>false</flagSDF>
+    <frazionabileValorizzato>false</frazionabileValorizzato>
+    <motivazioneDisponibilitaLiquidare>Disponibilita' calcolata dalla function</motivazioneDisponibilitaLiquidare>
+    <numeroAccFinanziamento>0</numeroAccFinanziamento>
+    <annoImpegnoPadre>2019</annoImpegnoPadre>
+    <numeroImpegnoPadre>1069</numeroImpegnoPadre>
+</subImpegno>
+
+SubImpegno_uid_125153
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<subImpegno>
+    <dataCreazione>2019-04-01T09:52:32.202+02:00</dataCreazione>
+    <dataInizioValidita>2019-04-01T09:52:32.202+02:00</dataInizioValidita>
+    <dataModifica>2019-04-01T09:52:32.202+02:00</dataModifica>
+    <loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>125153</uid>
+    <annoCapitoloOrigine>0</annoCapitoloOrigine>
+    <annoMovimento>2019</annoMovimento>
+    <annoOriginePlur>0</annoOriginePlur>
+    <annoRiaccertato>0</annoRiaccertato>
+    <byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+    <collegatoALiquidazioni>false</collegatoALiquidazioni>
+    <collegatoAOrdinativi>false</collegatoAOrdinativi>
+    <dataModifica>2019-04-01T09:52:32.202+02:00</dataModifica>
+    <flagAttivaGsa>false</flagAttivaGsa>
+    <flagDaRiaccertamento>false</flagDaRiaccertamento>
+    <flagSoggettoDurc>false</flagSoggettoDurc>
+    <importoAttuale>34.00</importoAttuale>
+    <importoIniziale>34.00</importoIniziale>
+    <numero>3</numero>
+    <numeroArticoloOrigine>0</numeroArticoloOrigine>
+    <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+    <numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+    <numeroUEBOrigine>0</numeroUEBOrigine>
+    <parereFinanziario>false</parereFinanziario>
+    <presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+    <siopeAssenzaMotivazione>
+        <stato>VALIDO</stato>
+        <uid>0</uid>
+        <descrizioneBancaItalia>CIG in corso di definizione</descrizioneBancaItalia>
+    </siopeAssenzaMotivazione>
+    <soggetto>
+        <stato>VALIDO</stato>
+        <uid>0</uid>
+        <avviso>false</avviso>
+        <codiceSoggetto>108297</codiceSoggetto>
+        <controlloSuSoggetto>true</controlloSuSoggetto>
+        <residenteEstero>false</residenteEstero>
+        <uidSoggettoPadre>0</uidSoggettoPadre>
+    </soggetto>
+    <validato>true</validato>
+    <annoFinanziamento>0</annoFinanziamento>
+    <chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+    <disponibilitaLiquidare>34.00</disponibilitaLiquidare>
+    <flagCassaEconomale>false</flagCassaEconomale>
+    <flagFrazionabile>false</flagFrazionabile>
+    <flagPrenotazione>false</flagPrenotazione>
+    <flagPrenotazioneLiquidabile>false</flagPrenotazioneLiquidabile>
+    <flagSDF>false</flagSDF>
+    <frazionabileValorizzato>false</frazionabileValorizzato>
+    <motivazioneDisponibilitaLiquidare>Disponibilita' calcolata dalla function</motivazioneDisponibilitaLiquidare>
+    <numeroAccFinanziamento>0</numeroAccFinanziamento>
+    <annoImpegnoPadre>2019</annoImpegnoPadre>
+    <numeroImpegnoPadre>685</numeroImpegnoPadre>
+</subImpegno>
+
+SubImpegno_uid_144935
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<subImpegno>
+    <dataCreazione>2019-10-11T12:09:50.285+02:00</dataCreazione>
+    <dataInizioValidita>2019-10-11T12:09:50.285+02:00</dataInizioValidita>
+    <dataModifica>2019-10-11T12:09:50.285+02:00</dataModifica>
+    <loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>144935</uid>
+    <annoCapitoloOrigine>0</annoCapitoloOrigine>
+    <annoMovimento>2019</annoMovimento>
+    <annoOriginePlur>0</annoOriginePlur>
+    <annoRiaccertato>0</annoRiaccertato>
+    <byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+    <collegatoALiquidazioni>false</collegatoALiquidazioni>
+    <collegatoAOrdinativi>false</collegatoAOrdinativi>
+    <dataModifica>2019-10-11T12:09:50.285+02:00</dataModifica>
+    <descrizione>PROVA SOFIA</descrizione>
+    <flagAttivaGsa>false</flagAttivaGsa>
+    <flagDaRiaccertamento>false</flagDaRiaccertamento>
+    <flagSoggettoDurc>false</flagSoggettoDurc>
+    <importoAttuale>5.00</importoAttuale>
+    <importoIniziale>5.00</importoIniziale>
+    <numero>3</numero>
+    <numeroArticoloOrigine>0</numeroArticoloOrigine>
+    <numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+    <numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+    <numeroUEBOrigine>0</numeroUEBOrigine>
+    <parereFinanziario>false</parereFinanziario>
+    <presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+    <soggetto>
+        <stato>VALIDO</stato>
+        <uid>0</uid>
+        <avviso>false</avviso>
+        <codiceSoggetto>322906</codiceSoggetto>
+        <controlloSuSoggetto>true</controlloSuSoggetto>
+        <residenteEstero>false</residenteEstero>
+        <uidSoggettoPadre>0</uidSoggettoPadre>
+    </soggetto>
+    <validato>true</validato>
+    <annoFinanziamento>0</annoFinanziamento>
+    <chiaveCapitoloUscitaGestione>0</chiaveCapitoloUscitaGestione>
+    <disponibilitaLiquidare>0</disponibilitaLiquidare>
+    <flagCassaEconomale>false</flagCassaEconomale>
+    <flagFrazionabile>false</flagFrazionabile>
+    <flagPrenotazione>false</flagPrenotazione>
+    <flagPrenotazioneLiquidabile>false</flagPrenotazioneLiquidabile>
+    <flagSDF>false</flagSDF>
+    <frazionabileValorizzato>false</frazionabileValorizzato>
+    <motivazioneDisponibilitaLiquidare>Disponibilita' calcolata dalla function</motivazioneDisponibilitaLiquidare>
+    <numeroAccFinanziamento>0</numeroAccFinanziamento>
+    <annoImpegnoPadre>2019</annoImpegnoPadre>
+    <numeroImpegnoPadre>916</numeroImpegnoPadre>
+</subImpegno>

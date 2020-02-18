@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SirfelTFattura_FatturaFEL_Base_NoPrestatoreFEL" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.FatturaFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTFattura</class-b>
+		
+<!-- 		<field> -->
+<!-- 			<a>ente.uid</a> -->
+<!-- 			<b>id.enteProprietarioId</b> -->
+<!-- 		</field> -->
+		
+<!-- 		<field> -->
+<!-- 			<a>idFattura</a> -->
+<!-- 			<b>id.idFattura</b> -->
+<!-- 		</field> -->
+		
+		<field>
+			<a>portaleFattureFEL</a>
+			<b>sirfelTPortaleFatture</b>
+		</field>
+		
+		<field custom-converter-id="fatturaFELTipoDocumentoFELConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.FatturaFELStatoAcquisizioneConverter">
+			<a>statoAcquisizioneFEL</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	
+	<mapping map-id="SirfelTFattura_FatturaFEL_Base" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.FatturaFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTFattura</class-b>
+		
+		<field map-id="SirfelTFattura_FatturaFEL_Base_NoPrestatoreFEL">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SirfelTPrestatore_PrestatoreFEL_Base">
+			<a>prestatore</a>
+			<b>sirfelTPrestatore</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SirfelTFattura_FatturaFEL_NoPrestatoreFEL" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.FatturaFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTFattura</class-b>
+		
+		<field map-id="SirfelTFattura_FatturaFEL_Base_NoPrestatoreFEL">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<!-- <field custom-converter-id="fatturaFELDocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field> -->
+		
+		<field map-id="SirfelTRiepilogoBeni_RiepilogoBeniFEL_Base">
+			<a>riepiloghiBeni</a>
+			<b>sirfelTRiepilogoBenis</b>
+		</field>
+		
+		<field>
+			<a>causaliFEL</a>
+			<b>sirfelTCausales</b>
+		</field>
+		
+		<field>
+			<a>protocolloFEL</a>
+			<b>sirfelTProtocollo</b>
+		</field>
+		
+		<field map-id="SirfelTCassaPrevidenziale_CassaPrevidenzialeFEL_Minimal">
+			<a>cassePrevidenziali</a>
+			<b>sirfelTCassaPrevidenziales</b>
+		</field>
+		
+		<field>
+			<a>fattureCollegate</a>
+			<b>sirfelTFattureCollegates</b>
+		</field>
+		
+		<field>
+			<a>fattureContabili</a>
+			<b>sirfelTFatturaContabiles</b>
+		</field>
+		
+		<field map-id="SirfelTPagamento_PagamentoFEL">
+			<a>pagamenti</a>
+			<b>sirfelTPagamentos</b>
+		</field>
+		
+		<field>
+			<a>datiGestionali</a>
+			<b>sirfelTDatiGestionalis</b>
+		</field>
+		
+		<field map-id="SirfelTOrdineAcquisto_OrdineAcquistoFEL">
+			<a>ordiniAcquisti</a>
+			<b>sirfelTOrdineAcquistos</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SirfelTFattura_FatturaFEL" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.FatturaFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTFattura</class-b>
+		
+		<field map-id="SirfelTFattura_FatturaFEL_NoPrestatoreFEL">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SirfelTPrestatore_PrestatoreFEL_Base">
+			<a>prestatore</a>
+			<b>sirfelTPrestatore</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SirfelTFattura_FatturaFEL_Full_PrestatoreFEL" wildcard="true">
+		<class-a>it.csi.siac.sirfelser.model.FatturaFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelTFattura</class-b>
+		
+		<field map-id="SirfelTFattura_FatturaFEL_NoPrestatoreFEL">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="fatturaFELPrestatoreFELConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+
+</mappings>

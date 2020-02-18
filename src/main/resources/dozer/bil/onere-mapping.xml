@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+
+	<mapping map-id="SiacRDocOnere_DettaglioOnere" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.DettaglioOnere</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacRDocOnere</class-b>
+
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+
+		<field map-id="SiacTDoc_DocumentoSpesa_Minimal">
+			<a>documentoSpesa</a>
+			<b>siacTDoc</b>
+		</field>
+
+		<field map-id="SiacDOnere_TipoOnere">
+			<a>tipoOnere</a>
+			<b>siacDOnere</b>
+		</field>
+
+		<field map-id="SiacDCausale_Causale770">
+			<a>causale770</a>
+			<b>siacDCausale</b>
+		</field>
+
+		<field map-id="SiacDOnereAttivita_AttivitaOnere">
+			<a>attivitaOnere</a>
+			<b>siacDOnereAttivita</b>
+		</field>
+		
+		<field map-id="SiacDSommaNonSoggettaTipo_CodiceSommaNonSoggetta">
+			<a>codiceSommaNonSoggetta</a>
+			<b>siacDSommaNonSoggettaTipo</b>
+		</field>
+		
+		<field custom-converter-id="dettaglioOnereSubOrdinativiConverter">  <!-- da modificare -->
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+	</mapping>
+
+
+	<mapping map-id="SiacDOnere_TipoOnere_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.TipoOnere</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDOnere</class-b>
+
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+
+		<field>
+			<a>codice</a>
+			<b>onereCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>onereDesc</b>
+		</field>
+
+		<field map-id="SiacDOnereTipo_NaturaOnere">
+			<a>naturaOnere</a>
+			<b>siacDOnereTipo</b>
+		</field>
+		
+		<field custom-converter-id="tipoOnereTipoIvaSplitReverseConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoOnereTipoSommaNonSoggettaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+	</mapping>
+	
+
+	<mapping map-id="SiacDOnere_TipoOnere" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.TipoOnere</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDOnere</class-b>
+
+		<field map-id="SiacDOnere_TipoOnere_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field custom-converter-id="tipoOnereAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoOnereCausaliConverter"> <!-- siacROnereCausales -->
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+<!-- 		<field custom-converter-id="tipoOnereCausaliImpegnoAccertamentoConverter"> -->
+<!--            Meglio non metterlo perche' pesante! richiama il servizio di ricercaImpegnoPerChiave. E' possibile utilizzarlo solo tramite ModelDetail -->
+<!-- 			<a>this</a> --> 
+<!-- 			<b>this</b> -->
+<!-- 		</field> -->
+		
+		<field custom-converter-id="tipoOnereAttivitaConverter"> <!-- siacROnereAttivitas -->
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacDOnereTipo_NaturaOnere" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.NaturaOnere</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDOnereTipo</class-b>
+
+		<field>
+			<a>codice</a>
+			<b>onereTipoCode</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>onereTipoDesc</b>
+		</field>
+
+	</mapping>
+
+	<mapping map-id="SiacDOnereAttivita_AttivitaOnere" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AttivitaOnere</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDOnereAttivita</class-b>
+
+		<field>
+			<a>codice</a>
+			<b>onereAttCode</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>onereAttDesc</b>
+		</field>
+	</mapping>
+
+
+
+	<mapping map-id="SiacDCausale_Causale770" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.Causale770</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDCausale</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+
+		<field>
+			<a>codice</a>
+			<b>causCode</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>causDesc</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDSommaNonSoggettaTipo_CodiceSommaNonSoggetta" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.CodiceSommaNonSoggetta</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDSommaNonSoggettaTipo</class-b>
+		
+<!-- 		<field map-id="SiacTEnteProprietario_Ente_Base"> -->
+<!-- 			<a>ente</a> -->
+<!-- 			<b>siacTEnteProprietario</b> -->
+<!-- 		</field> -->
+
+		<field>
+			<a>codice</a>
+			<b>sommaNonSoggettaTipoCode</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>sommaNonSoggettaTipoDesc</b>
+		</field>
+	</mapping>
+	
+
+</mappings>

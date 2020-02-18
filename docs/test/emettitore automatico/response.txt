@@ -1,0 +1,31 @@
+Response senza uid bilancio
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:emetteOrdinativiDiPagamentoDaElencoSyncResponse xmlns:ns2="http://siac.csi.it/fin2/svc/1.0">
+         <cardinalitaComplessiva>1</cardinalitaComplessiva>
+         <errori>
+            <stato>VALIDO</stato>
+            <uid>0</uid>
+            <codice>COR_ERR_0003</codice>
+            <descrizione>Parametro uid bilancio non inizializzato</descrizione>
+         </errori>
+         <esito>FALLIMENTO</esito>
+      </ns2:emetteOrdinativiDiPagamentoDaElencoSyncResponse>
+   </soap:Body>
+</soap:Envelope>
+
+Response con uid bilancio
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns2:emetteOrdinativiDiPagamentoDaElencoSyncResponse xmlns:ns2="http://siac.csi.it/fin2/svc/1.0">
+         <cardinalitaComplessiva>1</cardinalitaComplessiva>
+         <errori>
+            <stato>VALIDO</stato>
+            <uid>0</uid>
+            <codice>COR_ERR_0003</codice>
+            <descrizione>Parametro allegato atto non inizializzato</descrizione>
+         </errori>
+         <esito>FALLIMENTO</esito>
+      </ns2:emetteOrdinativiDiPagamentoDaElencoSyncResponse>
+   </soap:Body>
+</soap:Envelope>

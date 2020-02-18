@@ -1,0 +1,111 @@
+﻿RENDICONTO CASSA
+
+NOTA:- per capire se il movimento è uin rendiconto deve essere presente 
+</stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/rendicontoRichiesta>
+NOTA:- per capire se il movimento è un ANTICIPO SPESE MISSIONE
+</stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/richiestaEconomale/tipoRichiestaEconomale> contiene:
+<codice>ANTICIPO_SPESE_MISSIONE</codice>
+oppre
+</stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/flagAnticipoSpeseMissione> = true
+MAPPATURA
+A1: 	</stampaRendicontoCassaReportModel/intestazione/tipoStampa>
+A2: 	</stampaRendicontoCassaReportModel/intestazione/numeroDiPagina>
+A3: 	</stampaRendicontoCassaReportModel/intestazione/ente/nome>
+A4: 	</stampaRendicontoCassaReportModel/intestazione/direzione>
+A5: 	</stampaRendicontoCassaReportModel/intestazione/settore>
+A6: 	</stampaRendicontoCassaReportModel/intestazione/ufficio>
+A7: 	</stampaRendicontoCassaReportModel/intestazione/riferimentoCassaEconomale>
+A8: 	</stampaRendicontoCassaReportModel/intestazione/dataStampaRendiconto>
+A9: 	</stampaRendicontoCassaReportModel/intestazione/numeroRendiconto>
+A10: 	</stampaRendicontoCassaReportModel/intestazione/periodoInizio>
+A11: 	</stampaRendicontoCassaReportModel/intestazione/periodoFine>
+
+
+
+Ciclare su </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento>
+
+B1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/capitolo/numeroCapitolo>
+B2: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/capitolo/numeroArticolo>
+B3: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/capitolo/descrizione>
+
+B5: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/impegno/annoMovimento>
+B5: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/impegno/numero>
+	(se è presente il subImpegno) </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/richiestaEconomale/subImpegno/numero>
+B6: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/impegno/descrizione>
+	
+//MOVIMENTI NON ANTICIPOSPESEMISSIONE
+Ciclare su </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento>
+
+C1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/numeroMovimento>
+D1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/dataMovimento>
+E1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/soggetto/denominazione>
+
+
+F1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/annoFattura> 
+    </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/numeroFattura> 
+
+G1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/richiestaEconomale/descrizioneDellaRichiesta>
+
+H1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/importoRigaMovimento>
+
+
+-- fine ciclo
+
+Ciclare su </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/>
+I1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/numMovimentiCapitoloNOASM>
+
+
+L1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/importoUsciteNOASM>
+L2: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/importoEntrateNOASM>
+L3: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/importoTotaleUsciteEntrateNOASM>
+-- fine ciclo
+M1: </stampaRendicontoCassaReportModel/numeroMovimentiTotaleNOASM>
+N1: </stampaRendicontoCassaReportModel/importoTotaleMovimentoCapitoliNOASM>
+
+Ciclare su </stampaRendicontoCassaReportModel/operazioniCassa/operazioneCassa>
+O1: </stampaRendicontoCassaReportModel/operazioniCassa/operazioneCassa/descrizione>
+P1: </stampaRendicontoCassaReportModel/operazioniCassa/operazioneCassa/importo>
+-- fine ciclo
+Q1: </stampaRendicontoCassaReportModel/importoTotaleOperazioniCassa>
+R1: </stampaRendicontoCassaReportModel/importoTotaleRendiconto>
+
+
+//MOVIMENTI  ANTICIPOSPESEMISSIONE
+Ciclare su </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento>
+
+C1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/numeroMovimento>
+D1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/dataMovimento>
+E1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/soggetto/denominazione>
+
+
+F1:  </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/numeroFattura> 
+
+G1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/richiestaEconomale/descrizioneDellaRichiesta>
+
+H1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoliMovimento/movimenti/movimento/importoRigaMovimento>
+
+
+-- fine ciclo
+
+Ciclare su </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/>
+I1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/numMovimentiCapitoloASM>
+
+
+L1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/importoUsciteASM>
+L2: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/importoEntrateASM>
+L3: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/importoTotaleUsciteEntrateASM>
+-- fine ciclo
+S1: </stampaRendicontoCassaReportModel/numeroMovimentiTotaleASM>
+S2: </stampaRendicontoCassaReportModel/importoTotaleMovimentoCapitoliASM>
+
+
+
+
+
+TOTALE
+T1: </stampaRendicontoCassaReportModel/capitoliMovimenti/capitoloMovimenti/numMovimentiCapitolo>
+U1: </stampaRendicontoCassaReportModel/importoTotaleMovimentoCapitoli>
+
+
+
+

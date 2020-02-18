@@ -1,0 +1,2007 @@
+------------------------
+SIAC BIL Server Impl
+------------------------
+
+TODO
+-------
+- AL utilizzare come libreria di logging solo jboss logging anche in locale
+- AL realizzare il ws e deployarlo su JBOSS
+
+Funzionalità rilasciate
+
+build 28/01/2020 versione 4.20.0
+ SIAC-7184
+ SIAC-7227
+ SIAC-7228
+ SIAC-7252
+ SIAC-7271
+ SIAC-7301
+ SIAC-7302
+ SIAC-7309
+ SIAC-7316
+ SIAC-7322
+ SIAC-7319
+ SIAC-7327
+ SIAC-7343 
+ SIAC-7350
+ 
+build 18/12/2019 versione 4.19.0
+ SIAC-6883
+ SIAC-6884
+ SIAC-6990
+ SIAC-7218
+ SIAC-7236
+ SIAC-7239
+
+
+build 6/12/2019 versione 4.18.1
+ SIAC-7236
+ SIAC-7239
+ SIAC-6884
+
+build 27/11/2019 versione 4.18.0
+ SIAC-6840
+ SIAC-6881
+ SIAC-7053
+ SIAC-7097
+ SIAC-7101
+ SIAC-7109
+ SIAC-7115
+ SIAC-7120
+ SIAC-7127
+ SIAC-7152
+ SIAC-7159
+ SIAC-7167
+ SIAC-7172
+ SIAC-7173
+ SIAC-7189
+ SIAC-7209
+
+build 15/11/2019 versione 4.17.1
+ SIAC-6879
+ SIAC-7114
+ SIAC-7127
+ SIAC-7143
+ SIAC-7144
+ SIAC-7159
+ SIAC-6759
+ SIAC-7053
+ SIAC-7097
+ SIAC-7101
+ SIAC-7109
+ SIAC-7115
+ SIAC-7152
+ SIAC-7167
+ SIAC-7167
+ SIAC-7189
+
+
+build 22/10/2019 versione 4.17.0
+ SIAC-6888
+ SIAC-7043
+ SIAC-7044
+
+build 07/10/2019 versione 4.16.0
+ SIAC-6702
+ SIAC-6835
+ SIAC-6842
+ SIAC-6847
+ SIAC-6899
+ SIAC-6914
+ SIAC-6958
+ SIAC-6972
+ SIAC-6977
+ SIAC-6989
+ SIAC-6991
+ SIAC-7017
+ SIAC-7022
+ SIAC-7031
+ SIAC-7045
+ SIAC-7047
+
+build 28/08/2019 versione 4.15.0
+ SIAC-6874
+ SIAC-6949
+ SIAC-6970
+
+build 24/07/2019 versione 4.14.0
+ SIAC-6352
+ SIAC-6705
+ SIAC-6932
+ SIAC-6962
+ SIAC-6980
+ SIAC-6981 (patch)
+
+build 26/06/2019 versione 4.13.0
+ SIAC-6720
+ SIAC-6871
+ SIAC-6909
+ SIAC-6911
+ SIAC-6915
+ SIAC-6937
+ SIAC-6945
+ SIAC-6948
+
+build 29/05/2019 versione 4.12.0
+ SIAC-6255
+ SIAC-6706
+ SIAC-6743
+ SIAC-6750
+ SIAC-6754
+ SIAC-6773
+ SIAC-6776
+ SIAC-6778
+ SIAC-6781
+ SIAC-6784
+ SIAC-6792
+ SIAC-6796
+ SIAC-6801
+ SIAC-6808
+ SIAC-6814
+ SIAC-6815
+ SIAC-6817
+ SIAC-6831
+ SIAC-6837
+ SIAC-6850
+ SIAC-6882
+
+build 29/04/2019 versione 4.11.0
+ SIAC-6572 
+ SIAC-6688
+ SIAC-6792 (patch)
+ 
+build 27/03/2019 versione 4.10.0
+ SIAC-6565 
+ SIAC-6726 
+ SIAC-6727
+
+build 06/03/2019 versione 4.9.0
+ SIAC-6281
+ SIAC-6468
+ SIAC-6567
+ SIAC-6585
+ SIAC-6587
+ SIAC-6646
+ SIAC-6678
+ SIAC-6680
+ SIAC-6686
+ SIAC-6695
+ SIAC-6704
+ SIAC-6707
+ SIAC-6709
+ SIAC-6710
+ SIAC-6711
+ SIAC-6712
+
+build 13/02/2019 versione 4.8.0
+ SIAC-6586
+ SIAC-6645
+ SIAC-6652
+ SIAC-6659
+ SIAC-6663
+ SIAC-6665
+ SIAC-6674
+ SIAC-6681
+ 
+build 23/01/2019 versione 4.7.0
+ SIAC-6574
+ SIAC-6581
+ SIAC-6588 
+ SIAC-6617
+ SIAC-6643
+ SIAC-6647
+
+build 09/01/2019 versione 4.6.0
+ SIAC-6265
+ SIAC-6348
+ SIAC-6365
+ SIAC-6467
+ SIAC-6500
+ SIAC-6540
+ SIAC-6556
+ SIAC-6564
+ SIAC-6576
+ SIAC-6577
+ SIAC-6583
+ SIAC-6590
+ SIAC-6614
+ SIAC-6618
+ SIAC-6620
+ SIAC-6622
+ SIAC-6626
+ SIAC-6632 (risolta con SIAC-6626)
+
+build 13/12/2018 versione 4.5.0
+ Cespiti- modifica importo su prima nota
+ SIAC-6261
+ SIAC-6291
+ SIAC-6294
+ SIAC-6343
+ SIAC-6465
+ SIAC-6545
+ SIAC-6552
+ SIAC-6572
+
+build 22/11/2018 versione 4.4.0
+ SIAC-6340
+ SIAC-6480
+ Cespiti- aggiorna prima nota registro A
+ SIAC-6494
+ SIAC-6523
+ SIAC-6531
+ SIAC-6539
+ SIAC-6544
+ SIAC-6545
+ SIAC-6546
+
+build 15/11/2018 versione 4.3.0
+ SIAC-6489
+ SIAC-6503
+ SIAC-6504
+ SIAC-6508
+ SIAC-6509
+ SIAC-6519
+ SIAC-6520
+ SIAC-6521
+ SIAC-6522
+ SIAC-6525
+ SIAC-6530
+
+build 08/11/2018 versione 4.2.0
+ SIAC-6484
+ SIAC-6490
+ SIAC-6492
+ 
+ Cespiti-RegistroA consultazione
+
+build 31/10/2018 versione 4.1.0
+ SIAC-6252
+ SIAC-6347
+ Cespiti-V4
+
+build 25/10/2018 versione 4.0.0
+ SIAC-6441
+ SIAC-6483
+ Cespiti-V3
+ incremento versione per modifiche architettura
+
+build 18/10/2018 versione 3.53.0
+ SIAC-6449
+
+build 11/10/2018 versione 3.52.0
+ SIAC-6450
+
+build 27/09/2018 versione 3.51.0
+ SIAC-6328
+ SIAC-6332
+ SIAC-6428
+ SIAC-6432 
+ SIAC-6433
+ SIAC-6443
+ SIAC-6444
+ SIAC-6445
+ SIAC-6447
+
+ 
+build 20/09/2018 versione 3.50.0
+ SIAC-6439
+
+build 13/09/2018 versione 3.49.0
+ SIAC-6426
+ 
+build 06/09/2018 versione 3.48.0
+ SIAC-6262
+ SIAC-6285
+ SIAC-6286
+ SIAC-6287
+ SIAC-6303
+ SIAC-6311
+ SIAC-6260
+ SIAC-6367
+ SIAC-6370
+ SIAC-6372
+ SIAC-6374
+ SIAC-6375
+ SIAC-6376
+ SIAC-6377
+ SIAC-6379
+ SIAC-6380
+ SIAC-6381
+ SIAC-6382
+ SIAC-6384
+ SIAC-6385
+ SIAC-6387
+ SIAC-6388
+ SIAC-6389
+ SIAC-6393
+ SIAC-6401
+ SIAC-6402
+ SIAC-6403
+ SIAC-6411
+
+build 26/07/2018 versione 3.47.0
+ SIAC-6175
+ SIAC-6193
+ SIAC-6206
+ SIAC-6308
+ SIAC-6349
+ SIAC-6350
+ SIAC-6355
+ SIAC-6356
+
+build 12/07/2018 versione 3.46.0
+ SIAC-6269
+ SIAC-6309
+ SIAC-6315 
+
+build 05/07/2018 versione 3.45.0
+ SIAC-6249
+ SIAC-6276
+ SIAC-6290
+ SIAC-6293
+
+
+build 28/06/2018 versione 3.44.0
+ SIAC-6241
+ SIAC-6248
+ SIAC-6277
+ 
+build 21/06/2018 versione 3.43.0
+ SIAC-6232
+ SIAC-6238
+
+build 14/06/2018 versione 3.42.0
+ SIAC-6184
+ SIAC-6190
+ SIAC-6198
+ 
+build 07/06/2018 versione 3.41.0
+ SIAC-6165
+ SIAC-6192
+ SIAC-6207
+ SIAC-6219
+
+build 31/05/2018 versione 3.40.0
+ SIAC-6092
+ SIAC-6154
+ SIAC-6166
+ SIAC-6178
+ SIAC-6195
+ SIAC-6204
+ SIAC-6210
+ SIAC-6211
+  
+build 24/05/2018 versione 3.39.0
+ SIAC-6076
+ SIAC-6154
+ SIAC-6191
+
+build 17/05/2018 versione 3.38.0
+ SIAC-6092
+ SIAC-6157
+ SIAC-6160
+ SIAC-6162
+ SIAC-6181
+
+build 10/05/2018 versione 3.37.0
+ SIAC-6090
+ SIAC-6095
+ SIAC-6113
+ SIAC-6130
+ SIAC-6132
+ SIAC-6136
+ SIAC-6141
+
+build 03/05/2018 versione 3.36.0
+ SIAC-6106
+ SIAC-6119
+ SIAC-6120
+
+build 26/04/2018 versione 3.35.0
+ SIAC-5937
+ SIAC-6099
+
+build 19/04/2018 versione 3.34.0
+ SIAC-6098
+ SIAC-6107
+
+build 12/04/2018 versione 3.33.0
+ SIAC-6040
+ SIAC-6048
+ SIAC-6073
+ SIAC-6077
+ SIAC-6079
+ SIAC-6087
+
+build 05/04/2018 versione 3.32.0
+ SIAC-6060
+
+build 29/03/2018 versione 3.31.0
+ SIAC-5712
+ SIAC-5813
+ SIAC-5853
+ SIAC-5944
+ SIAC-6000
+ SIAC-6031
+ SIAC-6042
+
+build 22/03/2018 versione 3.30.0
+ SIAC-5802
+ SIAC-5943
+ SIAC-5981
+ SIAC-5985
+ SIAC-6018
+ SIAC-6021
+ SIAC-6022
+ SIAC-6036
+ SIAC-6039
+ SIAC-6043
+ SIAC-6044
+
+build 15/03/2018 versione 3.29.0
+ SIAC-5799
+ SIAC-5873
+ SIAC-5879
+ SIAC-5947
+ SIAC-5979
+ SIAC-6001
+ SIAC-6004
+ SIAC-6009
+ SIAC-6013
+ SIAC-6016
+
+build 08/03/2018 versione 3.28.0
+ SIAC-5584
+ SIAC-5879
+ SIAC-5898
+ SIAC-5940
+ SIAC-5965
+ SIAC-5989
+ SIAC-5991
+
+build 01/03/2018 versione 3.27.0
+ SIAC-5945
+ SIAC-5580
+ SIAC-5936
+ SIAC-5926
+ SIAC-5948
+ SIAC-5954
+ SIAC-5959
+
+build 22/02/2018 versione 3.26.0
+ SIAC-5888
+ SIAC-5890
+ SIAC-5910
+ SIAC-5915
+ SIAC-5917
+ SIAC-5919
+ SIAC-5920
+ SIAC-5950
+
+build 15/02/2018 versione 3.25.0
+ SIAC-5426
+ SIAC-5589
+ SIAC-5649
+ SIAC-5836
+ SIAC-5842
+ SIAC-5887
+ SIAC-5906
+
+build 08/02/2018 versione 3.24.0
+ SIAC-5333
+ SIAC-5831
+ SIAC-5860
+
+build 01/02/2018 versione 3.23.0
+ SIAC-5333
+ SIAC-5510
+ SIAC-5549
+ SIAC-5572
+ SIAC-5586
+ SIAC-5637
+ SIAC-5745
+ SIAC-5797
+ SIAC-5815
+ SIAC-5823
+ SIAC-5827
+ SIAC-5828
+ SIAC-5848
+
+build 25/01/2018 versione 3.22.0
+ SIAC-5333
+ SIAC-5344
+ SIAC-5582
+ SIAC-5683
+ SIAC-5794
+ SIAC-5798
+ SIAC-5801
+ SIAC-5803
+ SIAC-5807
+ SIAC-5811
+ SIAC-5812
+ SIAC-5818
+ 
+build 18/01/2018 versione 3.21.0
+ SIAC-5307
+ SIAC-5790
+ SIAC-5757
+ SIAC-5758
+ SIAC-5785
+ 
+build 11/01/2018 versione 3.20.0
+ SIAC-5752
+ SIAC-5762
+ SIAC-5747
+ SIAC-5761
+ SIAC-5759
+	
+build 28/12/2017 versione 3.19.0
+ SIAC-5336
+ SIAC-5736
+ SIAC-5740
+ SIAC-5749
+ SIAC-5750
+ SIAC-5751
+ SIAC-5754
+
+build 21/12/2017 versione 3.18.0
+ SIAC-5334
+ SIAC-5684
+ SIAC-5706
+
+build 14/12/2017 versione 3.17.0
+ SIAC-5279
+ SIAC-5290
+ SIAC-5308
+ SIAC-5551
+ SIAC-5605
+ SIAC-5632
+ SIAC-5640
+ SIAC-5664
+
+build 30/11/2017 versione 3.16.0
+ SIAC-5551
+ SIAC-5592
+ SIAC-5597
+ SIAC-5598
+
+build 23/11/2017 versione 3.15.0
+ SIAC-5291
+ SIAC-5292
+ SIAC-5346
+ SIAC-5500
+ SIAC-5546
+ SIAC-5561
+ SIAC-5565
+ SIAC-5568
+ SIAC-5574
+
+build 16/11/2017 versione 3.14.0
+ SIAC-5481
+ SIAC-5524
+ SIAC-5526
+ SIAC-5542
+ SIAC-5543
+
+build 09/11/2017 versione 3.13.0
+ SIAC-5295
+ SIAC-5342
+ SIAC-5386
+ SIAC-5393
+ SIAC-5442
+ SIAC-5446
+ SIAC-5464
+ SIAC-5467
+ SIAC-5468
+ SIAC-5471
+ SIAC-5474
+ SIAC-5475
+ SIAC-5484
+ SIAC-5486
+ SIAC-5489
+ SIAC-5496
+ SIAC-5517
+
+build 26/10/2017 versione 3.12.0
+ SIAC-5354
+ SIAC-5365
+ SIAC-5367
+ SIAC-5429
+ SIAC-5384
+ SIAC-5388
+ SIAC-5389
+ SIAC-5419
+ SIAC-5433
+#### SIOPE+ INIZIO ####
+ SIAC-5115
+ SIAC-5311
+ SIAC-5356
+ SIAC-5381
+ SIAC-5391
+ SIAC-5393
+ SIAC-5394
+ SIAC-5410
+ SIAC-5416
+ SIAC-5419
+ SIAC-5440
+ SIAC-5457
+ SIAC-5459
+####  SIOPE+ FINE  ####
+
+build 12/10/2017 versione 3.11.0
+ SIAC-5176
+ SIAC-5252
+ SIAC-5271
+ SIAC-5343
+
+build 05/10/2017 versione 3.10.0
+ SIAC-5255
+ SIAC-5261
+ SIAC-5274
+ SIAC-5281
+ SIAC-5312
+ SIAC-5319
+ SIAC-5320
+
+build 28/09/2017 versione 3.9.0
+ SIAC-5211
+ SIAC-5251
+ SIAC-5272
+ SIAC-5280
+ SIAC-5300
+
+build 21/09/2017 versione 3.8.0
+ SIAC-5219
+ SIAC-5244
+ SIAC-5246
+ SIAC-5250
+ SIAC-5253
+ SIAC-5267
+
+build 14/09/2017 versione 3.7.0
+ SIAC-5218
+ SIAC-5224
+ SIAC-5225
+ SIAC-5233
+ SIAC-5236
+ SIAC-5239
+
+build 07/09/2017 versione 3.6.0
+ SIAC-5204
+ SIAC-5213
+ SIAC-5219
+
+build 31/08/2017 versione 3.5.0
+ SIAC-5043
+ SIAC-5050
+ SIAC-5086
+ SIAC-5093
+ SIAC-5152
+ SIAC-5153
+ SIAC-5156
+ SIAC-5161
+ SIAC-5162
+ SIAC-5163
+ SIAC-5165
+ SIAC-5166
+ SIAC-5169
+ SIAC-5171
+ SIAC-5172
+ SIAC-5173
+ SIAC-5175
+ SIAC-5177
+ SIAC-5178
+ SIAC-5191
+ SIAC-5193
+ SIAC-5194
+ SIAC-5201
+ SIAC-5205
+
+build 27/07/2017 versione 3.4.0
+ SIAC-5043
+ SIAC-5056
+ SIAC-5076
+ SIAC-5130
+ SIAC-5131
+ SIAC-5134
+ SIAC-5094
+
+build 20/07/2017 versione 3.3.0
+ SIAC-5016
+ SIAC-5021
+ SIAC-5031
+ SIAC-5032
+ SIAC-5048
+ SIAC-5088
+ SIAC-5098
+ SIAC-5102
+ SIAC-5127
+
+build 13/07/2017 versione 3.2.0
+ SIAC-4999
+ SIAC-5052
+ SIAC-5079
+ SIAC-5080
+ SIAC-5082
+ SIAC-5087
+ SIAC-5089
+
+build 06/07/2017 versione 3.1.0
+ SIAC-4961
+ SIAC-4981
+ SIAC-4996
+ SIAC-5003
+ SIAC-5018
+ SIAC-5023
+ SIAC-5061
+ SIAC-5063
+
+build 29/06/2017 versione 3.0.0
+ SIAC-4961
+ SIAC-4970
+ SIAC-5001
+ SIAC-5047
+ SIAC-5049
+
+build 16/06/2017 versione 2.72.0
+ SIAC-4963
+ SIAC-4979
+
+build 09/06/2017 versione 2.71.0
+ SIAC-4881
+ SIAC-4912
+ SIAC-4931
+ SIAC-4932
+ SIAC-4935
+ SIAC-4950
+ SIAC-4956
+ SIAC-4958
+ SIAC-4963
+
+build 01/06/2017 versione 2.70.0
+ SIAC-4864
+ SIAC-4911
+ SIAC-4914
+ SIAC-4916
+ SIAC-4918
+ 
+build 26/05/2017 versione 2.69.0
+ SIAC-4857
+ SIAC-4867
+ SIAC-4899
+ 
+build 19/05/2017 versione 2.68.0
+ SIAC-4800
+ SIAC-4865
+ SIAC-4881
+
+build 12/05/2017 versione 2.67.0
+ SIAC-4844
+ SIAC-4846
+
+build 05/05/2017 versione 2.66.0
+ SIAC-4752
+ SIAC-4790
+ SIAC-4795
+ SIAC-4808
+ SIAC-4815
+ SIAC-4832
+
+build 28/04/2017 versione 2.65.0
+ SIAC-4790
+
+build 14/04/2017 versione 2.63.0
+ SIAC-4746
+ SIAC-4747
+ SIAC-4766
+ SIAC-4772
+ SIAC-4775
+
+build 07/04/2017 versione 2.62.0
+ SIAC-4713
+ SIAC-4714
+ SIAC-4725
+ SIAC-4734
+ SIAC-4740
+
+build 31/03/2017 versione 2.61.0
+ SIAC-4604
+ SIAC-4663
+ SIAC-4686
+ SIAC-4694
+ SIAC-4704
+
+build 24/03/2017 versione 2.60.0
+ SIAC-4622
+ SIAC-4647
+ SIAC-4652
+ SIAC-4657
+
+build 17/03/2017 versione 2.59.0
+ SIAC-4592
+ SIAC-4609
+ SIAC-4612
+ SIAC-4626
+ SIAC-4632
+ SIAC-4633
+
+build 10/03/2017 versione 2.58.0
+ SIAC-4561
+ SIAC-4576
+ SIAC-4577
+ SIAC-4592
+
+build 03/03/2017 versione 2.57.0
+ SIAC-4518
+ SIAC-4539
+ SIAC-4541
+ SIAC-4548
+
+build 24/02/2017 versione 2.56.0
+ SIAC-4503
+ SIAC-4504
+ SIAC-4516
+
+build 17/02/2017 versione 2.55.0
+ SIAC-4409 (bugfix su CR)
+ SIAC-4451
+ SIAC-4466
+ SIAC-4473
+ SIAC-4476
+ SIAC-4479
+ SIAC-4480
+ SIAC-4499
+ SIAC-4508
+
+build 10/02/2017 versione 2.54.0
+ SIAC-4446
+ SIAC-4453
+ SIAC-4463
+ SIAC-4466
+
+build 03/02/2017 versione 2.53.0
+ SIAC-4417
+ SIAC-4421
+ SIAC-4438
+ SIAC-4441
+
+build 27/01/2017 versione 2.52.0
+ SIAC-4399
+ SIAC-4415
+
+build 20/01/2017 versione 2.51.0
+ SIAC-4392
+
+build 13/01/2017 versione 2.50.0
+ SIAC-4333
+ SIAC-4343
+ SIAC-4354
+ SIAC-4355
+
+build 05/01/2017 versione 2.49.0
+ SIAC-4342
+
+build 30/12/2016 versione 2.48.0
+ SIAC-4298
+ SIAC-4320
+
+build 23/12/2016 versione 2.47.0
+ SIAC-4280
+ SIAC-4313
+ SIAC-4314
+ SIAC-4325
+
+build 16/12/2016 versione 2.46.0
+ SIAC-3990
+ SIAC-4223
+ SIAC-4256
+ SIAC-4259
+ SIAC-4279
+ SIAC-4289
+ SIAC-4292
+ SIAC-4293
+ SIAC-4295
+ SIAC-4298
+
+build 07/12/2016 versione 2.45.0
+ SIAC-3507 - Inserito blocco concorrenza tra operazioni di aggiornamento documenti e inserimento PN.
+ SIAC-4256
+ SIAC-4277
+
+build 02/12/2016 versione 2.44.0
+ SIAC-4165 - rivista nella logica la query nativa ricerca prime note per la validazione massiva
+ SIAC-4234
+ SIAC-4244
+
+build 25/11/2016 versione 2.43.0
+ SIAC-3559
+ SIAC-4165 - ricerca prima nota riscritta in SQL Nativo.
+ SIAC-4223
+ SIAC-4243
+ SIAC-4244
+ SIAC-4245
+ SIAC-4248
+
+build 18/11/2016 versione 2.42.0
+ SIAC-3507 - Annullamento registrazioni in caso di modifica dei movimenti IVA
+ SIAC-4193
+ SIAC-4205
+
+build 11/11/2016 versione 2.41.0
+ SIAC-3938
+ SIAC-4088 (bugfix di CR)
+ SIAC-4165
+ SIAC-4169
+ SIAC-4174
+ SIAC-4184
+ SIAC-4190
+
+build 04/11/2016 versione 2.40.0
+ SIAC-4147
+ SIAC-4148
+
+build 28/10/2016 versione 2.39.0
+ SIAC-4109
+ SIAC-4119
+ SIAC-4142
+ SIAC-4143
+
+build 21/10/2016 versione 2.38.0
+ SIAC-3956
+ SIAC-4096
+ SIAC-4101
+ SIAC-4106
+ SIAC-4109
+ SIAC-4112
+ SIAC-4114 - leggere commento su Jira per ripulire siac_r_reg_movfin_stato e sia_r_prima_nota_stato
+ SIAC-4117
+ SIAC-4118
+
+build 14/10/2016 versione 2.37.0
+ SIAC-4082
+ SIAC-4083
+ SIAC-4087
+ SIAC-4096
+ SIAC-4101
+ SIAC-4118
+
+build 07/10/2016 versione 2.36.0
+ SIAC-3973
+ SIAC-4014 - popolare nuova colonna su siacRConciliazioneCapitolo
+ SIAC-4034
+ SIAC-4063
+
+build 30/09/2016 versione 2.35.0
+ SIAC-4004
+ SIAC-4018
+ SIAC-4022
+ SIAC-4023
+ SIAC-4049
+ SIAC-4050
+
+build 23/09/2016 versione 2.34.0
+ SIAC-3965
+ SIAC-3986
+ SIAC-3994
+ SIAC-3995
+ SIAC-3999
+ SIAC-4018
+ SIAC-4019
+ SIAC-4025
+ SIAC-4026
+
+build 16/09/2016 versione 2.33.0
+ SIAC-3507
+ SIAC-3958
+ SIAC-3961
+ SIAC-3969
+ SIAC-3977
+ SIAC-3979
+
+build 09/09/2016 versione 2.32.0
+ SIAC-3885
+ SIAC-3947
+ SIAC-3948
+ SIAC-3949
+ SIAC-3950
+ SIAC-3955
+
+build 02/09/2016 versione 2.31.0
+ SIAC-3940
+
+build 26/08/2016 versione 2.30.0
+ SIAC-3924
+ SIAC-3902
+ SIAC-3936
+ SIAC-3938
+
+build 05/08/2016 versione 2.29.0
+ SIAC-3915
+ SIAC-3916
+
+build 29/07/2016 versione 2.28.0
+ SIAC-3698
+ SIAC-3793
+ SIAC-3872
+
+build 22/07/2016 versione 2.27.0
+ SIAC-3854
+ SIAC-3855
+
+build 15/07/2016 versione 2.26.0
+ SIAC-3815
+ SIAC-3834
+ SIAC-3835
+ SIAC-3845
+
+build 08/07/2016 versione 2.25.0
+ SIAC-3711
+ SIAC-3794
+ SIAC-3798
+ SIAC-3806
+ SIAC-3807
+
+build 01/07/2016 versione 2.24.0
+ SIAC-3559
+ SIAC-3648 (bug fix)
+ SIAC-3770
+ SIAC-3775
+
+build 23/06/2016 versione 2.23.0
+ SIAC-3559
+ SIAC-3732
+ SIAC-3742
+ SIAC-3747
+
+build 17/06/2016 versione 2.22.0
+ SIAC-3633
+ SIAC-3701
+ SIAC-3720
+ SIAC-3721
+ SIAC-3724
+
+build 10/06/2016 versione 2.21.0
+ SIAC-3545 (bugfix di CR)
+ SIAC-3649
+ SIAC-3655
+ SIAC-3659
+ SIAC-3660
+ SIAC-3661
+ SIAC-3662
+ SIAC-3669
+ SIAC-3682
+ SIAC-3684
+ SIAC-3693
+
+build 03/06/2016 versione 2.20.0
+ SIAC-3613
+ SIAC-3638
+ SIAC-3655
+
+build 27/05/2016 versione 2.19.0
+ SIAC-3545 (bugfix di CR)
+ SIAC-3612
+ SIAC-3613
+ SIAC-3628
+ SIAC-3629
+ SIAC-3632
+
+build 20/05/2016 versione 2.18.0
+ SIAC-3544 (bugfix di CR)
+ SIAC-3568
+ SIAC-3578
+
+build 13/05/2016 versione 2.17.0
+ SIAC-3523
+ SIAC-3531
+ SIAC-3546
+ SIAC-3552
+ SIAC-3554
+
+build 06/05/2016 versione 2.16.0
+ SIAC-3286
+ SIAC-3370
+ SIAC-3443
+ SIAC-3496
+ SIAC-3497
+ SIAC-3501
+ SIAC-3504
+ SIAC-3505
+ SIAC-3507
+ SIAC-3508
+
+build 29/04/2016 versione 2.15.0
+ SIAC-3411
+ SIAC-3479
+
+build 22/04/2016 versione 2.14.0
+ SIAC-3398
+ SIAC-3411
+ SIAC-3429
+ SIAC-3432
+ SIAC-3437
+ SIAC-3440
+ SIAC-3443
+ SIAC-3449
+ SIAC-3459
+
+build 15/04/2016 versione 2.13.0
+ SIAC-3194
+ SIAC-3246
+ SIAC-3286
+ SIAC-3375
+ SIAC-3382
+ SIAC-3383
+ SIAC-3390
+ SIAC-3398
+ SIAC-3399
+ SIAC-3402
+ SIAC-3409
+ SIAC-3410
+ SIAC-3413
+ SIAC-3414
+ SIAC-3420
+
+build 08/04/2016 versione 2.12.0
+ SIAC-2869
+ SIAC-3251
+ SIAC-3313
+ SIAC-3328
+ SIAC-3336
+ SIAC-3343
+ SIAC-3350
+ SIAC-3354
+ SIAC-3355
+ SIAC-3379
+
+build 01/04/2016 versione 2.11.0
+ SIAC-3246
+ SIAC-3284
+ SIAC-3292
+ SIAC-3311
+ SIAC-3312
+ SIAC-3327
+
+build 25/03/2016 versione 2.10.0
+ SIAC-3230
+ SIAC-3236
+ SIAC-3241
+ SIAC-3264
+ SIAC-3265
+ SIAC-3266
+ SIAC-3279
+ SIAC-3284
+ SIAC-3286
+ SIAC-3291
+ SIAC-3293
+
+
+build 18/03/2016 versione 2.9.0
+ SIAC-3227
+ SIAC-3233
+ SIAC-3139
+ SIAC-3245
+ SIAC-3248
+
+build 11/03/2016 versione 2.8.0
+ SIAC-3073
+ SIAC-3124
+ SIAC-3171
+ SIAC-3190
+ SIAC-3191
+ SIAC-3197
+ SIAC-3200
+
+build 04/03/2016 versione 2.7.0
+ SIAC-3076
+ SIAC-3120
+ SIAC-3124
+ SIAC-3149
+ SIAC-3157
+
+build 26/02/2016 versione 2.6.0
+ SIAC-3019
+ SIAC-3068
+ SIAC-3073
+ SIAC-3076
+ SIAC-3089
+ SIAC-3091
+ SIAC-3094
+ SIAC-3106
+
+build 19/02/2016 versione 2.5.0
+ SIAC-3015
+ SIAC-3024
+ SIAC-3041
+ SIAC-3044
+ SIAC-3060
+
+build 12/02/2016 versione 2.4.0
+ SIAC-2993
+ SIAC-2994
+ SIAC-3002
+ SIAC-3007
+ SIAC-3033
+
+build 11/02/2016 versione 2.3.1
+ SIAC-3013
+
+build 05/02/2016 versione 2.3.0
+ SIAC-2921
+ SIAC-2966
+ SIAC-2950
+
+build 04/02/2016 versione 2.1.1
+ SIAC-2963
+ SIAC-2969
+
+build 29/01/2016 versione 2.2.0
+ SIAC-2926
+ SIAC-2942
+
+build 22/01/2016 versione 2.1.0
+ SIAC-2677 (bugfix di CR)
+ SIAC-2719
+ SIAC-2742
+ SIAC-2826
+ SIAC-2855
+ SIAC-2894
+ SIAC-2896
+ SIAC-2898
+ SIAC-2902
+ SIAC-2903
+ SIAC-2904
+
+build 15/01/2016 versione 1.20.4
+ SIAC-2761
+ SIAC-2804
+ SIAC-2857
+ SIAC-2862
+ SIAC-2864
+ SIAC-2878
+
+build 08/01/2016 versione 1.20.3
+ SIAC-2761
+ SIAC-2810
+ SIAC-2824
+ SIAC-2825
+ SIAC-2832 (sostituita con CR 2839)
+ SIAC-2834
+
+build 30/12/2015 versione 1.20.2
+ SIAC-2719
+ SIAC-2788
+ SIAC-2793
+ SIAC-2794
+ SIAC-2795
+ SIAC-2804
+
+build 23/12/2015 versione 1.20.1
+ SIAC-2671
+ SIAC-2759
+ SIAC-2761
+ SIAC-2783
+ SIAC-2786
+ SIAC-2789
+ SIAC-2790
+
+build 18/12/2015 versione 1.20.0
+ SIAC-2422
+ SIAC-2585
+ SIAC-2621
+ SIAC-2759
+ SIAC-2761
+ SIAC-2763
+ SIAC-2773
+
+build 16/12/2015 versione 1.19.4
+ SIAC-2574
+ SIAC-2679
+ SIAC-2736
+ SIAC-2747
+ SIAC-2751
+ SIAC-2752
+
+build 11/12/2015 versione 1.19.3
+ SIAC-2669
+ SIAC-2672
+ SIAC-2721
+ SIAC-2725
+ SIAC-2748
+
+build 04/12/2015 versione 1.19.2
+ SIAC-2283
+ SIAC-2667
+
+build 27/11/2015 versione 1.19.1
+ SIAC-2422
+ SIAC-2480
+ SIAC-2538
+ SIAC-2544
+ SIAC-2577
+ SIAC-2614
+ SIAC-2625
+ SIAC-2632
+ SIAC-2635
+ SIAC-2643
+ SIAC-2638
+ SIAC-2640
+ SIAC-2651
+ SIAC-2652
+ SIAC-2662
+ SIAC-2663
+ SIAC-2664
+ SIAC-2667
+
+build 20/11/2015 versione 1.19.0
+ SIAC-2538
+ SIAC-2598
+ SIAC-2600
+ SIAC-2603
+ SIAC-2604
+ SIAC-2607
+ SIAC-2611
+ SIAC-2615
+ SIAC-2619
+ SIAC-2620
+
+build 13/11/2015 versione 1.18.6
+ SIAC-2473
+ SIAC-2553
+ SIAC-2561
+ SIAC-2571
+ SIAC-2578
+ SIAC-2586
+ SIAC-2587
+ SIAC-2593
+
+build 06/11/2015 versione 1.18.5
+ SIAC-2517
+ SIAC-2536
+ SIAC-2545
+ SIAC-2560
+
+build 30/10/2015 versione 1.18.4
+ SIAC-2478
+ SIAC-2486
+ SIAC-2487
+ SIAC-2491
+ SIAC-2492
+ SIAC-2505
+ SIAC-2506
+ SIAC-2510
+ SIAC-2536
+
+Codice Template da aggiungere  in siac_t_repj_template per le stampe ricevuta rendiconto
+StampaRicevutaRendicontoRichiestaEconomale_ANTICIPO_SPESE
+StampaRicevutaRendicontoRichiestaEconomale_ANTICIPO_SPESE_MISSIONE
+
+build 23/10/2015 versione 1.18.3
+ SIAC-2193
+ SIAC-2322
+ SIAC-2383
+ SIAC-2407
+ SIAC-2408
+ SIAC-2419
+ SIAC-2445
+ SIAC-2467
+ SIAC-2469
+ SIAC-2481
+
+build 16/10/2015 versione 1.18.2
+ SIAC-2392
+ SIAC-2440
+
+build 09/10/2015 versione 1.18.1
+ SIAC-2263
+ SIAC-2401
+ SIAC-2406
+
+build 02/10/2015 versione 1.18.0
+ SIAC-2287
+ SIAC-2303
+ SIAC-2320
+ SIAC-2337
+ SIAC-2350
+ SIAC-2354
+ SIAC-2361
+ SIAC-2371
+
+build 25/09/2015 versione 1.17.3
+ SIAC-2297
+ SIAC-2309
+ SIAC-2310
+ SIAC-2322
+
+build 18/09/2015 versione 1.17.2
+ SIAC-2285
+ SIAC-2286
+ SIAC-2289
+ SIAC-2293
+
+build 11/09/2015 versione 1.17.1
+ SIAC-2213
+ SIAC-2263
+ SIAC-2264
+ SIAC-2265
+ SIAC-2266
+ SIAC-2267
+ SIAC-2270
+ SIAC-2273
+
+build 04/09/2015 versione 1.17.0
+ SIAC-2236
+ SIAC-2239
+ SIAC-2240
+ SIAC-2244
+ SIAC-2245
+ SIAC-2250
+ SIAC-2252
+ SIAC-2253
+
+build 28/08/2015 versione 1.16.7
+ SIAC-2216
+
+build 07/08/2015 versione 1.16.6
+ SIAC-1938
+ SIAC-2146
+ SIAC-2194
+ SIAC-2202
+ SIAC-2204
+ SIAC-2210
+ SIAC-2213
+
+build 31/07/2015 versione 1.16.5
+ SIAC-1937
+ SIAC-1938
+ SIAC-2146
+ SIAC-2194
+ SIAC-2201
+ SIAC-2202
+
+build 24/07/2015 versione 1.16.4
+ SIAC-2160
+ SIAC-2174
+ SIAC-2178
+
+build 17/07/2015 versione 1.16.3
+ SIAC-2102
+ SIAC-2113
+ SIAC-2117
+ SIAC-2140
+ SIAC-2141
+ SIAC-2143
+ SIAC-2150
+
+build 15/07/2015 versione 1.16.2
+ SIAC-2133
+ SIAC-2146
+
+build 10/07/2015 versione 1.16.1
+
+build 07/07/2015 versione 1.16.0
+ SIAC-1930
+ SIAC-1937
+ SIAC-1938
+ SIAC-2030
+ SIAC-2088
+ SIAC-2089
+ SIAC-2107
+ SIAC-2108
+ SIAC-2109
+ SIAC-2110
+ SIAC-2111
+ SIAC-2113
+ SIAC-2116
+ SIAC-2117
+
+build 26/06/2015 versione 1.15.4
+ SIAC-2059
+ SIAC-2088
+ SIAC-2089
+ SIAC-2098
+ SIAC-2105
+
+build 19/06/2015 versione 1.15.3
+ SIAC-2055
+ SIAC-2067
+ SIAC-2072
+ SIAC-2074
+ SIAC-2075
+ SIAC-2092
+
+build 12/06/2015 versione 1.15.2
+ SIAC-2057
+ SIAC-2059
+ SIAC-2063
+ SIAC-2067
+ SIAC-2071
+
+build 05/06/2015 versione 1.15.1
+ SIAC-2051
+ SIAC-2052
+ SIAC-2053
+
+build 03/06/2015 versione 1.15.0
+ SIAC-1938
+ SIAC-1986
+ SIAC-2026
+ SIAC-2029
+ SIAC-2034
+ SIAC-2036
+ SIAC-2037
+ SIAC-2038
+ SIAC-2039
+ SIAC-2045
+
+build 22/05/2015 versione 1.14.5
+ SIAC-1917
+ SIAC-1921
+ SIAC-1922
+ SIAC-1924
+
+build 20/05/2015 versione 1.14.4
+ SIAC-1823 (Itf)
+ SIAC-1961
+ SIAC-1973
+ SIAC-1989
+ SIAC-1992
+ SIAC-2002
+ SIAC-2005 (Itf)
+ SIAC-2006 (Itf)
+
+build 08/05/2015 versione 1.14.3
+ SIAC-1979
+ SIAC-1921
+
+
+build 24/04/2015 versione 1.14.2
+ SIAC-1848
+ SIAC-1926
+ SIAC-1928
+ SIAC-1950
+ SIAC-1953 (rifiutata - errore lato core non bilser)
+ SIAC-1942
+ SIAC-1957
+
+build 17/04/2015 versione 1.14.1
+ SIAC-1926
+ SIAC-1928
+ SIAC-1935
+ SIAC-1942
+
+build 10/04/2015 versione 1.14.0
+ SIAC-1927
+
+build 03/04/2015 versione 1.13.5
+ SIAC-1919
+ SIAC-1920
+
+build 27/03/2015 versione 1.13.4
+ SIAC-1844
+ SIAC-1889
+ SIAC-1890
+ SIAC-1892 (sospesa e riassegnata a Silvia Torta, da non svil in v1)
+ SIAC-1899
+ SIAC-1903 (da commentare)
+ SIAC-1904 (da commentare)
+ SIAC-1906
+ SIAC-1915 (da assegnare a FIN)
+
+
+build 20/03/2015 versione 1.13.3
+ SIAC-1790
+ SIAC-1884
+ SIAC-1901
+ SIAC-1902
+
+build 13/03/2015 versione 1.13.2
+ SIAC-1880
+ SIAC-1891
+
+build 05/03/2015 versione 1.13.1
+ SIAC-1841
+ SIAC-1842
+ SIAC-1843
+ SIAC-1860
+ SIAC-1735
+ SIAC-1855
+ SIAC-1856
+ SIAC-1857
+ SIAC-1858
+ SIAC-1867
+
+
+
+build 27/02/2015 versione 1.13.0
+rilascio di fase
+
+
+
+build 20/02/2015 versione 1.12.5
+  SIAC-1813
+
+build 13/02/2015 versione 1.12.4
+risoluzione problemi JIRA
+ SIAC-1785
+ SIAC-1786
+ SIAC-1797
+ SIAC-1798
+
+
+
+build 07/02/2015 versione 1.12.3
+risoluzione problemi JIRA
+ SIAC-1447
+ SIAC-1724
+ SIAC-1732 (risolta nello scorso rilascio)
+ SIAC-1747
+ SIAC-1753
+ SIAC-1754
+ SIAC-1759
+ SIAC-1783
+ SIAC-1787
+ SIAC-1789
+ SIAC-1791
+ SIAC-1794
+
+build 30/01/2015 versione 1.12.2
+risoluzione problemi JIRA
+ SIAC-1739
+ SIAC-1775
+
+build 23/01/2015 versione 1.12.1
+risoluzione problemi JIRA
+ SIAC-1683
+ SIAC-1712
+ SIAC-1724
+ SIAC-1731
+ SIAC-1733
+ SIAC-1740
+ SIAC-1741
+ SIAC-1742
+ SIAC-1743
+ SIAC-1745
+ SIAC-1747
+
+build 16/01/2015 versione 1.12.0
+consegna #2 lotto G
+risoluzione problemi JIRA
+ SIAC-1218
+ SIAC-1630
+ SIAC-1639
+ SIAC-1641
+ SIAC-1643
+ SIAC-1704
+ SIAC-1714
+ SIAC-1724
+ SIAC-1726
+ SIAC-1727
+ SIAC-1728
+ SIAC-1730
+
+build 09/01/2015 versione 1.11.5
+risoluzione problemi JIRA
+ SIAC-1536
+ SIAC-1595
+ SIAC-1596
+ SIAC-1615
+ SIAC-1683
+ SIAC-1685
+ SIAC-1701
+ SIAC-1703
+ SIAC-1704
+ SIAC-1705
+ SIAC-1706
+ SIAC-1707
+ SIAC-1713
+
+build 19/12/2014 versione 1.11.4
+risoluzione problemi JIRA
+ SIAC-1519
+ SIAC-1535
+ SIAC-1547
+ SIAC-1572
+ SIAC-1609
+ SIAC-1641
+ SIAC-1645
+ SIAC-1672
+ SIAC-1675
+ SIAC-1681
+ SIAC-1690
+ SIAC-1695
+ SIAC-1698
+ SIAC-1699
+ SIAC-1702
+
+build 12/12/2014 versione 1.11.3
+consegna #1 lotto G
+risoluzione problemi JIRA
+ SIAC-1515
+ SIAC-1547
+ SIAC-1572
+ SIAC-1597
+ SIAC-1602
+ SIAC-1615
+ SIAC-1620
+ SIAC-1689
+ SIAC-1690
+ SIAC-1695
+
+build 05/12/2014 versione 1.11.2
+risoluzione problemi JIRA
+ SIAC-1470
+ SIAC-1480
+
+build 28/11/2014 versione 1.11.0
+risoluzione problemi JIRA
+ SIAC-1457
+ SIAC-1470
+ SIAC-1629
+ SIAC-1636
+
+build 24/11/2014 versione 1.10.4
+risoluzione problemi JIRA
+ SIAC-1218
+ SIAC-1428
+ SIAC-1451
+ SIAC-1469
+ SIAC-1474
+ SIAC-1531
+ SIAC-1588
+ SIAC-1625
+ SIAC-1629
+
+build 17/11/2014 versione 1.10.3
+risoluzione problemi JIRA
+ SIAC-1245
+ SIAC-1542
+ SIAC-1548
+ SIAC-1549
+ SIAC-1587
+
+build 10/11/2014 versione 1.10.2
+risoluzione problemi JIRA
+ SIAC-1460
+ SIAC-1471
+ SIAC-1479
+ SIAC-1485
+ SIAC-1492
+ SIAC-1514
+ SIAC-1515
+ SIAC-1520
+ SIAC-1563
+
+
+build 31/10/2014 versione 1.10.1
+risoluzione problemi JIRA
+ SIAC-1452
+ SIAC-1491
+ SIAC-1494
+ SIAC-1502
+
+build 24/10/2014 versione 1.10.0
+ rilascio fase 11 (lotto E)
+
+
+build 10/10/2014 versione 1.9.7
+risoluzione problemi JIRA
+ SIAC-1216
+ SIAC-1415
+ SIAC-1416
+ SIAC-1430
+
+build 03/10/2014 versione 1.9.6
+risoluzione problemi JIRA
+ SIAC-1242
+
+
+build 29/09/2014 versione 1.9.5
+risoluzione problemi JIRA
+ SIAC-1166
+ SIAC-1243
+ SIAC-1244
+ SIAC-1248
+ SIAC-1257
+ SIAC-1266
+ SIAC-1275
+ SIAC-1278
+ SIAC-1288
+ SIAC-1290
+ SIAC-1293
+ SIAC-1306
+ SIAC-1307
+
+build 19/09/2014, versione 1.9.4
+ SIAC-1242
+ SIAC-1246
+ SIAC-1243
+ SIAC-1267
+ SIAC-1288
+
+build 05/09/2014, versione 1.9.2
+ SIAC-840
+ SIAC-1170
+ SIAC-1202
+
+build 29/08/2014, versione 1.9.1
+ SIAC-1169
+ SIAC-1172
+
+build 08/08/2014, versione 1.9.0
+ Rilascio fase 10
+ SIAC-1082
+ SIAC-1112
+ SIAC-1145
+ SIAC-1151
+ SIAC-1153
+ SIAC-1154
+ SIAC-1164
+ SIAC-1166
+
+build 28/07/2014, versione 1.8.4
+ SIAC-1055
+ SIAC-1091
+ SIAC-1099
+ SAIC-1102
+ SIAC-1103
+ SIAC-1104
+ SIAC-1112
+
+build 21/07/2014, versione 1.8.3
+ SIAC-1038
+ SIAC-1045
+
+
+build 11/07/2014, versione 1.8.1
+ SIAC-10
+ SIAC-403
+ SIAC-696
+ SIAC-840
+ SIAC-789
+ SIAC-794
+ SIAC-856
+ SIAC-884
+ SIAC-917
+
+build 27/06/2014, versione 1.8.0
+ Rilascio fase 9
+
+build 23/05/2014, versione 1.7.1
+
+ SIAC-617
+ SIAC-622
+ SIAC-623
+ SIAC-687
+
+
+build 16/05/2014, versione 1.7.0
+
+ SIAC-601
+ SIAC-617 (sospesa)
+ SIAC-622
+ SIAC-623
+
+
+
+rilascio
+
+build 11/04/2014, versione 1.6.1
+SIAC-10
+SIAC-263
+SIAC-377
+SIAC-482
+SIAC-483
+SIAC-485
+SIAC-487
+
+
+build 31/01/2014, versione 1.4.0
+SIAC-186
+SIAC-223
+
+build 20/01/2014, versione 1.3.3
+Nessuna anomalia risolta.
+
+build 20/01/2014, versione 1.3.2
+SIAC-174
+
+build 08/01/2014, versione 1.3.1
+SIAC-144
+SIAC-156
+
+build 20/12/2014, versione 1.3.0
+rilascio fase 4
+
+build 09/12/2013, versione 1.2.3
+SIAC-86 - agg massive di cui una ueb annullata
+SIAC-88 - note della variazione
+SIAC-98 - messaggio agg e ins con o senza indizazione della ueb
+SIAC-103
+
+
+build 02/12/2013, versione 1.2.2
+SIAC-94
+SIAC-95
+SIAC-96
+
+
+build 28/11/2013, versione 1.2.1
+SIAC-73
+SIAC-78
+SIAC-82
+
+
+build 20/11/2013, versione 1.2.0
+Rilascio fase 3
+
+
+
+build 08/11/2013, versione 1.1.7:
+risoluzione problemi JIRA
+ SIAC-60
+ SIAC-62
+ SIAC-65
+ SIAC-67
+ SIAC-68
+
+build 04/11/2013, versione 1.1.6:
+risoluzione problemi JIRA
+ SIAC-53
+ SIAC-56
+
+
+build 28/10/2013, versione 1.1.5:
+risoluzione problemi JIRA
+ SIAC-52
+ SIAC-50
+ SIAC-48
+ SIAC-44
+
+
+
+build 22/10/2013, versione 1.1.3:
+risoluzione problemi JIRA
+ SIAC-43
+ SIAC-44
+ SIAC-46 (Non toccare codifiche su db)
+ SIAC-47
+
+build 18/10/2013, versione 1.1.2:
+risoluzione problemi JIRA
+ SIAC-35
+ SIAC-37
+
+build 11/10/2013, versione 1.1.1:
+risoluzione problemi JIRA
+ SIAC-21
+ SIAC-28
+
+build 01/10/2013, versione 1.1.0:
+Consegna fase 2
+
+build 26/09/2013, versione 1.0.3:
+risoluzione problemi JIRA
+ SIAC-18
+ SIAC-27
+
+build 2013-09-18, versione 1.0.2:
+risoluzione problemi JIRA
+ SIAC-23
+
+build 2013-09-09, versione 1.0.1:
+risoluzione problemi JIRA
+ SIAC-4
+ SIAC-5
+
+build 2013-xx-xx:
+- deployato un webservice cxf con spring su JBOSS 6 EAP USANDO
+il supporto a ws che fornisce JBOSS, iniettando servizi con spring
+- evitato il problema del non-repeatable read
+(http://docs.oracle.com/javaee/6/api/javax/persistence/LockModeType.html).
+- modificato il build che cancelli e riscriva la dir build/temp, altrimenti in
+fase di costruzione dei pacchetti si ottenevano cose non sempre aggiornate al 100%
+- realizzato il layer dao su JPA/hibernate
+
+build 2013-02-26:
+- costruito il progetto non wso2 centrico

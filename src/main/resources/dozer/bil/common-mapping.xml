@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="SiacTEnteProprietario_Ente_Base">
+		<class-a>it.csi.siac.siaccorser.model.Ente</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario</class-b>		
+		<field>
+			<a>nome</a>
+			<b>enteDenominazione</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTEnteProprietario_Ente">
+		<class-a>it.csi.siac.siaccorser.model.Ente</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario</class-b>		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="entePartitaIvaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<!--field map-id="enteIndirizzoPrincipaleConverter">
+			<a>this</a>
+			<b>this</b>
+		</field-->
+	</mapping>
+	
+	<mapping map-id="SiacTEnteProprietario_Ente_GestioneLivelli">
+		<class-a>it.csi.siac.siaccorser.model.Ente</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario</class-b>
+				
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="enteGestioneLivelliConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+	</mapping>
+	
+	<mapping map-id="SiacTBil_Bilancio">
+		<class-a>it.csi.siac.siaccorser.model.Bilancio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBil</class-b>	
+		<field>
+			<a>anno</a>
+			<b>siacTPeriodo.anno</b>
+		</field>
+		
+		<field custom-converter-id="bilancioFaseConverter">
+			<a>faseEStatoAttualeBilancio.faseBilancio</a> <!-- enum FaseBilancio -->
+			<b>siacRBilFaseOperativas</b>
+		</field>
+		
+		<field custom-converter-id="bilancioStatoConverter">
+			<a>faseEStatoAttualeBilancio.statoBilancio</a> <!-- enum FaseBilancio -->
+			<b>siacRBilStatoOps</b>
+		</field>
+		<!-- field>
+			<a>stato</a>
+			<b>siacRBilStatoOps[0].siacDBilStatoOp.bilStatoOpCode</b>
+		</field -->
+	</mapping>
+	<mapping map-id="SiacTBil_AttributiBilancio">
+		<class-a>it.csi.siac.siacbilser.model.AttributiBilancio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBil</class-b>	
+		
+		<field custom-converter-id="attributiBilancioAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+
+	
+	
+</mappings>

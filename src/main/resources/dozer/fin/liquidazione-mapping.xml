@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 
+ 	<mapping map-id="SiacTLiquidazione_Liquidazione">
+		<class-a>it.csi.siac.siacfinser.model.liquidazione.Liquidazione</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTLiquidazioneFin</class-b>
+
+		<field>
+			<a>idLiquidazione</a>
+			<b>liqId</b>
+		</field>
+		<field>
+			<a>numeroLiquidazione</a>
+			<b>liqNumero</b>
+		</field>
+		<field>
+			<a>annoLiquidazione</a>
+			<b>liqAnno</b>
+		</field>		
+		<field>
+			<a>descrizioneLiquidazione</a>
+			<b>liqDesc</b>
+		</field>		
+		<field>
+			<a>dataEmissioneLiquidazione</a>
+			<b>liqEmissioneData</b>
+		</field>
+		<field>
+			<a>liqAutomatica</a>
+			<b>liqAutomatica</b>
+		</field>	
+		<field>
+			<a>liqManuale</a>
+			<b>liqConvalidaManuale</b>
+		</field>						
+		<field>
+			<a>importoLiquidazione</a>
+			<b>liqImporto</b>
+		</field>
+		<field>
+			<a>dataCreazione</a>
+			<b>dataCreazione</b>
+		</field>				
+		<field>
+			<a>dataModifica</a>
+			<b>dataModifica</b>
+		</field>				
+		<field>
+			<a>dataFineValidita</a>
+			<b>dataFineValidita</b>
+		</field>				
+		
+  	</mapping>
+  	
+  	
+  	<mapping map-id="SiacTLiquidazione_Liquidazione_Base">
+		<class-a>it.csi.siac.siacfinser.model.liquidazione.Liquidazione</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTLiquidazioneFin</class-b>
+
+		<field>
+			<a>idLiquidazione</a>
+			<b>liqId</b>
+		</field>
+		<field>
+			<a>numeroLiquidazione</a>
+			<b>liqNumero</b>
+		</field>
+		<field>
+			<a>annoLiquidazione</a>
+			<b>liqAnno</b>
+		</field>		
+		<field>
+			<a>descrizioneLiquidazione</a>
+			<b>liqDesc</b>
+		</field>	
+		
+		<field>
+			<a>importoLiquidazione</a>
+			<b>liqImporto</b>
+		</field>	
+  	</mapping>
+  	
+  	
+  	<!-- LiquidazioneDto_liquidazione Ricerca estesa -->
+  	<mapping map-id="LiquidazioneDto_liquidazione" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.integration.dao.common.dto.RicercaEstesaLiquidazioniDto</class-a>
+		<class-b>it.csi.siac.siacfinser.model.liquidazione.LiquidazioneAtti</class-b>
+
+		<field>
+			<a>annoAtto</a>
+			<b>attoAmministrativoLiquidazione.anno</b>
+		</field>		
+		
+		<field>
+			<a>numeroAtto</a>
+			<b>attoAmministrativoLiquidazione.numero</b>
+		</field>
+		
+		<field>
+			<a>codiceTipoAtto</a>
+			<b>attoAmministrativoLiquidazione.tipoAtto.codice</b>
+		</field>
+		
+		<field>
+			<a>codiceSacAtto</a>
+			<b>attoAmministrativoLiquidazione.strutturaAmmContabile.codice</b>
+		</field>
+		
+		<field>
+			<a>codiceTipoSacAtto</a>
+			<b>attoAmministrativoLiquidazione.strutturaAmmContabile.tipoClassificatore.codice</b>
+		</field>
+		
+		<field>
+			<a>creditore</a>
+			<b>beneficiario</b>
+		</field>
+		
+		<field>
+			<a>numeroCapitolo</a>
+			<b>numeroCapitoloLiquidazione</b>
+		</field>	
+		
+		<field>
+			<a>numeroArticolo</a>
+			<b>numeroArticoloLiquidazione</b>
+		</field>	
+			
+		<field>
+			<a>annoImpegno</a>
+			<b>impegno.annoMovimento</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+			<a>numeroImpegno</a>
+			<b>impegno.numero</b>
+		</field>
+		
+		<field>
+			<a>codiceSubImpegno</a>
+			<b>subImpegno.numero</b>
+		</field>
+		
+		<field>
+			<a>importoLiquidazione</a>
+			<b>importoAttualeLiquidazione</b>
+		</field>	
+		
+		<field>
+			<a>descrizioneStato</a>
+			<b>codiceStatoOperativoLiquidazione</b>
+		</field>
+		
+  	</mapping>
+  	
+  	
+  	
+  	<mapping map-id="SiacDDistinta_Distinta">
+		<class-a>it.csi.siac.siacfinser.model.Distinta</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDDistintaFin</class-b>
+
+		<field>
+			<a>uid</a>
+			<b>distId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>distCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>distDesc</b>
+		</field>		
+	</mapping>
+  	
+  	
+  	<mapping map-id="SiacDContotesoreria_Contotesoreria">
+		<class-a>it.csi.siac.siacfinser.model.ContoTesoreria</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDContotesoreriaFin</class-b>
+
+		<field>
+			<a>uid</a>
+			<b>contotesId</b>
+		</field>
+		<field>
+			<a>codice</a>
+			<b>contotesCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>contotesDesc</b>
+		</field>		
+				
+		
+  	</mapping>
+
+</mappings>

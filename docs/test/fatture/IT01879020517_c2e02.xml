@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><p:FatturaElettronica xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPA12">
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+    <FatturaElettronicaHeader>
+        <DatiTrasmissione>
+            <IdTrasmittente>
+                <IdPaese>IT</IdPaese>
+                <IdCodice>01879020517</IdCodice>
+            </IdTrasmittente>
+            
+            
+            
+            
+        <ProgressivoInvio>0003653509</ProgressivoInvio><FormatoTrasmissione>FPA12</FormatoTrasmissione><CodiceDestinatario>THPX37</CodiceDestinatario></DatiTrasmissione>
+        <CedentePrestatore>
+            <DatiAnagrafici>
+                <IdFiscaleIVA>
+                    <IdPaese>IT</IdPaese>
+                    <IdCodice>04130480017</IdCodice>
+                </IdFiscaleIVA>
+                <CodiceFiscale>TBINGL55H55L219I</CodiceFiscale>
+                <Anagrafica>
+                    <Nome>angela</Nome>
+                    <Cognome>tibo</Cognome>
+                </Anagrafica>
+                <AlboProfessionale>Ordine dei Medici Chirurghi di Torino</AlboProfessionale>
+                <ProvinciaAlbo>TO</ProvinciaAlbo>
+                <NumeroIscrizioneAlbo>11454</NumeroIscrizioneAlbo>
+                <DataIscrizioneAlbo>1981-06-09</DataIscrizioneAlbo>
+                <RegimeFiscale>RF01</RegimeFiscale>
+            </DatiAnagrafici>
+            <Sede>
+                <Indirizzo>via collegno 16</Indirizzo>
+                <CAP>10143</CAP>
+                <Comune>Torino</Comune>
+                <Provincia>TO</Provincia>
+                <Nazione>IT</Nazione>
+            </Sede>
+            <Contatti>
+                <Telefono>0114374337</Telefono>
+                <Email>amtibo@alice.it</Email>
+            </Contatti>
+        </CedentePrestatore>
+        <CessionarioCommittente>
+            <DatiAnagrafici>
+                <CodiceFiscale>80087670016</CodiceFiscale>
+                <Anagrafica>
+                    <Denominazione>Regione Piemonte - Sistemi organizzativi e risorse umane del SSR</Denominazione>
+                </Anagrafica>
+            </DatiAnagrafici>
+            <Sede>
+                <Indirizzo>C.so Regina Margherita, 153 bis</Indirizzo>
+                <CAP>10122</CAP>
+                <Comune>Torino</Comune>
+                <Provincia>TO</Provincia>
+                <Nazione>IT</Nazione>
+            </Sede>
+        </CessionarioCommittente>
+        <TerzoIntermediarioOSoggettoEmittente>
+            <DatiAnagrafici>
+                <IdFiscaleIVA>
+                    <IdPaese>IT</IdPaese>
+                    <IdCodice>01879020517</IdCodice>
+                </IdFiscaleIVA>
+                
+                <Anagrafica>
+                    <Denominazione>Aruba Pec S.p.A.</Denominazione>
+                </Anagrafica>
+            </DatiAnagrafici>
+        </TerzoIntermediarioOSoggettoEmittente>
+        
+    <SoggettoEmittente>TZ</SoggettoEmittente></FatturaElettronicaHeader>
+    <FatturaElettronicaBody>
+        <DatiGenerali>
+            <DatiGeneraliDocumento>
+                <TipoDocumento>TD01</TipoDocumento>
+                <Divisa>EUR</Divisa>
+                <Data>2017-12-05</Data>
+                <Numero>FATTPA 21_17</Numero>
+                <DatiRitenuta>
+                    <TipoRitenuta>RT01</TipoRitenuta>
+                    <ImportoRitenuta>66.67</ImportoRitenuta>
+                    <AliquotaRitenuta>20.00</AliquotaRitenuta>
+                    <CausalePagamento>L1</CausalePagamento>
+                </DatiRitenuta>
+                <ImportoTotaleDocumento>406.66</ImportoTotaleDocumento>
+            </DatiGeneraliDocumento>
+        </DatiGenerali>
+        <DatiBeniServizi>
+            <DettaglioLinee>
+                <NumeroLinea>1</NumeroLinea>
+                <CodiceArticolo>
+                    <CodiceTipo>Codice fornitore</CodiceTipo>
+                    <CodiceValore>ON</CodiceValore>
+                </CodiceArticolo>
+                <Descrizione>MMG convenzionato ad oggi, seminario del 16/11/17 canale bianco ECG 2 , 2015-2018</Descrizione>
+                <Quantita>1.00000000</Quantita>
+                <UnitaMisura>NR</UnitaMisura>
+                <PrezzoUnitario>333.33000000</PrezzoUnitario>
+                <PrezzoTotale>333.33000000</PrezzoTotale>
+                <AliquotaIVA>22.00</AliquotaIVA>
+                <Ritenuta>SI</Ritenuta>
+            </DettaglioLinee>
+            <DatiRiepilogo>
+                <AliquotaIVA>22.00</AliquotaIVA>
+                <ImponibileImporto>333.33</ImponibileImporto>
+                <Imposta>73.33</Imposta>
+                <EsigibilitaIVA>S</EsigibilitaIVA>
+                <RiferimentoNormativo>Scissione dei pagamenti art. 17 TER DPR 633/72 e successive modifiche</RiferimentoNormativo>
+            </DatiRiepilogo>
+        </DatiBeniServizi>
+        <DatiPagamento>
+            <CondizioniPagamento>TP02</CondizioniPagamento>
+            <DettaglioPagamento>
+                <ModalitaPagamento>MP05</ModalitaPagamento>
+                <DataScadenzaPagamento>2018-01-04</DataScadenzaPagamento>
+                <ImportoPagamento>266.66</ImportoPagamento>
+                <IstitutoFinanziario>INTESASANPAOLO</IstitutoFinanziario>
+                <IBAN>IT75L0306901003100000102073</IBAN>
+                <CodicePagamento>BB30G</CodicePagamento>
+            </DettaglioPagamento>
+        </DatiPagamento>
+    </FatturaElettronicaBody>
+</p:FatturaElettronica>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 
+  	<mapping map-id="SiacTCartacont_CartaContabile">
+		<class-a>it.csi.siac.siacfinser.model.carta.CartaContabile</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTCartacontFin</class-b>
+		<field>
+			<a>idCartaContabile</a>
+			<b>cartacId</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>cartacNumero</b>
+		</field>
+	  
+		<field>
+			<a>oggetto</a>
+			<b>cartacOggetto</b>
+		</field>
+
+		<field>
+			<a>causale</a>
+			<b>cartacCausale</b>
+		</field>
+	
+		<field>
+			<a>numRegistrazione</a>
+			<b>cartacNumeroReg</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>cartacImporto</b>
+		</field>
+
+		<field>
+			<a>importoValuta</a>
+			<b>cartacImportoValuta</b>
+		</field>		
+		
+		<field>
+			<a>dataEsecuzionePagamento</a>
+			<b>cartacDataPagamento</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>cartacDataScadenza</b>
+		</field>
+		
+		<field>
+			<a>dataInizioValidita</a>
+			<b>dataInizioValidita</b>
+		</field>
+		
+		<field>
+			<a>dataFineValidita</a>
+			<b>dataFineValidita</b>
+		</field>
+		
+		<field>
+			<a>dataCreazione</a>
+			<b>dataCreazione</b>
+		</field>
+
+		<field>
+			<a>dataCancellazione</a>
+			<b>dataCancellazione</b>
+		</field>
+			
+		<field>
+			<a>dataModifica</a>
+			<b>dataModifica</b>
+		</field>
+
+		<field>
+			<a>utenteCreazione</a>
+			<b>loginCreazione</b>
+		</field>
+
+		<field>
+			<a>utenteModifica</a>
+			<b>loginModifica</b>
+		</field>
+
+		<field>
+			<a>utenteCancellazione</a>
+			<b>loginCancellazione</b>
+		</field>
+
+		<field>
+			<a>utenteOperazione</a>
+			<b>loginOperazione</b>
+		</field>
+		
+		<field custom-converter-id="cartaContabileStatoConverter">
+  			 <a>statoOperativoCartaContabile</a>
+   			 <b>this</b> <!--.siacRDocStatos[0].siacDDocStato  -->
+  		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+
+        <field custom-converter-id="cartaAttoAmmConverter">
+			<a>attoAmministrativo</a>
+			<b>this</b>
+		</field>
+
+		<!-- <field>
+			<a>idAttoAmministrativo</a>
+			<b>siacTAttoAmm.attoammId</b>
+		</field>
+
+		<field>
+			<a>annoAttoAmministrativo</a>
+			<b>siacTAttoAmm.attoammAnno</b>
+		</field>
+
+		<field>
+			<a>numeroAttoAmministrativo</a>
+			<b>siacTAttoAmm.attoammNumero</b>
+		</field> -->
+ 	
+ 	</mapping>
+
+  	<mapping map-id="SiacTCartacontEstera_CartaEstera">
+		<class-a>it.csi.siac.siacfinser.model.carta.CartaEstera</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTCartacontEsteraFin</class-b>
+		<field>
+			<a>idCartaEstera</a>
+			<b>cartacestId</b>
+		</field>
+		
+		<field>
+			<a>causalePagamento</a>
+			<b>cartacestCausalepagamento</b>
+		</field>
+		
+		<field>
+			<a>istruzioni</a>
+			<b>cartacestIstruzioni</b>
+		</field>
+
+		<field>
+			<a>diversoTitolare</a>
+			<b>cartacestDiversotitolare</b>
+		</field>
+
+		<field>
+			<a>dataValuta</a>
+			<b>cartacestDataValuta</b>
+		</field>
+		
+		<field map-id="SiacDValuta_CodificaFin">
+			<a>valuta</a>
+			<b>siacDValuta</b>
+		</field>
+		
+		<field map-id="SiacDCommissioniestero_CodificaFin">
+			<a>commissioniEstero</a>
+			<b>siacDCommissioniestero</b>
+		</field>
+	
+	</mapping>
+	
+  	<mapping map-id="SiacTCartacontDet_PreDocumentoCarta">
+		<class-a>it.csi.siac.siacfinser.model.carta.PreDocumentoCarta</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTCartacontDetFin</class-b>
+		<field>
+			<a>idPreDocumentoCarta</a>
+			<b>cartacDetId</b>
+		</field>		
+
+		<field>
+			<a>numero</a>
+			<b>cartacDetNumero</b>
+		</field>		
+
+		<field>
+			<a>dataDocumento</a>
+			<b>cartacDetData</b>
+		</field>		
+
+		<field>
+			<a>descrizione</a>
+			<b>cartacDetDesc</b>
+		</field>		
+
+		<field>
+			<a>importo</a>
+			<b>cartacDetImporto</b>
+		</field>		
+
+		<field>
+			<a>importoValutaEstera</a>
+			<b>cartacDetImportoValuta</b>
+		</field>		
+
+		<field>
+			<a>dataInizioValidita</a>
+			<b>dataInizioValidita</b>
+		</field>
+		
+		<field>
+			<a>dataFineValidita</a>
+			<b>dataFineValidita</b>
+		</field>
+		
+		<field>
+			<a>dataCreazione</a>
+			<b>dataCreazione</b>
+		</field>
+
+		<field>
+			<a>dataCancellazione</a>
+			<b>dataCancellazione</b>
+		</field>
+			
+		<field>
+			<a>dataModifica</a>
+			<b>dataModifica</b>
+		</field>
+
+		<field>
+			<a>utenteCreazione</a>
+			<b>loginCreazione</b>
+		</field>
+
+		<field>
+			<a>utenteModifica</a>
+			<b>loginModifica</b>
+		</field>
+
+		<field>
+			<a>utenteCancellazione</a>
+			<b>loginCancellazione</b>
+		</field>
+
+		<field>
+			<a>utenteOperazione</a>
+			<b>loginOperazione</b>
+		</field>
+		
+		<field map-id="SiacDContotesoreria_Contotesoreria">
+			<a>contoTesoreria</a>
+			<b>siacDContotesoreria</b>
+		</field>
+		
+		<field custom-converter-id="preDocumentoCartaConverter">
+  			 <a>this</a>
+   			 <b>this</b> 
+  		</field>
+		
+		
+		
+		
+	</mapping>
+
+</mappings>

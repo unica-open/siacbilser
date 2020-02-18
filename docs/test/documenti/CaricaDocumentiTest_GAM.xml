@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<elenchiDocumentiAllegato>
+	<elenchi>
+		<elenco>
+			<annoSysEsterno>2016</annoSysEsterno>
+			<numeroSysEsterno>PBANDI</numeroSysEsterno>
+			<allegatoAtto>
+				<uid>-1</uid>
+				<causale>CUPCARLA - POR. FESR 0703 - ASSE II.1.1-3 - Riqualificazione energetica del complesso del - successivo acconto - iter non standard</causale>
+				<datiSensibili>false</datiSensibili>
+				<attoAmministrativo>
+					<anno>2016</anno>
+					<tipoAtto>
+						<codice>ALG</codice>
+					</tipoAtto>
+					<statoOperativo>DEFINITIVO</statoOperativo>
+					<oggetto>LIQUIDAZIONE successivo acconto - iter non standard</oggetto>
+					<strutturaAmmContabile>
+						<codice>A19000</codice>
+					</strutturaAmmContabile>
+				</attoAmministrativo>
+			</allegatoAtto>
+			<subdocumenti>
+				<subdocumentoSpesa>
+					<documentoSpesa>
+						<uid>-123</uid>
+						<anno>2016</anno>
+						<numero>CUPCARLA-A19_2015_2202</numero>
+						<importo>200</importo>
+						<descrizione>Atto liquidazione progetto A19_2015_MER_2202</descrizione>
+						<codiceBollo>
+							<codice>99</codice>
+						</codiceBollo>
+						<dataEmissione>2017-02-22</dataEmissione>
+						<soggetto>
+							<codiceSoggetto>15494</codiceSoggetto>
+						</soggetto>
+						<tipoDocumento>
+							<codice>FAT</codice>
+							<tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+						</tipoDocumento>
+					</documentoSpesa>
+					<importo>27.9</importo>
+					<note>1 quota</note>
+					<impegno>
+						<annoMovimento>2016</annoMovimento>
+						<numero>260</numero>
+					</impegno>
+					<modalitaPagamentoSoggetto>
+						<codiceModalitaPagamento>1</codiceModalitaPagamento>
+					</modalitaPagamentoSoggetto>
+					<cup>J16J16001400004</cup>
+				</subdocumentoSpesa>
+				<subdocumentoSpesa>
+					<documentoSpesa>
+						<uid>-123</uid>						
+					</documentoSpesa>
+					<importo>92.98</importo>
+					<note>2 quota</note>
+					<impegno>
+						<annoMovimento>2016</annoMovimento>
+						<numero>261</numero>
+					</impegno>
+					<modalitaPagamentoSoggetto>
+						<codiceModalitaPagamento>1</codiceModalitaPagamento>
+					</modalitaPagamentoSoggetto>
+					<cup>J16J16001400004</cup>
+				</subdocumentoSpesa>
+				<subdocumentoSpesa>
+					<documentoSpesa>
+						<uid>-123</uid>						
+					</documentoSpesa>
+					<importo>79.12</importo>
+					<note>3 quota</note>
+					<impegno>
+						<annoMovimento>2016</annoMovimento>
+						<numero>315</numero>
+					</impegno>
+					<modalitaPagamentoSoggetto>
+						<codiceModalitaPagamento>1</codiceModalitaPagamento>
+					</modalitaPagamentoSoggetto>
+					<cup>J16J16001400004</cup>
+				</subdocumentoSpesa>
+			</subdocumenti>
+		</elenco>
+	</elenchi>
+</elenchiDocumentiAllegato>

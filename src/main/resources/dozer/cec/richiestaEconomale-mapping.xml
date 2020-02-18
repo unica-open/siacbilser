@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+     <mapping map-id="SiacTRichiestaEcon_RichiestaEconomale_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.RichiestaEconomale</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRichiestaEcon</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field map-id="SiacDRichiestaEconTipo_TipoRichiestaEconomale">
+			<a>tipoRichiestaEconomale</a>
+			<b>siacDRichiestaEconTipo</b>
+		</field>
+		
+<!-- 		<field map-id="SiacTCassaEcon_CassaEconomale_Minimal"> -->
+<!-- 			<a>cassaEconomale</a> -->
+<!-- 			<b>siacTCassaEcon</b> -->
+<!-- 		</field> -->
+		
+		<field>
+			<a>numeroRichiesta</a>
+			<b>riceconNumero</b>
+		</field>
+		
+		<field>
+			<a>delegatoAllIncasso</a>
+			<b>riceconDelegatoIncasso</b>
+		</field>
+		
+		<field>
+			<a>descrizioneDellaRichiesta</a>
+			<b>riceconDesc</b>
+		</field>
+		
+		<field>
+			<a>note</a>
+			<b>riceconNote</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>riceconImporto</b>
+		</field>
+		
+		<field> 
+			<a>caricataDaProceduraEsterna</a>
+			<b>riceconDaProcEst</b>
+		</field>
+		
+		<field>
+			<a>strutturaDiAppartenenza</a>
+			<b>riceconUnitaOrganizzativa</b>
+		</field>
+		
+		<field>
+			<a>matricola</a>
+			<b>riceconMatricola</b>
+		</field>
+		
+		<field>
+			<a>nome</a>
+			<b>riceconNome</b>
+		</field>
+		
+		<field>
+			<a>cognome</a>
+			<b>riceconCognome</b>
+		</field>
+		
+		<field>
+			<a>codiceFiscale</a>
+			<b>riceconCodiceFiscale</b>
+		</field>
+		
+		<field>
+			<a>codiceBeneficiario</a>
+			<b>riceconCodiceBeneficiario</b>
+		</field>
+		
+		<field>
+			<a>idMissioneEsterna</a>
+			<b>missioneEsternaId</b>
+		</field>
+		
+		<field>
+			<a>flagPagamentoRitenutaSuFattura</a>
+			<b>riceconRitSuFattura</b>
+		</field>
+	</mapping>
+     
+     <mapping map-id="SiacTRichiestaEcon_RichiestaEconomale_Base" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.RichiestaEconomale</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRichiestaEcon</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTBil_Bilancio">
+			<a>bilancio</a>
+			<b>siacTBil</b>
+		</field>
+		
+		<field map-id="SiacDRichiestaEconTipo_TipoRichiestaEconomale">
+			<a>tipoRichiestaEconomale</a>
+			<b>siacDRichiestaEconTipo</b>
+		</field>
+		
+		<field map-id="SiacTCassaEcon_CassaEconomale_Minimal">
+			<a>cassaEconomale</a>
+			<b>siacTCassaEcon</b>
+		</field>
+		
+		<field>
+			<a>numeroRichiesta</a>
+			<b>riceconNumero</b>
+		</field>
+		
+		<field>
+			<a>delegatoAllIncasso</a>
+			<b>riceconDelegatoIncasso</b>
+		</field>
+		
+		<field>
+			<a>descrizioneDellaRichiesta</a>
+			<b>riceconDesc</b>
+		</field>
+		
+		<field>
+			<a>note</a>
+			<b>riceconNote</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>riceconImporto</b>
+		</field>
+		
+		<field> 
+			<a>caricataDaProceduraEsterna</a>
+			<b>riceconDaProcEst</b>
+		</field>
+		
+		<field>
+			<a>strutturaDiAppartenenza</a>
+			<b>riceconUnitaOrganizzativa</b>
+		</field>
+		
+		<field>
+			<a>matricola</a>
+			<b>riceconMatricola</b>
+		</field>
+		
+		<field>
+			<a>nome</a>
+			<b>riceconNome</b>
+		</field>
+		
+		<field>
+			<a>cognome</a>
+			<b>riceconCognome</b>
+		</field>
+		
+		<field>
+			<a>codiceFiscale</a>
+			<b>riceconCodiceFiscale</b>
+		</field>
+		
+		<field>
+			<a>codiceBeneficiario</a>
+			<b>riceconCodiceBeneficiario</b>
+		</field>
+		
+		<field>
+			<a>idMissioneEsterna</a>
+			<b>missioneEsternaId</b>
+		</field>
+		
+		<field>
+			<a>flagPagamentoRitenutaSuFattura</a>
+			<b>riceconRitSuFattura</b>
+		</field>
+		
+		<field custom-converter-id="richiestaEconomaleStatoOperativoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="richiestaEconomaleRendicontoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTRichiestaEcon_RichiestaEconomale_Medium" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.RichiestaEconomale</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRichiestaEcon</class-b>
+	
+		<field map-id="SiacTRichiestaEcon_RichiestaEconomale_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+		<field custom-converter-id="richiestaEconomaleSospesoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="richiestaEconomaleSoggettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="richiestaEconomaleMovimentiConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="richiestaEconomaleImpegnoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacTRichiestaEcon_RichiestaEconomale" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.RichiestaEconomale</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTRichiestaEcon</class-b>
+	
+		<field map-id="SiacTRichiestaEcon_RichiestaEconomale_Medium">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+		<field custom-converter-id="richiestaEconomaleClassificatoriConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="richiestaEconomaleDatiTrasfertaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="richiestaEconomaleGiustificativiConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="richiestaEconomaleSubdocumentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="richiestaEconomaleDatiStampaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	
+	 <mapping map-id="SiacDRichiestaEconTipo_TipoRichiestaEconomale" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.TipoRichiestaEconomale</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDRichiestaEconTipo</class-b>      
+	
+		<field>
+			<a>codice</a>
+			<b>riceconTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>riceconTipoDesc</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStringConverter"> 
+			<a>rendiconto</a>
+			<b>riceconRendiconto</b>
+		</field>
+		
+	</mapping>
+     
+     
+     <mapping map-id="SiacTMovimento_Movimento_Base" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.Movimento</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovimento</class-b>      
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>numeroMovimento</a>
+			<b>movtNumero</b>
+		</field>
+		
+		<field>
+			<a>dataMovimento</a>
+			<b>movtData</b>
+		</field>
+		
+		<field>
+			<a>abi</a>
+			<b>abi</b>
+		</field>
+		
+		<field>
+			<a>assegnoNumero</a>
+			<b>assegnoNumero</b>
+		</field>
+		
+		<field>
+			<a>bic</a>
+			<b>bic</b>
+		</field>
+		
+		<field>
+			<a>cab</a>
+			<b>cab</b>
+		</field>
+		
+		<field>
+			<a>cin</a>
+			<b>cin</b>
+		</field>
+		
+		<field>
+			<a>contoCorrente</a>
+			<b>contocorrente</b>
+		</field>
+		
+		<field>
+			<a>contoCorrenteIntestazione</a>
+			<b>contocorrenteIntestazione</b>
+		</field>
+		
+		<field>
+			<a>iban</a>
+			<b>iban</b>
+		</field>
+		
+		<field>
+			<a>dettaglioPagamento</a>
+			<b>movtPagamentoDettaglio</b>
+		</field>
+	</mapping>
+       
+    <mapping map-id="SiacTMovimento_Movimento" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.Movimento</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovimento</class-b>      
+	
+		<field map-id="SiacTMovimento_Movimento_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="movimentoModalitaPagamentoSoggettoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="movimentoModalitaPagamentoCassaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field> 
+		
+		<field custom-converter-id="movimentoModalitaPagamentoDipendenteConverter">
+			<a>this</a>
+			<b>this</b>
+		</field> 
+		
+	</mapping>
+	
+	
+	 <mapping map-id="SiacTMovimento_Movimento_Extra" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.Movimento</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovimento</class-b>
+		
+		<field map-id="SiacTMovimento_Movimento">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+		<field map-id="SiacTGiustificativo_RendicontoRichiesta_Medium">
+			<a>rendicontoRichiesta</a>
+			<b>siacTGiustificativo</b>
+		</field>
+		
+		
+		<field map-id="SiacTRichiestaEcon_RichiestaEconomale">
+			<a>richiestaEconomale</a>
+			<b>siacTRichiestaEcon</b>
+		</field>
+		
+	</mapping>
+		
+	<mapping map-id="SiacRAccreditoTipoCassaEcon_ModalitaPagamentoDipendente" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.ModalitaPagamentoDipendente</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacRAccreditoTipoCassaEcon</class-b>      
+		
+		<field custom-converter-id="modalitaPagamentoDipendenteConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+ 	</mapping>
+	
+</mappings>

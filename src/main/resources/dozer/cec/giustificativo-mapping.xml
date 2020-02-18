@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     
+     <mapping map-id="SiacTGiustificativoDet_Giustificativo_Base" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.Giustificativo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGiustificativoDet</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>annoProtocollo</a>
+			<b>gstProtocolloAnno</b>
+		</field>
+		
+		<field>
+			<a>numeroProtocollo</a>
+			<b>gstProtocolloNumero</b>
+		</field>
+		
+		<field>
+			<a>numeroGiustificativo</a>
+			<b>gstDetCode</b>
+		</field>
+		
+		<field>
+			<a>dataEmissione</a>
+			<b>gstEmissioneData</b>
+		</field>
+		
+		<field>
+			<a>importoGiustificativo</a>
+			<b>gstImporto</b>
+		</field>
+		
+		<field>
+			<a>importoSpettanteGiustificativo</a>
+			<b>gstImportoSpettante</b>
+		</field>
+		
+		<field>
+			<a>importoGiustificativoInValuta</a>
+			<b>gstImportoValuta</b>
+		</field>
+		
+		<field>
+			<a>quantita</a>
+			<b>quantita</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStringConverter">
+			<a>flagInclusoNelPagamento</a>
+			<b>gstInclusoInPag</b>
+		</field>
+		
+		<field>
+			<a>cambio</a>
+			<b>gstTassoDiCambio</b>
+		</field>
+		
+		<field custom-converter-id="giustificativoStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+	</mapping>
+	
+	<mapping map-id="SiacTGiustificativoDet_Giustificativo_Medium" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.Giustificativo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGiustificativoDet</class-b>
+	
+		<field map-id="SiacTGiustificativoDet_Giustificativo_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<!-- <field map-id="SiacDGiustificativo_TipoGiustificativo">
+			<a>tipoGiustificativo</a>
+			<b>siacDGiustificativo</b>
+		</field> -->
+		
+		<field custom-converter-id="giustificativoTipoGiustificativoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacDValuta_Valuta">
+			<a>valuta</a>
+			<b>siacDValuta</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTGiustificativoDet_Giustificativo" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.Giustificativo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTGiustificativoDet</class-b>
+	
+		<field map-id="SiacTGiustificativoDet_Giustificativo_Medium">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTGiustificativo_RendicontoRichiesta_Base">
+			<a>rendicontoRichiesta</a>
+			<b>siacTGiustificativo</b>
+		</field>
+		
+	</mapping>
+	
+</mappings>

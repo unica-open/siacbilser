@@ -1,0 +1,148 @@
+INTESTAZIONE:
+	- Ente:
+		- Denominazione: /stampaLiquidazioneIvaReportModel/intestazione/ente/nome
+		- Indirizzo:     /stampaLiquidazioneIvaReportModel/intestazione/indirizzoSoggetto
+		- Partita IVA:   /stampaLiquidazioneIvaReportModel/intestazione/soggetto/partitaIva
+	- TipoStampa:     /stampaLiquidazioneIvaReportModel/intestazione/tipoStampa
+	- Periodo:        /stampaLiquidazioneIvaReportModel/intestazione/periodo (leggerne gli attributi)
+	- Anno Contabile: /stampaLiquidazioneIvaReportModel/intestazione/annoDiRiferimentoContabile
+	- Numero pagina:  /stampaLiquidazioneIvaReportModel/intestazione/numeroDiPagina (ATTENZIONE! Viene indicato solo il numero di pagina iniziale)
+	- Gruppo:        /stampaLiquidazioneIvaReportModel/intestazione/gruppoAttivitaIva (/codice, /descrizione)
+
+STAMPA LIQUIDAZIONE IVA - ACQUISTI IVA IMMEDIATA
+	SEZIONE 1:
+		(Ciclare su '/stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto')
+		- A1: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto/registroIva/codice
+		- B1: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto/registroIva/descrizione
+		- C1: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D1: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E1: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F1: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G1: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto/imponibile
+		- H1: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto/imposta
+		- nuovo campo TipoStampa : /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/datiIva/acquisto/tipoStampaRegistro
+	
+	SEZIONE 2:
+		(Ciclare su /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva)
+		- C2: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D2: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E2: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F2: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G2: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- H2: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/imposta
+		
+		- Somma Imponibile: /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/riepilogo/totaleImponibile
+		- Somma IVA:        /stampaLiquidazioneIvaReportModel/acquistiIvaImmediata/riepilogo/totaleImposta
+
+STAMPA LIQUIDAZIONE IVA - ACQUISTI IVA DIFFERITA (PAGATI)
+	SEZIONE 1:
+		(Ciclare su '/stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto')
+		- A1: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto/registroIva/codice
+		- B1: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto/registroIva/descrizione
+		- C1: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D1: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E1: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F1: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G1: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto/imponibile
+		- H1: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto/imposta
+		- nuovo campo TipoStampa : /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/datiIva/acquisto/tipoStampaRegistro
+	
+	SEZIONE 2:
+		(Ciclare su /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/riepilogo/riepiloghiIva/riepilogoIva)
+		- C2: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D2: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E2: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F2: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G2: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- H2: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/riepilogo/riepiloghiIva/riepilogoIva/imposta
+		
+		- Somma Imponibile: /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/riepilogo/totaleImponibile
+		- Somma IVA:        /stampaLiquidazioneIvaReportModel/acquistiIvaDifferitaPagata/riepilogo/totaleImposta
+
+STAMPA LIQUIDAZIONE IVA - VENDITE IVA IMMEDIATA
+	SEZIONE 1:
+		(Ciclare su '/stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita')
+		- A1: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita/registroIva/codice
+		- B1: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita/registroIva/descrizione
+		- C1: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D1: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E1: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F1: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G1: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita/imponibile
+		- H1: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita/imposta
+		- nuovo campo TipoStampa : /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/datiIva/vendita/tipoStampaRegistro
+	
+	SEZIONE 2:
+		(Ciclare su /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva)
+		- C2: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D2: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E2: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F2: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G2: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- H2: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/riepilogo/riepiloghiIva/riepilogoIva/imposta
+		
+		- Somma Imponibile: /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/riepilogo/totaleImponibile
+		- Somma IVA:        /stampaLiquidazioneIvaReportModel/venditeIvaImmediata/riepilogo/totaleImposta
+
+STAMPA LIQUIDAZIONE IVA - VENDITE IVA DIFERITA (INCASSATI)
+	SEZIONE 1:
+		(Ciclare su '/stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita')
+		- A1: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita/registroIva/codice
+		- B1: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita/registroIva/descrizione
+		- C1: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D1: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E1: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F1: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G1: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita/imponibile
+		- H1: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita/imposta
+		- nuovo campo TipoStampa : /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/datiIva/vendita/tipoStampaRegistro
+	
+	SEZIONE 2:
+		(Ciclare su /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/riepilogo/riepiloghiIva/riepilogoIva)
+		- C2: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D2: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E2: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F2: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G2: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- H2: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/riepilogo/riepiloghiIva/riepilogoIva/imposta
+		
+		- Somma Imponibile: /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/riepilogo/totaleImponibile
+		- Somma IVA:        /stampaLiquidazioneIvaReportModel/venditeIvaDifferitaIncassata/riepilogo/totaleImposta
+
+STAMPA LIQUIDAZIONE IVA - CORRISPETTIVI
+	SEZIONE 1:
+		(Ciclare su '/stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita')
+		- A1: /stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita/registroIva/codice
+		- B1: /stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita/registroIva/descrizione
+		- C1: /stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D1: /stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E1: /stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F1: /stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G1: /stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita/imponibile
+		- H1: /stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita/imposta
+		- nuovo campo TipoStampa : /stampaLiquidazioneIvaReportModel/corrispettivi/datiIva/vendita/tipoStampaRegistro
+	
+	SEZIONE 2:
+		(Ciclare su /stampaLiquidazioneIvaReportModel/corrispettivi/riepilogo/riepiloghiIva/riepilogoIva)
+		- C2: /stampaLiquidazioneIvaReportModel/corrispettivi/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- D2: /stampaLiquidazioneIvaReportModel/corrispettivi/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- E2: /stampaLiquidazioneIvaReportModel/corrispettivi/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/tipoOperazioneIva (leggerne gli attributi)
+		- F2: /stampaLiquidazioneIvaReportModel/corrispettivi/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- G2: /stampaLiquidazioneIvaReportModel/corrispettivi/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- H2: /stampaLiquidazioneIvaReportModel/corrispettivi/riepilogo/riepiloghiIva/riepilogoIva/imposta
+		
+		- Somma Imponibile: /stampaLiquidazioneIvaReportModel/corrispettivi/riepilogo/totaleImponibile
+		- Somma IVA:        /stampaLiquidazioneIvaReportModel/corrispettivi/riepilogo/totaleImposta
+
+RIEPILOGO
+	- A: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/ivaADebito
+	- B: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/ivaACredito
+	- C1: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/ivaIndetraibileCausaProRata
+	- C2: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/ivaDebitoIndetraibileCausaProRata
+	- D1: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/totaleIvaAmmessaInDetrazione
+	- D2: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/totaleIvaDebitoAmmessaInDetrazione
+	- E: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/ivaADebitoMenoIvaACredito
+	- F: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/ivaACreditoPeriodoPrecedente
+	- G: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/ivaDaVersareIvaACredito
+	
+	- Percentuale Pro-Rata: /stampaLiquidazioneIvaReportModel/riepilogoGlobale/percentualeProRata

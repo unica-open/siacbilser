@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<elenchiDocumentiAllegato >
+	<elenchi>
+		<elenco saltaInserimento="true">
+			<annoSysEsterno>2015</annoSysEsterno>
+			<numeroSysEsterno>123</numeroSysEsterno>
+			<allegatoAtto>
+				<uid>-1</uid>
+				<causale>mia causale allegato atto</causale>
+				<datiSensibili>false</datiSensibili>
+<!-- 				<attoAmministrativo> -->
+<!-- 					<anno>2015</anno> -->
+<!-- 					<numero>123</numero> -->
+<!-- 					<tipoAtto> -->
+<!-- 						<codice>02</codice> -->
+<!-- 					</tipoAtto> -->
+<!-- 				</attoAmministrativo> -->
+			</allegatoAtto>
+			<subdocumenti>
+				
+			</subdocumenti>
+			 <subdocumentiIva>
+                <subdocumentoIvaSpesa>
+                    
+                    <documentoSpesa> <!-- questa e' la testata iva -->
+                        <uid>-101</uid>
+                        <anno>2015</anno>
+                        <arrotondamento>0</arrotondamento>
+                        <dataEmissione>2014-09-15T14:30:05+02:00</dataEmissione>
+                        <descrizione>IVA SPESA SISTEMA ESTERNO</descrizione>
+                        <importo>100</importo>
+                        <note>note mia testata iva</note>
+                        <numero>2233</numero>
+                        <annoEsercizio>2015</annoEsercizio>
+                        <soggetto>
+                            <codiceSoggetto>1</codiceSoggetto>
+                        </soggetto>
+                        <tipoDocumento>
+                            <codice>FAT</codice>
+                            <tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                        </tipoDocumento>
+                    </documentoSpesa>
+                    
+                    <aliquote>
+                        <aliquotaSubdocumentoIva>
+                            <aliquotaIva>
+								<codice>04</codice>
+								<tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                            </aliquotaIva>
+                            <imponibile>10</imponibile>
+                            <imposta>0.4</imposta>
+                            <impostaDetraibile>0.4</impostaDetraibile>
+                            <impostaIndetraibile>0</impostaIndetraibile>
+                            <totale>10.4</totale>
+                        </aliquotaSubdocumentoIva>
+                    </aliquote>
+                    <attivitaIva>
+                        <codice>01</codice>
+                        <flagRilevanteIRAP>false</flagRilevanteIRAP>
+                    </attivitaIva>
+                    <annoEsercizio>2015</annoEsercizio>
+                    
+                    <statoSubdocumentoIva>PROVVISORIO</statoSubdocumentoIva>
+                    <dataProtocolloDefinitivo>2014-10-16T14:30:05+02:00</dataProtocolloDefinitivo>
+                    <dataRegistrazione>2015-10-16T14:30:05+02:00</dataRegistrazione>
+                    <descrizioneIva>subIVA legato a sub testata</descrizioneIva>
+                    
+                    <importoInValuta>10</importoInValuta>
+                    <registroIva>
+                        <codice>01 Registro</codice>
+                        <tipoRegistroIva descrizione="Acquisti iva immediata" codice="AI">ACQUISTI_IVA_IMMEDIATA</tipoRegistroIva>
+                    </registroIva>
+                    <tipoRegistrazioneIva>
+                        <codice>01</codice>
+                    </tipoRegistrazioneIva>
+<!--                     <totaleMovimentiIva>0</totaleMovimentiIva> -->
+                </subdocumentoIvaSpesa>
+            </subdocumentiIva>
+		</elenco>
+	</elenchi>
+</elenchiDocumentiAllegato>

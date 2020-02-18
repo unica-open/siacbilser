@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacDSiopeTipoDebito_SiopeTipoDebito" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.siopeplus.SiopeTipoDebito</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDSiopeTipoDebito</class-b>
+		<field>
+			<a>codice</a>
+			<b>siopeTipoDebitoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>siopeTipoDebitoDesc</b>
+		</field>
+		<field>
+			<a>descrizioneBancaItalia</a>
+			<b>siopeTipoDebitoDescBnkit</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacDSiopeAssenzaMotivazione_SiopeAssenzaMotivazione" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDSiopeAssenzaMotivazione</class-b>
+		<field>
+			<a>codice</a>
+			<b>siopeAssenzaMotivazioneCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>siopeAssenzaMotivazioneDesc</b>
+		</field>
+		<field>
+			<a>descrizioneBancaItalia</a>
+			<b>siopeAssenzaMotivazioneDescBnkit</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacDSiopeDocumentoTipo_SiopeDocumentoTipo" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.siopeplus.SiopeDocumentoTipo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDSiopeDocumentoTipo</class-b>
+		<field>
+			<a>codice</a>
+			<b>siopeDocumentoTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>siopeDocumentoTipoDesc</b>
+		</field>
+		<field>
+			<a>descrizioneBancaItalia</a>
+			<b>siopeDocumentoTipoDescBnkit</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacDSiopeDocumentoTipoAnalogico_SiopeDocumentoTipoAnalogico_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.siopeplus.SiopeDocumentoTipoAnalogico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDSiopeDocumentoTipoAnalogico</class-b>
+		<field>
+			<a>codice</a>
+			<b>siopeDocumentoTipoAnalogicoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>siopeDocumentoTipoAnalogicoDesc</b>
+		</field>
+		<field>
+			<a>descrizioneBancaItalia</a>
+			<b>siopeDocumentoTipoAnalogicoDescBnkit</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacDSiopeDocumentoTipoAnalogico_SiopeDocumentoTipoAnalogico" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.siopeplus.SiopeDocumentoTipoAnalogico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDSiopeDocumentoTipoAnalogico</class-b>
+		<field map-id="SiacDSiopeDocumentoTipoAnalogico_SiopeDocumentoTipoAnalogico_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field map-id="SiacDSiopeDocumentoTipo_SiopeDocumentoTipo">
+			<a>siopeDocumentoTipo</a>
+			<b>siacDSiopeDocumentoTipo</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacDSiopeScadenzaMotivo_SiopeScadenzaMotivo" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.siopeplus.SiopeScadenzaMotivo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDSiopeScadenzaMotivo</class-b>
+		<field>
+			<a>codice</a>
+			<b>siopeScadenzaMotivoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>siopeScadenzaMotivoDesc</b>
+		</field>
+		<field>
+			<a>descrizioneBancaItalia</a>
+			<b>siopeScadenzaMotivoDescBnkit</b>
+		</field>
+	</mapping>
+	
+</mappings>

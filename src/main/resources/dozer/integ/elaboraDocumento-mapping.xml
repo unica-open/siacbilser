@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="ElaboraDocumento_ElaboraFile">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraDocumento</class-a>
+		<class-b>it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFile</class-b>
+
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>contenutoDocumento</a>
+			<b set-method="setContenuto(java.lang.String)">file.contenuto</b>
+		</field>
+	
+	</mapping>
+
+
+	<mapping map-id="ElaboraAttiAmministrativi_ElaboraFile">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraAttiAmministrativi</class-a>
+		<class-b>it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFile</class-b>
+
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>contenutoDocumento</a>
+			<b set-method="setContenuto(java.lang.String)">file.contenuto</b>
+		</field>
+	
+	</mapping>
+
+
+
+	<mapping map-id="ElaboraDocumentoResponse_ElaboraFileResponse" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraDocumentoResponse</class-a>
+		<class-b>it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFileResponse</class-b>
+
+		<field map-id="BaseResponse_ServiceResponse">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+
+
+	<mapping map-id="ElaboraAttiAmministrativiResponse_ElaboraFileResponse" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraAttiAmministrativiResponse</class-a>
+		<class-b>it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFileResponse</class-b>
+
+		<field map-id="BaseResponse_ServiceResponse">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+
+
+
+	<mapping map-id="ElaboraDocumentoAsyncResponse_AsyncServiceResponse" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraDocumentoAsyncResponse</class-a>
+		<class-b>it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse</class-b>
+
+		<field map-id="BaseResponse_ServiceResponse">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>idOperazioneAsincrona</a>
+			<b>idOperazioneAsincrona</b>
+		</field>
+	
+	</mapping>
+
+
+
+	<mapping map-id="ElaboraAttiAmministrativiAsyncResponse_AsyncServiceResponse" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraAttiAmministrativiAsyncResponse</class-a>
+		<class-b>it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse</class-b>
+
+		<field map-id="BaseResponse_ServiceResponse">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field>
+			<a>idOperazioneAsincrona</a>
+			<b>idOperazioneAsincrona</b>
+		</field>
+	
+	</mapping>
+
+
+
+
+</mappings>

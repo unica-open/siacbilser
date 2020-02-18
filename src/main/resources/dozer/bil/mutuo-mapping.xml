@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="SiacTMutuo_Mutuo_BIL">
+		<class-a>it.csi.siac.siacfinser.model.mutuo.Mutuo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMutuo</class-b>
+
+		<field>
+			<a>codiceMutuo</a>
+			<b>mutCode</b>
+		</field>
+		<field>
+			<a>dataInizioMutuo</a>
+			<b>mutDataInizio</b>
+		</field>
+		<field>
+			<a>dataFineMutuo</a>
+			<b>mutDataFine</b>
+		</field>
+		<field>
+			<a>descrizioneMutuo</a>
+			<b>mutDesc</b>
+		</field>
+		<field>
+			<a>durataMutuo</a>
+			<b>mutDurata</b>
+		</field>
+		<field>
+			<a>importoInizialeMutuo</a>
+			<b>mutImportoIniziale</b>
+		</field>
+		<field>
+			<a>importoAttualeMutuo</a>
+			<b>mutImportoAttuale</b>
+		</field>
+		<field>
+			<a>numeroRegistrazioneMutuo</a>
+			<b>mutNumRegistrazione</b>
+		</field>
+		<field>
+			<a>noteMutuo</a>
+			<b>mutNote</b>
+		</field>
+	</mapping>
+
+	<mapping map-id="SiacTMutuoVoce_VoceMutuo_BIL">
+		<class-a>it.csi.siac.siacfinser.model.mutuo.VoceMutuo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMutuoVoce</class-b>
+
+		<field>
+			<a>numeroVoceMutuo</a>
+			<b>mutVoceCode</b>
+		</field>
+		
+		<field>
+			<a>idMutuo</a>
+			<b>siacTMutuo.mutId</b>
+		</field>
+
+		<field>
+			<a>numeroMutuo</a>
+			<b>siacTMutuo.mutCode</b>
+		</field>
+		
+		<field>
+			<a>descrizioneVoceMutuo</a>
+			<b>mutVoceDesc</b>
+		</field>
+		
+		<field>
+			<a>importoAttualeVoceMutuo</a>
+			<b>mutVoceImportoAttuale</b>
+		</field>
+		
+		<field>
+			<a>importoInizialeVoceMutuo</a>
+			<b>mutVoceImportoIniziale</b>
+		</field>
+		
+		<field map-id="SiacTMutuo_Mutuo_BIL">
+			<a>mutuo</a>
+			<b>siacTMutuo</b>
+		</field>
+	</mapping>
+
+</mappings>

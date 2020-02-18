@@ -1,0 +1,72 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<listaModificheMovimentoGestioneEntrata>
+	<stato>VALIDO</stato>
+	<uid>0</uid>
+	<annoCapitoloOrigine>0</annoCapitoloOrigine>
+	<annoMovimento>0</annoMovimento>
+	<annoOriginePlur>0</annoOriginePlur>
+	<annoRiaccertato>0</annoRiaccertato>
+	<attoAmmTipoAtto>
+		<loginOperazione>admin</loginOperazione>
+		<stato>VALIDO</stato>
+		<uid>306</uid>
+		<codice>AD</codice>
+		<descrizione>ATTO DIRIGENZIALE</descrizione>
+		<progressivoAutomatico>false</progressivoAutomatico>
+	</attoAmmTipoAtto>
+	<attoAmministrativo>
+		<stato>VALIDO</stato>
+		<uid>24645</uid>
+		<anno>2015</anno>
+		<numero>202</numero>
+		<parereRegolaritaContabile>false</parereRegolaritaContabile>
+		<statoOperativo>DEFINITIVO</statoOperativo>
+		<strutturaAmmContabile>
+			<stato>VALIDO</stato>
+			<uid>1719549</uid>
+			<codice>A11000</codice>
+			<descrizione>RISORSE FINANZIARIE E PATRIMONIO</descrizione>
+			<livello>0</livello>
+		</strutturaAmmContabile>
+		<tipoAtto>
+			<loginOperazione>admin</loginOperazione>
+			<stato>VALIDO</stato>
+			<uid>306</uid>
+			<codice>AD</codice>
+			<descrizione>ATTO DIRIGENZIALE</descrizione>
+			<progressivoAutomatico>false</progressivoAutomatico>
+		</tipoAtto>
+	</attoAmministrativo>
+	<byPassControlloDodicesimi>false</byPassControlloDodicesimi>
+	<collegatoALiquidazioni>false</collegatoALiquidazioni>
+	<collegatoAOrdinativi>false</collegatoAOrdinativi>
+	<descrizione>MODIFICA RORM: INSERIMENTO</descrizione>
+	<flagAttivaGsa>false</flagAttivaGsa>
+	<flagDaRiaccertamento>false</flagDaRiaccertamento>
+	<flagSoggettoDurc>false</flagSoggettoDurc>
+	<idStrutturaAmministrativa>1719549</idStrutturaAmministrativa>
+	<numeroArticoloOrigine>0</numeroArticoloOrigine>
+	<numeroCapitoloOrigine>0</numeroCapitoloOrigine>
+	<numeroSubNonAnnullati>0</numeroSubNonAnnullati>
+	<numeroUEBOrigine>0</numeroUEBOrigine>
+	<parereFinanziario>false</parereFinanziario>
+	<presenzaSubNonAnnullati>false</presenzaSubNonAnnullati>
+	<tipoMovimento>ACC</tipoMovimento>
+	<validato>true</validato>
+	<attoAmministrativoAnno>2015</attoAmministrativoAnno>
+	<attoAmministrativoNumero>202</attoAmministrativoNumero>
+	<attoAmministrativoTipoCode>AD</attoAmministrativoTipoCode>
+	<idClasseSoggettoNewMovimentoGestione>0</idClasseSoggettoNewMovimentoGestione>
+	<idClasseSoggettoOldMovimentoGestione>0</idClasseSoggettoOldMovimentoGestione>
+	<idModificaMovimentoGestione>0</idModificaMovimentoGestione>
+	<importoNew>40556.17</importoNew>
+	<importoOld>0.00</importoOld>
+	<numeroModificaMovimentoGestione>0</numeroModificaMovimentoGestione>
+	<reimputazione>false</reimputazione>
+	<tipoModificaMovimentoGestione>RORM</tipoModificaMovimentoGestione>
+	<numeroModificheAutomatiche>0</numeroModificheAutomatiche>
+	<riepilogoAutomatiche>false</riepilogoAutomatiche>
+</listaModificheMovimentoGestioneEntrata>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+	<mapping map-id="SiacTCespiti_Cespite" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.Cespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespiti</class-b>
+		
+		<field map-id="SiacTCespiti_Cespite_ModelDetail">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		
+  		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+
+		<field custom-converter-id="cespiteTipoBeneCespiteConverter">
+  			<a>this</a>
+  			<b>this</b>
+		</field>
+
+		<field custom-converter-id="cespiteClassificazioneGiuridicaConverter">
+  			<a>this</a>
+  			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="cespiteDismissioneCespiteConverter">
+  			<a>this</a>
+  			<b>this</b>
+		</field>
+
+	</mapping>
+	
+	<mapping map-id="SiacTCespiti_Cespite_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.Cespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespiti</class-b>
+		<field>
+			<a>codice</a>
+			<b>cesCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>cesDesc</b>
+		</field>	
+		<field>
+			<a>numeroInventario</a>
+			<b>numInventario</b>
+		</field>	
+		<field>
+			<a>dataAccessoInventario</a>
+			<b>dataIngressoInventario</b>
+		</field>	
+		<field>
+			<a>valoreIniziale</a>
+			<b>valoreIniziale</b>
+		</field>
+		<field>
+			<a>valoreAttuale</a>
+			<b>valoreAttuale</b>
+		</field>
+		<field>
+			<a>flagSoggettoTutelaBeniCulturali</a>
+			<b>soggettoBeniCulturali</b>
+		</field>
+		<field>
+			<a>flagStatoBene</a>
+			<b>flgStatoBene</b>
+		</field>
+		<field>
+			<a>descrizioneStato</a>
+			<b>descrizioneStato</b>
+		</field>
+		<field>
+			<a>ubicazione</a>
+			<b>ubicazione</b>
+		</field>
+		<field>
+			<a>note</a>
+			<b>note</b>
+		</field>
+		<field>
+			<a>flgDonazioneRinvenimento</a>
+			<b>flgDonazioneRinvenimento</b>
+		</field>
+		<field>
+			<a>numeroInventarioPrefisso</a>
+			<b>numInventarioPrefisso</b>
+		</field>
+		<field>
+			<a>numeroInventarioNumero</a>
+			<b>numInventarioNumero</b>
+		</field>
+		
+		
+	</mapping>
+</mappings>

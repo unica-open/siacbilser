@@ -1,0 +1,101 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacDBilElemDetCompTipo_TipoComponenteImportiCapitolo_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDBilElemDetCompTipo</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>elemDetCompTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>elemDetCompTipoDesc</b>
+		</field>
+
+	</mapping>
+	
+	<mapping map-id="SiacDBilElemDetCompTipo_TipoComponenteImportiCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDBilElemDetCompTipo</class-b>
+		
+		<field  map-id="SiacDBilElemDetCompTipo_TipoComponenteImportiCapitolo_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field custom-converter-id="tipoComponenteImportiCapitoloStatoTipoComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoComponenteImportiCapitoloAnnoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoComponenteImportiCapitoloMacrotipoComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoComponenteImportiCapitoloSottotipoComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoComponenteImportiCapitoloAmbitoComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoComponenteImportiCapitoloFonteFinanziariaComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoComponenteImportiCapitoloMomentoComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoComponenteImportiCapitoloPropostaDefaultComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoComponenteImportiCapitoloTipoGestioneComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoComponenteImportiCapitoloDettaglioComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+		<field custom-converter-id="tipoComponenteImportiCapitoloCollegatoACapitoliConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+
+	</mapping>
+	
+	<mapping map-id="SiacDBilElemDetCompTipo_TipoComponenteImportiCapitolo_Base" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDBilElemDetCompTipo</class-b>
+		
+		<field  map-id="SiacDBilElemDetCompTipo_TipoComponenteImportiCapitolo_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	
+</mappings>

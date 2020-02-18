@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTBilElemDetComp_ComponenteImportiCapitolo_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.ComponenteImportiCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElemDetComp</class-b>
+	</mapping>
+	
+	<mapping map-id="SiacTBilElemDetComp_ComponenteImportiCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.ComponenteImportiCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElemDetComp</class-b>
+		
+		<field map-id="SiacTBilElemDetComp_ComponenteImportiCapitolo_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.componenteimporticapitolo.ComponenteImportiCapitoloImportoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="componenteImportiCapitoloTipoComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="componenteImportiCapitoloImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTBilElemDetVarComp_ComponenteImportiCapitolo_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElemDetVarComp</class-b>
+		
+		<field>
+			<a>importo</a>
+			<b>elemDetImporto</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacTBilElemDetVarComp_ComponenteImportiCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElemDetVarComp</class-b>
+		
+		<field map-id="SiacTBilElemDetVarComp_ComponenteImportiCapitolo_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.componenteimporticapitolo.DettaglioVariazioneComponenteImportoCapitoloFlagConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="dettaglioVariazioneComponenteImportoCapitoloComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="dettaglioVariazioneComponenteImportoCapitoloDettaglioVariazioneImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+</mappings>

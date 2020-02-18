@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+	<mapping map-id="SiacDCausaleTipo_TipoCausale" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.TipoCausale</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDCausaleTipo</class-b>
+	
+		<field>
+			<!-- Si puo' omettere -->
+			<a>uid</a>
+			<b>causTipoId</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>causTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>causTipoDesc</b>
+		</field>
+		
+		<field custom-converter-id="tipoFamigliaCausaleConverter">
+			<a>tipoFamigliaCausale</a>
+			<b>this</b>
+		</field>	
+	</mapping>
+		
+	<mapping map-id="SiacDContotesoreria_ContoTesoreria" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.ContoTesoreria</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDContotesoreria</class-b>
+	
+		<field>
+			<!-- Si puo' omettere -->
+			<a>uid</a>
+			<b>contotesId</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>contotesCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>contotesDesc</b>
+		</field>
+	</mapping>	
+	
+</mappings>

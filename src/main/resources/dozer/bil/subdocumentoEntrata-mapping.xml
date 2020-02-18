@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+	<mapping map-id="SiacTSubdoc_SubdocumentoEntrata_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>subdocNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>subdocDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>subdocImporto</b>
+		</field>
+		
+		<field>
+			<a>importoDaDedurre</a>
+			<b>subdocImportoDaDedurre</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>subdocDataScadenza</b>
+		</field>
+				
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStringManualeAutomaticoConverter">
+			<a>flagConvalidaManuale</a>
+			<b>subdocConvalidaManuale</b>
+		</field>
+		
+		<field>
+			<a>numeroRegistrazioneIVA</a>
+			<b>subdocNregIva</b>
+		</field>
+	</mapping>
+	
+    <mapping map-id="SiacTSubdoc_SubdocumentoEntrata_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field map-id="SiacTDoc_DocumentoEntrata_Minimal">
+			<a>documento</a> <!-- .uid -->
+			<b>siacTDoc</b> <!-- .docId -->
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>subdocNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>subdocDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>subdocImporto</b>
+		</field>
+		
+		<field>
+			<a>importoDaDedurre</a>
+			<b>subdocImportoDaDedurre</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>subdocDataScadenza</b>
+		</field>
+				
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStringManualeAutomaticoConverter">
+			<a>flagConvalidaManuale</a>
+			<b>subdocConvalidaManuale</b>
+		</field>
+		
+		<field>
+			<a>numeroRegistrazioneIVA</a>
+			<b>subdocNregIva</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+          
+	<mapping map-id="SiacTSubdoc_SubdocumentoEntrata" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTSubdoc_SubdocumentoEntrata_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacDNoteTesoriere_NoteTesoriere">
+			<a>noteTesoriere</a>
+			<b>siacDNoteTesoriere</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataClassifConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+<!-- 		<field custom-converter-id="subdocumentoEntrataModPagConverter"> -->
+<!-- 			<a>this</a> -->
+<!--  			<b>this</b> -->
+<!-- 		</field> -->
+		
+		<field custom-converter-id="subdocumentoEntrataSedeSecondariaSoggettoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+
+		<field custom-converter-id="subdocumentoEntrataContoTesoreriaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoEntrataDistintaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataAttoAmmConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataAccertamentoSubaccertamentoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataElencoDocumentiConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataProvvisorioDiCassaConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataPredocumentoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		
+		
+<!-- 		<field custom-converter-id="documentoEntrataStatoConverter"> -->
+<!-- 			<a>statoOperativoDocumento</a> -->
+<!--  			<b>this</b> .siacRDocStatos[0].siacDDocStato  -->
+<!-- 		</field> -->
+		
+
+		
+<!-- 		<field custom-converter-id="documentoEntrataSoggConverter"> -->
+<!-- 			<a>this</a> -->
+<!--  			<b>this</b> -->
+<!-- 		</field> -->
+		
+<!-- 		<field custom-converter-id="documentoEntrataDataInizioValiditaStatoConverter"> -->
+<!-- 			<a>this</a> -->
+<!--  			<b>this</b> -->
+<!-- 		</field> -->
+
+
+		<field custom-converter-id="subdocumentoEntrataSubdocumentoIvaConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataOrdinativoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		
+						
+	</mapping>
+	
+
+	<mapping map-id="SiacTSubdoc_SubdocumentoEntrata_Medium" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTSubdoc_SubdocumentoEntrata_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacDNoteTesoriere_NoteTesoriere">
+			<a>noteTesoriere</a>
+			<b>siacDNoteTesoriere</b>
+		</field>
+		<field custom-converter-id="subdocumentoEntrataContoTesoreriaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoEntrataDistintaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoEntrataAttoAmmConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoEntrataAccertamentoSubaccertamentoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTSubdoc_SubdocumentoEntrata_Allegato" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdoc</class-b>
+		
+		<field map-id="SiacTSubdoc_SubdocumentoEntrata_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataAccertamentoSubaccertamentoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataHasSubordinatiConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataIsSubordinatoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataOrdinativoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataDocPadreConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="subdocumentoEntrataAttoAmmConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoEntrataProvvisorioDiCassaConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+		<!-- SIAC-4765 -->
+		<field custom-converter-id="subdocumentoEntrataHasSubordinatiPNLConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<!-- SIAC-5308 -->
+		<field custom-converter-id="subdocumentoEntrataDocFigliConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="SiacDDistinta_Distinta" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.Distinta</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDDistinta</class-b>
+		<field>
+			<a>codice</a>
+			<b>distCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>distDesc</b>
+		</field>
+	</mapping>
+	
+	
+</mappings>

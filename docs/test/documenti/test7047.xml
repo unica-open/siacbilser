@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<elenchiDocumentiAllegato >
+	<elenchi>
+		<elenco saltaInserimento="true">
+			<annoSysEsterno>2015</annoSysEsterno>
+			<numeroSysEsterno>123</numeroSysEsterno>
+			<allegatoAtto>
+				<uid>-1</uid>
+				<causale>mia causale allegato atto</causale>
+				<datiSensibili>false</datiSensibili>
+				<attoAmministrativo>
+					<anno>2016</anno>
+					<!-- uguale anno di bilancio -->
+					<tipoAtto>
+						<codice>ALG</codice>
+					</tipoAtto>
+					<statoOperativo>DEFINITIVO</statoOperativo>
+					<oggetto>mia causale allegato atto</oggetto>
+					<!-- stessa causale atto -->
+					<!-- <numero>555</numero>  -->
+					<strutturaAmmContabile>
+						<!-- 						<codice>A19000</codice> -->
+						<codice>022</codice>
+					</strutturaAmmContabile>
+				</attoAmministrativo>
+			</allegatoAtto>
+			<subdocumenti>
+				<subdocumentoSpesa>
+					<documentoSpesa>
+						<uid>-1</uid>
+						<anno>2015</anno>
+						<numero>2015-1</numero>
+						<soggetto>
+							<codiceSoggetto>5</codiceSoggetto>
+						</soggetto>
+						<tipoDocumento>
+							<codice>FAT</codice>
+							<tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+						</tipoDocumento>
+						<descrizione> bla bla bla </descrizione>
+						<dataEmissione>2014-05-15T14:30:05+02:00</dataEmissione>
+						<documentiSpesaFiglio/>
+						<documentiEntrataFiglio>
+							<documentoEntrata>
+								<uid>-1</uid>
+								<anno>2015</anno>
+								<numero>1234</numero>
+								<importo>300</importo>
+								<descrizione>FATTURA ENTRATA SISTEMA ESTERNO</descrizione>
+								<arrotondamento>-1</arrotondamento>
+								<codiceBollo>
+									<codice>99</codice>
+								</codiceBollo>
+								<dataEmissione>2014-05-15T14:30:05+02:00</dataEmissione>
+								<dataScadenza>2014-05-16T14:30:05+02:00</dataScadenza>
+								<numeroRepertorio>mio numero di repertorio</numeroRepertorio>
+								<soggetto>
+									<codiceSoggetto>5</codiceSoggetto>
+								</soggetto>
+								<terminePagamento>1</terminePagamento>
+								<tipoDocumento>
+									<codice>TRB</codice>
+									<tipoFamigliaDocumento>ENTRATA</tipoFamigliaDocumento>
+								</tipoDocumento>
+								<flagDebitoreMultiplo>false</flagDebitoreMultiplo>
+								<documentiSpesaFiglio/>
+								<documentiEntrataFiglio/>
+							</documentoEntrata>
+						</documentiEntrataFiglio>
+					</documentoSpesa>
+					<dataScadenza>2014-06-16T14:30:05+02:00</dataScadenza>
+					<descrizione>FATT SYST ESTERNO S1</descrizione>
+					<flagEsproprio>false</flagEsproprio>
+					<flagOrdinativoSingolo>false</flagOrdinativoSingolo>
+					<importo>100</importo>
+					<importoDaDedurre>10</importoDaDedurre>
+					<note>PROVA INSERIMENTO QUOTA</note>
+					<noteTesoriere>
+						<codice>01</codice>
+					</noteTesoriere>
+					<causaleOrdinativo>mia causale ordinativo SERVIZIO CARICA DOCUMENTI</causaleOrdinativo>
+					<cig>mio cig</cig>
+					<commissioniDocumento>ESENTE</commissioniDocumento>
+					<cup>mio cup</cup>
+					<datiCertificazioneCrediti>
+						<annotazione>mia annotazione</annotazione>
+						<dataCertificazione>2014-09-01T00:00:00+02:00</dataCertificazione>
+						<flagCertificazione>false</flagCertificazione>
+						<noteCertificazione>mie note certificazione</noteCertificazione>
+						<numeroCertificazione>mio numero certificazione</numeroCertificazione>
+					</datiCertificazioneCrediti>
+					<impegno>
+						<annoMovimento>2015</annoMovimento>
+						<numero>2300</numero>
+					</impegno>
+					<subImpegno>
+						<annoMovimento>2015</annoMovimento>
+						<numero>14</numero>
+					</subImpegno>
+					<modalitaPagamentoSoggetto>
+						<codiceModalitaPagamento>1</codiceModalitaPagamento>
+					</modalitaPagamentoSoggetto>
+				</subdocumentoSpesa>
+				<subdocumentoSpesa>
+					<documentoSpesa>
+						<uid>-1</uid>
+					</documentoSpesa>
+					<dataScadenza>2014-06-16T14:30:05+02:00</dataScadenza>
+					<descrizione>FATT SYST ESTERNO S2</descrizione>
+					<flagEsproprio>false</flagEsproprio>
+					<flagOrdinativoSingolo>false</flagOrdinativoSingolo>
+					<importo>101</importo>
+					<importoDaDedurre>11</importoDaDedurre>
+					<note>PROVA INSERIMENTO QUOTA</note>
+					<noteTesoriere>
+						<codice>01</codice>
+					</noteTesoriere>
+					<causaleOrdinativo>mia causale ordinativo SERVIZIO CARICA DOCUMENTI</causaleOrdinativo>
+					<cig>mio cig</cig>
+					<commissioniDocumento>ESENTE</commissioniDocumento>
+					<cup>mio cup</cup>
+					<datiCertificazioneCrediti>
+						<annotazione>mia annotazione</annotazione>
+						<dataCertificazione>2014-09-01T00:00:00+02:00</dataCertificazione>
+						<flagCertificazione>false</flagCertificazione>
+						<noteCertificazione>mie note certificazione</noteCertificazione>
+						<numeroCertificazione>mio numero certificazione</numeroCertificazione>
+					</datiCertificazioneCrediti>
+					<impegno>
+						<annoMovimento>2015</annoMovimento>
+						<numero>630</numero>
+					</impegno>
+					<modalitaPagamentoSoggetto>
+						<codiceModalitaPagamento>1</codiceModalitaPagamento>
+					</modalitaPagamentoSoggetto>
+				</subdocumentoSpesa>
+				<subdocumentoEntrata>
+					<documentoEntrata>
+						<uid>-1</uid>
+					</documentoEntrata>
+					<dataScadenza>2014-06-16T14:30:05+02:00</dataScadenza>
+					<descrizione>FATT SYST ESTERNO E1</descrizione>
+					<flagEsproprio>false</flagEsproprio>
+					<flagOrdinativoSingolo>false</flagOrdinativoSingolo>
+					<importo>50</importo>
+					<importoDaDedurre>1</importoDaDedurre>
+					<note>PROVA INSERIMENTO QUOTA</note>
+					<noteTesoriere>
+						<codice>01</codice>
+					</noteTesoriere>
+					<accertamento>
+						<annoMovimento>2015</annoMovimento>
+						<numero>4</numero>
+					</accertamento>
+					<contoTesoreria>
+						<codice>01</codice>
+					</contoTesoreria>
+					<distinta>
+						<codice>E1</codice>
+					</distinta>
+				</subdocumentoEntrata>
+			</subdocumenti>
+			<subdocumentiIva/>
+		</elenco>
+	</elenchi>
+</elenchiDocumentiAllegato>

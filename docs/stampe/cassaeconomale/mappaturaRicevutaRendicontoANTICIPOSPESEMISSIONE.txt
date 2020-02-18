@@ -1,0 +1,56 @@
+INTESTAZIONE RICEVUTA
+-	<<Ente>>:  </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/ente/nome>
+-	<<direzione>>: </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneDirezione>
+-	<<settore>> : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneSettore>
+-	<<ufficio>> : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneUfficio>
+-	<<codice cassa>>: </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/cassaEconomale/codice> 
+-	<<descrizione  cassa>>:</stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/cassaEconomale/descrizione>
+
+-	<<anno sospeso>> : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/bilancio/anno>
+-	<<numero sospeso>> : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/sospeso/numeroSospeso>
+
+-- dati richiesta
+-	<<capitolo>> : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/impegno/capitoloUscitaGestione/numeroCapitolo> / </stampaRicevutaRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/impegno/capitoloUscitaGestione/numeroArticolo>
+-	<<impegno>>: </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/impegno/numero>
+-- dati rendiconto
+-	<<capitolo>> : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/impegno/capitoloUscitaGestione/numeroCapitolo> / </stampaRicevutaRichiestaEconomaleReportModel/rendicontoRichiesta/impegno/capitoloUscitaGestione/numeroArticolo>
+-	<<impegno>>: </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/impegno/numero>
+
+
+ANTICIPO SPESE MISSIONE
+
+A1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/denominazioneRichiedente>
+B1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/matricola>
+C1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/strutturaDiAppartenenza>
+
+D1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneSettore>
+E1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneUfficio>
+F1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/cassaEconomale/responsabile>
+
+G1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/datiTrasfertaMissione/luogo>
+
+H1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/datiTrasfertaMissione/dataInizio>
+I1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/datiTrasfertaMissione/dataFine>
+
+Ciclare su </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/datiTrasfertaMissione/mezziDiTrasporto/mezzoDiTrasporto>
+L1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/datiTrasfertaMissione/mezziDiTrasporto/mezzoDiTrasporto/descrizione>
+
+M1 : </stampaRicevutaRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/tipoRichiestaEconomale/descrizione>
+
+N1 : </stampaRicevutaRichiestaEconomaleReportModel/valutaDefault/descrizione>
+
+O1 : prendere quello non a 0 tra 
+</stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/importoIntegrato>
+</stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/importoRestituito>
+
+P1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/dataRendiconto>
+
+Q1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/modalitaPagamentoPerStampa>
+
+R1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/modalitaPagamentoDipendente/flagEstero>  (true se Estero/false se Italia)
+
+S1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneCitta>
+T1 : </stampaRicevutaRendicontoRichiestaEconomaleReportModel/dataStampa>
+
+SIAC-5255
+</stampaRicevutaRendicontoRichiestaEconomaleReportModel/rendicontoRichiesta/movimento/dettaglioPagamento>

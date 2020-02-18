@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     <mapping map-id="SiacTCespitiAmmortamento_AmmortamentoAnnuoCespite_All" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.AmmortamentoAnnuoCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiAmmortamento</class-b>
+		
+		<field map-id="SiacTCespitiAmmortamento_AmmortamentoAnnuoCespite_ModelDetail">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		
+		<field custom-converter-id="ammortamentoAnnuoCespiteDettaglioAmmortamentoAnnuoCespiteConverter">
+  			<a>this</a>
+  			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="ammortamentoAnnuoCespiteCespiteConverter">
+  			<a>this</a>
+  			<b>this</b>
+		</field>
+
+	</mapping>
+          
+	<mapping map-id="SiacTCespitiAmmortamento_AmmortamentoAnnuoCespite" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.AmmortamentoAnnuoCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiAmmortamento</class-b>
+		
+		<field map-id="SiacTCespitiAmmortamento_AmmortamentoAnnuoCespite_ModelDetail">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+  		
+		<field custom-converter-id="ammortamentoAnnuoCespiteCespiteConverter">
+  			<a>this</a>
+  			<b>this</b>
+		</field>
+
+	</mapping>
+	
+	<mapping map-id="SiacTCespitiAmmortamento_AmmortamentoAnnuoCespite_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.AmmortamentoAnnuoCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiAmmortamento</class-b>
+		<field>
+			<a>ultimoAnnoAmmortato</a>
+			<b>cesAmmUltimoAnnoReg</b>
+		</field>	
+		<field>
+			<a>importoTotaleAmmortato</a>
+			<b>cesAmmImportoTotReg</b>
+		</field>
+		<field>
+			<a>completo</a>
+			<b>cesAmmCompleto</b>
+		</field>
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTCespitiAmmortamentoDett_DettaglioAmmortamentoAnnuoCespite_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.DettaglioAmmortamentoAnnuoCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiAmmortamentoDett</class-b>
+		<field>
+			<a>anno</a>
+			<b>cesAmmDettAnno</b>
+		</field>	
+		<field>
+			<a>quotaAnnuale</a>
+			<b>cesAmmDettImporto</b>
+		</field>
+		<field>
+			<a>dataAmmortamento</a>
+			<b>cesAmmDettData</b>
+		</field>
+		<field>
+			<a>registrazioneDefinitivaAmmortamento</a>
+			<b>numRegDefAmmortamento</b>
+		</field>
+  		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTCespitiAmmortamentoDett_DettaglioAmmortamentoAnnuoCespite" wildcard="true">
+		<class-a>it.csi.siac.siaccespser.model.DettaglioAmmortamentoAnnuoCespite</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTCespitiAmmortamentoDett</class-b>
+		
+		<field map-id="SiacTCespitiAmmortamentoDett_DettaglioAmmortamentoAnnuoCespite_ModelDetail">
+   			<a>this</a>
+   			<b>this</b>
+  		</field>
+		<field custom-converter-id="dettaglioAmmortamentoAnnuoCespiteAmmortamentoAnnuoCespiteConverter">
+  			<a>this</a>
+  			<b>this</b>
+		</field>
+		<field custom-converter-id="dettaglioAmmortamentoAnnuoCespitePrimaNotaConverter">
+  			<a>this</a>
+  			<b>this</b>
+		</field>		
+	</mapping>
+</mappings>

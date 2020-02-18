@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SiacTIvaAliquota_AliquotaIva" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AliquotaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaAliquota</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>ivaaliquotaCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>ivaaliquotaDesc</b>
+		</field>
+		<field>
+			<a>percentualeAliquota</a>
+			<b>ivaaliquotaPerc</b>
+		</field>
+		<field>
+			<a>percentualeIndetraibilita</a>
+			<b>ivaaliquotaPercIndetr</b>
+		</field>
+		<field>
+			<a>flagIvaSplit</a>
+			<b>ivaaliquotaSplit</b>
+		</field>
+				
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		<field custom-converter-id="tipoOperazioneIvaConverter"> 
+			<a>tipoOperazioneIva</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="aliquotaIvaAliquotaIvaTipoConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTIvamov_AliquotaSubdocumentoIva" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.AliquotaSubdocumentoIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvamov</class-b>
+		
+		<field>
+			<a>imponibile</a>
+			<b>ivamovImponibile</b>
+		</field>
+		<field>
+			<a>imposta</a>
+			<b>ivamovImposta</b>
+		</field>
+		<field>
+			<a>totale</a>
+			<b>ivamovTotale</b>
+		</field>	
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>	
+		
+		<field map-id="SiacTIvaAliquota_AliquotaIva">
+			<a>aliquotaIva</a>
+			<b>siacTIvaAliquota</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacDIvaRegistrazioneTipo_TipoRegistrazioneIva" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.TipoRegistrazioneIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDIvaRegistrazioneTipo</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>regTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>regTipoDesc</b>
+		</field>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		<field custom-converter-id="tipoRegistrazioneIvaFlagsConverter"> 
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDValuta_Valuta" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.Valuta</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDValuta</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>valutaCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>valutaDesc</b>
+		</field>
+	</mapping>
+	
+
+	
+	
+	
+	
+</mappings>

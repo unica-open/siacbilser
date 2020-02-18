@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	
+	<mapping map-id="SiacTIvaStampa_StampaIva_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.StampaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaStampa</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field> 
+		
+<!-- 		<field> -->
+<!-- 			<a>annoEsercizio</a> -->
+<!-- 			<b>ivastAnno</b> -->
+<!-- 		</field> -->
+		
+		<field>
+			<a>codice</a>
+			<b>ivastCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>ivastDesc</b>
+		</field>
+		
+		<field custom-converter-id="stampaIvaTipoStampaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stampaIvaStatoStampaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stampaIvaPeriodoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stampaIvaValoreConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTIvaStampa_StampaIva" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.StampaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaStampa</class-b>
+		
+		<field  map-id="SiacTIvaStampa_StampaIva_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stampaIvaRegistroIvaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stampaIvaFileConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTIvaStampa_StampaIva_FileBase" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.StampaIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaStampa</class-b>
+		
+		<field map-id="SiacTIvaStampa_StampaIva_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stampaIvaRegistroIvaGruppoBaseConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="stampaIvaFileBaseConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTFile_File_Base" wildcard="true">
+		<class-a>it.csi.siac.siaccorser.model.file.File</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTFile</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>fileCode</b>
+		</field>
+		
+		<field>
+			<a>nome</a>
+			<b>fileName</b>
+		</field>
+		
+		<field>
+			<a>note</a>
+			<b>fileNote</b>
+		</field>
+		
+		<field type="one-way">
+			<a>dimensione</a>
+			<b>fileSize</b>
+		</field>
+		
+		<field>
+			<a>mimeType</a>
+			<b>fileType</b>
+		</field>
+		
+		<field map-id="SiacDFileTipo_TipoFile">
+			<a>tipo</a>
+			<b>siacDFileTipo</b>
+		</field>
+		
+<!-- 		<field custom-converter-id="fileStatoConverter"> -->
+<!-- 			<a>this</a> statoFile -->
+<!-- 			<b>this</b> siacRFileStatos -->
+<!-- 		</field> -->
+		
+	</mapping>
+	
+	<mapping map-id="SiacTFile_File" wildcard="true">
+		<class-a>it.csi.siac.siaccorser.model.file.File</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTFile</class-b>
+		
+		<field  map-id="SiacTFile_File_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>contenuto</a>
+			<b>file</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacDFileTipo_TipoFile" wildcard="true">
+		<class-a>it.csi.siac.siaccorser.model.file.TipoFile</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDFileTipo</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>fileTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>fileTipoDesc</b>
+		</field>
+	
+	</mapping>
+	
+	<mapping map-id="SiacDFileStato_StatoFile" wildcard="true">
+		<class-a>it.csi.siac.siaccorser.model.file.StatoFile</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDFileStato</class-b>
+		
+		<!-- Solo uid -->
+	</mapping>
+	
+</mappings>

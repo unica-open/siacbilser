@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="SiacTClass_Codifica" wildcard="true">
+		<class-a>it.csi.siac.siaccorser.model.Codifica</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTClass</class-b>
+		<field>
+			<a>codice</a>
+			<b>classifCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>classifDesc</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDClassTipo_TipoClassificatore" wildcard="true">
+		<class-a>it.csi.siac.siaccorser.model.TipoClassificatore</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDClassTipo</class-b>
+		<field>
+			<a>codice</a>
+			<b>classifTipoCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>classifTipoDesc</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTClass_ClassificatoreGenerico" map-null="false">
+		<class-a>it.csi.siac.siaccorser.model.ClassificatoreGenerico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTClass</class-b>
+		<field>
+			<a>codice</a>
+			<b>classifCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>classifDesc</b>
+		</field>
+		<field>
+			<a>tipoClassificatore.codice</a>
+			<b>siacDClassTipo.classifTipoCode</b>
+		</field>
+		<field>
+			<a>tipoClassificatore.descrizione</a>
+			<b>siacDClassTipo.classifTipoDesc</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTClass_ClassificatoriGenerici" type="one-way">
+		<class-a>java.util.List</class-a>
+		<class-b>java.util.List</class-b>
+	</mapping>
+	
+	
+	<mapping map-id="SiacTClass_ClassificatoreGerarchico_Reduced" map-null="false">
+		<class-a>it.csi.siac.siaccorser.model.ClassificatoreGerarchico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTClass</class-b>
+		<field>
+			<a>codice</a>
+			<b>classifCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>classifDesc</b>
+		</field>
+		<field>
+			<a>tipoClassificatore.codice</a>
+			<b>siacDClassTipo.classifTipoCode</b>
+		</field>
+		<field>
+			<a>tipoClassificatore.descrizione</a>
+			<b>siacDClassTipo.classifTipoDesc</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTClass_ClassificatoreGerarchico" map-null="false">
+		<class-a>it.csi.siac.siaccorser.model.ClassificatoreGerarchico</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTClass</class-b>
+		<field>
+			<a>codice</a>
+			<b>classifCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>classifDesc</b>
+		</field>
+		<field>
+			<a>livello</a>
+			<b>siacRClassFamTreesFiglio[0].livello</b>
+		</field>
+		<field>
+			<a>tipoClassificatore.codice</a>
+			<b>siacDClassTipo.classifTipoCode</b>
+		</field>
+		<field>
+			<a>tipoClassificatore.descrizione</a>
+			<b>siacDClassTipo.classifTipoDesc</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTClass_ClassificatoreGerarchici" type="one-way">
+		<class-a>java.util.List</class-a>
+		<class-b>java.util.List</class-b>
+	</mapping>
+	
+	<mapping map-id="SiacTClass_StrutturaAmministrativoContabile">
+		<class-a>it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTClass</class-b>
+		<field map-id="SiacTClass_ClassificatoreGerarchico">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	<mapping map-id="SiacTClass_StrutturaAmministrativoContabile_Reduced">
+		<class-a>it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTClass</class-b>
+		<field map-id="SiacTClass_ClassificatoreGerarchico_Reduced">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+</mappings>

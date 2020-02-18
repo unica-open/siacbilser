@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="RicercaProvvisoriDiCassa_IntegRicercaProvvisoriDiCassa" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.provvisori.RicercaProvvisoriDiCassa </class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisoriDiCassa </class-b>
+		
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>numeroQuietanza</a>
+			<b>parametroRicercaProvvisorio.numero</b>
+		</field>
+		
+		<field>
+			<a>descrizioneCausale</a>
+			<b>parametroRicercaProvvisorio.descCausale</b>
+		</field>
+		
+		
+		<field>
+			<a>dataDa</a>
+			<b>parametroRicercaProvvisorio.dataInizioEmissione</b>
+		</field>
+				
+		<field>
+			<a>dataA</a>
+			<b>parametroRicercaProvvisorio.dataFineEmissione</b>
+		</field>
+		
+		
+		
+		<field>
+			<a>importoDa</a>
+			<b>parametroRicercaProvvisorio.importoDa</b>
+		</field>
+		
+		 <field>
+			<a>importoA</a>
+			<b>parametroRicercaProvvisorio.importoA</b>
+		</field>
+		
+		<field>
+			<a>numeroElementiPerPagina</a>
+			<b>numRisultatiPerPagina</b>
+		</field> 
+	
+		<field>
+			<a>numeroPagina</a>
+			<b>numPagina</b>
+		</field>
+		 
+	</mapping>
+	
+    <mapping map-id="ListProvvisorioDiCassa_IntegImpegnoProvvisorioDiCassa" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.ProvvisorioDiCassa</class-b>
+		
+		<field-exclude> 
+		  <a>tipoProvvisorioDiCassa</a> 
+		  <b>tipoProvvisorioDiCassa</b> 
+		</field-exclude>
+		
+		<field-exclude> 
+		  <a>stato</a> 
+		  <b>stato</b> 
+		</field-exclude>
+		
+		<field custom-converter-id="tipoProvvisorioFinToIntegConverter">
+  			 <a>this</a>
+   			 <b>this</b>
+  		</field>
+  		
+  		<field custom-converter-id="annullatoProvvisorioFinToIntegConverter">
+  			 <a>this</a>
+   			 <b>this</b>
+  		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>numero</b>
+		</field>
+		
+		<field>
+			<a>causale</a>
+			<b>causale</b>
+		</field>
+		
+		<field>
+			<a>dataEmissione</a>
+			<b>data</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>importo</b>
+		</field>
+		
+	</mapping>
+	
+	
+</mappings>

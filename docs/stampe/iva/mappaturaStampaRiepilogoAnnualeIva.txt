@@ -1,0 +1,138 @@
+INTESTAZIONE:
+	- Ente:
+		- Denominazione: /stampaRiepilogoAnnualeIvaReportModel/intestazione/ente/nome
+		- Indirizzo:     /stampaRiepilogoAnnualeIvaReportModel/intestazione/indirizzoSoggetto
+		- Partita IVA:   /stampaRiepilogoAnnualeIvaReportModel/intestazione/soggetto/partitaIva
+	- Anno Contabile: /stampaRiepilogoAnnualeIvaReportModel/intestazione/annoDiRiferimentoContabile	
+	- Numero pagina:  /stampaRiepilogoAnnualeIvaReportModel/intestazione/numeroDiPagina (ATTENZIONE! Viene indicato solo il numero di pagina iniziale)
+	- Gruppo:         /stampaRiepilogoAnnualeIvaReportModel/intestazione/gruppoAttivitaIva (/codice, /descrizione)
+
+	
+STAMPA RIEPILOGO ANNUALE - ACQUISTI IVA IMMEDIATA
+	SEZIONE 1:
+		(Ciclare su '/stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/acquistiIva/acquistoIva')
+		- A1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/acquistiIva/acquistoIva/aliquotaIva/codice
+		- B1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/acquistiIva/acquistoIva/aliquotaIva/percentualeAliquota
+		- C1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/acquistiIva/acquistoIva/aliquotaIva/tipoOperazioneIva
+		- D1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/acquistiIva/acquistoIva/aliquotaIva/descrizione
+		- E1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/acquistiIva/acquistoIva/aliquotaIva/percentualeIndetraibilita
+		- F1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/acquistiIva/acquistoIva/imponibile
+		- G1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/acquistiIva/acquistoIva/iva
+		
+		- Totale Indetraibili:    /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/totaleIndetraibiliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/totaleIndetraibiliIva 
+		- Totale Detraibili:      /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/totaleDetraibiliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/totaleDetraibiliIva
+		- Totale ES/N.I./F.C.I.:  /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/totaliEsNiFci
+		- Totali:                 /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/totaliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/totaliIva
+	    - Totali(escluso F.C.I.): /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaImmediata/totaliImponibileEsclusoFci
+		
+		
+STAMPA RIEPILOGO ANNUALE - ACQUISTI IVA DIFFERITA
+	SEZIONE 2:
+		(Ciclare su '/stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/acquistiIva/acquistoIva')
+		- A1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/acquistiIva/acquistoIva/aliquotaIva/codice
+		- B1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/acquistiIva/acquistoIva/aliquotaIva/percentualeAliquota
+		- C1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/acquistiIva/acquistoIva/aliquotaIva/tipoOperazioneIva
+		- D1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/acquistiIva/acquistoIva/aliquotaIva/descrizione
+		- E1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/acquistiIva/acquistoIva/aliquotaIva/percentualeIndetraibilita
+		- F1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/acquistiIva/acquistoIva/imponibile
+		- G1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/acquistiIva/acquistoIva/iva
+		
+		- Totale Indetraibili:    /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/totaleIndetraibiliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/totaleIndetraibiliIva 
+		- Totale Detraibili:      /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/totaleDetraibiliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/totaleDetraibiliIva
+		- Totale ES/N.I./F.C.I.:  /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/totaliEsNiFci
+		- Totali:                 /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/totaliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/totaliIva
+	    - Totali(escluso F.C.I.): /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferita/totaliImponibileEsclusoFci
+		
+		
+STAMPA RIEPILOGO ANNUALE - ACQUISTI IVA DIFFERITA PAGATA
+	SEZIONE 2:
+		(Ciclare su '/stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/acquistiIva/acquistoIva')
+		- A1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/acquistiIva/acquistoIva/aliquotaIva/codice
+		- B1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/acquistiIva/acquistoIva/aliquotaIva/percentualeAliquota
+		- C1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/acquistiIva/acquistoIva/aliquotaIva/tipoOperazioneIva
+		- D1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/acquistiIva/acquistoIva/aliquotaIva/descrizione
+		- E1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/acquistiIva/acquistoIva/aliquotaIva/percentualeIndetraibilita
+		- F1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/acquistiIva/acquistoIva/imponibile
+		- G1: /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/acquistiIva/acquistoIva/iva
+		
+		- Totale Indetraibili:    /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/totaleIndetraibiliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/totaleIndetraibiliIva 
+		- Totale Detraibili:      /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/totaleDetraibiliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/totaleDetraibiliIva
+		- Totale ES/N.I./F.C.I.:  /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/totaliEsNiFci
+		- Totali:                 /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/totaliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/totaliIva
+	    - Totali(escluso F.C.I.): /stampaRiepilogoAnnualeIvaReportModel/acquistiIvaDifferitaPagata/totaliImponibileEsclusoFci
+		
+		
+STAMPA RIEPILOGO ANNUALE - VENDITA IVA IMMEDIATA
+	SEZIONE 4:
+		(Ciclare su '/stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/venditeIva/venditaIva')
+		- A1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/venditeIva/venditaIva/aliquotaIva/codice
+		- B1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/venditeIva/venditaIva/aliquotaIva/percentualeAliquota
+		- C1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/venditeIva/venditaIva/aliquotaIva/tipoOperazioneIva
+		- D1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/venditeIva/venditaIva/aliquotaIva/descrizione
+		- F1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/venditeIva/venditaIva/imponibile
+		- G1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/venditeIva/venditaIva/iva
+		
+		- Totali:                 /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/totaliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/totaliIva 
+		- Totale ES/N.I./F.C.I.:  /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/totaliEsNiFci
+	    - Totali(escluso F.C.I.): /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/totaliImponibileEsclusoFci
+		                          /stampaRiepilogoAnnualeIvaReportModel/venditeIvaImmediata/totaliIvaEsclusoFci
+								  
+STAMPA RIEPILOGO ANNUALE - VENDITA IVA DIFFERITA
+	SEZIONE 5:
+		(Ciclare su '/stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/venditeIva/venditaIva')
+		- A1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/venditeIva/venditaIva/aliquotaIva/codice
+		- B1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/venditeIva/venditaIva/aliquotaIva/percentualeAliquota
+		- C1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/venditeIva/venditaIva/aliquotaIva/tipoOperazioneIva
+		- D1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/venditeIva/venditaIva/aliquotaIva/descrizione
+		- F1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/venditeIva/venditaIva/imponibile
+		- G1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/venditeIva/venditaIva/iva
+		
+		- Totali:                 /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/totaliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/totaliIva 
+		- Totale ES/N.I./F.C.I.:  /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/totaliEsNiFci
+	    - Totali(escluso F.C.I.): /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/totaliImponibileEsclusoFci
+		                          /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferita/totaliIvaEsclusoFci
+								  
+								  
+STAMPA RIEPILOGO ANNUALE - VENDITA IVA DIFFERITA INCASSATI
+	SEZIONE 6:
+		(Ciclare su '/stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/venditeIva/venditaIva')
+		- A1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/venditeIva/venditaIva/aliquotaIva/codice
+		- B1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/venditeIva/venditaIva/aliquotaIva/percentualeAliquota
+		- C1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/venditeIva/venditaIva/aliquotaIva/tipoOperazioneIva
+		- D1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/venditeIva/venditaIva/aliquotaIva/descrizione
+		- F1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/venditeIva/venditaIva/imponibile
+		- G1: /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/venditeIva/venditaIva/iva
+		
+		- Totali:                 /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/totaliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/totaliIva 
+		- Totale ES/N.I./F.C.I.:  /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/totaliEsNiFci
+	    - Totali(escluso F.C.I.): /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/totaliImponibileEsclusoFci
+		                          /stampaRiepilogoAnnualeIvaReportModel/venditeIvaDifferitaIncassati/totaliIvaEsclusoFci
+								  
+								  
+STAMPA RIEPILOGO ANNUALE - CORRISPETTIVI
+	SEZIONE 7:
+		(Ciclare su '/stampaRiepilogoAnnualeIvaReportModel/corrispettivi/venditeIva/venditaIva')
+		- A1: /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/venditeIva/venditaIva/aliquotaIva/codice
+		- B1: /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/venditeIva/venditaIva/aliquotaIva/percentualeAliquota
+		- C1: /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/venditeIva/venditaIva/aliquotaIva/tipoOperazioneIva
+		- D1: /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/venditeIva/venditaIva/aliquotaIva/descrizione
+		- F1: /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/venditeIva/venditaIva/imponibile
+		- G1: /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/venditeIva/venditaIva/iva
+		
+		- Totali:                 /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/totaliImponibile
+		                          /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/totaliIva 
+		- Totale ES/N.I./F.C.I.:  /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/totaliEsNiFci
+	    - Totali(escluso F.C.I.): /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/totaliImponibileEsclusoFci
+		                          /stampaRiepilogoAnnualeIvaReportModel/corrispettivi/totaliIvaEsclusoFci

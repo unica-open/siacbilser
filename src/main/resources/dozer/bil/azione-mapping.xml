@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="SiacTAzione_Azione" wildcard="true">
+		<class-a>it.csi.siac.siaccorser.model.Azione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAzione</class-b>
+		
+		<field>
+			<a>nome</a>
+			<b>azioneCode</b>
+		</field>
+		<field>
+			<a>nomeProcesso</a>
+			<b>nomeprocesso</b>
+		</field>
+		<field>
+			<a>nomeTask</a>
+			<b>nometask</b>
+		</field>
+		<!-- Tipo non dovrebbe servire -->
+		<field>
+			<a>titolo</a>
+			<b>azioneDesc</b>
+		</field>
+		<field>
+			<a>urlApplicazione</a>
+			<b>urlapplicazione</b>
+		</field>
+		<field>
+			<a>flagVerificaSac</a>
+			<b>verificauo</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTAzione_Azione_ConGruppo" wildcard="true">
+		<class-a>it.csi.siac.siaccorser.model.Azione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAzione</class-b>
+		
+		<field map-id="SiacTAzione_Azione">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacDGruppoAzioni_GruppoAzioni">
+			<a>gruppo</a>
+			<b>siacDGruppoAzioni</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDGruppoAzioni_GruppoAzioni" wildcard="true">
+		<class-a>it.csi.siac.siaccorser.model.GruppoAzioni</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDGruppoAzioni</class-b>
+		
+		<field>
+			<a>nome</a>
+			<b>gruppoAzioniCode</b>
+		</field>
+		<field>
+			<a>titolo</a>
+			<b>titolo</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>gruppoAzioniDesc</b>
+		</field>
+	
+	</mapping>
+	
+</mappings>

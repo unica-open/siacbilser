@@ -1,0 +1,68 @@
+name*,version*,license*,vendor/community,end-of-support,dependencies,language
+antlr,2.7.7-redhat-1,BSD 3-clause,,,,java
+aopalliance,1.0.0,Public Domain,,,,java
+asm,3.3.1,BSD 3-clause,,,,java
+cglib,2.2.2,Apache 2.0,,,,java
+commons-beanutils,1.8.3,Apache 2.0,,,,java
+commons-codec,1.7,Apache 2.0,,,,java
+commons-collections,3.2.1,Apache 2.0,,,,java
+commons-dbcp,1.2.2,Apache 2.0,,,,java
+commons-httpclient,3.1,Apache 2.0,,,,java
+commons-io,2.1,Apache 2.0,,,,java
+commons-lang,2.6,Apache 2.0,,,,java
+commons-lang3,3.1,Apache 2.0,,,,java
+commons-logging,1.1,Apache 2.0,,,,java
+commons-logging,1.1.1,Apache 2.0,,,,java
+commons-pool,1.5.2,Apache 2.0,,,,java
+cxf-api,2.4.6-redhat-1,Apache 2.0,,,,java
+dom4j,1.6.1,BSD 4-clause,,,,java
+dom4j,1.6.1-redhat-1,BSD 4-clause,,,,java
+dozer,5.3.2,Apache 2.0,,,,java
+hamcrest-all,1.3,BSD 2-clause,,,,java
+hibernate-commons-annotations,4.0.1.Final-redhat-1,LGPL 2.1,,,,java
+hibernate-core,4.1.3.Final-redhat-1,LGPL 2.1,,,,java
+hibernate-entitymanager,4.1.3.Final-redhat-1,LGPL 2.1,,,,java
+hibernate-jpa-2.0-api,1.0.1.Final-redhat-1,EPL 1.0,,,,java
+hibernate-validator,4.2.0.Final-redhat-1,Apache 2.0,,,,java
+jackson-core-asl,1.9.2-redhat-1,Apache 2.0,,,,java
+jackson-mapper-asl,1.9.2-redhat-1,Apache 2.0,,,,java
+javassist,3.16.1-GA,Apache 2.0+LGPL 2.1+MPL 1.1,,,,java
+jboss-ejb-api_3.1_spec,1.0.2.Final-redhat-1,CDDL+GPL 2.0,,,,java
+jboss-jsp-api_2.2_spec,1.0.1.Final-redhat-1,LGPL 2.1,,,,java
+jboss-jstl-api_1.2_spec,1.0.3.Final-redhat-1,CDDL+GPL 1.0,,,,java
+jboss-logging,3.1.1.GA-redhat-1,LGPL 2.1,,,,java
+jboss-transaction-api_1.1_spec,1.0.1.Final-redhat-1,CDDL+GPL 2.0,,,,java
+jboss-servlet-api_3.0_spec,1.0.1.Final-redhat-1,CDDL+GPL 2.0,,,,java
+jtype,0.1.1-redhat-1,Apache 2.0,,,,java
+junit,4.11,EPL 1.0,,,,java
+log4j,1.2.15,Apache 2.0,,,,java
+poi,3.9,Apache 2.0,,,,java
+poi-ooxml,3.9,Apache 2.0,,,,java
+poi-ooxml-schemas,3.9,Apache 2.0,,,,java
+poi-scratchpad,3.9,Apache 2.0,,,,java
+postgresql,9.3-1101.jdbc4,POSTGRESQL,,,,java
+slf4j-api,1.5.8,MIT,,,,java
+slf4j-jdk14,1.5.8,MIT,,,,java
+spring-aop,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-asm,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-beans,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-context,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-core,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-data-commons-core,1.4.0.RELEASE,Apache 2.0,,,,java
+spring-data-jpa,1.2.0.RELEASE,Apache 2.0,,,,java
+spring-expression,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-jdbc,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-orm,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-test,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-tx,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-web,3.1.1.RELEASE,Apache 2.0,,,,java
+spring-webmvc,3.1.1.RELEASE,Apache 2.0,,,,java
+stax-api,1.0.1,CDDL 1.0+GPL 3.0,,,,java
+
+token-retry,2.0.0,???,,,,java
+
+validation-api,1.0.0.GA-redhat-1,Apache 2.0,,,,java
+xmlbeans,2.4.0,Apache 2.0,,,,java
+xmlpull,1.1.3.1,Public Domain,,,,java
+xpp3_min,1.1.4c,CC0 1.0+Public Domain,,,,java
+xstream,1.4.2,BSD 2-clause,,,,java

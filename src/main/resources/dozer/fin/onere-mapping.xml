@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+
+
+	<mapping map-id="SiacDOnereFin_TipoOnere" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.TipoOnere</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDOnereFin</class-b>
+
+		<field>
+			<a>codice</a>
+			<b>onereCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>onereDesc</b>
+		</field>
+
+		<field map-id="SiacDOnereTipoFin_NaturaOnere">
+			<a>naturaOnere</a>
+			<b>siacDOnereTipo</b>
+		</field>
+
+	</mapping>
+	
+	
+	<mapping map-id="SiacDOnereTipoFin_NaturaOnere" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.NaturaOnere</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDOnereTipoFin</class-b>
+
+		<field>
+			<a>codice</a>
+			<b>onereTipoCode</b>
+		</field>
+
+		<field>
+			<a>descrizione</a>
+			<b>onereTipoDesc</b>
+		</field>
+
+	</mapping>
+
+	
+
+</mappings>

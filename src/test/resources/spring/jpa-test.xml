@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+           				   http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/data/jpa
+    					   http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+	<!-- Accesso a JPA da Spring -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+
+		<property name="packagesToScan">
+			<list>
+				<value>it.csi.siac.siaccorser.business.dto</value>
+				<value>it.csi.siac.siacbilser.business.dto</value>
+				<value>it.csi.siac.siacbilser.integration.entity</value>
+				<value>it.csi.siac.siacfinser.integration.entity</value>
+			</list>
+		</property>
+
+
+		<property name="jpaVendorAdapter">
+			<!-- Impostiamo hibernate come implementazione JPA -->
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="showSql" value="true" />
+				<property name="generateDdl" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.PostgreSQLDialect"/>
+				<!-- property name="database" value="POSTGRESQL" / -->
+				
+			</bean>
+		</property>
+		
+<!-- 		<property name="jpaDialect"> -->
+<!--             <bean class="it.csi.siac.siacbilser.integration.utility.HibernateExtendedJpaDialect"/> -->
+<!--         </property> -->
+		
+		<property name="jpaProperties">
+	        <props>
+	            <prop key="hibernate.format_sql">false</prop>
+	            <prop key="hibernate.id.new_generator_mappings">true</prop>
+	            
+	            <!-- Workaround per il blocco in fase di configurazione? -->
+<!-- 	            <prop key="hibernate.jdbc.use_get_generated_keys">true</prop> -->
+<!-- 	            <prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop> -->
+	           <!-- <prop key="hibernate.ejb.use_class_enhancer">true</prop> for dev only!!This tells Hibernate that it may use the "application server" class transformation by calling addTransformer on the PersistenceUnitInfo instance. -->
+	           <!-- http://stackoverflow.com/questions/18423019/how-to-enable-load-time-runtime-weaving-with-hibernate-jpa-and-spring-framewor -->
+	           <!-- <prop key="AvailableSettings.USE_CLASS_ENHANCER">true</prop for dev only!! -->
+	           <!-- <prop key="hibernate.ejb.classcache.it.csi.siac.siacbilser.integration.entity.SiacTEnteBase">read-write</prop>-->
+	        </props>
+    	</property>
+	</bean>
+
+
+	<!-- Gestore delle transazioni di Spring -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+	
+	
+
+	<!-- abilita la gestione delle transazioni dichiarativa tramite l'annotation 
+		@Transactional -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- abilita l'interpretazione delle annotazioni @PersistenceUnit/@PersistenceContext 
+		per l'accesso a EntityManagerFactory/EntityManager -->
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+		
+
+	<jpa:repositories base-package="it.csi.siac.siacbilser.integration.dao, it.csi.siac.siaccorser.integration.dao, it.csi.siac.siacfinser.integration.dao" />
+	
+
+</beans>

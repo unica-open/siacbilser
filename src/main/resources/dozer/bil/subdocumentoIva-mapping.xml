@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+          
+    <mapping map-id="SiacTSubdocIva_SubdocumentoIva_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdocIva</class-b>
+		
+		<field>
+			<a>progressivoIVA</a>
+			<b>subdocivaNumero</b>
+		</field>
+		<field>
+			<a>annoEsercizio</a>
+			<b>subdocivaAnno</b>
+		</field>	
+		<field>
+			<a>dataRegistrazione</a>
+			<b>subdocivaDataRegistrazione</b>
+		</field>
+		
+		<field>
+			<a>dataProtocolloDefinitivo</a>
+			<b>subdocivaDataProtDef</b>
+		</field>
+		
+		<field>
+			<a>numeroProtocolloDefinitivo</a>
+			<b>subdocivaProtDef</b>
+		</field>
+		
+		<field>
+			<a>dataProtocolloProvvisorio</a>
+			<b>subdocivaDataProtProv</b>
+		</field>
+		
+		<field>
+			<a>numeroProtocolloProvvisorio</a>
+			<b>subdocivaProtProv</b>
+		</field>		 
+		<field>
+			<a>descrizioneIva</a>
+			<b>subdocivaDesc</b>
+		</field>		
+		<field>
+			<a>numeroOrdinativoDocumento</a>
+			<b>subdocivaNumordinativodoc</b>
+		</field>	
+		
+		<field>
+			<a>dataOrdinativoDocumento</a>
+			<b>subdocivaDataOrdinativoadoc</b>
+		</field>	
+		
+		<field>
+			<a>dataCassaDocumento</a>
+			<b>subdocivaDataCassadoc</b>
+		</field>	
+		
+		<field>
+			<a>importoInValuta</a>
+			<b>subdocivaImportoValuta</b>
+		</field>
+	</mapping>
+    
+    <mapping map-id="SiacTSubdocIva_SubdocumentoIva_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdocIva</class-b>
+		
+		<field map-id="SiacTSubdocIva_SubdocumentoIva_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>	
+		<field map-id="SiacTIvaAttivita_AttivitaIva_Minimal">
+			<a>attivitaIva</a>
+ 			<b>siacTIvaAttivita</b>
+		</field>
+		
+		<field map-id="SiacDValuta_Valuta">
+			<a>valuta</a>
+			<b>siacDValuta</b>
+		</field>	
+		
+		<field map-id="SiacDIvaRegistrazioneTipo_TipoRegistrazioneIva">
+			<a>tipoRegistrazioneIva</a>
+			<b>siacDIvaRegistrazioneTipo</b>
+		</field>	
+		
+		<field custom-converter-id="subdocumentoIvaDocumentoConverter">
+			<a>this</a> <!-- Documento -->
+ 			<b>this</b> <!-- SiacRDocIva -->
+		</field>
+		
+		<field custom-converter-id="subdocumentoIvaRegistroIvaConverter"> <!-- TODO eliminare questo converter e utilizzare map-id SiacTIvaRegistro_RegistroIva_Base quando pronto-->
+			<a>this</a> <!-- tipoRegistroIva -->
+ 			<b>this</b> <!-- direttamente siac_t_iva_registro -->
+		</field>
+		
+		<field custom-converter-id="subdocumentoIvaAliquoteConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="subdocumentoIvaStatoConverter">
+			<a>statoSubdocumentoIva</a> <!-- statoSubdocumentoIva -->
+ 			<b>this</b> <!-- siac_r_subdoc_iva_stato -->
+		</field>
+	</mapping>
+          
+	<mapping map-id="SiacTSubdocIva_SubdocumentoIva" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.SubdocumentoIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSubdocIva</class-b>
+		
+			
+		<field map-id="SiacTSubdocIva_SubdocumentoIva_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>			
+		
+		<field custom-converter-id="subdocumentoIvaSubdocumentiCollegatiConverter">
+			<a>this</a> <!-- listaSubdocumenti -->
+ 			<b>this</b> <!-- SiacRSubdocSubdocIva -->
+		</field>		
+		
+		<!--  Da non implementare in questa fase!
+		<field custom-converter-id="subdocumentoIvaDocumentoIvaConverter">
+			<a>this</a> Documento
+ 			<b>this</b> SiacRDocIva.SiacTDocIva
+		</field> -->		
+		
+		<field custom-converter-id="subdocumentoIvaAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>	
+						
+	</mapping>
+	
+	
+	
+</mappings>

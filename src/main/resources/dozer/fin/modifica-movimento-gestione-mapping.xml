@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 
+
+	<mapping map-id="SiacTModificaBIL_ModificaMovimentoGestioneSpesa">
+		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTModifica</class-b>
+
+		<field>
+			<a>idModificaMovimentoGestione</a>
+			<b>modId</b>
+		</field>
+
+		<field>
+			<a>numeroModificaMovimentoGestione</a>
+			<b>modNum</b>
+		</field>
+
+		<field>
+			<a>descrizioneModificaMovimentoGestione</a>
+			<b>modDesc</b>
+		</field>
+
+		<field>
+			<a>dataModificaMovimentoGestione</a>
+			<b>modData</b>
+		</field>
+
+		<field>
+			<a>utenteCreazione</a>
+			<b>loginOperazione</b>
+		</field>
+
+		<field>
+			<a>dataAnnullamento</a>
+			<b>dataCancellazione</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoAnno</a>
+			<b>siacTAttoAmm.attoammAnno</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoNumero</a>
+			<b>siacTAttoAmm.attoammNumero</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoTipoCode</a>
+			<b>siacTAttoAmm.siacDAttoAmmTipo.attoammTipoCode</b>
+		</field>
+		
+  	</mapping>  	
+
+	<mapping map-id="SiacTModificaBIL_ModificaMovimentoGestioneEntrata">
+		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneEntrata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTModifica</class-b>
+
+		<field>
+			<a>idModificaMovimentoGestione</a>
+			<b>modId</b>
+		</field>
+
+		<field>
+			<a>numeroModificaMovimentoGestione</a>
+			<b>modNum</b>
+		</field>
+
+		<field>
+			<a>descrizioneModificaMovimentoGestione</a>
+			<b>modDesc</b>
+		</field>
+
+		<field>
+			<a>dataModificaMovimentoGestione</a>
+			<b>modData</b>
+		</field>
+
+		<field>
+			<a>utenteCreazione</a>
+			<b>loginOperazione</b>
+		</field>
+
+		<field>
+			<a>dataAnnullamento</a>
+			<b>dataCancellazione</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoAnno</a>
+			<b>siacTAttoAmm.attoammAnno</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoNumero</a>
+			<b>siacTAttoAmm.attoammNumero</b>
+		</field>
+
+		<field>
+			<a>attoAmministrativoTipoCode</a>
+			<b>siacTAttoAmm.siacDAttoAmmTipo.attoammTipoCode</b>
+		</field>
+		
+  	</mapping>
+</mappings>

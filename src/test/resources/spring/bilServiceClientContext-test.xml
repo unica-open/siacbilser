@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:property-placeholder location="classpath:spring/bilServiceClient.properties" />
+
+	<!-- 
+		Per utilizzare il servizio all'interno della propria Action o componente di Spring basta dichiarare un field a livello di classe in questo modo: 
+		
+		@Autowired
+		private CapitoloUscitaPrevisioneService capitoloUscitaPrevisioneService;	
+	-->
+	
+	<!-- ################ Servizi di Bilancio ################# -->
+	
+	<bean name="capitoloUscitaGestioneService" class="it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneServiceImpl" />
+	<bean name="capitoloEntrataGestioneService" class="it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneServiceImpl" />
+	
+	<bean name="documentoService" class="it.csi.siac.siacbilser.frontend.webservice.DocumentoServiceImpl" />
+	<bean name="documentoSpesaService" class="it.csi.siac.siacbilser.frontend.webservice.DocumentoSpesaServiceImpl" />
+	<bean name="preDocumentoSpesaService" class="it.csi.siac.siacbilser.frontend.webservice.PreDocumentoSpesaServiceImpl" />
+	<bean name="documentoEntrataService" class="it.csi.siac.siacbilser.frontend.webservice.DocumentoEntrataServiceImpl" />
+	<bean name="preDocumentoEntrataService" class="it.csi.siac.siacbilser.frontend.webservice.PreDocumentoEntrataServiceImpl" />
+	<bean name="classificatoreBilService" class="it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilServiceImpl" />
+	
+	<!-- ################ Servizi di Atti ################# -->
+	
+	<bean name="provvedimentoService" class="it.csi.siac.siacbilser.frontend.webservice.ProvvedimentoServiceImpl" />
+	
+	<!-- ################ Servizi di Core ################# -->
+	
+	<bean id="coreService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.CoreService" />
+		<property name="wsdlDocumentUrl" value="${endpoint.url.service.cor}/CoreService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+		<property name="serviceName" value="CoreService" />
+		<property name="endpointAddress" value="${endpoint.url.service.cor}/CoreService" />
+		<property name="lookupServiceOnStartup" value="false" />
+	</bean>
+	<bean id="classificatoreService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService" />
+		<property name="wsdlDocumentUrl" value="${endpoint.url.service.cor}/ClassificatoreService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+		<property name="serviceName" value="ClassificatoreService" />
+		<property name="endpointAddress" value="${endpoint.url.service.cor}/ClassificatoreService" />
+		<property name="lookupServiceOnStartup" value="false" />
+	</bean>	
+	<bean id="fileService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.FileService" />
+		<property name="wsdlDocumentUrl" value="${endpoint.url.service.cor}/FileService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+		<property name="serviceName" value="FileService" />
+ 		<property name="endpointAddress" value="${endpoint.url.service.cor}/FileService" />
+ 		<property name="lookupServiceOnStartup" value="false" />
+	</bean>
+	<bean id="operazioneAsincronaService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService" />
+		<property name="wsdlDocumentUrl" value="${endpoint.url.service.cor}/OperazioneAsincronaService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+		<property name="serviceName" value="OperazioneAsincronaService" />
+		<property name="endpointAddress" value="${endpoint.url.service.cor}/OperazioneAsincronaService" />
+		<property name="lookupServiceOnStartup" value="false" />
+	</bean>
+	
+	<!-- ################ Servizi di Fin ################# -->
+	
+	<!-- movimentoGestioneService e liquidazioneService sono definiti come @Component sull'implementazione del WS -->
+	<bean name="soggettoService" class="it.csi.siac.siacfinser.frontend.webservice.SoggettoServiceImpl" />
+	<bean name="genericService" class="it.csi.siac.siacfinser.frontend.webservice.GenericServiceImpl" />
+	<bean name="provvisorioService" class="it.csi.siac.siacfinser.frontend.webservice.ProvvisorioServiceImpl" />
+	<bean name="documentiService" class="it.csi.siac.siacintegser.frontend.webservice.documenti.DocumentiServiceImpl" />
+	
+	<!-- ################ Servizio generazione Report ########### -->
+	
+	<bean id="reportService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ReportService" />
+		<property name="wsdlDocumentUrl" value="${endpoint.url.service.rep}/ReportService?wsdl" />
+		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
+		<property name="serviceName" value="ReportService" />
+		<property name="endpointAddress" value="${endpoint.url.service.rep}/ReportService" />
+		<property name="lookupServiceOnStartup" value="false" />
+	</bean>
+
+	<!-- ################ Servizi di MARC per integrazione PCC ################# -->
+	
+	<!-- TODO dati da parametrizzare -->
+	<bean id="marcWS" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.siac.pcc.marc.services.webservices_1_0.MarcWSPortType" />
+		<property name="wsdlDocumentUrl" value="http://dev-srv-marc.bilancio.csi.it/wso004/services/MarcProxyService?wsdl" />
+		<property name="namespaceUri" value="http://www.csi.it/marc/services/webservices-1.0" />
+		<property name="serviceName" value="MarcProxyService" />
+		<property name="endpointAddress" value="http://dev-srv-marc.bilancio.csi.it/wso004/services/MarcProxyService" />
+		<property name="lookupServiceOnStartup" value="false" />
+	</bean>
+	
+	<bean id="felWS" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.fel.eis.bilanciotofel.BilancioToFel" />
+		<property name="wsdlDocumentUrl" value="http://tst-jb1fel.bilancio.csi.it:8121/http-router/webservices/bilancioToFelService?wsdl" />
+		<property name="namespaceUri" value="http://www.csi.it/fel/eis/bilancioToFel" />
+		<property name="serviceName" value="BilancioToFel" />
+		<property name="endpointAddress" value="http://tst-jb1fel.bilancio.csi.it:8121/http-router/webservices/bilancioToFelService" />
+		<property name="lookupServiceOnStartup" value="false" />
+  	</bean>
+	
+	
+	<!-- ################ Servizi di HR per la Cassa Economale ################# -->
+	
+	<bean id="iMissioniService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.srvpers.rapws.interfaccecxf.services.missioni.IMissioniService" />
+		<property name="wsdlDocumentUrl" value="https://tst-api-ent.ecosis.csi.it/wso007/registry/resource/_system/governance/apimgt/applicationdata/wsdls/pers-cre--PERS_RAP_RP-01_missioni-T1.0.wsdl" />
+		<property name="namespaceUri" value="http://missioni.services.interfaccecxf.rapws.srvpers.csi.it/" />
+		<property name="serviceName" value="MissioniServiceService" />
+		<property name="endpointAddress" value="http://tst-api-ent.ecosis.csi.it:80/api/PERS_RAP_RP-01_missioni-T/1.0" />
+		<property name="lookupServiceOnStartup" value="false" />
+		<property name="handlerResolver">
+			<bean id="missioniServiceHandlerResolver" class="it.csi.siac.siacbilser.business.utility.WSO2HandlerResolver">
+				<property name="tokenRenewalUrl" value="https://tst-api-ent.ecosis.csi.it/api/token" />
+				<property name="consumerKey" value="TlzP4YdiqmaYfbfPtNEUj7M9WLwa" />
+				<property name="consumerSecret" value="XBgJcNVVLJM4ZogfZJjo1mep65ka" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- ################ Servizi di APPJ  ################# -->
+	
+	<bean id="appjWS" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+		<property name="serviceInterface" value="it.csi.appjwebsrv.business.WSInterface" />
+		<property name="wsdlDocumentUrl" value="https://tst-api-ent.ecosis.csi.it/wso007/registry/resource/_system/governance/apimgt/applicationdata/provider/bilancio-cre/BILANCIO_PROCUREMENT_CMTO_VerificaEvasione/1.0/documentation/files/bilancio-cre--BILANCIO_PROCUREMENT_CMTO_VerificaEvasione1.0.wsdl" />
+		<property name="namespaceUri" value="http://business.appjwebsrv.csi.it/" />
+		<property name="serviceName" value="WsImplService" />
+		<property name="endpointAddress" value="http://tst-api-ent.ecosis.csi.it:80/api/BILANCIO_PROCUREMENT_CMTO_VerificaEvasione/1.0" />
+		<property name="lookupServiceOnStartup" value="false" />
+		<property name="handlerResolver">
+			<bean id="appjWSHandlerResolver" class="it.csi.siac.siacbilser.business.utility.WSO2HandlerResolver">
+				<property name="tokenRenewalUrl" value="https://tst-api-ent.ecosis.csi.it/api/token" />
+				<property name="consumerKey" value="4v26TIUXYi6uxGm6wfeCJZiZiyYa" />
+				<property name="consumerSecret" value="25AG0MeFWw7F0u0pVdn0JOjvoa0a" />
+			</bean>
+		</property>
+	</bean>
+	
+</beans>

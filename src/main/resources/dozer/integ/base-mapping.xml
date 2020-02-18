@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="EntitaBase_Entita" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.model.base.EntitaBase</class-a>
+		<class-b>it.csi.siac.siaccorser.model.Entita</class-b>
+	</mapping>
+
+	<mapping map-id="BaseRequest_ServiceRequest" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.base.BaseRequest</class-a>
+		<class-b>it.csi.siac.siaccorser.model.ServiceRequest</class-b>
+	</mapping>
+
+	<mapping map-id="BaseResponse_ServiceResponse" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.base.BaseResponse</class-a>
+		<class-b>it.csi.siac.siaccorser.model.ServiceResponse</class-b>
+	</mapping>
+
+</mappings>

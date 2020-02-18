@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<elenchiDocumentiAllegato>
+	<elenchi>
+		<elenco>
+			<annoSysEsterno>2019</annoSysEsterno>
+			<numeroSysEsterno>FRUITORE1</numeroSysEsterno>
+			<allegatoAtto>
+				<uid>-13</uid>
+				<attoAmministrativo>
+					<anno>2019</anno>
+					<tipoAtto>
+						<codice>ALG</codice>
+					</tipoAtto>
+					<statoOperativo>DEFINITIVO</statoOperativo>
+					<strutturaAmmContabile>
+						<codice>A15000</codice>
+					</strutturaAmmContabile>
+				</attoAmministrativo>
+				<causale>Causale proposta liquidazione FRUITORE1</causale>
+				<ente/>
+			</allegatoAtto>				
+			<subdocumenti>
+				<subdocumentoSpesa>
+					<documentoSpesa>
+						<uid>-336</uid>
+						<anno>2019</anno>
+						<numero>FRUITORE1-provv-con SAC</numero>
+						<importo>0.03</importo>
+						<descrizione>documento del fruitore 1, con inserimento del provvedimento in automatico </descrizione>
+						<codiceBollo>
+							<codice>99</codice>
+						</codiceBollo>
+						<dataEmissione>2019-08-28</dataEmissione>
+						<soggetto>
+							<codiceSoggetto>108297</codiceSoggetto>
+						</soggetto>
+						<tipoDocumento>
+							<codice>FAT</codice>
+							<tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+						</tipoDocumento>
+					</documentoSpesa>
+					<impegno>
+						<annoMovimento>2019</annoMovimento>
+						<numero>573</numero>
+					</impegno>
+					<importo>0.01</importo>
+					<descrizione>quota uno del documento del FRUITORE1 </descrizione>
+					<modalitaPagamentoSoggetto>
+						<codiceModalitaPagamento>5</codiceModalitaPagamento>
+					</modalitaPagamentoSoggetto>					
+				</subdocumentoSpesa>
+			</subdocumenti>				
+			<subdocumentiIva/>
+		</elenco>
+	</elenchi>
+</elenchiDocumentiAllegato>

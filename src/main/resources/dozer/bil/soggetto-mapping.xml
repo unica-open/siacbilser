@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+
+	<mapping map-id="SiacTIndirizzoSoggetto_IndirizzoSoggetto">
+		<class-a>it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIndirizzoSoggetto</class-b>
+		
+		<!-- Ignorati: idComune, indirizzoId, indirizzoIdProvvisorio, idTipoIndirizzo, idTipoIndirizzoDesc, codiceNazione -->
+		<field>
+			<a>comune</a>
+			<b>siacTComune.comuneDesc</b>
+		</field>
+		<field>
+			<a>sedime</a>
+			<b>siacDViaTipo.viaTipoDesc</b>
+		</field>
+		<field>
+			<a>cap</a>
+			<b>zipCode</b>
+		</field>
+		<field>
+			<a>denominazione</a>
+			<b>toponimo</b>
+		</field>
+		<field>
+			<a>codiceNazione</a>
+			<b>siacTComune.siacTNazione.nazioneCode</b>
+		</field>
+		
+		<!-- Campi che dovrebbero essere gestiti in automatico: avviso, principale, numeroCivico -->
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanStringToStringFinConverter">
+			<a>principale</a>
+			<b>principale</b>
+		</field>
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanStringToStringFinConverter">
+			<a>avviso</a>
+			<b>avviso</b>
+		</field>
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStringConverter">
+			<a>checkPrincipale</a>
+			<b>principale</b>
+		</field>
+		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStringConverter">
+			<a>checkAvviso</a>
+			<b>avviso</b>
+		</field>
+		<field>
+			<a>numeroCivico</a>
+			<b>numeroCivico</b>
+		</field>
+		<field custom-converter-id="indirizzoSoggettoProvinciaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<!-- Copio il minimo indispensabile. Ampliare nel caso si vogliano altri dati -->
+	<mapping map-id="SiacTSoggetto_Soggetto">
+		<class-a>it.csi.siac.siacfinser.model.soggetto.Soggetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSoggetto</class-b>
+		<field>
+			<a>codiceSoggetto</a>
+			<b>soggettoCode</b>
+		</field>
+		<field>
+			<a>denominazione</a>
+			<b>soggettoDesc</b>
+		</field>
+	</mapping>
+	
+	<!-- Copio il minimo indispensabile.con campo matricola -->
+	<mapping map-id="SiacTSoggetto_Soggetto_Matricola">
+		<class-a>it.csi.siac.siacfinser.model.soggetto.Soggetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSoggetto</class-b>
+		<field map-id="SiacTSoggetto_Soggetto">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="soggettoMatricolaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTSoggetto_Soggetto_Indirizzo">
+		<class-a>it.csi.siac.siacfinser.model.soggetto.Soggetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSoggetto</class-b>
+		<field>
+			<a>codiceSoggetto</a>
+			<b>soggettoCode</b>
+		</field>
+		<field>
+			<a>denominazione</a>
+			<b>soggettoDesc</b>
+		</field>
+		<field custom-converter-id="soggettoIndirizziConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field>
+			<a>tipoSoggetto.soggettoTipoCode</a>
+			<b>siacRSoggettoTipos[0].siacDSoggettoTipo.soggettoTipoCode</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacDSoggettoClasse_ClasseSoggetto">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.ClasseSoggetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDSoggettoClasse</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>soggettoClasseCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>soggettoClasseDesc</b>
+		</field>
+	</mapping>
+	
+	<!-- Copio il minimo indispensabile.con con i campi DURC -->
+	<mapping map-id="SiacTSoggetto_Soggetto_DatiDurc">
+		<class-a>it.csi.siac.siacfinser.model.soggetto.Soggetto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTSoggetto</class-b>
+		<field map-id="SiacTSoggetto_Soggetto">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="soggettoDatiDurcConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+
+</mappings>

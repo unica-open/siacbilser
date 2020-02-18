@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+   
+	
+	
+	<mapping map-id="SiacDDocTipo_TipoDocumento" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.TipoDocumento</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDDocTipo</class-b>
+	
+		<field>
+			<!-- Si puo' omettere -->
+			<a>uid</a>
+			<b>docTipoId</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>docTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>docTipoDesc</b>
+		</field>
+		
+		<field>
+			<a>codiceGruppo</a>
+			<b>siacDDocGruppo.docGruppoTipoCode</b>
+		</field>	
+
+		<field custom-converter-id="tipoDocumentoAttrConverter"> 
+			<!-- Serve solo in lettura -->
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="tipoDocumentoFamTipoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+				
+	</mapping>
+	
+	
+	
+	
+	
+	
+	<mapping map-id="SiacTDoc_Documento_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.Documento</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTDoc</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+	
+		<field>
+			<a>anno</a>
+			<b>docAnno</b>
+		</field>
+		
+		<field>
+			<a>numero</a>
+			<b>docNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>docDesc</b>
+		</field>
+		
+		<field>
+			<a>importo</a>
+			<b>docImporto</b>
+		</field>
+		
+		<field>
+			<a>dataEmissione</a>
+			<b>docDataEmissione</b>
+		</field>
+		
+		<field>
+			<a>dataScadenza</a>
+			<b>docDataScadenza</b>
+		</field>		
+		
+		<field map-id="SiacDDocTipo_TipoDocumento">
+			<a>tipoDocumento</a>
+			<b>siacDDocTipo</b>
+		</field>
+					
+		<field custom-converter-id="documentoSoggConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>		
+						
+	</mapping>
+	
+	
+	
+</mappings>

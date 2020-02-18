@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	
+	<mapping map-id="SiacRBilElemAttoLegge_AttoDiLeggeCapitolo" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.AttoDiLeggeCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacRBilElemAttoLegge</class-b>
+		
+		<field>
+			<a>dataInizioFinanz</a>
+			<b>finanziamentoInizio</b>
+		</field>
+		
+		<field>
+			<a>dataFineFinanz</a>
+			<b>finanziamentoFine</b>
+		</field>
+		
+		<field map-id="SiacTAttoLegge">
+			<a>attoDiLegge</a>
+			<b>siacTAttoLegge</b>
+		</field>
+		
+	</mapping>
+		
+	<mapping map-id="SiacTAttoLegge" wildcard="true">
+		<class-a>it.csi.siac.siacattser.model.AttoDiLegge</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAttoLegge</class-b>
+
+		<field>
+			<a>anno</a>
+			<b>attoleggeAnno</b>
+		</field>
+		<field>
+			<a>articolo</a>
+			<b>attoleggeArticolo</b>
+		</field>
+		<field>
+			<a>punto</a>
+			<b>attoleggePunto</b>
+		</field>
+		<field>
+			<a>comma</a>
+			<b>attoleggeComma</b>
+		</field>
+		<field>
+			<a>numero</a>
+			<b>attoleggeNumero</b>
+		</field>
+		<field>
+			<a>anno</a>
+			<b>attoleggeAnno</b>
+		</field>
+	</mapping>
+
+
+	<mapping map-id="SiacTBilElem_Capitolo">
+		<class-a>it.csi.siac.siacbilser.model.Capitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTBilElem</class-b>
+
+		<field>
+			<a>numeroCapitolo</a>
+			<b>elemCode</b>
+		</field>		
+		<field>
+			<a>numeroArticolo</a>
+			<b>elemCode2</b>
+		</field>
+		<field>
+			<a>numeroUEB</a>
+			<b>elemCode3</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>elemDesc</b>
+		</field>	
+		<field>
+			<a>descrizioneArticolo</a>
+			<b>elemDesc2</b>
+		</field>
+		<field custom-converter="it.csi.siac.siaccommonser.business.dtomapping.converter.StringFormatConverter" custom-converter-param="%05d"
+			type="one-way">
+			<a>numeroCapitolo</a> <!-- Integer -->
+			<b>ordine</b><!-- String -->
+		</field>	
+		<field custom-converter="it.csi.siac.siaccommonser.business.dtomapping.converter.YearDateConverter">
+			<a>annoCreazioneCapitolo</a> <!-- Integer -->
+			<b>dataCreazione</b><!-- java.util.Date -->
+		</field>
+		<field>
+			<a>annoCapitolo</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+		<field custom-converter-id="bilElemStatoConverter">
+			<a>this</a><!-- StatoOperativoElementoDiBilancio -->
+			<b>this</b><!-- SiacRBilElemStato -->
+		</field>
+	</mapping>
+</mappings>

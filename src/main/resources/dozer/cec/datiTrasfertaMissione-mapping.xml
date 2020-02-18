@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     <mapping map-id="SiacTTrasfMiss_DatiTrasfertaMissione" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.DatiTrasfertaMissione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTTrasfMiss</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>dataInizio</a>
+			<b>tramisInizio</b>
+		</field>
+		
+		<field>
+			<a>dataFine</a>
+			<b>tramisFine</b>
+		</field>
+		
+		<field>
+			<a>motivo</a>
+			<b>tramisDesc</b>
+		</field>
+		
+		<field> 
+			<a>codice</a>
+			<b>tramisCode</b>
+		</field>
+		
+		<field>
+			<a>luogo</a>
+			<b>tramisLuogo</b>
+		</field>
+		
+		<field> 
+			<a>flagEstero</a>
+			<b>tramisFlagestero</b>
+		</field>
+		
+		<field  map-id="SiacTRichiestaEcon_RichiestaEconomale_Base">
+			<a>richiestaEconomale</a>
+			<b>siacTRichiestaEcon</b>
+		</field>
+		
+		<field custom-converter-id="datiTrasfertaMezziDiTrasportoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+	</mapping>
+	
+	 <mapping map-id="SiacDTrasportoMezzo_MezziDiTrasporto" wildcard="true">
+		<class-a>it.csi.siac.siaccecser.model.MezziDiTrasporto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDTrasportoMezzo</class-b>
+
+		<field>
+			<a>codice</a>
+			<b>mtraCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>mtraDesc</b>
+		</field>
+	
+	</mapping>
+	
+</mappings>

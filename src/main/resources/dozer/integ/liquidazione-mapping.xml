@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="RicercaLiquidazione_RicercaLiquidazioni" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.liquidazione.RicercaLiquidazione </class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazioni </class-b>
+		
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>annoBilancio</a>
+			<b>parametroRicercaLiquidazione.annoEsercizio</b>
+		</field>
+		
+		<field>
+			<a>annoProvvedimento</a>
+			<b>parametroRicercaLiquidazione.annoProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>numeroProvvedimento</a>
+			<b>parametroRicercaLiquidazione.numeroProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>numeroPagina</a>
+			<b>numPagina</b>
+		</field>
+		
+		<field>
+			<a>numeroElementiPerPagina</a>
+			<b>numRisultatiPerPagina</b>
+		</field>
+		
+	</mapping>
+	
+	
+	<mapping map-id="RicercaEstesaLiquidazioni_RicercaEstesaLiquidazioniFin" wildcard="false">
+		<class-a>it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.liquidazione.RicercaEstesaLiquidazioni</class-a>
+		<class-b>it.csi.siac.siacfinser.frontend.webservice.msg.RicercaEstesaLiquidazioni</class-b>
+		
+		<field map-id="BaseRequest_ServiceRequest">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field>
+			<a>annoBilancio</a>
+			<b>annoEsercizio</b>
+		</field>
+		
+		<field>
+			<a>annoProvvedimento</a>
+			<b>atto.anno</b>
+		</field>
+		
+		<field>
+			<a>numeroProvvedimento</a>
+			<b>atto.numero</b>
+		</field>
+		
+		<!-- <field>
+			<a>numeroPagina</a>
+			<b>numPagina</b>
+		</field>
+		
+		<field>
+			<a>numeroElementiPerPagina</a>
+			<b>numRisultatiPerPagina</b>
+		</field> -->
+		
+	</mapping>
+	
+	
+	<mapping map-id="ListLiquidazione_IntegLiquidazione" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.liquidazione.Liquidazione</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.Liquidazione</class-b>
+		
+		
+		<field>
+			<a>impegno.annoMovimento</a>
+			<b>annoImpegno</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+			<a>impegno.numero</a>
+			<b>numeroImpegno</b>
+		</field>
+		
+		<field>
+			<a>codiceStatoOperativoLiquidazione</a>
+			<b>stato.codice</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+			<a>subImpegno.numero</a>
+			<b>numeroSubImpegno</b>
+		</field>
+		
+		<!-- JIRA SIAC-3983, mappo l'importo liquidazione della liquidazione siac   -->
+		<!-- <field>
+			<a>importoAttualeLiquidazione</a>
+			<b>importoLiquidazione</b>
+		</field> -->
+				
+	</mapping>
+	
+	
+	<mapping map-id="ListLiquidazioni_LiquidazioniAtti" wildcard="true">
+		<class-a>it.csi.siac.siacfinser.model.liquidazione.LiquidazioneAtti</class-a>
+		<class-b>it.csi.siac.siacintegser.model.integ.LiquidazioneAtti</class-b>
+		
+		<field>
+			<a>impegno.annoMovimento</a>
+			<b>annoImpegno</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+			<a>impegno.numero</a>
+			<b>numeroImpegno</b>
+		</field>
+		
+		<field>
+			<a>codiceStatoOperativoLiquidazione</a>
+			<b>stato.codice</b>
+		</field>
+		
+		<field custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+			<a>subImpegno.numero</a>
+			<b>numeroSubImpegno</b>
+		</field>
+		
+		<field>
+			<a>importoAttualeLiquidazione</a>
+			<b>importoLiquidazione</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativoLiquidazione.anno</a>
+			<b>atto.annoProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativoLiquidazione.numero</a>
+			<b>atto.numeroProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativoLiquidazione.tipoAtto.codice</a>
+			<b>atto.codiceTipoProvvedimento</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativoLiquidazione.strutturaAmmContabile.codice</a>
+			<b>atto.sac.codice</b>
+		</field>
+		
+		<field>
+			<a>attoAmministrativoLiquidazione.strutturaAmmContabile.tipoClassificatore.codice</a>
+			<b>atto.sac.codiceTipoStruttura</b>
+		</field>
+		
+		<field>
+			<a>numeroCapitoloLiquidazione</a>
+			<b>numeroCapitolo</b>
+		</field>
+		
+		<field>
+			<a>numeroArticoloLiquidazione</a>
+			<b>numeroArticolo</b>
+		</field>
+		
+				
+	</mapping>
+	
+</mappings>

@@ -1,0 +1,2591 @@
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<stampaRegistroIvaReportModel>
+    <datiIva>
+        <acquistiVendite>
+            <acquisto>
+                <aliquotaSubdocumentoIva>
+                    <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>166</uid>
+                    <aliquotaIva>
+                        <dataCreazione>2014-07-15T09:31:10+02:00</dataCreazione>
+                        <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                        <dataModifica>2014-07-15T09:31:10+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>2</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>10</codice>
+                        <descrizione>10%</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <percentualeAliquota>10</percentualeAliquota>
+                        <percentualeIndetraibilita>0</percentualeIndetraibilita>
+                        <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                    </aliquotaIva>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <imponibile>435.00</imponibile>
+                    <imposta>43.50</imposta>
+                    <impostaDetraibile>0</impostaDetraibile>
+                    <impostaIndetraibile>0</impostaIndetraibile>
+                    <totale>478.50</totale>
+                </aliquotaSubdocumentoIva>
+                <documento xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://siac.csi.it/fin2/data/1.0" xsi:type="ns3:documentoSpesa">
+                    <dataCreazione>2015-01-08T11:18:03.325+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:18:03.325+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:18:03.325+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>407</uid>
+                    <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                    <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                    <subdocumentoIvaSpesa>
+                        <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>91</uid>
+                        <documentoSpesa>
+                            <dataCreazione>2015-01-08T11:18:03.325+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:18:03.325+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:18:03.325+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>407</uid>
+                            <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                            <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                            <anno>2014</anno>
+                            <arrotondamento>0</arrotondamento>
+                            <collegatoAdAllegatoAtto>false</collegatoAdAllegatoAtto>
+                            <dataCreazioneDocumento>2015-01-08T11:18:03.325+01:00</dataCreazioneDocumento>
+                            <dataEmissione>2014-01-01T00:00:00+01:00</dataEmissione>
+                            <dataInizioValiditaStato>2015-01-08T11:20:26.550+01:00</dataInizioValiditaStato>
+                            <descrizione>canone affitto locali</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <importo>1700.70</importo>
+                            <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                            <numero>BEP5-fit</numero>
+                            <soggetto>
+<stato>VALIDO</stato>
+<uid>7</uid>
+<avviso>false</avviso>
+<codiceFiscale>TRMGNN60T47B990O</codiceFiscale>
+<codiceSoggetto>1</codiceSoggetto>
+<controlloSuSoggetto>true</controlloSuSoggetto>
+<denominazione>TREMANTE GIOVANNA</denominazione>
+<residenteEstero>false</residenteEstero>
+<uidSoggettoPadre>0</uidSoggettoPadre>
+                            </soggetto>
+                            <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                            <tipoDocumento>
+<dataCreazione>2014-03-19T10:49:58.349+01:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2014-03-19T10:49:58.349+01:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>217</uid>
+<annoCatalogazione>0</annoCatalogazione>
+<codice>FIT</codice>
+<descrizione>FITTI PASSIVI</descrizione>
+<tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                            </tipoDocumento>
+                            <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                        </documentoSpesa>
+                        <annoEsercizio>2014</annoEsercizio>
+                        <dataProtocolloProvvisorio>2014-01-08T00:00:00+01:00</dataProtocolloProvvisorio>
+                        <dataRegistrazione>2014-01-08T11:20:26.440+01:00</dataRegistrazione>
+                        <descrizioneIva>SubdocIva per il doc 407</descrizioneIva>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <flagIntracomunitario>false</flagIntracomunitario>
+                        <flagNotaCredito>false</flagNotaCredito>
+                        <flagRegistrazioneIva>false</flagRegistrazioneIva>
+                        <flagRilevanteIRAP>false</flagRilevanteIRAP>
+                        <importoInValuta>0</importoInValuta>
+                        <listaAliquotaSubdocumentoIva>
+                            <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>166</uid>
+                            <aliquotaIva>
+<dataCreazione>2014-07-15T09:31:10+02:00</dataCreazione>
+<dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+<dataModifica>2014-07-15T09:31:10+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>2</uid>
+<annoCatalogazione>0</annoCatalogazione>
+<codice>10</codice>
+<descrizione>10%</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+<percentualeAliquota>10</percentualeAliquota>
+<percentualeIndetraibilita>0</percentualeIndetraibilita>
+<tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                            </aliquotaIva>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <imponibile>435.00</imponibile>
+                            <imposta>43.50</imposta>
+                            <impostaDetraibile>0</impostaDetraibile>
+                            <impostaIndetraibile>0</impostaIndetraibile>
+                            <totale>478.50</totale>
+                        </listaAliquotaSubdocumentoIva>
+                        <listaAliquotaSubdocumentoIva>
+                            <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>167</uid>
+                            <aliquotaIva>
+<dataCreazione>2014-07-15T09:32:37+02:00</dataCreazione>
+<dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+<dataModifica>2014-07-15T09:32:37+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>3</uid>
+<annoCatalogazione>0</annoCatalogazione>
+<codice>22</codice>
+<descrizione>22%</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+<percentualeAliquota>22</percentualeAliquota>
+<percentualeIndetraibilita>50</percentualeIndetraibilita>
+<tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                            </aliquotaIva>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <imponibile>350.00</imponibile>
+                            <imposta>77.00</imposta>
+                            <impostaDetraibile>0</impostaDetraibile>
+                            <impostaIndetraibile>0</impostaIndetraibile>
+                            <totale>427.00</totale>
+                        </listaAliquotaSubdocumentoIva>
+                        <numeroProtocolloProvvisorio>1</numeroProtocolloProvvisorio>
+                        <progressivoIVA>111</progressivoIVA>
+                        <registroIva>
+                            <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>40</uid>
+                            <codice>Acquisti-Differita-BEPP</codice>
+                            <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <gruppoAttivitaIva>
+<dataCreazione>2015-01-07T16:55:00.892+01:00</dataCreazione>
+<dataInizioValidita>2015-01-07T16:55:00.892+01:00</dataInizioValidita>
+<dataModifica>2015-01-07T16:55:00.892+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>24</uid>
+<codice>BEP-STAMP-JIRA</codice>
+<descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+<ivaPrecedente>0</ivaPrecedente>
+<listaProRataEChiusuraGruppoIva>
+    <stato>VALIDO</stato>
+    <uid>64</uid>
+    <annoEsercizio>2014</annoEsercizio>
+    <percentualeProRata>25.00</percentualeProRata>
+</listaProRataEChiusuraGruppoIva>
+<listaRegistroIva>
+    <dataCreazione>2015-01-07T16:55:39.681+01:00</dataCreazione>
+    <dataInizioValidita>2015-01-07T16:55:39.681+01:00</dataInizioValidita>
+    <dataModifica>2015-01-07T16:55:39.681+01:00</dataModifica>
+    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>38</uid>
+    <codice>BEP-SIAC-1705</codice>
+    <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+    <ente>
+        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <codiceFiscale>aaaa</codiceFiscale>
+        <gestioneLivelli/>
+        <nome>Città di Torino</nome>
+    </ente>
+</listaRegistroIva>
+<listaRegistroIva>
+    <dataCreazione>2015-01-08T09:36:06.215+01:00</dataCreazione>
+    <dataInizioValidita>2015-01-08T09:36:06.215+01:00</dataInizioValidita>
+    <dataModifica>2015-01-08T09:36:06.215+01:00</dataModifica>
+    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>39</uid>
+    <codice>CORR-BEP</codice>
+    <descrizione>Corrispettivi - Gruppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+    <ente>
+        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <codiceFiscale>aaaa</codiceFiscale>
+        <gestioneLivelli/>
+        <nome>Città di Torino</nome>
+    </ente>
+</listaRegistroIva>
+<listaRegistroIva>
+    <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+    <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+    <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>40</uid>
+    <codice>Acquisti-Differita-BEPP</codice>
+    <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+    <ente>
+        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <codiceFiscale>aaaa</codiceFiscale>
+        <gestioneLivelli/>
+        <nome>Città di Torino</nome>
+    </ente>
+</listaRegistroIva>
+<tipoAttivita>PROMISCUA</tipoAttivita>
+<tipoChiusura>TRIMESTRALE</tipoChiusura>
+                            </gruppoAttivitaIva>
+                            <tipoRegistroIva>ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+                        </registroIva>
+                        <tipoRegistrazioneIva>
+                            <dataCreazione>2014-07-15T08:46:38.018+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2014-07-15T08:46:38.018+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>01</codice>
+                            <descrizione>NORMALE</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <flagTipoRegistrazioneIvaEntrata>true</flagTipoRegistrazioneIvaEntrata>
+                            <flagTipoRegistrazioneIvaSpesa>true</flagTipoRegistrazioneIvaSpesa>
+                        </tipoRegistrazioneIva>
+                        <totaleMovimentiIva>905.50</totaleMovimentiIva>
+                    </subdocumentoIvaSpesa>
+                    <anno>2014</anno>
+                    <arrotondamento>0</arrotondamento>
+                    <collegatoAdAllegatoAtto>false</collegatoAdAllegatoAtto>
+                    <dataCreazioneDocumento>2015-01-08T11:18:03.325+01:00</dataCreazioneDocumento>
+                    <dataEmissione>2014-01-01T00:00:00+01:00</dataEmissione>
+                    <dataInizioValiditaStato>2015-01-08T11:20:26.550+01:00</dataInizioValiditaStato>
+                    <descrizione>canone affitto locali</descrizione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <importo>1700.70</importo>
+                    <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                    <numero>BEP5-fit</numero>
+                    <soggetto>
+                        <stato>VALIDO</stato>
+                        <uid>7</uid>
+                        <avviso>false</avviso>
+                        <codiceFiscale>TRMGNN60T47B990O</codiceFiscale>
+                        <codiceSoggetto>1</codiceSoggetto>
+                        <controlloSuSoggetto>true</controlloSuSoggetto>
+                        <denominazione>TREMANTE GIOVANNA</denominazione>
+                        <residenteEstero>false</residenteEstero>
+                        <uidSoggettoPadre>0</uidSoggettoPadre>
+                    </soggetto>
+                    <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                    <tipoDocumento>
+                        <dataCreazione>2014-03-19T10:49:58.349+01:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-03-19T10:49:58.349+01:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>217</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>FIT</codice>
+                        <descrizione>FITTI PASSIVI</descrizione>
+                        <tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                    </tipoDocumento>
+                    <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                    <ritenuteDocumento>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <importoCassaPensioni>0</importoCassaPensioni>
+                        <importoEsente>0</importoEsente>
+                        <importoIVA>0</importoIVA>
+                        <importoRivalsa>0</importoRivalsa>
+                    </ritenuteDocumento>
+                </documento>
+                <subdocumentoIva xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://siac.csi.it/fin2/data/1.0" xsi:type="ns3:subdocumentoIvaSpesa">
+                    <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>91</uid>
+                    <documentoSpesa>
+                        <dataCreazione>2015-01-08T11:18:03.325+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:18:03.325+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:18:03.325+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>407</uid>
+                        <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                        <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                        <anno>2014</anno>
+                        <arrotondamento>0</arrotondamento>
+                        <collegatoAdAllegatoAtto>false</collegatoAdAllegatoAtto>
+                        <dataCreazioneDocumento>2015-01-08T11:18:03.325+01:00</dataCreazioneDocumento>
+                        <dataEmissione>2014-01-01T00:00:00+01:00</dataEmissione>
+                        <dataInizioValiditaStato>2015-01-08T11:20:26.550+01:00</dataInizioValiditaStato>
+                        <descrizione>canone affitto locali</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <importo>1700.70</importo>
+                        <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                        <numero>BEP5-fit</numero>
+                        <soggetto>
+                            <stato>VALIDO</stato>
+                            <uid>7</uid>
+                            <avviso>false</avviso>
+                            <codiceFiscale>TRMGNN60T47B990O</codiceFiscale>
+                            <codiceSoggetto>1</codiceSoggetto>
+                            <controlloSuSoggetto>true</controlloSuSoggetto>
+                            <denominazione>TREMANTE GIOVANNA</denominazione>
+                            <residenteEstero>false</residenteEstero>
+                            <uidSoggettoPadre>0</uidSoggettoPadre>
+                        </soggetto>
+                        <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                        <tipoDocumento>
+                            <dataCreazione>2014-03-19T10:49:58.349+01:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2014-03-19T10:49:58.349+01:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>217</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>FIT</codice>
+                            <descrizione>FITTI PASSIVI</descrizione>
+                            <tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                        </tipoDocumento>
+                        <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                    </documentoSpesa>
+                    <annoEsercizio>2014</annoEsercizio>
+                    <dataProtocolloProvvisorio>2014-01-08T00:00:00+01:00</dataProtocolloProvvisorio>
+                    <dataRegistrazione>2014-01-08T11:20:26.440+01:00</dataRegistrazione>
+                    <descrizioneIva>SubdocIva per il doc 407</descrizioneIva>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <flagIntracomunitario>false</flagIntracomunitario>
+                    <flagNotaCredito>false</flagNotaCredito>
+                    <flagRegistrazioneIva>false</flagRegistrazioneIva>
+                    <flagRilevanteIRAP>false</flagRilevanteIRAP>
+                    <importoInValuta>0</importoInValuta>
+                    <listaAliquotaSubdocumentoIva>
+                        <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>166</uid>
+                        <aliquotaIva>
+                            <dataCreazione>2014-07-15T09:31:10+02:00</dataCreazione>
+                            <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                            <dataModifica>2014-07-15T09:31:10+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>2</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>10</codice>
+                            <descrizione>10%</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <percentualeAliquota>10</percentualeAliquota>
+                            <percentualeIndetraibilita>0</percentualeIndetraibilita>
+                            <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                        </aliquotaIva>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <imponibile>435.00</imponibile>
+                        <imposta>43.50</imposta>
+                        <impostaDetraibile>0</impostaDetraibile>
+                        <impostaIndetraibile>0</impostaIndetraibile>
+                        <totale>478.50</totale>
+                    </listaAliquotaSubdocumentoIva>
+                    <listaAliquotaSubdocumentoIva>
+                        <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>167</uid>
+                        <aliquotaIva>
+                            <dataCreazione>2014-07-15T09:32:37+02:00</dataCreazione>
+                            <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                            <dataModifica>2014-07-15T09:32:37+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>3</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>22</codice>
+                            <descrizione>22%</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <percentualeAliquota>22</percentualeAliquota>
+                            <percentualeIndetraibilita>50</percentualeIndetraibilita>
+                            <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                        </aliquotaIva>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <imponibile>350.00</imponibile>
+                        <imposta>77.00</imposta>
+                        <impostaDetraibile>0</impostaDetraibile>
+                        <impostaIndetraibile>0</impostaIndetraibile>
+                        <totale>427.00</totale>
+                    </listaAliquotaSubdocumentoIva>
+                    <numeroProtocolloProvvisorio>1</numeroProtocolloProvvisorio>
+                    <progressivoIVA>111</progressivoIVA>
+                    <registroIva>
+                        <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>40</uid>
+                        <codice>Acquisti-Differita-BEPP</codice>
+                        <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <gruppoAttivitaIva>
+                            <dataCreazione>2015-01-07T16:55:00.892+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-07T16:55:00.892+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-07T16:55:00.892+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>24</uid>
+                            <codice>BEP-STAMP-JIRA</codice>
+                            <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <ivaPrecedente>0</ivaPrecedente>
+                            <listaProRataEChiusuraGruppoIva>
+<stato>VALIDO</stato>
+<uid>64</uid>
+<annoEsercizio>2014</annoEsercizio>
+<percentualeProRata>25.00</percentualeProRata>
+                            </listaProRataEChiusuraGruppoIva>
+                            <listaRegistroIva>
+<dataCreazione>2015-01-07T16:55:39.681+01:00</dataCreazione>
+<dataInizioValidita>2015-01-07T16:55:39.681+01:00</dataInizioValidita>
+<dataModifica>2015-01-07T16:55:39.681+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>38</uid>
+<codice>BEP-SIAC-1705</codice>
+<descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+                            </listaRegistroIva>
+                            <listaRegistroIva>
+<dataCreazione>2015-01-08T09:36:06.215+01:00</dataCreazione>
+<dataInizioValidita>2015-01-08T09:36:06.215+01:00</dataInizioValidita>
+<dataModifica>2015-01-08T09:36:06.215+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>39</uid>
+<codice>CORR-BEP</codice>
+<descrizione>Corrispettivi - Gruppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+                            </listaRegistroIva>
+                            <listaRegistroIva>
+<dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+<dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+<dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>40</uid>
+<codice>Acquisti-Differita-BEPP</codice>
+<descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+                            </listaRegistroIva>
+                            <tipoAttivita>PROMISCUA</tipoAttivita>
+                            <tipoChiusura>TRIMESTRALE</tipoChiusura>
+                        </gruppoAttivitaIva>
+                        <tipoRegistroIva>ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+                    </registroIva>
+                    <statoSubdocumentoIva>PROVVISORIO</statoSubdocumentoIva>
+                    <tipoRegistrazioneIva>
+                        <dataCreazione>2014-07-15T08:46:38.018+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-07-15T08:46:38.018+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>01</codice>
+                        <descrizione>NORMALE</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <flagTipoRegistrazioneIvaEntrata>true</flagTipoRegistrazioneIvaEntrata>
+                        <flagTipoRegistrazioneIvaSpesa>true</flagTipoRegistrazioneIvaSpesa>
+                    </tipoRegistrazioneIva>
+                    <totaleMovimentiIva>905.50</totaleMovimentiIva>
+                </subdocumentoIva>
+                <totale>478.50</totale>
+            </acquisto>
+            <acquisto>
+                <aliquotaSubdocumentoIva>
+                    <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>167</uid>
+                    <aliquotaIva>
+                        <dataCreazione>2014-07-15T09:32:37+02:00</dataCreazione>
+                        <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                        <dataModifica>2014-07-15T09:32:37+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>3</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>22</codice>
+                        <descrizione>22%</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <percentualeAliquota>22</percentualeAliquota>
+                        <percentualeIndetraibilita>50</percentualeIndetraibilita>
+                        <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                    </aliquotaIva>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <imponibile>350.00</imponibile>
+                    <imposta>77.00</imposta>
+                    <impostaDetraibile>0</impostaDetraibile>
+                    <impostaIndetraibile>0</impostaIndetraibile>
+                    <totale>427.00</totale>
+                </aliquotaSubdocumentoIva>
+                <documento xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://siac.csi.it/fin2/data/1.0" xsi:type="ns3:documentoSpesa">
+                    <dataCreazione>2015-01-08T11:18:03.325+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:18:03.325+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:18:03.325+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>407</uid>
+                    <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                    <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                    <subdocumentoIvaSpesa>
+                        <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>91</uid>
+                        <documentoSpesa>
+                            <dataCreazione>2015-01-08T11:18:03.325+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:18:03.325+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:18:03.325+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>407</uid>
+                            <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                            <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                            <anno>2014</anno>
+                            <arrotondamento>0</arrotondamento>
+                            <collegatoAdAllegatoAtto>false</collegatoAdAllegatoAtto>
+                            <dataCreazioneDocumento>2015-01-08T11:18:03.325+01:00</dataCreazioneDocumento>
+                            <dataEmissione>2014-01-01T00:00:00+01:00</dataEmissione>
+                            <dataInizioValiditaStato>2015-01-08T11:20:26.550+01:00</dataInizioValiditaStato>
+                            <descrizione>canone affitto locali</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <importo>1700.70</importo>
+                            <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                            <numero>BEP5-fit</numero>
+                            <soggetto>
+<stato>VALIDO</stato>
+<uid>7</uid>
+<avviso>false</avviso>
+<codiceFiscale>TRMGNN60T47B990O</codiceFiscale>
+<codiceSoggetto>1</codiceSoggetto>
+<controlloSuSoggetto>true</controlloSuSoggetto>
+<denominazione>TREMANTE GIOVANNA</denominazione>
+<residenteEstero>false</residenteEstero>
+<uidSoggettoPadre>0</uidSoggettoPadre>
+                            </soggetto>
+                            <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                            <tipoDocumento>
+<dataCreazione>2014-03-19T10:49:58.349+01:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2014-03-19T10:49:58.349+01:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>217</uid>
+<annoCatalogazione>0</annoCatalogazione>
+<codice>FIT</codice>
+<descrizione>FITTI PASSIVI</descrizione>
+<tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                            </tipoDocumento>
+                            <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                        </documentoSpesa>
+                        <annoEsercizio>2014</annoEsercizio>
+                        <dataProtocolloProvvisorio>2014-01-08T00:00:00+01:00</dataProtocolloProvvisorio>
+                        <dataRegistrazione>2014-01-08T11:20:26.440+01:00</dataRegistrazione>
+                        <descrizioneIva>SubdocIva per il doc 407</descrizioneIva>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <flagIntracomunitario>false</flagIntracomunitario>
+                        <flagNotaCredito>false</flagNotaCredito>
+                        <flagRegistrazioneIva>false</flagRegistrazioneIva>
+                        <flagRilevanteIRAP>false</flagRilevanteIRAP>
+                        <importoInValuta>0</importoInValuta>
+                        <listaAliquotaSubdocumentoIva>
+                            <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>166</uid>
+                            <aliquotaIva>
+<dataCreazione>2014-07-15T09:31:10+02:00</dataCreazione>
+<dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+<dataModifica>2014-07-15T09:31:10+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>2</uid>
+<annoCatalogazione>0</annoCatalogazione>
+<codice>10</codice>
+<descrizione>10%</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+<percentualeAliquota>10</percentualeAliquota>
+<percentualeIndetraibilita>0</percentualeIndetraibilita>
+<tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                            </aliquotaIva>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <imponibile>435.00</imponibile>
+                            <imposta>43.50</imposta>
+                            <impostaDetraibile>0</impostaDetraibile>
+                            <impostaIndetraibile>0</impostaIndetraibile>
+                            <totale>478.50</totale>
+                        </listaAliquotaSubdocumentoIva>
+                        <listaAliquotaSubdocumentoIva>
+                            <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>167</uid>
+                            <aliquotaIva>
+<dataCreazione>2014-07-15T09:32:37+02:00</dataCreazione>
+<dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+<dataModifica>2014-07-15T09:32:37+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>3</uid>
+<annoCatalogazione>0</annoCatalogazione>
+<codice>22</codice>
+<descrizione>22%</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+<percentualeAliquota>22</percentualeAliquota>
+<percentualeIndetraibilita>50</percentualeIndetraibilita>
+<tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                            </aliquotaIva>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <imponibile>350.00</imponibile>
+                            <imposta>77.00</imposta>
+                            <impostaDetraibile>0</impostaDetraibile>
+                            <impostaIndetraibile>0</impostaIndetraibile>
+                            <totale>427.00</totale>
+                        </listaAliquotaSubdocumentoIva>
+                        <numeroProtocolloProvvisorio>1</numeroProtocolloProvvisorio>
+                        <progressivoIVA>111</progressivoIVA>
+                        <registroIva>
+                            <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>40</uid>
+                            <codice>Acquisti-Differita-BEPP</codice>
+                            <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <gruppoAttivitaIva>
+<dataCreazione>2015-01-07T16:55:00.892+01:00</dataCreazione>
+<dataInizioValidita>2015-01-07T16:55:00.892+01:00</dataInizioValidita>
+<dataModifica>2015-01-07T16:55:00.892+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>24</uid>
+<codice>BEP-STAMP-JIRA</codice>
+<descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+<ivaPrecedente>0</ivaPrecedente>
+<listaProRataEChiusuraGruppoIva>
+    <stato>VALIDO</stato>
+    <uid>64</uid>
+    <annoEsercizio>2014</annoEsercizio>
+    <percentualeProRata>25.00</percentualeProRata>
+</listaProRataEChiusuraGruppoIva>
+<listaRegistroIva>
+    <dataCreazione>2015-01-07T16:55:39.681+01:00</dataCreazione>
+    <dataInizioValidita>2015-01-07T16:55:39.681+01:00</dataInizioValidita>
+    <dataModifica>2015-01-07T16:55:39.681+01:00</dataModifica>
+    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>38</uid>
+    <codice>BEP-SIAC-1705</codice>
+    <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+    <ente>
+        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <codiceFiscale>aaaa</codiceFiscale>
+        <gestioneLivelli/>
+        <nome>Città di Torino</nome>
+    </ente>
+</listaRegistroIva>
+<listaRegistroIva>
+    <dataCreazione>2015-01-08T09:36:06.215+01:00</dataCreazione>
+    <dataInizioValidita>2015-01-08T09:36:06.215+01:00</dataInizioValidita>
+    <dataModifica>2015-01-08T09:36:06.215+01:00</dataModifica>
+    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>39</uid>
+    <codice>CORR-BEP</codice>
+    <descrizione>Corrispettivi - Gruppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+    <ente>
+        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <codiceFiscale>aaaa</codiceFiscale>
+        <gestioneLivelli/>
+        <nome>Città di Torino</nome>
+    </ente>
+</listaRegistroIva>
+<listaRegistroIva>
+    <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+    <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+    <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>40</uid>
+    <codice>Acquisti-Differita-BEPP</codice>
+    <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+    <ente>
+        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <codiceFiscale>aaaa</codiceFiscale>
+        <gestioneLivelli/>
+        <nome>Città di Torino</nome>
+    </ente>
+</listaRegistroIva>
+<tipoAttivita>PROMISCUA</tipoAttivita>
+<tipoChiusura>TRIMESTRALE</tipoChiusura>
+                            </gruppoAttivitaIva>
+                            <tipoRegistroIva>ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+                        </registroIva>
+                        <tipoRegistrazioneIva>
+                            <dataCreazione>2014-07-15T08:46:38.018+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2014-07-15T08:46:38.018+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>01</codice>
+                            <descrizione>NORMALE</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <flagTipoRegistrazioneIvaEntrata>true</flagTipoRegistrazioneIvaEntrata>
+                            <flagTipoRegistrazioneIvaSpesa>true</flagTipoRegistrazioneIvaSpesa>
+                        </tipoRegistrazioneIva>
+                        <totaleMovimentiIva>905.50</totaleMovimentiIva>
+                    </subdocumentoIvaSpesa>
+                    <anno>2014</anno>
+                    <arrotondamento>0</arrotondamento>
+                    <collegatoAdAllegatoAtto>false</collegatoAdAllegatoAtto>
+                    <dataCreazioneDocumento>2015-01-08T11:18:03.325+01:00</dataCreazioneDocumento>
+                    <dataEmissione>2014-01-01T00:00:00+01:00</dataEmissione>
+                    <dataInizioValiditaStato>2015-01-08T11:20:26.550+01:00</dataInizioValiditaStato>
+                    <descrizione>canone affitto locali</descrizione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <importo>1700.70</importo>
+                    <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                    <numero>BEP5-fit</numero>
+                    <soggetto>
+                        <stato>VALIDO</stato>
+                        <uid>7</uid>
+                        <avviso>false</avviso>
+                        <codiceFiscale>TRMGNN60T47B990O</codiceFiscale>
+                        <codiceSoggetto>1</codiceSoggetto>
+                        <controlloSuSoggetto>true</controlloSuSoggetto>
+                        <denominazione>TREMANTE GIOVANNA</denominazione>
+                        <residenteEstero>false</residenteEstero>
+                        <uidSoggettoPadre>0</uidSoggettoPadre>
+                    </soggetto>
+                    <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                    <tipoDocumento>
+                        <dataCreazione>2014-03-19T10:49:58.349+01:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-03-19T10:49:58.349+01:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>217</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>FIT</codice>
+                        <descrizione>FITTI PASSIVI</descrizione>
+                        <tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                    </tipoDocumento>
+                    <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                    <ritenuteDocumento>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <importoCassaPensioni>0</importoCassaPensioni>
+                        <importoEsente>0</importoEsente>
+                        <importoIVA>0</importoIVA>
+                        <importoRivalsa>0</importoRivalsa>
+                    </ritenuteDocumento>
+                </documento>
+                <subdocumentoIva xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://siac.csi.it/fin2/data/1.0" xsi:type="ns3:subdocumentoIvaSpesa">
+                    <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>91</uid>
+                    <documentoSpesa>
+                        <dataCreazione>2015-01-08T11:18:03.325+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:18:03.325+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:18:03.325+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>407</uid>
+                        <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                        <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                        <anno>2014</anno>
+                        <arrotondamento>0</arrotondamento>
+                        <collegatoAdAllegatoAtto>false</collegatoAdAllegatoAtto>
+                        <dataCreazioneDocumento>2015-01-08T11:18:03.325+01:00</dataCreazioneDocumento>
+                        <dataEmissione>2014-01-01T00:00:00+01:00</dataEmissione>
+                        <dataInizioValiditaStato>2015-01-08T11:20:26.550+01:00</dataInizioValiditaStato>
+                        <descrizione>canone affitto locali</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <importo>1700.70</importo>
+                        <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                        <numero>BEP5-fit</numero>
+                        <soggetto>
+                            <stato>VALIDO</stato>
+                            <uid>7</uid>
+                            <avviso>false</avviso>
+                            <codiceFiscale>TRMGNN60T47B990O</codiceFiscale>
+                            <codiceSoggetto>1</codiceSoggetto>
+                            <controlloSuSoggetto>true</controlloSuSoggetto>
+                            <denominazione>TREMANTE GIOVANNA</denominazione>
+                            <residenteEstero>false</residenteEstero>
+                            <uidSoggettoPadre>0</uidSoggettoPadre>
+                        </soggetto>
+                        <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                        <tipoDocumento>
+                            <dataCreazione>2014-03-19T10:49:58.349+01:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2014-03-19T10:49:58.349+01:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>217</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>FIT</codice>
+                            <descrizione>FITTI PASSIVI</descrizione>
+                            <tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                        </tipoDocumento>
+                        <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                    </documentoSpesa>
+                    <annoEsercizio>2014</annoEsercizio>
+                    <dataProtocolloProvvisorio>2014-01-08T00:00:00+01:00</dataProtocolloProvvisorio>
+                    <dataRegistrazione>2014-01-08T11:20:26.440+01:00</dataRegistrazione>
+                    <descrizioneIva>SubdocIva per il doc 407</descrizioneIva>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <flagIntracomunitario>false</flagIntracomunitario>
+                    <flagNotaCredito>false</flagNotaCredito>
+                    <flagRegistrazioneIva>false</flagRegistrazioneIva>
+                    <flagRilevanteIRAP>false</flagRilevanteIRAP>
+                    <importoInValuta>0</importoInValuta>
+                    <listaAliquotaSubdocumentoIva>
+                        <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>166</uid>
+                        <aliquotaIva>
+                            <dataCreazione>2014-07-15T09:31:10+02:00</dataCreazione>
+                            <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                            <dataModifica>2014-07-15T09:31:10+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>2</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>10</codice>
+                            <descrizione>10%</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <percentualeAliquota>10</percentualeAliquota>
+                            <percentualeIndetraibilita>0</percentualeIndetraibilita>
+                            <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                        </aliquotaIva>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <imponibile>435.00</imponibile>
+                        <imposta>43.50</imposta>
+                        <impostaDetraibile>0</impostaDetraibile>
+                        <impostaIndetraibile>0</impostaIndetraibile>
+                        <totale>478.50</totale>
+                    </listaAliquotaSubdocumentoIva>
+                    <listaAliquotaSubdocumentoIva>
+                        <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>167</uid>
+                        <aliquotaIva>
+                            <dataCreazione>2014-07-15T09:32:37+02:00</dataCreazione>
+                            <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                            <dataModifica>2014-07-15T09:32:37+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>3</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>22</codice>
+                            <descrizione>22%</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <percentualeAliquota>22</percentualeAliquota>
+                            <percentualeIndetraibilita>50</percentualeIndetraibilita>
+                            <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                        </aliquotaIva>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <imponibile>350.00</imponibile>
+                        <imposta>77.00</imposta>
+                        <impostaDetraibile>0</impostaDetraibile>
+                        <impostaIndetraibile>0</impostaIndetraibile>
+                        <totale>427.00</totale>
+                    </listaAliquotaSubdocumentoIva>
+                    <numeroProtocolloProvvisorio>1</numeroProtocolloProvvisorio>
+                    <progressivoIVA>111</progressivoIVA>
+                    <registroIva>
+                        <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>40</uid>
+                        <codice>Acquisti-Differita-BEPP</codice>
+                        <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <gruppoAttivitaIva>
+                            <dataCreazione>2015-01-07T16:55:00.892+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-07T16:55:00.892+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-07T16:55:00.892+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>24</uid>
+                            <codice>BEP-STAMP-JIRA</codice>
+                            <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <ivaPrecedente>0</ivaPrecedente>
+                            <listaProRataEChiusuraGruppoIva>
+<stato>VALIDO</stato>
+<uid>64</uid>
+<annoEsercizio>2014</annoEsercizio>
+<percentualeProRata>25.00</percentualeProRata>
+                            </listaProRataEChiusuraGruppoIva>
+                            <listaRegistroIva>
+<dataCreazione>2015-01-07T16:55:39.681+01:00</dataCreazione>
+<dataInizioValidita>2015-01-07T16:55:39.681+01:00</dataInizioValidita>
+<dataModifica>2015-01-07T16:55:39.681+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>38</uid>
+<codice>BEP-SIAC-1705</codice>
+<descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+                            </listaRegistroIva>
+                            <listaRegistroIva>
+<dataCreazione>2015-01-08T09:36:06.215+01:00</dataCreazione>
+<dataInizioValidita>2015-01-08T09:36:06.215+01:00</dataInizioValidita>
+<dataModifica>2015-01-08T09:36:06.215+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>39</uid>
+<codice>CORR-BEP</codice>
+<descrizione>Corrispettivi - Gruppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+                            </listaRegistroIva>
+                            <listaRegistroIva>
+<dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+<dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+<dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>40</uid>
+<codice>Acquisti-Differita-BEPP</codice>
+<descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+                            </listaRegistroIva>
+                            <tipoAttivita>PROMISCUA</tipoAttivita>
+                            <tipoChiusura>TRIMESTRALE</tipoChiusura>
+                        </gruppoAttivitaIva>
+                        <tipoRegistroIva>ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+                    </registroIva>
+                    <statoSubdocumentoIva>PROVVISORIO</statoSubdocumentoIva>
+                    <tipoRegistrazioneIva>
+                        <dataCreazione>2014-07-15T08:46:38.018+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-07-15T08:46:38.018+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>01</codice>
+                        <descrizione>NORMALE</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <flagTipoRegistrazioneIvaEntrata>true</flagTipoRegistrazioneIvaEntrata>
+                        <flagTipoRegistrazioneIvaSpesa>true</flagTipoRegistrazioneIvaSpesa>
+                    </tipoRegistrazioneIva>
+                    <totaleMovimentiIva>905.50</totaleMovimentiIva>
+                </subdocumentoIva>
+                <totale>427.00</totale>
+            </acquisto>
+            <acquisto>
+                <aliquotaSubdocumentoIva>
+                    <dataCreazione>2015-01-08T11:27:27.863+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:27:27.863+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:27:27.863+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>168</uid>
+                    <aliquotaIva>
+                        <dataCreazione>2014-07-15T09:31:10+02:00</dataCreazione>
+                        <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                        <dataModifica>2014-07-15T09:31:10+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>2</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>10</codice>
+                        <descrizione>10%</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <percentualeAliquota>10</percentualeAliquota>
+                        <percentualeIndetraibilita>0</percentualeIndetraibilita>
+                        <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                    </aliquotaIva>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <imponibile>309.00</imponibile>
+                    <imposta>30.90</imposta>
+                    <impostaDetraibile>0</impostaDetraibile>
+                    <impostaIndetraibile>0</impostaIndetraibile>
+                    <totale>339.90</totale>
+                </aliquotaSubdocumentoIva>
+                <documento xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://siac.csi.it/fin2/data/1.0" xsi:type="ns3:documentoSpesa">
+                    <dataCreazione>2015-01-08T11:24:36.457+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:24:36.457+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:24:36.457+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>408</uid>
+                    <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                    <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                    <subdocumentoIvaSpesa>
+                        <dataCreazione>2015-01-08T11:27:27.863+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:27:27.863+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:27:27.863+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>92</uid>
+                        <documentoSpesa>
+                            <dataCreazione>2015-01-08T11:24:36.457+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:24:36.457+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:24:36.457+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>408</uid>
+                            <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                            <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                            <anno>2014</anno>
+                            <arrotondamento>0</arrotondamento>
+                            <collegatoAdAllegatoAtto>false</collegatoAdAllegatoAtto>
+                            <dataCreazioneDocumento>2015-01-08T11:24:36.457+01:00</dataCreazioneDocumento>
+                            <dataEmissione>2014-01-01T00:00:00+01:00</dataEmissione>
+                            <dataInizioValiditaStato>2015-01-08T11:27:27.868+01:00</dataInizioValiditaStato>
+                            <descrizione>consulenza</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <importo>3000.00</importo>
+                            <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                            <numero>BEP2A</numero>
+                            <soggetto>
+<stato>VALIDO</stato>
+<uid>7</uid>
+<avviso>false</avviso>
+<codiceFiscale>TRMGNN60T47B990O</codiceFiscale>
+<codiceSoggetto>1</codiceSoggetto>
+<controlloSuSoggetto>true</controlloSuSoggetto>
+<denominazione>TREMANTE GIOVANNA</denominazione>
+<residenteEstero>false</residenteEstero>
+<uidSoggettoPadre>0</uidSoggettoPadre>
+                            </soggetto>
+                            <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                            <tipoDocumento>
+<dataCreazione>2014-03-19T10:49:58.349+01:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2014-03-19T10:49:58.349+01:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>219</uid>
+<annoCatalogazione>0</annoCatalogazione>
+<codice>FPR</codice>
+<descrizione>PARCELLA PROFESSIONISTI</descrizione>
+<tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                            </tipoDocumento>
+                            <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                        </documentoSpesa>
+                        <annoEsercizio>2014</annoEsercizio>
+                        <dataProtocolloProvvisorio>2014-01-08T00:00:00+01:00</dataProtocolloProvvisorio>
+                        <dataRegistrazione>2014-01-08T11:27:27.539+01:00</dataRegistrazione>
+                        <descrizioneIva>Differiti, ma non pagati</descrizioneIva>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <flagIntracomunitario>false</flagIntracomunitario>
+                        <flagNotaCredito>false</flagNotaCredito>
+                        <flagRegistrazioneIva>false</flagRegistrazioneIva>
+                        <flagRilevanteIRAP>false</flagRilevanteIRAP>
+                        <importoInValuta>0</importoInValuta>
+                        <listaAliquotaSubdocumentoIva>
+                            <dataCreazione>2015-01-08T11:27:27.863+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:27:27.863+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:27:27.863+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>168</uid>
+                            <aliquotaIva>
+<dataCreazione>2014-07-15T09:31:10+02:00</dataCreazione>
+<dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+<dataModifica>2014-07-15T09:31:10+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>2</uid>
+<annoCatalogazione>0</annoCatalogazione>
+<codice>10</codice>
+<descrizione>10%</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+<percentualeAliquota>10</percentualeAliquota>
+<percentualeIndetraibilita>0</percentualeIndetraibilita>
+<tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                            </aliquotaIva>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <imponibile>309.00</imponibile>
+                            <imposta>30.90</imposta>
+                            <impostaDetraibile>0</impostaDetraibile>
+                            <impostaIndetraibile>0</impostaIndetraibile>
+                            <totale>339.90</totale>
+                        </listaAliquotaSubdocumentoIva>
+                        <numeroProtocolloProvvisorio>2</numeroProtocolloProvvisorio>
+                        <progressivoIVA>112</progressivoIVA>
+                        <registroIva>
+                            <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>40</uid>
+                            <codice>Acquisti-Differita-BEPP</codice>
+                            <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <gruppoAttivitaIva>
+<dataCreazione>2015-01-07T16:55:00.892+01:00</dataCreazione>
+<dataInizioValidita>2015-01-07T16:55:00.892+01:00</dataInizioValidita>
+<dataModifica>2015-01-07T16:55:00.892+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>24</uid>
+<codice>BEP-STAMP-JIRA</codice>
+<descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+<ivaPrecedente>0</ivaPrecedente>
+<listaProRataEChiusuraGruppoIva>
+    <stato>VALIDO</stato>
+    <uid>64</uid>
+    <annoEsercizio>2014</annoEsercizio>
+    <percentualeProRata>25.00</percentualeProRata>
+</listaProRataEChiusuraGruppoIva>
+<listaRegistroIva>
+    <dataCreazione>2015-01-07T16:55:39.681+01:00</dataCreazione>
+    <dataInizioValidita>2015-01-07T16:55:39.681+01:00</dataInizioValidita>
+    <dataModifica>2015-01-07T16:55:39.681+01:00</dataModifica>
+    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>38</uid>
+    <codice>BEP-SIAC-1705</codice>
+    <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+    <ente>
+        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <codiceFiscale>aaaa</codiceFiscale>
+        <gestioneLivelli/>
+        <nome>Città di Torino</nome>
+    </ente>
+</listaRegistroIva>
+<listaRegistroIva>
+    <dataCreazione>2015-01-08T09:36:06.215+01:00</dataCreazione>
+    <dataInizioValidita>2015-01-08T09:36:06.215+01:00</dataInizioValidita>
+    <dataModifica>2015-01-08T09:36:06.215+01:00</dataModifica>
+    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>39</uid>
+    <codice>CORR-BEP</codice>
+    <descrizione>Corrispettivi - Gruppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+    <ente>
+        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <codiceFiscale>aaaa</codiceFiscale>
+        <gestioneLivelli/>
+        <nome>Città di Torino</nome>
+    </ente>
+</listaRegistroIva>
+<listaRegistroIva>
+    <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+    <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+    <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>40</uid>
+    <codice>Acquisti-Differita-BEPP</codice>
+    <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+    <ente>
+        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+        <loginOperazione>admin</loginOperazione>
+        <stato>VALIDO</stato>
+        <uid>1</uid>
+        <codiceFiscale>aaaa</codiceFiscale>
+        <gestioneLivelli/>
+        <nome>Città di Torino</nome>
+    </ente>
+</listaRegistroIva>
+<tipoAttivita>PROMISCUA</tipoAttivita>
+<tipoChiusura>TRIMESTRALE</tipoChiusura>
+                            </gruppoAttivitaIva>
+                            <tipoRegistroIva>ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+                        </registroIva>
+                        <tipoRegistrazioneIva>
+                            <dataCreazione>2014-07-15T08:46:38.018+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2014-07-15T08:46:38.018+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>01</codice>
+                            <descrizione>NORMALE</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <flagTipoRegistrazioneIvaEntrata>true</flagTipoRegistrazioneIvaEntrata>
+                            <flagTipoRegistrazioneIvaSpesa>true</flagTipoRegistrazioneIvaSpesa>
+                        </tipoRegistrazioneIva>
+                        <totaleMovimentiIva>339.90</totaleMovimentiIva>
+                    </subdocumentoIvaSpesa>
+                    <anno>2014</anno>
+                    <arrotondamento>0</arrotondamento>
+                    <collegatoAdAllegatoAtto>false</collegatoAdAllegatoAtto>
+                    <dataCreazioneDocumento>2015-01-08T11:24:36.457+01:00</dataCreazioneDocumento>
+                    <dataEmissione>2014-01-01T00:00:00+01:00</dataEmissione>
+                    <dataInizioValiditaStato>2015-01-08T11:27:27.868+01:00</dataInizioValiditaStato>
+                    <descrizione>consulenza</descrizione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <importo>3000.00</importo>
+                    <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                    <numero>BEP2A</numero>
+                    <soggetto>
+                        <stato>VALIDO</stato>
+                        <uid>7</uid>
+                        <avviso>false</avviso>
+                        <codiceFiscale>TRMGNN60T47B990O</codiceFiscale>
+                        <codiceSoggetto>1</codiceSoggetto>
+                        <controlloSuSoggetto>true</controlloSuSoggetto>
+                        <denominazione>TREMANTE GIOVANNA</denominazione>
+                        <residenteEstero>false</residenteEstero>
+                        <uidSoggettoPadre>0</uidSoggettoPadre>
+                    </soggetto>
+                    <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                    <tipoDocumento>
+                        <dataCreazione>2014-03-19T10:49:58.349+01:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-03-19T10:49:58.349+01:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>219</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>FPR</codice>
+                        <descrizione>PARCELLA PROFESSIONISTI</descrizione>
+                        <tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                    </tipoDocumento>
+                    <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                    <ritenuteDocumento>
+                        <stato>VALIDO</stato>
+                        <uid>0</uid>
+                        <importoCassaPensioni>0</importoCassaPensioni>
+                        <importoEsente>0</importoEsente>
+                        <importoIVA>0</importoIVA>
+                        <importoRivalsa>0</importoRivalsa>
+                    </ritenuteDocumento>
+                </documento>
+                <subdocumentoIva xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://siac.csi.it/fin2/data/1.0" xsi:type="ns3:subdocumentoIvaSpesa">
+                    <dataCreazione>2015-01-08T11:27:27.863+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:27:27.863+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:27:27.863+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>92</uid>
+                    <documentoSpesa>
+                        <dataCreazione>2015-01-08T11:24:36.457+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:24:36.457+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:24:36.457+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>408</uid>
+                        <loginCreazione>Demo 21 - Città di Torino</loginCreazione>
+                        <loginModifica>Demo 21 - Città di Torino</loginModifica>
+                        <anno>2014</anno>
+                        <arrotondamento>0</arrotondamento>
+                        <collegatoAdAllegatoAtto>false</collegatoAdAllegatoAtto>
+                        <dataCreazioneDocumento>2015-01-08T11:24:36.457+01:00</dataCreazioneDocumento>
+                        <dataEmissione>2014-01-01T00:00:00+01:00</dataEmissione>
+                        <dataInizioValiditaStato>2015-01-08T11:27:27.868+01:00</dataInizioValiditaStato>
+                        <descrizione>consulenza</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <importo>3000.00</importo>
+                        <importoTotaleNoteCollegate>0</importoTotaleNoteCollegate>
+                        <numero>BEP2A</numero>
+                        <soggetto>
+                            <stato>VALIDO</stato>
+                            <uid>7</uid>
+                            <avviso>false</avviso>
+                            <codiceFiscale>TRMGNN60T47B990O</codiceFiscale>
+                            <codiceSoggetto>1</codiceSoggetto>
+                            <controlloSuSoggetto>true</controlloSuSoggetto>
+                            <denominazione>TREMANTE GIOVANNA</denominazione>
+                            <residenteEstero>false</residenteEstero>
+                            <uidSoggettoPadre>0</uidSoggettoPadre>
+                        </soggetto>
+                        <statoOperativoDocumento>VALIDO</statoOperativoDocumento>
+                        <tipoDocumento>
+                            <dataCreazione>2014-03-19T10:49:58.349+01:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2014-03-19T10:49:58.349+01:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>219</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>FPR</codice>
+                            <descrizione>PARCELLA PROFESSIONISTI</descrizione>
+                            <tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+                        </tipoDocumento>
+                        <flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+                    </documentoSpesa>
+                    <annoEsercizio>2014</annoEsercizio>
+                    <dataProtocolloProvvisorio>2014-01-08T00:00:00+01:00</dataProtocolloProvvisorio>
+                    <dataRegistrazione>2014-01-08T11:27:27.539+01:00</dataRegistrazione>
+                    <descrizioneIva>Differiti, ma non pagati</descrizioneIva>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <flagIntracomunitario>false</flagIntracomunitario>
+                    <flagNotaCredito>false</flagNotaCredito>
+                    <flagRegistrazioneIva>false</flagRegistrazioneIva>
+                    <flagRilevanteIRAP>false</flagRilevanteIRAP>
+                    <importoInValuta>0</importoInValuta>
+                    <listaAliquotaSubdocumentoIva>
+                        <dataCreazione>2015-01-08T11:27:27.863+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:27:27.863+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:27:27.863+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>168</uid>
+                        <aliquotaIva>
+                            <dataCreazione>2014-07-15T09:31:10+02:00</dataCreazione>
+                            <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                            <dataModifica>2014-07-15T09:31:10+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>2</uid>
+                            <annoCatalogazione>0</annoCatalogazione>
+                            <codice>10</codice>
+                            <descrizione>10%</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <percentualeAliquota>10</percentualeAliquota>
+                            <percentualeIndetraibilita>0</percentualeIndetraibilita>
+                            <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                        </aliquotaIva>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <imponibile>309.00</imponibile>
+                        <imposta>30.90</imposta>
+                        <impostaDetraibile>0</impostaDetraibile>
+                        <impostaIndetraibile>0</impostaIndetraibile>
+                        <totale>339.90</totale>
+                    </listaAliquotaSubdocumentoIva>
+                    <numeroProtocolloProvvisorio>2</numeroProtocolloProvvisorio>
+                    <progressivoIVA>112</progressivoIVA>
+                    <registroIva>
+                        <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+                        <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+                        <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+                        <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>40</uid>
+                        <codice>Acquisti-Differita-BEPP</codice>
+                        <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <gruppoAttivitaIva>
+                            <dataCreazione>2015-01-07T16:55:00.892+01:00</dataCreazione>
+                            <dataInizioValidita>2015-01-07T16:55:00.892+01:00</dataInizioValidita>
+                            <dataModifica>2015-01-07T16:55:00.892+01:00</dataModifica>
+                            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>24</uid>
+                            <codice>BEP-STAMP-JIRA</codice>
+                            <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                            <ente>
+<dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+<dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+<dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+<loginOperazione>admin</loginOperazione>
+<stato>VALIDO</stato>
+<uid>1</uid>
+<codiceFiscale>aaaa</codiceFiscale>
+<gestioneLivelli/>
+<nome>Città di Torino</nome>
+                            </ente>
+                            <ivaPrecedente>0</ivaPrecedente>
+                            <listaProRataEChiusuraGruppoIva>
+<stato>VALIDO</stato>
+<uid>64</uid>
+<annoEsercizio>2014</annoEsercizio>
+<percentualeProRata>25.00</percentualeProRata>
+                            </listaProRataEChiusuraGruppoIva>
+                            <listaRegistroIva>
+<dataCreazione>2015-01-07T16:55:39.681+01:00</dataCreazione>
+<dataInizioValidita>2015-01-07T16:55:39.681+01:00</dataInizioValidita>
+<dataModifica>2015-01-07T16:55:39.681+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>38</uid>
+<codice>BEP-SIAC-1705</codice>
+<descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+                            </listaRegistroIva>
+                            <listaRegistroIva>
+<dataCreazione>2015-01-08T09:36:06.215+01:00</dataCreazione>
+<dataInizioValidita>2015-01-08T09:36:06.215+01:00</dataInizioValidita>
+<dataModifica>2015-01-08T09:36:06.215+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>39</uid>
+<codice>CORR-BEP</codice>
+<descrizione>Corrispettivi - Gruppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+                            </listaRegistroIva>
+                            <listaRegistroIva>
+<dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+<dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+<dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+<loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+<stato>VALIDO</stato>
+<uid>40</uid>
+<codice>Acquisti-Differita-BEPP</codice>
+<descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+<ente>
+    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+    <loginOperazione>admin</loginOperazione>
+    <stato>VALIDO</stato>
+    <uid>1</uid>
+    <codiceFiscale>aaaa</codiceFiscale>
+    <gestioneLivelli/>
+    <nome>Città di Torino</nome>
+</ente>
+                            </listaRegistroIva>
+                            <tipoAttivita>PROMISCUA</tipoAttivita>
+                            <tipoChiusura>TRIMESTRALE</tipoChiusura>
+                        </gruppoAttivitaIva>
+                        <tipoRegistroIva>ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+                    </registroIva>
+                    <statoSubdocumentoIva>PROVVISORIO</statoSubdocumentoIva>
+                    <tipoRegistrazioneIva>
+                        <dataCreazione>2014-07-15T08:46:38.018+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2014-07-15T08:46:38.018+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>01</codice>
+                        <descrizione>NORMALE</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <flagTipoRegistrazioneIvaEntrata>true</flagTipoRegistrazioneIvaEntrata>
+                        <flagTipoRegistrazioneIvaSpesa>true</flagTipoRegistrazioneIvaSpesa>
+                    </tipoRegistrazioneIva>
+                    <totaleMovimentiIva>339.90</totaleMovimentiIva>
+                </subdocumentoIva>
+                <totale>339.90</totale>
+            </acquisto>
+        </acquistiVendite>
+        <totaleImponibile>1094.00</totaleImponibile>
+        <totaleImposta>151.40</totaleImposta>
+        <totaleTotale>1245.40</totaleTotale>
+    </datiIva>
+    <intestazione>
+        <annoDiRiferimentoContabile>2014</annoDiRiferimentoContabile>
+        <ente>
+            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+            <loginOperazione>admin</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>1</uid>
+            <codiceFiscale>aaaa</codiceFiscale>
+            <gestioneLivelli/>
+            <nome>Città di Torino</nome>
+        </ente>
+        <indirizzoSoggetto>
+            <cap>10100</cap>
+            <denominazione>CALZOLARI</denominazione>
+            <numeroCivico>1</numeroCivico>
+            <sedime>Via</sedime>
+            <avviso>false</avviso>
+            <checkAvviso>false</checkAvviso>
+            <checkPrincipale>true</checkPrincipale>
+            <comune>Firenze</comune>
+            <indirizzoId>39</indirizzoId>
+            <principale>true</principale>
+        </indirizzoSoggetto>
+        <numeroDiPagina>1</numeroDiPagina>
+        <soggetto>
+            <dataCreazione>2014-06-19T10:40:17.402+02:00</dataCreazione>
+            <dataInizioValidita>2014-06-19T10:40:17.402+02:00</dataInizioValidita>
+            <dataModifica>2014-06-19T10:40:17.402+02:00</dataModifica>
+            <loginOperazione>Demo 24 - Città di Torino - AMMINISTRATORE</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>36</uid>
+            <avviso>false</avviso>
+            <codiceSoggetto>13</codiceSoggetto>
+            <controlloSuSoggetto>true</controlloSuSoggetto>
+            <loginCreazione>Demo 24 - Città di Torino - AMMINISTRATORE</loginCreazione>
+            <loginModifica>Demo 24 - Città di Torino - AMMINISTRATORE</loginModifica>
+            <residenteEstero>false</residenteEstero>
+            <uidSoggettoPadre>0</uidSoggettoPadre>
+        </soggetto>
+        <tipoStampa>BOZZA</tipoStampa>
+    </intestazione>
+    <riepilogo>
+        <riepiloghiIva>
+            <riepilogoIva>
+                <aliquotaSubdocumentoIva>
+                    <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>166</uid>
+                    <aliquotaIva>
+                        <dataCreazione>2014-07-15T09:31:10+02:00</dataCreazione>
+                        <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                        <dataModifica>2014-07-15T09:31:10+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>2</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>10</codice>
+                        <descrizione>10%</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <percentualeAliquota>10</percentualeAliquota>
+                        <percentualeIndetraibilita>0</percentualeIndetraibilita>
+                        <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                    </aliquotaIva>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <imponibile>435.00</imponibile>
+                    <imposta>43.50</imposta>
+                    <impostaDetraibile>0</impostaDetraibile>
+                    <impostaIndetraibile>0</impostaIndetraibile>
+                    <totale>478.50</totale>
+                </aliquotaSubdocumentoIva>
+                <imponibile>744.00</imponibile>
+                <iva>74.40</iva>
+                <progressivoImponibile>744.00</progressivoImponibile>
+                <progressivoIva>74.40</progressivoIva>
+                <totale>818.40</totale>
+                <totaleProgressivo>818.40</totaleProgressivo>
+            </riepilogoIva>
+            <riepilogoIva>
+                <aliquotaSubdocumentoIva>
+                    <dataCreazione>2015-01-08T11:20:26.539+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:20:26.539+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:20:26.539+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>167</uid>
+                    <aliquotaIva>
+                        <dataCreazione>2014-07-15T09:32:37+02:00</dataCreazione>
+                        <dataInizioValidita>2014-07-15T00:00:00+02:00</dataInizioValidita>
+                        <dataModifica>2014-07-15T09:32:37+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>3</uid>
+                        <annoCatalogazione>0</annoCatalogazione>
+                        <codice>22</codice>
+                        <descrizione>22%</descrizione>
+                        <ente>
+                            <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                            <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                            <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                            <loginOperazione>admin</loginOperazione>
+                            <stato>VALIDO</stato>
+                            <uid>1</uid>
+                            <codiceFiscale>aaaa</codiceFiscale>
+                            <gestioneLivelli/>
+                            <nome>Città di Torino</nome>
+                        </ente>
+                        <percentualeAliquota>22</percentualeAliquota>
+                        <percentualeIndetraibilita>50</percentualeIndetraibilita>
+                        <tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+                    </aliquotaIva>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                    <imponibile>350.00</imponibile>
+                    <imposta>77.00</imposta>
+                    <impostaDetraibile>0</impostaDetraibile>
+                    <impostaIndetraibile>0</impostaIndetraibile>
+                    <totale>427.00</totale>
+                </aliquotaSubdocumentoIva>
+                <imponibile>350.00</imponibile>
+                <iva>77.00</iva>
+                <progressivoImponibile>350.00</progressivoImponibile>
+                <progressivoIva>77.00</progressivoIva>
+                <totale>427.00</totale>
+                <totaleProgressivo>427.00</totaleProgressivo>
+            </riepilogoIva>
+        </riepiloghiIva>
+        <ivaIndetraibileCausaProRata>9.81100</ivaIndetraibileCausaProRata>
+        <percProrata>25.00</percProrata>
+        <totaleIVA>151.40</totaleIVA>
+        <totaleImponibile>1094.00</totaleImponibile>
+        <totaleProgressivoImponibile>1094.00</totaleProgressivoImponibile>
+        <totaleProgressivoIva>151.40</totaleProgressivoIva>
+        <totaleTotale>1245.40</totaleTotale>
+        <totaleTotaleProgressivo>1245.40</totaleTotaleProgressivo>
+    </riepilogo>
+    <titolo>
+        <annoContabile>2014</annoContabile>
+        <gruppoAttivitaIva>
+            <dataCreazione>2015-01-07T16:55:00.892+01:00</dataCreazione>
+            <dataInizioValidita>2015-01-07T16:55:00.892+01:00</dataInizioValidita>
+            <dataModifica>2015-01-07T16:55:00.892+01:00</dataModifica>
+            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>24</uid>
+            <codice>BEP-STAMP-JIRA</codice>
+            <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+            <ente>
+                <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                <loginOperazione>admin</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>1</uid>
+                <codiceFiscale>aaaa</codiceFiscale>
+                <gestioneLivelli/>
+                <nome>Città di Torino</nome>
+            </ente>
+            <ivaPrecedente>0</ivaPrecedente>
+            <listaProRataEChiusuraGruppoIva>
+                <stato>VALIDO</stato>
+                <uid>64</uid>
+                <annoEsercizio>2014</annoEsercizio>
+                <percentualeProRata>25.00</percentualeProRata>
+            </listaProRataEChiusuraGruppoIva>
+            <listaRegistroIva>
+                <dataCreazione>2015-01-07T16:55:39.681+01:00</dataCreazione>
+                <dataInizioValidita>2015-01-07T16:55:39.681+01:00</dataInizioValidita>
+                <dataModifica>2015-01-07T16:55:39.681+01:00</dataModifica>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>38</uid>
+                <codice>BEP-SIAC-1705</codice>
+                <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+            </listaRegistroIva>
+            <listaRegistroIva>
+                <dataCreazione>2015-01-08T09:36:06.215+01:00</dataCreazione>
+                <dataInizioValidita>2015-01-08T09:36:06.215+01:00</dataInizioValidita>
+                <dataModifica>2015-01-08T09:36:06.215+01:00</dataModifica>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>39</uid>
+                <codice>CORR-BEP</codice>
+                <descrizione>Corrispettivi - Gruppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+            </listaRegistroIva>
+            <listaRegistroIva>
+                <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+                <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+                <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>40</uid>
+                <codice>Acquisti-Differita-BEPP</codice>
+                <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+            </listaRegistroIva>
+            <tipoAttivita>PROMISCUA</tipoAttivita>
+            <tipoChiusura>TRIMESTRALE</tipoChiusura>
+        </gruppoAttivitaIva>
+        <periodo descrizione="Gennaio - Marzo" codice="T01">GENNAIO_MARZO</periodo>
+        <registroIva>
+            <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+            <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+            <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+            <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+            <stato>VALIDO</stato>
+            <uid>40</uid>
+            <codice>Acquisti-Differita-BEPP</codice>
+            <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+            <ente>
+                <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                <loginOperazione>admin</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>1</uid>
+                <codiceFiscale>aaaa</codiceFiscale>
+                <gestioneLivelli/>
+                <nome>Città di Torino</nome>
+            </ente>
+            <gruppoAttivitaIva>
+                <dataCreazione>2015-01-07T16:55:00.892+01:00</dataCreazione>
+                <dataInizioValidita>2015-01-07T16:55:00.892+01:00</dataInizioValidita>
+                <dataModifica>2015-01-07T16:55:00.892+01:00</dataModifica>
+                <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                <stato>VALIDO</stato>
+                <uid>24</uid>
+                <codice>BEP-STAMP-JIRA</codice>
+                <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                <ente>
+                    <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                    <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                    <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                    <loginOperazione>admin</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>1</uid>
+                    <codiceFiscale>aaaa</codiceFiscale>
+                    <gestioneLivelli/>
+                    <nome>Città di Torino</nome>
+                </ente>
+                <ivaPrecedente>0</ivaPrecedente>
+                <listaProRataEChiusuraGruppoIva>
+                    <stato>VALIDO</stato>
+                    <uid>64</uid>
+                    <annoEsercizio>2014</annoEsercizio>
+                    <percentualeProRata>25.00</percentualeProRata>
+                </listaProRataEChiusuraGruppoIva>
+                <listaRegistroIva>
+                    <dataCreazione>2015-01-07T16:55:39.681+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-07T16:55:39.681+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-07T16:55:39.681+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>38</uid>
+                    <codice>BEP-SIAC-1705</codice>
+                    <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                </listaRegistroIva>
+                <listaRegistroIva>
+                    <dataCreazione>2015-01-08T09:36:06.215+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T09:36:06.215+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T09:36:06.215+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>39</uid>
+                    <codice>CORR-BEP</codice>
+                    <descrizione>Corrispettivi - Gruppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                </listaRegistroIva>
+                <listaRegistroIva>
+                    <dataCreazione>2015-01-08T11:16:28.158+01:00</dataCreazione>
+                    <dataInizioValidita>2015-01-08T11:16:28.158+01:00</dataInizioValidita>
+                    <dataModifica>2015-01-08T11:16:28.158+01:00</dataModifica>
+                    <loginOperazione>Demo 21 - Città di Torino</loginOperazione>
+                    <stato>VALIDO</stato>
+                    <uid>40</uid>
+                    <codice>Acquisti-Differita-BEPP</codice>
+                    <descrizione>Grupppo per le Jira sulle Stampe IVA dovute al nostro amico Beppe</descrizione>
+                    <ente>
+                        <dataCreazione>2013-05-20T11:21:26.827+02:00</dataCreazione>
+                        <dataInizioValidita>2013-01-01T00:00:00+01:00</dataInizioValidita>
+                        <dataModifica>2013-05-20T11:21:26.827+02:00</dataModifica>
+                        <loginOperazione>admin</loginOperazione>
+                        <stato>VALIDO</stato>
+                        <uid>1</uid>
+                        <codiceFiscale>aaaa</codiceFiscale>
+                        <gestioneLivelli/>
+                        <nome>Città di Torino</nome>
+                    </ente>
+                </listaRegistroIva>
+                <tipoAttivita>PROMISCUA</tipoAttivita>
+                <tipoChiusura>TRIMESTRALE</tipoChiusura>
+            </gruppoAttivitaIva>
+            <tipoRegistroIva>ACQUISTI_IVA_DIFFERITA</tipoRegistroIva>
+        </registroIva>
+    </titolo>
+</stampaRegistroIvaReportModel>

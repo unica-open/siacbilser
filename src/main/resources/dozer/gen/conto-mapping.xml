@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+     
+     <!-- 
+[17:12:05] Giuliano: su siac_t_pdce_conto c'è tutta l'alberatura
+[17:12:18] Giuliano: la testata è su siac_t_pdce_fam_tree
+[17:12:48] Giuliano: che ti dirà ad esempio che c'è una famiglia di tipo CE - Costi di esercizio
+[17:12:52] Giuliano: poi
+[17:13:00] Giuliano: su siac_t_pdce_conto
+[17:13:15] Giuliano: avrai un record con code  CE e livello zero
+
+ -->
+  <mapping map-id="SiacTPdceConto_Conto_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.Conto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPdceConto</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>pdceContoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>pdceContoDesc</b>
+		</field>
+	
+		<field>
+			<a>livello</a>
+			<b>livello</b>
+		</field>
+		
+		<field>
+			<a>ordine</a>
+			<b>ordine</b>
+		</field>
+		
+		<field>
+			<a>contoAPartite</a>
+			<b>pdceContoAPartita</b>
+		</field>
+		
+		<field custom-converter-id="contoAmbitoConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>		
+	</mapping>
+	
+	<mapping map-id="SiacTPdceConto_Conto_Minimal_WithPianoDeiConti" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.Conto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPdceConto</class-b>
+	
+		<field map-id="SiacTPdceConto_Conto_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTPdceFamTree_PianoDeiConti">
+			<a>pianoDeiConti</a>
+			<b>siacTPdceFamTree</b>
+		</field>
+		
+	</mapping>
+ 
+    <!-- WARNING: intentional Recursive Parent mapping! -->
+  	<mapping map-id="SiacTPdceConto_Conto_Minimal_WithParent" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.Conto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPdceConto</class-b>
+	
+		<field map-id="SiacTPdceConto_Conto_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTPdceConto_Conto_Minimal_WithParent">
+			<a>contoPadre</a>
+			<b>siacTPdceConto</b>
+		</field>
+		
+	</mapping>
+	
+    <mapping map-id="SiacTPdceConto_Conto_Base" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.Conto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPdceConto</class-b>
+	
+		<field map-id="SiacTPdceConto_Conto_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTPdceConto_Conto_Minimal_WithParent">
+			<a>contoPadre</a>
+			<b>siacTPdceConto</b>
+		</field>
+		
+		<field map-id="SiacDPdceContoTipo_TipoConto">
+			<a>tipoConto</a>
+			<b>siacDPdceContoTipo</b>
+		</field>
+		
+		<field map-id="SiacDCespitiCategoria_CategoriaCespiti_Minimal">
+			<a>categoriaCespiti</a>
+			<b>siacDCespitiCategoria</b>
+		</field>
+		
+		<field map-id="SiacTPdceFamTree_PianoDeiConti" > <!-- siac_t_pdce_fam_tree -> siac_d_pdce_fam    custom-converter-id="contoPianoDeiContiFamigliaConverter" -->
+			<a>pianoDeiConti</a>
+			<b>siacTPdceFamTree</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTPdceConto_Conto_Medium" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.Conto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPdceConto</class-b>
+	
+		<field map-id="SiacTPdceConto_Conto_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="contoAttrConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="contoClassifConverter"> <!-- siac_r_pdce_conto_class -->
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field custom-converter-id="contoSoggettoConverter"> <!-- siac_r_pdce_conto_soggetto -->
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		
+	</mapping>
+	
+	<mapping map-id="SiacTPdceConto_Conto" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.Conto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPdceConto</class-b>
+	
+		<field map-id="SiacTPdceConto_Conto_Medium">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+<!-- 		<field custom-converter-id="contoContoPadreConverter"> .pdce_conto_id_padre -->
+<!-- 			<a>this</a> -->
+<!-- 			<b>this</b> -->
+<!-- 		</field> -->
+		
+		
+		
+		<field custom-converter-id="contoContoCollegatoConverter"> <!-- siac_r_pdce_conto -->
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<!-- siac_r_causale_ep_pdce_conto -->
+<!-- 		<field custom-converter-id="contoCausaliEpConverter">  -->
+<!-- 			<a>this</a> -->
+<!-- 			<b>this</b> -->
+<!-- 		</field> -->
+		
+		
+	</mapping>
+	
+	
+	
+	<!-- #################################### -->
+	<mapping map-id="SiacDPdceContoTipo_TipoConto" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.TipoConto</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDPdceContoTipo</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>pdceCtTipoCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>pdceCtTipoDesc</b>
+		</field>
+		
+	</mapping>
+	
+<!-- 	<mapping map-id="SiacDCespitiCategoria_CategoriaCespiti" wildcard="true"> -->
+<!-- 		<class-a>it.csi.siac.siacgenser.model.CategoriaCespiti</class-a> -->
+<!-- 		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDCespitiCategoria</class-b> -->
+	
+<!-- 		<field map-id="SiacTEnteProprietario_Ente_Base"> -->
+<!-- 			<a>ente</a> -->
+<!-- 			<b>siacTEnteProprietario</b> -->
+<!-- 		</field> -->
+		
+<!-- 		<field> -->
+<!-- 			<a>codice</a> -->
+<!-- 			<b>cescatCode</b> -->
+<!-- 		</field> -->
+		
+<!-- 		<field> -->
+<!-- 			<a>descrizione</a> -->
+<!-- 			<b>cescatDesc</b> -->
+<!-- 		</field> -->
+		
+<!-- 	</mapping> -->
+	
+	<mapping map-id="SiacDPdceFam_ClassePiano" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.ClassePiano</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDPdceFam</class-b>
+	
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>pdceFamCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>pdceFamDesc</b>
+		</field>
+		
+		<field>
+			<a>segnoContoString</a>
+			<b>pdceFamSegno</b>
+		</field>
+		
+		<field>
+			<a>livelloDiLegge</a>
+			<b>pdceLivelloLegge</b>
+		</field>
+		
+		<field custom-converter-id="classePianoAmbitoConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	  <mapping map-id="SiacTPdceFamTree_PianoDeiConti" wildcard="true">
+		<class-a>it.csi.siac.siacgenser.model.PianoDeiConti</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTPdceFamTree</class-b>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field>
+			<a>codice</a>
+			<b>pdceFamCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>pdceFamDesc</b>
+		</field>
+		
+		<field map-id="SiacDPdceFam_ClassePiano">
+			<a>classePiano</a>
+			<b>siacDPdceFam</b>
+		</field>
+		
+		<field custom-converter-id="pianoDeiContiAmbitoConverter" > 
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+</mappings>

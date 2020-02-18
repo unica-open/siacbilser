@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+    
+<!-- 	<mapping map-id="SiacDIvaRegistroTipo_TipoRegistroIva" wildcard="true"> -->
+<!-- 		<class-a>it.csi.siac.siacfin2ser.model.TipoRegistroIva</class-a> -->
+<!-- 		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDIvaRegistroTipo</class-b> -->
+		
+<!-- 		<field> -->
+<!-- 			<a>codice</a> -->
+<!-- 			<b>ivaregTipoCode</b> -->
+<!-- 		</field> -->
+		
+<!-- 		<field> -->
+<!-- 			<a>descrizione</a> -->
+<!-- 			<b>ivaregTipoDesc</b> -->
+<!-- 		</field> -->
+		
+<!-- 		<field map-id="SiacTEnteProprietario_Ente_Base"> -->
+<!-- 			<a>ente</a> -->
+<!-- 			<b>siacTEnteProprietario</b> -->
+<!-- 		</field> -->
+		
+<!-- 		<field custom-converter-id="registroIvaTipoEsigibilitaIvaConverter"> -->
+<!-- 			<a>tipoEsigibilitaIva</a> -->
+<!-- 			<b>this</b> -->
+<!-- 		</field> -->
+		
+<!-- 	</mapping>	 -->
+	
+	<mapping map-id="SiacTIvaRegistro_RegistroIva_Minimal" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.RegistroIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaRegistro</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>ivaregCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>ivaregDesc</b>
+		</field>
+		
+		<!-- SIAC-6276 CR-1179B -->
+		<field>
+			<a>flagLiquidazioneIva</a>
+			<b>ivaregFlagLiquidazioneIva</b>
+		</field>
+		
+		<field>
+			<a>flagBloccato</a>
+			<b>ivaregFlagbloccato</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTIvaRegistro_RegistroIva_Base" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.RegistroIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaRegistro</class-b>
+		
+		<field map-id="SiacTIvaRegistro_RegistroIva_Minimal">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+		<field map-id="SiacTEnteProprietario_Ente_Base">
+			<a>ente</a>
+			<b>siacTEnteProprietario</b>
+		</field>
+		
+		<field custom-converter-id="registroIvaTipoConverter">
+			<a>this</a> <!-- tipoRegistroIva -->
+			<b>this</b> <!-- siacDIvaRegistroTipo -->
+		</field>
+		
+	</mapping>
+		
+     
+	<mapping map-id="SiacTIvaRegistro_RegistroIva" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.RegistroIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaRegistro</class-b>
+		
+		<field map-id="SiacTIvaRegistro_RegistroIva_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+		<field custom-converter-id="registroIvaGruppoAttivitaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="SiacTIvaRegistro_RegistroIva_GruppoBase" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.RegistroIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaRegistro</class-b>
+		
+		<field map-id="SiacTIvaRegistro_RegistroIva_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+		<field custom-converter-id="registroIvaGruppoAttivitaBaseConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+
+
+	<mapping map-id="SiacTIvaRegistro_RegistroIva_GruppoMinimal" wildcard="true">
+		<class-a>it.csi.siac.siacfin2ser.model.RegistroIva</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIvaRegistro</class-b>
+		
+		<field map-id="SiacTIvaRegistro_RegistroIva_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	
+		<field custom-converter-id="registroIvaGruppoAttivitaMinimalConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		
+	</mapping>
+
+	
+	
+	
+</mappings>

@@ -1,0 +1,363 @@
+INTESTAZIONE:
+	- Ente:
+		- Denominazione: /stampaRegistroIvaReportModel/intestazione/ente/nome
+		- Indirizzo:     /stampaRegistroIvaReportModel/intestazione/indirizzoSoggetto
+		- Partita IVA:   /stampaRegistroIvaReportModel/intestazione/soggetto/partitaIva
+	- TipoStampa:     /stampaRegistroIvaReportModel/intestazione/tipoStampa
+	- Numero pagina:  /stampaRegistroIvaReportModel/intestazione/numeroDiPagina (ATTENZIONE! Viene indicato solo il numero di pagina iniziale)
+	- Anno contabile: /stampaRegistroIvaReportModel/intestazione/annoDiRiferimentoContabile
+
+TITOLO SEZIONE 1:
+	- Tipo registro:  /stampaRegistroIvaReportModel/titolo/registroIva/tipoRegistroIva/@descrizione
+	- Registro:       /stampaRegistroIvaReportModel/titolo/registroIva (/codice, /descrizione)
+	- Gruppo:         /stampaRegistroIvaReportModel/titolo/gruppoAttivitaIva (/codice, /descrizione)
+	- Periodo:        /stampaRegistroIvaReportModel/titolo/periodo (leggerne gli attributi
+	- Anno contabile: /stampaRegistroIvaReportModel/titolo/annoContabile
+
+TITOLO SEZIONE 2:
+	- Tipo registro:  /stampaRegistroIvaReportModel/titolo/registroIva/tipoRegistroIva/@descrizione
+	- Registro:       /stampaRegistroIvaReportModel/titolo/registroIva (/codice, /descrizione)
+	- Gruppo:         /stampaRegistroIvaReportModel/titolo/gruppoAttivitaIva (/codice, /descrizione)
+	- Periodo:        /stampaRegistroIvaReportModel/titolo/periodo (leggerne gli attributi)
+	- Anno contabile: /stampaRegistroIvaReportModel/titolo/annoContabile
+
+STAMPA REGISTRO IVA - ACQUISTI IVA IMMEDIATA
+	SEZIONE 1:
+		(Ciclare su '/stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto')
+		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/numeroProtocolloDefinitivo
+		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/dataProtocolloDefinitivo
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/dataEmissione
+		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/numero
+		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/tipoDocumento (/codice, /descrizione)
+		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/soggetto/codiceSoggetto
+		- G1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/soggetto/denominazione
+		- H1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/attivitaIva (/codice, /descrizione se codice non significativo)
+		- I1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/imponibile
+		- L1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/imposta
+		- M1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- N1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- O1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/totale
+		- P1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/flagRilevanteIRAP
+		
+		- Somma Imponibile: /stampaRegistroIvaReportModel/datiIva/totaleImponibile
+		- Somma IVA:        /stampaRegistroIvaReportModel/datiIva/totaleImposta
+		- Somma Totale:     /stampaRegistroIvaReportModel/datiIva/totaleTotale
+	SEZIONE 2:
+		(Ciclare su '/stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva')
+		- A2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- B2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- C2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- D2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeIndetraibilita
+		- E2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- F2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/iva
+		- G2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totale
+		- H2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoImponibile
+		- I2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoIva
+		- L2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totaleProgressivo
+		
+		- Somma Imponibile Indetraibile:             /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibileIndetraibile
+		- Somma IVA Indetraibile:                    /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVAIndetraibile
+		- Somma Progressivo Imponibile Indetraibile: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibileIndetraibile
+		- Somma Progressivo IVA Indetraibile:        /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIvaIndetraibile
+		
+		- Somma Imponibile Detraibile:             /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibileDetraibile
+		- Somma IVA Detraibile:                    /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVADetraibile
+		- Somma Progressivo Imponibile Detraibile: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibileDetraibile
+		- Somma Progressivo IVA Detraibile:        /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIvaDetraibile
+		
+		- Somma Imponibile Esente:             /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibileEsente
+		- Somma Progressivo Imponibile Esente: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibileEsente
+		
+		- Somma Imponibile:               /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibile
+		- Somma IVA:                      /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVA
+		- Somma Totale:                   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotale
+		- Somma Progressivo Imponibile:   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibile
+		- Somma Progressivo IVA:          /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIva
+		- Somma Totale Progressivo:       /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotaleProgressivo
+		- Percentuale ProRata:            /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/percProrata
+		- IVA Indetraibile Causa ProRata: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/ivaIndetraibileCausaProRata
+
+
+STAMPA REGISTRO IVA - ACQUISTI IVA ESIGIBILITA' DIFFERITA (NON PAGATI)
+	SEZIONE 1:
+		(Ciclare su '/stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto')
+		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/numeroProtocolloProvvisorio
+		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/dataProtocolloProvvisorio
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/dataEmissione
+		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/numero
+		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/tipoDocumento (/codice, /descrizione)
+		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/soggetto/codiceSoggetto
+		- G1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/soggetto/denominazione
+		- H1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/attivitaIva (/codice, /descrizione se codice non significativo)
+		- I1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/imponibile
+		- L1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/imposta
+		- M1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- N1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- O1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/totale
+		- P1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/flagRilevanteIRAP
+		
+		- Somma Imponibile: /stampaRegistroIvaReportModel/datiIva/totaleImponibile
+		- Somma IVA:        /stampaRegistroIvaReportModel/datiIva/totaleImposta
+		- Somma Totale:     /stampaRegistroIvaReportModel/datiIva/totaleTotale
+	SEZIONE 2:
+		(Ciclare su '/stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva')
+		- A2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- B2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- C2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- D2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeIndetraibilita
+		- E2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- F2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/iva
+		- G2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totale
+		- H2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoImponibile
+		- I2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoIva
+		- L2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totaleProgressivo
+		
+		- Somma Imponibile Indetraibile:             /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibileIndetraibile
+		- Somma IVA Indetraibile:                    /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVAIndetraibile
+		- Somma Progressivo Imponibile Indetraibile: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibileIndetraibile
+		- Somma Progressivo IVA Indetraibile:        /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIvaIndetraibile
+		
+		- Somma Imponibile Detraibile:             /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibileDetraibile
+		- Somma IVA Detraibile:                    /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVADetraibile
+		- Somma Progressivo Imponibile Detraibile: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibileDetraibile
+		- Somma Progressivo IVA Detraibile:        /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIvaDetraibile
+		
+		- Somma Imponibile Esente:             /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibileEsente
+		- Somma Progressivo Imponibile Esente: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibileEsente
+		
+		- Somma Imponibile:               /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibile
+		- Somma IVA:                      /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVA
+		- Somma Totale:                   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotale
+		- Somma Progressivo Imponibile:   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibile
+		- Somma Progressivo IVA:          /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIva
+		- Somma Totale Progressivo:       /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotaleProgressivo
+		- Percentuale ProRata:            /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/percProrata
+		- IVA Indetraibile Causa ProRata: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/ivaIndetraibileCausaProRata
+
+		
+STAMPA REGISTRO IVA - ACQUISTI IVA ESIGIBILITA' DIFFERITA (PAGATI)
+	SEZIONE 1:
+		(Ciclare su '/stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto')
+		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/numeroProtocolloDefinitivo
+		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/dataProtocolloDefinitivo
+		- Q1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/numeroOrdinativoDocumento
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/dataEmissione
+		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/numero
+		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/tipoDocumento (/codice, /descrizione)
+		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/soggetto/codiceSoggetto
+		- G1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/documento/soggetto/denominazione
+		- R1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/subdocumentoSpesa/numero (puo' essere nullo)
+		- H1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/attivitaIva (/codice, /descrizione se codice non significativo)
+		- I1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/imponibile
+		- L1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/imposta
+		- M1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- N1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- O1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/aliquotaSubdocumentoIva/totale
+		- P1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/flagRilevanteIRAP
+		- S1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/numeroProtocolloProvvisorio
+		- T1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/acquisto/subdocumentoIva/dataProtocolloProvvisorio
+		
+		- Somma Imponibile: /stampaRegistroIvaReportModel/datiIva/totaleImponibile
+		- Somma IVA:        /stampaRegistroIvaReportModel/datiIva/totaleImposta
+		- Somma Totale:     /stampaRegistroIvaReportModel/datiIva/totaleTotale
+	SEZIONE 2:
+		(Ciclare su '/stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva')
+		- A2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- B2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- C2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- D2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeIndetraibilita
+		- E2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- F2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/iva
+		- G2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totale
+		- H2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoImponibile
+		- I2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoIva
+		- L2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totaleProgressivo
+		
+		- Somma Imponibile Indetraibile:             /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibileIndetraibile
+		- Somma IVA Indetraibile:                    /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVAIndetraibile
+		- Somma Progressivo Imponibile Indetraibile: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibileIndetraibile
+		- Somma Progressivo IVA Indetraibile:        /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIvaIndetraibile
+		
+		- Somma Imponibile Detraibile:             /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibileDetraibile
+		- Somma IVA Detraibile:                    /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVADetraibile
+		- Somma Progressivo Imponibile Detraibile: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibileDetraibile
+		- Somma Progressivo IVA Detraibile:        /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIvaDetraibile
+		
+		- Somma Imponibile Esente:             /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibileEsente
+		- Somma Progressivo Imponibile Esente: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibileEsente
+		
+		- Somma Imponibile:               /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibile
+		- Somma IVA:                      /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVA
+		- Somma Totale:                   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotale
+		- Somma Progressivo Imponibile:   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibile
+		- Somma Progressivo IVA:          /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIva
+		- Somma Totale Progressivo:       /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotaleProgressivo
+		- Percentuale ProRata:            /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/percProrata
+		- IVA Indetraibile Causa ProRata: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/ivaIndetraibileCausaProRata
+
+
+STAMPA REGISTRO IVA - VENDITE IVA IMMEDIATA
+	SEZIONE 1:
+		(Ciclare su '/stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita')
+		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroProtocolloDefinitivo
+		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/dataProtocolloDefinitivo
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataEmissione
+		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/numero
+		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/tipoDocumento (/codice, /descrizione)
+		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/codiceSoggetto
+		- G1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/denominazione
+		- H1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/attivitaIva (/codice, /descrizione se codice non significativo)
+		- I1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/imponibile
+		- L1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/imposta
+		- M1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- N1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- O1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/totale
+		- P1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/flagRilevanteIRAP
+		
+		- Somma Imponibile: /stampaRegistroIvaReportModel/datiIva/totaleImponibile
+		- Somma IVA:        /stampaRegistroIvaReportModel/datiIva/totaleImposta
+		- Somma Totale:     /stampaRegistroIvaReportModel/datiIva/totaleTotale
+	SEZIONE 2:
+		(Ciclare su '/stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva')
+		- A2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- B2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- C2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- E2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- F2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/iva
+		- G2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totale
+		- H2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoImponibile
+		- I2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoIva
+		- L2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totaleProgressivo
+		
+		- Somma Imponibile:               /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibile
+		- Somma IVA:                      /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVA
+		- Somma Totale:                   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotale
+		- Somma Progressivo Imponibile:   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibile
+		- Somma Progressivo IVA:          /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIva
+		- Somma Totale Progressivo:       /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotaleProgressivo
+
+STAMPA REGISTRO IVA - VENDITE IVA DIFFERITA (NON INCASSATI)
+	SEZIONE 1:
+		(Ciclare su '/stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita')
+		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroProtocolloProvvisorio
+		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/dataProtocolloProvvisorio
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataEmissione
+		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/numero
+		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/tipoDocumento (/codice, /descrizione)
+		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/codiceSoggetto
+		- G1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/denominazione
+		- H1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/attivitaIva (/codice, /descrizione se codice non significativo)
+		- I1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/imponibile
+		- L1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/imposta
+		- M1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- N1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- O1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/totale
+		- P1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/flagRilevanteIRAP
+		
+		- Somma Imponibile: /stampaRegistroIvaReportModel/datiIva/totaleImponibile
+		- Somma IVA:        /stampaRegistroIvaReportModel/datiIva/totaleImposta
+		- Somma Totale:     /stampaRegistroIvaReportModel/datiIva/totaleTotale
+	SEZIONE 2:
+		(Ciclare su '/stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva')
+		- A2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- B2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- C2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- E2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- F2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/iva
+		- G2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totale
+		- H2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoImponibile
+		- I2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoIva
+		- L2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totaleProgressivo
+		
+		- Somma Imponibile:               /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibile
+		- Somma IVA:                      /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVA
+		- Somma Totale:                   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotale
+		- Somma Progressivo Imponibile:   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibile
+		- Somma Progressivo IVA:          /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIva
+		- Somma Totale Progressivo:       /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotaleProgressivo
+
+
+STAMPA REGISTRO IVA - VENDITE IVA ESIGIBILITA' DIFFERITA (INCASSATI)
+	SEZIONE 1:
+		(Ciclare su '/stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita')
+		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroProtocolloDefinitivo
+		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/dataProtocolloDefinitivo
+		- Q1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroOrdinativoDocumento
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataEmissione
+		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/numero
+		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/tipoDocumento (/codice, /descrizione)
+		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/codiceSoggetto
+		- G1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/denominazione
+		- R1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/subdocumentoEntrata/numero (puo' essere nullo)
+		- H1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/attivitaIva (/codice, /descrizione se codice non significativo)
+		- I1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/imponibile
+		- L1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/imposta
+		- M1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- N1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- O1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/totale
+		- P1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/flagRilevanteIRAP
+		- S1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroProtocolloProvvisorio
+		- T1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/dataProtocolloProvvisorio
+		
+		- Somma Imponibile: /stampaRegistroIvaReportModel/datiIva/totaleImponibile
+		- Somma IVA:        /stampaRegistroIvaReportModel/datiIva/totaleImposta
+		- Somma Totale:     /stampaRegistroIvaReportModel/datiIva/totaleTotale
+	SEZIONE 2:
+		(Ciclare su '/stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva')
+		- A2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- B2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- C2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- E2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- F2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/iva
+		- G2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totale
+		- H2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoImponibile
+		- I2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoIva
+		- L2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totaleProgressivo
+		
+		- Somma Imponibile:               /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibile
+		- Somma IVA:                      /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVA
+		- Somma Totale:                   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotale
+		- Somma Progressivo Imponibile:   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibile
+		- Somma Progressivo IVA:          /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIva
+		- Somma Totale Progressivo:       /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotaleProgressivo
+
+		
+STAMPA REGISTRO IVA - CORRISPETTIVI
+	SEZIONE 1:
+		(Ciclare su '/stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita')
+		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroProtocolloDefinitivo
+		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/dataProtocolloDefinitivo
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataEmissione
+		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/numero
+		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/tipoDocumento (/codice, /descrizione)
+		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/codiceSoggetto
+		- G1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/denominazione
+		- H1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/attivitaIva (/codice, /descrizione se codice non significativo)
+		- I1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/imponibile
+		- L1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/imposta
+		- M1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- N1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- O1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/aliquotaSubdocumentoIva/totale
+		- P1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/flagRilevanteIRAP
+		
+		- Somma Imponibile: /stampaRegistroIvaReportModel/datiIva/totaleImponibile
+		- Somma IVA:        /stampaRegistroIvaReportModel/datiIva/totaleImposta
+		- Somma Totale:     /stampaRegistroIvaReportModel/datiIva/totaleTotale
+	SEZIONE 2:
+		(Ciclare su '/stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva')
+		- A2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/codice
+		- B2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/percentualeAliquota
+		- C2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/aliquotaSubdocumentoIva/aliquotaIva/descrizione
+		- E2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/imponibile
+		- F2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/iva
+		- G2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totale
+		- H2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoImponibile
+		- I2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/progressivoIva
+		- L2: /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/riepiloghiIva/riepilogoIva/totaleProgressivo
+		
+		- Somma Imponibile:               /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleImponibile
+		- Somma IVA:                      /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleIVA
+		- Somma Totale:                   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotale
+		- Somma Progressivo Imponibile:   /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoImponibile
+		- Somma Progressivo IVA:          /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleProgressivoIva
+		- Somma Totale Progressivo:       /stampaRegistroIvaReportModel/listaRiepilogo/riepilogo/totaleTotaleProgressivo

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<elenchiDocumentiAllegato>
+	<elenchi>
+		<elenco>
+			<annoSysEsterno>2015</annoSysEsterno>
+			<numeroSysEsterno>123</numeroSysEsterno>
+<!--
+			<allegatoAtto>
+				<uid>-1</uid>						
+				<causale>mia causale allegato atto</causale>
+				<datiSensibili>false</datiSensibili>
+
+			</allegatoAtto>
+-->
+			<subdocumenti>
+				<subdocumentoSpesa>
+					<documentoSpesa>
+						<uid>-1</uid>
+						<!-- Questo uid deve essere univoco per ogni documentoSpesa all'interno del flusso xml. 
+										   Alla prima occorrenza di un documentoSpesa (ovvero questa) vengono specificati tutti i dettagli (anno, numero, imoporto, documenti figli, ecc...
+										   campi indicati di seguito), mentre nelle successive occorrenze potr�ssere riportato SOLO l'uid.
+										   (Questo numero deve essere compreso tra -1 e -2147483648)
+										-->
+						<anno>2015</anno>
+						<!--DATI DOCUMENTO SPESA-->
+						<numero>26708</numero>
+						<importo>10</importo>
+						<descrizione>FATTURA SPESA SISTEMA ESTERNO</descrizione>
+
+						<arrotondamento>0</arrotondamento>
+						<codiceBollo>
+							<codice>99</codice>
+						</codiceBollo>
+						<dataEmissione>2014-05-15T14:30:05+02:00</dataEmissione>
+						<dataScadenza>2014-05-16T14:30:05+02:00</dataScadenza>
+
+						<numeroRepertorio>mio numero di repertorio</numeroRepertorio>
+						<soggetto>
+							<codiceSoggetto>1</codiceSoggetto>
+						</soggetto>
+						<terminePagamento>1</terminePagamento>
+						<tipoDocumento>
+							<codice>FAT</codice>
+							<tipoFamigliaDocumento>SPESA</tipoFamigliaDocumento>
+						</tipoDocumento>
+						<causaleSospensione>mia causale sospensione</causaleSospensione>
+						<codiceFiscalePignorato>SDFNGB88C12L219E</codiceFiscalePignorato>
+						<dataRiattivazione>2016-05-16T14:30:05+02:00</dataRiattivazione>
+						<dataSospensione>2014-05-16T14:30:05+02:00</dataSospensione>
+						<flagBeneficiarioMultiplo>false</flagBeneficiarioMultiplo>
+
+					</documentoSpesa>
+					<dataScadenza>2014-06-16T14:30:05+02:00</dataScadenza>
+					<descrizione>FATT SYST ESTERNO S1</descrizione>
+				
+					<flagEsproprio>false</flagEsproprio>
+					<flagOrdinativoSingolo>false</flagOrdinativoSingolo>
+					<importo>2</importo>
+					<importoDaDedurre>1</importoDaDedurre>
+					<note>PROVA INSERIMENTO QUOTA</note>
+					<noteTesoriere>
+						<codice>01</codice>
+					</noteTesoriere>
+
+					<causaleOrdinativo>mia causale ordinativo SERVIZIO CARICA DOCUMENTI</causaleOrdinativo>
+					<cig>mio cig</cig>
+					<commissioniDocumento>ESENTE</commissioniDocumento>
+					<cup>mio cup</cup>
+					<datiCertificazioneCrediti>
+						<annotazione>mia annotazione</annotazione>
+						<dataCertificazione>2014-09-01T00:00:00+02:00</dataCertificazione>
+						<flagCertificazione>false</flagCertificazione>
+						<noteCertificazione>mie note certificazione</noteCertificazione>
+						<numeroCertificazione>mio numero certificazione</numeroCertificazione>
+					</datiCertificazioneCrediti>
+					<impegno>
+						<annoMovimento>2015</annoMovimento>
+						<numero>4868</numero>
+					</impegno>
+					<modalitaPagamentoSoggetto>
+						<codiceModalitaPagamento>1</codiceModalitaPagamento>
+					</modalitaPagamentoSoggetto>
+					<numeroMutuo>mio numero mutuo</numeroMutuo>
+					<sedeSecondariaSoggetto>
+						<codiceSedeSecondaria>myCodieceSede</codiceSedeSecondaria>
+					</sedeSecondariaSoggetto>
+					<flagRilevanteIVA>true</flagRilevanteIVA>
+				</subdocumentoSpesa>
+			</subdocumenti>
+
+			<subdocumentiIva>
+				<subdocumentoIvaSpesa>
+					
+					<documentoSpesa> <!-- questa e' la testata iva -->
+						<uid>-12</uid>
+						<anno>2015</anno>
+						<arrotondamento>0</arrotondamento>
+						<dataEmissione>2014-09-15T14:30:05+02:00</dataEmissione>
+						<descrizione>IVA SPESA SISTEMA ESTERNO</descrizione>
+						<importo>100</importo>
+						<note>note mia testata iva</note>
+						<numero>2233</numero>
+						<annoEsercizio>2015</annoEsercizio>
+						<soggetto>
+							<codiceSoggetto>1</codiceSoggetto>
+						</soggetto>
+						<tipoDocumento>
+							<codice>FAT</codice>
+							<tipoFamigliaDocumento>IVA_SPESA</tipoFamigliaDocumento>
+						</tipoDocumento>
+					</documentoSpesa>
+					
+					
+					<!-- 					<importoInValuta>10</importoInValuta> -->
+					<registroIva>
+						<codice>01 Registro</codice>
+                        <tipoRegistroIva descrizione="Acquisti iva immediata" codice="AI">ACQUISTI_IVA_IMMEDIATA</tipoRegistroIva>	
+					</registroIva>
+					<tipoRegistrazioneIva>
+						<codice>01</codice>
+					</tipoRegistrazioneIva>
+
+					<aliquote>
+						<aliquotaSubdocumentoIva>
+							<aliquotaIva>
+								<codice>04</codice>
+								<tipoOperazioneIva descrizione="Imponibile" codice="I">IMPONIBILE</tipoOperazioneIva>
+							</aliquotaIva>
+							<imponibile>1</imponibile>
+							<imposta>0</imposta>
+							<impostaDetraibile>0</impostaDetraibile>
+							<impostaIndetraibile>0</impostaIndetraibile>
+							<totale>0</totale>
+						</aliquotaSubdocumentoIva>
+					</aliquote>
+					<attivitaIva>
+						<codice>01</codice>
+						<flagRilevanteIRAP>false</flagRilevanteIRAP>
+					</attivitaIva>
+					<annoEsercizio>2015</annoEsercizio>
+					<importo>10</importo>
+					<importoInValuta>10</importoInValuta>
+					<statoSubdocumentoIva>DEFINITIVO</statoSubdocumentoIva>
+					<dataProtocolloDefinitivo>2014-10-16T14:30:05+02:00</dataProtocolloDefinitivo>
+					<dataRegistrazione>2014-10-16T14:30:05+02:00</dataRegistrazione>
+					<descrizioneIva>subIVA legato a sub testata</descrizioneIva>
+					<!--                     <totaleMovimentiIva>0</totaleMovimentiIva> -->
+				</subdocumentoIvaSpesa>
+			</subdocumentiIva>
+			
+		</elenco>
+	</elenchi>
+</elenchiDocumentiAllegato>
