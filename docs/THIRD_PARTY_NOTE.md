@@ -74,10 +74,10 @@ xpp3_min,1.1.4c
 hibernate-jpa-2.0-api,1.0.1.Final-redhat-1\
 junit,4.11
 
-[GNU General Public License 1.0](https://github.com/unica-open/contabilia/blob/master/third-party-licenses/GPL%201.0.txt) \
+[GNU General Public License 1.0](https://github.com/unica-open/contabilia/blob/master/third-party-licenses/GPL%201.0-LICENSE.txt) \
 jboss-jstl-api_1.2_spec,1.0.3.Final-redhat-1
 
-[GNU General Public License 2.0](https://github.com/unica-open/contabilia/blob/master/third-party-licenses/GPL%202.0.txt) \
+[GNU General Public License 2.0](https://github.com/unica-open/contabilia/blob/master/third-party-licenses/GPL%202.0-LICENSE.txt) \
 jboss-ejb-api_3.1_spec,1.0.2.Final-redhat-1\
 jboss-transaction-api_1.1_spec,1.0.1.Final-redhat-1\
 jboss-servlet-api_3.0_spec,1.0.1.Final-redhat-1
@@ -108,5 +108,5 @@ aopalliance,1.0.0\
 xmlpull,1.1.3.1\
 xpp3_min,1.1.4c
 
-[CSI](https://github.com/unica-open/contabilia/blob/master/third-party-licenses/CSI.txt) \
+[CSI](https://github.com/unica-open/contabilia/blob/master/Copyrights.txt) \
 token-retry,2.0.0
