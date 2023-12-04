@@ -40,7 +40,7 @@ public class SiacDBilElemDetCompTipo extends SiacTEnteBase {
 
 	@Column(name="elem_det_comp_tipo_desc")
 	private String elemDetCompTipoDesc;
-
+	//SIAC-7349
 	@Column(name="elem_det_comp_tipo_gest_aut")
 	private Boolean elemDetCompTipoGestAut;
 	
@@ -79,7 +79,13 @@ public class SiacDBilElemDetCompTipo extends SiacTEnteBase {
 	@ManyToOne
 	@JoinColumn(name="elem_det_comp_tipo_stato_id")
 	private SiacDBilElemDetCompTipoStato siacDBilElemDetCompTipoStato;
-
+	
+	//SIAC-7349
+	//bi-directional many-to-one association to SiacDBilElemDetCompTipoImp
+	@ManyToOne
+	@JoinColumn(name="elem_det_comp_tipo_imp_id")
+	private SiacDBilElemDetCompTipoImp siacDBilElemDetCompTipoImp;
+	
 	/**
 	 * Instantiates a new siac d bil elem det comp sotto tipo.
 	 */
@@ -277,6 +283,22 @@ public class SiacDBilElemDetCompTipo extends SiacTEnteBase {
 	public void setElemDetCompTipoGestAut(Boolean elemDetCompTipoGestAut) {
 		this.elemDetCompTipoGestAut = elemDetCompTipoGestAut;
 	}
+
+	/**
+	 * @return the siacDBilElemDetCompTipoImp
+	 */
+	public SiacDBilElemDetCompTipoImp getSiacDBilElemDetCompTipoImp() {
+		return siacDBilElemDetCompTipoImp;
+	}
+
+	/**
+	 * @param siacDBilElemDetCompTipoImp the siacDBilElemDetCompTipoImp to set
+	 */
+	public void setSiacDBilElemDetCompTipoImp(SiacDBilElemDetCompTipoImp siacDBilElemDetCompTipoImp) {
+		this.siacDBilElemDetCompTipoImp = siacDBilElemDetCompTipoImp;
+	}
+	
+	
 
 
 }

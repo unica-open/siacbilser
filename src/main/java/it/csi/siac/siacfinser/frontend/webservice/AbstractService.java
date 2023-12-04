@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Entita;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.ServiceRequest;
@@ -24,7 +24,7 @@ import it.csi.siac.siaccorser.model.ServiceResponse;
 
 public class AbstractService {
 
-	protected transient LogUtil log = new LogUtil(this.getClass());
+	protected transient LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	@Autowired
 	protected ApplicationContext appCtx;

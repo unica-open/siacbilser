@@ -7,9 +7,11 @@ package it.csi.siac.siacfinser.business.service.movgest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -19,16 +21,18 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.ModelUtils;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.business.service.enumeration.CodiceEventoEnum;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaImpegno;
@@ -44,6 +48,7 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoAttivaRegistrazion
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoCompilaListaSubImpegniConTuttiGliIdsDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoControlliAggiornamentoImpegnoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoControlliDto;
+import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoInserimentoMovimentoGestioneDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.ImpegnoInModificaInfoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.ModificaMovimentoGestioneSpesaInfoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.ModificaVincoliImpegnoInfoDto;
@@ -56,6 +61,7 @@ import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.UnitaElementareGestione;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestione.StatoOperativoModificaMovimentoGestione;
 import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesa;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 import it.csi.siac.siacgenser.model.TipoCollegamento;
@@ -68,7 +74,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 	private ImpegnoOttimizzatoDad impegnoOttimizzatoDad;
 	
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	
 	@Autowired
 	CommonDad commonDad;
@@ -77,7 +83,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 	protected void init() {
 		final String methodName = "AggiornaImpegnoService : init()";
 		log.trace(methodName, "- Begin");		
-	
+		impegnoOttimizzatoDad.setEnte(req.getRichiedente().getAccount().getEnte());
 	}	
 
 	@Override
@@ -145,7 +151,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		
 		//Dati modifiche:
 		OttimizzazioneModificheMovimentoGestioneDto ottimizzazioneModDto = null;
-		ottimizzazioneModDto = impegnoOttimizzatoDad.caricaOttimizzazioneModificheMovimentoGestioneDto(impegnoInModificaInfoDto.getSiacTMovgest().getSiacTMovgestTs());
+		ottimizzazioneModDto = impegnoOttimizzatoDad.caricaOttimizzazioneModificheMovimentoGestioneDto(impegnoInModificaInfoDto.getSiacTMovgest().getSiacTMovgestTs(), impegnoInModificaInfoDto.getSiacTMovgest().getMovgestId());
 		impegnoInModificaInfoDto.getOttimizzazioneMovGest().setOttimizzazioneModDto(ottimizzazioneModDto);
 		
 		//4. Carichiamo i dati del capitolo:
@@ -164,7 +170,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		
 		// creiamo una lista dove ci sono le valutazione sia delle (eventuali) modifiche sull'impegno
 		// che sui suoi subImpegni
-		List<ModificaMovimentoGestioneSpesaInfoDto> valutazioneModMovAll = CommonUtils.toList( CommonUtils.toList(valutazioneModMov),valutazioneModMovSubs);
+		List<ModificaMovimentoGestioneSpesaInfoDto> valutazioneModMovAll = CommonUtil.toList( CommonUtil.toList(valutazioneModMov),valutazioneModMovSubs);
 		
 		boolean modifichePresenti = impegnoOttimizzatoDad.presentiModificheSpesa(valutazioneModMovAll);
 		
@@ -176,7 +182,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			//Siamo nel caso: A. Aggiornare l'accertamento in senso stretto
 			//lanciamo quindi i controlli descritti nell'Operazione "Aggiorna Accertamento"
 			esitoControlliAggAcc =  impegnoOttimizzatoDad.controlliDiMeritoAggiornamentoImpegno(req.getRichiedente(),  req.getEnte(), 
-					bilancio, impegnoDaAggiornare,datiOperazione,impegnoInModificaInfoDto);
+					bilancio, impegnoDaAggiornare,datiOperazione,impegnoInModificaInfoDto, capitoliInfo);
 			listaErrori = esitoControlliAggAcc.getListaErrori();
 			
 			if(listaErrori == null){
@@ -197,8 +203,12 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 					for(int i=0; i<subImpegniDaInserireOModificare.size();i++){
 							checkAttoAmministrativo(listaErrori, subImpegniDaInserireOModificare.get(i).getAttoAmministrativo());
 					}
-				}else {
-					checkAttoAmministrativo(listaErrori, req.getImpegno().getAttoAmministrativo());
+				}else if(subImpegniDaEliminare != null && !subImpegniDaEliminare.isEmpty()){//task-137
+					for(int i=0; i<subImpegniDaEliminare.size();i++){
+						checkAttoAmministrativo(listaErrori, subImpegniDaEliminare.get(i).getAttoAmministrativo());
+					}
+				}else{
+						checkAttoAmministrativo(listaErrori, req.getImpegno().getAttoAmministrativo());
 				}
 			
 			}
@@ -237,6 +247,27 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		if(inserireDoppiaGestione){
 			//
 			infoVincoliValutati = caricaInfoAccVincoliPerDoppiaGest(bilancio,datiOperazione,impegnoInModificaInfoDto,impegnoDaAggiornare);
+
+			//SIAC-8894: se non ho trovato il progetto anno successivo (e impostato) allora errore
+			if (impegnoDaAggiornare.getProgetto() != null && !isEmpty(impegnoDaAggiornare.getProgetto().getCodice())) {	
+				//SIAC-8894: se non ho trovato il progetto anno successivo allora errore
+				if(!esisteProgettoAnnoSuccPerDoppiaGestione(bilancio,datiOperazione,impegnoDaAggiornare, null)) {
+					res.setErrori(Arrays.asList(ErroreFin.PROGETTO_NONTROVATO_DOPPIAGESTIONE.getErrore(impegnoDaAggiornare.getProgetto().getCodice())));
+					res.setEsito(Esito.FALLIMENTO);
+					return;
+				}  
+			}
+			
+			
+			//task-78: se non ho trovato il progetto anno successivo (e impostato) allora errore
+			if (impegnoDaAggiornare.getIdCronoprogramma() != null) {					
+				//task-78: se non ho trovato il cronoprogramma anno successivo allora errore
+				if(!esisteCronoprogrammaAnnoSuccPerDoppiaGestione(bilancio,datiOperazione,impegnoDaAggiornare, null)) {
+					res.setErrori(Arrays.asList(ErroreFin.CRONOP_NONTROVATO_DOPPIAGESTIONE.getErrore(impegnoDaAggiornare.getIdCronoprogramma())));
+					res.setEsito(Esito.FALLIMENTO);
+					return;
+				}
+			}
 		}
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -255,7 +286,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		} else {
 			
 			//eventuali messaggi non blocanti da comunicare al front-end:
-			res.setErrori(CommonUtils.addAll(res.getErrori(), esito.getListaWarning()));
+			res.setErrori(CommonUtil.addAll(res.getErrori(), esito.getListaWarning()));
 			TransactionAspectSupport.currentTransactionStatus().flush();
 			Impegno fromUpdate = (Impegno) esito.getMovimentoGestione();
 			
@@ -271,6 +302,9 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			//FEBBRAIO-MARZO 2016, ottimizzazione e paginazione ricerca sub, tolgo la valorizzazione completa dei sub da aggiorna impegno 
 			//per motivi di performance
 			fromUpdate.setElencoSubImpegni(subImpegni);
+			
+			//SIAC-8811
+			inserisciImpegnoAggiudicazione(modifichePresenti, fromUpdate, ottimizzazioneModDto.getUidsModificheImportoPreEsistentiValide(), datiOperazione, annoBilancioRequest, req.getDescrizioneEventualeImpegnoAggiudicazione(),req.getEventualeNuovoCUPImpegno());
 			//
 			
 			// Prima di restituire la response scatta la registrazione fin -> gen
@@ -290,11 +324,11 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			//    per capire se e' cambiato in definitivo:
 			DatiOperazioneDto datiOperazioneAvanzaTs = impegnoOttimizzatoDad.avanzaAClockTime(datiOperazione);
 			String statoCodNew = impegnoOttimizzatoDad.getStatoCode(fromUpdate.getUid(), datiOperazioneAvanzaTs );
-			boolean passaggioAStatoDefinitivo = CommonUtils.passaggioAStatoDefinitivo(statoCodOld, statoCodNew);
+			boolean passaggioAStatoDefinitivo = CommonUtil.passaggioAStatoDefinitivo(statoCodOld, statoCodNew);
 			//
 			
 			String codiceFaseBilancio= impegnoOttimizzatoDad.caricaCodiceBilancio(datiOperazione, annoBilancioRequest);
-			if (!StringUtils.isEmpty(codiceFaseBilancio) && Constanti.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(codiceFaseBilancio)) {
+			if (!StringUtilsFin.isEmpty(codiceFaseBilancio) && CostantiFin.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(codiceFaseBilancio)) {
 				registraPerPredisposizioneConsuntivo = true;
 			}
 			
@@ -314,17 +348,17 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 							
 				if(presentiModificheSpesaSuiSubDaInserire(valutazioneModMovSubs)){
 					
-					List<SubImpegno> subsConModifichePopolate = impegnoOttimizzatoDad.caricaModificheSubImpegni(richiedente, Integer.toString(annoBilancioRequest), impegnoDaAggiornare.getAnnoMovimento(), impegnoDaAggiornare.getNumero(), datiOperazione);
+					List<SubImpegno> subsConModifichePopolate = impegnoOttimizzatoDad.caricaModificheSubImpegni(richiedente, Integer.toString(annoBilancioRequest), impegnoDaAggiornare.getAnnoMovimento(), impegnoDaAggiornare.getNumeroBigDecimal(), datiOperazione);
 					
 					for (SubImpegno sub : fromUpdate.getElencoSubImpegni()) {
 						
 						//Giugno 2016 Fix per  SIAC-3653
-						SubImpegno subConModifichePopolate = ModelUtils.getSubImpByNumero(subsConModifichePopolate, sub.getNumero());
+						SubImpegno subConModifichePopolate = ModelUtils.getSubImpByNumero(subsConModifichePopolate, sub.getNumeroBigDecimal());
 						sub.setListaModificheMovimentoGestioneSpesa(((SubImpegno)subConModifichePopolate).getListaModificheMovimentoGestioneSpesa());
 						
 						
-						if(!StringUtils.isEmpty(sub.getListaModificheMovimentoGestioneSpesa())
-								&& numeriSubCoinvolitiNelleMod!=null && numeriSubCoinvolitiNelleMod.contains(sub.getNumero())){
+						if(!StringUtilsFin.isEmpty(sub.getListaModificheMovimentoGestioneSpesa())
+								&& numeriSubCoinvolitiNelleMod!=null && numeriSubCoinvolitiNelleMod.contains(sub.getNumeroBigDecimal())){
 							gestisciRegistrazioneGENModificheMovimentoSpesa(fromUpdate, sub, TipoCollegamento.MODIFICA_MOVIMENTO_GESTIONE_SPESA, registraPerAnnoBilancioCorrente , registraPerPredisposizioneConsuntivo, residuo, registraPerModificaImportoPluriennale, annoBilancioRequest);
 						}
 					}
@@ -338,13 +372,13 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 					for (SubImpegno sub: fromUpdate.getElencoSubImpegni()) {
 					 
 						//Solo se il sub iterato e' stato inserito o modificato:
-						if(!CommonUtils.contenutoInLista(subInvariati, sub.getUid())){
+						if(!CommonUtil.contenutoInLista(subInvariati, sub.getUid())){
 							
 							// fix per SIAC-5529 e SIAC-5980:
 							String statoCodNewSub = impegnoOttimizzatoDad.getStatoCodeByTsId(sub.getUid(), datiOperazioneAvanzaTs);
 							boolean passaggioAStatoDefinitivoSub = false;
 							String statoCodOldSub = determinaStatoOldSub(subDaInserireOModificareConStatoOld, sub);
-							passaggioAStatoDefinitivoSub = CommonUtils.passaggioAStatoDefinitivo(statoCodOldSub, statoCodNewSub);
+							passaggioAStatoDefinitivoSub = CommonUtil.passaggioAStatoDefinitivo(statoCodOldSub, statoCodNewSub);
 							//
 							
 							if(passaggioAStatoDefinitivoSub){
@@ -363,8 +397,151 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		}
 	}
 	
+	private boolean modificaAbilitanteAdInserimentoAggiudicazione(ModificaMovimentoGestioneSpesa mods) {
+		return StatoOperativoModificaMovimentoGestione.VALIDO.equals(mods.getStatoOperativoModificaMovimentoGestione()) 
+				&& mods.isModificaDiImporto() 
+				&& Boolean.TRUE.equals(mods.getFlagAggiudicazione());
+	}
+	private boolean isModificaAppenaInserita(List<Integer> uisModifichePresistenti, ModificaMovimentoGestioneSpesa mods) {
+		return uisModifichePresistenti == null || !uisModifichePresistenti.contains(Integer.valueOf(mods.getUid()));
+	}
+	
+	private void inserisciImpegnoAggiudicazione(boolean modifichePresenti, Impegno impegno, List<Integer> uisModifichePresistenti, DatiOperazioneDto datiOperazioneDto, Integer annoBilancioRequest, String descrizioneEventualeImpegnoAggiudicazione, String eventualeNuovoCUPImpegno) {
+		final String methodName="inserisciImpegnoAggiudicazione";
+		if(!modifichePresenti) {
+			return;
+		}
+		List<String> chiaviAggiudicazioniInserite= new ArrayList<String>();
+		
+		List<ModificaMovimentoGestioneSpesa> listaModificheMovimentoGestioneSpesa = impegno.getListaModificheMovimentoGestioneSpesa();
+		for (ModificaMovimentoGestioneSpesa mods : listaModificheMovimentoGestioneSpesa) {
+
+			log.info(methodName, "considero la modifica [uid: " + mods.getUid() + " ]  numero: " + mods.getNumeroModificaMovimentoGestione());
+			if(!modificaAbilitanteAdInserimentoAggiudicazione(mods) || !isModificaAppenaInserita(uisModifichePresistenti, mods)) {
+				log.debug(methodName, "Non si tratta di una aggiudicazione,  oppure la modifica non e' stata appena inserita: esco.");
+				continue;
+			}
+			log.debug(methodName, "inserisco una modifica di aggiudicazione");
+			
+			boolean impegnoDiOrigineConSoggettoOClasse= (impegno.getSoggetto() != null && impegno.getSoggetto().getUid() != 0) || org.apache.commons.lang3.StringUtils.isNotBlank(impegno.getSoggettoCode())
+					|| (impegno.getClasseSoggetto() != null && (impegno.getClasseSoggetto().getUid() !=0 || org.apache.commons.lang3.StringUtils.isNotBlank(impegno.getClasseSoggetto().getCodice())));
+			boolean aggiudicazioneSenzaSoggetto = Boolean.TRUE.equals(mods.getFlagAggiudicazioneSenzaSoggetto());
+			
+			BigDecimal importoModificaAbs =  mods.getImportoOld() != null? mods.getImportoOld().abs() : BigDecimal.ZERO;
+			Impegno impAggiudicazione = clone(impegno);
+			//sbianco i dati che non voglio
+			impAggiudicazione.setUid(0);
+			impAggiudicazione.setListaModificheMovimentoGestioneSpesa(null);
+			impAggiudicazione.setElencoSubImpegni(null);
+			// imposto i dati a partire dalla modifica 
+			impAggiudicazione.setImportoIniziale(importoModificaAbs);
+			impAggiudicazione.setImportoAttuale(importoModificaAbs);
+			impAggiudicazione.setSoggetto(mods.getSoggettoAggiudicazione());
+			impAggiudicazione.setSoggettoCode(!mods.getFlagAggiudicazioneSenzaSoggetto() && mods.getSoggettoAggiudicazione() != null? mods.getSoggettoAggiudicazione().getCodiceSoggetto() : null);
+			impAggiudicazione.setClasseSoggetto(mods.getClasseSoggettoAggiudicazione())
+			
+			
+			;
+			impAggiudicazione.setAttoAmministrativo(mods.getAttoAmministrativo());
+			impAggiudicazione.setAttoAmmAnno("" + mods.getAttoAmministrativo().getAnno());
+			impAggiudicazione.setAttoAmmNumero(mods.getAttoAmministrativo().getNumero());
+			impAggiudicazione.setAttoAmmTipoAtto(mods.getAttoAmministrativo().getTipoAtto());
+			//SIAC-7838
+			impAggiudicazione.setFlagPrenotazione(getValoreFlagPrenotazioneAggiudicazione(impegnoDiOrigineConSoggettoOClasse, aggiudicazioneSenzaSoggetto, impegno.isFlagPrenotazione()));
+			impAggiudicazione.setFlagPrenotazioneLiquidabile(getValoreFlagLiquidabileAggiudicazione(impegnoDiOrigineConSoggettoOClasse, aggiudicazioneSenzaSoggetto, impegno.isFlagPrenotazioneLiquidabile()));
+			
+			impAggiudicazione.setAnnoPrenotazioneOrigine(impegno.getAttoAmmAnno());
+			
+			//SIAC-8184
+			if(StringUtils.isNotBlank(descrizioneEventualeImpegnoAggiudicazione)) {
+				impAggiudicazione.setDescrizione(descrizioneEventualeImpegnoAggiudicazione);
+			}
+			//SIAC-8811
+			if(StringUtils.isNotBlank(eventualeNuovoCUPImpegno)) {
+				impAggiudicazione.setCup(eventualeNuovoCUPImpegno);
+			}
+			
+			//sarebbe meglio chiamare direttamente inserisci impegno, ma il timore e' che non regga senza andare in timeout.
+			//per ora provo cosi', verificare nel tempo
+			EsitoInserimentoMovimentoGestioneDto esitoInserimento = impegnoOttimizzatoDad.inserisceMovimento(req.getRichiedente(), req.getEnte(),
+					bilancio, impAggiudicazione, datiOperazioneDto,null, null);
+			if(esitoInserimento.presenzaErrori()) {
+				res.addErrori(esitoInserimento.getListaErrori());
+				throw new BusinessException(ErroreCore.ERRORE_DI_SISTEMA.getErrore("si sono verificati errori nell'inserimento dell'aggiudicazione."));
+			} 
+			Impegno aggiudicazioneInserita = (Impegno)esitoInserimento.getMovimentoGestione();
+			if(aggiudicazioneInserita == null) { 
+				//questo caso non dovrebbe capitare mai.
+				res.addErrori(esitoInserimento.getListaErrori());
+				throw new BusinessException(ErroreCore.ERRORE_DI_SISTEMA.getErrore("si sono verificati errori nell'inserimento dell'aggiudicazione."));
+			}
+			impegnoOttimizzatoDad.collegaImpegnoAggiudicazioneConPrenotazioneModifica(aggiudicazioneInserita, impegno, mods, datiOperazioneDto, req.getBilancio());
+			StringBuilder chiave = new StringBuilder()
+					.append(aggiudicazioneInserita.getAnnoMovimento())
+					.append("/")
+					.append(Integer.valueOf((aggiudicazioneInserita.getNumeroBigDecimal().toString())));
+			chiaviAggiudicazioniInserite.add(chiave.toString()); 
+			
+			// per la registrazione gen, ho bisogno dei dati del capitolo, ce ho gia' caricato prima e che quindi prendo
+			aggiudicazioneInserita.setCapitoloUscitaGestione(impAggiudicazione.getCapitoloUscitaGestione());
+			gestisciRegistrazioneGENPerImpegno(aggiudicazioneInserita, TipoCollegamento.IMPEGNO, false, CodiceEventoEnum.INSERISCI_IMPEGNO.getCodice(), annoBilancioRequest, false);
+			
+		}
+		
+		res.setChiaviLogicheAggiudicazioniInserite(chiaviAggiudicazioniInserite);
+		
+	}
+
+	/**
+	 * Gets the valore flag prenotazione aggiudicazione.
+	 * 
+	 * <ul>
+	 * <li> se il nuovo impegno &egrave; senza soggetto (non ha n&egrave; classe e n&egrave; soggetto esplicito) e l'impegno origine aveva il soggetto 
+	 * o la classe, il nuovo impegno deve avere il flag prenotazione=SI; 
+	 * <li> se il nuovo impegno &egrave; senza soggetto (non ha n&egrave; classe e n&egrave; soggetto esplicito) e l'impegno origine non aveva il soggetto 
+	 * (non aveva n&egrave; classe e n&egrave; soggetto esplicito), il nuovo impegno eredita il flag prenotazione dall'impegno origine; 
+	 * <li> se il nuovo impegno &egrave; con soggetto o classe il flag prenotazione=NO
+	 * </ul>
+	 *
+	 * @param impegnoDiOrigineConSoggettoOClasse the impegno di origine con soggetto O classe
+	 * @param aggiudicazioneSenzaSoggetto the aggiudicazione senza soggetto
+	 * @param flagPrenotazioneImpegnoOrigine the flag prenotazione impegno origine
+	 * @return the valore flag prenotazione aggiudicazione
+	 */
+	//SIAC-7838
+	private boolean getValoreFlagPrenotazioneAggiudicazione(boolean impegnoDiOrigineConSoggettoOClasse,boolean aggiudicazioneSenzaSoggetto, boolean flagPrenotazioneImpegnoOrigine) {
+		
+		if(!aggiudicazioneSenzaSoggetto) {
+			return false; 
+		}
+		return impegnoDiOrigineConSoggettoOClasse?  true : flagPrenotazioneImpegnoOrigine;
+	}
+	
+	
+
+	
+	/**
+	 * Get del flag liquidabile
+	 * <ul>
+	 * <li>se il nuovo impegno &grave; senza soggetto (non ha n&grave; classe e n&grave; soggetto esplicito) e l'impegno origine aveva il soggetto o la classe, 
+	 * il nuovo impegno deve avere il flag liquidabile=NO; 
+	 * <li>se il nuovo impegno è senza soggetto (non ha n&egrave; classe e n&egrave; soggetto esplicito) e l'impegno origine non aveva il soggetto 
+	 * (non aveva &egrave; classe e n&egrave; soggetto esplicito), il nuovo impegno eredita il flag liquidabile dall’impegno origine; 
+	 * <li>se il nuovo impegno &egrave; con soggetto il flag liquidabile deve essere=NO
+	 * </ul>
+	 * @param impegnoDiOrigineConSoggettoOClasse the impegno di origine con soggetto O classe
+	 * @param aggiudicazioneSenzaSoggetto the aggiudicazione senza soggetto
+	 * @param flagPrenotazioneImpegnoOrigine the flag prenotazione impegno origine
+	 * @return the valore flag liquidabile aggiudicazione
+	 */
+	//SIAC-7838
+	private boolean getValoreFlagLiquidabileAggiudicazione(boolean impegnoDiOrigineConSoggettoOClasse,boolean aggiudicazioneSenzaSoggetto, boolean flagLiquidabileImpegnoOrigine) {
+		
+		return !aggiudicazioneSenzaSoggetto || impegnoDiOrigineConSoggettoOClasse? false : flagLiquidabileImpegnoOrigine;
+	}
+
 	private String determinaStatoOldSub(List<SubImpegno> subDaInserireOModificareConStatoOld,SubImpegno sub){
-		SubImpegno subPrima = CommonUtils.getById(subDaInserireOModificareConStatoOld, sub.getUid());
+		SubImpegno subPrima = CommonUtil.getById(subDaInserireOModificareConStatoOld, sub.getUid());
 		String statoCodOldSub = null;
 		if(subPrima!=null){
 			// si tratta di un sub modificato
@@ -388,16 +565,16 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 	
 	private List<BigDecimal> getNumeriSubCoinvoltiNelleModifiche(List<ModificaMovimentoGestioneSpesaInfoDto> valutazioneModMovSubs){
 		 List<BigDecimal> numeriSubCoinvoliti = new ArrayList<BigDecimal>();
-		 if(!StringUtils.isEmpty(valutazioneModMovSubs)){
+		 if(!StringUtilsFin.isEmpty(valutazioneModMovSubs)){
 			 for(ModificaMovimentoGestioneSpesaInfoDto it : valutazioneModMovSubs){
 				 if(it!=null){
 					 List<ModificaMovimentoGestioneSpesa> modDaAggiornare = it.getModificheDaAggiornare();
 					 List<ModificaMovimentoGestioneSpesa> modDaCreare = it.getModificheDaCreare();
 					 List<ModificaMovimentoGestioneSpesa> modResidue = it.getModificheResidue();
 					 
-					 List<ModificaMovimentoGestioneSpesa> tutte = CommonUtils.addAllConNew(CommonUtils.addAllConNew(modDaAggiornare, modDaCreare),modResidue);
+					 List<ModificaMovimentoGestioneSpesa> tutte = CommonUtil.addAllConNew(CommonUtil.addAllConNew(modDaAggiornare, modDaCreare),modResidue);
 					 
-					 if(!StringUtils.isEmpty(tutte)){
+					 if(!StringUtilsFin.isEmpty(tutte)){
 						 
 						 for(ModificaMovimentoGestioneSpesa modIt : tutte){
 							 if(modIt!=null && modIt.getNumeroSubImpegno()!=null && !numeriSubCoinvoliti.contains(new BigDecimal(modIt.getNumeroSubImpegno()))){
@@ -459,7 +636,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		long totC = end_C - start_C;
 		long totD = end_D - start_D;
 		
-		CommonUtils.println("totA: " + totA + " - totB: " + totB + " - totC: " + totC + " - totD: " + totD);
+		CommonUtil.println("totA: " + totA + " - totB: " + totB + " - totC: " + totC + " - totD: " + totD);
 		
 		impegnoInModificaInfoDto.setInfoSubValutati(valutati);
 		
@@ -488,7 +665,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			//FEBBRAIO 2016, nuovo comportamento, viene INTERDETTA la possibilita' di eliminare i SUB IMPEGNI TRAMITE
 			//QUESTO SERVIZIO. Il motivo e' la paginazione dei sub.
 			
-			String tipoMovimento = Constanti.MOVGEST_TIPO_IMPEGNO;
+			String tipoMovimento = CostantiFin.MOVGEST_TIPO_IMPEGNO;
 			
 			List<SubImpegno> subImpegniDaFe = (List<SubImpegno>) ((Impegno)impegnoDaAggiornare).getElencoSubImpegni();
 			
@@ -502,7 +679,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			
 			//
 			OttimizzazioneMovGestDto ottimizzazioneMovGest = new OttimizzazioneMovGestDto();
-			List<SubImpegno> tuttiISubSoloGliIds = (List<SubImpegno>) impegnoOttimizzatoDad.caricaElencoIdsSubMovimenti(datiOperazione,richiedente, ente, annoBilancio, impegnoDaAggiornare.getAnnoMovimento(),impegnoDaAggiornare.getNumero(), tipoMovimento,ottimizzazioneMovGest ,datiOpzionali);
+			List<SubImpegno> tuttiISubSoloGliIds = (List<SubImpegno>) impegnoOttimizzatoDad.caricaElencoIdsSubMovimenti(datiOperazione,richiedente, ente, annoBilancio, impegnoDaAggiornare.getAnnoMovimento(),impegnoDaAggiornare.getNumeroBigDecimal(), tipoMovimento,ottimizzazioneMovGest ,datiOpzionali);
 			esito.setOttimizzazioneMovGest(ottimizzazioneMovGest);
 			//
 			
@@ -510,7 +687,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			
 			
 			List<SubImpegno> subImpegniDaFeConAggiuntiINonPresenti = new ArrayList<SubImpegno>();
-			subImpegniDaFeConAggiuntiINonPresenti = CommonUtils.addAll(subImpegniDaFeConAggiuntiINonPresenti, subImpegniDaFe);
+			subImpegniDaFeConAggiuntiINonPresenti = CommonUtil.addAll(subImpegniDaFeConAggiuntiINonPresenti, subImpegniDaFe);
 			
 			if(tuttiISubSoloGliIds!=null && tuttiISubSoloGliIds.size()>0){
 				for(SubImpegno subIterato : tuttiISubSoloGliIds){
@@ -520,7 +697,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 					}
 				}
 			}
-			subImpegniDaFeConAggiuntiINonPresenti = CommonUtils.addAll(subImpegniDaFeConAggiuntiINonPresenti, elencoIdsSubNonPresentiDaFe);
+			subImpegniDaFeConAggiuntiINonPresenti = CommonUtil.addAll(subImpegniDaFeConAggiuntiINonPresenti, elencoIdsSubNonPresentiDaFe);
 			//
 			
 			esito.setElencoIdsSubNonPresentiDaFe(elencoIdsSubNonPresentiDaFe);
@@ -563,7 +740,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			
 			ArrayList<SubImpegno> invariati = valutati.getSubImpegniInvariati();
 			ArrayList<SubImpegno> invariatiRicostruita = new ArrayList<SubImpegno>();
-			invariatiRicostruita = (ArrayList<SubImpegno>) CommonUtils.addAll(invariatiRicostruita, invariati);
+			invariatiRicostruita = (ArrayList<SubImpegno>) CommonUtil.addAll(invariatiRicostruita, invariati);
 			if(nonSonoDaModificare!=null && nonSonoDaModificare.size()>0){
 				for(SubImpegno subIt : nonSonoDaModificare){
 					boolean giaPresente = presenteByNumero(subIt, invariati);
@@ -632,7 +809,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			
 			for(SubImpegno iterato : subImpegniDaEliminare){
 				if(iterato!=null){
-					SiacTMovgestTsFin trovato = trovaByNumero(iterato.getNumero(), oldSubs);
+					SiacTMovgestTsFin trovato = trovaByNumero(iterato.getNumeroBigDecimal(), oldSubs);
 					if(trovato!=null){
 						subImpegniDaEliminareRicostruiti.add(trovato);
 					}
@@ -661,8 +838,8 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		SubImpegno trovato = null;
 		if(sub!=null && lista!=null && lista.size()>0){
 			for(SubImpegno subFeIterato : lista){
-				if(subFeIterato!=null && subFeIterato.getNumero()!=null && sub.getNumero()!=null 
-						&& subFeIterato.getNumero().intValue()==sub.getNumero().intValue()){
+				if(subFeIterato!=null && subFeIterato.getNumeroBigDecimal()!=null && sub.getNumeroBigDecimal()!=null 
+						&& subFeIterato.getNumeroBigDecimal().intValue()==sub.getNumeroBigDecimal().intValue()){
 					trovato = subFeIterato;
 					break;
 				}
@@ -708,10 +885,12 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		Richiedente richiedente = req.getRichiedente();
 		Bilancio bilancio = req.getBilancio();
 		
-		List<ModificaMovimentoGestioneSpesaInfoDto> valutazioneModMovAll = CommonUtils.toList( CommonUtils.toList(valutazioneModMov),valutazioneModMovSubs);
+		List<ModificaMovimentoGestioneSpesaInfoDto> valutazioneModMovAll = CommonUtil.toList( CommonUtil.toList(valutazioneModMov),valutazioneModMovSubs);
 		
 		//Bisogna assicurarsi che non ci sia piu' di una nuova modifica per acc e per sub (quelle in update non danno problemi
 		//perche' per esse l'importo e' non modificabile:
+		
+	
 		listaErrori = controlliNumeroModificheImporto(valutazioneModMov,valutazioneModMovSubs);
 		
 		if(listaErrori!=null && listaErrori.size()>0){
@@ -729,7 +908,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		}
 
 		//altri controlli non dipendenti da servizi esterni:
-		EsitoControlliDto esitoConMerito =  accertamentoOttimizzatoDad.controlliDiMeritoAggiornamentoModificaMovimentoSpesa(req.getRichiedente(), Constanti.AMBITO_FIN, req.getEnte(), bilancio, accertamentoDaAggiornare,datiOperazione,
+		EsitoControlliDto esitoConMerito =  accertamentoOttimizzatoDad.controlliDiMeritoAggiornamentoModificaMovimentoSpesa(req.getRichiedente(), CostantiFin.AMBITO_FIN, req.getEnte(), bilancio, accertamentoDaAggiornare,datiOperazione,
 				impegnoInModificaInfoDto,valutazioneModMov,valutazioneModMovSubs,capitoliInfo);
 		if(esitoConMerito.getListaErrori()!=null && esitoConMerito.getListaErrori().size()>0){
 			esito.setListaErrori(listaErrori);
@@ -739,6 +918,8 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		
 		return esito;
 	}
+	
+
 	
 	@SuppressWarnings("unchecked")
 	private List<Errore> controlliNumeroModificheImporto(ModificaMovimentoGestioneSpesaInfoDto valutazioneModMov,List<ModificaMovimentoGestioneSpesaInfoDto> valutazioneModMovSubs) {
@@ -761,15 +942,17 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 				numeroModificheDiImportoAccertamento++;
 			}
 		}
-		if(numeroModificheDiImportoAccertamento>1){
-			listaErrori.add(ErroreFin.CAMPO_NON_ACCETTABILE.getErrore("Non si puo' indicare piu' di una nuova modifica importo alla volta"));
-			return listaErrori;
-		}
-		
+		//SIAC-6997
+		//commentata la condizione per il cruuscotto in quanto si possono inserie piu modifiche
+//		if(numeroModificheDiImportoAccertamento>1){
+//				listaErrori.add(ErroreFin.CAMPO_NON_ACCETTABILE.getErrore("Non si puo' indicare piu' di una nuova modifica importo alla volta"));
+//				return listaErrori;
+//		}
+			
 		int numeroModificheDiImportoSub = 0;
 		List<ModificaMovimentoGestioneSpesa> nuoveSub = null;
 		for(ModificaMovimentoGestioneSpesaInfoDto subModInfoIt : valutazioneModMovSubs){
-			nuoveSub = CommonUtils.toList(nuoveSub, subModInfoIt.getModificheDaCreare());
+			nuoveSub = CommonUtil.toList(nuoveSub, subModInfoIt.getModificheDaCreare());
 		}
 		if(nuoveSub!=null && nuoveSub.size()>0){
 			for(ModificaMovimentoGestioneSpesa nuovaSubIt : nuoveSub){
@@ -778,10 +961,12 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 				}
 			}
 		}
-		if(numeroModificheDiImportoSub>1){
-			listaErrori.add(ErroreFin.CAMPO_NON_ACCETTABILE.getErrore("Non si puo' indicare piu' di una nuova modifica importo alla volta"));
-			return listaErrori;
-		}
+		//SIAC-6997
+		//commentata la condizione per il cruuscotto in quanto si possono inserie piu modifiche
+//		if(numeroModificheDiImportoSub>1){
+//			listaErrori.add(ErroreFin.CAMPO_NON_ACCETTABILE.getErrore("Non si puo' indicare piu' di una nuova modifica importo alla volta"));
+//			return listaErrori;
+//		}
 		
 		return listaErrori;
 	}
@@ -803,7 +988,7 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			if(attiDaValidare!=null && attiDaValidare.size()>0){
 				for(AttiAmmModificatiGestioneSpesaInfoDto attIt: attiDaValidare){
 					AttoAmministrativo attoDaService = estraiAttoAmministrativoCaching(richiedente,attIt.getAttoRicevutoInInput(), cacheAttoAmm);
-					if(attoDaService==null || attoDaService.getStatoOperativo().equalsIgnoreCase(Constanti.ATTO_AMM_STATO_ANNULLATO)){
+					if(attoDaService==null || attoDaService.getStatoOperativo().equalsIgnoreCase(CostantiFin.ATTO_AMM_STATO_ANNULLATO)){
 						listaErrori.add(ErroreFin.STATO_PROVVEDIMENTO_NON_CONSENTITO.getErrore("Modifica Movimento","Definitivo"));
 						return listaErrori;
 					}
@@ -815,6 +1000,8 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 	}
 	
 	
+	
+	
 	//SIAC-6929
 	private void checkAttoAmministrativo(List<Errore> listaErrori, AttoAmministrativo attoAmm){
 		
@@ -822,9 +1009,9 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 			
 			RicercaAtti ricercaAtti = new RicercaAtti();
 			ricercaAtti.setUid(attoAmm.getUid());
-			provvedimentoDad.setLoginOperazione(loginOperazione);
-			provvedimentoDad.setEnte(req.getEnte());
-			List<AttoAmministrativo> listaAtti = provvedimentoDad.ricerca(ricercaAtti);
+			attoAmministrativoDad.setLoginOperazione(loginOperazione);
+			attoAmministrativoDad.setEnte(req.getEnte());
+			List<AttoAmministrativo> listaAtti = attoAmministrativoDad.ricerca(ricercaAtti);
 			if(listaAtti!= null && !listaAtti.isEmpty()){
 				AttoAmministrativo atto = listaAtti.get(0);
 				if(atto.getBloccoRagioneria()!= null && atto.getBloccoRagioneria().booleanValue()){
@@ -836,7 +1023,33 @@ public class AggiornaImpegnoService extends AbstractBaseService<AggiornaImpegno,
 		}
 		
 	}
-	
+//	@Override
+//	protected RicercaSinteticaCapitoloUscitaGestione buildRequestPerRicercaSinteticaCapitoloUG(
+//			Ente ente, Richiedente richiedente, Integer annoBilancio,
+//			Integer annoCapitolo, Integer numeroCapitolo,
+//			Integer numeroArticolo, Integer numeroUeb,DatiOpzionaliCapitoli datiOpzionaliCapitoli) {
+//		if(datiOpzionaliCapitoli == null) {
+//			super.buildRequestPerRicercaSinteticaCapitoloUG(ente, richiedente, annoBilancio, annoCapitolo, numeroCapitolo, numeroArticolo, numeroUeb, datiOpzionaliCapitoli);
+//		}
+//		DatiOpzionaliCapitoli datiOpzionaliNotNull = datiOpzionaliCapitoli != null? datiOpzionaliCapitoli : new DatiOpzionaliCapitoli();
+//		Set<TipologiaClassificatore> classifRichiesti = datiOpzionaliNotNull.getTipologieClassificatoriRichiesti() != null? datiOpzionaliNotNull.getTipologieClassificatoriRichiesti() : new HashSet<TipologiaClassificatore>();
+//		
+//		if (!classifRichiesti.contains(TipologiaClassificatore.PDC_IV)) {
+//			classifRichiesti.add(TipologiaClassificatore.PDC_IV);
+//		}
+//		if (!classifRichiesti.contains(TipologiaClassificatore.PDC_V)) {
+//			classifRichiesti.add(TipologiaClassificatore.PDC_V);
+//		}
+//		datiOpzionaliNotNull.setTipologieClassificatoriRichiesti(classifRichiesti);
+//		return super.buildRequestPerRicercaSinteticaCapitoloUG(ente, richiedente, annoBilancio, annoCapitolo, numeroCapitolo, numeroArticolo, numeroUeb, datiOpzionaliNotNull);
+//	}
+//	
+//	public static void main(String[] args) {
+//		if("x" == null) {
+//			System.out.println("instance of string!!");
+//			
+//		}
+//	}
 	
 	
 }

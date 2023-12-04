@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 
+ 
+   <mapping map-id="ModificaMovimentoGestioneSpesaCollegata_SiacRMovgestTsDetModFin_ModelDetail" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesaCollegata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsDetModFin</class-b>
+		
+		<field>
+			<a>importoResiduoCollegare</a>
+			<b>movgestTsModImpoResiduo</b>
+		</field>
+
+		<field>
+			<a>importoCollegamento</a>
+			<b>movgestTsModImporto</b>
+		</field>
+		
+	</mapping>
+
+   <mapping map-id="ModificaMovimentoGestioneSpesaCollegata_SiacRMovgestTsDetModFin_Default_ModelDetail" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesaCollegata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsDetModFin</class-b>
+		
+		<field>
+			<a>importoResiduoCollegare</a>
+			<b>movgestTsModImpoResiduo</b>
+		</field>
+
+		<field>
+			<a>importoMaxCollegabile</a>
+			<b>movgestTsModImpoResiduo</b>
+		</field>
+		
+	</mapping>
+
+	<mapping map-id="SiacRMovgestTsDetModFin_ImportiModificaMovimentoGestioneSpesa" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesaCollegata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsDetModFin</class-b>
+
+		<field>
+			<a>modificaMovimentoGestioneSpesa.importoNew</a>
+			<b>siacTMovgestTsDetModSpesa.siacTMovgestTsDet.movgestTsDetImporto</b>
+		</field>
+
+		<field>
+			<a>modificaMovimentoGestioneSpesa.importoOld</a>
+			<b>siacTMovgestTsDetModSpesa.movgestTsDetImporto</b>
+		</field>
+
+	</mapping>
+
+	<mapping map-id="SiacRMovgestTsDetModFin_ImportiModificaMovimentoGestioneEntrata" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesaCollegata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsDetModFin</class-b>
+
+		<field>
+			<a>modificaMovimentoGestioneEntrata.importoNew</a>
+			<b>siacTMovgestTsDetModEntrata.siacTMovgestTsDet.movgestTsDetImporto</b>
+		</field>
+
+		<field>
+			<a>modificaMovimentoGestioneEntrata.importoOld</a>
+			<b>siacTMovgestTsDetModEntrata.movgestTsDetImporto</b>
+		</field>
+
+	</mapping>
+
+	<mapping map-id="SiacRMovgestTsDetModFin_ReimputazioneModificaMovimentoGestioneSpesa" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesaCollegata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsDetModFin</class-b>
+
+		<field>
+			<a>modificaMovimentoGestioneSpesa.reimputazione</a>
+			<b>siacTMovgestTsDetModSpesa.mtdmReimputazioneFlag</b>
+		</field>
+
+		<field>
+			<a>modificaMovimentoGestioneSpesa.annoReimputazione</a>
+			<b>siacTMovgestTsDetModSpesa.mtdmReimputazioneAnno</b>
+		</field>
+
+	</mapping>
+
+	<mapping map-id="SiacRMovgestTsDetModFin_ReimputazioneModificaMovimentoGestioneEntrata" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesaCollegata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsDetModFin</class-b>
+
+		<field>
+			<a>modificaMovimentoGestioneEntrata.reimputazione</a>
+			<b>siacTMovgestTsDetModEntrata.mtdmReimputazioneFlag</b>
+		</field>
+
+		<field>
+			<a>modificaMovimentoGestioneEntrata.annoReimputazione</a>
+			<b>siacTMovgestTsDetModEntrata.mtdmReimputazioneAnno</b>
+		</field>
+
+	</mapping>
+
+	<mapping map-id="SiacRMovgestTsDetModFin_AltriDatiImportoModificaMovimentoGestioneSpesaConverter" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesaCollegata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsDetModFin</class-b>
+
+		<field custom-converter="it.csi.siac.siacfinser.integration.entitymapping.converter.ModificaMovimentoGestioneSpesaImportoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+
+	</mapping>
+
+	<mapping map-id="SiacRMovgestTsDetModFin_AltriDatiImportoModificaMovimentoGestioneEntrataConverter" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesaCollegata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsDetModFin</class-b>
+
+		<field custom-converter="it.csi.siac.siacfinser.integration.entitymapping.converter.ModificaMovimentoGestioneEntrataImportoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+
+	</mapping>
+
+	<mapping map-id="SiacTModificaFin_ModificaMovimentoGestioneSpesaCollegataConverter" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesaCollegata</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTModificaFin</class-b>
+
+		<field custom-converter="it.csi.siac.siacfinser.integration.entitymapping.converter.ModificaMovimentoGestioneSpesaImportiModificaMovimentoGestioneSpesaCollegataVincoloEsplicitoConverter">
+			<a>this</a>
+ 			<b>this</b>
+		</field>
+
+	</mapping>
+
+</mappings>

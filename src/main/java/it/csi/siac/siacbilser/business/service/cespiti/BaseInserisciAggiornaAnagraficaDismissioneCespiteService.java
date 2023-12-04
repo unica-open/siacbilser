@@ -14,7 +14,7 @@ import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.dad.CausaleEPDad;
 import it.csi.siac.siacbilser.integration.dad.DismissioneCespiteDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siaccespser.model.DismissioneCespite;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
@@ -41,7 +41,7 @@ public abstract class BaseInserisciAggiornaAnagraficaDismissioneCespiteService<R
 	@Autowired
 	protected DismissioneCespiteDad dismissioneCespiteDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private CausaleEPDad causaleEpDad;
 	
@@ -67,7 +67,7 @@ public abstract class BaseInserisciAggiornaAnagraficaDismissioneCespiteService<R
 		super.init();
 		dismissioneCespiteDad.setEnte(ente);
 		dismissioneCespiteDad.setLoginOperazione(loginOperazione);
-		provvedimentoDad.setEnte(ente);
+		attoAmministrativoDad.setEnte(ente);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public abstract class BaseInserisciAggiornaAnagraficaDismissioneCespiteService<R
 	 * @throws BusinessException se l'atto non esiste
 	 */
 	protected void caricaAttoAmministrativo() {
-		AttoAmministrativo aa = provvedimentoDad.findProvvedimentoByIdAndModelDetail(dismissioneCespite.getAttoAmministrativo().getUid(), new AttoAmministrativoModelDetail[]{});
+		AttoAmministrativo aa = attoAmministrativoDad.findProvvedimentoByIdAndModelDetail(dismissioneCespite.getAttoAmministrativo().getUid(), new AttoAmministrativoModelDetail[]{});
 		if(aa == null) {
 			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("atto amministrativo"));
 		}

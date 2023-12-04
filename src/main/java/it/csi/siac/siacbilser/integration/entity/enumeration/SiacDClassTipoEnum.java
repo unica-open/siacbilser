@@ -22,6 +22,7 @@ import it.csi.siac.siacbilser.model.PoliticheRegionaliUnitarie;
 import it.csi.siac.siacbilser.model.Programma;
 import it.csi.siac.siacbilser.model.RicorrenteEntrata;
 import it.csi.siac.siacbilser.model.RicorrenteSpesa;
+import it.csi.siac.siacbilser.model.RisorsaAccantonata;
 import it.csi.siac.siacbilser.model.SiopeEntrata;
 import it.csi.siac.siacbilser.model.SiopeSpesa;
 import it.csi.siac.siacbilser.model.TipoAmbito;
@@ -45,24 +46,7 @@ import it.csi.siac.siacfinser.model.ElementoContoEconomico;
 import it.csi.siac.siacgenser.model.ClassificatoreEP;
 import it.csi.siac.siacgenser.model.CodiceBilancio;
 
-// TODO: Auto-generated Javadoc
-/**
- * 
- * 
- * 		//PianoDeiConti			 			-> PrimoLivelloPDC,SecondoLivelloPDC,TerzoLivelloPDC...QuintoLivelloPDC
-		//StrutturaAmministrativaContabile 	-> Centro di Responsabilità, CDC (Settore)
-		//SpesaMissioniprogrammi			-> Missione, Programma
-		//SpesaTitolimacroaggregati			-> TitoloSpesa, Macroaggregato		  (solo Uscita)
-		//EntrataTitolitipologiecategorie	-> TitoloEntrata, Tipologia, Categoria (solo Entrata)
-		 * 
-		 * 
-		 * 
- * 
- * select replace(initcap(elem_tipo_desc),' ','') || '('|| elem_tipo_id || ', "' || elem_tipo_code || '")' || ',' from siac_d_bil_elem_tipo
- * 
- * @author Domenico
- *
- */
+
 /**
  * @author Domenico
  *
@@ -96,14 +80,16 @@ public enum SiacDClassTipoEnum {
 	
 	
 	//StrutturaAmministrativaContabile 	-> Centro di Responsabilità, CDC (Settore)
-    CentroDiRespondabilita("CDR", TipologiaClassificatore.CDR,StrutturaAmministrativoContabile.class, SiacDClassFamEnum.StrutturaAmministrativaContabile, null), //TOLTO DB MA SERVE!!!
+	CentroDiResponsabilita("CDR", TipologiaClassificatore.CDR, StrutturaAmministrativoContabile.class,
+			SiacDClassFamEnum.StrutturaAmministrativaContabile, null), // TOLTO DB MA SERVE!!!
     //figlio di CentroDiResponsabilità
-    Cdc("CDC", TipologiaClassificatore.CDC, StrutturaAmministrativoContabile.class, SiacDClassFamEnum.StrutturaAmministrativaContabile, SiacDClassTipoEnum.CentroDiRespondabilita), 
+	Cdc("CDC", TipologiaClassificatore.CDC, StrutturaAmministrativoContabile.class,
+			SiacDClassFamEnum.StrutturaAmministrativaContabile, SiacDClassTipoEnum.CentroDiResponsabilita),
+
 	//Assessorato(9, "ASS",  StrutturaAmministrativoContabile.class, SiacDClassFamEnum.StrutturaAmministrativaContabile),
 	
 	//PianoDeiConti			 			-> PrimoLivelloPDC,SecondoLivelloPDC,TerzoLivelloPDC...QuintoLivelloPDC
-    @Deprecated
-	PianoDeiConti("PDC", TipologiaClassificatore.PDC,ElementoPianoDeiConti.class, SiacDClassFamEnum.PianoDeiConti, null),	//FIXME credo non sia utilizzato! presente solo perchè c'è anche su db
+    @Deprecated	PianoDeiConti("PDC", TipologiaClassificatore.PDC,ElementoPianoDeiConti.class, SiacDClassFamEnum.PianoDeiConti, null),	//FIXME credo non sia utilizzato! presente solo perchè c'è anche su db
 	PrimoLivelloPdc("PDC_I", TipologiaClassificatore.PDC_I,ElementoPianoDeiConti.class, SiacDClassFamEnum.PianoDeiConti, SiacDClassTipoEnum.PianoDeiConti),
 	SecondoLivelloPdc("PDC_II", TipologiaClassificatore.PDC_II,ElementoPianoDeiConti.class, SiacDClassFamEnum.PianoDeiConti, SiacDClassTipoEnum.PrimoLivelloPdc),
 	TerzoLivelloPdc("PDC_III", TipologiaClassificatore.PDC_III,ElementoPianoDeiConti.class, SiacDClassFamEnum.PianoDeiConti, SiacDClassTipoEnum.SecondoLivelloPdc),
@@ -121,7 +107,7 @@ public enum SiacDClassTipoEnum {
 	
 	//Generici
 	TipoFondo("TIPO_FONDO", TipologiaClassificatore.TIPO_FONDO, TipoFondo.class,null,null),
-	TipoFinanziamento("TIPO_FINANZIAMENTO", TipologiaClassificatore.TIPO_FINANZIAMENTO, TipoFinanziamento.class,null,null),
+	TipoFinanziamento(TipologiaClassificatore.TIPO_FINANZIAMENTO.name(), TipologiaClassificatore.TIPO_FINANZIAMENTO, TipoFinanziamento.class,null,null),
 	TipoVincolo("TPV", TipologiaClassificatore.TPV, TipoVincolo.class,null,null),
 	RicorrenteSpesa("RICORRENTE_SPESA", TipologiaClassificatore.RICORRENTE_SPESA, RicorrenteSpesa.class,null,null),
 	RicorrenteEntrata("RICORRENTE_ENTRATA", TipologiaClassificatore.RICORRENTE_ENTRATA, RicorrenteEntrata.class,null,null),
@@ -167,6 +153,9 @@ public enum SiacDClassTipoEnum {
 	Classificatore51("CLASSIFICATORE_51", TipologiaClassificatore.CLASSIFICATORE_51, ClassificatoreGenerico.class,null,null),
 	Classificatore52("CLASSIFICATORE_52", TipologiaClassificatore.CLASSIFICATORE_52, ClassificatoreGenerico.class,null,null),
 	Classificatore53("CLASSIFICATORE_53", TipologiaClassificatore.CLASSIFICATORE_53, ClassificatoreGenerico.class,null,null),
+	//SIAC-7192
+	RisorsaAccantonata("RISACC", TipologiaClassificatore.RISORSA_ACCANTONATA, RisorsaAccantonata.class,null,null),
+	
 	
 	TipoAmbito("TIPO_AMBITO", TipologiaClassificatore.TIPO_AMBITO, TipoAmbito.class, null, null), 
 	
@@ -187,7 +176,7 @@ public enum SiacDClassTipoEnum {
 	ValoreBene("VALORE_BENE", TipologiaClassificatore.VALORE_BENE, ClassificatoreEP.class, null, null),
 	ModalitaAcquisizioneBene("MODALITA_AQUISIZIONE_BENE", TipologiaClassificatore.MODALITA_AQUISIZIONE_BENE, ClassificatoreEP.class, null, null),
 	TipoDocumentoCollegato("TIPO_DOCUMENTO_COLLEGATO", TipologiaClassificatore.TIPO_DOCUMENTO_COLLEGATO, ClassificatoreEP.class, null, null),
-	tipoOnereFiscale("TIPO_ONERE_FISCALE", TipologiaClassificatore.TIPO_ONERE_FISCALE, ClassificatoreEP.class, null, null),
+	//TipoOnereFiscale("TIPO_ONERE_FISCALE", TipologiaClassificatore.TIPO_ONERE_FISCALE, ClassificatoreEP.class, null, null),
 	RilevanteIva("RILEVANTE_IVA", TipologiaClassificatore.RILEVANTE_IVA, ClassificatoreEP.class, null, null),
 	
 	//ContoEconomico (verra' sostituito da siac_t_pdce_conto "Lotto i")

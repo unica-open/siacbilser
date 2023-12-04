@@ -12,9 +12,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import it.csi.siac.siacbilser.business.service.azione.RicercaAzionePerChiaveService;
+import it.csi.siac.siacbilser.business.service.azione.RicercaVisibilitaService;
 import it.csi.siac.siacbilser.business.service.base.BaseServiceExecutor;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaAzionePerChiave;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaAzionePerChiaveResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.azione.RicercaAzionePerChiave;
+import it.csi.siac.siacbilser.frontend.webservice.msg.azione.RicercaAzionePerChiaveResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.azione.RicercaVisibilita;
+import it.csi.siac.siacbilser.frontend.webservice.msg.azione.RicercaVisibilitaResponse;
 
 /**
  * Implementazione del servizio AzioneService.
@@ -42,6 +45,11 @@ public class AzioneServiceImpl implements AzioneService {
 	@Override
 	public RicercaAzionePerChiaveResponse ricercaAzionePerChiave(RicercaAzionePerChiave parameters) {
 		return BaseServiceExecutor.execute(appCtx, RicercaAzionePerChiaveService.class, parameters);
+	}
+
+	@Override
+	public RicercaVisibilitaResponse ricercaVisibilita(RicercaVisibilita parameters) {
+		return BaseServiceExecutor.execute(appCtx, RicercaVisibilitaService.class, parameters);
 	}
 
 }

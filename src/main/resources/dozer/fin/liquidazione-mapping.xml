@@ -181,7 +181,7 @@ SPDX-License-Identifier: EUPL-1.2
   	
   	
   	<mapping map-id="SiacDContotesoreria_Contotesoreria">
-		<class-a>it.csi.siac.siacfinser.model.ContoTesoreria</class-a>
+		<class-a>it.csi.siac.siacfin2ser.model.ContoTesoreria</class-a>
 		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDContotesoreriaFin</class-b>
 
 		<field>
@@ -196,8 +196,6 @@ SPDX-License-Identifier: EUPL-1.2
 			<a>descrizione</a>
 			<b>contotesDesc</b>
 		</field>		
-				
-		
   	</mapping>
 
 </mappings>

@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacbilser.integration.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,4 +48,17 @@ public interface SiacTBilElemDetVarRepository extends JpaRepository<SiacTBilElem
 			)
 	List<Object[]> calcolaTotaleImportoVariazioneByTipoStanziamentoETipoCapitolo(@Param("variazioneId") Integer uidVariazione, @Param("elemTipoCodes") List<String> elemTipoCodes);
 	
+	@Query(" SELECT COALESCE(SUM(tbedv.elemDetImporto), 0)" +
+			" FROM SiacTBilElemDetVar tbedv " +
+			" WHERE tbedv.dataCancellazione IS NULL " +
+			" AND tbedv.siacRVariazioneStato.dataCancellazione IS NULL " +
+			" AND tbedv.siacRVariazioneStato.dataFineValidita IS NULL " +
+			" AND tbedv.siacTBilElem.elemId = :elemId " +
+			" AND tbedv.siacTPeriodo.anno = :annoCompetenza " +
+			" AND tbedv.siacDBilElemDetTipo.elemDetTipoCode = :elemDetTipoCode " +
+			// Esclusione delle definitive in quanto gia' presenti nella disponibilita'
+			" AND tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode <> 'D'" +
+			" AND tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode <> 'A'"
+			)
+	BigDecimal sumByElemIdAndAnnoNotDefinitiva(@Param("elemId") Integer elemId, @Param("annoCompetenza") String annoCompetenza, @Param("elemDetTipoCode") String elemDetTipoCode);
 }

@@ -10,7 +10,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemTipoEnu
 import it.csi.siac.siacbilser.integration.utility.function.jdbc.SQLParam;
 import it.csi.siac.siacconsultazioneentitaser.model.ParametriRicercaCapitoloSpesaConsultabile;
 import it.csi.siac.siaccorser.model.Ente;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * {@link FunctionParamsAdapter} per la ricerca dei capitoli di spesa.

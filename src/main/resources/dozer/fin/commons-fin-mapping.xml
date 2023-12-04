@@ -491,30 +491,11 @@ SPDX-License-Identifier: EUPL-1.2
 		</field>
 	</mapping>	
 	
-		<mapping map-id="SiacDMutuoTipo_CodificaFin">
-		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
-		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDMutuoTipoFin</class-b>
-
-		<field>
-			<a>id</a>
-			<b>mutTipoId</b>
-		</field>
-		<field>
-			<a>descrizione</a>
-			<b>mutTipoDesc</b>
-		</field>
 		
-	  
-		<field>
-			<a>codice</a>
-			<b>mutTipoCode</b>
-		</field>
-	
-	</mapping>
 	
 	
-	<mapping map-id="SiacDContoTesoreria_CodificaFin">
-		<class-a>it.csi.siac.siacfinser.model.codifiche.CodificaFin</class-a>
+	<mapping map-id="SiacDContoTesoreria_ContoTesoreriaCodificaFin">
+		<class-a>it.csi.siac.siacfinser.model.codifiche.ContoTesoreriaCodificaFin</class-a>
 		<class-b>it.csi.siac.siacfinser.integration.entity.SiacDContotesoreriaFin</class-b>
 
 		<field>
@@ -532,6 +513,10 @@ SPDX-License-Identifier: EUPL-1.2
 			<b>contotesCode</b>
 		</field>
 	
+		<field>
+			<a>vincolato</a>
+			<b>vincolato</b>
+		</field>
 	</mapping>
 	
 	<mapping map-id="SiacDNoteTesoriere_CodificaFin">

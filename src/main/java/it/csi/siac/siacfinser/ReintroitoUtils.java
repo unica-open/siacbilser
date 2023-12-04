@@ -60,8 +60,8 @@ public final class ReintroitoUtils implements Serializable   {
 	public final static BigDecimal sommaImportoOrdinativiIncasso(OrdinativoPagamento ordinativoPag){
 		BigDecimal sommaImportiOrdinativiIncasso = BigDecimal.ZERO;
 		if(ordinativoPag!=null){
-			List<Ordinativo> senzaAnnullati = CommonUtils.rimuoviOrdinativiAnnullati(ordinativoPag.getElencoOrdinativiCollegati());
-			if(ordinativoPag!=null && !StringUtils.isEmpty(senzaAnnullati)){
+			List<Ordinativo> senzaAnnullati = CommonUtil.rimuoviOrdinativiAnnullati(ordinativoPag.getElencoOrdinativiCollegati());
+			if(ordinativoPag!=null && !StringUtilsFin.isEmpty(senzaAnnullati)){
 				for(Ordinativo it: senzaAnnullati){
 					if(it!=null){
 						sommaImportiOrdinativiIncasso = sommaImportiOrdinativiIncasso.add(it.getImportoOrdinativo());
@@ -74,11 +74,11 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static String descrizionePerLiquidazione(ImpegnoPerReintroitoInfoDto impDestInfo,OrdinativoInReintroitoInfoDto datiReintroito){
 		String descrImpOrSub = impDestInfo.getDescrizioneImpOSub();
-		if(StringUtils.isEmpty(descrImpOrSub)){
+		if(StringUtilsFin.isEmpty(descrImpOrSub)){
 			AttoAmministrativo provv = attoAmministrativoDaUsare(impDestInfo, datiReintroito);
 			descrImpOrSub = provv.getAnno() + "/" + provv.getNumero() + " - " + provv.getTipoAtto().getDescrizione();
 			StrutturaAmministrativoContabile sac = provv.getStrutturaAmmContabile();
-			if(sac!=null && !StringUtils.isEmpty(sac.getCodice())){
+			if(sac!=null && !StringUtilsFin.isEmpty(sac.getCodice())){
 				descrImpOrSub = descrImpOrSub + " - " + sac.getCodice();
 			}
 		}
@@ -88,7 +88,7 @@ public final class ReintroitoUtils implements Serializable   {
 	public final static AttoAmministrativo attoAmministrativoDaUsare(ImpegnoPerReintroitoInfoDto impDestInfo, OrdinativoInReintroitoInfoDto datiReintroito){
 		MovimentoGestione mg = impDestInfo.getImpegno();
 		MovimentoGestione subMov = impDestInfo.getSubImpegno();
-		if(subMov!=null && CommonUtils.maggioreDiZero(subMov.getNumero())){
+		if(subMov!=null && CommonUtil.maggioreDiZero(subMov.getNumeroBigDecimal())){
 			//in caso di sub indicato vince il sub:
 			return attoAmministrativoDaUsare(subMov, datiReintroito);
 		} else {
@@ -121,7 +121,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static BigDecimal sommaImportiModifiche(List<AccertamentoModAutomaticaPerReintroitoInfoDto> listaMod){
 		BigDecimal somma = BigDecimal.ZERO;
-		if(!StringUtils.isEmpty(listaMod)){
+		if(!StringUtilsFin.isEmpty(listaMod)){
 			for(AccertamentoModAutomaticaPerReintroitoInfoDto it : listaMod){
 				if(it!=null && it.getModificaDaApportare()!=null){
 					somma = somma.add(it.getModificaDaApportare());
@@ -133,7 +133,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static List<AccertamentoModAutomaticaPerReintroitoInfoDto> conStessoMovKey(List<AccertamentoModAutomaticaPerReintroitoInfoDto> listaModInfo, MovimentoKey key){
 		List<AccertamentoModAutomaticaPerReintroitoInfoDto> conStessaKey = new ArrayList<AccertamentoModAutomaticaPerReintroitoInfoDto>();
-		if(!StringUtils.isEmpty(listaModInfo)){
+		if(!StringUtilsFin.isEmpty(listaModInfo)){
 			for(AccertamentoModAutomaticaPerReintroitoInfoDto modInfoIt: listaModInfo){
 				if(modInfoIt!=null && sonoUguali(modInfoIt.getKey(), key)){
 					conStessaKey.add(modInfoIt);
@@ -145,7 +145,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static BigDecimal sommaImportiOrdinativiIncasso(List<RitenutaSpiltPerReintroitoInfoDto> lista){
 		BigDecimal somma = BigDecimal.ZERO;
-		if(!StringUtils.isEmpty(lista)){
+		if(!StringUtilsFin.isEmpty(lista)){
 			for(RitenutaSpiltPerReintroitoInfoDto it : lista){
 				if(it!=null && it.getOrdinativoIncasso()!=null && it.getOrdinativoIncasso().getImportoOrdinativo()!=null){
 					somma = somma.add(it.getOrdinativoIncasso().getImportoOrdinativo());
@@ -158,7 +158,7 @@ public final class ReintroitoUtils implements Serializable   {
 	public final static List<RitenuteReintroitoConStessoMovimentoDto> raggruppaConStessoAccertamento(List<RitenutaSpiltPerReintroitoInfoDto> lista){
 		List<RitenuteReintroitoConStessoMovimentoDto> conStessoAccertamento = new ArrayList<RitenuteReintroitoConStessoMovimentoDto>();
 		List<MovimentoKey> giaFatti = new ArrayList<MovimentoKey>();
-		if(!StringUtils.isEmpty(lista)){
+		if(!StringUtilsFin.isEmpty(lista)){
 			for(RitenutaSpiltPerReintroitoInfoDto it : lista){
 				if(it!=null && it.getAccertamento()!=null){
 					AccertamentoPerReintroitoInfoDto accInfo = it.getAccertamento();
@@ -181,7 +181,7 @@ public final class ReintroitoUtils implements Serializable   {
 	public final static List<RitenuteReintroitoConStessoMovimentoDto> raggruppaConStessoImpegno(List<RitenutaSpiltPerReintroitoInfoDto> lista){
 		List<RitenuteReintroitoConStessoMovimentoDto> conStessoImpegno = new ArrayList<RitenuteReintroitoConStessoMovimentoDto>();
 		List<MovimentoKey> giaFatti = new ArrayList<MovimentoKey>();
-		if(!StringUtils.isEmpty(lista)){
+		if(!StringUtilsFin.isEmpty(lista)){
 			for(RitenutaSpiltPerReintroitoInfoDto it : lista){
 				if(it!=null && it.getImpegno()!=null){
 					ImpegnoPerReintroitoInfoDto impInfo = it.getImpegno();
@@ -203,7 +203,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static List<RitenutaSpiltPerReintroitoInfoDto> conStessoImpegno(List<RitenutaSpiltPerReintroitoInfoDto> lista, MovimentoKey impKey){
 		List<RitenutaSpiltPerReintroitoInfoDto> conStessoImpegno = new ArrayList<RitenutaSpiltPerReintroitoInfoDto>();
-		if(!StringUtils.isEmpty(lista)){
+		if(!StringUtilsFin.isEmpty(lista)){
 			for(RitenutaSpiltPerReintroitoInfoDto it : lista){
 				if(it!=null && it.getImpegno()!=null && sonoUguali(it.getImpegno().getKey(), impKey)){
 					conStessoImpegno.add(clone(it));
@@ -215,7 +215,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static List<RitenutaSpiltPerReintroitoInfoDto> conStessoAccertamento(List<RitenutaSpiltPerReintroitoInfoDto> lista, MovimentoKey accKey){
 		List<RitenutaSpiltPerReintroitoInfoDto> conStessoAccertamento = new ArrayList<RitenutaSpiltPerReintroitoInfoDto>();
-		if(!StringUtils.isEmpty(lista)){
+		if(!StringUtilsFin.isEmpty(lista)){
 			for(RitenutaSpiltPerReintroitoInfoDto it : lista){
 				if(it!=null && it.getAccertamento()!=null && sonoUguali(it.getAccertamento().getKey(), accKey)){
 					conStessoAccertamento.add(clone(it));
@@ -243,7 +243,7 @@ public final class ReintroitoUtils implements Serializable   {
 		if(impegno){
 			nomeEntita = "Impegno";
 		}
-		if(CommonUtils.maggioreDiZero(mKey.getNumeroSubMovimento())){
+		if(CommonUtil.maggioreDiZero(mKey.getNumeroSubMovimento())){
 			nomeEntita = "Sub" + nomeEntita;
 		}
 		return nomeEntita;
@@ -251,7 +251,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static String buildCodiceEntitaPerMessaggiDiErrore(MovimentoKey mKey){
 		String codiceEntita = mKey.getAnnoEsercizio() + " / " + mKey.getAnnoMovimento() + " / " + mKey.getNumeroMovimento();
-		if(CommonUtils.maggioreDiZero(mKey.getNumeroSubMovimento())){
+		if(CommonUtil.maggioreDiZero(mKey.getNumeroSubMovimento())){
 			codiceEntita = codiceEntita + " / " + mKey.getNumeroSubMovimento();
 		}
 		return codiceEntita;
@@ -297,7 +297,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static Ordinativo getByKeyOrdinativo(List<Ordinativo> lista, OrdinativoKey key){
 		Ordinativo finded = null;
-		if(!StringUtils.isEmpty(lista)){
+		if(!StringUtilsFin.isEmpty(lista)){
 			for(Ordinativo it: lista){
 				if(sonoUguali(toOrdKey(it), key)){
 					finded = it;
@@ -310,7 +310,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static MovimentoKey getByKey(List<MovimentoKey> lista, MovimentoKey key){
 		MovimentoKey finded = null;
-		 if(!StringUtils.isEmpty(lista)){
+		 if(!StringUtilsFin.isEmpty(lista)){
 			 for(MovimentoKey it: lista){
 				 if(sonoUguali(it, key)){
 					 finded = it;
@@ -323,7 +323,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static OrdinativoKey getByKey(List<OrdinativoKey> lista, OrdinativoKey key){
 		 OrdinativoKey finded = null;
-		 if(!StringUtils.isEmpty(lista)){
+		 if(!StringUtilsFin.isEmpty(lista)){
 			 for(OrdinativoKey it: lista){
 				 if(sonoUguali(it, key)){
 					 finded = it;
@@ -337,9 +337,9 @@ public final class ReintroitoUtils implements Serializable   {
 	public final static boolean sonoUguali(OrdinativoKey key1, OrdinativoKey key2){
 		boolean uguali = false;
 		if(!isEmpty(key1) && !isEmpty(key2)){
-			if(StringUtils.sonoUguali(key1.getAnno(), key2.getAnno()) && 
-				StringUtils.sonoUguali(key1.getNumero(), key2.getNumero()) && 
-				StringUtils.sonoUguali(key1.getAnnoBilancio(), key2.getAnnoBilancio())){
+			if(StringUtilsFin.sonoUguali(key1.getAnno(), key2.getAnno()) && 
+				StringUtilsFin.sonoUguali(key1.getNumero(), key2.getNumero()) && 
+				StringUtilsFin.sonoUguali(key1.getAnnoBilancio(), key2.getAnnoBilancio())){
 				uguali = true;
 			}
 		}
@@ -349,9 +349,9 @@ public final class ReintroitoUtils implements Serializable   {
 	public final static boolean sonoUguali(MovimentoKey key1, MovimentoKey key2){
 		boolean uguali = false;
 		if(!isEmpty(key1) && !isEmpty(key2)){
-			if(StringUtils.sonoUguali(key1.getAnnoMovimento(), key2.getAnnoMovimento()) && 
-				StringUtils.sonoUguali(key1.getNumeroMovimento(), key2.getNumeroMovimento()) && 
-				StringUtils.sonoUguali(key1.getAnnoEsercizio(), key2.getAnnoEsercizio())){
+			if(StringUtilsFin.sonoUguali(key1.getAnnoMovimento(), key2.getAnnoMovimento()) && 
+				StringUtilsFin.sonoUguali(key1.getNumeroMovimento(), key2.getNumeroMovimento()) && 
+				StringUtilsFin.sonoUguali(key1.getAnnoEsercizio(), key2.getAnnoEsercizio())){
 				
 				//FIN QUI IL MOVIMENTO E' LO STESSO, VEDIAMO IL SUB EVENTUALE:
 				
@@ -365,7 +365,7 @@ public final class ReintroitoUtils implements Serializable   {
 				boolean tuttiEDueSub = isSub(key1) && isSub(key2);
 				if(tuttiEDueSub){
 					//se tutti e due sono sub deve essere lo stesso sub:
-					return StringUtils.sonoUguali(key1.getNumeroSubMovimento(), key2.getNumeroSubMovimento());
+					return StringUtilsFin.sonoUguali(key1.getNumeroSubMovimento(), key2.getNumeroSubMovimento());
 				}
 				
 				
@@ -384,7 +384,7 @@ public final class ReintroitoUtils implements Serializable   {
 	 */
 	public final static List<OrdinativoKey> toOrdKeys(List<Ordinativo> listOrd){
 		List<OrdinativoKey> listaKey = new ArrayList<OrdinativoKey>();
-		if(!StringUtils.isEmpty(listOrd)){
+		if(!StringUtilsFin.isEmpty(listOrd)){
 			for(Ordinativo it: listOrd){
 				if(it!=null){
 					listaKey.add(toOrdKey(it));
@@ -418,7 +418,7 @@ public final class ReintroitoUtils implements Serializable   {
 	 */
 	public final static List<OrdinativoKey> estraiListaOrdinativiIncasso(List<ReintroitoRitenutaSplit> listaRitenute){
 		List<OrdinativoKey> ordinativi = new ArrayList<OrdinativoKey>();
-		if(!StringUtils.isEmpty(listaRitenute)){
+		if(!StringUtilsFin.isEmpty(listaRitenute)){
 			for(ReintroitoRitenutaSplit it: listaRitenute){
 				if(it!=null){
 					ordinativi.add(it.getOrdinativoIncasso());
@@ -439,7 +439,7 @@ public final class ReintroitoUtils implements Serializable   {
 				+ movKey.getAnnoEsercizio() + "-"
 				+ movKey.getAnnoMovimento() + "-"
 				+ movKey.getNumeroMovimento();
-		if(CommonUtils.maggioreDiZero(movKey.getNumeroSubMovimento())){
+		if(CommonUtil.maggioreDiZero(movKey.getNumeroSubMovimento())){
 			elabKey = elabKey + "-" + movKey.getNumeroSubMovimento();
 		} else {
 			elabKey = elabKey + "-" + "nosub";
@@ -513,7 +513,7 @@ public final class ReintroitoUtils implements Serializable   {
 	 */
 	public final static boolean isEmpty(List<ReintroitoRitenutaSplit> ritenuteSplit){
 		boolean vuota = true;
-		if(!StringUtils.isEmpty(ritenuteSplit)){
+		if(!StringUtilsFin.isEmpty(ritenuteSplit)){
 			for(ReintroitoRitenutaSplit it: ritenuteSplit){
 				if(!isEmpty(it)){
 					vuota = false;
@@ -531,7 +531,7 @@ public final class ReintroitoUtils implements Serializable   {
 	 */
 	public final static boolean tuttiCoerenti(List<ReintroitoRitenutaSplit> ritenuteSplit){
 		boolean coerenti = true;
-		if(!StringUtils.isEmpty(ritenuteSplit)){
+		if(!StringUtilsFin.isEmpty(ritenuteSplit)){
 			for(ReintroitoRitenutaSplit it: ritenuteSplit){
 				if(!isCorente(it)){
 					coerenti = false;
@@ -550,7 +550,7 @@ public final class ReintroitoUtils implements Serializable   {
 	 */
 	public final static boolean isEmpty(OrdinativoKey ok){
 		boolean vuoto = true;
-		if(ok!=null && ok.getAnno()>0 && CommonUtils.maggioreDiZero(ok.getNumero()) && CommonUtils.maggioreDiZero(ok.getAnnoBilancio())){
+		if(ok!=null && ok.getAnno()>0 && CommonUtil.maggioreDiZero(ok.getNumero()) && CommonUtil.maggioreDiZero(ok.getAnnoBilancio())){
 			vuoto = false;
 		}
 		return vuoto;
@@ -564,7 +564,7 @@ public final class ReintroitoUtils implements Serializable   {
 	 */
 	public final static boolean isEmpty(MovimentoKey mk){
 		boolean vuoto = true;
-		if(mk!=null && mk.getAnnoMovimento()>0 && CommonUtils.maggioreDiZero(mk.getNumeroMovimento()) && CommonUtils.maggioreDiZero(mk.getAnnoEsercizio())){
+		if(mk!=null && mk.getAnnoMovimento()>0 && CommonUtil.maggioreDiZero(mk.getNumeroMovimento()) && CommonUtil.maggioreDiZero(mk.getAnnoEsercizio())){
 			vuoto = false;
 		}
 		return vuoto;
@@ -573,7 +573,7 @@ public final class ReintroitoUtils implements Serializable   {
 	public final static MovimentoKey subToMovKey(MovimentoKey subKey){
 		MovimentoKey mk = null;
 		if(subKey!=null){
-			mk = clone(mk);
+			mk = clone(subKey);
 			mk.setNumeroSubMovimento(null);
 		}
 		return mk;
@@ -581,7 +581,7 @@ public final class ReintroitoUtils implements Serializable   {
 	
 	public final static boolean isSub(MovimentoKey mk){
 		boolean isSub = false;
-		if(!isEmpty(mk) && CommonUtils.maggioreDiZero(mk.getNumeroSubMovimento())){
+		if(!isEmpty(mk) && CommonUtil.maggioreDiZero(mk.getNumeroSubMovimento())){
 			isSub = true;
 		}
 		return isSub;

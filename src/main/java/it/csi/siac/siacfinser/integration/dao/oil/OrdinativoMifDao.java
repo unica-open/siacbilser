@@ -17,13 +17,21 @@ public interface OrdinativoMifDao
 	
 	public List<Integer> getAnniEsercizioOrdinativiSpesa(int idElaborazione);
 
+	public List<String> getCodiciIstatAnnoEsercizioOrdinativiEntrata(int idElaborazione, Integer anno);
+	
+	public List<String> getCodiciIstatAnnoEsercizioOrdinativiSpesa(int idElaborazione, Integer anno);
+
 	public int countOrdinativiEntrata(int idElaborazione);
 
 	public int countOrdinativiSpesa(int idElaborazione);
 
-	public int countOrdinativiAnnoEntrata(int idElaborazione, Integer anno);
+	@Deprecated public int countOrdinativiAnnoEntrata(int idElaborazione, Integer anno);
 
-	public int countOrdinativiAnnoSpesa(int idElaborazione, Integer anno);
+	@Deprecated public int countOrdinativiAnnoSpesa(int idElaborazione, Integer anno);
+
+	public int countOrdinativiAnnoCodiceIstatEntrata(int idElaborazione, Integer anno, String codiceIstat);
+
+	public int countOrdinativiAnnoCodiceIstatSpesa(int idElaborazione, Integer anno, String codiceIstat);
 
 	public List<Map<String, Object>> leggiStrutturaXml(int idElaborazione);
 

@@ -22,6 +22,13 @@ public interface SiacDSoggettoStatoRepository extends JpaRepository<SiacDSoggett
 	
 	
 	@Query("Select soggstat FROM SiacDSoggettoStatoFin soggstat WHERE soggstat.soggettoStatoCode = :code " +
+			" and soggstat.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId and "+ 
+			" soggstat.dataInizioValidita <= CURRENT_TIMESTAMP  AND (soggstat.dataFineValidita IS NULL OR CURRENT_TIMESTAMP < soggstat.dataFineValidita) "
+			+ " AND soggstat.dataCancellazione IS NULL )")
+    public SiacDSoggettoStatoFin findOneValidoByEnteAndByCode(@Param("enteProprietarioId") Integer enteProprietarioId, @Param("code") String code);
+
+	
+	@Query("Select soggstat FROM SiacDSoggettoStatoFin soggstat WHERE soggstat.soggettoStatoCode = :code " +
 			" and soggstat.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId and "+condizione2)
     public List<SiacDSoggettoStatoFin> findValidoByEnteAndByCode(@Param("enteProprietarioId") Integer enteProprietarioId,@Param("dataInput") Timestamp  dataInput, @Param("code") String code);
 

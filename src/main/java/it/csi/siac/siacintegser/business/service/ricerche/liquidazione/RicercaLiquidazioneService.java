@@ -19,8 +19,9 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.business.service.liquidazione.RicercaLiquidazioniService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazioni;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazioniResponse;
-import it.csi.siac.siacintegser.business.service.ServiceHelper;
 import it.csi.siac.siacintegser.business.service.base.RicercaPaginataBaseService;
+import it.csi.siac.siacintegser.business.service.helper.ProvvedimentoServiceHelper;
+import it.csi.siac.siacintegser.business.service.helper.StrutturaAmministrativoContabileServiceHelper;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.liquidazione.RicercaLiquidazione;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.liquidazione.RicercaLiquidazioneResponse;
@@ -33,8 +34,9 @@ public class RicercaLiquidazioneService extends
 		RicercaPaginataBaseService<RicercaLiquidazione, RicercaLiquidazioneResponse>
 {
 
-	@Autowired
-	ServiceHelper serviceHelper;
+	@Autowired private ProvvedimentoServiceHelper provvedimentoServiceHelper;
+	@Autowired private StrutturaAmministrativoContabileServiceHelper strutturaAmministrativoContabileServiceHelper;
+	
 	
 	@Override
 	protected RicercaLiquidazioneResponse execute(RicercaLiquidazione ireq)
@@ -46,14 +48,14 @@ public class RicercaLiquidazioneService extends
 		RicercaLiquidazioneResponse ires = instantiateNewIRes();
 		
 		if(!StringUtils.isEmpty(ireq.getCodiceStruttura()) && !StringUtils.isEmpty(ireq.getCodiceTipoStruttura())){
-			StrutturaAmministrativoContabile sac = serviceHelper.ricercaStrutturaByCodice(ente,richiedente,ireq.getCodiceStruttura(), ireq.getCodiceTipoStruttura());
+			StrutturaAmministrativoContabile sac = strutturaAmministrativoContabileServiceHelper.findStrutturaAmministrativoContabileByCodice(ente,richiedente,ireq.getCodiceStruttura(), ireq.getCodiceTipoStruttura());
 			if(sac ==null){
 				addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "il codice e il tipo della struttura non esistono");
 				return ires;
 			}else req.getParametroRicercaLiquidazione().setUidStrutturaAmministrativaProvvedimento(sac.getUid());
 		}
 		
-		TipoAtto tipoAtto = serviceHelper.ricercaTipoProvvedimentoByCodice(ente, richiedente, ireq.getCodiceTipoProvvedimento());
+		TipoAtto tipoAtto = provvedimentoServiceHelper.findTipoAttoByCodice(ente, richiedente, ireq.getCodiceTipoProvvedimento());
 		if(tipoAtto ==null){
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "il codice del provvedimento non esiste");
 			return ires;
@@ -62,7 +64,7 @@ public class RicercaLiquidazioneService extends
 		
 		RicercaLiquidazioniResponse res = appCtx.getBean(RicercaLiquidazioniService.class).executeService(req);
 		
-		checkBusinessServiceResponse(res);
+		checkServiceResponse(res);
 		
 		List<Liquidazione> elencoLiquidazioni = dozerUtil.mapList(res.getElencoLiquidazioni(),Liquidazione.class, IntegMapId.ListLiquidazione_IntegLiquidazione);
 		
@@ -83,26 +85,26 @@ public class RicercaLiquidazioneService extends
 	protected void checkServiceParameters(RicercaLiquidazione ireq) throws ServiceParamError {		
 		
 		// controllo parametri in input
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || ireq.getAnnoProvvedimento() != null ||
 				ireq.getCodiceTipoProvvedimento() == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno provvedimento"));
 
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() != null || ireq.getAnnoProvvedimento() == null || 
 				ireq.getCodiceTipoProvvedimento()  == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || ireq.getAnnoProvvedimento() == null || 
 				ireq.getCodiceTipoProvvedimento()  != null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getCodiceStruttura() == null || ireq.getCodiceTipoStruttura() != null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo struttura"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getCodiceStruttura() != null || ireq.getCodiceTipoStruttura() == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice struttura"));	
 	}	

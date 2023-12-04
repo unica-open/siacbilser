@@ -5,6 +5,7 @@
 package it.csi.siac.siacfinser.integration.dao.movgest;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +19,8 @@ public interface SiacRModificaStatoRepository extends JpaRepository<SiacRModific
 	String condizione = " ( (dataInizioValidita < :dataInput)  AND (dataFineValidita IS NULL OR :dataInput < dataFineValidita) AND  dataCancellazione IS NULL ) ";
 	
 	@Query("FROM SiacRModificaStatoFin WHERE siacTEnteProprietario.enteProprietarioId = :enteProprietarioId AND "+condizione)
-	public List<SiacRModificaStatoFin> findListaSiacRModificaStato(@Param("enteProprietarioId") Integer enteProprietarioId,@Param("dataInput") Timestamp  dataInput);
+	public List<SiacRModificaStatoFin> findListaSiacRModificaStato(@Param("enteProprietarioId") Integer enteProprietarioId, @Param("dataInput") Timestamp  dataInput);
+
+	@Query("FROM SiacRModificaStatoFin srmsf JOIN srmsf.siacTMovgestTsDetMods stmtdm WHERE stmtdm.movgestTsDetModId = :uid AND " + condizione)
+	public List<SiacRModificaStatoFin> findListaSiacRModificaStatoBySiacTMovgestTsDetModFin(@Param("uid") Integer uidSiacTMovgestTsDetModFin,  @Param("dataInput") Date dataInput);
 }

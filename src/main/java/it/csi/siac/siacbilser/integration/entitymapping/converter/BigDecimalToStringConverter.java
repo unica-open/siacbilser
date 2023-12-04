@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 import org.dozer.DozerConverter;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * The Class BigDecimalToStringConverter.
@@ -16,7 +16,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class BigDecimalToStringConverter extends DozerConverter<BigDecimal, String> {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/**
 	 * Instantiates a new boolean to string base converter.

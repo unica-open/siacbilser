@@ -22,28 +22,26 @@ import it.csi.siac.siacbilser.integration.entity.SiacTPeriodo;
 public interface SiacTBilRepository extends JpaRepository<SiacTBil, Integer> {
 	
 	/**
-	 * Cerca Fase di bilincioCerca il periodo annuale valido attualmente per l'ente selezionato.
+	 * Cerca Fase di bilincio per anno e ente
 	 *
-	 * @param periodo the periodo
-	 * @param ente the ente
-	 * @return the fase
+	 * @param anno
+	 * @param ente
+	 * @return SiacDFaseOperativa
 	 */
 	@Query( "SELECT fo.siacDFaseOperativa" +
 			" FROM SiacTBil b" +
 			" INNER JOIN b.siacRBilFaseOperativas fo" +
-			" WHERE b.siacTPeriodo = :periodo" +
-			" and b.siacTEnteProprietario = :ente" +
+			" WHERE cast(b.siacTPeriodo.anno as integer) = :anno" +
+			" and b.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId" +
 			" and b.dataCancellazione is null " +
 			" and b.dataInizioValidita < CURRENT_DATE " +
 			" and ( b.dataFineValidita is null or b.dataFineValidita > CURRENT_DATE)" +
-	        " and fo.dataCancellazione is null " +
+			" and fo.dataCancellazione is null " +
 			" and fo.dataInizioValidita < CURRENT_DATE " +
 			" and ( fo.dataFineValidita is null or fo.dataFineValidita > CURRENT_DATE)")
-	SiacDFaseOperativa getFase(
-			@Param("periodo")SiacTPeriodo periodo,
-			@Param("ente")SiacTEnteProprietario ente);
-	
-	
+	SiacDFaseOperativa getSiacDFaseOperativaByAnno(
+			@Param("anno")Integer anno,
+			@Param("enteProprietarioId")Integer enteProprietarioId);
 	
 	@Query( "SELECT b " +
 			" FROM SiacTBil b" +

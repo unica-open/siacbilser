@@ -16,9 +16,9 @@ import org.springframework.beans.PropertyAccessorFactory;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.handler.CigAttrHandler;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.handler.CupAttrHandler;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.handler.SiacTAttrHandler;
-import it.csi.siac.siacbilser.model.TipoMediaPrescelta;
 import it.csi.siac.siacbilser.model.TipologiaAttributo;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siacbilser.model.fcde.TipoMediaPrescelta;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 
 /**
@@ -40,9 +40,13 @@ public enum SiacTAttrEnum {
 	FlagEntrateRicorrenti("FlagEntrateRicorrenti", Boolean.class, "flagEntrateRicorrenti", TipologiaAttributo.FLAG_ENTRATE_RICORRENTI, SiacDAttrTipoEnum.Boolean),
 	@Deprecated FlagFondoPluriennaleVinc("FlagFondoPluriennaleVinc", Boolean.class,"flagFondoPluriennaleVinc", TipologiaAttributo.FLAG_FONDO_PLURIENNALE_VINC, SiacDAttrTipoEnum.Boolean),
 	FlagImpegnabile("FlagImpegnabile", Boolean.class,"flagImpegnabile", TipologiaAttributo.FLAG_IMPEGNABILE, SiacDAttrTipoEnum.Numerico),
+	//task-55
+	FlagNonInserireAllegatoA1("FlagNonInserireAllegatoA1", Boolean.class, "flagNonInserireAllegatoA1", TipologiaAttributo.FLAG_NON_INSERIRE_ALLEGATO_A1, SiacDAttrTipoEnum.Boolean),
 	FlagTrasferimentiVincolati("FlagTrasferimentiVincolati", Boolean.class, "flagTrasferimentiVincolati", TipologiaAttributo.FLAG_TRASFERIMENTI_VINCOLATI, SiacDAttrTipoEnum.Boolean),
 	// SIAC-5582
 	FlagAccertatoPerCassa("FlagAccertatoPerCassa", Boolean.class, "flagAccertatoPerCassa", TipologiaAttributo.FLAG_ACCERTATO_PER_CASSA, SiacDAttrTipoEnum.Boolean),
+	// SIAC-7858
+	FlagEntrataDubbiaEsigFCDE("FlagEntrataDubbiaEsigFCDE", Boolean.class, "flagEntrataDubbiaEsigFCDE", TipologiaAttributo.FLAG_ENTRATA_DUBBIA_ESIG_FCDE, SiacDAttrTipoEnum.Boolean),
 
 	//Attributi legati a Progetto e Cronoprogramma
 	FlagRilevanteFondoPluriennaleVincolato("FlagRilevanteFPV", Boolean.class, "rilevanteFPV", TipologiaAttributo.FLAG_RILEVANTE_FPV, SiacDAttrTipoEnum.Boolean),
@@ -81,10 +85,10 @@ public enum SiacTAttrEnum {
 	FlagOrdinativoSingolo("flagOrdinativoSingolo",  Boolean.class , "flagOrdinativoSingolo" , TipologiaAttributo.FLAG_ORDINATIVO_SINGOLO, SiacDAttrTipoEnum.Boolean),
 	FlagRilevanteIVA("flagRilevanteIVA",  Boolean.class , "flagRilevanteIVA" , TipologiaAttributo.FLAG_RILEVANTE_IVA, SiacDAttrTipoEnum.Boolean), //verificare sovrapposizione con FlagRilevanteIva (va minuscole)
 	CausaleOrdinativo("causaleOrdinativo",  String.class , "causaleOrdinativo" , TipologiaAttributo.FLAG_CAUSALE_ORDINATIVO, SiacDAttrTipoEnum.Testo),
+	//SIAC-7567 anche il documento di entrata possiede cig e cup
 	Cig("cig",  String.class , "cig" , TipologiaAttributo.CIG, SiacDAttrTipoEnum.Testo, CigAttrHandler.class),
 	Cup("cup",  String.class , "cup" , TipologiaAttributo.CUP, SiacDAttrTipoEnum.Testo, CupAttrHandler.class),
-	/** @deprecated Lasciato per retrocompatibilità. Ora viene utilizzata l'Entita {@link it.csi.siac.siacfinser.model.mutuo.VoceMutuo}. */
-	@Deprecated NumeroMutuo("numeroMutuo",  String.class , "numeroMutuo" , TipologiaAttributo.NUMERO_MUTUO, SiacDAttrTipoEnum.Numerico),
+
 	DataEsecuzionePagamento("dataEsecuzionePagamento",  Date.class , "dataEsecuzionePagamento" , TipologiaAttributo.DATA_ESECUZIONE_PAGAMENTO, SiacDAttrTipoEnum.Testo),
 	
 	//Attributi legati a Subdocumento <>---- Dati Certificazione Crediti
@@ -163,11 +167,15 @@ public enum SiacTAttrEnum {
 	FlagPrenotazione("flagPrenotazione", Boolean.class, null, null, null),
 	//SIAC-6261
 	FlagSoggettoDurc("flagSoggettoDurc", Boolean.class,null, null, null),
+
+	FlagDaReanno("flagDaReanno", Boolean.class, null, null, null),
+	AnnoRiaccertato("annoRiaccertato", String.class, null, null, null),
+	NumeroRiaccertato("numeroRiaccertato", String.class, null, null, null),
 	;
 	
 	
 	public static final String FlagRilevanteIVA_Codice = "flagRilevanteIVA"; //FlagRilevanteIVA.getCodice();
-	private static LogUtil log = new LogUtil(SiacTAttrEnum.class);
+	private static LogSrvUtil log = new LogSrvUtil(SiacTAttrEnum.class);
 	private final String codice;
 	private final String modelFieldName;
 	

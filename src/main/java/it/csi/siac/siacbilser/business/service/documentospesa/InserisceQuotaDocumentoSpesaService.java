@@ -72,7 +72,7 @@ public class InserisceQuotaDocumentoSpesaService extends CrudDocumentoDiSpesaBas
 				 ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero provvisorio di cassa") );
 		
 		checkCondition(subdoc.getImpegno()==null || subdoc.getImpegno().getUid()== 0 ||
-				(subdoc.getImpegno().getAnnoMovimento()!=0 && subdoc.getImpegno().getNumero()!=null), 
+				(subdoc.getImpegno().getAnnoMovimento()!=0 && subdoc.getImpegno().getNumeroBigDecimal()!=null), 
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero impegno")); 
 		
 		checkCondition(subdoc.getAttoAmministrativo()==null || subdoc.getAttoAmministrativo().getUid() != 0,
@@ -130,7 +130,7 @@ public class InserisceQuotaDocumentoSpesaService extends CrudDocumentoDiSpesaBas
 			
 			impostaFlagOrdinativo();
 		}
-		
+
 		Integer numeroSubdocumento = subdocumentoSpesaDad.staccaNumeroSubdocumento(subdoc.getDocumento().getUid());
 		subdoc.setNumero(numeroSubdocumento);
 		gestisciNumeroRegistrazioneIva();
@@ -139,8 +139,7 @@ public class InserisceQuotaDocumentoSpesaService extends CrudDocumentoDiSpesaBas
 		
 		// SIAC-5115
 		gestisciSospensioniSubdocumento(req.isGestisciSospensioni());
-		
-		
+
 		// Mantengo il valore della eventuale liquidazione presente
 		boolean hasLiquidazioneValorizzata = subdoc.getLiquidazione() != null && subdoc.getLiquidazione().getUid() != 0;
 		if(!req.isQuotaContestuale()) {
@@ -166,6 +165,9 @@ public class InserisceQuotaDocumentoSpesaService extends CrudDocumentoDiSpesaBas
 			log.debug(methodName, "Comunicazione PCC data scadenza dopo riattivazione da inserire");
 			comunicazionePCCAggiornamentoDataScadenzaPCC();
 		}
+		
+		//SIAC-8153
+		caricaStrutturaCompetenteQuota();
 		
 		res.setSubdocumentoSpesa(subdoc);
 		

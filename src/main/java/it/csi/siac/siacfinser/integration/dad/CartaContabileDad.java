@@ -30,8 +30,8 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.EntitaUtils;
 import it.csi.siac.siacfinser.integration.dao.carta.CartaContabileDao;
 import it.csi.siac.siacfinser.integration.dao.carta.SiacDCartacontStatoRepository;
@@ -54,11 +54,9 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoRicercaMovimentoPk
 import it.csi.siac.siacfinser.integration.dao.common.dto.OggettoDellAttributoTClass;
 import it.csi.siac.siacfinser.integration.dao.common.dto.PaginazioneSubMovimentiDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaCartaContabileParamDto;
-import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacDContotesoreriaFinRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestTsRepository;
-import it.csi.siac.siacfinser.integration.dao.mutuo.SiacRMutuoVoceCartacontDetRepository;
-import it.csi.siac.siacfinser.integration.dao.mutuo.SiacTMutuoVoceRepository;
+import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDContotesoreriaFinRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoAttoAmmRepository;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacRSoggettoRelazFinRepository;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacTModpagFinRepository;
@@ -77,7 +75,6 @@ import it.csi.siac.siacfinser.integration.entity.SiacRCartacontDetSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRCartacontDetSubdocFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRCartacontStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRDocStatoFin;
-import it.csi.siac.siacfinser.integration.entity.SiacRMutuoVoceCartacontDet;
 import it.csi.siac.siacfinser.integration.entity.SiacRSubdocMovgestTFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTAttoAmmFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTBilFin;
@@ -88,11 +85,10 @@ import it.csi.siac.siacfinser.integration.entity.SiacTDocFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTModpagFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin;
-import it.csi.siac.siacfinser.integration.entity.SiacTMutuoVoceFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSubdocFin;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.ObjectStreamerHandler;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.model.Impegno;
@@ -102,7 +98,6 @@ import it.csi.siac.siacfinser.model.carta.CartaContabile.StatoOperativoCartaCont
 import it.csi.siac.siacfinser.model.carta.CartaEstera;
 import it.csi.siac.siacfinser.model.carta.PreDocumentoCarta;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaCartaContabile;
 import it.csi.siac.siacfinser.model.ric.RicercaCartaContabileK;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
@@ -184,17 +179,11 @@ public class CartaContabileDad extends AbstractFinDad {
 	SiacTMovgestTsRepository siacTMovgestTsRepository;
 	
 	@Autowired
-	SiacTMutuoVoceRepository siacTMutuoVoceRepository;
-
-	@Autowired
 	SiacTMovgestRepository siacTMovgestRepository;
 
 	@Autowired
 	SiacRCartacontDetMovgestTRepository siacRCartacontDetMovgestTRepository;
 	
-	@Autowired
-	SiacRMutuoVoceCartacontDetRepository siacRMutuoVoceCartacontDetRepository;
-
 	/**
 	 * converte ParametroRicercaCartaContabile (che e' un model) in un oggetto (non model) da poter passare al DaoImpl
 	 * 
@@ -268,11 +257,11 @@ public class CartaContabileDad extends AbstractFinDad {
 				attributoInfo.setSiacTCartacont(siacTCartacont);
 
 				// note
-				String noteCc = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_NOTE_CC);
+				String noteCc = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_NOTE_CC);
 				cartaContabile.setNote(noteCc);
 
 				// motivo urgenza
-				String motivoUrgenza = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_MOTIVO_URGENZA);
+				String motivoUrgenza = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_MOTIVO_URGENZA);
 				cartaContabile.setMotivoUrgenza(motivoUrgenza);
 				// attributi metadatati della carta contabile : fine
 
@@ -295,7 +284,7 @@ public class CartaContabileDad extends AbstractFinDad {
 							attributoInfo.setSiacTCartacontDet(siacTCartacontDet);
 
 							//note
-							String noteCcDet = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_NOTE_CC);
+							String noteCcDet = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_NOTE_CC);
 							preDocumentoCarta.setNote(noteCcDet);
 							
 							// Jira-1461 
@@ -403,15 +392,15 @@ public class CartaContabileDad extends AbstractFinDad {
 											Integer annoImpegno = siacRCartacontDetMovgestT.getSiacTMovgestT().getSiacTMovgest().getMovgestAnno();
 											BigDecimal numeroImpegno = siacRCartacontDetMovgestT.getSiacTMovgestT().getSiacTMovgest().getMovgestNumero();
 
-											impegnoPreDocumento = (Impegno) impegnoDad.ricercaMovimentoPk(richiedente, ente, annoBilancio, annoImpegno, numeroImpegno, Constanti.MOVGEST_TIPO_IMPEGNO, true);
-											if(movgestTsTipoCode.equals(Constanti.MOVGEST_TS_TIPO_TESTATA)) {
+											impegnoPreDocumento = (Impegno) impegnoDad.ricercaMovimentoPk(richiedente, ente, annoBilancio, annoImpegno, numeroImpegno, CostantiFin.MOVGEST_TIPO_IMPEGNO, true);
+											if(movgestTsTipoCode.equals(CostantiFin.MOVGEST_TS_TIPO_TESTATA)) {
 												// il pre-documento e' legato ad un impegno
 
 												preDocumentoCarta.setImpegno(impegnoPreDocumento);
 												// pulisco l'eventuale sub rimasto da operazioni precedenti
 												preDocumentoCarta.setSubImpegno(null);
 
-											} else if (movgestTsTipoCode.equals(Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
+											} else if (movgestTsTipoCode.equals(CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
 												// il pre-documento e' legato ad un sub-impegno
 												Integer idSubImpegno = siacRCartacontDetMovgestT.getSiacTMovgestT().getMovgestTsId();
 
@@ -465,11 +454,11 @@ public class CartaContabileDad extends AbstractFinDad {
 							attributoInfo.setSiacTCartacontEstera(siacTCartacontEstera);
 
 							//tipo pagamento
-							String isAssegno = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-							String isBonifico = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-							String isAltro = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
-							String isSpedizione = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_RECAPITOASSEGNO_SPEDIZIONE);
-							String isConsegna = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_RECAPITOASSEGNO_CONSEGNA);
+							String isAssegno = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+							String isBonifico = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+							String isAltro = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+							String isSpedizione = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_RECAPITOASSEGNO_SPEDIZIONE);
+							String isConsegna = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_RECAPITOASSEGNO_CONSEGNA);
 
 							if ("S".equalsIgnoreCase(isAssegno)) {
 								cartaEstera.setTipologiaPagamento("Assegno");
@@ -596,7 +585,7 @@ public class CartaContabileDad extends AbstractFinDad {
 			// inserisco la relazione tra siac_t_cartacont_det e siac_t_subdoc
 			// attraverso la tavola di relazione siac_r_cartacont_det_subdoc
 			SiacRCartacontDetSubdocFin siacRCartacontDetSubdoc = new SiacRCartacontDetSubdocFin(); 
-			siacRCartacontDetSubdoc = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSubdoc, datiOperazione, siacTAccountRepository);
+			siacRCartacontDetSubdoc = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSubdoc, datiOperazione, siacTAccountRepository);
 
 			siacRCartacontDetSubdoc.setSiacTCartacontDet(siacTCartacontDet);
 			siacRCartacontDetSubdoc.setSiacTSubdoc(siacTSubdoc);
@@ -604,7 +593,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 			// aggiorno i dati su siac_t_cartacont_det
 			datiOperazione.setOperazione(Operazione.MODIFICA);
-			siacTCartacontDet = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontDet, datiOperazione, siacTAccountRepository);
+			siacTCartacontDet = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontDet, datiOperazione, siacTAccountRepository);
 			siacTCartaContDetRepository.saveAndFlush(siacTCartacontDet);
 
 			result = true;
@@ -662,14 +651,14 @@ public class CartaContabileDad extends AbstractFinDad {
 								if(siacRCartacontDetSubdoc!=null && siacRCartacontDetSubdoc.getDataFineValidita()==null){
 									// per ogni riga valida di legame tra il preDocumentoCarta e un subDocumento
 									// annullo logicamente il legame
-									siacRCartacontDetSubdoc = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSubdoc, datiOperazione, siacTAccountRepository);
+									siacRCartacontDetSubdoc = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSubdoc, datiOperazione, siacTAccountRepository);
 									siacRCartacontDetSubdocRepository.saveAndFlush(siacRCartacontDetSubdoc);
 								}
 							}
 						}
 
 						// annullo la riga di dettaglio della carta contabile
-						siacTCartacontDet = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontDet, datiOperazione, siacTAccountRepository);
+						siacTCartacontDet = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontDet, datiOperazione, siacTAccountRepository);
 						siacTCartaContDetRepository.saveAndFlush(siacTCartacontDet);
 					}
 				}
@@ -681,15 +670,15 @@ public class CartaContabileDad extends AbstractFinDad {
 				for(SiacRCartacontStatoFin rCartaContStato : listaRCartacontStato){
 					if(rCartaContStato!=null && rCartaContStato.getDataFineValidita()==null){
 						// annullo il vecchio stato operativo della carta contabile
-						rCartaContStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(rCartaContStato, datiOperazione, siacTAccountRepository);
+						rCartaContStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(rCartaContStato, datiOperazione, siacTAccountRepository);
 						siacRCartacontStatoRepository.saveAndFlush(rCartaContStato);
 
 						// creo il nuovo legame con lo stato operativo annullato
-						SiacDCartacontStatoFin siacDCartacontStatoAnnullato = siacDCartacontStatoRepository.findDCartaContStatoValidoByEnteAndCode(idEnte, Constanti.D_CARTA_CONTABILE_STATO_ANNULLATO, datiOperazione.getTs());
+						SiacDCartacontStatoFin siacDCartacontStatoAnnullato = siacDCartacontStatoRepository.findDCartaContStatoValidoByEnteAndCode(idEnte, CostantiFin.D_CARTA_CONTABILE_STATO_ANNULLATO, datiOperazione.getTs());
 						SiacRCartacontStatoFin siacRCartacontStatoAnnullato = new SiacRCartacontStatoFin();
 						datiOperazione.setOperazione(Operazione.INSERIMENTO);
 
-						siacRCartacontStatoAnnullato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontStatoAnnullato, datiOperazione, siacTAccountRepository);
+						siacRCartacontStatoAnnullato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontStatoAnnullato, datiOperazione, siacTAccountRepository);
 
 						siacRCartacontStatoAnnullato.setSiacDCartacontStato(siacDCartacontStatoAnnullato);
 						siacRCartacontStatoAnnullato.setSiacTCartacont(siacTCartacont);
@@ -746,8 +735,8 @@ public class CartaContabileDad extends AbstractFinDad {
 					if(rCartaContStato!=null && rCartaContStato.getDataFineValidita()==null){
 						String statoOperativoCartaCode = rCartaContStato.getSiacDCartacontStato().getCartacStatoCode();
 						String statoOperativoCartaDesc = rCartaContStato.getSiacDCartacontStato().getCartacStatoDesc();
-						if(!statoOperativoCartaCode.equalsIgnoreCase(Constanti.D_CARTA_CONTABILE_STATO_COMPLETATO) &&
-								!statoOperativoCartaCode.equalsIgnoreCase(Constanti.D_CARTA_CONTABILE_STATO_PROVVISORIO)){
+						if(!statoOperativoCartaCode.equalsIgnoreCase(CostantiFin.D_CARTA_CONTABILE_STATO_COMPLETATO) &&
+								!statoOperativoCartaCode.equalsIgnoreCase(CostantiFin.D_CARTA_CONTABILE_STATO_PROVVISORIO)){
 							listaErrori.add(ErroreFin.STATO_MOVIMENTO_IMPOSSIBILE.getErrore(statoOperativoCartaDesc, "ANNULLATO", "CARTA CONTABILE"));				
 						}
 					}
@@ -773,7 +762,7 @@ public class CartaContabileDad extends AbstractFinDad {
 									if(siacTDoc!=null){
 										SiacDDocTipoFin siacDDocTipo = siacTDoc.getSiacDDocTipo();
 										if(siacDDocTipo!=null){
-											if(siacDDocTipo.getDocTipoCode().equalsIgnoreCase(Constanti.D_DOC_TIPO_CARTA_CONTABILE_CODE)){
+											if(siacDDocTipo.getDocTipoCode().equalsIgnoreCase(CostantiFin.D_DOC_TIPO_CARTA_CONTABILE_CODE)){
 												List<SiacRDocStatoFin> elencoSiacRDocStato = siacTDoc.getSiacRDocStatos();
 												if(elencoSiacRDocStato!=null && elencoSiacRDocStato.size()>0){
 													for(SiacRDocStatoFin siacRDocStato : elencoSiacRDocStato){
@@ -782,10 +771,10 @@ public class CartaContabileDad extends AbstractFinDad {
 															if(siacDDocStato!=null){
 																String statoOperativoDocumentoCode = siacDDocStato.getDocStatoCode();
 
-																if(statoOperativoDocumentoCode.equalsIgnoreCase(Constanti.D_DOC_STATO_LIQUIDATO) ||
-																		statoOperativoDocumentoCode.equalsIgnoreCase(Constanti.D_DOC_STATO_PARZIALMENTE_LIQUIDATO) ||
-																		statoOperativoDocumentoCode.equalsIgnoreCase(Constanti.D_DOC_STATO_PARZIALMENTE_EMESSO) ||
-																		statoOperativoDocumentoCode.equalsIgnoreCase(Constanti.D_DOC_STATO_EMESSO)){
+																if(statoOperativoDocumentoCode.equalsIgnoreCase(CostantiFin.D_DOC_STATO_LIQUIDATO) ||
+																		statoOperativoDocumentoCode.equalsIgnoreCase(CostantiFin.D_DOC_STATO_PARZIALMENTE_LIQUIDATO) ||
+																		statoOperativoDocumentoCode.equalsIgnoreCase(CostantiFin.D_DOC_STATO_PARZIALMENTE_EMESSO) ||
+																		statoOperativoDocumentoCode.equalsIgnoreCase(CostantiFin.D_DOC_STATO_EMESSO)){
 
 																	listaErrori.add(ErroreFin.ENTITA_COLLEGATE.getErrore("DOCUMENTI DI TIPO CCN LIQUIDATI", "NON E' POSSIBILE PROCEDERE CON L'ANNULLAMENTO DELLA CARTA"));
 																	break;
@@ -857,7 +846,7 @@ public class CartaContabileDad extends AbstractFinDad {
 									if(siacTDoc!=null){
 										SiacDDocTipoFin siacDDocTipo = siacTDoc.getSiacDDocTipo();
 										if(siacDDocTipo!=null){
-											if(siacDDocTipo.getDocTipoCode().equalsIgnoreCase(Constanti.D_DOC_TIPO_CARTA_CONTABILE_CODE)){
+											if(siacDDocTipo.getDocTipoCode().equalsIgnoreCase(CostantiFin.D_DOC_TIPO_CARTA_CONTABILE_CODE)){
 												// aggiungo il documento da annullare
 												elencoSiacTDocDaAnnullare.add(siacTDoc);
 											}
@@ -919,7 +908,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 		//Provvedimento carta
 		if (cartaContabileInput.getAttoAmministrativo()!=null && cartaContabileInput.getAttoAmministrativo().getStatoOperativo()!=null) {
-			if (cartaContabileInput.getAttoAmministrativo().getStatoOperativo().equalsIgnoreCase(Constanti.ATTO_AMM_STATO_ANNULLATO)) {
+			if (cartaContabileInput.getAttoAmministrativo().getStatoOperativo().equalsIgnoreCase(CostantiFin.ATTO_AMM_STATO_ANNULLATO)) {
 				listaErrori.add(ErroreAtt.PROVVEDIMENTO_ANNULLATO.getErrore("Provvedimento Annullato"));
 			}
 		}
@@ -928,7 +917,7 @@ public class CartaContabileDad extends AbstractFinDad {
 		if (cartaContabileInput.getListaPreDocumentiCarta()!=null && cartaContabileInput.getListaPreDocumentiCarta().size()>0) {
 			for (PreDocumentoCarta preDocumentoCarta : cartaContabileInput.getListaPreDocumentiCarta()) {
 				// Soggetto: Verifica che il soggetto sia VALIDO o SOSPESO
-				Soggetto soggettoCheck = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), preDocumentoCarta.getSoggetto().getCodiceSoggetto(), false, true);
+				Soggetto soggettoCheck = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), preDocumentoCarta.getSoggetto().getCodiceSoggetto(), false, true);
 				if(null==soggettoCheck){
 					listaErrori.add(ErroreFin.SOGGETTO_BLOCCATO.getErrore(""));
 				} else if (!soggettoCheck.getStatoOperativo().name().equalsIgnoreCase(StatoOperativoAnagrafica.VALIDO.name()) && 
@@ -938,7 +927,7 @@ public class CartaContabileDad extends AbstractFinDad {
 					List<ModalitaPagamentoSoggetto> listaModalitaPagamentoSoggetto = preDocumentoCarta.getSoggetto().getElencoModalitaPagamento();
 					if (listaModalitaPagamentoSoggetto!=null && listaModalitaPagamentoSoggetto.size()==1) {
 						ModalitaPagamentoSoggetto modalitaPagamentoSoggetto=listaModalitaPagamentoSoggetto.get(0);
-						if(!modalitaPagamentoSoggetto.getStato().toString().equalsIgnoreCase(Constanti.STATO_VALIDO)){
+						if(!modalitaPagamentoSoggetto.getStato().toString().equalsIgnoreCase(CostantiFin.STATO_VALIDO)){
 							listaErrori.add(ErroreFin.MOD_PAGAMENTO_STATO.getErrore(""));
 						}
 					}
@@ -950,7 +939,7 @@ public class CartaContabileDad extends AbstractFinDad {
 						if (subdocumentoSpesaCollegato.getDocumento()!=null) {
 							//Controllo sullo stato del documento
 							StatoOperativoDocumento stato=subdocumentoSpesaCollegato.getDocumento().getStatoOperativoDocumento();
-							if (stato.equals(Constanti.D_DOC_STATO_ANNULLATO)) {
+							if (stato.equals(CostantiFin.D_DOC_STATO_ANNULLATO)) {
 								listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nel documento collegato)"));
 							} else {
 								//controllare che non sia collegato ad altre carte contabili
@@ -968,7 +957,7 @@ public class CartaContabileDad extends AbstractFinDad {
 				}
 
 				//Impegno - subimpegno
-				if (preDocumentoCarta.getImpegno()!=null && preDocumentoCarta.getImpegno().getNumero()!=null && preDocumentoCarta.getImpegno().getAnnoMovimento()!=0) {
+				if (preDocumentoCarta.getImpegno()!=null && preDocumentoCarta.getImpegno().getNumeroBigDecimal()!=null && preDocumentoCarta.getImpegno().getAnnoMovimento()!=0) {
 
 					String annoEsercizio=String.valueOf(bilancio.getAnno());
 					
@@ -978,7 +967,7 @@ public class CartaContabileDad extends AbstractFinDad {
 							&& preDocumentoCarta.getImpegno().getElencoSubImpegni().size()==1
 							&& preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0)!=null){
 						//Selezionato un SUB 
-						BigDecimal numeroSub = preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0).getNumero();
+						BigDecimal numeroSub = preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0).getNumeroBigDecimal();
 						paginazioneSubMovimentiDto.setNoSub(false);
 						paginazioneSubMovimentiDto.setNumeroSubMovimentoRichiesto(numeroSub);
 					} else {
@@ -990,7 +979,10 @@ public class CartaContabileDad extends AbstractFinDad {
 					
 					Impegno impegnoDaDB = null;
 					
-					EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, preDocumentoCarta.getImpegno().getAnnoMovimento(), preDocumentoCarta.getImpegno().getNumero(),paginazioneSubMovimentiDto,null, Constanti.MOVGEST_TIPO_IMPEGNO, false);
+					EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(
+							richiedente, ente, annoEsercizio, preDocumentoCarta.getImpegno().getAnnoMovimento(), 
+							preDocumentoCarta.getImpegno().getNumeroBigDecimal(),paginazioneSubMovimentiDto, null, 
+							CostantiFin.MOVGEST_TIPO_IMPEGNO, false, true);
 					
 					if(esitoRicercaMov!=null){
 						impegnoDaDB = (Impegno) esitoRicercaMov.getMovimentoGestione();
@@ -1002,9 +994,9 @@ public class CartaContabileDad extends AbstractFinDad {
 						preDocumentoCarta.getImpegno().setDisponibilitaLiquidare(impegnoDaDB.getDisponibilitaLiquidare());
 
 						String statoImpegno=preDocumentoCarta.getImpegno().getStatoOperativoMovimentoGestioneSpesa();
-						if (!statoImpegno.equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO)  && !statoImpegno.equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE)) {
+						if (!statoImpegno.equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO)  && !statoImpegno.equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE)) {
 							listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nell'impegno collegato)"));
-						} else if (statoImpegno.equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE)) {
+						} else if (statoImpegno.equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE)) {
 							List<SubImpegno> listaSubImpegni = preDocumentoCarta.getImpegno().getElencoSubImpegni();
 							if (listaSubImpegni==null || listaSubImpegni.size()!=1) {
 								listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nell'impegno collegato)"));
@@ -1013,7 +1005,7 @@ public class CartaContabileDad extends AbstractFinDad {
 								boolean subTrovato = false;
 								if (impegnoDaDB.getElencoSubImpegni()!=null && impegnoDaDB.getElencoSubImpegni().size()>0) {
 									for (SubImpegno subImpegnoDaDB : impegnoDaDB.getElencoSubImpegni()) {
-										if (subImpegnoDaDB.getNumero().compareTo(subImpegno.getNumero())==0) {
+										if (subImpegnoDaDB.getNumeroBigDecimal().compareTo(subImpegno.getNumeroBigDecimal())==0) {
 											subImpegno.setUid(subImpegnoDaDB.getUid());
 											subImpegno.setAnnoMovimento(subImpegnoDaDB.getAnnoMovimento());
 											subImpegno.setStatoOperativoMovimentoGestioneSpesa(subImpegnoDaDB.getStatoOperativoMovimentoGestioneSpesa());
@@ -1025,7 +1017,7 @@ public class CartaContabileDad extends AbstractFinDad {
 								if(!subTrovato){
 									listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nel subimpegno collegato)"));
 								}
-								if (!subImpegno.getStatoOperativoMovimentoGestioneSpesa().equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO)) {
+								if (!subImpegno.getStatoOperativoMovimentoGestioneSpesa().equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO)) {
 									listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nel subimpegno collegato)"));
 								} else {
 									// DISPONIBILE A LIQUIDARE SUBIMPEGNO  >=  IMPORTO RIGA
@@ -1145,7 +1137,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 		//Provvedimento carta
 		if (cartaContabileInput.getAttoAmministrativo()!=null && cartaContabileInput.getAttoAmministrativo().getStatoOperativo()!=null) {
-			if (cartaContabileInput.getAttoAmministrativo().getStatoOperativo().equalsIgnoreCase(Constanti.ATTO_AMM_STATO_ANNULLATO)) {
+			if (cartaContabileInput.getAttoAmministrativo().getStatoOperativo().equalsIgnoreCase(CostantiFin.ATTO_AMM_STATO_ANNULLATO)) {
 				listaErrori.add(ErroreAtt.PROVVEDIMENTO_ANNULLATO.getErrore("Provvedimento Annullato"));
 			}
 		}
@@ -1157,7 +1149,7 @@ public class CartaContabileDad extends AbstractFinDad {
 				for (PreDocumentoCarta preDocumentoCartaOld : cartaContabileOld.getListaPreDocumentiCarta()) {
 					if (preDocumentoCartaOld.getNumero().compareTo(preDocumentoCarta.getNumero())==0) {
 						// Soggetto: Verifica che il soggetto sia VALIDO o SOSPESO
-						Soggetto soggettoCheck = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), preDocumentoCarta.getSoggetto().getCodiceSoggetto(), false, true);
+						Soggetto soggettoCheck = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), preDocumentoCarta.getSoggetto().getCodiceSoggetto(), false, true);
 						if(null==soggettoCheck){
 							listaErrori.add(ErroreFin.SOGGETTO_BLOCCATO.getErrore(""));
 						} else if (!soggettoCheck.getStatoOperativo().name().equalsIgnoreCase(StatoOperativoAnagrafica.VALIDO.name()) && 
@@ -1171,7 +1163,7 @@ public class CartaContabileDad extends AbstractFinDad {
 								ModalitaPagamentoSoggetto modalitaPagamentoSoggetto= EntitaUtils.entitaConUid(listaModalitaPagamentoSoggetto.get(0)) && EntitaUtils.entitaConUid(listaModalitaPagamentoSoggetto.get(0).getModalitaPagamentoSoggettoCessione2())? 
 										listaModalitaPagamentoSoggetto.get(0).getModalitaPagamentoSoggettoCessione2() 
 										: listaModalitaPagamentoSoggetto.get(0);
-								if(modalitaPagamentoSoggetto == null || !Constanti.STATO_VALIDO.equalsIgnoreCase(modalitaPagamentoSoggetto.getCodiceStatoModalitaPagamento())){
+								if(modalitaPagamentoSoggetto == null || !CostantiFin.STATO_VALIDO.equalsIgnoreCase(modalitaPagamentoSoggetto.getCodiceStatoModalitaPagamento())){
 									listaErrori.add(ErroreFin.MOD_PAGAMENTO_STATO_ORIG.getErrore("Modalita' di Pagamento"));
 								}
 							}
@@ -1192,9 +1184,9 @@ public class CartaContabileDad extends AbstractFinDad {
 								if (subdocumentoSpesaCollegato.getDocumento()!=null) {
 									//Controllo sullo stato del documento
 									StatoOperativoDocumento stato=subdocumentoSpesaCollegato.getDocumento().getStatoOperativoDocumento();
-									if (stato.equals(Constanti.D_DOC_STATO_ANNULLATO) ||
-											stato.equals(Constanti.D_DOC_STATO_STORNATO) ||
-											stato.equals(Constanti.D_DOC_STATO_EMESSO)) {
+									if (stato.equals(CostantiFin.D_DOC_STATO_ANNULLATO) ||
+											stato.equals(CostantiFin.D_DOC_STATO_STORNATO) ||
+											stato.equals(CostantiFin.D_DOC_STATO_EMESSO)) {
 										listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nel documento collegato)"));
 									} else {
 										//controllo che non sia collegato ad altre carte contabili
@@ -1215,7 +1207,7 @@ public class CartaContabileDad extends AbstractFinDad {
 						//Impegno - subimpegno
 						boolean isImpegnoSubChanged=checkImpegnoSubChanged(preDocumentoCarta.getImpegno(), preDocumentoCartaOld.getImpegno());
 						if (isImpegnoSubChanged) {
-							if (preDocumentoCarta.getImpegno()!=null && preDocumentoCarta.getImpegno().getNumero()!=null && preDocumentoCarta.getImpegno().getAnnoMovimento()!=0) {
+							if (preDocumentoCarta.getImpegno()!=null && preDocumentoCarta.getImpegno().getNumeroBigDecimal()!=null && preDocumentoCarta.getImpegno().getAnnoMovimento()!=0) {
 
 								String annoEsercizio=String.valueOf(bilancio.getAnno());
 								
@@ -1226,7 +1218,7 @@ public class CartaContabileDad extends AbstractFinDad {
 										&& preDocumentoCarta.getImpegno().getElencoSubImpegni().size()==1
 										&& preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0)!=null){
 									//Selezionato un SUB 
-									BigDecimal numeroSub = preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0).getNumero();
+									BigDecimal numeroSub = preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0).getNumeroBigDecimal();
 									paginazioneSubMovimentiDto.setNoSub(false);
 									paginazioneSubMovimentiDto.setNumeroSubMovimentoRichiesto(numeroSub);
 								} else {
@@ -1236,7 +1228,10 @@ public class CartaContabileDad extends AbstractFinDad {
 								}
 								//
 								
-								EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, preDocumentoCarta.getImpegno().getAnnoMovimento(), preDocumentoCarta.getImpegno().getNumero(),paginazioneSubMovimentiDto,null, Constanti.MOVGEST_TIPO_IMPEGNO, false);
+								EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(
+										richiedente, ente, annoEsercizio, preDocumentoCarta.getImpegno().getAnnoMovimento(), 
+										preDocumentoCarta.getImpegno().getNumeroBigDecimal(),paginazioneSubMovimentiDto, null, 
+										CostantiFin.MOVGEST_TIPO_IMPEGNO, false, true);
 								
 								Impegno impegnoDaDB = null;
 								if(esitoRicercaMov!=null){
@@ -1249,9 +1244,9 @@ public class CartaContabileDad extends AbstractFinDad {
 									preDocumentoCarta.getImpegno().setDisponibilitaLiquidare(impegnoDaDB.getDisponibilitaLiquidare());
 
 									String statoImpegno=preDocumentoCarta.getImpegno().getStatoOperativoMovimentoGestioneSpesa();
-									if (!statoImpegno.equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO)  && !statoImpegno.equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE)) {
+									if (!statoImpegno.equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO)  && !statoImpegno.equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE)) {
 										listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nell'impegno collegato)"));
-									} else if (statoImpegno.equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE)) {
+									} else if (statoImpegno.equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE)) {
 										List<SubImpegno> listaSubImpegni = preDocumentoCarta.getImpegno().getElencoSubImpegni();
 										if (listaSubImpegni==null || listaSubImpegni.size()!=1) {
 											listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nell'impegno collegato)"));
@@ -1260,7 +1255,7 @@ public class CartaContabileDad extends AbstractFinDad {
 											boolean subTrovato = false;
 											if (impegnoDaDB.getElencoSubImpegni()!=null && impegnoDaDB.getElencoSubImpegni().size()>0) {
 												for (SubImpegno subImpegnoDaDB : impegnoDaDB.getElencoSubImpegni()) {
-													if (subImpegnoDaDB.getNumero().compareTo(subImpegno.getNumero())==0) {
+													if (subImpegnoDaDB.getNumeroBigDecimal().compareTo(subImpegno.getNumeroBigDecimal())==0) {
 														subImpegno.setUid(subImpegnoDaDB.getUid());
 														subImpegno.setAnnoMovimento(subImpegnoDaDB.getAnnoMovimento());
 														subImpegno.setStatoOperativoMovimentoGestioneSpesa(subImpegnoDaDB.getStatoOperativoMovimentoGestioneSpesa());
@@ -1272,7 +1267,7 @@ public class CartaContabileDad extends AbstractFinDad {
 											if(!subTrovato){
 												listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nel subimpegno collegato)"));
 											}
-											if (!subImpegno.getStatoOperativoMovimentoGestioneSpesa().equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO)) {
+											if (!subImpegno.getStatoOperativoMovimentoGestioneSpesa().equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO)) {
 												listaErrori.add(ErroreFin.ERRORE_IN_CARTA_CONTABILE.getErrore("(errore nel subimpegno collegato)"));
 											} else {
 												// DISPONIBILE A LIQUIDARE SUBIMPEGNO  >=  IMPORTO RIGA
@@ -1312,7 +1307,7 @@ public class CartaContabileDad extends AbstractFinDad {
 											&& preDocumentoCarta.getImpegno().getElencoSubImpegni().size()==1
 											&& preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0)!=null){
 										//Selezionato un SUB 
-										BigDecimal numeroSub = preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0).getNumero();
+										BigDecimal numeroSub = preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0).getNumeroBigDecimal();
 										paginazioneSubMovimentiDto.setNoSub(false);
 										paginazioneSubMovimentiDto.setNumeroSubMovimentoRichiesto(numeroSub);
 									} else {
@@ -1324,7 +1319,10 @@ public class CartaContabileDad extends AbstractFinDad {
 									
 									Impegno impegnoDaDB = null;
 									
-									EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, preDocumentoCarta.getImpegno().getAnnoMovimento(), preDocumentoCarta.getImpegno().getNumero(),paginazioneSubMovimentiDto,null, Constanti.MOVGEST_TIPO_IMPEGNO, false);
+									EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(
+											richiedente, ente, annoEsercizio, preDocumentoCarta.getImpegno().getAnnoMovimento(), 
+											preDocumentoCarta.getImpegno().getNumeroBigDecimal(),paginazioneSubMovimentiDto, null, 
+											CostantiFin.MOVGEST_TIPO_IMPEGNO, false, false);
 
 									if(esitoRicercaMov!=null){
 										impegnoDaDB = (Impegno) esitoRicercaMov.getMovimentoGestione();
@@ -1340,7 +1338,7 @@ public class CartaContabileDad extends AbstractFinDad {
 											SubImpegno subImpegno=preDocumentoCarta.getImpegno().getElencoSubImpegni().get(0);
 											if (impegnoDaDB.getElencoSubImpegni()!=null && impegnoDaDB.getElencoSubImpegni().size()>0) {
 												for (SubImpegno subImpegnoDaDB : impegnoDaDB.getElencoSubImpegni()) {
-													if (subImpegnoDaDB.getNumero().compareTo(subImpegno.getNumero())==0) {
+													if (subImpegnoDaDB.getNumeroBigDecimal().compareTo(subImpegno.getNumeroBigDecimal())==0) {
 														subImpegno.setUid(subImpegnoDaDB.getUid());
 														subImpegno.setAnnoMovimento(subImpegnoDaDB.getAnnoMovimento());
 														subImpegno.setStatoOperativoMovimentoGestioneSpesa(subImpegnoDaDB.getStatoOperativoMovimentoGestioneSpesa());
@@ -1397,11 +1395,11 @@ public class CartaContabileDad extends AbstractFinDad {
 				return true;
 			}
 
-			if (impegnoNew.getNumero()!=null && 
+			if (impegnoNew.getNumeroBigDecimal()!=null && 
 					impegnoNew.getAnnoMovimento()!=0 && 
-					impegnoOld.getNumero()!=null && 
+					impegnoOld.getNumeroBigDecimal()!=null && 
 					impegnoOld.getAnnoMovimento()!=0) {
-				if (impegnoNew.getNumero().compareTo(impegnoOld.getNumero())!=0) {
+				if (impegnoNew.getNumeroBigDecimal().compareTo(impegnoOld.getNumeroBigDecimal())!=0) {
 					return true;
 				} else if (impegnoNew.getAnnoMovimento()!=impegnoOld.getAnnoMovimento()) {
 					return true;
@@ -1409,7 +1407,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 				if (impegnoOld.getElencoSubImpegni()!=null && impegnoOld.getElencoSubImpegni().size()==1 && 
 						impegnoNew.getElencoSubImpegni()!=null && impegnoNew.getElencoSubImpegni().size()==1) {
-					if (impegnoNew.getElencoSubImpegni().get(0).getNumero().compareTo(impegnoOld.getElencoSubImpegni().get(0).getNumero())!=0) {
+					if (impegnoNew.getElencoSubImpegni().get(0).getNumeroBigDecimal().compareTo(impegnoOld.getElencoSubImpegni().get(0).getNumeroBigDecimal())!=0) {
 						return true;
 					}
 				}
@@ -1446,7 +1444,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 		String loginOperazione = richiedente.getAccount().getNome();
 
-		SiacDAmbitoFin  siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(Constanti.AMBITO_FIN, idEnte);
+		SiacDAmbitoFin  siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(CostantiFin.AMBITO_FIN, idEnte);
 		Integer idAmbito = siacDAmbitoPerCode.getAmbitoId();
 
 		long nuovoCode = getMaxCode(ProgressivoType.CARTA, idEnte, idAmbito, loginOperazione, bilancio.getAnno());
@@ -1492,7 +1490,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 		siacTCartacontIns.setSiacTBil(siacTBilCarta);
 
-		siacTCartacontIns = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontIns, datiOperazione, siacTAccountRepository);
+		siacTCartacontIns = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontIns, datiOperazione, siacTAccountRepository);
 		siacTCartacontIns = siacTCartaContRepository.saveAndFlush(siacTCartacontIns);
 
 		//Atto Amm
@@ -1503,7 +1501,7 @@ public class CartaContabileDad extends AbstractFinDad {
 			//procediamo al salvataggio del legame con l'atto trovato:
 			if (siacTAttoAmm!=null){
 				siacTCartacontIns.setSiacTAttoAmm(siacTAttoAmm);
-				siacTCartacontIns = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontIns, datiOperazione, siacTAccountRepository);
+				siacTCartacontIns = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontIns, datiOperazione, siacTAccountRepository);
 				siacTCartacontIns = siacTCartaContRepository.saveAndFlush(siacTCartacontIns);
 			}
 		}
@@ -1511,11 +1509,11 @@ public class CartaContabileDad extends AbstractFinDad {
 		//stato carta
 		SiacDCartacontStatoFin siacDCartacontStato=new SiacDCartacontStatoFin();
 
-		String statoOP = Constanti.statoOperativoCartaContabileEnumToString(StatoOperativoCartaContabile.PROVVISORIO);
+		String statoOP = CostantiFin.statoOperativoCartaContabileEnumToString(StatoOperativoCartaContabile.PROVVISORIO);
 		siacDCartacontStato=siacDCartacontStatoRepository.findDCartaContStatoValidoByEnteAndCode(idEnte, statoOP, datiOperazione.getTs());
 
 		SiacRCartacontStatoFin siacRCartacontStato=new SiacRCartacontStatoFin();
-		siacRCartacontStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontStato, datiOperazione, siacTAccountRepository);
+		siacRCartacontStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontStato, datiOperazione, siacTAccountRepository);
 		siacRCartacontStato.setSiacTCartacont(siacTCartacontIns);
 		siacRCartacontStato.setSiacDCartacontStato(siacDCartacontStato);
 		siacRCartacontStatoRepository.saveAndFlush(siacRCartacontStato);
@@ -1528,20 +1526,20 @@ public class CartaContabileDad extends AbstractFinDad {
 		if (cartaContabileInput.getNote()!=null) {
 			cartaContabileInput.setNote(cartaContabileInput.getNote().toUpperCase());
 		}
-		salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getNote(), Constanti.T_ATTR_CODE_NOTE_CC);
+		salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getNote(), CostantiFin.T_ATTR_CODE_NOTE_CC);
 		if (cartaContabileInput.getMotivoUrgenza()!=null) {
 			cartaContabileInput.setMotivoUrgenza(cartaContabileInput.getMotivoUrgenza().toUpperCase());
 		}
-		salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getMotivoUrgenza(), Constanti.T_ATTR_CODE_MOTIVO_URGENZA);
+		salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getMotivoUrgenza(), CostantiFin.T_ATTR_CODE_MOTIVO_URGENZA);
 
 		//Firma 1:
 		if(!isEmpty(cartaContabileInput.getFirma1())){
-			salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getFirma1(), Constanti.T_ATTR_FIRMA_1_CARTA_CONT);
+			salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getFirma1(), CostantiFin.T_ATTR_FIRMA_1_CARTA_CONT);
 		}
 		
 		//Firma 2:
 		if(!isEmpty(cartaContabileInput.getFirma2())){
-			salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getFirma2(), Constanti.T_ATTR_FIRMA_2_CARTA_CONT);
+			salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getFirma2(), CostantiFin.T_ATTR_FIRMA_2_CARTA_CONT);
 		}
 		
 
@@ -1577,7 +1575,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 			siacTCartacontEstera.setSiacDValuta(siacDValuta);
 
-			siacTCartacontEstera = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontEstera, datiOperazione, siacTAccountRepository);
+			siacTCartacontEstera = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontEstera, datiOperazione, siacTAccountRepository);
 			siacTCartacontEstera = siacTCartaContEsteraRepository.saveAndFlush(siacTCartacontEstera);
 
 			//Attributi carta estera (bonifico assegno)
@@ -1587,21 +1585,21 @@ public class CartaContabileDad extends AbstractFinDad {
 
 
 			if (cartaEstera.getTipoPagamento().equals(CartaEstera.TipoPagamento.Bonifico)) {
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
 			} else if (cartaEstera.getTipoPagamento().equals(CartaEstera.TipoPagamento.Assegno)) {
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
 			} else if (cartaEstera.getTipoPagamento().equals(CartaEstera.TipoPagamento.Altro)) {
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
 			} else {
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+				salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
 			}
 
 		}
@@ -1639,7 +1637,7 @@ public class CartaContabileDad extends AbstractFinDad {
 					siacTCartacontDet.setSiacDContotesoreria(siacDContotesoreria);
 
 
-					siacTCartacontDet = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontDet, datiOperazione, siacTAccountRepository);
+					siacTCartacontDet = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontDet, datiOperazione, siacTAccountRepository);
 					siacTCartacontDet = siacTCartaContDetRepository.saveAndFlush(siacTCartacontDet);
 
 
@@ -1651,7 +1649,7 @@ public class CartaContabileDad extends AbstractFinDad {
 					if (preDocumentoCarta.getNote()!=null) {
 						preDocumentoCarta.setNote(preDocumentoCarta.getNote().toUpperCase());
 					}
-					salvaAttributoTAttr(attributoInfoDet, datiOperazione, preDocumentoCarta.getNote(), Constanti.T_ATTR_CODE_NOTE_CC);
+					salvaAttributoTAttr(attributoInfoDet, datiOperazione, preDocumentoCarta.getNote(), CostantiFin.T_ATTR_CODE_NOTE_CC);
 
 
 					//Soggetto - Sede secondaria soggetto
@@ -1675,7 +1673,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 							if (sedeSecondariaEntity != null) {
 								SiacRCartacontDetSoggettoFin siacRCartacontDetSoggettoSedeSec = new SiacRCartacontDetSoggettoFin();
-								siacRCartacontDetSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSoggettoSedeSec, datiOperazione, siacTAccountRepository);
+								siacRCartacontDetSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSoggettoSedeSec, datiOperazione, siacTAccountRepository);
 
 								siacRCartacontDetSoggettoSedeSec.setSiacTCartacontDet(siacTCartacontDet);
 								siacRCartacontDetSoggettoSedeSec.setSiacTSoggetto(sedeSecondariaEntity);
@@ -1683,11 +1681,11 @@ public class CartaContabileDad extends AbstractFinDad {
 							}
 
 						} else {
-							siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codSoggetto, Constanti.SEDE_SECONDARIA, getNow());
+							siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codSoggetto, CostantiFin.SEDE_SECONDARIA, getNow());
 
 							if (siacTSoggetto != null) {
 
-								siacRCartacontDetSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSoggetto, datiOperazione, siacTAccountRepository);
+								siacRCartacontDetSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSoggetto, datiOperazione, siacTAccountRepository);
 
 								siacRCartacontDetSoggetto.setSiacTCartacontDet(siacTCartacontDet);
 								siacRCartacontDetSoggetto.setSiacTSoggetto(siacTSoggetto);
@@ -1706,7 +1704,7 @@ public class CartaContabileDad extends AbstractFinDad {
 							SiacTModpagFin siacTModpag = caricaSiacTModpagFinTenendoContoDelBugSuUidModPagCessione(modalitaPagamentoSoggetto);
 							
 							SiacRCartacontDetModpagFin siacRCartacontDetModpag=new SiacRCartacontDetModpagFin();
-							siacRCartacontDetModpag = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetModpag, datiOperazione, siacTAccountRepository);
+							siacRCartacontDetModpag = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetModpag, datiOperazione, siacTAccountRepository);
 							siacRCartacontDetModpag.setSiacTCartacontDet(siacTCartacontDet);
 							siacRCartacontDetModpag.setSiacTModpag(siacTModpag);
 							siacRCartacontDetModpagRepository.saveAndFlush(siacRCartacontDetModpag);
@@ -1721,21 +1719,21 @@ public class CartaContabileDad extends AbstractFinDad {
 						String annoEsercizio=String.valueOf(bilancio.getAnno());
 						SiacTMovgestFin siacTMovgest = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, annoEsercizio,
 								impegnoRiga.getAnnoMovimento(),
-								impegnoRiga.getNumero(),
-								Constanti.MOVGEST_TIPO_IMPEGNO);
+								impegnoRiga.getNumeroBigDecimal(),
+								CostantiFin.MOVGEST_TIPO_IMPEGNO);
 
 						List<SubImpegno> listaSubImpegnoRiga=impegnoRiga.getElencoSubImpegni();
 						if (listaSubImpegnoRiga!=null && listaSubImpegnoRiga.size()==1) {
 							//SubImpegno
 							SubImpegno subImpegnoRiga=listaSubImpegnoRiga.get(0);
 
-							String codiceSubImpegnoRiga = subImpegnoRiga.getNumero().toString();
+							String codiceSubImpegnoRiga = subImpegnoRiga.getNumeroBigDecimal().toString();
 							List<SiacTMovgestTsFin> listaSiacTMovgestTs = siacTMovgestTsRepository.findSubMovgestTsByCodeAndMovgestId(idEnte, getNow(), siacTMovgest.getUid(), codiceSubImpegnoRiga);
 							if (listaSiacTMovgestTs != null && listaSiacTMovgestTs.size() > 0) {
 								SiacTMovgestTsFin siacTMovgestTsSubImpegno = listaSiacTMovgestTs.get(0);
 
 								SiacRCartacontDetMovgestTFin siacRCartacontDetMovgestTsSub = new SiacRCartacontDetMovgestTFin();
-								siacRCartacontDetMovgestTsSub = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsSub, datiOperazione, siacTAccountRepository);
+								siacRCartacontDetMovgestTsSub = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsSub, datiOperazione, siacTAccountRepository);
 								siacRCartacontDetMovgestTsSub.setSiacTCartacontDet(siacTCartacontDet);
 								siacRCartacontDetMovgestTsSub.setSiacTMovgestT(siacTMovgestTsSubImpegno);
 								siacRCartacontDetMovgestTsSub = siacRCartacontDetMovgestTRepository.saveAndFlush(siacRCartacontDetMovgestTsSub);
@@ -1749,27 +1747,13 @@ public class CartaContabileDad extends AbstractFinDad {
 
 
 								SiacRCartacontDetMovgestTFin siacRCartacontDetMovgestTsImp = new SiacRCartacontDetMovgestTFin();
-								siacRCartacontDetMovgestTsImp = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsImp, datiOperazione, siacTAccountRepository);
+								siacRCartacontDetMovgestTsImp = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsImp, datiOperazione, siacTAccountRepository);
 								siacRCartacontDetMovgestTsImp.setSiacTCartacontDet(siacTCartacontDet);
 								siacRCartacontDetMovgestTsImp.setSiacTMovgestT(siacTMovgestTs);
 								siacRCartacontDetMovgestTsImp = siacRCartacontDetMovgestTRepository.saveAndFlush(siacRCartacontDetMovgestTsImp);
 							}
 						}
 						
-						//INOLTRE PUO' ESSERCI UN LEGAME CON UN MUTUO:
-						SiacRMutuoVoceCartacontDet siacRMutuoVoceCartacontDet =null;
-						if(impegnoRiga.getListaVociMutuo()!=null && impegnoRiga.getListaVociMutuo().size()>0){
-							VoceMutuo voceMutuoDaAssociare = impegnoRiga.getListaVociMutuo().get(0);
-							if(voceMutuoDaAssociare!=null){
-								siacRMutuoVoceCartacontDet = new SiacRMutuoVoceCartacontDet();
-								siacRMutuoVoceCartacontDet.setSiacTCartacontDet(siacTCartacontDet);
-								BigDecimal idVoceMutuo = voceMutuoDaAssociare.getIdVoceMutuo();
-								SiacTMutuoVoceFin siacTMutuoVoce = siacTMutuoVoceRepository.findOne(idVoceMutuo.intValue());
-								siacRMutuoVoceCartacontDet.setSiacTMutuoVoce(siacTMutuoVoce);
-								siacRMutuoVoceCartacontDet  = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMutuoVoceCartacontDet, datiOperazione, siacTAccountRepository);
-								siacRMutuoVoceCartacontDet = siacRMutuoVoceCartacontDetRepository.saveAndFlush(siacRMutuoVoceCartacontDet);
-							}
-						}
 						
 						//
 						
@@ -1797,7 +1781,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 									siacRCartacontDetSubdoc.setSiacTCartacontDet(siacTCartacontDet);
 									siacRCartacontDetSubdoc.setSiacTSubdoc(siacTSubdoc);
-									siacRCartacontDetSubdoc  = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSubdoc, datiOperazione, siacTAccountRepository);
+									siacRCartacontDetSubdoc  = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSubdoc, datiOperazione, siacTAccountRepository);
 									siacRCartacontDetSubdocRepository.saveAndFlush(siacRCartacontDetSubdoc);
 								}
 							}
@@ -1885,7 +1869,7 @@ public class CartaContabileDad extends AbstractFinDad {
 				!cartaContabileInput.getStatoOperativoCartaContabile().equals(cartaContabileDaDB.getStatoOperativoCartaContabile())) {
 			SiacDCartacontStatoFin siacDCartacontStato=new SiacDCartacontStatoFin();
 
-			String statoOP = Constanti.statoOperativoCartaContabileEnumToString(cartaContabileInput.getStatoOperativoCartaContabile());
+			String statoOP = CostantiFin.statoOperativoCartaContabileEnumToString(cartaContabileInput.getStatoOperativoCartaContabile());
 			siacDCartacontStato=siacDCartacontStatoRepository.findDCartaContStatoValidoByEnteAndCode(idEnte, statoOP, datiOperazione.getTs());
 
 			if (siacTCartacontAgg.getSiacRCartacontStatos()!=null && siacTCartacontAgg.getSiacRCartacontStatos().size()>0) {
@@ -1896,13 +1880,13 @@ public class CartaContabileDad extends AbstractFinDad {
 								datiOperazione.getSiacTEnteProprietario(), 
 								datiOperazione.getSiacDAmbito(), 
 								datiOperazione.getAccountCode());
-						DatiOperazioneUtils.annullaRecord(siacRCartacontStatoOld, siacRCartacontStatoRepository, datiOperazioneCancella, siacTAccountRepository);
+						DatiOperazioneUtil.annullaRecord(siacRCartacontStatoOld, siacRCartacontStatoRepository, datiOperazioneCancella, siacTAccountRepository);
 					}
 				}
 			}
 
 			SiacRCartacontStatoFin siacRCartacontStato=new SiacRCartacontStatoFin();
-			siacRCartacontStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontStato, datiOperazione, siacTAccountRepository);
+			siacRCartacontStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontStato, datiOperazione, siacTAccountRepository);
 			siacRCartacontStato.setSiacTCartacont(siacTCartacontAgg);
 			siacRCartacontStato.setSiacDCartacontStato(siacDCartacontStato);
 			siacRCartacontStatoRepository.saveAndFlush(siacRCartacontStato);
@@ -1948,7 +1932,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 			siacTCartacontAgg.setSiacTBil(siacTBilCarta);
 
-			siacTCartacontAgg = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontAgg, datiOperazione, siacTAccountRepository);
+			siacTCartacontAgg = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontAgg, datiOperazione, siacTAccountRepository);
 			siacTCartacontAgg = siacTCartaContRepository.saveAndFlush(siacTCartacontAgg);
 
 			//Atto Amm
@@ -1959,7 +1943,7 @@ public class CartaContabileDad extends AbstractFinDad {
 				//aggiorniamo il legame con l'atto trovato:
 				if (siacTAttoAmm!=null){
 					siacTCartacontAgg.setSiacTAttoAmm(siacTAttoAmm);
-					siacTCartacontAgg = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontAgg, datiOperazione, siacTAccountRepository);
+					siacTCartacontAgg = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontAgg, datiOperazione, siacTAccountRepository);
 					siacTCartacontAgg = siacTCartaContRepository.saveAndFlush(siacTCartacontAgg);
 				}
 			}
@@ -1973,24 +1957,24 @@ public class CartaContabileDad extends AbstractFinDad {
 				if (cartaContabileInput.getNote()!=null) {
 					cartaContabileInput.setNote(cartaContabileInput.getNote().toUpperCase());
 				}
-				salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getNote(), Constanti.T_ATTR_CODE_NOTE_CC);
+				salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getNote(), CostantiFin.T_ATTR_CODE_NOTE_CC);
 			}
 
 			if (cartaContabileInput.getMotivoUrgenza()!=null && !cartaContabileInput.getMotivoUrgenza().equalsIgnoreCase(cartaContabileDaDB.getMotivoUrgenza())) {
 				if (cartaContabileInput.getMotivoUrgenza()!=null) {
 					cartaContabileInput.setMotivoUrgenza(cartaContabileInput.getMotivoUrgenza().toUpperCase());
 				}
-				salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getMotivoUrgenza(), Constanti.T_ATTR_CODE_MOTIVO_URGENZA);
+				salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getMotivoUrgenza(), CostantiFin.T_ATTR_CODE_MOTIVO_URGENZA);
 			}
 			
 			//Firma 1:
 			if(!isEmpty(cartaContabileInput.getFirma1()) && !cartaContabileInput.getFirma1().equalsIgnoreCase(cartaContabileDaDB.getFirma1())){
-				salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getFirma1(), Constanti.T_ATTR_FIRMA_1_CARTA_CONT);
+				salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getFirma1(), CostantiFin.T_ATTR_FIRMA_1_CARTA_CONT);
 			}
 			
 			//Firma 2:
 			if(!isEmpty(cartaContabileInput.getFirma2()) && !cartaContabileInput.getFirma2().equalsIgnoreCase(cartaContabileDaDB.getFirma2())){
-				salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getFirma2(), Constanti.T_ATTR_FIRMA_2_CARTA_CONT);
+				salvaAttributoTAttr(attributoInfo, datiOperazione, cartaContabileInput.getFirma2(), CostantiFin.T_ATTR_FIRMA_2_CARTA_CONT);
 			}
 
 
@@ -2036,7 +2020,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 					siacTCartacontEstera.setSiacDValuta(siacDValuta);
 
-					siacTCartacontEstera = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontEstera, datiOperazione, siacTAccountRepository);
+					siacTCartacontEstera = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontEstera, datiOperazione, siacTAccountRepository);
 					siacTCartacontEstera = siacTCartaContEsteraRepository.saveAndFlush(siacTCartacontEstera);
 
 					//Attributi carta estera (bonifico assegno)
@@ -2046,21 +2030,21 @@ public class CartaContabileDad extends AbstractFinDad {
 
 					if (!cartaEstera.getTipoPagamento().equals(cartaEsteraDaDB.getTipoPagamento())) {
 						if (cartaEstera.getTipoPagamento().equals(CartaEstera.TipoPagamento.Bonifico)) {
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
 						} else if (cartaEstera.getTipoPagamento().equals(CartaEstera.TipoPagamento.Assegno)) {
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
 						} else if (cartaEstera.getTipoPagamento().equals(CartaEstera.TipoPagamento.Altro)) {
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, true, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
 						} else {
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+							salvaAttributoTAttr(attributoInfoEstera, datiOperazione, false, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
 						}
 					}
 				}
@@ -2131,7 +2115,7 @@ public class CartaContabileDad extends AbstractFinDad {
 				}
 
 				for (PreDocumentoCarta preDocumentoCartaDaEliminare : righeDaEliminare) {
-					DatiOperazioneDto datiOperazioneCancella=new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazione.getSiacTEnteProprietario(), datiOperazione.getAccountCode());
+					DatiOperazioneDto datiOperazioneCancella=new DatiOperazioneDto(currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazione.getSiacTEnteProprietario(), datiOperazione.getAccountCode());
 					cancellaRiga(preDocumentoCartaDaEliminare, datiOperazioneCancella);
 				}
 			}
@@ -2242,7 +2226,7 @@ public class CartaContabileDad extends AbstractFinDad {
 			siacTCartacontDetDaDB.setSiacDContotesoreria(siacDContotesoreria);
 		}
 
-		siacTCartacontDetDaDB = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontDetDaDB, datiOperazione, siacTAccountRepository);
+		siacTCartacontDetDaDB = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontDetDaDB, datiOperazione, siacTAccountRepository);
 		siacTCartacontDetDaDB = siacTCartaContDetRepository.saveAndFlush(siacTCartacontDetDaDB);
 
 
@@ -2254,7 +2238,7 @@ public class CartaContabileDad extends AbstractFinDad {
 		if (rigaDaAggiornare.getNote()!=null) {
 			rigaDaAggiornare.setNote(rigaDaAggiornare.getNote().toUpperCase());
 		}
-		salvaAttributoTAttr(attributoInfoDet, datiOperazione, rigaDaAggiornare.getNote(), Constanti.T_ATTR_CODE_NOTE_CC);
+		salvaAttributoTAttr(attributoInfoDet, datiOperazione, rigaDaAggiornare.getNote(), CostantiFin.T_ATTR_CODE_NOTE_CC);
 
 
 		//Soggetto - Sede secondaria soggetto
@@ -2290,11 +2274,11 @@ public class CartaContabileDad extends AbstractFinDad {
 								datiOperazione.getSiacTEnteProprietario(), 
 								datiOperazione.getSiacDAmbito(), 
 								datiOperazione.getAccountCode());
-						DatiOperazioneUtils.annullaRecord(listaRCartacontDetSoggetto.get(0), siacRCartacontDetSoggettoRepository, datiOperazioneCancella, siacTAccountRepository);
+						DatiOperazioneUtil.annullaRecord(listaRCartacontDetSoggetto.get(0), siacRCartacontDetSoggettoRepository, datiOperazioneCancella, siacTAccountRepository);
 
 						//Inserisco quella nuova
 						SiacRCartacontDetSoggettoFin siacRCartacontDetSoggettoSedeSec = new SiacRCartacontDetSoggettoFin();
-						siacRCartacontDetSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSoggettoSedeSec, datiOperazione, siacTAccountRepository);
+						siacRCartacontDetSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSoggettoSedeSec, datiOperazione, siacTAccountRepository);
 
 						siacRCartacontDetSoggettoSedeSec.setSiacTCartacontDet(siacTCartacontDetDaDB);
 						siacRCartacontDetSoggettoSedeSec.setSiacTSoggetto(sedeSecondariaEntity);
@@ -2303,7 +2287,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 				} else {
 					//Estraggo l'associazione corrente con il sogg
-					siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codSoggetto, Constanti.SEDE_SECONDARIA, getNow());
+					siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codSoggetto, CostantiFin.SEDE_SECONDARIA, getNow());
 
 					//Controllo che sia cambiata
 					Integer oldId=listaRCartacontDetSoggetto.get(0).getSiacTSoggetto().getUid();
@@ -2314,10 +2298,10 @@ public class CartaContabileDad extends AbstractFinDad {
 								datiOperazione.getSiacTEnteProprietario(), 
 								datiOperazione.getSiacDAmbito(), 
 								datiOperazione.getAccountCode());
-						DatiOperazioneUtils.annullaRecord(listaRCartacontDetSoggetto.get(0), siacRCartacontDetSoggettoRepository, datiOperazioneCancella, siacTAccountRepository);
+						DatiOperazioneUtil.annullaRecord(listaRCartacontDetSoggetto.get(0), siacRCartacontDetSoggettoRepository, datiOperazioneCancella, siacTAccountRepository);
 
 						//Inserisco quella nuova
-						siacRCartacontDetSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSoggetto, datiOperazione, siacTAccountRepository);
+						siacRCartacontDetSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSoggetto, datiOperazione, siacTAccountRepository);
 
 						siacRCartacontDetSoggetto.setSiacTCartacontDet(siacTCartacontDetDaDB);
 						siacRCartacontDetSoggetto.setSiacTSoggetto(siacTSoggetto);
@@ -2357,12 +2341,12 @@ public class CartaContabileDad extends AbstractFinDad {
 									datiOperazione.getSiacTEnteProprietario(), 
 									datiOperazione.getSiacDAmbito(), 
 									datiOperazione.getAccountCode());
-							DatiOperazioneUtils.annullaRecord(listaRCartacontDetModpag.get(0), siacRCartacontDetModpagRepository, datiOperazioneCancella, siacTAccountRepository);
+							DatiOperazioneUtil.annullaRecord(listaRCartacontDetModpag.get(0), siacRCartacontDetModpagRepository, datiOperazioneCancella, siacTAccountRepository);
 							
 							//Inserisco quella nuova
 							SiacRCartacontDetModpagFin siacRCartacontDetModpag=new SiacRCartacontDetModpagFin();
 
-							siacRCartacontDetModpag = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetModpag, datiOperazione, siacTAccountRepository);
+							siacRCartacontDetModpag = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetModpag, datiOperazione, siacTAccountRepository);
 							siacRCartacontDetModpag.setSiacTCartacontDet(siacTCartacontDetDaDB);
 							siacRCartacontDetModpag.setSiacTModpag(siacTModpag);
 							siacRCartacontDetModpagRepository.saveAndFlush(siacRCartacontDetModpag);
@@ -2402,7 +2386,7 @@ public class CartaContabileDad extends AbstractFinDad {
 		
 		List<SiacRCartacontDetSubdocFin> listaRCartacontDetSubdocDaDB=siacTCartacontDetDaDB.getSiacRCartacontDetSubdocs();
 		if (listaRCartacontDetSubdocDaDB!=null && listaRCartacontDetSubdocDaDB.size()>0) {
-			listaRCartacontDetSubdocDaDB=DatiOperazioneUtils.soloValidi(listaRCartacontDetSubdocDaDB, datiOperazione.getTs());
+			listaRCartacontDetSubdocDaDB=DatiOperazioneUtil.soloValidi(listaRCartacontDetSubdocDaDB, datiOperazione.getTs());
 		}
 
 
@@ -2446,8 +2430,8 @@ public class CartaContabileDad extends AbstractFinDad {
 				
 				if (!esiste) {
 					//siacRCartacontDetSubdocDaDB da eliminare
-					DatiOperazioneDto datiOperazioneCancella=new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazione.getSiacTEnteProprietario(), datiOperazione.getAccountCode());
-					DatiOperazioneUtils.cancellaRecord(siacRCartacontDetSubdocDaDB, siacRCartacontDetSubdocRepository, datiOperazioneCancella, siacTAccountRepository);
+					DatiOperazioneDto datiOperazioneCancella=new DatiOperazioneDto(currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazione.getSiacTEnteProprietario(), datiOperazione.getAccountCode());
+					DatiOperazioneUtil.cancellaRecord(siacRCartacontDetSubdocDaDB, siacRCartacontDetSubdocRepository, datiOperazioneCancella, siacTAccountRepository);
 				}
 			}
 		}
@@ -2473,15 +2457,15 @@ public class CartaContabileDad extends AbstractFinDad {
 			String annoEsercizio=String.valueOf(bilancio.getAnno());
 			SiacTMovgestFin siacTMovgest = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, annoEsercizio,
 					impegnoRiga.getAnnoMovimento(),
-					impegnoRiga.getNumero(),
-					Constanti.MOVGEST_TIPO_IMPEGNO);
+					impegnoRiga.getNumeroBigDecimal(),
+					CostantiFin.MOVGEST_TIPO_IMPEGNO);
 
 			List<SubImpegno> listaSubImpegnoRiga=impegnoRiga.getElencoSubImpegni();
 			if (listaSubImpegnoRiga!=null && listaSubImpegnoRiga.size()==1) {
 				//SubImpegno
 				SubImpegno subImpegnoRiga=listaSubImpegnoRiga.get(0);
 
-				String codiceSubImpegnoRiga = subImpegnoRiga.getNumero().toString();
+				String codiceSubImpegnoRiga = subImpegnoRiga.getNumeroBigDecimal().toString();
 				List<SiacTMovgestTsFin> listaSiacTMovgestTs = siacTMovgestTsRepository.findSubMovgestTsByCodeAndMovgestId(idEnte, getNow(), siacTMovgest.getUid(), codiceSubImpegnoRiga);
 				if (listaSiacTMovgestTs != null && listaSiacTMovgestTs.size() > 0) {
 					SiacTMovgestTsFin siacTMovgestTsSubImpegno = listaSiacTMovgestTs.get(0);
@@ -2493,7 +2477,7 @@ public class CartaContabileDad extends AbstractFinDad {
 					//Se non esiste la inserisco
 					if (listRCartacontDetMovgestT==null || listRCartacontDetMovgestT.size()==0) {
 						SiacRCartacontDetMovgestTFin siacRCartacontDetMovgestTsSub = new SiacRCartacontDetMovgestTFin();
-						siacRCartacontDetMovgestTsSub = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsSub, datiOperazione, siacTAccountRepository);
+						siacRCartacontDetMovgestTsSub = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsSub, datiOperazione, siacTAccountRepository);
 						siacRCartacontDetMovgestTsSub.setSiacTCartacontDet(siacTCartacontDetDaDB);
 						siacRCartacontDetMovgestTsSub.setSiacTMovgestT(siacTMovgestTsSubImpegno);
 						siacRCartacontDetMovgestTsSub = siacRCartacontDetMovgestTRepository.saveAndFlush(siacRCartacontDetMovgestTsSub);
@@ -2507,11 +2491,11 @@ public class CartaContabileDad extends AbstractFinDad {
 									datiOperazione.getSiacTEnteProprietario(), 
 									datiOperazione.getSiacDAmbito(), 
 									datiOperazione.getAccountCode());
-							DatiOperazioneUtils.annullaRecord(listRCartacontDetMovgestT.get(0), siacRCartacontDetMovgestTRepository, datiOperazioneCancella, siacTAccountRepository);
+							DatiOperazioneUtil.annullaRecord(listRCartacontDetMovgestT.get(0), siacRCartacontDetMovgestTRepository, datiOperazioneCancella, siacTAccountRepository);
 
 							//Inserisco quella nuova
 							SiacRCartacontDetMovgestTFin siacRCartacontDetMovgestTsSub = new SiacRCartacontDetMovgestTFin();
-							siacRCartacontDetMovgestTsSub = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsSub, datiOperazione, siacTAccountRepository);
+							siacRCartacontDetMovgestTsSub = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsSub, datiOperazione, siacTAccountRepository);
 							siacRCartacontDetMovgestTsSub.setSiacTCartacontDet(siacTCartacontDetDaDB);
 							siacRCartacontDetMovgestTsSub.setSiacTMovgestT(siacTMovgestTsSubImpegno);
 							siacRCartacontDetMovgestTsSub = siacRCartacontDetMovgestTRepository.saveAndFlush(siacRCartacontDetMovgestTsSub);
@@ -2531,7 +2515,7 @@ public class CartaContabileDad extends AbstractFinDad {
 					//Se non esiste la inserisco
 					if (listRCartacontDetMovgestT==null || listRCartacontDetMovgestT.size()==0) {
 						SiacRCartacontDetMovgestTFin siacRCartacontDetMovgestTsImp = new SiacRCartacontDetMovgestTFin();
-						siacRCartacontDetMovgestTsImp = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsImp, datiOperazione, siacTAccountRepository);
+						siacRCartacontDetMovgestTsImp = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsImp, datiOperazione, siacTAccountRepository);
 						siacRCartacontDetMovgestTsImp.setSiacTCartacontDet(siacTCartacontDetDaDB);
 						siacRCartacontDetMovgestTsImp.setSiacTMovgestT(siacTMovgestTs);
 						siacRCartacontDetMovgestTsImp = siacRCartacontDetMovgestTRepository.saveAndFlush(siacRCartacontDetMovgestTsImp);
@@ -2545,11 +2529,11 @@ public class CartaContabileDad extends AbstractFinDad {
 									datiOperazione.getSiacTEnteProprietario(), 
 									datiOperazione.getSiacDAmbito(), 
 									datiOperazione.getAccountCode());
-							DatiOperazioneUtils.annullaRecord(listRCartacontDetMovgestT.get(0), siacRCartacontDetMovgestTRepository, datiOperazioneCancella, siacTAccountRepository);
+							DatiOperazioneUtil.annullaRecord(listRCartacontDetMovgestT.get(0), siacRCartacontDetMovgestTRepository, datiOperazioneCancella, siacTAccountRepository);
 
 							//Inserisco quella nuova
 							SiacRCartacontDetMovgestTFin siacRCartacontDetMovgestTsImp = new SiacRCartacontDetMovgestTFin();
-							siacRCartacontDetMovgestTsImp = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsImp, datiOperazione, siacTAccountRepository);
+							siacRCartacontDetMovgestTsImp = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsImp, datiOperazione, siacTAccountRepository);
 							siacRCartacontDetMovgestTsImp.setSiacTCartacontDet(siacTCartacontDetDaDB);
 							siacRCartacontDetMovgestTsImp.setSiacTMovgestT(siacTMovgestTs);
 							siacRCartacontDetMovgestTsImp = siacRCartacontDetMovgestTRepository.saveAndFlush(siacRCartacontDetMovgestTsImp);
@@ -2569,7 +2553,7 @@ public class CartaContabileDad extends AbstractFinDad {
 						datiOperazione.getSiacTEnteProprietario(), 
 						datiOperazione.getSiacDAmbito(), 
 						datiOperazione.getAccountCode());
-				DatiOperazioneUtils.annullaRecord(listRCartacontDetMovgestT.get(0), siacRCartacontDetMovgestTRepository, datiOperazioneCancella, siacTAccountRepository);
+				DatiOperazioneUtil.annullaRecord(listRCartacontDetMovgestT.get(0), siacRCartacontDetMovgestTRepository, datiOperazioneCancella, siacTAccountRepository);
 			}
 		}
 	}
@@ -2597,7 +2581,7 @@ public class CartaContabileDad extends AbstractFinDad {
 					getNow());
 
 			SiacRCartacontDetSubdocFin siacRCartacontDetSubdoc = new SiacRCartacontDetSubdocFin(); 
-			siacRCartacontDetSubdoc = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSubdoc, datiOperazione, siacTAccountRepository);
+			siacRCartacontDetSubdoc = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSubdoc, datiOperazione, siacTAccountRepository);
 
 			siacRCartacontDetSubdoc.setSiacTCartacontDet(siacTCartacontDetDaDB);
 			siacRCartacontDetSubdoc.setSiacTSubdoc(siacTSubdoc);
@@ -2645,7 +2629,7 @@ public class CartaContabileDad extends AbstractFinDad {
 		}
 
 
-		siacTCartacontDet = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTCartacontDet, datiOperazione, siacTAccountRepository);
+		siacTCartacontDet = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTCartacontDet, datiOperazione, siacTAccountRepository);
 		siacTCartacontDet = siacTCartaContDetRepository.saveAndFlush(siacTCartacontDet);
 
 
@@ -2657,7 +2641,7 @@ public class CartaContabileDad extends AbstractFinDad {
 		if (rigaDaInserire.getNote()!=null) {
 			rigaDaInserire.setNote(rigaDaInserire.getNote().toUpperCase());
 		}
-		salvaAttributoTAttr(attributoInfoDet, datiOperazione, rigaDaInserire.getNote(), Constanti.T_ATTR_CODE_NOTE_CC);
+		salvaAttributoTAttr(attributoInfoDet, datiOperazione, rigaDaInserire.getNote(), CostantiFin.T_ATTR_CODE_NOTE_CC);
 
 
 		//Soggetto - Sede secondaria soggetto
@@ -2681,7 +2665,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 				if (sedeSecondariaEntity != null) {
 					SiacRCartacontDetSoggettoFin siacRCartacontDetSoggettoSedeSec = new SiacRCartacontDetSoggettoFin();
-					siacRCartacontDetSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSoggettoSedeSec, datiOperazione, siacTAccountRepository);
+					siacRCartacontDetSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSoggettoSedeSec, datiOperazione, siacTAccountRepository);
 
 					siacRCartacontDetSoggettoSedeSec.setSiacTCartacontDet(siacTCartacontDet);
 					siacRCartacontDetSoggettoSedeSec.setSiacTSoggetto(sedeSecondariaEntity);
@@ -2689,11 +2673,11 @@ public class CartaContabileDad extends AbstractFinDad {
 				}
 
 			} else {
-				siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codSoggetto, Constanti.SEDE_SECONDARIA, getNow());
+				siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codSoggetto, CostantiFin.SEDE_SECONDARIA, getNow());
 
 				if (siacTSoggetto != null) {
 
-					siacRCartacontDetSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetSoggetto, datiOperazione, siacTAccountRepository);
+					siacRCartacontDetSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetSoggetto, datiOperazione, siacTAccountRepository);
 
 					siacRCartacontDetSoggetto.setSiacTCartacontDet(siacTCartacontDet);
 					siacRCartacontDetSoggetto.setSiacTSoggetto(siacTSoggetto);
@@ -2711,7 +2695,7 @@ public class CartaContabileDad extends AbstractFinDad {
 				SiacTModpagFin siacTModpag = caricaSiacTModpagFinTenendoContoDelBugSuUidModPagCessione(modalitaPagamentoSoggetto);
 
 				SiacRCartacontDetModpagFin siacRCartacontDetModpag=new SiacRCartacontDetModpagFin();
-				siacRCartacontDetModpag = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetModpag, datiOperazione, siacTAccountRepository);
+				siacRCartacontDetModpag = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetModpag, datiOperazione, siacTAccountRepository);
 				siacRCartacontDetModpag.setSiacTCartacontDet(siacTCartacontDet);
 				siacRCartacontDetModpag.setSiacTModpag(siacTModpag);
 				siacRCartacontDetModpagRepository.saveAndFlush(siacRCartacontDetModpag);
@@ -2726,21 +2710,21 @@ public class CartaContabileDad extends AbstractFinDad {
 			String annoEsercizio=String.valueOf(bilancio.getAnno());
 			SiacTMovgestFin siacTMovgest = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, annoEsercizio,
 					impegnoRiga.getAnnoMovimento(),
-					impegnoRiga.getNumero(),
-					Constanti.MOVGEST_TIPO_IMPEGNO);
+					impegnoRiga.getNumeroBigDecimal(),
+					CostantiFin.MOVGEST_TIPO_IMPEGNO);
 
 			List<SubImpegno> listaSubImpegnoRiga=impegnoRiga.getElencoSubImpegni();
 			if (listaSubImpegnoRiga!=null && listaSubImpegnoRiga.size()==1) {
 				//SubImpegno
 				SubImpegno subImpegnoRiga=listaSubImpegnoRiga.get(0);
 
-				String codiceSubImpegnoRiga = subImpegnoRiga.getNumero().toString();
+				String codiceSubImpegnoRiga = subImpegnoRiga.getNumeroBigDecimal().toString();
 				List<SiacTMovgestTsFin> listaSiacTMovgestTs = siacTMovgestTsRepository.findSubMovgestTsByCodeAndMovgestId(idEnte, getNow(), siacTMovgest.getUid(), codiceSubImpegnoRiga);
 				if (listaSiacTMovgestTs != null && listaSiacTMovgestTs.size() > 0) {
 					SiacTMovgestTsFin siacTMovgestTsSubImpegno = listaSiacTMovgestTs.get(0);
 
 					SiacRCartacontDetMovgestTFin siacRCartacontDetMovgestTsSub = new SiacRCartacontDetMovgestTFin();
-					siacRCartacontDetMovgestTsSub = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsSub, datiOperazione, siacTAccountRepository);
+					siacRCartacontDetMovgestTsSub = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsSub, datiOperazione, siacTAccountRepository);
 					siacRCartacontDetMovgestTsSub.setSiacTCartacontDet(siacTCartacontDet);
 					siacRCartacontDetMovgestTsSub.setSiacTMovgestT(siacTMovgestTsSubImpegno);
 					siacRCartacontDetMovgestTsSub = siacRCartacontDetMovgestTRepository.saveAndFlush(siacRCartacontDetMovgestTsSub);
@@ -2754,7 +2738,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 
 					SiacRCartacontDetMovgestTFin siacRCartacontDetMovgestTsImp = new SiacRCartacontDetMovgestTFin();
-					siacRCartacontDetMovgestTsImp = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsImp, datiOperazione, siacTAccountRepository);
+					siacRCartacontDetMovgestTsImp = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRCartacontDetMovgestTsImp, datiOperazione, siacTAccountRepository);
 					siacRCartacontDetMovgestTsImp.setSiacTCartacontDet(siacTCartacontDet);
 					siacRCartacontDetMovgestTsImp.setSiacTMovgestT(siacTMovgestTs);
 					siacRCartacontDetMovgestTsImp = siacRCartacontDetMovgestTRepository.saveAndFlush(siacRCartacontDetMovgestTsImp);
@@ -2787,7 +2771,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 			if (listaRCartacontDetMovgestTs!=null && listaRCartacontDetMovgestTs.size()>0) {
 				for (SiacRCartacontDetMovgestTFin siacRCartacontDetMovgestTsDaCancellare : listaRCartacontDetMovgestTs) {
-					DatiOperazioneUtils.cancellaRecord(siacRCartacontDetMovgestTsDaCancellare, siacRCartacontDetMovgestTRepository, datiOperazioneCancella, siacTAccountRepository);
+					DatiOperazioneUtil.cancellaRecord(siacRCartacontDetMovgestTsDaCancellare, siacRCartacontDetMovgestTRepository, datiOperazioneCancella, siacTAccountRepository);
 				}
 			}
 
@@ -2795,7 +2779,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 			if (listaRCartacontDetModpag!=null && listaRCartacontDetModpag.size()>0) {
 				for (SiacRCartacontDetModpagFin siacRCartacontDetModpagDaCancellare : listaRCartacontDetModpag) {
-					DatiOperazioneUtils.cancellaRecord(siacRCartacontDetModpagDaCancellare, siacRCartacontDetModpagRepository, datiOperazioneCancella, siacTAccountRepository);
+					DatiOperazioneUtil.cancellaRecord(siacRCartacontDetModpagDaCancellare, siacRCartacontDetModpagRepository, datiOperazioneCancella, siacTAccountRepository);
 				}
 			}
 
@@ -2803,7 +2787,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 			if (listaRCartacontDetSoggetto!=null && listaRCartacontDetSoggetto.size()>0) {
 				for (SiacRCartacontDetSoggettoFin siacRCartacontDetSoggettoDaCancellare : listaRCartacontDetSoggetto) {
-					DatiOperazioneUtils.cancellaRecord(siacRCartacontDetSoggettoDaCancellare, siacRCartacontDetSoggettoRepository, datiOperazioneCancella, siacTAccountRepository);
+					DatiOperazioneUtil.cancellaRecord(siacRCartacontDetSoggettoDaCancellare, siacRCartacontDetSoggettoRepository, datiOperazioneCancella, siacTAccountRepository);
 				}
 			}
 			
@@ -2811,11 +2795,11 @@ public class CartaContabileDad extends AbstractFinDad {
 			
 			if (listaRCartacontDetSubdoc!=null && listaRCartacontDetSubdoc.size()>0) {
 				for (SiacRCartacontDetSubdocFin siacRCartacontDetSubdocDaCancellare : listaRCartacontDetSubdoc) {
-					DatiOperazioneUtils.cancellaRecord(siacRCartacontDetSubdocDaCancellare, siacRCartacontDetSubdocRepository, datiOperazioneCancella, siacTAccountRepository);
+					DatiOperazioneUtil.cancellaRecord(siacRCartacontDetSubdocDaCancellare, siacRCartacontDetSubdocRepository, datiOperazioneCancella, siacTAccountRepository);
 				}
 			}
 
-			DatiOperazioneUtils.cancellaRecord(siacTCartacontDetDaCancellare, siacTCartaContDetRepository, datiOperazioneCancella, siacTAccountRepository);
+			DatiOperazioneUtil.cancellaRecord(siacTCartacontDetDaCancellare, siacTCartaContDetRepository, datiOperazioneCancella, siacTAccountRepository);
 		}
 	}
 	
@@ -2855,19 +2839,19 @@ public class CartaContabileDad extends AbstractFinDad {
 		attributoInfo.setSiacTCartacont(siacTCartacont);
 
 		//note
-		String noteCc = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_NOTE_CC);
+		String noteCc = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_NOTE_CC);
 		cartaContabile.setNote(noteCc);
 
 		//motivo urgenza
-		String motivoUrgenza = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_MOTIVO_URGENZA);
+		String motivoUrgenza = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_MOTIVO_URGENZA);
 		cartaContabile.setMotivoUrgenza(motivoUrgenza);
 		
 		//firma 1
-		String firma1 = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_FIRMA_1_CARTA_CONT);
+		String firma1 = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_FIRMA_1_CARTA_CONT);
 		cartaContabile.setFirma1(firma1);
 
 		//firma 2
-		String firma2 = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_FIRMA_2_CARTA_CONT);
+		String firma2 = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_FIRMA_2_CARTA_CONT);
 		cartaContabile.setFirma2(firma2);
 
 		//data trasmissione
@@ -2895,7 +2879,7 @@ public class CartaContabileDad extends AbstractFinDad {
 					attributoInfo.setSiacTCartacontDet(siacTCartacontDet);
 
 					//note
-					String noteCcDet = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_NOTE_CC);
+					String noteCcDet = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_NOTE_CC);
 					preDocumentoCarta.setNote(noteCcDet);
 
 					// soggetto + eventuale sede secondaria + modalita' di pagamento : inizio
@@ -2909,7 +2893,7 @@ public class CartaContabileDad extends AbstractFinDad {
 						for(SiacRCartacontDetSoggettoFin siacRCartacontDetSoggetto : listaSiacRCartacontDetSoggetto){
 							if(siacRCartacontDetSoggetto!=null && siacRCartacontDetSoggetto.getDataFineValidita()==null){
 								codSoggettoPreDocumento = siacRCartacontDetSoggetto.getSiacTSoggetto().getSoggettoCode();
-								soggettoPreDocumento = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, idEnte, codSoggettoPreDocumento, false, true);
+								soggettoPreDocumento = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, idEnte, codSoggettoPreDocumento, false, true);
 								Integer idSoggetto = siacRCartacontDetSoggetto.getSiacTSoggetto().getSoggettoId();
 								if (soggettoDad.isSedeSecondaria(idSoggetto, idEnte)) {
 									isSedeSecondaria = true;
@@ -3016,11 +3000,11 @@ public class CartaContabileDad extends AbstractFinDad {
 					attributoInfo.setSiacTCartacontEstera(siacTCartacontEstera);
 
 					//tipo pagamento
-					String isAssegno = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
-					String isBonifico = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
-					String isAltro = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
-					String isSpedizione = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_RECAPITOASSEGNO_SPEDIZIONE);
-					String isConsegna = getValoreAttr(attributoInfo, datiOperazione, idEnte, Constanti.T_ATTR_CODE_RECAPITOASSEGNO_CONSEGNA);
+					String isAssegno = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ASSEGNO);
+					String isBonifico = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_BONIFICO);
+					String isAltro = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_MODALITA_ACCREDITO_ALTRO);
+					String isSpedizione = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_RECAPITOASSEGNO_SPEDIZIONE);
+					String isConsegna = getValoreAttr(attributoInfo, datiOperazione, idEnte, CostantiFin.T_ATTR_CODE_RECAPITOASSEGNO_CONSEGNA);
 
 					if ("S".equalsIgnoreCase(isAssegno)) {
 						cartaEstera.setTipologiaPagamento("Assegno");
@@ -3081,7 +3065,7 @@ public class CartaContabileDad extends AbstractFinDad {
 		BigDecimal numeroImpegno = siacTMovgestT.getSiacTMovgest().getMovgestNumero();
 
 		PaginazioneSubMovimentiDto paginazioneSubMovimentiDto = new PaginazioneSubMovimentiDto();
-		if (movgestTsTipoCode.equals(Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
+		if (movgestTsTipoCode.equals(CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
 			//SUB IMPEGNO
 			String numeroSub = siacTMovgestT.getMovgestTsCode();
 			paginazioneSubMovimentiDto.setNoSub(false);
@@ -3094,18 +3078,18 @@ public class CartaContabileDad extends AbstractFinDad {
 		
 		EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(
 				richiedente, ente, annoBilancio, annoImpegno, numeroImpegno,
-				paginazioneSubMovimentiDto, null, Constanti.MOVGEST_TIPO_IMPEGNO, true);
+				paginazioneSubMovimentiDto, null, CostantiFin.MOVGEST_TIPO_IMPEGNO, true, true);
 		
 		if (esitoRicercaMov != null) {
 			impegnoPreDocumento = (Impegno) esitoRicercaMov.getMovimentoGestione();
 		}
 		
-		if(movgestTsTipoCode.equals(Constanti.MOVGEST_TS_TIPO_TESTATA)) {
+		if(movgestTsTipoCode.equals(CostantiFin.MOVGEST_TS_TIPO_TESTATA)) {
 			// il pre-documento e' legato ad un impegno
 				// Jira-1370
 			subImpegnoPreDocumento = null;
 			
-		} else if (movgestTsTipoCode.equals(Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
+		} else if (movgestTsTipoCode.equals(CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
 			// il pre-documento e' legato ad un sub-impegno
 			Integer idSubImpegno = siacTMovgestT.getMovgestTsId();
 
@@ -3194,7 +3178,7 @@ public class CartaContabileDad extends AbstractFinDad {
 		List<SiacTCartacontDetFin> elencoSiacTCartacontDet = siacTCartacont.getSiacTCartacontDets();
 		SiacTCartacontDetFin rigaRichiesta = getByNumeroRiga(elencoSiacTCartacontDet, numeroRiga);
 		
-		if(rigaRichiesta==null || !CommonUtils.isValidoSiacTBase(rigaRichiesta, datiOperazione.getTs())){
+		if(rigaRichiesta==null || !CommonUtil.isValidoSiacTBase(rigaRichiesta, datiOperazione.getTs())){
 			//riga indicata inesistete oppure invalidata:
 			String messaggio = rigaRichiesta + " per la carta " + numeroCarta;
 			esito.addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Riga Carta Contabile", messaggio));
@@ -3207,7 +3191,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 		//SOGGETTO:
 		List<SiacRCartacontDetSoggettoFin> listaSiacRCartacontDetSoggetto = rigaRichiesta.getSiacRCartacontDetSoggettos();
-		SiacRCartacontDetSoggettoFin relazioneValidaConSoggetto = CommonUtils.getValidoSiacTBase(listaSiacRCartacontDetSoggetto, datiOperazione.getTs());
+		SiacRCartacontDetSoggettoFin relazioneValidaConSoggetto = CommonUtil.getValidoSiacTBase(listaSiacRCartacontDetSoggetto, datiOperazione.getTs());
 		if(relazioneValidaConSoggetto!=null){
 			String codSoggettoRiga = relazioneValidaConSoggetto.getSiacTSoggetto().getSoggettoCode();
 			Soggetto soggettoRiga = new Soggetto();
@@ -3221,10 +3205,10 @@ public class CartaContabileDad extends AbstractFinDad {
 
 		// IMPEGNO + EVENTUALE SUB-IMPEGNO
 		List<SiacRCartacontDetMovgestTFin> listaSiacRCartacontDetMovgestT = rigaRichiesta.getSiacRCartacontDetMovgestTs();
-		SiacRCartacontDetMovgestTFin relazioneValidaVersoImpegni = CommonUtils.getValidoSiacTBase(listaSiacRCartacontDetMovgestT, datiOperazione.getTs());
+		SiacRCartacontDetMovgestTFin relazioneValidaVersoImpegni = CommonUtil.getValidoSiacTBase(listaSiacRCartacontDetMovgestT, datiOperazione.getTs());
 		if(relazioneValidaVersoImpegni!=null){
 			//Non puo' avere impegni
-			esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Riga carta", "La riga indicata e' gia' collegata ad un movimento"));
+			esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Riga carta", "La riga indicata e' gia' collegata ad un movimento"));
 			return esito;
 		}
 
@@ -3288,7 +3272,7 @@ public class CartaContabileDad extends AbstractFinDad {
 						for(SiacRCartacontDetSoggettoFin siacRCartacontDetSoggetto : listaSiacRCartacontDetSoggetto){
 							if(siacRCartacontDetSoggetto!=null && siacRCartacontDetSoggetto.getDataFineValidita()==null){
 								codSoggettoPreDocumento = siacRCartacontDetSoggetto.getSiacTSoggetto().getSoggettoCode();
-								soggettoPreDocumento = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, idEnte, codSoggettoPreDocumento, false, true);
+								soggettoPreDocumento = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, idEnte, codSoggettoPreDocumento, false, true);
 								Integer idSoggetto = siacRCartacontDetSoggetto.getSiacTSoggetto().getSoggettoId();
 								if (soggettoDad.isSedeSecondaria(idSoggetto, idEnte)) {
 									isSedeSecondaria = true;
@@ -3346,7 +3330,7 @@ public class CartaContabileDad extends AbstractFinDad {
 
 								
 								PaginazioneSubMovimentiDto paginazioneSubMovimentiDto = new PaginazioneSubMovimentiDto();
-								if (movgestTsTipoCode.equals(Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
+								if (movgestTsTipoCode.equals(CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
 									//SUB IMPEGNO
 									String numeroSub = siacRCartacontDetMovgestT.getSiacTMovgestT().getMovgestTsCode();
 									paginazioneSubMovimentiDto.setNoSub(false);
@@ -3357,18 +3341,20 @@ public class CartaContabileDad extends AbstractFinDad {
 									paginazioneSubMovimentiDto.setNoSub(true);
 								}
 								
-								EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoBilancio, annoImpegno, numeroImpegno,paginazioneSubMovimentiDto,null, Constanti.MOVGEST_TIPO_IMPEGNO, true);
+								EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(
+										richiedente, ente, annoBilancio, annoImpegno, numeroImpegno, paginazioneSubMovimentiDto, null,
+										CostantiFin.MOVGEST_TIPO_IMPEGNO, true, true);
 								
 								if(esitoRicercaMov!=null){
 									impegnoPreDocumento = (Impegno) esitoRicercaMov.getMovimentoGestione();
 								}
 								
-								if(movgestTsTipoCode.equals(Constanti.MOVGEST_TS_TIPO_TESTATA)) {
+								if(movgestTsTipoCode.equals(CostantiFin.MOVGEST_TS_TIPO_TESTATA)) {
 									// il pre-documento e' legato ad un impegno
 
 									preDocumentoCarta.setImpegno(impegnoPreDocumento);
 
-								} else if (movgestTsTipoCode.equals(Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
+								} else if (movgestTsTipoCode.equals(CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
 									// il pre-documento e' legato ad un sub-impegno
 									Integer idSubImpegno = siacRCartacontDetMovgestT.getSiacTMovgestT().getMovgestTsId();
 

@@ -109,6 +109,7 @@ public abstract class AsyncBaseService<REQ extends ServiceRequest,
 		
 		originalRequest = req.getRequest();
 		req.setRichiedente(originalRequest.getRichiedente());
+		originalRequest.setUserSessionInfo(req.getUserSessionInfo());
 		
 		//Inizializzazione del Service sottostante.
 		initServiceBase();
@@ -268,12 +269,21 @@ public abstract class AsyncBaseService<REQ extends ServiceRequest,
 	
 	protected InserisciOperazioneAsincResponse inserisciOperazioneAsinc(){
 		
+		InserisciOperazioneAsinc reqIOS = popolaRequestOperazioneAsincrona();
+		
+		InserisciOperazioneAsincResponse resAgg = operazioneAsincronaService.inserisciOperazioneAsinc(reqIOS);
+		checkServiceResponseFallimento(resAgg);
+		return resAgg;
+	}
+
+	protected InserisciOperazioneAsinc popolaRequestOperazioneAsincrona() {
 		InserisciOperazioneAsinc reqIOS = new InserisciOperazioneAsinc();
 		
 		reqIOS.setAccount(req.getAccount());
 		reqIOS.setDataOra(new Date());
 		reqIOS.setEnte(req.getEnte());
 		reqIOS.setRichiedente(originalRequest.getRichiedente());
+		reqIOS.setUserSessionInfo(req.getUserSessionInfo());
 		
 		if(getNomeAzione() == null) { 
 			//XXX fallback temporaneo, in attesa che tutte le classi che estendono AsyncBaseService specifichino il nomeAzione.
@@ -282,10 +292,7 @@ public abstract class AsyncBaseService<REQ extends ServiceRequest,
 			AzioneRichiesta azioneRichiesta = creaAzioneRichiesta();
 			reqIOS.setAzioneRichiesta(azioneRichiesta);
 		}
-		
-		InserisciOperazioneAsincResponse resAgg = operazioneAsincronaService.inserisciOperazioneAsinc(reqIOS);
-		checkServiceResponseFallimento(resAgg);
-		return resAgg;
+		return reqIOS;
 	}
 	
 	private AzioneRichiesta creaAzioneRichiesta() {
@@ -317,7 +324,8 @@ public abstract class AsyncBaseService<REQ extends ServiceRequest,
 		reqAgg.setRichiedente(originalRequest.getRichiedente());
 		reqAgg.setIdOperazioneAsinc(this.idOperazioneAsincrona);		
 		reqAgg.setIdEnte(req.getEnte().getUid());
-		
+		reqAgg.setUserSessionInfo(req.getUserSessionInfo());
+
 		reqAgg.setStato(stato);
 
 		AggiornaOperazioneAsincResponse resAgg = operazioneAsincronaService.aggiornaOperazioneAsinc(reqAgg);

@@ -41,7 +41,11 @@ public enum SiacDVariazioneTipoEnum {
 	//VariazioneDecentrata("VD", TipoVariazione.VARIAZIONE_DECENTRATA),
 	
 	//SIAC-4637
-	VariazioneCostituzioneIncrementoFPVSpesa("FP", TipoVariazione.COSTITUZIONE_INCREMENTO_FPV_SPESA)
+	VariazioneCostituzioneIncrementoFPVSpesa("FP", TipoVariazione.COSTITUZIONE_INCREMENTO_FPV_SPESA),
+	
+	
+	//SIAC-7629
+	variazioneDecentratalegge("VL", TipoVariazione.VARIAZIONE_DECENTRATA_LEGGE)
 	
 	;
 

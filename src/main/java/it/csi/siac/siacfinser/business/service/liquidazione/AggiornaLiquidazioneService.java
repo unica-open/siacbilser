@@ -18,8 +18,8 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.business.service.enumeration.CodiceEventoEnum;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaLiquidazione;
@@ -91,8 +91,8 @@ public class AggiornaLiquidazioneService extends AbstractBaseService<AggiornaLiq
 			DatiOperazioneDto datiOperazioneRicerca = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.RICERCA, null);
 			
 			
-			liquidazioneReload = liquidazioneDad.ricercaLiquidazionePerChiave(liquidazioneDaRicercare,  Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE, 
-					richiedente,new Integer(annoEsercizio),Constanti.AMBITO_FIN, ente,datiOperazioneRicerca);
+			liquidazioneReload = liquidazioneDad.ricercaLiquidazionePerChiave(liquidazioneDaRicercare,  CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE, 
+					richiedente,new Integer(annoEsercizio),CostantiFin.AMBITO_FIN, ente,datiOperazioneRicerca);
 			
 			//setto l'importo old in liquidazione perche' viene considerato per i controlli successivamente:
 			liquidazione.setImportoLiquidazioneDaAggiornare(liquidazioneReload.getImportoAttualeLiquidazione());
@@ -124,8 +124,8 @@ public class AggiornaLiquidazioneService extends AbstractBaseService<AggiornaLiq
 			if(liquidazioneReload.getStatoOperativoLiquidazione()!=null){
 				
 				// sono in aggiorna liquidazione e varia lo stato da PROVVISORIO a VALIDO, REGISTRO con LIQ-INS
-				if(Constanti.statoOperativoLiquidazioneEnumToString(liquidazioneReload.getStatoOperativoLiquidazione()).equals(Constanti.LIQUIDAZIONE_STATO_PROVVISORIO) && 
-						Constanti.statoOperativoLiquidazioneEnumToString(liquidazioneAggiornata.getStatoOperativoLiquidazione()).equals(Constanti.LIQUIDAZIONE_STATO_VALIDO)){
+				if(CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazioneReload.getStatoOperativoLiquidazione()).equals(CostantiFin.LIQUIDAZIONE_STATO_PROVVISORIO) && 
+						CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazioneAggiornata.getStatoOperativoLiquidazione()).equals(CostantiFin.LIQUIDAZIONE_STATO_VALIDO)){
 					
 					if(liquidazioneReload.getSubdocumentoSpesa()!=null)
 						liquidazioneAggiornata.setSubdocumentoSpesa(liquidazione.getSubdocumentoSpesa());
@@ -150,8 +150,8 @@ public class AggiornaLiquidazioneService extends AbstractBaseService<AggiornaLiq
 				
 				
 				// sono in aggiorna liquidazione e varia lo stato da VALIDO a PROVVISORIO, annulla la registrazione della liquidazione 
-				if(Constanti.statoOperativoLiquidazioneEnumToString(liquidazioneReload.getStatoOperativoLiquidazione()).equals(Constanti.LIQUIDAZIONE_STATO_VALIDO) && 
-						Constanti.statoOperativoLiquidazioneEnumToString(liquidazioneAggiornata.getStatoOperativoLiquidazione()).equals(Constanti.LIQUIDAZIONE_STATO_PROVVISORIO)){
+				if(CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazioneReload.getStatoOperativoLiquidazione()).equals(CostantiFin.LIQUIDAZIONE_STATO_VALIDO) && 
+						CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazioneAggiornata.getStatoOperativoLiquidazione()).equals(CostantiFin.LIQUIDAZIONE_STATO_PROVVISORIO)){
 					
 					annullaRegistrazioneEPrimaNotaLiquidazione(TipoCollegamento.LIQUIDAZIONE, liquidazioneAggiornata);
 				}
@@ -228,7 +228,7 @@ public class AggiornaLiquidazioneService extends AbstractBaseService<AggiornaLiq
 			}
 		}
 
-		if (StringUtils.isEmpty(req.getAnnoEsercizio())) {
+		if (StringUtilsFin.isEmpty(req.getAnnoEsercizio())) {
 			if(elencoParamentriNonInizializzati.length() > 0){
 				elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", ANNO_ESERCIZIO";
 			}else{

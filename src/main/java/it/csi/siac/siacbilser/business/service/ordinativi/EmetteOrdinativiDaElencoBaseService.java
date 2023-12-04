@@ -57,17 +57,17 @@ import it.csi.siac.siacbilser.model.ElabKeys;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siacbilser.model.exception.AlreadyElaboratedException;
-import it.csi.siac.siacbilser.model.messaggio.MessaggioBil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Codifica;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.model.messaggio.MessaggioCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiSpesa;
@@ -81,6 +81,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceQuotaDocumentoEn
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceQuotaDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceQuotaDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.model.CommissioniDocumento;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.Documento;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
@@ -93,10 +94,12 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoIvaSpesa;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoRelazione;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.movgest.RicercaAccertamentoPerChiaveOttimizzatoService;
 import it.csi.siac.siacfinser.business.service.ordinativo.InserisceOrdinativoIncassoService;
 import it.csi.siac.siacfinser.business.service.ordinativo.InserisceOrdinativoPagamentoService;
+import it.csi.siac.siacfinser.cig.exception.CigException;
+import it.csi.siac.siacfinser.cig.helper.CigHelper;
 import it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
@@ -115,8 +118,8 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazionePerChia
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazionePerChiaveResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
+import it.csi.siac.siacfinser.integration.dad.oil.AccreditoTipoOilIsPagoPADad;
 import it.csi.siac.siacfinser.model.Accertamento;
-import it.csi.siac.siacfinser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Distinta;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.MovimentoGestione;
@@ -151,7 +154,7 @@ import it.csi.siac.siacfinser.model.soggetto.sedesecondaria.SedeSecondariaSogget
  *
  * @author Domenico
  * @author Marchino Alessandro
- * @author Valentina
+ * @author Valentina   
  * @param <REQ> the generic type
  * @param <RES> the generic type
  */
@@ -210,6 +213,10 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 	private CodificaDad codificaDad;
 	@Autowired
 	private LiquidazioneBilDad liquidazioneBilDad;
+	
+	//SIAC-8853
+	@Autowired
+	private AccreditoTipoOilIsPagoPADad AccreditoTipoOilIsPagoPADad;
 	
 	//Fields...
 	protected Bilancio bilancio;
@@ -533,11 +540,17 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 		
 		//SIAC-6840
 		//controllo che il metodo di pagamento sia "AVVISO PAGOPA" ed il campo "Codice avviso PagoPA" sia valorizzato
-		checkBusinessCondition(!(StringUtils.isBlank(subdoc.getDocumento().getCodAvvisoPagoPA()) && "APA".equals(subdoc.getModalitaPagamentoSoggetto().getModalitaAccreditoSoggetto().getCodice())), 
+		//SIAC-8853
+		checkBusinessCondition(!(StringUtils.isBlank(subdoc.getDocumento().getCodAvvisoPagoPA()) && isModalitaPagamentoPagoPa(subdoc)), 
 				ErroreFin.COD_AVVISO_PAGO_PA_ASSENTE.getErrore("subdocumento " + subdoc.getNumero() + " [uid: "+subdoc.getUid()+"] del documento: "+subdoc.getDocumento().getDescAnnoNumeroTipoDoc() + "."));
 		
 	}
 	
+	//SIAC-8853
+	private boolean isModalitaPagamentoPagoPa(SubdocumentoSpesa subdoc) {
+		String tipoAccreditoNuovoSubdocumento = subdoc.getModalitaPagamentoSoggetto().getModalitaAccreditoSoggetto().getCodice();
+	    return tipoAccreditoNuovoSubdocumento != null && AccreditoTipoOilIsPagoPADad.accreditoTipoOilIsPagoPA(subdoc.getEnte().getUid(), tipoAccreditoNuovoSubdocumento);
+	}
 
 	private void checkDatiDurc(Impegno impegno, Soggetto soggettoLiquidazione, Soggetto soggettoCessione) {
 		final String methodName ="checkDatiDurc";
@@ -602,11 +615,24 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 		
 		// se siope commercialecig o, in alternativa assenza cig sono obbligatori
 		if("CO".equals(siopeTipoDebito.getCodice()) && !(isCigValorizzato || isMotivoAssenzaCigPresente)) {
-			log.debug(methodName, "siope commerciale e cig o morivo assenza cig non valorizzati");
+			log.debug(methodName, "siope commerciale e cig o motivo assenza cig non valorizzati");
 			throw new BusinessException(ErroreCore.ENTITA_NON_COMPLETA.getErrore("Liquidazione", "dati SIOPE+ incongruenti"));
 		}
+		
+		//SIAC-8208 controlli formali sul CIG
+		controlliFormaliSulCig(liq);
 	}
 
+	//SIAC-8208
+	private void controlliFormaliSulCig(Liquidazione liq) {
+		try {
+			CigHelper.controlloCIGSuLiquidazione(liq, true);
+		} catch (CigException ce) {
+			log.debug("controlliFormaliSulCig", ce.getErrore().getDescrizione());
+			throw new BusinessException(ce.getErrore());
+		}
+	}
+	
 	private boolean datiIvaValidi(SubdocumentoSpesa subdoc) {
 		if(subdoc.getSubdocumentoIva() != null && !Boolean.TRUE.equals(subdoc.getFlagRilevanteIVA())){
 			return false;
@@ -792,7 +818,7 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 		Long countOrdinativiAssociatiAQuota = subdocumentoEntrataDad.countOrdinativiAssociatiAQuota(subdocumentoEntrata);
 		log.debug(methodName, "countOrdinativiAssociatiAQuota: " + countOrdinativiAssociatiAQuota);
 		if(countOrdinativiAssociatiAQuota >0) {
-			Messaggio msg = MessaggioBil.MESSAGGIO_DI_SISTEMA.getMessaggio("subdocumento [uid: " + subdocumentoEntrata.getUid() + "]");
+			Messaggio msg = MessaggioCore.MESSAGGIO_DI_SISTEMA.getMessaggio("subdocumento [uid: " + subdocumentoEntrata.getUid() + "]");
 			Errore erroreElaborazione = new Errore(msg.getCodice(), msg.getDescrizione());
     		throw new AlreadyElaboratedException(erroreElaborazione);
     	}
@@ -1206,7 +1232,7 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 			subOrdinativo.setAccertamento(s.getAccertamentoOSubAccertamento());// TODO: Subaccertamento
 			
 			if(subOrdinativo.getAccertamento() instanceof SubAccertamento){
-				((SubAccertamento)subOrdinativo.getAccertamento()).setNumeroAccertamentoPadre(s.getAccertamento().getNumero());
+				((SubAccertamento)subOrdinativo.getAccertamento()).setNumeroAccertamentoPadre(s.getAccertamento().getNumeroBigDecimal());
 				((SubAccertamento)subOrdinativo.getAccertamento()).setAnnoAccertamentoPadre(s.getAccertamento().getAnnoMovimento());
 				((SubAccertamento)subOrdinativo.getAccertamento()).setAnnoMovimento(s.getAccertamento().getAnnoMovimento()); 
 			}
@@ -1623,6 +1649,8 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 		reqIO.setOrdinativoPagamento(ordinativoPagamento);
 		InserisceOrdinativoPagamentoResponse resIO = serviceExecutor.executeServiceSuccess(InserisceOrdinativoPagamentoService.class, reqIO);
 		checkServiceResponseFallimento(resIO);
+		//SIAC-8017-CMTO
+		impostaMessaggiInResponse(resIO.getMessaggi());
 		return resIO.getOrdinativoPagamentoInserito();
 		
 	}
@@ -1645,9 +1673,14 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 //		InserisceOrdinativoIncassoResponse resIO = ordinativoService.inserisceOrdinativoIncasso(reqIO);
 		InserisceOrdinativoIncassoResponse resIO = serviceExecutor.executeServiceSuccess(InserisceOrdinativoIncassoService.class, reqIO);
 		checkServiceResponseFallimento(resIO);
+		
+		impostaMessaggiInResponse(resIO.getMessaggi());
+		
 		return resIO.getOrdinativoIncassoInserito();
 	}
 	
+	protected abstract void impostaMessaggiInResponse(List<Messaggio> messaggi);
+
 	/**
 	 * Popola i campi comuni alla ricerca di accertamento e subaccertamento della request per il servizio {@link RicercaAccertamentoPerChiaveOttimizzatoService}
 	 *
@@ -1670,7 +1703,7 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 		RicercaAccertamentoK pRicercaAccertamentoK = new RicercaAccertamentoK();
 		pRicercaAccertamentoK.setAnnoEsercizio(bilancio.getAnno());
 		pRicercaAccertamentoK.setAnnoAccertamento(accertamento.getAnnoMovimento());
-		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
+		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 		
 		reqRAPCO.setpRicercaAccertamentoK(pRicercaAccertamentoK);
 		reqRAPCO.setDatiOpzionaliElencoSubTuttiConSoloGliIds(parametriElencoIds);
@@ -1693,7 +1726,8 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 			log.debug(methodName, "Errori nella response senza impostare il FALLIMENTO per la chiave " + key + ": impostazione del dato a mano");
 			resRA.setEsito(Esito.FALLIMENTO);
 		}
-		if(!resRA.isFallimento() && resRA.getAccertamento() == null) {
+		//SIAC-8220 si rende parlante l'errore, non controllo per esito della response
+		if(resRA.getAccertamento() == null) {
 			log.debug(methodName, "Nessun dato trovato per la chiave " + key + ". Aggiungo l'errore nella response");
 			resRA.addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", key));
 			resRA.setEsito(Esito.FALLIMENTO);
@@ -1723,11 +1757,11 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 			log.debug(methodName, "Accertamento null");
 			return null;
 		}
-		final String key = accertamento.getAnnoMovimento() + "/" + accertamento.getNumero();
+		final String key = accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal();
 		RicercaAccertamentoPerChiaveOttimizzato reqRAPCO = popolaCampiComuniRequestRicercaAccertamentoPerChiaveOttimizzato(accertamento);
 		if(subaccertamento != null){
 			log.debug(methodName, "subaccertamento null. Carico tutti i sub");
-			reqRAPCO.getpRicercaAccertamentoK().setNumeroSubDaCercare(subaccertamento.getNumero());
+			reqRAPCO.getpRicercaAccertamentoK().setNumeroSubDaCercare(subaccertamento.getNumeroBigDecimal());
 			reqRAPCO.setCaricaSub(true);
 		}
 		
@@ -1749,7 +1783,7 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 			log.debug(methodName, "Accertamento null");
 			return null;
 		}
-		final String key = accertamento.getAnnoMovimento() + "/" + accertamento.getNumero();
+		final String key = accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal();
 		RicercaAccertamentoPerChiaveOttimizzato reqRAPCO = popolaCampiComuniRequestRicercaAccertamentoPerChiaveOttimizzato(accertamento);
 		reqRAPCO.setCaricaSub(false);
 		
@@ -1769,7 +1803,7 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 		RicercaAccertamentoK pRicercaAccertamentoK = new RicercaAccertamentoK();
 		pRicercaAccertamentoK.setAnnoEsercizio(bilancio.getAnno());
 		pRicercaAccertamentoK.setAnnoAccertamento(accertamento.getAnnoMovimento());
-		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
+		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 		
 		RicercaAccertamentoPerChiaveOttimizzato reqRAPCO = new RicercaAccertamentoPerChiaveOttimizzato();
 		reqRAPCO.setRichiedente(req.getRichiedente());
@@ -1853,7 +1887,7 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 		ricercaLiquidazioneK.setAnnoLiquidazione(liquidazione.getAnnoLiquidazione());
 		ricercaLiquidazioneK.setNumeroLiquidazione(liquidazione.getNumeroLiquidazione());
 		ricercaLiquidazioneK.setLiquidazione(liquidazione);
-		ricercaLiquidazioneK.setTipoRicerca(Constanti.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO);
+		ricercaLiquidazioneK.setTipoRicerca(CostantiFin.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO);
 		
 		reqRL.setpRicercaLiquidazioneK(ricercaLiquidazioneK);
 		RicercaLiquidazionePerChiaveResponse resRL = liquidazioneService.ricercaLiquidazionePerChiave(reqRL);
@@ -2610,13 +2644,13 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 	 * 	<li> Se la liquidazione che si è pagata è passata a residuo nell’anno di bilancio + 1 (attenzione, dopo l’inserimento dell’ordinativo sarà stata cancellata logicamente) e se la suddetta liquidazione residua ha una relazione valida con la quota che si sta pagando è necessario:
 	 * 		<ul>
 	 * 			<li>Cancellare la relazione con la liquidazione residua dell’anno di bilancio + 1 </li>
-	 * 			<li>Riportare a “sempre valida” la relazione con la liquidazione dell’anno in corso (data fine validità nulla) </li>
+	 * 			<li>Riportare a  'sempre valida'  la relazione con la liquidazione dell’anno in corso (data fine validità nulla) </li>
 	 * 		</ul>
 	 * 	</li>
 	 * <li> Se l’impegno/sub che si è pagato è passato a residuo nell’anno di bilancio + 1 (attenzione, dopo l’inserimento dell’ordinativo potrebbe essere stato cancellato logicamente) e se il suddetto impegno residuo ha una relazione valida con la quota che si sta pagando è necessario:
 	 * 		<ul>
 	 * 			<li>Cancellare la relazione con l’impegno/sub residuo dell’anno di bilancio + 1 </li>
-	 * 			<li>Riportare a “sempre valida” la relazione con l’impegno/sub dell’anno in corso (data fine validità nulla) </li>
+	 * 			<li>Riportare a 'sempre valida' la relazione con l’impegno/sub dell’anno in corso (data fine validità nulla) </li>
 	 * 		</ul>
 	 * 	</li>
 	 * 
@@ -2665,7 +2699,7 @@ public abstract class EmetteOrdinativiDaElencoBaseService<REQ extends ServiceReq
 	 * <li> Se l’accertamento/sub che si è pagato è passato a residuo nell’anno di bilancio + 1 (attenzione, dopo l’inserimento dell’ordinativo potrebbe essere stato cancellato logicamente) e se il suddetto impegno residuo ha una relazione valida con la quota che si sta pagando è necessario:
 	 * 		<ul>
 	 * 			<li>Cancellare la relazione tra quota e accertamento/sub residuo dell’anno di bilancio + 1 </li>
-	 * 			<li>Riportare a “sempre valida” la relazione  tra quota e accertamento/sub dell’anno in corso (data fine validità nulla) </li>
+	 * 			<li>Riportare a 'sempre valida' la relazione  tra quota e accertamento/sub dell’anno in corso (data fine validità nulla) </li>
 	 * 		</ul>
 	 * 	</li>
 	 * 

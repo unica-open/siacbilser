@@ -773,9 +773,9 @@ public class AllegatoAttoServiceTest extends BaseJunit4TestCase {
 //		
 //		//Modifico il tipo convalida coerentemente con il subdocumetno
 //		if(Boolean.TRUE.equals(flagConvalidaManuale)){
-//			liquidazione.setLiqManuale(Constanti.LIQUIDAZIONE_MAUALE);
+//			liquidazione.setLiqManuale(CostantiFin.LIQUIDAZIONE_MAUALE);
 //		} else {
-//			liquidazione.setLiqManuale(Constanti.LIQUIDAZIONE_AUTOMATICA);
+//			liquidazione.setLiqManuale(CostantiFin.LIQUIDAZIONE_AUTOMATICA);
 //		}
 //	}
 //	

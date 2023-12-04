@@ -23,7 +23,7 @@ import it.csi.siac.siacbilser.business.service.stampa.liquidazioneiva.model.Stam
 import it.csi.siac.siacbilser.business.service.stampa.liquidazioneiva.model.StampaLiquidazioneIvaRiepilogoIva;
 import it.csi.siac.siacbilser.integration.dad.ProgressiviIvaDad;
 import it.csi.siac.siacbilser.integration.dad.StampaIvaDad;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.AliquotaIva;
 import it.csi.siac.siacfin2ser.model.Periodo;
 import it.csi.siac.siacfin2ser.model.ProgressiviIva;
@@ -34,7 +34,7 @@ import it.csi.siac.siacfin2ser.model.TipoStampaIva;
 
 public abstract class StampaLiquidazioneIvaBaseDataCompiler<SI extends SubdocumentoIva<?, ?, ?>> {
 	
-	protected LogUtil log = new LogUtil(getClass());
+	protected LogSrvUtil log = new LogSrvUtil(getClass());
 	
 	@Autowired
 	private ProgressiviIvaDad progressiviIvaDad;

@@ -29,6 +29,8 @@ SOGGETTI + MODALITA' PAGAMENTO SOGGETTO
 	- ImpForn: /stampaAllegatoAttoReportModel/elenchi/elenco/totaleImpegni
 	- ImpDaDedurre: /stampaAllegatoAttoReportModel/elenchi/elenco/totaleImportoDaDedurre
 	- CodSogg: /stampaAllegatoAttoReportModel/elenchi/elenco/soggetto/codiceSoggetto
+	(SIAC-8299)
+	- codieFiscaleEstero: /stampaAllegatoAttoReportModel/elenchi/elenco/soggetto/codiceFiscaleEstero
 	- DenominazioneSogg: /stampaAllegatoAttoReportModel/elenchi/elenco/soggetto/denominazione
 	(SIAC-6190)
 	- Sede secondaria: /stampaAllegatoAttoReportModel/elenchi/elenco/sedeSecondariaSoggetto/denominazione

@@ -24,7 +24,7 @@ import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RegistrazioneGENServiceHelper;
 import it.csi.siac.siacbilser.integration.dad.ClassificatoriDad;
 import it.csi.siac.siacbilser.integration.dad.CronoprogrammaDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.exception.AttoNonTrovatoException;
 import it.csi.siac.siacbilser.model.StatoOperativoCronoprogramma;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
@@ -43,7 +43,7 @@ public class AggiornaProvvedimentoService extends CheckedAccountBaseService<Aggi
 	
 	/** The provvedimento dad. */
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private RegistrazioneGENServiceHelper registrazioneGENServiceHelper;
 	@Autowired
@@ -83,8 +83,8 @@ public class AggiornaProvvedimentoService extends CheckedAccountBaseService<Aggi
 	
 	@Override
 	protected void init() {
-		provvedimentoDad.setLoginOperazione(loginOperazione);
-		provvedimentoDad.setEnte(req.getEnte());
+		attoAmministrativoDad.setLoginOperazione(loginOperazione);
+		attoAmministrativoDad.setEnte(req.getEnte());
 		
 		cronoprogrammaDad.setEnte(ente);
 		cronoprogrammaDad.setLoginOperazione(loginOperazione);
@@ -107,7 +107,7 @@ public class AggiornaProvvedimentoService extends CheckedAccountBaseService<Aggi
 		AttoAmministrativo attoAmministrativoAggiornato;
 		try {
 			
-			attoAmministrativoAggiornato = provvedimentoDad.update(req.getAttoAmministrativo(), req.getStrutturaAmministrativoContabile(), req.getTipoAtto());
+			attoAmministrativoAggiornato = attoAmministrativoDad.update(req.getAttoAmministrativo(), req.getStrutturaAmministrativoContabile(), req.getTipoAtto(), req.getCodiceInc());
 			
 			// RM: il metodo aggiornaStatoImpegniEAccertamentiCollegati usa la response per leggere l'atto amministrativo per elaborare l'aggiornamento dello stato
 			// del provvedimento 
@@ -140,12 +140,13 @@ public class AggiornaProvvedimentoService extends CheckedAccountBaseService<Aggi
 	protected void effettuaOperazioniCollegateCambioStatoProvvedimento(AttoAmministrativo attoAmministrativoAggiornato) {
 		final String methodName="effettuaOperazioniCollegateCambioStatoProvvedimento";
 		
+		boolean isProvvedimentoDefinitivo = StatoOperativoAtti.DEFINITIVO.equals(req.getAttoAmministrativo().getStatoOperativoAtti());
 		// SIAC-5639: girate le condizioni per prevenire NPE
-		boolean isPassaggioDiStatoDaProvvisorioADefinitivo = StatoOperativoAtti.PROVVISORIO.equals(this.statoOperativoAttuale) && StatoOperativoAtti.DEFINITIVO.equals(req.getAttoAmministrativo().getStatoOperativoAtti());
+		boolean isPassaggioDiStatoDaProvvisorioADefinitivo = StatoOperativoAtti.PROVVISORIO.equals(this.statoOperativoAttuale) && isProvvedimentoDefinitivo;
 		//boolean isPassaggioDiStatoAdAnnullato = !this.statoOperativoAttuale.equals(StatoOperativoAtti.ANNULLATO) && req.getAttoAmministrativo().getStatoOperativoAtti().equals(StatoOperativoAtti.ANNULLATO);
 		log.debug(methodName, "isPassaggioDiStatoDaProvvisorioADefinitivo: "+ isPassaggioDiStatoDaProvvisorioADefinitivo 
 				 /*+  " isPassaggioDiStatoAdAnnullato: "+ isPassaggioDiStatoAdAnnullato*/);
-		aggiornaStatoImpegniEAccertamentiCollegati(isPassaggioDiStatoDaProvvisorioADefinitivo);
+		aggiornaStatoImpegniEAccertamentiCollegati(isPassaggioDiStatoDaProvvisorioADefinitivo, isProvvedimentoDefinitivo);
 			
 		//SIAC-6255
 		aggiornaStatoCronoprogrammiCollegati(isPassaggioDiStatoDaProvvisorioADefinitivo, attoAmministrativoAggiornato);
@@ -164,17 +165,22 @@ public class AggiornaProvvedimentoService extends CheckedAccountBaseService<Aggi
 	 * Se l'operazione di aggiornamento comporta un passaggio di stato Provvisorio – Definitivo 
 	 * il sistema aggiorna coerentemente anche gli stati dei movimenti finanziari (Impegni ed Accertamenti) associati al provvedimento
 	 * @param isPassaggioDiStatoDaProvvisorioADefinitivo 
+	 * @param isProvvedimentoDefinitivo 
 	 * 
 	 */
-	private void aggiornaStatoImpegniEAccertamentiCollegati(boolean isPassaggioDiStatoDaProvvisorioADefinitivo) {
+	private void aggiornaStatoImpegniEAccertamentiCollegati(boolean isPassaggioDiStatoDaProvvisorioADefinitivo, boolean isProvvedimentoDefinitivo) {
 		final String methodName = "aggiornaStatoImpegniEAccertamentiCollegati";
 		
-		
-		if(Boolean.TRUE.equals(req.getIsEsecutivo()) || isPassaggioDiStatoDaProvvisorioADefinitivo /*|| isPassaggioDiStatoAdAnnullato*/) {
-			List<Integer> listaRegistrazioneMovFin = provvedimentoDad.aggiornaStatoImpegniEAccertamentiCollegati(res.getAttoAmministrativoAggiornato(), req.getAttoAmministrativo().getStatoOperativoAtti(), req.getIsEsecutivo());
+		//SIAC-8729
+		if(isPassaggioDiStatoDaProvvisorioADefinitivo) {
+			List<Integer> listaRegistrazioneMovFin = attoAmministrativoDad.aggiornaStatoImpegniEAccertamentiCollegati(res.getAttoAmministrativoAggiornato(), req.getAttoAmministrativo().getStatoOperativoAtti(), req.getIsEsecutivo());
 			// TODO: verificare il ritorno della function utilizzata per l'aggiornamento degli stati degli impegni collegati.
-			log.debug(methodName, "Impegni e accertamenti collegati aggiornati corre:ttamente. Numero registrazioni create: " + listaRegistrazioneMovFin.size());
+			log.error(methodName, "Impegni e accertamenti collegati aggiornati correttamente. Numero registrazioni create: " + listaRegistrazioneMovFin.size());
 			inserisciPrimeNoteAutomatiche(listaRegistrazioneMovFin);
+		}else if(Boolean.TRUE.equals(req.getIsEsecutivo())&& isProvvedimentoDefinitivo){
+			//SIAC-8729
+			 attoAmministrativoDad.aggiornaParereFinanziarioImpegniEAccertamentiCollegati(res.getAttoAmministrativoAggiornato(), req.getIsEsecutivo());
+			 log.error(methodName, "aggiornato il solo parerefinanziario");
 		}
 		
 	}
@@ -185,7 +191,7 @@ public class AggiornaProvvedimentoService extends CheckedAccountBaseService<Aggi
 	 */
 	private void caricaStatoOperativoAttuale() {
 		String methodName = "caricaStatoOperativoAttuale";
-		this.statoOperativoAttuale = provvedimentoDad.findStatoOperativoAttoAmministrativo(req.getAttoAmministrativo());
+		this.statoOperativoAttuale = attoAmministrativoDad.findStatoOperativoAttoAmministrativo(req.getAttoAmministrativo());
 		log.debug(methodName, "statoOperativoAttuale: "+this. statoOperativoAttuale);
 	}
 	
@@ -215,7 +221,7 @@ public class AggiornaProvvedimentoService extends CheckedAccountBaseService<Aggi
 	}
 
 	protected Boolean isAnnullabile() {
-		return provvedimentoDad.isAnnullabile(req.getAttoAmministrativo());
+		return attoAmministrativoDad.isAnnullabile(req.getAttoAmministrativo());
 	}
 
 	/**
@@ -233,7 +239,7 @@ public class AggiornaProvvedimentoService extends CheckedAccountBaseService<Aggi
 	}
 	
 	private void caricaTipoAtto() {
-		TipoAtto ta = provvedimentoDad.findTipoAttoByUid(this.tipoAtto.getUid());
+		TipoAtto ta = attoAmministrativoDad.findTipoAttoByUid_DEPRECATED(this.tipoAtto.getUid());
 		if(ta == null || ta.getUid() == 0) {
 			throw new BusinessException(ErroreCore.ENTITA_INESISTENTE.getErrore("Tipo atto", "uid " + this.tipoAtto.getUid()));
 		}

@@ -73,7 +73,8 @@ public interface SiacTProgrammaRepository extends JpaRepository<SiacTProgramma, 
 			"	FROM s.siacRProgrammaStatos sp " +
 			"	WHERE sp.siacTProgramma.programmaId = :programmaId " +
 			" 	AND sp.dataCancellazione IS NULL " +
-			"   AND sp.dataInizioValidita < CURRENT_TIMESTAMP " +
+			//SIAC-7591 si setta a <=
+			"   AND sp.dataInizioValidita <= CURRENT_TIMESTAMP " +
 			"   AND ( " +
 			"      sp.dataFineValidita IS NULL " +
 			"      OR sp.dataFineValidita > CURRENT_TIMESTAMP " +

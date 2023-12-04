@@ -52,20 +52,26 @@ public abstract class BaseSoggettoHandler<P extends Predocumento> implements Sog
 		this.entityManager = entityManager;
 	}
 
-	@Override
-	public Soggetto ricercaSoggetto(P predocumento) throws SoggettoPredocumentoException
-	{
+	
+	private RicercaSoggettiResponse ricercaSoggetti(ParametroRicercaSoggetto parametroRicercaSoggetto) throws SoggettoPredocumentoException  {
 		RicercaSoggetti ricercaSoggetti = new RicercaSoggetti();
 
 		ricercaSoggetti.setEnte(ente);
 		ricercaSoggetti.setRichiedente(richiedente);
-		ParametroRicercaSoggetto parametroRicercaSoggetto = buildParametroRicercaSoggetto(predocumento);
 
 		ricercaSoggetti.setParametroRicercaSoggetto(parametroRicercaSoggetto);
 
 		RicercaSoggettiResponse ricercaSoggettiResponse = soggettoService.ricercaSoggetti(ricercaSoggetti);
 
 		checkServiceResponseFallimento(ricercaSoggettiResponse);
+		
+		return ricercaSoggettiResponse;
+	}
+	
+	@Override
+	public Soggetto cercaSoggetto(P predocumento) throws SoggettoPredocumentoException
+	{
+		RicercaSoggettiResponse ricercaSoggettiResponse = ricercaSoggetti(buildParametroRicercaSoggetto(predocumento));
 
 		if (ricercaSoggettiResponse.getSoggetti() == null || ricercaSoggettiResponse.getSoggetti().isEmpty())
 			return null;
@@ -129,7 +135,7 @@ public abstract class BaseSoggettoHandler<P extends Predocumento> implements Sog
 		indirizzoSoggetto.setCodiceNazione(siacTComune.getSiacTNazione().getNazioneCode());
 
 		if ("1".equals(indirizzoSoggetto.getCodiceNazione())) {
-			indirizzoSoggetto.setIdComune(siacTComune.getComuneIstatCode());
+			indirizzoSoggetto.setCodiceIstatComune(siacTComune.getComuneIstatCode());
 		}
 		
 		List<IndirizzoSoggetto> indirizzi = new ArrayList<IndirizzoSoggetto>();
@@ -182,6 +188,11 @@ public abstract class BaseSoggettoHandler<P extends Predocumento> implements Sog
 		return externalServiceResponse.getClass().getSimpleName().replaceAll("(Response)$", "") + "Service";
 	}
 
-	protected abstract ParametroRicercaSoggetto buildParametroRicercaSoggetto(P predocumento);
+	protected ParametroRicercaSoggetto buildParametroRicercaSoggetto(P predocumento)
+	{
+		return buildParametroRicercaSoggetto(predocumento.getCodiceFiscale());
+	}
+
+	protected abstract ParametroRicercaSoggetto buildParametroRicercaSoggetto(String chiave);
 
 }

@@ -12,7 +12,7 @@ SPDX-License-Identifier: EUPL-1.2
 					5
 			</connection-property>
 			<connection-property name="socketTimeout">
-					180
+					300
 			</connection-property>
 			<driver>postgresql</driver>
 			<pool>

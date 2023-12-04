@@ -19,7 +19,7 @@ import it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService
 import it.csi.siac.siacbilser.frontend.webservice.msg.VerificaAnnullabilitaCapitoloEntrataGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.VerificaAnnullabilitaCapitoloEntrataGestioneResponse;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -126,7 +126,7 @@ public class VerificaAnnullabilitaCapitoloEntrataGestioneServiceTest extends Cap
 	 * @return the verifica annullabilita capitolo entrata gestione response
 	 */
 	private VerificaAnnullabilitaCapitoloEntrataGestioneResponse verificaAnnullabilitaCapitoloEntrataGestione() {
-		LogUtil log = new LogUtil(this.getClass());
+		LogSrvUtil log = new LogSrvUtil(this.getClass());
 		
 		VerificaAnnullabilitaCapitoloEntrataGestione req = new VerificaAnnullabilitaCapitoloEntrataGestione();
 		

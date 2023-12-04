@@ -20,7 +20,7 @@ import it.csi.siac.siacbilser.business.service.pagopa.util.ResultTypeEnum;
 import it.csi.siac.siacbilser.integration.dad.PagoPADad;
 import it.csi.siac.siacbilser.integration.entity.SiacTFilePagopa;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDFilePagopaStatoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -29,7 +29,7 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LeggiEsitoFlussiService extends ExtendedBaseService<LeggiEsitoFlussi, LeggiEsitoFlussiResponse> {
 
-	private static LogUtil log = new LogUtil(LeggiEsitoFlussiService.class);
+	private static LogSrvUtil log = new LogSrvUtil(LeggiEsitoFlussiService.class);
 	
 	@Autowired
 	private PagoPADad pagoPADad;

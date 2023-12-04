@@ -1138,5 +1138,12 @@ public class SubdocumentoEntrataDad extends ExtendedBaseDadImpl {
 		}
 		return listProvvisorioDiCassaUid;
 	}
+
+	public List<String> caricaCodiciIPASediSecondarieQuoteDocumento(DocumentoEntrata doc) {
+		List<String> codici =  siacTSubdocRepository.getCodiciIPASediSecondarieQuoteDocumento(doc.getUid());
+		return codici;
+	}
+	
+	
 	
 }

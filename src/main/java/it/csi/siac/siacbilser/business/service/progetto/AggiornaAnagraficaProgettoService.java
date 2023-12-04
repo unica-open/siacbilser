@@ -20,18 +20,22 @@ import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAnagraficaProgettoResponse;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
+import it.csi.siac.siacbilser.integration.dad.ClassificatoriDad;
 import it.csi.siac.siacbilser.integration.dad.CronoprogrammaDad;
 import it.csi.siac.siacbilser.integration.dad.ProgettoDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.model.Progetto;
 import it.csi.siac.siacbilser.model.StatoOperativo;
+import it.csi.siac.siacbilser.model.TipoAmbito;
 import it.csi.siac.siacbilser.model.TipoProgetto;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+import it.csi.siac.siaccorser.model.TipologiaClassificatore;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
@@ -55,13 +59,15 @@ public class AggiornaAnagraficaProgettoService extends CheckedAccountBaseService
 	
 	/** The provvedimento dad. */
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	
 	@Autowired
 	private CronoprogrammaDad cronoprogrammaDad;
 	
 	@Autowired
 	private BilancioDad bilancioDad;
+
+	@Autowired private ClassificatoriDad classificatoriDad;
 	
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {
@@ -111,10 +117,50 @@ public class AggiornaAnagraficaProgettoService extends CheckedAccountBaseService
 		//
 		checkImportoCronoprogrammiCollegati();
 		
+		// SIAC-8814
+		if (req.getRetrieveAggregateData()) {
+			checkTipoAmbito(progetto);
+			checkStrutturaAmministrativoContabile(progetto);
+		}
+		
 		progettoDad.aggiornaProgetto(progetto);
 		res.setProgetto(progetto);
 	}
 	
+	private void checkStrutturaAmministrativoContabile(Progetto progetto) {
+		if (progetto.getStrutturaAmministrativoContabile() == null || progetto.getStrutturaAmministrativoContabile().getUid() > 0) {
+			return;
+		}
+		
+		StrutturaAmministrativoContabile strutturaAmministrativoContabile = (StrutturaAmministrativoContabile) classificatoriDad.ricercaClassificatoreGerarchicoByCodiceAndTipoAndAnno(
+				progetto.getStrutturaAmministrativoContabile(), 
+				TipologiaClassificatore.fromCodice(progetto.getStrutturaAmministrativoContabile().getTipoClassificatore().getCodice()), 
+				Integer.valueOf(ente.getUid()), 
+				Integer.valueOf(progetto.getBilancio().getAnno()));
+
+		if (strutturaAmministrativoContabile == null) {
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("strutturaAmministrativoContabile", 
+					String.format("%s/%s", progetto.getStrutturaAmministrativoContabile().getCodice(), progetto.getStrutturaAmministrativoContabile().getTipoClassificatore().getCodice())));
+		}
+		
+		progetto.setStrutturaAmministrativoContabile(strutturaAmministrativoContabile); 
+	}
+
+	private void checkTipoAmbito(Progetto progetto) {
+		
+		if (progetto.getTipoAmbito() == null || progetto.getTipoAmbito().getUid() > 0) {
+			return;
+		}
+		
+		TipoAmbito tipoAmbito = progettoDad.ricercaTipoAmbito(progetto.getBilancio().getAnno(), progetto.getTipoAmbito().getCodice());
+
+		if (tipoAmbito.getUid() == 0) {
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("tipoAmbito", "codice " + progetto.getTipoAmbito().getCodice()));
+		}
+		
+		progetto.setTipoAmbito(tipoAmbito);
+	}
+
 	private void checkImportoCronoprogrammiCollegati() {
 		if(progetto.getValoreComplessivo() == null || BigDecimal.ZERO.compareTo( progetto.getValoreComplessivo()) ==0) {
 			return;
@@ -138,9 +184,13 @@ public class AggiornaAnagraficaProgettoService extends CheckedAccountBaseService
 		FaseEStatoAttualeBilancio faseEStatoAttualeBilancio = bilancio.getFaseEStatoAttualeBilancio();
 		FaseBilancio faseBilancio = faseEStatoAttualeBilancio.getFaseBilancio();
 		boolean faseBilancioPerProgettoPrevisione = FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) || FaseBilancio.PREVISIONE.equals(faseBilancio);
-		if((faseBilancioPerProgettoPrevisione && !TipoProgetto.PREVISIONE.equals(progetto.getTipoProgetto()) 
-				|| (FaseBilancio.GESTIONE.equals(faseBilancio) && !TipoProgetto.GESTIONE.equals(progetto.getTipoProgetto())))){
-			throw new BusinessException(ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("fase bilancio: " + faseBilancio.name() + " e progetto: " + progetto.getTipoProgetto().getDescrizione()));
+		
+		//SIAC-8900
+		if(!req.getByPassFaseBilancioProgetto()) {
+			if((faseBilancioPerProgettoPrevisione && !TipoProgetto.PREVISIONE.equals(progetto.getTipoProgetto()) 
+					|| (FaseBilancio.GESTIONE.equals(faseBilancio) && !TipoProgetto.GESTIONE.equals(progetto.getTipoProgetto())))){
+				throw new BusinessException(ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("fase bilancio: " + faseBilancio.name() + " e progetto: " + progetto.getTipoProgetto().getDescrizione()));
+			}
 		}
 	}
 
@@ -159,7 +209,7 @@ public class AggiornaAnagraficaProgettoService extends CheckedAccountBaseService
 	 * Controlla che il Provvedimento fornito in input al servizio non sia in stato <code>ANNULLATO</code>.
 	 */
 	private void checkProvvedimentoNonAnnullato() {
-		AttoAmministrativo attoAmministrativo = provvedimentoDad.findProvvedimentoById(progetto.getAttoAmministrativo().getUid());
+		AttoAmministrativo attoAmministrativo = attoAmministrativoDad.findProvvedimentoById(progetto.getAttoAmministrativo().getUid());
 		if(attoAmministrativo == null) {
 			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("atto amministrativo", "uid " + progetto.getAttoAmministrativo().getUid()));
 		}

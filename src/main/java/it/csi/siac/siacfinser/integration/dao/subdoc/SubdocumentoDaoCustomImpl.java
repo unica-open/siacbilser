@@ -32,14 +32,14 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDLiquidazioneSt
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDOrdinativoStatoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDProvCassaTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dao.common.AbstractDao;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.entity.SiacTDocFin;
-import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
+import it.csi.siac.siacfinser.integration.util.DataValiditaUtil;
 
 /**
  * Versione customizzata dell'originale SubdocumentoDaoImpl di bilancio, ci serve solo per la ricerca sub documenti
@@ -55,7 +55,7 @@ import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer> implements SubdocumentoDaoCustom {
 	
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	
 	/* (non-Javadoc)
@@ -445,7 +445,7 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 		}
 		
 		// 	SIAC-6076 introduco nuovo filtro:
-		if(!it.csi.siac.siacfinser.StringUtils.isEmpty(tipiDocDaEscludere)){
+		if(!it.csi.siac.siacfinser.StringUtilsFin.isEmpty(tipiDocDaEscludere)){
 			//String tipiDocumentoDaEscludere = buildElencoPerClausolaIN(tipiDocDaEscludere);
 			jpql.append(" AND "+aliasSubdoc+".siacTDoc.siacDDocTipo.docTipoCode NOT IN (:tipiDocumentoDaEscludere) ");
 			param.put("tipiDocumentoDaEscludere", tipiDocDaEscludere);
@@ -836,10 +836,10 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 			}
 			jpql.append(" EXISTS ( FROM SiacRCartacontDetSubdoc srccds " );
 			jpql.append(" WHERE ");
-			jpql.append(DataValiditaUtils.validitaForQuery("srccds"));
+			jpql.append(DataValiditaUtil.validitaForQuery("srccds"));
 			jpql.append("   AND  srccds.siacTSubdoc.subdocId = "+aliasSubdoc+".subdocId ");
 			jpql.append(" ) ");
-			DataValiditaUtils.aggiungiParametroDataValidita(param);
+			DataValiditaUtil.aggiungiParametroDataValidita(param);
 		}
 		
 		if(escludiGiaPagatiDaOrdinativoSpesa!=null && escludiGiaPagatiDaOrdinativoSpesa==true){
@@ -930,7 +930,7 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> param = new HashMap<String, Object>();
 		
-		param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, datiOperazione.getTs());
+		param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, datiOperazione.getTs());
 		
 		jpql.append(" SELECT sd.subdocId FROM SiacTSubdoc sd ");
 		
@@ -941,14 +941,14 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 		jpql.append("     FROM sd.siacRSubdocLiquidaziones rl, SiacTLiquidazione l ");
 		jpql.append("     WHERE ");
 		jpql.append("     rl.siacTLiquidazione = l ");
-		jpql.append("     AND ").append(DataValiditaUtils.validitaForQuery("rl"));
+		jpql.append("     AND ").append(DataValiditaUtil.validitaForQuery("rl"));
 		
 		//Liquidazione in stato VALIDO
 		jpql.append("     AND EXISTS ( ");
 		jpql.append("         FROM l.siacRLiquidazioneStatos ls ");
 		jpql.append("         WHERE  ");
 		jpql.append("         ls.siacDLiquidazioneStato.liqStatoCode = :liqStatoCode");
-		jpql.append("         AND ").append(DataValiditaUtils.validitaForQuery("ls"));
+		jpql.append("         AND ").append(DataValiditaUtil.validitaForQuery("ls"));
 		jpql.append("     ) ");
 		
 		param.put("liqStatoCode", SiacDLiquidazioneStatoEnum.Valido.getCodice());
@@ -958,13 +958,13 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 		jpql.append("         FROM l.siacRLiquidazioneAttoAmms laa, SiacTAttoAmm aa ");
 		jpql.append("         WHERE ");
 		jpql.append("         laa.siacTAttoAmm = aa ");
-		jpql.append("         AND ").append(DataValiditaUtils.validitaForQuery("laa"));
-		jpql.append("         AND ").append(DataValiditaUtils.validitaForQuery("aa"));
+		jpql.append("         AND ").append(DataValiditaUtil.validitaForQuery("laa"));
+		jpql.append("         AND ").append(DataValiditaUtil.validitaForQuery("aa"));
 		jpql.append("         AND EXISTS ( ");
 		jpql.append("             FROM aa.siacRAttoAmmStatos aas ");
 		jpql.append("             WHERE ");
 		jpql.append("             aas.siacDAttoAmmStato.attoammStatoCode = :attoammStatoCode");
-		jpql.append("             AND ").append(DataValiditaUtils.validitaForQuery("aas"));
+		jpql.append("             AND ").append(DataValiditaUtil.validitaForQuery("aas"));
 		jpql.append("         ) ");
 		jpql.append("     ) ");
 		
@@ -978,18 +978,18 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 		jpql.append("        		 otd.siacDOrdinativoTsDetTipo.ordTsDetTipoCode = :ordTsDetTipoCode ");
 		jpql.append("         		 AND otd.siacTOrdinativoT = ot ");
 		jpql.append("         		 AND ot.siacTOrdinativo = o ");
-		jpql.append("                AND ").append(DataValiditaUtils.validitaForQuery("otd"));
+		jpql.append("                AND ").append(DataValiditaUtil.validitaForQuery("otd"));
 		jpql.append("         		 AND EXISTS ( ");
 		jpql.append("            	 	FROM ot.siacRLiquidazioneOrds lo ");
 		jpql.append("            		WHERE " );
 		jpql.append("             		lo.siacTLiquidazione = l ");
-		jpql.append("                   AND ").append(DataValiditaUtils.validitaForQuery("lo"));
+		jpql.append("                   AND ").append(DataValiditaUtil.validitaForQuery("lo"));
 		jpql.append("         		    ) ");
 		jpql.append("         		 AND EXISTS ( ");
 		jpql.append("             	 	FROM o.siacROrdinativoStatos so ");
 		jpql.append("                	WHERE " );
 		jpql.append("               	so.siacDOrdinativoStato.ordinativoStatoCode NOT IN ( :ordinativoStatoCode) ");
-		jpql.append("                   AND ").append(DataValiditaUtils.validitaForQuery("so"));
+		jpql.append("                   AND ").append(DataValiditaUtil.validitaForQuery("so"));
 		jpql.append("         			) ");
 		jpql.append("     			) ");
 		jpql.append("     	  ) != l.liqImporto ");
@@ -1003,7 +1003,7 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 			
 		List<Integer> results = query.getResultList();
 		
-		return !it.csi.siac.siacfinser.StringUtils.isEmpty(results);
+		return !it.csi.siac.siacfinser.StringUtilsFin.isEmpty(results);
 
 	}
 	
@@ -1011,7 +1011,7 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 	public <ST extends SiacTBase>  List<ST> ricercaBySiacTDocFinMassive(List<SiacTDocFin> listaInput, String nomeEntity) {
 		List<ST> listaRitorno = new ArrayList<ST>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTDocFin>> esploso = it.csi.siac.siacfinser.StringUtils.esplodiInListe(listaInput, AbstractDao.DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTDocFin>> esploso = it.csi.siac.siacfinser.StringUtilsFin.esplodiInListe(listaInput, AbstractDao.DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTDocFin> listaIt : esploso){
 					List<ST> risultatoParziale = ricercaBySiacTDocFinMassiveCORE(listaIt, nomeEntity);
@@ -1020,7 +1020,7 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1055,8 +1055,8 @@ public class SubdocumentoDaoCustomImpl extends AbstractDao<SiacTSubdoc, Integer>
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, TimingUtils.getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, TimingUtils.getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);

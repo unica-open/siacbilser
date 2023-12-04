@@ -21,7 +21,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemDetTipo
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTBilElemDetVarElemDetFlagEnum;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoSingoloCapitolo;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * The Class VariazioneImportiSingoloCapitoloConverter.
@@ -31,7 +31,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class VariazioneImportiSingoloCapitoloConverter extends DozerConverter<VariazioneImportoSingoloCapitolo, SiacTVariazione>  {
 	
 	/** The log util */
-	private final LogUtil log = new LogUtil(getClass());
+	private final LogSrvUtil log = new LogSrvUtil(getClass());
 	@Autowired
 	private SiacTBilElemDetVarRepository siacTBilElemDetVarRepository;
 	

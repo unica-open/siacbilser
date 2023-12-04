@@ -30,6 +30,7 @@ import it.csi.siac.siacbilser.business.service.capitolouscitagestione.RicercaMov
 import it.csi.siac.siacbilser.business.service.capitolouscitagestione.RicercaPuntualeCapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.business.service.capitolouscitagestione.RicercaSinteticaCapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.business.service.capitolouscitagestione.RicercaSinteticaMassivaCapitoloUscitaGestioneService;
+import it.csi.siac.siacbilser.business.service.capitolouscitagestione.RicercaStanziamentiCapitoloGestioneService;
 import it.csi.siac.siacbilser.business.service.capitolouscitagestione.RicercaVariazioniCapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.business.service.capitolouscitagestione.VerificaAnnullabilitaCapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.business.service.capitolouscitagestione.VerificaEliminabilitaCapitoloUscitaGestioneService;
@@ -277,8 +278,10 @@ public class CapitoloUscitaGestioneServiceImpl implements CapitoloUscitaGestione
 	}
 
 	@Override
+	@WebMethod
+	@WebResult
 	public RicercaDisponibilitaCapitoloUscitaGestioneResponse ricercaDisponibilitaCapitoloUscitaGestione(RicercaDisponibilitaCapitoloUscitaGestione parameters) {
 		return BaseServiceExecutor.execute(appCtx, RicercaDisponibilitaCapitoloUscitaGestioneService.class, parameters);
 	}
-
+	
 }

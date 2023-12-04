@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * Impl di base per i {@link ResultSetExtractor}.
@@ -19,7 +19,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
  */
 public abstract class BaseImplResultSetExtractor<T> implements ResultSetExtractor<T> {
 
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	public BaseImplResultSetExtractor() {
 		super();

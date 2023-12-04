@@ -16,7 +16,6 @@ import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.PreDocumento;
 
 /**
- * The Class PreDocumentoSpesaMutuoConverter.
  */
 @Component
 public class PreDocumentoElencoDocumentiAllegatoConverter extends ExtendedDozerConverter<PreDocumento<?, ?>, SiacTPredoc> {

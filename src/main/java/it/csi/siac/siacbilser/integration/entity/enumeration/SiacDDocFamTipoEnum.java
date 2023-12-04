@@ -33,7 +33,7 @@ public enum SiacDDocFamTipoEnum {
 	public static final String CODICE_SPESA = "S";
 	public static final String CODICE_ENTRATA = "E";
 	public static final String CODICE_IVA_SPESA = "IS";
-	public static final String CODICE_IVA_ENTRATA = "IS";
+	public static final String CODICE_IVA_ENTRATA = "IE";
 	
 
 	/**

@@ -76,7 +76,7 @@ public abstract class AsyncBaseServiceFin<REQ extends ServiceRequest,
 		
 		InserisciOperazioneAsincResponse resIOA = inserisciOperazioneAsinc();
 		idOperazioneAsincrona = resIOA.getIdOperazione();
-		log.info(methodName, "Operazione asincrona inserita nel sistema. [idOperazioneAsincrona: " + idOperazioneAsincrona + "]");
+		log.debug(methodName, "Operazione asincrona inserita nel sistema. [idOperazioneAsincrona: " + idOperazioneAsincrona + "]");
 		res.setIdOperazioneAsincrona(idOperazioneAsincrona);
 		
 		aggiornaOperazioneAsinc(StatoOperazioneAsincronaEnum.STATO_OPASINC_AVVIATA);
@@ -115,7 +115,7 @@ public abstract class AsyncBaseServiceFin<REQ extends ServiceRequest,
 	 */	
 	protected void startService(){
 		final String methodName = "startService";
-		log.info(methodName, "Sto per avviare l'operazione Asincrona. [idOperazioneAsincrona: " + idOperazioneAsincrona + "]");
+		log.debug(methodName, "Sto per avviare l'operazione Asincrona. [idOperazioneAsincrona: " + idOperazioneAsincrona + "]");
 		/*Future<RES> future =*/ serviceExecutor.executeServiceTxRequiresNewAsync(service, originalRequest, responseHandler);
 		log.info(methodName, "Operazione Asincrona avviata correttamente. [idOperazioneAsincrona: " + idOperazioneAsincrona + "]");
 	}

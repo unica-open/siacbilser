@@ -21,6 +21,7 @@ import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.entity.SiacRVincoloAttr;
 import it.csi.siac.siacbilser.integration.entity.SiacRVincoloBilElem;
 import it.csi.siac.siacbilser.integration.entity.SiacRVincoloGenere;
+import it.csi.siac.siacbilser.integration.entity.SiacRVincoloRisorseVincolate;
 import it.csi.siac.siacbilser.integration.entity.SiacRVincoloStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTVincolo;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemTipoEnum;
@@ -68,6 +69,13 @@ public class VincoloCapitoliDaoImpl extends JpaDao<SiacTVincolo, Integer> implem
 			}
 		}
 		
+		//SIAC-7192
+		if(v.getSiacRVincoloRisorseVincolates() != null) {
+			for (SiacRVincoloRisorseVincolate r : v.getSiacRVincoloRisorseVincolates()) {
+				r.setDataModificaInserimento(now);
+			}
+		}
+		
 		v.setUid(null);		
 		super.save(v);
 		return v;
@@ -109,6 +117,13 @@ public class VincoloCapitoliDaoImpl extends JpaDao<SiacTVincolo, Integer> implem
 			}
 		}
 		
+		//SIAC-7192
+		if(vAttuale.getSiacRVincoloRisorseVincolates() != null) {
+			for (SiacRVincoloRisorseVincolate r : vAttuale.getSiacRVincoloRisorseVincolates()) {
+				r.setDataCancellazioneIfNotSet(now);
+			}
+		}
+		
 		
 		//inserimento elementi nuovi
 		if(v.getSiacRVincoloStatos()!=null){
@@ -134,11 +149,19 @@ public class VincoloCapitoliDaoImpl extends JpaDao<SiacTVincolo, Integer> implem
 			}
 		}
 		
+		//SIAC-7192
+		if(v.getSiacRVincoloRisorseVincolates() != null) {
+			for (SiacRVincoloRisorseVincolate r : v.getSiacRVincoloRisorseVincolates()) {
+				r.setDataModificaInserimento(now);
+			}
+		}
+		
 		v.setSiacTPeriodo(vAttuale.getSiacTPeriodo()); //Così facendo il periodo non è modificabile (ma per ora va bene).
 		super.update(v);
 		return v;
 		
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siacbilser.integration.dao.VincoloCapitoliDao#ricercaSinteticaVincoloCapitoli(java.lang.Integer, java.lang.String, it.csi.siac.siacbilser.integration.entity.enumeration.SiacDVincoloTipoEnum, java.lang.String, java.lang.Boolean, java.lang.Integer, it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemTipoEnum, java.util.List, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.springframework.data.domain.Pageable)
@@ -146,7 +169,10 @@ public class VincoloCapitoliDaoImpl extends JpaDao<SiacTVincolo, Integer> implem
 	@Override
 	public Page<SiacTVincolo> ricercaSinteticaVincoloCapitoli(Integer enteProprietarioId, String codiceVincolo, SiacDVincoloTipoEnum tipoVincolo,
 			String descrizioneVincolo, Boolean flagTrasferimentiVincolatiVincolo, Integer uidCapitolo, SiacDBilElemTipoEnum tipoCapitolo, List<SiacDBilElemTipoEnum> tipiCapitolo,
-			String annoCapitolo, String bilancioAnnoCapitolo, String numeroCapitolo, String numeroArticolo, String numeroUEB, Integer vincoloGenId, String bilAnno, Pageable pageable) {
+			String annoCapitolo, String bilancioAnnoCapitolo, String numeroCapitolo, String numeroArticolo, String numeroUEB, Integer vincoloGenId, Integer vincoloRisorsaVincolataId, String bilAnno, 
+			//task-52
+			boolean isRicercaCodiceLike,
+			Pageable pageable) {
 
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -158,14 +184,20 @@ public class VincoloCapitoliDaoImpl extends JpaDao<SiacTVincolo, Integer> implem
 		param.put("enteProprietarioId", enteProprietarioId);
 		
 		if(!StringUtils.isEmpty(codiceVincolo)){
-			jpql.append(" AND v.vincoloCode = :vincoloCode ");
+			//task-52
+			if(isRicercaCodiceLike) {
+				jpql.append(" AND ");
+				jpql.append(Utility.toJpqlSearchLike("v.vincoloCode", "CONCAT('%',:vincoloCode,'%')"));
+			} else {
+				jpql.append(" AND v.vincoloCode = :vincoloCode ");
+			}
 			param.put("vincoloCode", codiceVincolo);
 		}
 		
 		if(!StringUtils.isEmpty(descrizioneVincolo)) {
 			jpql.append(" AND ");
 			jpql.append(Utility.toJpqlSearchLike("v.vincoloDesc", "CONCAT('%',:vincoloDesc,'%')"));
-			jpql.append(" ) ");
+			//task-52 jpql.append(" ) ");
 			param.put("vincoloDesc", descrizioneVincolo);
 		}
 		
@@ -198,6 +230,17 @@ public class VincoloCapitoliDaoImpl extends JpaDao<SiacTVincolo, Integer> implem
 			jpql.append(" ) ");
 			param.put("vincoloGenId", vincoloGenId);
 		}
+
+		// SIAC-7192
+		if(vincoloRisorsaVincolataId != null) {
+			jpql.append(" AND EXISTS ( ");
+			jpql.append("     FROM v.siacRVincoloRisorseVincolates rvrv ");
+			jpql.append("     WHERE rvrv.dataCancellazione IS NULL ");
+			jpql.append("     AND rvrv.siacDVincoloRisorseVincolate.vincoloRisorseVincolateId = :vincoloRisorsaVincolataId ");
+			jpql.append(" ) ");
+			param.put("vincoloRisorsaVincolataId", vincoloRisorsaVincolataId);
+		}
+		
 		//SIAC-5790
 		if(StringUtils.isNotEmpty(bilAnno)) {
 			jpql.append(" AND v.siacTPeriodo.anno = :anno ");
@@ -299,5 +342,5 @@ public class VincoloCapitoliDaoImpl extends JpaDao<SiacTVincolo, Integer> implem
 		}		
 		return result;
 	}
-
+	
 }

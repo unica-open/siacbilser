@@ -1,0 +1,94 @@
+<project basedir="../" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+
+	<property name='reports' location="target/reports" />
+	<property name='SOAPUI_HOME' location="D:\dev\ide\SoapUI-5.2.0\bin"/>
+	
+	<property name='suite' value='SuiteA'/>
+	<property name='test.suite' value='${suite}'/>
+	<property name='soapui-project-xml-location' location='.\src\test\soapui\SIAC-INTEG-soapui-project.xml'/>
+	
+	
+	
+	<target name='init'>
+		<!-- carica il file di properties per l'ambiente target -->
+		<property file='buildfiles/${target}.properties' />
+		<property name='skip-run' value='skip'/>
+		<!--
+		-->
+	</target>
+	
+	<target name='clean'>
+		<delete dir="${reports}" />
+	</target>
+	
+	<target name="-run-tests.soapui" depends='init' unless='skip-run'>
+		
+		<echo>Testing Suite: ${test.suite} using url ${endpoint.url.service.fin}</echo>
+		<echo message="soapui location: ${SOAPUI_HOME}" level='verbose'/>
+		
+		<!-- test.suite is the name of test suite to run -->
+		<java fork="true" failonerror="false" classname="com.eviware.soapui.tools.SoapUITestCaseRunner">
+			<arg line="-j -f${reports}/raw -r -I -s${test.suite} -a ${soapui-project-xml-location}" />
+
+<!--			
+			<arg value="-ehttp://tst-srv1-forn2.bilancio.csi.it/siacbilser/RicercaService"/>
+			<arg value="-ehttp://localhost:8180/siacbilser/RicercaService"/>
+-->			
+			<arg value="-e${endpoint.url.service.fin}/RicercaService"/>
+			
+			
+			<jvmarg value="-Xms128m" />
+			<jvmarg value="-Xmx1024m" />
+			<jvmarg value="-Dsoapui.properties=soapui.properties" />
+			<jvmarg value="-Dsoapui.home=%SOAPUI_HOME%" />
+			<jvmarg value="-Dsoapui.ext.libraries=${SOAPUI_HOME}/ext " />
+			<jvmarg value="-Dsoapui.ext.listeners=${SOAPUI_HOME}/listeners" />
+			<jvmarg value="-Dsoapui.ext.actions=${SOAPUI_HOME}/actions " />
+
+			<classpath>
+				<pathelement location="${SOAPUI_HOME}/soapui-5.2.0.jar" />
+				<pathelement location="${SOAPUI_HOME}" />
+				<fileset dir="${SOAPUI_HOME}/../lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	
+	<target name='run-tests' depends="-run-tests.soapui">
+		<!--   
+		<echo>running test</echo>
+		-->
+	</target>
+	
+	<target name="test" depends='run-tests'>
+
+		<mkdir dir='${reports}\html'/>
+		<mkdir dir='${reports}\raw'/>
+
+		<fileset id="aaa" dir="${reports}/raw/">
+			<include name='${test.suite}-*.txt'/>
+		</fileset>
+		<property name="cp" refid="aaa"/>
+		
+		<junitreport todir="${reports}">
+			<fileset dir="${reports}/raw/">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<!--   -->
+			<report format="frames" styledir="buildfiles/junitreport"
+				todir="${reports}\html\">
+				<param name="allsteps" expression='${cp}'/>
+			</report>
+		</junitreport>
+		
+	</target>
+
+	<target name='ppp'>
+		<xslt processor="com.sun.org.apache.xalan.internal.xslt.Processor"
+			  style="buildfiles/junitreport/step-parser.xsl" in="etc/aaa.xml" out='target/bbb.xml'>
+		</xslt>
+	</target>
+	
+</project>

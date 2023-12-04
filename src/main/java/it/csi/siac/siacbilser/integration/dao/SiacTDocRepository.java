@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 
 import it.csi.siac.siacbilser.integration.entity.SiacDDocFamTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacDDocStato;
+import it.csi.siac.siacbilser.integration.entity.SiacDSiopeDocumentoTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacRDocOnere;
 import it.csi.siac.siacbilser.integration.entity.SiacRDocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTBil;
@@ -651,4 +652,78 @@ public interface SiacTDocRepository extends JpaRepository<SiacTDoc, Integer> {
 			+ " ) "
 			)
 	BigDecimal sumImportoMenoImportoDaDedurreSubdocNonACoperturaByDocId(@Param("docId") Integer docId);
+
+
+	@Query(" SELECT td.siacDSiopeDocumentoTipo "
+			+ " FROM SiacTDoc td "
+			+ " WHERE td.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			+ " AND td.docId = :docId "
+		)
+	SiacDSiopeDocumentoTipo findSiacDSiopeDocumentoTipoByDocId(@Param("docId") Integer docId, @Param("enteProprietarioId") Integer enteProprietarioId);
+
+
+	@Query("FROM SiacTDoc td "
+		+ " WHERE td.siacDDocTipo.siacDDocFamTipo.docFamTipoCode='S' "
+		+ " AND td.siacTEnteProprietario.enteProprietarioId=:idEnte "
+		+ " AND (CAST(:anno AS integer) IS NULL OR td.docAnno=:anno) "
+		+ " AND (CAST(:numeroMandato AS string) IS NULL OR EXISTS ( "
+		+ "		SELECT 1 FROM td.siacTSubdocs ts "
+		+ "		JOIN ts.siacRSubdocOrdinativoTs rsot "
+		+ "		JOIN rsot.siacTOrdinativoT.siacTOrdinativo to "
+		+ "     WHERE to.ordAnno=:annoMandato AND to.ordNumero=:numeroMandato "
+		+ "     AND to.siacTBil.siacTPeriodo.anno=CAST(:annoBilancio AS string) "
+		+ "		AND to.siacDOrdinativoTipo.ordTipoCode='P' "
+		+ "     AND EXISTS ("
+		+ "         SELECT 1 FROM to.siacROrdinativoStatos ros "
+		+ " 			WHERE ros.siacDOrdinativoStato.ordinativoStatoCode <> 'A' "
+		+ " 			AND ros.dataCancellazione IS NULL "
+		+ " 			AND ros.dataInizioValidita < CURRENT_TIMESTAMP "
+		+ " 			AND (ros.dataFineValidita IS NULL OR ros.dataFineValidita > CURRENT_TIMESTAMP) "
+		+ "     ) "
+		+ " 	AND ts.dataCancellazione IS NULL "
+		+ " 	AND ts.dataInizioValidita < CURRENT_TIMESTAMP "
+		+ " 	AND (ts.dataFineValidita IS NULL OR ts.dataFineValidita > CURRENT_TIMESTAMP) "
+		+ " 	AND rsot.dataCancellazione IS NULL "
+		+ " 	AND rsot.dataInizioValidita < CURRENT_TIMESTAMP "
+		+ " 	AND (rsot.dataFineValidita IS NULL OR rsot.dataFineValidita > CURRENT_TIMESTAMP) "
+		+ "	)) "
+		+ " AND (CAST(:cig AS string) IS NULL OR EXISTS ( "
+		+ "		SELECT 1 FROM td.siacTSubdocs ts "
+		+ "		JOIN ts.siacRSubdocAttrs rsa "
+		+ "     WHERE rsa.siacTAttr.attrCode='cig' "
+		+ "		AND rsa.testo=:cig "
+		+ " 	AND ts.dataCancellazione IS NULL "
+		+ " 	AND ts.dataInizioValidita < CURRENT_TIMESTAMP "
+		+ " 	AND (ts.dataFineValidita IS NULL OR ts.dataFineValidita > CURRENT_TIMESTAMP) "
+		+ " 	AND rsa.dataCancellazione IS NULL "
+		+ " 	AND rsa.dataInizioValidita < CURRENT_TIMESTAMP "
+		+ " 	AND (rsa.dataFineValidita IS NULL OR rsa.dataFineValidita > CURRENT_TIMESTAMP) "
+		+ "	)) "
+		+ " AND (CAST(:annoImpegno AS string) IS NULL AND CAST(:numeroImpegno AS string) IS NULL OR EXISTS ( "
+		+ "		SELECT 1 FROM td.siacTSubdocs ts "
+		+ "		JOIN ts.siacRSubdocMovgestTs rsmt "
+		+ "		JOIN rsmt.siacTMovgestT.siacTMovgest tm "
+		+ "     WHERE tm.movgestAnno=:annoImpegno AND tm.movgestNumero=:numeroImpegno "
+		+ "     AND tm.siacTBil.siacTPeriodo.anno=CAST(:annoBilancio AS string) "
+		+ " 	AND rsmt.dataCancellazione IS NULL "
+		+ " 	AND rsmt.dataInizioValidita < CURRENT_TIMESTAMP "
+		+ " 	AND (rsmt.dataFineValidita IS NULL OR rsmt.dataFineValidita > CURRENT_TIMESTAMP) "
+		+ " 	AND tm.dataCancellazione IS NULL "
+		+ " 	AND tm.dataInizioValidita < CURRENT_TIMESTAMP "
+		+ " 	AND (tm.dataFineValidita IS NULL OR tm.dataFineValidita > CURRENT_TIMESTAMP) "
+		+ " ))"
+		+ " AND td.dataCancellazione IS NULL "
+		+ " AND td.dataInizioValidita < CURRENT_TIMESTAMP "
+		+ " AND (td.dataFineValidita IS NULL OR td.dataFineValidita > CURRENT_TIMESTAMP) "
+	)
+	List<SiacTDoc> findSiacTDocSpesa( 
+			@Param("idEnte") Integer idEnte, 
+			@Param("annoBilancio") Integer annoBilancio, 
+			@Param("anno") Integer anno, 
+			@Param("cig") String cig, 
+			@Param("annoImpegno") Integer annoImpegno, 
+			@Param("numeroImpegno") BigDecimal numeroImpegno,
+			@Param("annoMandato") Integer annoMandato, 
+			@Param("numeroMandato") BigDecimal numeroMandato
+	);
 }

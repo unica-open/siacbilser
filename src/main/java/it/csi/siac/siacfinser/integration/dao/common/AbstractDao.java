@@ -20,10 +20,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import it.csi.siac.siaccommonser.integration.dao.base.JpaDao;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dao.common.dto.CodificaImportoDto;
-import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
+import it.csi.siac.siacfinser.integration.util.DataValiditaUtil;
 
 	
 public class AbstractDao<T, ID extends Serializable> extends JpaDao<T, ID>{
@@ -37,8 +37,11 @@ public class AbstractDao<T, ID extends Serializable> extends JpaDao<T, ID>{
 	
 	protected String buildClausolaRicercaAttr(String attrCode, String valoreRicerca, String aliasTAtt, String aliasRAtt,String paramName,Map<String,Object> param){
 		String clausola = "";
-		if(!StringUtils.isEmpty(valoreRicerca)){
-			clausola = clausola + " AND  "+aliasTAtt+".attrCode = '"+attrCode+"' AND UPPER("+aliasRAtt+".testo) LIKE UPPER(:"+paramName+") ";
+		if(!StringUtilsFin.isEmpty(valoreRicerca)){
+			
+			clausola = clausola + " AND  "+aliasTAtt+".attrCode = '"+attrCode +"' AND UPPER("+aliasRAtt+".testo) LIKE UPPER(:"+paramName+") " 
+					//SIAC-8302
+					+ DataValiditaUtil.ottieniClauseCheEscludeRecordCancellatiLogicamente(aliasRAtt);
 			String cupLike = buildLikeString(valoreRicerca);
 			param.put(paramName, cupLike);
 		}
@@ -47,7 +50,7 @@ public class AbstractDao<T, ID extends Serializable> extends JpaDao<T, ID>{
 	
 	protected String buildClausolaLikeGenerico(StringBuilder jpql, String colonna, String valoreRicerca,String paramName,Map<String,Object> param){
 		String clausola = "";
-		if(!StringUtils.isEmpty(valoreRicerca)){
+		if(!StringUtilsFin.isEmpty(valoreRicerca)){
 			clausola = clausola + " AND UPPER("+colonna+") LIKE UPPER(:"+paramName+") ";
 			String likeValue = buildLikeString(valoreRicerca);
 			param.put(paramName, likeValue);
@@ -76,7 +79,7 @@ public class AbstractDao<T, ID extends Serializable> extends JpaDao<T, ID>{
 	
 	protected String buildClausolaRicercaTClass(List<String> classCode, String codiceDaCercare, String aliasTClass, String aliasRClass,String paramName,Map<String,Object> param){
 		String clausola = "";
-		if(!StringUtils.isEmpty(codiceDaCercare)){
+		if(!StringUtilsFin.isEmpty(codiceDaCercare)){
 			
 			String elencoInOr = null;
 			
@@ -97,7 +100,7 @@ public class AbstractDao<T, ID extends Serializable> extends JpaDao<T, ID>{
 			
 			//clausola = clausola + " AND  "+aliasTAtt+".attrCode = '"+attrCode+"' AND UPPER("+aliasRAtt+".testo) LIKE UPPER(:"+paramName+") ";
 			clausola = clausola + " AND  "+ elencoInOr +" AND UPPER("+aliasTClass+".classifCode) = UPPER(:"+paramName+") ";
-			clausola = clausola + " AND  " + DataValiditaUtils.validitaForQuery(aliasRClass);
+			clausola = clausola + " AND  " + DataValiditaUtil.validitaForQuery(aliasRClass);
 			param.put(paramName, codiceDaCercare);
 		}
 		return clausola;
@@ -191,11 +194,11 @@ public class AbstractDao<T, ID extends Serializable> extends JpaDao<T, ID>{
 	 * @param jpql
 	 */
 	protected void buildClausolaAlmentoUnoUguale(String campoUguaglianza, String aliasParams,List<String> valori, Map<String,Object> param,StringBuilder jpql){
-		if(!StringUtils.isEmpty(valori)){
+		if(!StringUtilsFin.isEmpty(valori)){
 			jpql.append(" AND ( ");
 			int statoIndex = 0;
 			for(String statoIt: valori){
-				if(!StringUtils.isEmpty(statoIt)){
+				if(!StringUtilsFin.isEmpty(statoIt)){
 					if(statoIndex>0){
 						jpql.append(" OR ");
 					}

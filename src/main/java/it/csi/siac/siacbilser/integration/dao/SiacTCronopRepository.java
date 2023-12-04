@@ -178,7 +178,7 @@ public interface SiacTCronopRepository extends JpaRepository<SiacTCronop, Intege
 			+ " ) "
 			)
 	List<SiacTCronop> findCronopBySiacTAttoAmmIdAndStatoCode(@Param("attoammId") Integer attoammId, @Param("cronopStatoCode") String cronopStatoCode);
-
+	
 	@Query( " SELECT tc.cronopCode "
 			+ " FROM SiacTCronop tc "
 			+ " WHERE tc.dataCancellazione IS NULL  "
@@ -191,6 +191,12 @@ public interface SiacTCronopRepository extends JpaRepository<SiacTCronop, Intege
 			+ " 	AND tced.annoEntrata IS NOT NULL "
 			+ " 	AND tced.siacTCronopElem.dataCancellazione IS NULL "
 			+ " 	AND tced.dataCancellazione IS NULL "
+			//SIAC-8841
+			+ "     AND NOT EXISTS ( "
+			+ "         SELECT 1 FROM tc.siacRCronopStatos rcs "
+			+ "         WHERE rcs.siacDCronopStato.cronopStatoCode = 'AN'"
+			+ "         AND rcs.dataCancellazione IS NULL"
+			+ "     )  "
 			+ " 	GROUP BY tced.siacTCronopElem.siacTCronop.cronopId "
 			+ " ) "
 			)
@@ -226,5 +232,23 @@ public interface SiacTCronopRepository extends JpaRepository<SiacTCronop, Intege
 			@Param("attoammTipoId") Integer attoammTipoId,
 			@Param("attoammSacId") Integer attoammSacId,
 			@Param("enteProprietarioId") Integer enteProprietarioId);
+	
+	
+	@Query("SELECT c.cronopId FROM SiacTCronop c "
+			+ " WHERE  c.siacTBil.bilId = :bilIdSuccessivo "
+			+ "   AND  c.siacTProgramma.programmaId = :programmaId "
+			+ "   AND c.dataCancellazione IS NULL "
+			+ "   AND c.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			+ " AND EXISTS ( "
+			+ "   FROM  SiacTCronop stc " 
+			+ "   WHERE stc.cronopId = :cronopId "
+			+ "   AND  stc.cronopCode = c.cronopCode "
+			+ "   AND  stc.cronopDesc = c.cronopDesc "
+			+ "   AND  stc.siacTEnteProprietario.enteProprietarioId = c.siacTEnteProprietario.enteProprietarioId "	
+			+ "   AND  stc.dataCancellazione IS NULL ) ")
+	Integer findSiacCronopAnnoSuccByCronopIdAndProgettoId(@Param("cronopId") Integer cronopId, @Param("programmaId") Integer programmaId, @Param("bilIdSuccessivo") Integer bilIdSuccessivo, @Param("enteProprietarioId") Integer enteProprietarioId);
+
+	
+	
 	
 }

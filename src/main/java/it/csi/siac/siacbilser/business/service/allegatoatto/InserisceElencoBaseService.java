@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.service.documentospesa.AggiornaStatoDocumentoDiSpesaService;
 import it.csi.siac.siacbilser.integration.dad.AllegatoAttoDad;
@@ -27,6 +28,7 @@ import it.csi.siac.siacbilser.integration.dad.SubdocumentoSpesaDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceElenco;
@@ -36,21 +38,29 @@ import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
+import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceLiquidazione;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceLiquidazioneResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaModalitaPagamentoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaModalitaPagamentoPerChiaveResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
+import it.csi.siac.siacfinser.integration.dad.AccertamentoOttimizzatoDad;
+import it.csi.siac.siacfinser.integration.dad.ImpegnoOttimizzatoDad;
+import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoRicercaMovimentoPkDto;
+import it.csi.siac.siacfinser.integration.dao.common.dto.PaginazioneSubMovimentiDto;
 import it.csi.siac.siacfinser.model.Accertamento;
-import it.csi.siac.siacfinser.model.ContoTesoreria;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.MovimentoGestione;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione.StatoOperativoLiquidazione;
+import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestione;
+import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestione.StatoOperativoModificaMovimentoGestione;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaSoggettoK;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeTipoDebito;
@@ -83,7 +93,13 @@ public abstract class InserisceElencoBaseService extends CheckedAccountBaseServi
 	private SoggettoService soggettoService;
 	@Autowired
 	private LiquidazioneService liquidazioneService;
-
+	
+	//SIAC-7470
+	@Autowired
+	private ImpegnoOttimizzatoDad impegnoOttimizzatoDad;
+	@Autowired
+	private AccertamentoOttimizzatoDad accertamentoOttimizzatoDad;
+	
 	protected ElencoDocumentiAllegato elencoDocumentiAllegato;
 	protected Bilancio bilancio;
 	
@@ -239,9 +255,6 @@ public abstract class InserisceElencoBaseService extends CheckedAccountBaseServi
 		
 		l.setForza(true);
 		
-		if(subdoc.getVoceMutuo() != null  && StringUtils.isNotBlank(subdoc.getVoceMutuo().getNumeroMutuo())) {
-			l.setNumeroMutuo(integerize(subdoc.getVoceMutuo().getNumeroMutuo()));
-		}
 		
 		//popolo la quota con dati minimi per il documento padre
 		SubdocumentoSpesa quota = new SubdocumentoSpesa();
@@ -454,7 +467,7 @@ public abstract class InserisceElencoBaseService extends CheckedAccountBaseServi
 	}
 	
 	protected String getDescrizone(MovimentoGestione movimentoGestione) {
-		return movimentoGestione.getAnnoMovimento()+"/"+movimentoGestione.getNumero();
+		return movimentoGestione.getAnnoMovimento()+"/"+movimentoGestione.getNumeroBigDecimal();
 	}
 	
 	protected boolean isResiduo(MovimentoGestione movimentoGestione) {
@@ -465,6 +478,127 @@ public abstract class InserisceElencoBaseService extends CheckedAccountBaseServi
 
 	protected boolean isAccountConPermessoElenchiResidui() {
 		return !super.isAzioneConsentita("OP-COM-insAllegatoAttoNoRes");
+	}
+	
+	//SIAC-7470
+	protected boolean isBloccoRORAttivo(){
+		return super.isAzioneConsentita(AzioneConsentitaEnum.BLOCCO_SU_LIQ_IMP_RESIDUI.getNomeAzione()) || super.isAzioneConsentita(AzioneConsentitaEnum.BLOCCO_SU_INCASSI_RESIDUI.getNomeAzione()); 
+	}
+	
+	//SIAC-7470
+	protected void checkBloccoRor(){
+		boolean bloccoRorErrorImp = false;
+		boolean bloccoRorErrorAcc = false;
+		//impegni
+		for(SubdocumentoSpesa ss : elencoDocumentiAllegato.getSubdocumentiSpesa()) {
+			Impegno impegnoOSubImpegno = caricaDatiImpegno(ss);
+			//SIAC-7470
+			Impegno impegnoROR = this.ricaricaImpegno(impegnoOSubImpegno);
+			if(impegnoROR != null){
+				bloccoRorErrorImp = this.escludiImpegnoPerBloccoROR(impegnoROR, bilancio.getAnno());
+				//se l'impegno ha superato i test, verifico gli eventuali subImpegni
+				if(!bloccoRorErrorImp && impegnoROR.getElencoSubImpegni() != null && !impegnoROR.getElencoSubImpegni().isEmpty()){
+					for(int k = 0; k < impegnoROR.getElencoSubImpegni().size(); k++){
+						bloccoRorErrorImp = this.escludiImpegnoPerBloccoROR(impegnoROR.getElencoSubImpegni().get(k), bilancio.getAnno());
+					}
+				}
+			}
+		}
+		//accertamenti
+		for(SubdocumentoEntrata se : elencoDocumentiAllegato.getSubdocumentiEntrata()) {
+			Accertamento accertamentoOSubAccertamento = caricaDatiAccertamento(se);
+			//SIAC-7470
+			Accertamento accertamentoROR = this.ricaricaAccertamento(accertamentoOSubAccertamento);
+			if(accertamentoROR != null){
+				bloccoRorErrorAcc = this.escludiAccertamentoPerBloccoROR(accertamentoROR, bilancio.getAnno());
+				//se l'impegno ha superato i test, verifico gli eventuali subImpegni
+				if(!bloccoRorErrorAcc && accertamentoROR.getElencoSubAccertamenti() != null && !accertamentoROR.getElencoSubAccertamenti().isEmpty()){
+					for(int k = 0; k < accertamentoROR.getElencoSubAccertamenti().size(); k++){
+						bloccoRorErrorAcc = this.escludiAccertamentoPerBloccoROR(accertamentoROR.getElencoSubAccertamenti().get(k), bilancio.getAnno());
+					}
+				}
+			}
+		}
+		//errori
+		if(bloccoRorErrorAcc || bloccoRorErrorImp){
+			throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore((bloccoRorErrorImp ? "Impegno/sub impegno" : "Accertamento/sub accertamento") + " residuo non utilizzabile"));
+		}
+	}
+	
+	//SIAC-7470
+	private Impegno ricaricaImpegno(Impegno param){
+		Impegno result = null;
+		DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
+		caricaDatiOpzionaliDto.setEscludiAnnullati(true);
+		PaginazioneSubMovimentiDto paginazioneSubMovimentiDto = new PaginazioneSubMovimentiDto();
+		paginazioneSubMovimentiDto.setNoSub(false);
+		EsitoRicercaMovimentoPkDto esitoRicerca = impegnoOttimizzatoDad.ricercaMovimentoPk(req.getRichiedente(), ente, 
+				String.valueOf(bilancio.getAnno()), param.getAnnoMovimento(), param.getNumeroBigDecimal(),
+				paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, CostantiFin.MOVGEST_TIPO_IMPEGNO, true, false);
+		if(esitoRicerca != null && esitoRicerca.getMovimentoGestione() != null){
+			result = (Impegno) esitoRicerca.getMovimentoGestione();
+		}
+		return result;
+	}
+	
+	//SIAC-7470
+	private Accertamento ricaricaAccertamento(Accertamento param){
+		Accertamento result = null;
+		DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
+		caricaDatiOpzionaliDto.setEscludiAnnullati(true);
+		PaginazioneSubMovimentiDto paginazioneSubMovimentiDto = new PaginazioneSubMovimentiDto();
+		paginazioneSubMovimentiDto.setNoSub(false);
+		EsitoRicercaMovimentoPkDto esitoRicerca = accertamentoOttimizzatoDad.ricercaMovimentoPk(req.getRichiedente(), ente,
+				String.valueOf(bilancio.getAnno()), param.getAnnoMovimento(), param.getNumeroBigDecimal(), 
+				paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, true, true);
+		if(esitoRicerca!=null && esitoRicerca.getMovimentoGestione()!=null){
+			result = (Accertamento) esitoRicerca.getMovimentoGestione();
+		}
+		return result;
+	}
+	
+	//SIAC-7470
+	private boolean escludiAccertamentoPerBloccoROR(Accertamento accertamento, Integer annoEsercizio){
+		boolean escludiXBloccoROR = false;
+		if(super.isAzioneConsentita(AzioneConsentitaEnum.BLOCCO_SU_INCASSI_RESIDUI.getNomeAzione()) && 
+			(accertamento.getAnnoMovimento() > 0 && annoEsercizio != null && accertamento.getAnnoMovimento() < annoEsercizio)){
+			escludiXBloccoROR = true;
+			if(accertamento.getListaModificheMovimentoGestioneEntrata() != null && !accertamento.getListaModificheMovimentoGestioneEntrata().isEmpty()){
+				for(int j = 0; j < accertamento.getListaModificheMovimentoGestioneEntrata().size(); j++){
+					ModificaMovimentoGestione mmg = accertamento.getListaModificheMovimentoGestioneEntrata().get(j);
+					if(mmg.getTipoModificaMovimentoGestione() != null && mmg.getTipoModificaMovimentoGestione().equalsIgnoreCase(ModificaMovimentoGestione.CODICE_ROR_DA_MANTENERE) &&
+						mmg.getAttoAmministrativo() != null && mmg.getAttoAmministrativo().getStatoOperativo() != null && mmg.getStatoOperativoModificaMovimentoGestione() != null &&
+						mmg.getAttoAmministrativo().getStatoOperativo().equals(StatoOperativoAtti.DEFINITIVO.name()) && 
+						!(mmg.getStatoOperativoModificaMovimentoGestione().name().equals(StatoOperativoModificaMovimentoGestione.ANNULLATO.name()))){
+							escludiXBloccoROR = false;
+							break;
+					}
+				}
+			}
+		}
+		return escludiXBloccoROR;
+	}
+	
+	//SIAC-7470
+	private boolean escludiImpegnoPerBloccoROR(Impegno impegno, Integer annoEsercizio){
+		boolean escludiXBloccoROR = false;
+		if(super.isAzioneConsentita(AzioneConsentitaEnum.BLOCCO_SU_LIQ_IMP_RESIDUI.getNomeAzione()) && 
+			(impegno.getAnnoMovimento() > 0 && annoEsercizio != null && impegno.getAnnoMovimento() < annoEsercizio)){
+			escludiXBloccoROR = true;
+			if(impegno.getListaModificheMovimentoGestioneSpesa() != null && !impegno.getListaModificheMovimentoGestioneSpesa().isEmpty()){
+				for(int j = 0; j < impegno.getListaModificheMovimentoGestioneSpesa().size(); j++){
+					ModificaMovimentoGestione mmg = impegno.getListaModificheMovimentoGestioneSpesa().get(j);
+					if(mmg.getTipoModificaMovimentoGestione() != null && mmg.getTipoModificaMovimentoGestione().equalsIgnoreCase(ModificaMovimentoGestione.CODICE_ROR_DA_MANTENERE) &&
+						mmg.getAttoAmministrativo() != null && mmg.getAttoAmministrativo().getStatoOperativo() != null && mmg.getStatoOperativoModificaMovimentoGestione() != null &&
+						mmg.getAttoAmministrativo().getStatoOperativo().equals(StatoOperativoAtti.DEFINITIVO.name()) && 
+						!(mmg.getStatoOperativoModificaMovimentoGestione().name().equals(StatoOperativoModificaMovimentoGestione.ANNULLATO.name()))){
+							escludiXBloccoROR = false;
+							break;
+					}
+				}
+			}
+		}
+		return escludiXBloccoROR;
 	}
 	
 	/**

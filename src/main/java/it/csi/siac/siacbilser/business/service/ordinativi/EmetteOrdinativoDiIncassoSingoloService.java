@@ -4,6 +4,8 @@
 */
 package it.csi.siac.siacbilser.business.service.ordinativi;
 
+import java.util.List;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -165,10 +167,16 @@ public class EmetteOrdinativoDiIncassoSingoloService extends EmetteOrdinativiDaE
 		}catch(BusinessException be){
 			log.info(methodName, "subdocumento scartato! uid:"+ subdocumentoEntrata.getUid() + ". Errore: "+ (be.getErrore()!=null? be.getErrore().getTesto():"null"));
 			Messaggio messaggio = new Messaggio("QUOTA_SCARTATA", be.getErrore().getTesto());
-			res.setMessaggio(messaggio);
+			res.addMessaggio(messaggio);
 			res.setSubdocumentoScartato(subdocumentoEntrata);
 			return false; //Il subdocumento viene scartato. Si continua con il prossimo.
 		}
+	}
+	
+	@Override
+	//SIAC-8017-CMTO
+	protected void impostaMessaggiInResponse(List<Messaggio> messaggi) {
+		res.addMessaggi(messaggi);
 	}
 
 }

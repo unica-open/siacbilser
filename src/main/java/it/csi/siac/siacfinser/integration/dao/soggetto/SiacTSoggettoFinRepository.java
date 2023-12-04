@@ -14,6 +14,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import it.csi.siac.siacbilser.integration.entity.SiacDSoggettoClasse;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsSogclasseFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTClassFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTModpagFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTModpagModFin;
@@ -369,6 +371,17 @@ public interface SiacTSoggettoFinRepository extends JpaRepository<SiacTSoggettoF
 			@Param("loginModifica") String loginModifica
 	);
 	
+	
+	//SIAC-7619
+	@Query(" SELECT r "
+			+ " FROM SiacDSoggettoClasse s "
+			+ " JOIN s.siacRMovgestTsSogclasses r "
+			+ " WHERE s.dataCancellazione is NULL "
+			+ " AND r.dataCancellazione IS NULL "
+			+ " AND r.siacTMovgestT.movgestTsId = :movgestTsId "
+			+ " AND s.dataInizioValidita < CURRENT_TIMESTAMP "
+			+ " AND (s.dataFineValidita is NULL or s.dataFineValidita > CURRENT_TIMESTAMP) ")
+	List<SiacRMovgestTsSogclasseFin> findSiacRSoggettoClasseBySiacTMovgestTs(@Param("movgestTsId") Integer movgestTsId);
 	
 	
 }

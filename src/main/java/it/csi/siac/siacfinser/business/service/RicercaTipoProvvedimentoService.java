@@ -20,7 +20,7 @@ import it.csi.siac.siacfinser.integration.dad.ProvvedimentoFinDad;
 public class RicercaTipoProvvedimentoService extends AbstractBaseService<RicercaTipoProvvedimento, RicercaTipoProvvedimentoResponse> {
 
 	@Autowired
-	ProvvedimentoFinDad provvedimentoDad;
+	ProvvedimentoFinDad attoAmministrativoDad;
 	
 	@Override
 	protected void init() {
@@ -36,7 +36,7 @@ public class RicercaTipoProvvedimentoService extends AbstractBaseService<Ricerca
 	@Override
 	public void execute() {
 		
-		TipoAtto tipoAtto = provvedimentoDad.getTipoAttoByCodice(req.getEnte(), req.getCodice());
+		TipoAtto tipoAtto = attoAmministrativoDad.getTipoAttoByCodice(req.getEnte(), req.getCodice());
 		res.setTipoAtto(tipoAtto);
 	}
 

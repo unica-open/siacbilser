@@ -129,9 +129,6 @@ public class SiacTPredoc extends SiacTEnteBaseExt {
 	@OneToMany(mappedBy="siacTPredoc", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
 	private List<SiacRPredocSubdoc> siacRPredocSubdocs;
 	
-	@OneToMany(mappedBy="siacTPredoc", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
-	private List<SiacRMutuoVocePredoc> siacRMutuoVocePredocs;
-
 	//bi-directional many-to-one association to SiacDContotesoreria
 	/** The siac d contotesoreria. */
 	@ManyToOne
@@ -783,49 +780,7 @@ public class SiacTPredoc extends SiacTEnteBaseExt {
 		return siacRPredocSubdoc;
 	}
 	
-	/**
-	 * Gets the siac r mutuo voce predocs.
-	 *
-	 * @return the siac r mutuo voce predocs
-	 */
-	public List<SiacRMutuoVocePredoc> getSiacRMutuoVocePredocs() {
-		return this.siacRMutuoVocePredocs;
-	}
 
-	/**
-	 * Sets the siac r mutuo voce predocs.
-	 *
-	 * @param SiacRMutuoVocePredoc the new siac r mutuo voce predocs
-	 */
-	public void setSiacRMutuoVocePredocs(List<SiacRMutuoVocePredoc> siacRMutuoVocePredocs) {
-		this.siacRMutuoVocePredocs = siacRMutuoVocePredocs;
-	}
-
-	/**
-	 * Adds the siac r mutuo voce predoc.
-	 *
-	 * @param SiacRMutuoVocePredoc the siac r mutuo voce predoc
-	 * @return the siac r mutuo voce predoc
-	 */
-	public SiacRMutuoVocePredoc addSiacRMutuoVocePredoc(SiacRMutuoVocePredoc siacRMutuoVocePredoc) {
-		getSiacRMutuoVocePredocs().add(siacRMutuoVocePredoc);
-		siacRMutuoVocePredoc.setSiacTPredoc(this);
-
-		return siacRMutuoVocePredoc;
-	}
-
-	/**
-	 * Removes the siac r mutuo voce predoc.
-	 *
-	 * @param siacRPredocSubdoc the siac r mutuo voce predoc
-	 * @return the siac r mutuo voce predoc
-	 */
-	public SiacRMutuoVocePredoc removeSiacRMutuoVocePredoc(SiacRMutuoVocePredoc siacRMutuoVocePredoc) {
-		getSiacRMutuoVocePredocs().remove(siacRMutuoVocePredoc);
-		siacRMutuoVocePredoc.setSiacTPredoc(null);
-
-		return siacRMutuoVocePredoc;
-	}
 
 	/**
 	 * Gets the siac d contotesoreria.

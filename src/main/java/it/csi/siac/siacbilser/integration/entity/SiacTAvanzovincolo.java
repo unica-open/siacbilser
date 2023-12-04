@@ -14,7 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import it.csi.siac.siacfinser.integration.entity.base.SiacTEnteBase;
+//SIAC-7930
+import it.csi.siac.siacbilser.integration.entity.SiacTEnteBase;
 
 
 /**

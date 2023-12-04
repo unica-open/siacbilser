@@ -22,9 +22,11 @@ public class AggiornaTipoComponenteImportiCapitoloService extends BaseTipoCompon
 	protected void checkServiceParam() throws ServiceParamError {
 		checkEntita(req.getTipoComponenteImportiCapitolo(), "tipo componente importi capitolo");
 		//checkNotNull(req.getTipoComponenteImportiCapitolo().getAnno(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno"));
-		checkNotNull(req.getTipoComponenteImportiCapitolo().getCodice(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice"));
+		//SIAC-7492
+//		checkNotNull(req.getTipoComponenteImportiCapitolo().getCodice(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice"));
 		checkNotNull(req.getTipoComponenteImportiCapitolo().getDescrizione(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("descrizione"));
-		checkNotNull(req.getTipoComponenteImportiCapitolo().getTipoGestioneComponenteImportiCapitolo(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("tipo gestione"));
+		//SIAC-7349
+//		checkNotNull(req.getTipoComponenteImportiCapitolo().getTipoGestioneComponenteImportiCapitolo(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("tipo gestione"));
 		checkCondition(
 				req.getTipoComponenteImportiCapitolo().getDataInizioValidita() == null || 
 					req.getTipoComponenteImportiCapitolo().getDataFineValidita() == null || 

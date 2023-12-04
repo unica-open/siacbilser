@@ -6,12 +6,15 @@ package it.csi.siac.siacfinser.test.business.ordinativo;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.ClassificatoreStipendi;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
+import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siacfinser.business.service.classificatorefin.LeggiClassificatoriGenericiByTipoOrdinativoGestService;
 import it.csi.siac.siacfinser.business.service.ordinativo.AggiornaOrdinativoPagamentoService;
 import it.csi.siac.siacfinser.business.service.ordinativo.AnnullaOrdinativoPagamentoService;
@@ -26,6 +29,10 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativo;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativoPagamentoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativoPagamentoPerChiaveResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativoResponse;
+import it.csi.siac.siacfinser.integration.dad.OrdinativoPagamentoDad;
+import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoContotesNoDispFinRepository;
+import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoContotesNoDispFin;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaOrdinativoPagamento;
 import it.csi.siac.siacfinser.model.ric.RicercaOrdinativoPagamentoK;
@@ -152,5 +159,22 @@ public class OrdinativoPagamentoTest extends BaseJunit4TestCase {
 		AnnullaOrdinativoPagamentoResponse res = annullaOrdinativoPagamentoService.executeService(req);
 		assertNotNull(res);
 	}
+	
+	@Autowired OrdinativoPagamentoDad ordinativoPagamentoDad;
+	@Autowired
+	private SiacROrdinativoContotesNoDispFinRepository siacROrdinativoContotesNoDispFinRepository;
+	
+	@Test
+	public void test8017() {
+		ContoTesoreria contoTesoreriaOrdinativo = new ContoTesoreria();
+		contoTesoreriaOrdinativo.setUid(34);
+		
+		CapitoloUscitaGestione capitoloUscitaGestione = new CapitoloUscitaGestione();
+		capitoloUscitaGestione.setUid(153515);
+		
+		Ente ente = new Ente();
+		ente.setUid(2);
+		
+			}
 
 }

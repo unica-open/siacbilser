@@ -18,7 +18,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacDPredocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRPredocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTPredoc;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDPredocStatoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.PreDocumento;
 
 // TODO: Auto-generated Javadoc
@@ -29,7 +29,7 @@ import it.csi.siac.siacfin2ser.model.PreDocumento;
 public class PreDocumentoStatoConverter extends DozerConverter<PreDocumento<?, ?>, SiacTPredoc > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

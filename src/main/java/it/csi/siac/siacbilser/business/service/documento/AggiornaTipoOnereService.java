@@ -156,7 +156,7 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 		
 		// Se la natura ha codice ES (ESENZIONE) => il tipo deve essere Esenzione
 		if("ES".equals(naturaOnere.getCodice()) && !TipoIvaSplitReverse.ESENZIONE.equals(tipoOnere.getTipoIvaSplitReverse())) {
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("tipo IVA split / reverse",
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("tipo IVA split / reverse",
 					": se la natura onere e' ES deve essere " + TipoIvaSplitReverse.ESENZIONE.getDescrizione() + ". Valore fornito " + tipoOnere.getTipoIvaSplitReverse().getDescrizione()));
 		}
 		
@@ -203,7 +203,7 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 				causaleSpesa.setTipoCausale(tipoCausale);
 				causaleSpesa.setCodice("CAUS_S_"+ tipoOnere.getCodice() +"_"+ index);
 				causaleSpesa.setDescrizione("Causale spesa per impegno " +
-					(causaleSpesa.getImpegno() != null ? causaleSpesa.getImpegno().getAnnoMovimento() + "/" + causaleSpesa.getImpegno().getNumero() : "null")
+					(causaleSpesa.getImpegno() != null ? causaleSpesa.getImpegno().getAnnoMovimento() + "/" + causaleSpesa.getImpegno().getNumeroBigDecimal() : "null")
 				);
 				causaleSpesa.setModelloCausale(ModelloCausale.ONERI);
 				index++;
@@ -225,7 +225,7 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 				causaleEntrata.setTipoCausale(tipoCausale);
 				causaleEntrata.setCodice("CAUS_E_"+ tipoOnere.getCodice() +"_"+ index);
 				causaleEntrata.setDescrizione("Causale entrata per accertamento " +
-					(causaleEntrata.getAccertamento() != null ? causaleEntrata.getAccertamento().getAnnoMovimento() + "/" + causaleEntrata.getAccertamento().getNumero() : "null")
+					(causaleEntrata.getAccertamento() != null ? causaleEntrata.getAccertamento().getAnnoMovimento() + "/" + causaleEntrata.getAccertamento().getNumeroBigDecimal() : "null")
 				);
 				causaleEntrata.setModelloCausale(ModelloCausale.ONERI);
 				index++;
@@ -271,7 +271,7 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 	private void checkImpegnoOttimizzato(CausaleSpesa causaleSpesa) {
 		final String methodName = "checkImpegno";
 		//se non ho impegno o non ho dati sufficienti per la ricerca, esco
-		if(causaleSpesa.getImpegno() == null || causaleSpesa.getImpegno().getNumero() == null || causaleSpesa.getImpegno().getAnnoMovimento() == 0){
+		if(causaleSpesa.getImpegno() == null || causaleSpesa.getImpegno().getNumeroBigDecimal() == null || causaleSpesa.getImpegno().getAnnoMovimento() == 0){
 			log.debug(methodName, "non ho impegno o non ho dati sufficienti per la ricerca, esco");
 			return;
 		}
@@ -283,7 +283,7 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 		
 		if(causaleSpesa.getSubImpegno() != null){
 			if(impegno.getElencoSubImpegni() ==null || impegno.getElencoSubImpegni().isEmpty()){
-				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", causaleSpesa.getSubImpegno().getNumero()+""), Esito.FALLIMENTO);
+				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", causaleSpesa.getSubImpegno().getNumeroBigDecimal()+""), Esito.FALLIMENTO);
 
 			}
 			
@@ -325,7 +325,7 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 			return;
 		}
 		//se non ho accertamento o non ho dati sufficienti per la ricerca, esco
-		if(causaleEntrata.getAccertamento() == null || causaleEntrata.getAccertamento().getNumero() == null || causaleEntrata.getAccertamento().getAnnoMovimento() == 0){
+		if(causaleEntrata.getAccertamento() == null || causaleEntrata.getAccertamento().getNumeroBigDecimal() == null || causaleEntrata.getAccertamento().getAnnoMovimento() == 0){
 			log.debug(methodName, "non ho accertamento o non ho dati sufficienti per la ricerca, esco");
 			return;
 		}
@@ -337,7 +337,7 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 		
 		if(causaleEntrata.getSubAccertamento() != null){
 			if(accertamento.getElencoSubAccertamenti() ==null || accertamento.getElencoSubAccertamenti().isEmpty()){
-				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", causaleEntrata.getSubAccertamento().getNumero()+""), Esito.FALLIMENTO);
+				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", causaleEntrata.getSubAccertamento().getNumeroBigDecimal()+""), Esito.FALLIMENTO);
 			}
 			
 			log.debug(methodName, "il subaccertamento non è null, ne ricerco i dettagli");
@@ -486,7 +486,7 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 	protected RicercaImpegnoPerChiaveOttimizzatoResponse ricercaImpegnoPerChiaveOttimizzato(CausaleSpesa causaleSpesa) {
 		RicercaAttributiMovimentoGestioneOttimizzato parametri = new RicercaAttributiMovimentoGestioneOttimizzato();
 		parametri.setEscludiSubAnnullati(false);
-		parametri.setCaricaSub(causaleSpesa.getSubImpegno()!=null && causaleSpesa.getSubImpegno().getNumero() != null);
+		parametri.setCaricaSub(causaleSpesa.getSubImpegno()!=null && causaleSpesa.getSubImpegno().getNumeroBigDecimal() != null);
 	
 		DatiOpzionaliElencoSubTuttiConSoloGliIds parametriElencoIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		parametriElencoIds.setEscludiAnnullati(false);
@@ -505,12 +505,12 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 		Impegno impegno = resRIPC.getImpegno();
 		if(impegno==null) {
 			res.addErrori(resRIPC.getErrori());
-			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", causaleSpesa.getImpegno().getNumero()+"/"+ causaleSpesa.getImpegno().getAnnoMovimento()+""), Esito.FALLIMENTO);
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", causaleSpesa.getImpegno().getNumeroBigDecimal()+"/"+ causaleSpesa.getImpegno().getAnnoMovimento()+""), Esito.FALLIMENTO);
 		}
 		//Se il sub e' presente = ho effettuato la ricerca per sub
-		if(causaleSpesa.getSubImpegno()!=null && causaleSpesa.getSubImpegno().getNumero() != null 
+		if(causaleSpesa.getSubImpegno()!=null && causaleSpesa.getSubImpegno().getNumeroBigDecimal() != null 
 				&& (impegno.getElencoSubImpegni() == null || impegno.getElencoSubImpegni().isEmpty())){
-			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", causaleSpesa.getSubImpegno().getNumero()+""), Esito.FALLIMENTO);
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", causaleSpesa.getSubImpegno().getNumeroBigDecimal()+""), Esito.FALLIMENTO);
 	
 		}
 	
@@ -526,7 +526,7 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 		
 	RicercaAttributiMovimentoGestioneOttimizzato parametri = new RicercaAttributiMovimentoGestioneOttimizzato();
 	parametri.setEscludiSubAnnullati(false);
-	parametri.setCaricaSub(causaleEntrata.getSubAccertamento()!=null && causaleEntrata.getSubAccertamento().getNumero() != null);
+	parametri.setCaricaSub(causaleEntrata.getSubAccertamento()!=null && causaleEntrata.getSubAccertamento().getNumeroBigDecimal() != null);
 			
 	DatiOpzionaliElencoSubTuttiConSoloGliIds parametriElencoIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 	parametriElencoIds.setEscludiAnnullati(false);
@@ -543,13 +543,13 @@ public class AggiornaTipoOnereService extends CheckedAccountBaseService<Aggiorna
 	Accertamento accertamento = resRAPC.getAccertamento();
 	if(accertamento==null) {
 		res.addErrori(resRAPC.getErrori());
-		throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", causaleEntrata.getAccertamento().getNumero()+""+ causaleEntrata.getAccertamento().getAnnoMovimento()+""), Esito.FALLIMENTO);
+		throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", causaleEntrata.getAccertamento().getNumeroBigDecimal()+""+ causaleEntrata.getAccertamento().getAnnoMovimento()+""), Esito.FALLIMENTO);
 	}
 	
 	//Se il sub e' presente = ho effettuato la ricerca per sub
-	if(causaleEntrata.getSubAccertamento()!=null && causaleEntrata.getSubAccertamento().getNumero() != null 
+	if(causaleEntrata.getSubAccertamento()!=null && causaleEntrata.getSubAccertamento().getNumeroBigDecimal() != null 
 			&& (accertamento.getElencoSubAccertamenti() == null || accertamento.getElencoSubAccertamenti().isEmpty())){
-		throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", causaleEntrata.getSubAccertamento().getNumero()+""), Esito.FALLIMENTO);
+		throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", causaleEntrata.getSubAccertamento().getNumeroBigDecimal()+""), Esito.FALLIMENTO);
 	}
 	return resRAPC;
  }

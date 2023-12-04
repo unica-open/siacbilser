@@ -4,8 +4,11 @@
 */
 package it.csi.siac.siacintegser.business.service.base;
 
+import it.csi.siac.siaccorser.model.file.TipoFileEnum;
 import it.csi.siac.siacintegser.business.service.attiamministrativi.ElaboraFileAttiAmministrativiAsyncService;
 import it.csi.siac.siacintegser.business.service.attiamministrativi.ElaboraFileAttiAmministrativiService;
+import it.csi.siac.siacintegser.business.service.capitoli.ElaboraFilePrevisioneImpegnatoAccertatoAsyncService;
+import it.csi.siac.siacintegser.business.service.capitoli.ElaboraFilePrevisioneImpegnatoAccertatoService;
 import it.csi.siac.siacintegser.business.service.cespiti.ElaboraCespitiAsyncService;
 import it.csi.siac.siacintegser.business.service.cespiti.ElaboraCespitiService;
 import it.csi.siac.siacintegser.business.service.documenti.ElaboraFileDocumentiAsyncService;
@@ -22,6 +25,8 @@ import it.csi.siac.siacintegser.business.service.stipendi.stipe.ElaboraFileStipe
 import it.csi.siac.siacintegser.business.service.stipendi.stipe.ElaboraFileStipeService;
 import it.csi.siac.siacintegser.business.service.stipendi.stipeoneri.ElaboraFileStipeOneriAsyncService;
 import it.csi.siac.siacintegser.business.service.stipendi.stipeoneri.ElaboraFileStipeOneriService;
+import it.csi.siac.siacintegser.business.service.tefa.ElaboraFileTefaAsyncService;
+import it.csi.siac.siacintegser.business.service.tefa.ElaboraFileTefaService;
 
 /**
  * Enumera i servizi di elaborazione File
@@ -31,20 +36,23 @@ import it.csi.siac.siacintegser.business.service.stipendi.stipeoneri.ElaboraFile
  */
 public enum ElaboraFileServicesEnum implements ElaboraFileServiceInfo, ElaboraFileAsyncServiceInfo {
 	
-	DOCUMENTO_ENTRATA("DOCUMENTO_ENTRATA", ElaboraFileDocumentiService.class, ElaboraFileDocumentiAsyncService.class),
-	DOCUMENTO_SPESA("DOCUMENTO_SPESA", ElaboraFileDocumentiService.class, ElaboraFileDocumentiAsyncService.class),
+	DOCUMENTO_ENTRATA(TipoFileEnum.DOCUMENTO_ENTRATA.getCodice(), ElaboraFileDocumentiService.class, ElaboraFileDocumentiAsyncService.class),
+	DOCUMENTO_SPESA(TipoFileEnum.DOCUMENTO_SPESA.getCodice(), ElaboraFileDocumentiService.class, ElaboraFileDocumentiAsyncService.class),
 	
-	STIPE("STIPE", ElaboraFileStipeService.class, ElaboraFileStipeAsyncService.class),
-	ONERI("ONERI", ElaboraFileOneriService.class, ElaboraFileOneriAsyncService.class),
-	STIPE_ONERI("STIPE_ONERI", ElaboraFileStipeOneriService.class, ElaboraFileStipeOneriAsyncService.class),//ELABORA IL FLUSSO senza scarti (TUTTO) ---> senza controlli sul soggetto se e' tesoriere civico
+	STIPE(TipoFileEnum.STIPE.getCodice(), ElaboraFileStipeService.class, ElaboraFileStipeAsyncService.class),
+	ONERI(TipoFileEnum.ONERI.getCodice(), ElaboraFileOneriService.class, ElaboraFileOneriAsyncService.class),
+	STIPE_ONERI(TipoFileEnum.STIPE_ONERI.getCodice(), ElaboraFileStipeOneriService.class, ElaboraFileStipeOneriAsyncService.class),//ELABORA IL FLUSSO senza scarti (TUTTO) ---> senza controlli sul soggetto se e' tesoriere civico
 	
-	FLUSSO_PREDOC_ENTRATE("FLUSSO_PREDOC_ENTRATE", ElaboraPredocumentiEntrataService.class, ElaboraPredocumentiEntrataAsyncService.class),
-	FLUSSO_PREDOC_SPESE("FLUSSO_PREDOC_SPESE", ElaboraPredocumentiSpesaService.class, ElaboraPredocumentiSpesaAsyncService.class),
-    FLUSSO_ATTI_AMMINISTRATIVI("FLUSSO_ATTI", ElaboraFileAttiAmministrativiService.class, ElaboraFileAttiAmministrativiAsyncService.class),
+	FLUSSO_PREDOC_ENTRATE(TipoFileEnum.FLUSSO_PREDOC_ENTRATE.getCodice(), ElaboraPredocumentiEntrataService.class, ElaboraPredocumentiEntrataAsyncService.class),
+	FLUSSO_PREDOC_SPESE(TipoFileEnum.FLUSSO_PREDOC_SPESE.getCodice(), ElaboraPredocumentiSpesaService.class, ElaboraPredocumentiSpesaAsyncService.class),
+    FLUSSO_ATTI_AMMINISTRATIVI(TipoFileEnum.FLUSSO_ATTI.getCodice(), ElaboraFileAttiAmministrativiService.class, ElaboraFileAttiAmministrativiAsyncService.class),
     
-	LIMITE_IMPEGNABILE("LIMITE_IMPEGNABILE", ElaboraFileLimiteImpegnabileService.class, ElaboraFileLimiteImpegnabileAsyncService.class),
+	LIMITE_IMPEGNABILE(TipoFileEnum.LIMITE_IMPEGNABILE.getCodice(), ElaboraFileLimiteImpegnabileService.class, ElaboraFileLimiteImpegnabileAsyncService.class),
 	
-	CESPITI("CESPITI", ElaboraCespitiService.class, ElaboraCespitiAsyncService.class),
+	CESPITI(TipoFileEnum.CESPITI.getCodice(), ElaboraCespitiService.class, ElaboraCespitiAsyncService.class),
+	//SIAC-8191
+	PREVISIONE_IMP_ACC(TipoFileEnum.PREVISIONE_IMP_ACC.getCodice(), ElaboraFilePrevisioneImpegnatoAccertatoService.class,ElaboraFilePrevisioneImpegnatoAccertatoAsyncService.class),
+	FLUSSO_TEFA(TipoFileEnum.FLUSSO_TEFA.getCodice(), ElaboraFileTefaService.class, ElaboraFileTefaAsyncService.class),
 
 	;
 	

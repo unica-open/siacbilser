@@ -37,9 +37,8 @@ SPDX-License-Identifier: EUPL-1.2
 			<a>annoCapitolo</a>
 			<b>siacTBil.siacTPeriodo.anno</b>
 		</field>
-		
 	</mapping>
-    
+
      <mapping map-id="SiacTBilElem_Capitolo_Base" wildcard="true">  
      	<!-- Utilizzato solo per avere le info di base contenute nella superclasse Capitolo -->
 		<class-a>it.csi.siac.siacbilser.model.Capitolo</class-a>

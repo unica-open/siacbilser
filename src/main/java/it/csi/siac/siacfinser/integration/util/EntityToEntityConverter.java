@@ -118,6 +118,9 @@ public class EntityToEntityConverter {
 		siacTSoggettoMod.setEmailPec(siacTSoggetto.getEmailPec());
 		siacTSoggettoMod.setCodDestinatario(siacTSoggetto.getCodDestinatario());
 		
+		//task-68
+		siacTSoggettoMod.setIstitutoDiCredito(siacTSoggetto.getIstitutoDiCredito());
+		
 		return siacTSoggettoMod;
 	}
 	
@@ -212,6 +215,12 @@ public class EntityToEntityConverter {
 		siacTSoggetto.setCanalePA(siacTSoggettoMod.getCanalePA());
 		siacTSoggetto.setEmailPec(siacTSoggettoMod.getEmailPec());
 		siacTSoggetto.setCodDestinatario(siacTSoggettoMod.getCodDestinatario());
+
+
+
+		//task-68
+		siacTSoggetto.setIstitutoDiCredito(siacTSoggettoMod.getIstitutoDiCredito());
+		
 		
 		return siacTSoggetto;
 	}

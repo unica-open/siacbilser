@@ -44,6 +44,18 @@ public abstract class SoggettoPersonaFisicaHandler<P extends Predocumento> exten
 	
 	}
 
+	
+	@Override
+	protected ParametroRicercaSoggetto buildParametroRicercaSoggetto(String codiceFiscale)
+	{
+		ParametroRicercaSoggetto parametroRicercaSoggetto = new ParametroRicercaSoggetto();
+		parametroRicercaSoggetto.setCodiceFiscale(codiceFiscale);
+		
+		return parametroRicercaSoggetto;
+	}
+
+	
+	
 	protected Soggetto buildSoggettoInserimento(P predocumento) throws SoggettoPredocumentoException
 	{
 		Soggetto soggetto = new Soggetto();
@@ -79,16 +91,6 @@ public abstract class SoggettoPersonaFisicaHandler<P extends Predocumento> exten
 
 		return lcr.getListaComuni().get(0);
 	}
-
-	@Override
-	protected ParametroRicercaSoggetto buildParametroRicercaSoggetto(P predocumento)
-	{
-		ParametroRicercaSoggetto parametroRicercaSoggetto = new ParametroRicercaSoggetto();
-		parametroRicercaSoggetto.setCodiceFiscale(predocumento.getCodiceFiscale());
-		
-		return parametroRicercaSoggetto;
-	}
-
 
 	
 	

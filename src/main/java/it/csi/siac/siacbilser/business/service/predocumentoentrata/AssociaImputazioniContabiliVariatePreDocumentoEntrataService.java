@@ -22,11 +22,10 @@ import it.csi.siac.siacattser.model.errore.ErroreAtt;
 import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.integration.dad.AccertamentoBilDad;
 import it.csi.siac.siacbilser.integration.dad.CapitoloEntrataGestioneDad;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoEntrataDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
@@ -38,6 +37,7 @@ import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrataPerVariazioneImputazioniContabili;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrataPerVariazioneImputazioniContabiliResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AssociaImputazioniContabiliVariatePreDocumentoEntrata;
@@ -52,6 +52,7 @@ import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.SubAccertamento;
 import it.csi.siac.siacfinser.model.codifiche.ClasseSoggetto;
+import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto.StatoOperativoAnagrafica;
 
@@ -69,7 +70,7 @@ public class AssociaImputazioniContabiliVariatePreDocumentoEntrataService extend
 	@Autowired
 	private PreDocumentoEntrataDad preDocumentoEntrataDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private SoggettoDad soggettoDad;
 	
@@ -82,6 +83,8 @@ public class AssociaImputazioniContabiliVariatePreDocumentoEntrataService extend
 	private Soggetto soggetto;
 	private AttoAmministrativo attoAmministrativo;
 	private Bilancio bilancio;
+	//SIAC-7423
+	private ProvvisorioDiCassa provvisorioCassa;
 
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {
@@ -91,6 +94,8 @@ public class AssociaImputazioniContabiliVariatePreDocumentoEntrataService extend
 		soggetto = req.getSoggetto();
 		attoAmministrativo = req.getAttoAmministrativo();
 		bilancio = req.getBilancio();
+		//SIAC-7423
+		provvisorioCassa = req.getProvvisorioCassa();
 
 		checkEntita(bilancio, "bilancio", false);
 		
@@ -98,7 +103,8 @@ public class AssociaImputazioniContabiliVariatePreDocumentoEntrataService extend
 				|| entitaConUid(accertamento)
 				|| entitaConUid(subAccertamento)
 				|| entitaConUid(soggetto)
-				|| entitaConUid(attoAmministrativo),
+				|| entitaConUid(attoAmministrativo)
+				|| entitaConUid(provvisorioCassa),
 				ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("imputazione contabile"), false);
 		
 		checkNotNull(req.getPreDocumentiEntrata(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("predocumenti entrata"));
@@ -244,6 +250,10 @@ public class AssociaImputazioniContabiliVariatePreDocumentoEntrataService extend
 		if(entitaConUid(attoAmministrativo)) {
 			preDoc.setAttoAmministrativo(attoAmministrativo);
 		}
+		//SIAC-7423
+		if(entitaConUid(provvisorioCassa)) {
+			preDoc.setProvvisorioDiCassa(provvisorioCassa);
+		}
 	}
 
 	/**
@@ -277,7 +287,7 @@ public class AssociaImputazioniContabiliVariatePreDocumentoEntrataService extend
 	private boolean isAggiornabile(PreDocumentoEntrata preDoc) {
 		boolean hasSubAccertamento = preDoc.getAccertamento() != null && preDoc.getAccertamento().getUid() != 0;
 		boolean hasAccertamento= preDoc.getAccertamento() != null && preDoc.getAccertamento().getUid() != 0;
-		boolean isAzioneConsentita = isAzioneConsentita(AzioniConsentite.PREDOCUMENTO_ENTRATA_COMPLETA_SENZA_ACCERTAMENTO.getNomeAzione());
+		boolean isAzioneConsentita = isAzioneConsentita(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_COMPLETA_SENZA_ACCERTAMENTO.getNomeAzione());
 		boolean hasSoggetto = preDoc.getSoggetto() != null && preDoc.getSoggetto().getUid() != 0;
 		return StatoOperativoPreDocumento.INCOMPLETO.equals(preDoc.getStatoOperativoPreDocumento()) || (isAzioneConsentita && hasSoggetto) || (!isAzioneConsentita && (hasSubAccertamento || hasAccertamento) && hasSoggetto);
 	}
@@ -339,7 +349,7 @@ public class AssociaImputazioniContabiliVariatePreDocumentoEntrataService extend
 			attoAmministrativo = null;
 			return;
 		}
-		AttoAmministrativo aa = provvedimentoDad.findProvvedimentoByIdAndModelDetail(attoAmministrativo.getUid(), AttoAmministrativoModelDetail.StatoOperativo);
+		AttoAmministrativo aa = attoAmministrativoDad.findProvvedimentoByIdAndModelDetail(attoAmministrativo.getUid(), AttoAmministrativoModelDetail.StatoOperativo);
 		
 		checkBusinessCondition(aa != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("provvedimetno", "uid " + attoAmministrativo.getUid()));
 		checkBusinessCondition(!StatoOperativoAtti.ANNULLATO.equals(aa.getStatoOperativoAtti()), ErroreAtt.PROVVEDIMENTO_ANNULLATO.getErrore());

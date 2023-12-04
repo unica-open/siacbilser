@@ -207,7 +207,7 @@ public class CapitoloEntrataPrevisioneMainTest extends CapitoloMainTestBase {
 	 */
 	protected RicercaPuntualeCapitoloEntrataPrevisioneResponse ricercaPuntuale(CapitoloEntrataPrevisioneService capitoloEntrataPrevisioneService) {
 	       
-		log.debug("Ricerco il capitolo: "+ annoEser+"|"+annoCapi+"|"+numCapi+"|"+numArti+"|"+numUEB+"|"+statoCapi);
+		log.debug("ricercaPuntuale", "Ricerco il capitolo: "+ annoEser+"|"+annoCapi+"|"+numCapi+"|"+numArti+"|"+numUEB+"|"+statoCapi);
              
 		RicercaPuntualeCapitoloEPrev criteriRicerca = 
 					getCriteriRicerca(annoEser, annoCapi, numCapi, numArti, numUEB, statoCapi);

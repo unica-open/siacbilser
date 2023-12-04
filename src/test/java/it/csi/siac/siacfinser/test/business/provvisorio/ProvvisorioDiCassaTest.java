@@ -25,16 +25,16 @@ public class ProvvisorioDiCassaTest extends BaseJunit4TestCase {
 	public void ricercaProvvisoriDiCassa() {
 		RicercaProvvisoriDiCassa req = new RicercaProvvisoriDiCassa();
 		
-		req.setAnnoBilancio(Integer.valueOf(2018));
+		req.setAnnoBilancio(Integer.valueOf(2020));
 		req.setDataOra(new Date());
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
 		req.setEnte(req.getRichiedente().getAccount().getEnte());
 		
 		ParametroRicercaProvvisorio parametroRicercaProvvisorio = new ParametroRicercaProvvisorio();
-		parametroRicercaProvvisorio.setAnnoDa(2019);
-		parametroRicercaProvvisorio.setAnnoA(2019);
-		parametroRicercaProvvisorio.setNumeroDa(1);
-		parametroRicercaProvvisorio.setNumeroA(2);
+		parametroRicercaProvvisorio.setAnnoDa(2020);
+		parametroRicercaProvvisorio.setAnnoA(2020);
+		parametroRicercaProvvisorio.setNumeroDa(67801);
+		parametroRicercaProvvisorio.setNumeroA(67801);
 //		parametroRicercaProvvisorio.setNumeroA(300418);
 		parametroRicercaProvvisorio.setEscludiProvvisoriConImportoDaEmettereZero(Boolean.TRUE);
 		

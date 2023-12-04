@@ -20,10 +20,10 @@ import it.csi.siac.siacbilser.business.service.base.Helper;
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.business.service.provvedimento.InserisceProvvedimentoService;
 import it.csi.siac.siacbilser.business.service.stampa.cassaeconomale.rendiconto.model.StampaRendicontoCassaCapitoloMovimenti;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.model.exception.HelperException;
 import it.csi.siac.siaccecser.model.TipoStampa;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -51,7 +51,7 @@ import it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto;
  */
 public class StampaRendicontoCassaAllegatoAttoHelper implements Helper<Void> {
 	
-	private final LogUtil log = new LogUtil(getClass());
+	private final LogSrvUtil log = new LogSrvUtil(getClass());
 	
 	private final Richiedente richiedente;
 	private final Ente ente;
@@ -68,7 +68,7 @@ public class StampaRendicontoCassaAllegatoAttoHelper implements Helper<Void> {
 	
 	// Pseudo-autowired fields
 	private final ServiceExecutor serviceExecutor;
-	private final ProvvedimentoDad provvedimentoDad;
+	private final AttoAmministrativoDad attoAmministrativoDad;
 	
 	// Instance fields
 	private AttoAmministrativo attoAmministrativo;
@@ -88,13 +88,13 @@ public class StampaRendicontoCassaAllegatoAttoHelper implements Helper<Void> {
 	 * @param causale la causale
 	 * @param anticipiSpesaDaInserire se gli anticipi spesa siano da inserire nell'allegato
 	 * @param serviceExecutor l'executor dei servizi
-	 * @param provvedimentoDad il dad del provvedimento
+	 * @param attoAmministrativoDad il dad del provvedimento
 	 */
 	public StampaRendicontoCassaAllegatoAttoHelper(Richiedente richiedente, Ente ente, Bilancio bilancio, TipoStampa tipoStampa,
 			Iterable<StampaRendicontoCassaCapitoloMovimenti> listaStampaRendicontoCassaCapitoloMovimenti,
 			Soggetto soggetto, ModalitaPagamentoSoggetto modalitaPagamentoSoggetto,
 			StrutturaAmministrativoContabile strutturaAmministrativoContabile, String causale,
-			Boolean anticipiSpesaDaInserire, ServiceExecutor serviceExecutor, ProvvedimentoDad provvedimentoDad) {
+			Boolean anticipiSpesaDaInserire, ServiceExecutor serviceExecutor, AttoAmministrativoDad attoAmministrativoDad) {
 		this.richiedente = richiedente;
 		this.ente = ente;
 		this.bilancio = bilancio;
@@ -106,7 +106,7 @@ public class StampaRendicontoCassaAllegatoAttoHelper implements Helper<Void> {
 		this.causale = causale;
 		this.anticipiSpesaDaInserire = anticipiSpesaDaInserire;
 		this.serviceExecutor = serviceExecutor;
-		this.provvedimentoDad = provvedimentoDad;
+		this.attoAmministrativoDad = attoAmministrativoDad;
 		
 		this.dataOra = new Date();
 	}
@@ -195,7 +195,7 @@ public class StampaRendicontoCassaAllegatoAttoHelper implements Helper<Void> {
 	 * @return il tipo atto ALG
 	 */
 	private TipoAtto getTipoAttoALG() {
-		TipoAtto tipoAtto = provvedimentoDad.getTipoAttoALG(ente);
+		TipoAtto tipoAtto = attoAmministrativoDad.getTipoAttoALG(ente);
 		if(tipoAtto == null) {
 			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Tipo atto", "ALG"));
 		}

@@ -35,7 +35,7 @@ import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaLiquidazioneModulare;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaLiquidazioneModulareResponse;
@@ -200,7 +200,7 @@ public abstract class ConvalidaAllegatoAttoBaseService<REQ extends ConvalidaAlle
 		//Imposto lo stato a VALIDO
 		liqDaAggiornare.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.VALIDO);
 		//Modifico il tipo convalida coerentemente con il subdocumetno
-		liqDaAggiornare.setLiqManuale(Boolean.TRUE.equals(subdoc.getFlagConvalidaManuale())?Constanti.LIQUIDAZIONE_MAUALE:Constanti.LIQUIDAZIONE_AUTOMATICA);
+		liqDaAggiornare.setLiqManuale(Boolean.TRUE.equals(subdoc.getFlagConvalidaManuale())?CostantiFin.LIQUIDAZIONE_MAUALE:CostantiFin.LIQUIDAZIONE_AUTOMATICA);
 		
 		liqDaAggiornare.setSubdocumentoSpesa(subdoc);
 		

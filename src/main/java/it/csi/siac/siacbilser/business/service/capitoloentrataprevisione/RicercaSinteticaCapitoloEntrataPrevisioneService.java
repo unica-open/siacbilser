@@ -15,10 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataPrevisioneResponse;
-import it.csi.siac.siacbilser.integration.dad.AccantonamentoFondiDubbiaEsigibilitaDad;
 import it.csi.siac.siacbilser.integration.dad.CapitoloEntrataPrevisioneDad;
 import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
-import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.integration.dad.fcde.AccantonamentoFondiDubbiaEsigibilitaDad;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CategoriaTipologiaTitolo;
@@ -28,6 +27,8 @@ import it.csi.siac.siacbilser.model.SiopeEntrata;
 import it.csi.siac.siacbilser.model.TipologiaTitolo;
 import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
+import it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilita;
+import it.csi.siac.siacbilser.model.fcde.TipoAccantonamentoFondiDubbiaEsigibilita;
 import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloEPrev;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -97,9 +98,7 @@ public class RicercaSinteticaCapitoloEntrataPrevisioneService
 		importiCapitoloDad.setEnte(req.getEnte());
 	}
 
-	/* (non-Javadoc)
-	 * @see it.csi.siac.siaccommonser.business.service.base.BaseService#executeService(it.csi.siac.siaccorser.model.ServiceRequest)
-	 */
+	@Override
 	@Transactional(readOnly= true)
 	public RicercaSinteticaCapitoloEntrataPrevisioneResponse executeService(RicercaSinteticaCapitoloEntrataPrevisione serviceRequest) {
 		return super.executeService(serviceRequest);
@@ -181,7 +180,7 @@ public class RicercaSinteticaCapitoloEntrataPrevisioneService
 			}
 			
 			if(Boolean.TRUE.equals(req.getRicercaSinteticaCapitoloEPrev().getRichiediAccantonamentoFondiDubbiaEsigibilita())) {
-				AccantonamentoFondiDubbiaEsigibilita accantonamentoFondiDubbiaEsigibilita = accantonamentoFondiDubbiaEsigibilitaDad.findByCapitolo(capitoloEntrataPrevisione);
+				AccantonamentoFondiDubbiaEsigibilita accantonamentoFondiDubbiaEsigibilita = accantonamentoFondiDubbiaEsigibilitaDad.findByCapitolo(capitoloEntrataPrevisione, TipoAccantonamentoFondiDubbiaEsigibilita.PREVISIONE);
 				capitoloEntrataPrevisione.setAccantonamentoFondiDubbiaEsigibilita(accantonamentoFondiDubbiaEsigibilita);
 			}
 		}	

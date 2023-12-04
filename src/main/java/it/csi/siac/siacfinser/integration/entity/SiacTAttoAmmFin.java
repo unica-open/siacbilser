@@ -82,10 +82,7 @@ public class SiacTAttoAmmFin extends SiacTEnteBase {
 	@JoinColumn(name="attoamm_tipo_id")
 	private SiacDAttoAmmTipoFin siacDAttoAmmTipo;
 
-	//bi-directional many-to-one association to SiacRMutuoAttoAmmFin
-	@OneToMany(mappedBy="siacTAttoAmm")
-	private List<SiacRMutuoAttoAmmFin> siacRMutuoAttoAmms;
-
+	
 	public SiacTAttoAmmFin() {
 	}
 
@@ -225,27 +222,6 @@ public class SiacTAttoAmmFin extends SiacTEnteBase {
 		this.siacDAttoAmmTipo = siacDAttoAmmTipo;
 	}
 
-	public List<SiacRMutuoAttoAmmFin> getSiacRMutuoAttoAmms() {
-		return this.siacRMutuoAttoAmms;
-	}
-
-	public void setSiacRMutuoAttoAmms(List<SiacRMutuoAttoAmmFin> siacRMutuoAttoAmms) {
-		this.siacRMutuoAttoAmms = siacRMutuoAttoAmms;
-	}
-
-	public SiacRMutuoAttoAmmFin addSiacRMutuoAttoAmm(SiacRMutuoAttoAmmFin siacRMutuoAttoAmm) {
-		getSiacRMutuoAttoAmms().add(siacRMutuoAttoAmm);
-		siacRMutuoAttoAmm.setSiacTAttoAmm(this);
-
-		return siacRMutuoAttoAmm;
-	}
-
-	public SiacRMutuoAttoAmmFin removeSiacRMutuoAttoAmm(SiacRMutuoAttoAmmFin siacRMutuoAttoAmm) {
-		getSiacRMutuoAttoAmms().remove(siacRMutuoAttoAmm);
-		siacRMutuoAttoAmm.setSiacTAttoAmm(null);
-
-		return siacRMutuoAttoAmm;
-	}
 	
 
 	public List<SiacTAllegatoAttoFin> getSiacTAttoAllegatos() {

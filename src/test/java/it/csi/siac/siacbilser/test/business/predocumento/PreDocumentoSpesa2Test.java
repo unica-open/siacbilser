@@ -263,7 +263,7 @@ public class PreDocumentoSpesa2Test extends BaseJunit4TestCase {
 		Impegno impegno = new Impegno();
 		impegno.setUid(3);
 		impegno.setAnnoMovimento(2013);
-		impegno.setNumero(new BigDecimal("3"));
+		impegno.setNumeroBigDecimal(new BigDecimal("3"));
 		preDoc.setImpegno(impegno);
 		
 		SubImpegno subImpegno = new SubImpegno();

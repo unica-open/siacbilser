@@ -17,9 +17,10 @@ import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.dad.ImpegnoBilDad;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoSpesaDad;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
-import it.csi.siac.siaccommon.util.log.LogUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Bilancio;
+import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.DefiniscePreDocumentoSpesa;
@@ -49,8 +50,10 @@ public class DefiniscePreDocumentoSpesaPerElencoDefinizioneHelper implements Hel
 	private final Impegno impegno;
 	private final SubImpegno subImpegno;
 	
-	private final LogUtil log;
-	private final List<Messaggio> messaggi;
+	private final LogSrvUtil log;
+	private final List<Messaggio> messaggi; 
+	// SIAC-7837
+	private final List<Errore> errori; 
 	
 	private boolean skip;
 	private BigDecimal sommaPredoc;
@@ -78,8 +81,9 @@ public class DefiniscePreDocumentoSpesaPerElencoDefinizioneHelper implements Hel
 		this.impegno = impegno;
 		this.subImpegno = subImpegno;
 		
-		this.log = new LogUtil(getClass());
+		this.log = new LogSrvUtil(getClass());
 		this.messaggi = new ArrayList<Messaggio>();
+		this.errori = new ArrayList<Errore>();
 	}
 	
 	@Override
@@ -109,6 +113,11 @@ public class DefiniscePreDocumentoSpesaPerElencoDefinizioneHelper implements Hel
 		return null;
 	}
 	
+	
+	public List<Errore> getErrori() {
+		return errori;
+	}
+
 	/**
 	 * @return the messaggi
 	 */
@@ -211,7 +220,7 @@ public class DefiniscePreDocumentoSpesaPerElencoDefinizioneHelper implements Hel
 				// Model detail
 				PreDocumentoSpesaModelDetail.Causale, PreDocumentoSpesaModelDetail.Classif, PreDocumentoSpesaModelDetail.ContoTesoreria,
 				PreDocumentoSpesaModelDetail.Impegno, PreDocumentoSpesaModelDetail.ModPag, PreDocumentoSpesaModelDetail.ProvvisorioDiCassa,
-				PreDocumentoSpesaModelDetail.Sogg, PreDocumentoSpesaModelDetail.VoceMutuo,
+				PreDocumentoSpesaModelDetail.Sogg, 
 				//SIAC-6784
 				PreDocumentoSpesaModelDetail.ElencoDocumentiAllegato
 				);
@@ -228,8 +237,9 @@ public class DefiniscePreDocumentoSpesaPerElencoDefinizioneHelper implements Hel
 		// Invoco il servizio esterno
 		DefiniscePreDocumentoSpesaResponse res = serviceExecutor.executeServiceSuccess(DefiniscePreDocumentoSpesaService.class, req);
 		log.debug(methodName, "Definizione del predocumento avvenuta con successo? " + !res.hasErrori());
-		// Aggiungo tutti i messaggi nella response
+		// Aggiungo tutti i messaggi ed errori nella response
 		messaggi.addAll(res.getMessaggi());
+		errori.addAll(res.getErrori());
 	}
 	
 	/**

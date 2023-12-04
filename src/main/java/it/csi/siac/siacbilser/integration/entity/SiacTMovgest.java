@@ -5,8 +5,10 @@
 package it.csi.siac.siacbilser.integration.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,6 +63,11 @@ public class SiacTMovgest extends SiacTEnteBase {
 	@JoinColumn(name="movgest_tipo_id")
 	private SiacDMovgestTipo siacDMovgestTipo;
 
+	@Basic
+	@Column(name = "parere_finanziario_data_modifica")
+	private Date parereFinanziarioDataModifica;
+	
+
 	//bi-directional many-to-one association to SiacTBil
 	/** The siac t bil. */
 	@ManyToOne
@@ -72,6 +79,31 @@ public class SiacTMovgest extends SiacTEnteBase {
 	@OneToMany(mappedBy="siacTMovgest")
 	private List<SiacTMovgestT> siacTMovgestTs;
 
+	
+	@OneToMany(mappedBy="siacTMovgestDa")
+	private List<SiacRMovgestAggiudicazione> siacRMovgestAggiudicazionesDa;
+
+	
+	@OneToMany(mappedBy="siacTMovgestA")
+	private List<SiacRMovgestAggiudicazione> siacRMovgestAggiudicazionesA;
+
+	public List<SiacRMovgestAggiudicazione> getSiacRMovgestAggiudicazionesDa() {
+		return siacRMovgestAggiudicazionesDa;
+	}
+
+	public void setSiacRMovgestAggiudicazionesDa(List<SiacRMovgestAggiudicazione> siacRMovgestAggiudicazionesDa) {
+		this.siacRMovgestAggiudicazionesDa = siacRMovgestAggiudicazionesDa;
+	}
+
+	public List<SiacRMovgestAggiudicazione> getSiacRMovgestAggiudicazionesA() {
+		return siacRMovgestAggiudicazionesA;
+	}
+
+	public void setSiacRMovgestAggiudicazionesA(List<SiacRMovgestAggiudicazione> siacRMovgestAggiudicazionesA) {
+		this.siacRMovgestAggiudicazionesA = siacRMovgestAggiudicazionesA;
+	}
+
+	
 	/**
 	 * Instantiates a new siac t movgest.
 	 */
@@ -289,6 +321,14 @@ public class SiacTMovgest extends SiacTEnteBase {
 	@Override
 	public void setUid(Integer uid) {
 		movgestId = uid;
+	}
+
+	public Date getParereFinanziarioDataModifica() {
+		return parereFinanziarioDataModifica;
+	}
+
+	public void setParereFinanziarioDataModifica(Date parereFinanziarioDataModifica) {
+		this.parereFinanziarioDataModifica = parereFinanziarioDataModifica;
 	}
 
 }

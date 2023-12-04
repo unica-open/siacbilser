@@ -34,7 +34,7 @@ import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
 import it.csi.siac.siacbilser.model.ImportoDerivato;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 
 /**
@@ -64,7 +64,7 @@ public class ImportiCapitoloBaseConverter<IC extends ImportiCapitolo> {
 	
 	
 	/** The log. */
-	private static LogUtil log = new LogUtil(ImportiCapitoloBaseConverter.class);
+	private static LogSrvUtil log = new LogSrvUtil(ImportiCapitoloBaseConverter.class);
 	
 	
 	
@@ -369,7 +369,7 @@ public class ImportiCapitoloBaseConverter<IC extends ImportiCapitolo> {
 	 * @param <ICT> la tipizzazione dell'importo capitolo
 	 */
 	private static class PopolaImportiDerivatiFieldCallback<ICT extends ImportiCapitolo> implements FieldCallback {
-		private final LogUtil log = new LogUtil(getClass());
+		private final LogSrvUtil log = new LogSrvUtil(getClass());
 		
 		private final Set<ImportiCapitoloEnum> importiDerivatiRichiesti;
 		private final Integer uidCapitolo;

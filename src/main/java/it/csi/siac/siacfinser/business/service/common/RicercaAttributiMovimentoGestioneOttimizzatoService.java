@@ -19,7 +19,6 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChia
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAttributiMovimentoGestioneOttimizzato;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAttributiMovimentoGestioneOttimizzatoResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOttimizzato;
-import it.csi.siac.siacfinser.integration.dad.MutuoDad;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoRicercaMovimentoPkDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.PaginazioneSubMovimentiDto;
 import it.csi.siac.siacfinser.model.Impegno;
@@ -37,9 +36,6 @@ public abstract class RicercaAttributiMovimentoGestioneOttimizzatoService<REQ ex
 	@Autowired
 	protected ProvvedimentoService provvedimentoService;
 	
-	@Autowired
-	MutuoDad mutuoDad;
-	
 	
 	//METODI COMPLETAMENTO DATI IMPEGNO:
 	
@@ -49,30 +45,6 @@ public abstract class RicercaAttributiMovimentoGestioneOttimizzatoService<REQ ex
 		impegno = completaDatiRicercaImpegnoPk(richiedente, impegno, annoEsercizio,datiOpzionaliCapitoli,null,null);
 		
 		
-		/* LUGLIO 2016 OTTIMIZZANDO I MUTUI QUESTO CODICE DIVENTA SUPERFLUO, GIA' CARICATO TUTTI DENTRO AL ricercaMovimentoPK
-		 * in maniera ottimizzata, per ora commento 
-		
-		// completo con i MUTUI
-		if(impegno.getListaVociMutuo()!=null && !impegno.getListaVociMutuo().isEmpty()){
-			List<String> listaNumeriMutuo =  impegnoOttimizzatoDad.listaNumeriMutuo(impegno.getListaVociMutuo());
-			impegno.setElencoMutui(impegnoOttimizzatoDad.getListaMutuiAssociati(listaNumeriMutuo,idEnte));
-		}		
-		
-		//Jira 1887 se il mutuo non e' associato all'impegno 
-		if(impegno.getElencoSubImpegni()!=null && !impegno.getElencoSubImpegni().isEmpty()){
-			
-			for (SubImpegno subIterato : impegno.getElencoSubImpegni()) {
-				List<VoceMutuo> listaVociMutuo = subIterato.getListaVociMutuo();
-				if(listaVociMutuo!=null && listaVociMutuo.size()>0){
-					if(subIterato.getElencoMutui()==null || subIterato.getElencoMutui().size()==0){
-						//Completo i dati dei mutui solo se non sono gia caricati dal chiamanete:
-						List<String> listaNumeriMutuo =  impegnoOttimizzatoDad.listaNumeriMutuo(listaVociMutuo);
-						subIterato.setElencoMutui(impegnoOttimizzatoDad.getListaMutuiAssociati(listaNumeriMutuo,idEnte));
-					}
-				}
-			}
-			
-		}	*/
 		
 		return impegno;
 	}

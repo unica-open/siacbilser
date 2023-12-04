@@ -243,7 +243,7 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 	}
 	
 	private void componiNativeQueryRicercaSinteticaPrimaNotaBase(StringBuilder jpql, Map<String, Object> param, Integer enteProprietarioId, Integer bilId, SiacDAmbitoEnum siacDAmbitoEnum,
-			SiacDCausaleEpTipoEnum siacDCausaleEpTipoEnum, Integer pnotaNumero, Integer pnotaProgressivogiornale, SiacDPrimaNotaStatoEnum siacDPrimaNotaStatoEnum, String pnotaDesc,
+			SiacDCausaleEpTipoEnum siacDCausaleEpTipoEnum, Integer pnotaNumero, Integer pnotaProgressivogiornale, Integer pnotaAnno, SiacDPrimaNotaStatoEnum siacDPrimaNotaStatoEnum, String pnotaDesc,
 			Integer pdceContoId, Integer causaleEpId, Integer soggettoId, Date dataRegistrazioneDa, Date dataRegistrazioneA) {
 		
 		jpql.append(" SELECT ");
@@ -257,7 +257,9 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 		jpql.append("     siac_t_mov_ep tme, ");
 		jpql.append("     siac_r_evento_reg_movfin rerm, ");
 		jpql.append("     siac_d_evento de, ");
-		jpql.append("     siac_d_collegamento_tipo dct ");
+		jpql.append("     siac_d_collegamento_tipo dct, ");
+		jpql.append("	  siac_t_bil bil, ");//SIAC-8595
+		jpql.append("	  siac_t_periodo periodo ");//SIAC-8595
 		jpql.append(" WHERE p.data_cancellazione IS NULL ");
 		jpql.append(" AND da.data_cancellazione IS NULL ");
 		jpql.append(" AND cet.data_cancellazione IS NULL ");
@@ -268,6 +270,7 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 		jpql.append(" AND de.data_cancellazione IS NULL ");
 		jpql.append(" AND dct.data_cancellazione IS NULL ");
 		
+		
 		//Join
 		jpql.append(" AND p.ambito_id = da.ambito_id ");
 		jpql.append(" AND p.causale_ep_tipo_id = cet.causale_ep_tipo_id ");
@@ -277,6 +280,8 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 		jpql.append(" AND rerm.regmovfin_id = tme.regmovfin_id ");
 		jpql.append(" AND rerm.evento_id = de.evento_id ");
 		jpql.append(" AND de.collegamento_tipo_id = dct.collegamento_tipo_id ");
+		jpql.append(" AND bil.bil_id = p.bil_id ");//SIAC-8595
+		jpql.append(" AND periodo.periodo_id = bil.periodo_id ");//SIAC-8595
 		
 		//Base Filter
 		jpql.append(" AND p.ente_proprietario_id = :enteProprietarioId ");
@@ -292,6 +297,7 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 		appendNativeFilterSiacDCausaleEpTipoEnum(jpql, param, siacDCausaleEpTipoEnum);
 		appendNativeFilterPnotaNumero(jpql, param, pnotaNumero);
 		appendNativeFilterPnotaNumeroRegistrazione(jpql, param, pnotaProgressivogiornale);
+		appendNativeFilterPnotaAnno(jpql, param, pnotaAnno);
 		appendNativeFilterSiacDPrimaNotaStatoEnum(jpql, param, siacDPrimaNotaStatoEnum);
 		appendNativeFilterPnotaDesc(jpql, param, pnotaDesc);
 		appendNativeFilterSiacTPdceConto(jpql, param, pdceContoId);
@@ -302,7 +308,7 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 		
 		
 	}
-
+	
 	private void appendFilterSiacDAmbitoEnum(StringBuilder jpql, Map<String, Object> param, SiacDAmbitoEnum siacDAmbitoEnum) {
 		if(siacDAmbitoEnum != null){
 			jpql.append(" AND p.siacDAmbito.ambitoCode = :ambitoCode ");
@@ -527,6 +533,62 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 		}
 	}
 
+	//SIAC-8595
+	private void appendNativeFilterPnotaAnno(StringBuilder jpql, Map<String, Object> param, Integer pnotaAnno) {
+		if(pnotaAnno != null && pnotaAnno != 0){
+			jpql
+			.append("AND EXISTS (SELECT 1 FROM siac_t_movgest tm ")
+			.append("	WHERE tm.movgest_anno=:pnotaAnno ")
+			.append("	AND (dct.collegamento_tipo_code IN ('")
+															.append(SiacDCollegamentoTipoEnum.Impegno.getCodice())     
+															.append("', '")
+															.append(SiacDCollegamentoTipoEnum.Accertamento.getCodice())     
+															.append("') ")
+			.append("		AND rerm.campo_pk_id=tm.movgest_id")
+			.append("		OR dct.collegamento_tipo_code IN ('")
+															.append(SiacDCollegamentoTipoEnum.ModificaMovimentoGestioneSpesa.getCodice())     
+															.append("', '")
+															.append(SiacDCollegamentoTipoEnum.ModificaMovimentoGestioneEntrata.getCodice())     
+															.append("') ")
+			.append("		AND EXISTS (SELECT 1 ")
+			.append("			FROM siac_t_movgest_ts tmt, ")
+			.append("			siac_t_movgest_ts_det_mod tmtdm, ")
+			.append("			siac_r_modifica_stato rms,")
+			.append("			siac_t_modifica tmd,")
+			.append("			siac_d_modifica_stato dms")
+			.append("			WHERE rerm.campo_pk_id=tmd.mod_id")
+			.append("			AND tmt.movgest_id=tm.movgest_id ")
+			.append("			AND tmtdm.movgest_ts_id=tmt.movgest_ts_id")
+			.append("			AND tmtdm.mod_stato_r_id=rms.mod_stato_r_id")
+			.append("			AND rms.mod_stato_id=dms.mod_stato_id")
+//			.append("			AND dms.mod_stato_code!='A'")
+			.append("			AND rms.mod_id=tmd.mod_id ")
+			.append("			AND rerm.campo_pk_id=tmd.mod_id")
+			.append("			AND tmt.data_cancellazione IS NULL")
+			.append("			AND rms.data_cancellazione IS NULL")
+			.append("			AND tmtdm.data_cancellazione IS NULL")
+			.append("			AND tmd.data_cancellazione IS NULL")
+			.append("		)")
+			.append("		OR dct.collegamento_tipo_code IN ('")
+															.append(SiacDCollegamentoTipoEnum.SubImpegno.getCodice())     
+															.append("', '")
+															.append(SiacDCollegamentoTipoEnum.SubAccertamento.getCodice())     
+															.append("') ")
+			.append("		AND EXISTS (SELECT 1 ")
+			.append("			FROM siac_t_movgest_ts tmt, ")
+			.append("			siac_d_movgest_ts_tipo dmtt ")
+			.append("			WHERE rerm.campo_pk_id=tmt.movgest_ts_id")
+			.append("			AND tmt.movgest_id=tm.movgest_id ")
+			.append("			AND tmt.movgest_ts_tipo_id=dmtt.movgest_ts_tipo_id ")
+			.append("			AND dmtt.movgest_ts_tipo_code='S'")
+			.append("			AND dmtt.data_cancellazione IS NULL")
+			.append("			AND tmt.data_cancellazione IS NULL")
+			.append(")))");
+			
+			param.put("pnotaAnno", pnotaAnno);
+		}
+	}
+	
 	private void appendFilterSiacDCausaleEpTipoEnum(StringBuilder jpql, Map<String, Object> param, SiacDCausaleEpTipoEnum siacDCausaleEpTipoEnum) {
 		if(siacDCausaleEpTipoEnum != null){
 			jpql.append(" AND p.siacDCausaleEpTipo.causaleEpTipoCode = :causaleEpTipoCode ");
@@ -764,7 +826,7 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 	@Override
 	public Page<SiacTPrimaNota> ricercaSinteticaNativaPrimaNotaIntegrata(Integer enteProprietarioId, Integer bilId, Collection<SiacDCollegamentoTipoEnum> siacDCollegamentoTipos,
 			SiacDAmbitoEnum siacDAmbitoEnum, SiacDCausaleEpTipoEnum siacDCausaleEpTipoEnum, Collection<Integer> listaEventoTipoId, Integer eventoTipoId, Collection<Integer> eventoIds,
-			Integer pnotaNumero, Integer pnotaProgressivogiornale, Integer pdceContoId, Collection<Integer> idMovimento, SiacDPrimaNotaStatoEnum siacDPrimaNotaStatoEnum, Integer classifId,
+			Integer pnotaNumero, Integer pnotaProgressivogiornale, Integer pnotaAnno, Integer pdceContoId, Collection<Integer> idMovimento, SiacDPrimaNotaStatoEnum siacDPrimaNotaStatoEnum, Integer classifId,
 			String pnotaDesc, Integer causaleEpId, Date dataRegistrazioneDa, Date dataRegistrazioneA, Date dataRegistrazioneProvvisoriaDa, Date dataRegistrazioneProvvisoriaA,
 			List<Integer> docIds, 
 			
@@ -780,13 +842,14 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 			Integer gsaClassifId,
 			Pageable pageable) {
 		
-		final String methodName = "ricercaSinteticaPrimaNotaIntegrata";
+		final String methodName = "ricercaSinteticaNativaPrimaNotaIntegrata";
 		
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> param = new HashMap<String, Object>();
 		
+		//SIAC-8595
 		componiNativeQueryRicercaSinteticaPrimaNotaIntegrata(jpql, param, enteProprietarioId, bilId,siacDCollegamentoTipos, siacDAmbitoEnum, siacDCausaleEpTipoEnum, listaEventoTipoId,
-				eventoTipoId, eventoIds, pnotaNumero, pnotaProgressivogiornale, pdceContoId, idMovimento, siacDPrimaNotaStatoEnum, 
+				eventoTipoId, eventoIds, pnotaNumero, pnotaProgressivogiornale, pnotaAnno, pdceContoId, idMovimento, siacDPrimaNotaStatoEnum, 
 				 classifId, pnotaDesc, causaleEpId, soggettoId, dataRegistrazioneDa, dataRegistrazioneA, dataRegistrazioneProvvisoriaDa, dataRegistrazioneProvvisoriaA, docIds,
 				 uidAttoAmm,uidMovGest,uidSubMovGest, uidSac, importoDocumentoDa, importoDocumentoA, bilElemId, gsaClassifId);
 		
@@ -822,17 +885,17 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 		appendFilterSiacTGsaClassif(jpql, param, gsaClassifId);
 	}
 	
-	
+	//SIAC-8595
 	private void componiNativeQueryRicercaSinteticaPrimaNotaIntegrata(StringBuilder sql, Map<String, Object> param, Integer enteProprietarioId, Integer bilId,
 			Collection<SiacDCollegamentoTipoEnum> siacDCollegamentoTipos, SiacDAmbitoEnum siacDAmbitoEnum, SiacDCausaleEpTipoEnum siacDCausaleEpTipoEnum,
-			Collection<Integer> listaEventoTipoId, Integer eventoTipoId, Collection<Integer> eventoIds, Integer pnotaNumero, Integer pnotaProgressivogiornale,
+			Collection<Integer> listaEventoTipoId, Integer eventoTipoId, Collection<Integer> eventoIds, Integer pnotaNumero, Integer pnotaProgressivogiornale,Integer pnotaAnno,
 			Integer pdceContoId, Collection<Integer> idMovimento, SiacDPrimaNotaStatoEnum siacDPrimaNotaStatoEnum, Integer classifId,
 			String pnotaDesc, Integer causaleEpId, Integer soggettoId, Date dataRegistrazioneDa, Date dataRegistrazioneA,
 			Date dataRegistrazioneProvvisoriaDa, Date dataRegistrazioneProvvisoriaA, List<Integer> docId,
 			Integer uidAttoAmm,Integer uidMovGest,Integer uidSubMovGest,Integer uidSac,	BigDecimal importoDocumentoDa, BigDecimal importoDocumentoA, Integer uidBilElem, Integer gsaClassifId) {
 		
 		componiNativeQueryRicercaSinteticaPrimaNotaBase( sql, param,  enteProprietarioId, bilId, siacDAmbitoEnum,
-				siacDCausaleEpTipoEnum, pnotaNumero, pnotaProgressivogiornale, siacDPrimaNotaStatoEnum, pnotaDesc,
+				siacDCausaleEpTipoEnum, pnotaNumero, pnotaProgressivogiornale, pnotaAnno, siacDPrimaNotaStatoEnum, pnotaDesc,
 				pdceContoId, causaleEpId, soggettoId, dataRegistrazioneDa, dataRegistrazioneA);
 		
 		appendNativeFilterDataRegistrazioneProvvisoriaDa(sql, param, dataRegistrazioneProvvisoriaDa);
@@ -857,7 +920,6 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 		appendNativeFilterIdGsaClassif(sql, param, gsaClassifId);
 		
 	}
-
 
 	private void appendNativeFilterImportoDocumento(StringBuilder sql, Map<String, Object> param,
 			BigDecimal importoDocumentoDa, BigDecimal importoDocumentoA, List<Integer> docIds /*opzionale*/ ) {
@@ -1425,7 +1487,7 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 	public Page<SiacTPrimaNota> ricercaSinteticaNativaPrimaNotaIntegrataValidabile(Integer enteProprietarioId, Integer bilId,
 			Collection<SiacDCollegamentoTipoEnum> siacDCollegamentoTipos,
 			SiacDAmbitoEnum siacDAmbitoEnum, SiacDCausaleEpTipoEnum siacDCausaleEpTipoEnum, Integer eventoTipoId, Collection<Integer> eventoIds,
-			Integer pnotaNumero, Integer pnotaProgressivogiornale, Integer pdceContoId, Integer causaleEpId, Collection<Integer> idMovimento,
+			Integer pnotaNumero, Integer pnotaProgressivogiornale, Integer pnotaAnno, Integer pdceContoId, Integer causaleEpId, Collection<Integer> idMovimento,
 			SiacDPrimaNotaStatoEnum siacDPrimaNotaStatoEnum, Integer classifId, String pnotaDesc, Integer soggettoId, Date dataRegistrazioneDa,
 			Date dataRegistrazioneA, Integer uidAttoAmm,Integer uidMovGest,Integer uidSubMovGest,Integer uidSac, Integer uidBilElem, Integer gsaClassifId,
 			//Collection<String> collegamentoTipoCodesSubdoc, Collection<String> eventoCassaEconomaleCodes, Collection<String> eventoCodes, 
@@ -1434,8 +1496,9 @@ public class PrimaNotaDaoImpl extends ExtendedJpaDao<SiacTPrimaNota, Integer> im
 		StringBuilder sql = new StringBuilder();
 		Map<String, Object> param = new HashMap<String, Object>();
 		
+		//SIAC-8595
 		componiNativeQueryRicercaSinteticaPrimaNotaIntegrata(sql, param, enteProprietarioId, bilId, siacDCollegamentoTipos, siacDAmbitoEnum, siacDCausaleEpTipoEnum,
-				null, eventoTipoId, eventoIds, pnotaNumero, pnotaProgressivogiornale, pdceContoId, idMovimento, siacDPrimaNotaStatoEnum, classifId,
+				null, eventoTipoId, eventoIds, pnotaNumero, pnotaProgressivogiornale, pnotaAnno, pdceContoId, idMovimento, siacDPrimaNotaStatoEnum, classifId,
 				pnotaDesc, causaleEpId, soggettoId, null, null, dataRegistrazioneDa, dataRegistrazioneA , null /*docId*/,
 				 uidAttoAmm,uidMovGest,uidSubMovGest,uidSac, null /*importoDocumentoDa*/, null /*importoDocumentoA*/, uidBilElem, gsaClassifId);
 		

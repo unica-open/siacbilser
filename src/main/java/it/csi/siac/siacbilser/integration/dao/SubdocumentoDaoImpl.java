@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.dao.base.ExtendedJpaDao;
 import it.csi.siac.siacbilser.integration.entity.SiacRLiquidazioneStato;
-import it.csi.siac.siacbilser.integration.entity.SiacRMutuoVoceSubdoc;
 import it.csi.siac.siacbilser.integration.entity.SiacRSubdoc;
 import it.csi.siac.siacbilser.integration.entity.SiacRSubdocAttoAmm;
 import it.csi.siac.siacbilser.integration.entity.SiacRSubdocAttr;
@@ -138,11 +137,6 @@ public class SubdocumentoDaoImpl extends ExtendedJpaDao<SiacTSubdoc, Integer> im
 			}			
 		}
 		
-		if(d.getSiacRMutuoVoceSubdocs()!=null) {
-			for(SiacRMutuoVoceSubdoc r : d.getSiacRMutuoVoceSubdocs()){
-				r.setDataModificaInserimento(now);
-			}			
-		}
 		if(d.getSiacRSubdocSplitreverseIvaTipos() != null) {
 			for(SiacRSubdocSplitreverseIvaTipo r : d.getSiacRSubdocSplitreverseIvaTipos()){
 				r.setDataModificaInserimento(now);
@@ -246,11 +240,6 @@ public class SubdocumentoDaoImpl extends ExtendedJpaDao<SiacTSubdoc, Integer> im
 			}			
 		}
 		
-		if(dAttuale.getSiacRMutuoVoceSubdocs()!=null) {
-			for(SiacRMutuoVoceSubdoc r : dAttuale.getSiacRMutuoVoceSubdocs()){
-				r.setDataCancellazioneIfNotSet(now);
-			}			
-		}
 		
 		if(dAttuale.getSiacRSubdocSplitreverseIvaTipos() != null) {
 			for(SiacRSubdocSplitreverseIvaTipo r : dAttuale.getSiacRSubdocSplitreverseIvaTipos()){
@@ -325,12 +314,6 @@ public class SubdocumentoDaoImpl extends ExtendedJpaDao<SiacTSubdoc, Integer> im
 			}			
 		}
 		
-		if(d.getSiacRMutuoVoceSubdocs()!=null) {
-			for(SiacRMutuoVoceSubdoc r : d.getSiacRMutuoVoceSubdocs()){
-				r.setDataModificaInserimento(now);
-			}			
-		}
-		
 		if(d.getSiacRSubdocSplitreverseIvaTipos() != null) {
 			for(SiacRSubdocSplitreverseIvaTipo r : d.getSiacRSubdocSplitreverseIvaTipos()){
 				r.setDataModificaInserimento(now);
@@ -366,7 +349,6 @@ public class SubdocumentoDaoImpl extends ExtendedJpaDao<SiacTSubdoc, Integer> im
 		setDataCancellazione(subdoc.getSiacRSubdocSogs(), now);
 		setDataCancellazione(subdoc.getSiacRSubdocProvCassas(), now);
 		setDataCancellazione(subdoc.getSiacRElencoDocSubdocs(), now);
-		setDataCancellazione(subdoc.getSiacRMutuoVoceSubdocs(), now);
 		// SIAC-6039
 		setDataCancellazione(subdoc.getSiacTRegistroPccs(), now);
 		
@@ -1477,9 +1459,6 @@ public class SubdocumentoDaoImpl extends ExtendedJpaDao<SiacTSubdoc, Integer> im
 		jpql.append(" ) ");	
 	}
 
-	
-	
-	
 	@Override
 	public BigDecimal ricercaSinteticaSubdocumentiDaAssociareTotaleImporti(
 			int enteProprietarioId,
@@ -1531,6 +1510,171 @@ public class SubdocumentoDaoImpl extends ExtendedJpaDao<SiacTSubdoc, Integer> im
 		
 		return result;
 	}
+	
+	//SIAC-6780
+	@Override
+	public Page<SiacTSubdoc> ricercaSinteticaSubdocumentiDaAssociarePerCollegaDocumento(
+			int enteProprietarioId,
+			Collection<SiacDDocFamTipoEnum> tipoFam, 
+			SiacDProvCassaTipoEnum tipoProvv, 
+			Integer docTipoId,
+			Integer docAnno,
+			String docNumero, 
+			BigDecimal preDocImporto, 
+			BigDecimal numeroProvvisorio,
+			String soggettoCode, 
+			Set<SiacDDocStatoEnum> statiDocumento,
+			Pageable pageable) {
+		
+		final String methodName = "ricercaSubdocumento";
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append(" SELECT sd ");
+		
+		componiQueryRicercaSinteticaSubdocumentiDaAssociarePerCollegaDocumento(jpql, param ,enteProprietarioId, tipoFam, 
+				tipoProvv, docTipoId, docAnno, docNumero, preDocImporto, numeroProvvisorio, soggettoCode, statiDocumento);
+		
+		jpql.append(" ORDER BY sd.subdocId ");
+		
+		log.info(methodName, jpql.toString());
+		
+		return getPagedList(jpql.toString(), param, pageable);
+	}
+
+	@Override
+	public BigDecimal ricercaSinteticaSubdocumentiDaAssociareTotaleImportiPerCollegaDocumento(
+			int enteProprietarioId,
+			Collection<SiacDDocFamTipoEnum> tipoFam, 
+			SiacDProvCassaTipoEnum tipoProvv, 
+			Integer docTipoId,
+			Integer docAnno, 
+			String docNumero, 
+			BigDecimal preDocImporto, 
+			BigDecimal numeroProvvisorio,
+			String soggettoCode, 
+			Set<SiacDDocStatoEnum> statiDocumento,
+			Pageable pageable) {
+
+		final String methodName = "ricercaSinteticaSubdocumentiDaAssociareTotaleImporti";
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append(" SELECT SUM(sd.subdocImporto - sd.subdocImportoDaDedurre) ");
+		
+		componiQueryRicercaSinteticaSubdocumentiDaAssociarePerCollegaDocumento(jpql, param ,enteProprietarioId, tipoFam, 
+				tipoProvv, docTipoId, docAnno, docNumero, preDocImporto, numeroProvvisorio, soggettoCode, statiDocumento);
+		
+		log.debug(methodName, jpql.toString());
+		
+		Query query = createQuery(jpql.toString(), param);
+		BigDecimal result = (BigDecimal) query.getSingleResult();
+		
+		return result;
+	}
+
+	private void componiQueryRicercaSinteticaSubdocumentiDaAssociarePerCollegaDocumento(StringBuilder jpql,
+			Map<String, Object> param, int enteProprietarioId, Collection<SiacDDocFamTipoEnum> tipoFam,
+			SiacDProvCassaTipoEnum tipoProvv, Integer docTipoId, Integer docAnno, String docNumero, 
+			BigDecimal preDocImporto, BigDecimal numeroProvvCassa, String soggettoCode, Set<SiacDDocStatoEnum> statiDocumento) {
+
+		jpql.append("	FROM SiacTSubdoc sd, SiacTDoc d	");
+		
+		jpql.append("	WHERE sd.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ");
+		param.put("enteProprietarioId", enteProprietarioId);
+		
+		jpql.append("	AND sd.siacTDoc.docId = d	");
+		
+		if(docAnno != null && docAnno > 0) {
+			jpql.append("	AND d.docAnno = :docAnno	");
+			param.put("docAnno", docAnno);
+		}
+
+		if(docNumero != null && StringUtils.isNotEmpty(docNumero)) {
+			jpql.append("	AND d.docNumero like '%' || :docNumero || '%'	");
+			param.put("docNumero", docNumero);
+		}
+		
+		if(preDocImporto != null && preDocImporto.compareTo(BigDecimal.ZERO) > 0) {
+			jpql.append("	AND sd.subdocImporto <= :preDocImporto	");
+			param.put("preDocImporto", preDocImporto);			
+		}
+		
+		jpql.append("	AND sd.subdocImporto > 0	");
+		
+		if(docTipoId != null && docTipoId > 0) {
+			jpql.append("	AND d.siacDDocTipo.docTipoId = :docTipoId	");
+			param.put("docTipoId", docTipoId);
+		}
+		
+		if(tipoFam != null && tipoFam.size() > 0) {
+			jpql.append("	AND d.siacDDocTipo.siacDDocFamTipo.docFamTipoCode in (:docFamTipoCodes)	");
+			
+			List<String> docFamTipoCodes = new ArrayList<String>();
+			for(SiacDDocFamTipoEnum sddft : tipoFam) {
+				docFamTipoCodes.add(sddft.getCodice());
+			}
+			param.put("docFamTipoCodes", docFamTipoCodes);
+		}
+		
+		if(soggettoCode != null && StringUtils.isNotEmpty(soggettoCode)) {
+			jpql.append("	AND EXISTS (	");
+			jpql.append("		FROM SiacTSoggetto s, SiacRDocSog rdsogg	");
+			jpql.append("		WHERE rdsogg.siacTDoc = d	");
+			jpql.append("		AND rdsogg.siacTSoggetto = s	");
+			jpql.append("		AND s.soggettoCode = :soggettoCode	");
+			jpql.append("		AND s.dataCancellazione is null	");
+			jpql.append("		AND s.dataFineValidita is null	");
+			jpql.append("	)	");
+			param.put("soggettoCode", soggettoCode);
+		}
+		
+		jpql.append("	AND NOT EXISTS (	");
+		jpql.append("		FROM SiacRPredocSubdoc rps	");
+		jpql.append("		WHERE rps.siacTSubdoc = sd	");
+		jpql.append("		AND rps.siacTSubdoc.siacTDoc = d	");
+		jpql.append("		AND rps.dataCancellazione is null	");
+		jpql.append("		AND rps.dataFineValidita is null	");
+		jpql.append("		AND rps.siacTPredoc.dataCancellazione is null	");
+		jpql.append("	)	");
+		
+		if(statiDocumento != null && statiDocumento.size() > 0) {
+			jpql.append("	AND EXISTS (	");
+			jpql.append("		FROM SiacRDocStato rds	");
+			jpql.append("		WHERE rds.siacTDoc = d	");
+			jpql.append("		AND rds.siacDDocStato.docStatoCode not in (:docStatoCodes)	");
+			jpql.append("		AND rds.dataCancellazione is null	");
+			jpql.append("		AND rds.dataFineValidita is null	");
+			jpql.append("	)	");
+			
+			List<String> docStatoCodes = new ArrayList<String>();
+			for(SiacDDocStatoEnum sddse : statiDocumento) {
+				docStatoCodes.add(sddse.getCodice());
+			}
+			param.put("docStatoCodes", docStatoCodes);
+		}
+		
+		if(numeroProvvCassa != null && numeroProvvCassa.compareTo(BigDecimal.ZERO) > 0) {
+			jpql.append("	AND NOT EXISTS (	");
+			jpql.append("		FROM SiacRSubdocProvCassa cassa ");
+			jpql.append("		WHERE cassa.siacTProvCassa.provcNumero = :numeroProvvCassa	");
+			jpql.append("		AND cassa.siacTSubdoc = sd	");
+			jpql.append("		AND cassa.siacTProvCassa.dataCancellazione is null	");
+			jpql.append("		AND cassa.siacTProvCassa.dataFineValidita is null	");
+			jpql.append("	)	");
+			param.put("numeroProvvCassa", numeroProvvCassa);
+		}
+		
+		if((docAnno != null && docAnno > 0) || (docNumero != null && StringUtils.isNotEmpty(docNumero))) {
+			jpql.append("	AND d.dataCancellazione is null	");
+			jpql.append("	AND d.dataFineValidita is null	");
+		}
+		
+		jpql.append("	AND sd.dataCancellazione is null	");
+		jpql.append("	AND sd.dataFineValidita is null	");
+		
+	}
+	//
 
 	/*
 	 * Chiavi di esempio restituite: "123_1000.00_10.00_1_T_N" (Quando legato ad impegno), "123_100.00_10.00_4_S_N" (Quando legato a subimpegno)
@@ -2228,6 +2372,151 @@ public class SubdocumentoDaoImpl extends ExtendedJpaDao<SiacTSubdoc, Integer> im
 		
 		super.update(tsOriginale);
 	}
-
 	
+	/**
+	 * SIAC-8195
+	 * 
+	 * Cerco movimenti non residui associati al subdoc (annoMovimento < annoEsercizio)
+	 */
+	@Override
+	public List<SiacTSubdoc> cercaSubdocSenzaResiduo(Integer subDocUid, Integer annoEsercizio){
+		String methodName = "cercaSubdocConModificheRORM";
+		
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" SELECT DISTINCT sts ")
+		.append(" FROM SiacTSubdoc sts ")
+		.append(" JOIN sts.siacRSubdocMovgestTs srsmt ")
+		.append(" JOIN srsmt.siacTMovgestT stmt ")
+		.append(" JOIN stmt.siacTMovgest stm ")
+		.append(" WHERE sts.subdocId = :subDocUids ")
+		.append(" AND stm.movgestAnno >= :annoEsercizio ")
+		;
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("subDocUids", subDocUid);
+		param.put("annoEsercizio", annoEsercizio);
+		
+		Query query = createQuery(jpql.toString(), param);
+		
+		log.debug(methodName, jpql.toString());
+		
+		@SuppressWarnings("unchecked")
+		List<SiacTSubdoc> result = (List<SiacTSubdoc>) query.getResultList();
+		log.debug(methodName, "returning result: "+result);
+		
+		return result;
+	}
+	
+	/**
+	 * SIAC-8195
+	 * 
+	 * Cerco modifiche ROR - da mantenere in stato valido associate al subdoc
+	 */
+	@Override
+	public List<SiacTSubdoc> cercaSubdocConModificheRORM(Integer subDocUid, Integer annoEsercizio){
+		String methodName = "cercaSubdocConModificheRORM";
+		
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" SELECT DISTINCT sts ")
+			.append(" FROM SiacTSubdoc sts ")
+			.append(" JOIN sts.siacRSubdocMovgestTs srsmt ")
+			.append(" JOIN srsmt.siacTMovgestT stmt ")
+			.append(" JOIN stmt.siacTMovgest stm ")
+			.append(" JOIN stmt.siacTMovgestTsDetMods stmtdm ")
+			.append(" JOIN stmtdm.siacRModificaStato srms ")
+			.append(" JOIN srms.siacDModificaStato sdms ")
+			.append(" JOIN srms.siacTModifica modifica ")
+			.append(" JOIN modifica.siacDModificaTipo sdmt ")
+			.append(" JOIN modifica.siacTAttoAmm staa ")
+			.append(" JOIN staa.siacRAttoAmmStatos sraas ")
+			.append(" JOIN sraas.siacDAttoAmmStato sdaas ")
+			.append(" WHERE sts.subdocId = :subDocUids ")
+			.append(" AND stm.movgestAnno < :annoEsercizio ")
+			.append(" AND sdaas.attoammStatoCode = :attoAmmCode ")
+			.append(" AND sdms.modStatoCode <> :modStatoCode ")
+			.append(" AND sdmt.modTipoCode = :modTipoCode ")
+			.append(" AND sraas.dataCancellazione IS NULL ")
+			.append(" AND (sraas.dataInizioValidita IS NOT NULL AND sraas.dataInizioValidita <= CURRENT_TIMESTAMP) ")
+			.append(" AND (sraas.dataFineValidita IS NULL OR sraas.dataFineValidita > CURRENT_TIMESTAMP) ")
+			.append(" AND (srms.dataInizioValidita IS NOT NULL AND srms.dataInizioValidita <= CURRENT_TIMESTAMP) ")
+			.append(" AND (srms.dataFineValidita IS NULL OR srms.dataFineValidita > CURRENT_TIMESTAMP) ")
+			;
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("modStatoCode", "A");
+		param.put("modTipoCode", "RORM");
+		param.put("subDocUids", subDocUid);
+		param.put("annoEsercizio", annoEsercizio);
+		param.put("attoAmmCode", SiacDAttoAmmStatoEnum.DEFINITIVO.getCodice());
+		
+		Query query = createQuery(jpql.toString(), param);
+		
+		log.debug(methodName, jpql.toString());
+
+		@SuppressWarnings("unchecked")
+		List<SiacTSubdoc> result = (List<SiacTSubdoc>) query.getResultList();
+		log.debug(methodName, "returning result: "+result);
+		
+		return result;
+	}
+
+	/**
+	 * SIAC-8195
+	 * 
+	 * Cerco modifiche ROR - da mantenere in stato valido associate ai subdoc
+	 */
+	@Override
+	public List<SiacTSubdoc> cercaSubdocsConModificheRORM(List<Integer> subDocUids, Integer annoEsercizio){
+		String methodName = "cercaSubdocConModificheRORM";
+		
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" SELECT DISTINCT sts ")
+		.append(" FROM SiacTSubdoc sts ")
+		.append(" JOIN sts.siacRSubdocMovgestTs srsmt ")
+		.append(" JOIN srsmt.siacTMovgestT stmt ")
+		.append(" JOIN stmt.siacTMovgest stm ")
+		.append(" JOIN stmt.siacTMovgestTsDetMods stmtdm ")
+		.append(" JOIN stmtdm.siacRModificaStato srms ")
+		.append(" JOIN srms.siacDModificaStato sdms ")
+		.append(" JOIN srms.siacTModifica modifica ")
+		.append(" JOIN modifica.siacDModificaTipo sdmt ")
+		.append(" JOIN modifica.siacTAttoAmm staa ")
+		.append(" JOIN staa.siacRAttoAmmStatos sraas ")
+		.append(" JOIN sraas.siacDAttoAmmStato sdaas ")
+		.append(" WHERE sts.subdocId IN (:subDocUids) ")
+		.append(" AND stm.movgestAnno < :annoEsercizio ")
+		.append(" AND sdaas.attoammStatoCode = :attoAmmCode ")
+		.append(" AND sdms.modStatoCode <> :modStatoCode ")
+		.append(" AND sdmt.modTipoCode = :modTipoCode ")
+		.append(" AND sraas.dataCancellazione IS NULL ")
+		.append(" AND (sraas.dataInizioValidita IS NOT NULL AND sraas.dataInizioValidita <= CURRENT_TIMESTAMP) ")
+		.append(" AND (sraas.dataFineValidita IS NULL OR sraas.dataFineValidita > CURRENT_TIMESTAMP) ")
+		.append(" AND (srms.dataInizioValidita IS NOT NULL AND srms.dataInizioValidita <= CURRENT_TIMESTAMP) ")
+		.append(" AND (srms.dataFineValidita IS NULL OR srms.dataFineValidita > CURRENT_TIMESTAMP) ")
+		;
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("modStatoCode", "A");
+		param.put("modTipoCode", "RORM");
+		param.put("subDocUids", subDocUids);
+		param.put("annoEsercizio", annoEsercizio);
+		param.put("attoAmmCode", SiacDAttoAmmStatoEnum.DEFINITIVO.getCodice());
+		
+		Query query = createQuery(jpql.toString(), param);
+		
+		log.debug(methodName, jpql.toString());
+		
+		@SuppressWarnings("unchecked")
+		List<SiacTSubdoc> result = (List<SiacTSubdoc>) query.getResultList();
+		log.debug(methodName, "returning result: "+result);
+		
+		return result;
+	}
+
 }

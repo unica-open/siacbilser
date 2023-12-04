@@ -44,14 +44,14 @@ public class StampaRegistroIvaVenditeIvaImmediataReportHandler extends StampaReg
 		sie.setEnte(getEnte());
 		sie.setRegistroIva(registroIva);
 		sie.setStatoSubdocumentoIva(StatoSubdocumentoIva.DEFINITIVO);
-		//inizio periodo
-		Date protocolloDefinitivoDa = p.getInizioPeriodo(getBilancio().getAnno()); 
-		//fine periodo
-		Date protocolloDefinitivoA = p.getFinePeriodo(getBilancio().getAnno()); 
+		//inizio periodo - SIAC-7516
+		Date dataOperazioneDocumentoDa = p.getInizioPeriodo(getBilancio().getAnno()); 
+		//fine periodo - SIAC-7516
+		Date dataOperazioneDocumentoA = p.getFinePeriodo(getBilancio().getAnno()); 
 		
-		List<SubdocumentoIvaEntrata> listaSubdocumentoIvaEntrataNelPeriodo = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataNonQPID(sie, null, null, protocolloDefinitivoDa, protocolloDefinitivoA);
+		List<SubdocumentoIvaEntrata> listaSubdocumentoIvaEntrataNelPeriodo = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataNonQPID(sie, null, null, null, null, dataOperazioneDocumentoDa, dataOperazioneDocumentoA);
 		return listaSubdocumentoIvaEntrataNelPeriodo;
-		}
+	}
 
 	@Override
 	protected void sortSezione1(StampaRegistroIvaDatiIva sezione1) {

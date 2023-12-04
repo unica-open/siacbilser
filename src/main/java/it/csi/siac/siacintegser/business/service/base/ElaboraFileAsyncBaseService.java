@@ -6,7 +6,7 @@ package it.csi.siac.siacintegser.business.service.base;
 
 import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
 import it.csi.siac.siacbilser.business.service.base.BilAsyncResponseHandler;
-import it.csi.siac.siacbilser.business.service.base.ExtendedBaseService;
+import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFile;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFileResponse;
@@ -19,5 +19,21 @@ import it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFileResponse;
  * 
  * @author Domenico Lisi
  */
-public abstract class ElaboraFileAsyncBaseService<RH extends BilAsyncResponseHandler<ElaboraFileResponse>, S extends ExtendedBaseService<ElaboraFile, ElaboraFileResponse>> 
-	extends AsyncBaseService<ElaboraFile, ElaboraFileResponse, AsyncServiceRequestWrapper<ElaboraFile>, RH, S> {}
+public abstract class ElaboraFileAsyncBaseService<RH extends BilAsyncResponseHandler<ElaboraFileResponse>, S extends ElaboraFileBaseService> 
+	extends AsyncBaseService<ElaboraFile, ElaboraFileResponse, AsyncServiceRequestWrapper<ElaboraFile>, RH, S> {
+	
+	@Override
+	protected void checkServiceParam() throws ServiceParamError
+	{
+		String methodName = "checkServiceParam";
+		service.checkServiceParam();
+		log.debug(methodName, "Errori riscontrati: " + service.getServiceResponse().getErrori());
+		res.addErrori(service.getServiceResponse().getErrori());
+	}
+
+	@Override
+	protected void preStartService() {}
+
+	@Override
+	protected void postStartService() {}
+}

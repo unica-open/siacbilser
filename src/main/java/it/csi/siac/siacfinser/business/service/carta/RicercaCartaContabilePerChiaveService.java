@@ -28,8 +28,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioQuotaSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioQuotaSpesaResponse;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaCartaContabilePerChiave;
@@ -99,7 +99,7 @@ public class RicercaCartaContabilePerChiaveService extends AbstractBaseService<R
 			
 			DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.INSERIMENTO, null);
 			
-			CartaContabile cartaContabile = cartaContabileDad.ricercaCartaContabile(pk, richiedente, Constanti.AMBITO_FIN,ente, datiOperazione,
+			CartaContabile cartaContabile = cartaContabileDad.ricercaCartaContabile(pk, richiedente, CostantiFin.AMBITO_FIN,ente, datiOperazione,
 					req.getCercaMdpCessionePerChiaveModPag());
 				
 			// estraggo l'atto amministrativo della carta contabile
@@ -283,12 +283,12 @@ public class RicercaCartaContabilePerChiaveService extends AbstractBaseService<R
 			long totDue = stopDue-startDue;
 			
 			
-			CommonUtils.println("tot:                           " + tot);
-			CommonUtils.println("totUno:                        " + totUno  );
-			CommonUtils.println("totDue:                        " + totDue );
-			CommonUtils.println("totAttoAmministrativo:         " + totAttoAmministrativo);
-			CommonUtils.println("totCapitolo:                   " + totCapitolo);
-			CommonUtils.println("totRicercaDettaglioQuotaSpesa: " + totRicercaDettaglioQuotaSpesa);
+			CommonUtil.println("tot:                           " + tot);
+			CommonUtil.println("totUno:                        " + totUno  );
+			CommonUtil.println("totDue:                        " + totDue );
+			CommonUtil.println("totAttoAmministrativo:         " + totAttoAmministrativo);
+			CommonUtil.println("totCapitolo:                   " + totCapitolo);
+			CommonUtil.println("totRicercaDettaglioQuotaSpesa: " + totRicercaDettaglioQuotaSpesa);
 
 			
 			// Esito con OK

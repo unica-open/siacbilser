@@ -54,7 +54,8 @@ public class TipoComponenteImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacDBi
 	@Override
 	public List<SiacDBilElemDetCompTipo> ricercaTipoComponenteImportiCapitolo(
 			Integer enteProprietarioId, 
-			Boolean tipoGestioneSoloAutomatica,
+			//SIAC-7349
+			//Boolean tipoGestioneSoloAutomatica,
 			String descrizione, 
 			String codiceMacroTipo,
 			String codiceSottoTipo,
@@ -62,21 +63,28 @@ public class TipoComponenteImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacDBi
 			String codiceTipoFonte,
 			String codiceTipoFase,
 			String codiceTipoDef,
+			//SIAC-7349
+			String codiceTipoImp,
 			String codiceTipoStato,
 			Integer anno,
 			Integer annoBilancio,
 			Boolean soloValidiPerBilancio,
 			List<String> codiciMacroTipoDaEscludere,
 			List<String> codiciSottoTipoDaEscludere,
-			List<String> propostaDefaultComponenteImportiCapitoloDaEscludere) {
+			List<String> propostaDefaultComponenteImportiCapitoloDaEscludere,
+			//SIAC-7349
+			List<String> impegnabileComponenteImportiCapitoloDaEscludere) {
 		
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> params = new HashMap<String, Object>();
 		
-		buildJpqlRicercaTipoComponenteImportiCapitolo(enteProprietarioId, tipoGestioneSoloAutomatica,
+		buildJpqlRicercaTipoComponenteImportiCapitolo(enteProprietarioId, /*tipoGestioneSoloAutomatica,*/
 				descrizione, codiceMacroTipo, codiceSottoTipo, codiceTipoAmbito,
-				codiceTipoFonte, codiceTipoFase, codiceTipoDef, codiceTipoStato, anno, annoBilancio, soloValidiPerBilancio,
-				codiciMacroTipoDaEscludere, codiciSottoTipoDaEscludere, propostaDefaultComponenteImportiCapitoloDaEscludere, jpql, params);
+				codiceTipoFonte, codiceTipoFase, codiceTipoDef, codiceTipoImp, codiceTipoStato, 
+				//SIAC-7873
+				false,
+				anno, annoBilancio, soloValidiPerBilancio,
+				codiciMacroTipoDaEscludere, codiciSottoTipoDaEscludere, propostaDefaultComponenteImportiCapitoloDaEscludere,impegnabileComponenteImportiCapitoloDaEscludere, jpql, params);
 
 		return getList(jpql.toString(), params);
 	}	
@@ -84,7 +92,8 @@ public class TipoComponenteImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacDBi
 	@Override
 	public Page<SiacDBilElemDetCompTipo> ricercaPaginataTipoComponenteImportiCapitolo(
 			Integer enteProprietarioId, 
-			Boolean tipoGestioneSoloAutomatica,
+			//SIAC-7349
+			//Boolean tipoGestioneSoloAutomatica,
 			String descrizione,
 			String codiceMacroTipo,
 			String codiceSottoTipo,
@@ -92,22 +101,31 @@ public class TipoComponenteImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacDBi
 			String codiceTipoFonte,
 			String codiceTipoFase,
 			String codiceTipoDef,
+			//SIAC-7349
+			String codiceTipoImp,
 			String codiceTipoStato,
+			//SIAC-7873
+			boolean saltaControlloSuDateValidita,
 			Integer anno,
 			Integer annoBilancio,
 			Boolean soloValidiPerBilancio,
 			List<String> codiciMacroTipoDaEscludere,
 			List<String> codiciSottoTipoDaEscludere,
 			List<String> propostaDefaultComponenteImportiCapitoloDaEscludere,
+			//SIAC-7349
+			List<String> impegnabileComponenteImportiCapitoloDaEscludere,
 			Pageable pageable) {
 		final String methodName = "ricercaPaginataTipoComponenteImportiCapitolo";
 		
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> params = new HashMap<String, Object>();
 		
-		buildJpqlRicercaTipoComponenteImportiCapitolo(enteProprietarioId,tipoGestioneSoloAutomatica, descrizione, codiceMacroTipo,
+		buildJpqlRicercaTipoComponenteImportiCapitolo(enteProprietarioId,/*tipoGestioneSoloAutomatica,*/ descrizione, codiceMacroTipo,
 				codiceSottoTipo, codiceTipoAmbito, codiceTipoFonte, codiceTipoFase,
-				codiceTipoDef, codiceTipoStato, anno, annoBilancio, soloValidiPerBilancio, codiciMacroTipoDaEscludere, codiciSottoTipoDaEscludere, propostaDefaultComponenteImportiCapitoloDaEscludere, jpql, params);
+				codiceTipoDef, codiceTipoImp, codiceTipoStato, 
+				//SIAC-7873
+				saltaControlloSuDateValidita,
+				anno, annoBilancio, soloValidiPerBilancio, codiciMacroTipoDaEscludere, codiciSottoTipoDaEscludere, propostaDefaultComponenteImportiCapitoloDaEscludere, impegnabileComponenteImportiCapitoloDaEscludere, jpql, params);
 		log.debug(methodName, "JPQL TO EXECUTE: "+ jpql.toString());
 		
 		return getPagedList(jpql.toString(), params, pageable);
@@ -115,7 +133,8 @@ public class TipoComponenteImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacDBi
 	
 	private void buildJpqlRicercaTipoComponenteImportiCapitolo(
 			Integer enteProprietarioId, 
-			Boolean tipoGestioneSoloAutomatica,
+			//SIAC-7349
+			//Boolean tipoGestioneSoloAutomatica,
 			String descrizione, 
 			String codiceMacroTipo,
 			String codiceSottoTipo, 
@@ -123,13 +142,19 @@ public class TipoComponenteImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacDBi
 			String codiceTipoFonte,
 			String codiceTipoFase,
 			String codiceTipoDef,
+			//SIAC-7349
+			String codiceTipoImp,
 			String codiceTipoStato,
+			//SIAC-7873
+			boolean saltaControlloSuDateValidita,
 			Integer anno,
 			Integer annoBilancio,
 			Boolean soloValidiPerBilancio,
 			List<String> codiciMacroTipoDaEscludere,
 			List<String> codiciSottoTipoDaEscludere,
 			List<String> propostaDefaultComponenteImportiCapitoloDaEscludere,
+			//SIAC-7263
+			List<String> impegnabileComponenteImportiCapitoloDaEscludere,
 			StringBuilder jpql, 
 			Map<String, Object> params) {
 		
@@ -140,22 +165,27 @@ public class TipoComponenteImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacDBi
 		if(codiciSottoTipoDaEscludere != null && !codiciSottoTipoDaEscludere.isEmpty()) {
 			jpql.append(" LEFT JOIN dbedct.siacDBilElemDetCompSottoTipo sottoTipo ");
 		}
-		jpql.append(" WHERE dbedct.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ")
-			.append(" AND dbedct.dataInizioValidita < CURRENT_TIMESTAMP ")
+		jpql.append(" WHERE dbedct.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ");
+		//SIAC-7873 si omettono i controlli sulle date di validita' sia inizio che fine pe rl'anagrafica
+		if(!saltaControlloSuDateValidita) {
+			jpql.append(" AND dbedct.dataInizioValidita <= TO_DATE(:annoBilancioForVal, 'YYYY-MM-DD HH24:MI:SS') ")
 			//VISUALIZZA FINE VALIDITA
-			.append(" AND (dbedct.dataFineValidita IS NULL OR dbedct.dataFineValidita > CURRENT_TIMESTAMP) ")
+			.append(" AND (dbedct.dataFineValidita IS NULL OR dbedct.dataFineValidita >= CURRENT_TIMESTAMP) ")
 			.append(" AND dbedct.dataCancellazione IS NULL ");
+			params.put("annoBilancioForVal", annoBilancio.toString());
+		}
 		
 		if (StringUtils.isNotBlank(descrizione)) {
 			jpql.append(" AND dbedct.elemDetCompTipoDesc LIKE CONCAT('%', :descrizione, '%') ");
 			params.put("descrizione", descrizione);
 		}
-		
-		if(tipoGestioneSoloAutomatica != null) {
-			jpql.append(" AND dbedct.elemDetCompTipoGestAut = :elemDetCompTipoGestAut ");
-			params.put("elemDetCompTipoGestAut", tipoGestioneSoloAutomatica);
-		}
-		
+		//SIAC-7349
+//		if(tipoGestioneSoloAutomatica != null) {
+//			jpql.append(" AND dbedct.elemDetCompTipoGestAut = :elemDetCompTipoGestAut ");
+//			params.put("elemDetCompTipoGestAut", tipoGestioneSoloAutomatica);
+//		}
+		appendCodiceTipoClause("TipoImp", codiceTipoImp, jpql, params);
+
 		appendCodiceTipoClause("MacroTipo", codiceMacroTipo, jpql, params);
 		appendCodiceTipoClause("SottoTipo", codiceSottoTipo, jpql, params);
 		appendCodiceTipoClause("TipoAmbito", codiceTipoAmbito, jpql, params);
@@ -166,11 +196,16 @@ public class TipoComponenteImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacDBi
 		appendCodiceTipoClause("TipoStato", codiceTipoStato, jpql, params);
 		
 		appendAnnoClause(anno, jpql, params);
-		appendAnnoBilancioClause(annoBilancio, soloValidiPerBilancio, jpql, params);
+		//SIAC-7873
+		if(!saltaControlloSuDateValidita) {
+			appendAnnoBilancioClause(annoBilancio, soloValidiPerBilancio, jpql, params);
+		}
 		
 		appendCodiciMacroTipoDaEscludereClause(codiciMacroTipoDaEscludere, jpql, params);
 		appendCodiciSottoTipoDaEscludereClause(codiciSottoTipoDaEscludere, jpql, params);
 		appendCodiciPropostaDaEscludereClause(propostaDefaultComponenteImportiCapitoloDaEscludere, jpql, params);
+		//SIAC-7349
+		appendCodiciImpegnabileDaEscludereClause(impegnabileComponenteImportiCapitoloDaEscludere, jpql, params);
 		
 		jpql.append(" ORDER BY dbedct.elemDetCompTipoId ");
 	}
@@ -181,6 +216,15 @@ public class TipoComponenteImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacDBi
 		}
 		jpql.append(" AND dbedct.siacDBilElemDetCompTipoDef.elemDetCompTipoDefCode NOT IN (:elemDetCompTipoDefCodes) ");
 		params.put("elemDetCompTipoDefCodes", propostaDefaultComponenteImportiCapitoloDaEscludere);
+	}
+	
+	//SIAC-7349
+	private void appendCodiciImpegnabileDaEscludereClause(List<String> impegnabileComponenteImportiCapitoloDaEscludere, StringBuilder jpql, Map<String, Object> params) {
+		if(impegnabileComponenteImportiCapitoloDaEscludere == null || impegnabileComponenteImportiCapitoloDaEscludere.isEmpty()){
+			return;
+		}
+		jpql.append(" AND dbedct.siacDBilElemDetCompTipoImp.elemDetCompTipoImpCode NOT IN (:elemDetCompTipoImpCodes) ");
+		params.put("elemDetCompTipoImpCodes", impegnabileComponenteImportiCapitoloDaEscludere);
 	}
 
 	private void appendCodiciMacroTipoDaEscludereClause(List<String> codiciMacroTipoDaEscludere, StringBuilder jpql, Map<String, Object> params) {

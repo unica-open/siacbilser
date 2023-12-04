@@ -21,8 +21,10 @@ import it.csi.siac.siaccommon.util.codicefiscale.PartitaIvaUtil;
 import it.csi.siac.siaccommon.util.iban.IbanUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siacfin2ser.frontend.webservice.ContoTesoreriaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.PreDocumentoSpesaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceCausaleSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceCausaleSpesaResponse;
@@ -44,11 +46,13 @@ import it.csi.siac.siacfin2ser.model.PreDocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.StatoOperativoCausale;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
 import it.csi.siac.siacfin2ser.model.TipoCausale;
+import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.frontend.webservice.SoggettoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaBanca;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaBancaResponse;
 import it.csi.siac.siacfinser.integration.dad.ModalitaPagamentoDad;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
+import it.csi.siac.siacfinser.model.soggetto.Soggetto.StatoOperativoAnagrafica;
 import it.csi.siac.siacfinser.model.soggetto.modpag.Banca;
 import it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto;
 import it.csi.siac.siacintegser.business.service.predocumenti.ElaboraPredocumentiService;
@@ -68,6 +72,8 @@ public class ElaboraPredocumentiSpesaService extends ElaboraPredocumentiService<
 	@Autowired
 	private PreDocumentoSpesaService preDocumentoSpesaService;
 
+	@Autowired private ContoTesoreriaService contoTesoreriaService;
+	
 	@Autowired
 	private ModalitaPagamentoDad modalitaPagamentoDad;
 
@@ -85,7 +91,7 @@ public class ElaboraPredocumentiSpesaService extends ElaboraPredocumentiService<
 	@Override
 	protected PreDocumento<?, ?> elabora(PredocumentoSpesa predocumentoSpesa)
 	{
-		Soggetto soggetto = ricercaSoggetto(predocumentoSpesa);
+		Soggetto soggetto = ottieniSoggetto(predocumentoSpesa);
 
 		CausaleSpesa causale = ricercaCausaleSpesa(predocumentoSpesa);
 
@@ -101,15 +107,16 @@ public class ElaboraPredocumentiSpesaService extends ElaboraPredocumentiService<
 
 	private void controlloIban(String iban)
 	{
-		if (StringUtils.isBlank(iban))
+		if (StringUtils.isBlank(iban) || isGiroFondi(iban)) {
 			return;
+		}
 		
 		String errIban = IbanUtil.checkIban(iban);
 		
 		if (errIban != null)
 		{
-			elencoMessaggi.add(getLineMessage(String.format("Errore codice IBAN %s: %s", iban, errIban)));
-			
+			elencoMessaggi.add(getLineMessage(ErroreFin.CODICE_IBAN_ERRATO.getErrore(iban, errIban).getTesto()));
+
 			return;
 		}
 		
@@ -124,6 +131,10 @@ public class ElaboraPredocumentiSpesaService extends ElaboraPredocumentiService<
 			elencoMessaggi.add(
 					getLineMessage(String.format("Errore su servizio ricercaBanca (IBAN: %s): %s", iban, e.getMessage())));
 		}
+	}
+
+	private boolean isGiroFondi(String iban) {
+		return iban.matches("^GF\\-\\d+$");
 	}
 
 	private Banca ricercaBanca(String iban) throws SoggettoPredocumentoException
@@ -248,7 +259,6 @@ public class ElaboraPredocumentiSpesaService extends ElaboraPredocumentiService<
 				DatiAnagraficiPreDocumentoSpesa.class, predocumento);
 
 		datiAnagraficiPredocumentoSpesa.setCodiceIban(predocumento.getCodiceIBAN());
-		datiAnagraficiPredocumentoSpesa.setCodiceIban(predocumento.getCodiceIBAN());
 
 		return datiAnagraficiPredocumentoSpesa;
 	}
@@ -260,8 +270,7 @@ public class ElaboraPredocumentiSpesaService extends ElaboraPredocumentiService<
 		leggiContiTesoreria.setEnte(req.getEnte());
 		leggiContiTesoreria.setRichiedente(req.getRichiedente());
 
-		LeggiContiTesoreriaResponse leggiContiTesoreriaResponse = preDocumentoSpesaService
-				.leggiContiTesoreria(leggiContiTesoreria);
+		LeggiContiTesoreriaResponse leggiContiTesoreriaResponse = contoTesoreriaService.leggiContiTesoreria(leggiContiTesoreria);
 
 		checkServiceResponseFallimento(leggiContiTesoreriaResponse);
 
@@ -385,23 +394,23 @@ public class ElaboraPredocumentiSpesaService extends ElaboraPredocumentiService<
 	}
 
 	@Override
-	protected Soggetto ricercaSoggetto(PredocumentoSpesa predocumentoSpesa)
+	protected Soggetto ottieniSoggetto(PredocumentoSpesa predocumentoSpesa)
 	{
 		try
 		{
-			initSoggettoHandler(predocumentoSpesa); 			
+			Soggetto soggetto = cercaSoggettoByCodiceFiscale(predocumentoSpesa);
 			
-			Soggetto soggetto = soggettoHandler.ricercaSoggetto(predocumentoSpesa);
+			if (soggetto == null) {
+				soggetto = cercaSoggettoByPartitaIva(predocumentoSpesa);
+			}
 			
-			if (soggetto == null)
-				soggetto = soggettoHandler.inserisciSoggetto(predocumentoSpesa);
+			if (soggetto != null) {
+				checkSoggettoValido(soggetto);
+			} else {
+				soggetto = inserisciSoggetto(predocumentoSpesa);
+			}
 			
-			ModalitaPagamentoSoggetto mdp = new ModalitaPagamentoSoggetto();
-			
-			if (StringUtils.isNotBlank(predocumentoSpesa.getCodiceIBAN()))
-				mdp.setUid(associaModalitaPagamentoContoCorrente(soggetto, predocumentoSpesa));
-			else
-				mdp.setUid(associaModalitaPagamentoContanti(soggetto, predocumentoSpesa));
+			ModalitaPagamentoSoggetto mdp = getModalitaPagamento(soggetto, predocumentoSpesa);
 			
 			predocumentoSpesa.setModalitaPagamentoSoggetto(mdp);
 
@@ -418,56 +427,119 @@ public class ElaboraPredocumentiSpesaService extends ElaboraPredocumentiService<
 			return null;
 		}
 	}
-	
-	private void initSoggettoHandler(PredocumentoSpesa predocumento) throws SoggettoPredocumentoException
-	{
-		soggettoHandler = getSoggettoHandlerBean(predocumento);
+
+	private ModalitaPagamentoSoggetto getModalitaPagamento(Soggetto soggetto, PredocumentoSpesa predocumentoSpesa) {
+
+		if (StringUtils.isBlank(predocumentoSpesa.getCodiceIBAN())) {
+			return ottieniModalitaPagamentoContanti(soggetto, predocumentoSpesa);
+		}
 		
+		if (isGiroFondi(predocumentoSpesa.getCodiceIBAN())) {
+			return ottieniModalitaPagamentoGiroFondi(soggetto, predocumentoSpesa.getCodiceIBAN());
+		}
+		
+		return ottieniModalitaPagamentoContoCorrente(soggetto, predocumentoSpesa);
+	}
+
+	private void checkSoggettoValido(Soggetto soggetto) throws SoggettoPredocumentoException {
+		if (soggetto == null) {
+			return;
+		}
+		
+		if (StatoOperativoAnagrafica.BLOCCATO.equals(soggetto.getStatoOperativo())) {
+			throw new SoggettoPredocumentoException("Stato soggetto BLOCCATO");
+		}
+	}
+
+	private Soggetto inserisciSoggetto(PredocumentoSpesa predocumentoSpesa) throws SoggettoPredocumentoException {
+		soggettoHandler = getPredocumentoSpesaSoggettoHandler(predocumentoSpesa.getCodiceFiscale());
+		soggettoHandler.initInfoPersona(predocumentoSpesa);
+		return soggettoHandler.inserisciSoggetto(predocumentoSpesa);
+	}
+
+	private Soggetto cercaSoggettoByCodiceFiscale(PredocumentoSpesa predocumentoSpesa) throws SoggettoPredocumentoException {
+		soggettoHandler = getPredocumentoSpesaSoggettoPersonaFisicaHandler();
+		return cercaSoggetto(predocumentoSpesa);
+	}
+	
+	private Soggetto cercaSoggettoByPartitaIva(PredocumentoSpesa predocumentoSpesa) throws SoggettoPredocumentoException {
+		soggettoHandler = getPredocumentoSpesaSoggettoPersonaGiuridicaHandler();
+		return cercaSoggetto(predocumentoSpesa);
+	}
+
+	private Soggetto cercaSoggetto(PredocumentoSpesa predocumentoSpesa) throws SoggettoPredocumentoException {
 		soggettoHandler.init(req.getEnte(), req.getRichiedente(), entityManager);
 		
-		soggettoHandler.initInfoPersona(predocumento);
+		return soggettoHandler.cercaSoggetto(predocumentoSpesa);
+	}
+	
+	private SoggettoHandler<PredocumentoSpesa> getPredocumentoSpesaSoggettoHandler(String codiceFiscale) 
+			throws SoggettoPredocumentoException {
+		
+		if (CodiceFiscale.verificaCodiceFiscale(codiceFiscale)) {
+			return getPredocumentoSpesaSoggettoPersonaFisicaHandler();  
+		}
+		
+		if (PartitaIvaUtil.checkPartitaIva(codiceFiscale) == null) {
+			return  getPredocumentoSpesaSoggettoPersonaGiuridicaHandler();
+		}
+
+		throw new SoggettoPredocumentoException(ErroreCore.VALORE_NON_CONSENTITO
+				.getErrore("codice fiscale / partita IVA", codiceFiscale).getTesto());
 	}
 
 	@SuppressWarnings("unchecked")
-	private SoggettoHandler<PredocumentoSpesa> getSoggettoHandlerBean(PredocumentoSpesa predocumento) 
-			throws SoggettoPredocumentoException {
-		
-		if (CodiceFiscale.verificaCodiceFiscale(predocumento.getCodiceFiscale())) {
-			return (SoggettoHandler<PredocumentoSpesa>) applicationContext.getBean(Utility.toDefaultBeanName(PredocumentoSpesaSoggettoPersonaFisicaHandler.class));  
-		}
-		
-		if (PartitaIvaUtil.checkPartitaIva(predocumento.getCodiceFiscale()) == null) {
-			return (SoggettoHandler<PredocumentoSpesa>) applicationContext.getBean(Utility.toDefaultBeanName(PredocumentoSpesaSoggettoPersonaGiuridicaHandler.class));
-		}
+	private SoggettoHandler<PredocumentoSpesa> getPredocumentoSpesaSoggettoPersonaGiuridicaHandler() {
+		return (SoggettoHandler<PredocumentoSpesa>) applicationContext.getBean(Utility.toDefaultBeanName(PredocumentoSpesaSoggettoPersonaGiuridicaHandler.class));
+	}
 
-		throw new SoggettoPredocumentoException(ErroreCore.VALORE_NON_VALIDO
-				.getErrore("codice fiscale / partita IVA", predocumento.getCodiceFiscale()).getTesto());
+	@SuppressWarnings("unchecked")
+	private SoggettoHandler<PredocumentoSpesa> getPredocumentoSpesaSoggettoPersonaFisicaHandler() {
+		return  (SoggettoHandler<PredocumentoSpesa>) applicationContext.getBean(Utility.toDefaultBeanName(PredocumentoSpesaSoggettoPersonaFisicaHandler.class));
 	}
 	
-	private Integer associaModalitaPagamentoContoCorrente(Soggetto soggetto, PredocumentoSpesa predocumentoSpesa)
+	private ModalitaPagamentoSoggetto ottieniModalitaPagamentoContoCorrente(Soggetto soggetto, PredocumentoSpesa predocumentoSpesa)
 	{
-		String login = req.getRichiedente().getOperatore().getCodiceFiscale();
-
 		Integer mdpId = modalitaPagamentoDad.trovaModalitaPagamentoContoCorrente(soggetto.getUid(),
 				predocumentoSpesa.getCodiceIBAN(), ente.getUid());
 
-		if (mdpId == null)
+		if (mdpId == null) {
 			mdpId = modalitaPagamentoDad.inserisciModalitaPagamentoContoCorrente(soggetto.getUid(),
-					predocumentoSpesa.getCodiceIBAN(), ente.getUid(), login);
-
-		return mdpId;
+					predocumentoSpesa.getCodiceIBAN(), ente.getUid(), req.getRichiedente().getOperatore().getCodiceFiscale());
+		}
+		
+		return new ModalitaPagamentoSoggetto(mdpId);
 	}
 
-	private Integer associaModalitaPagamentoContanti(Soggetto soggetto, PredocumentoSpesa predocumentoSpesa)
+
+	private ModalitaPagamentoSoggetto ottieniModalitaPagamentoGiroFondi(Soggetto soggetto, String iban) {
+		
+		String numeroConto = StringUtils.split(iban, "-")[1];
+		
+		if (numeroConto.length() != 7) {
+			elencoMessaggi.add(getLineMessage(ErroreFin.CODICE_IBAN_ERRATO.getErrore(iban, "numero conto non di 7 cifre").getTesto()));
+
+			return null;
+		}
+		
+		Integer mdpId = modalitaPagamentoDad.trovaModalitaPagamentoGiroFondi(soggetto.getUid(), numeroConto, ente.getUid());
+
+		if (mdpId == null) {
+			mdpId = modalitaPagamentoDad.inserisciModalitaPagamentoGiroFondi(soggetto.getUid(), numeroConto, ente.getUid(), req.getRichiedente().getOperatore().getCodiceFiscale());
+		}
+		
+		return new ModalitaPagamentoSoggetto(mdpId);
+	}
+
+	private ModalitaPagamentoSoggetto ottieniModalitaPagamentoContanti(Soggetto soggetto, PredocumentoSpesa predocumentoSpesa)
 	{
-		String login = req.getRichiedente().getOperatore().getCodiceFiscale();
+		Integer mdpId = modalitaPagamentoDad.trovaModalitaPagamentoContanti(soggetto.getUid(), TipologiaGestioneLivelli.ACCREDITO_CONTANTI, ente.getUid());
 
-		Integer mdpId = modalitaPagamentoDad.trovaModalitaPagamentoContanti(soggetto.getUid(), ente.getUid());
-
-		if (mdpId == null)
-			mdpId = modalitaPagamentoDad.inserisciModalitaPagamentoContanti(soggetto, ente.getUid(), login);
-
-		return mdpId;
+		if (mdpId == null) {
+			mdpId = modalitaPagamentoDad.inserisciModalitaPagamentoContanti(soggetto, ente.getUid(), req.getRichiedente().getOperatore().getCodiceFiscale());
+		}
+		
+		return new ModalitaPagamentoSoggetto(mdpId);
 	}
 
 

@@ -176,4 +176,9 @@ public class EmetteOrdinativoDiPagamentoMultiploService extends EmetteOrdinativi
 		
 	}
 		
+	@Override
+	//SIAC-8017-CMTO
+	protected void impostaMessaggiInResponse(List<Messaggio> messaggi) {
+		res.addMessaggi(messaggi);
+	}
 }

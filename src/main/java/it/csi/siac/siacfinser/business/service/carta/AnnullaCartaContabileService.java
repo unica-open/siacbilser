@@ -24,7 +24,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaCartaContabile;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaCartaContabileResponse;
@@ -215,7 +215,7 @@ public class AnnullaCartaContabileService extends AbstractBaseService<AnnullaCar
 		} 
 		
 		// Nel caso in cui manchi uno o piu' parametri, viene restituito l'errore relativo
-		if(!StringUtils.isEmpty(elencoParametriNonInizializzati)){
+		if(!StringUtilsFin.isEmpty(elencoParametriNonInizializzati)){
 			res.setErrori(Arrays.asList(ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(elencoParametriNonInizializzati)));
 			res.setEsito(Esito.FALLIMENTO);
 		}

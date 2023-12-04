@@ -34,7 +34,7 @@ import it.csi.siac.siacbilser.business.utility.DummyMapper;
 import it.csi.siac.siacbilser.integration.dad.CassaEconomaleDad;
 import it.csi.siac.siacbilser.integration.dad.MovimentoDad;
 import it.csi.siac.siacbilser.integration.dad.OperazioneDiCassaDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.StampeCassaFileDad;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
@@ -81,7 +81,7 @@ public class StampaRendicontoCassaReportHandler extends JAXBBaseReportHandler<St
 	@Autowired 
 	private StampeCassaFileDad stampeCassaFileDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private HelperExecutor helperExecutor;
 	
@@ -157,7 +157,7 @@ public class StampaRendicontoCassaReportHandler extends JAXBBaseReportHandler<St
 			String numeroCapitoloArticolo = "";
 			if(movimento.getRendicontoRichiesta()!=null){
 				numeroCapitoloArticolo=computeChiaveMappaDaRendicontoRichiesta(movimento.getRendicontoRichiesta());// movimento.getRendicontoRichiesta().getImpegno().getCapitoloUscitaGestione().getNumeroCapitolo() + "/" +  movimento.getRendicontoRichiesta().getImpegno().getCapitoloUscitaGestione().getNumeroArticolo();
-				StatoOperativoAtti provv = provvedimentoDad.findStatoOperativoAttoAmministrativo(movimento.getRendicontoRichiesta().getImpegno().getAttoAmministrativo());
+				StatoOperativoAtti provv = attoAmministrativoDad.findStatoOperativoAttoAmministrativo(movimento.getRendicontoRichiesta().getImpegno().getAttoAmministrativo());
 				movimento.getRendicontoRichiesta().getImpegno().getAttoAmministrativo().setStatoOperativo(provv);
 			}  else if (movimento.getRichiestaEconomale()!=null) {
 				//recupero il capitolo dall'impegno legato alla richiesta
@@ -165,7 +165,7 @@ public class StampaRendicontoCassaReportHandler extends JAXBBaseReportHandler<St
 				numeroCapitoloArticolo = computeChiaveMappaDaRichiestaEconomale(movimento.getRichiestaEconomale());// movimento.getRichiestaEconomale().getImpegno().getCapitoloUscitaGestione().getNumeroCapitolo() + "/" +  movimento.getRichiestaEconomale().getImpegno().getCapitoloUscitaGestione().getNumeroArticolo();
 
 				//recupero lo stato del provvedimento
-				StatoOperativoAtti provv = provvedimentoDad.findStatoOperativoAttoAmministrativo(movimento.getRichiestaEconomale().getImpegno().getAttoAmministrativo());
+				StatoOperativoAtti provv = attoAmministrativoDad.findStatoOperativoAttoAmministrativo(movimento.getRichiestaEconomale().getImpegno().getAttoAmministrativo());
 				movimento.getRichiestaEconomale().getImpegno().getAttoAmministrativo().setStatoOperativo(provv);
 			} else {
 				log.debug(methodName, "Il movimento non ha ne' richiesta ne' rendiconto lo ignoro" + movimento.getUid());
@@ -245,9 +245,9 @@ public class StampaRendicontoCassaReportHandler extends JAXBBaseReportHandler<St
 		sb.append("-");
 		sb.append(cug != null ? cug.getNumeroArticolo() : "null");
 		sb.append("-");
-		sb.append(impegno != null ? impegno.getNumero() : "null");
+		sb.append(impegno != null ? impegno.getNumeroBigDecimal() : "null");
 		sb.append("-");
-		sb.append(rendicontoRichiesta.getSubImpegno() !=null ? rendicontoRichiesta.getSubImpegno().getNumero():"");
+		sb.append(rendicontoRichiesta.getSubImpegno() !=null ? rendicontoRichiesta.getSubImpegno().getNumeroBigDecimal():"");
 		
 		return sb.toString();
 	}
@@ -268,9 +268,9 @@ public class StampaRendicontoCassaReportHandler extends JAXBBaseReportHandler<St
 		sb.append("-");
 		sb.append(cug != null ? cug.getNumeroArticolo() : "null");
 		sb.append("-");
-		sb.append(impegno != null ? impegno.getNumero() : "null");
+		sb.append(impegno != null ? impegno.getNumeroBigDecimal() : "null");
 		sb.append("-");
-		sb.append(richiestaEconomale.getSubImpegno() !=null ? richiestaEconomale.getSubImpegno().getNumero():"");
+		sb.append(richiestaEconomale.getSubImpegno() !=null ? richiestaEconomale.getSubImpegno().getNumeroBigDecimal():"");
 		
 		return sb.toString();
 	}
@@ -523,7 +523,7 @@ public class StampaRendicontoCassaReportHandler extends JAXBBaseReportHandler<St
 		// Inizializzo l'helper
 		allegatoAttoHelper = new StampaRendicontoCassaAllegatoAttoHelper(richiedente, ente, bilancio, tipoStampa,
 				listaStampaRendicontoCassaCapitoloMovimenti, soggetto, modalitaPagamentoSoggetto,
-				strutturaAmministrativoContabile, causale, anticipiSpesaDaInserire, serviceExecutor, provvedimentoDad);
+				strutturaAmministrativoContabile, causale, anticipiSpesaDaInserire, serviceExecutor, attoAmministrativoDad);
 		
 		// Esecuzione dell'helper
 		try {

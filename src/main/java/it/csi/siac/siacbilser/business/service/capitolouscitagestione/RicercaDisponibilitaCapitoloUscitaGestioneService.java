@@ -11,6 +11,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapito
 import it.csi.siac.siacbilser.integration.dad.CapitoloUscitaGestioneDad;
 import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
 import it.csi.siac.siacbilser.integration.utility.CompareOperator;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.DisponibilitaCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.ImportoDerivatoFunctionEnum;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
@@ -54,13 +56,18 @@ public class RicercaDisponibilitaCapitoloUscitaGestioneService extends CheckedAc
 		return super.executeService(serviceRequest);
 	}
 	
+	// SIAC-8839
+	@Override
+	protected void init() {
+		capitoloUscitaGestioneDad.setEnte(ente);
+	}
+	
 	@Override
 	protected void execute() {
 		uids = Arrays.asList(req.getCapitoloUscitaGestione().getUid());
 		anno0 = req.getAnnoBilancio();
 		anno1 = anno0 + 1;
 		anno2 = anno0 + 2;
-		
 		//ANNO 0
 		DisponibilitaCapitoloUscitaGestione d0 = new DisponibilitaCapitoloUscitaGestione();
 		popolaDisponibilitaVariare(d0, anno0);
@@ -72,8 +79,13 @@ public class RicercaDisponibilitaCapitoloUscitaGestioneService extends CheckedAc
 		popolaImpegnatoDaEserciziPrec(d0, anno0, CompareOperator.EQUALS,anno0);
 		
 		// SIAC-6899 
-		popolaFinanziatoDaFPV(d0, anno0, CompareOperator.EQUALS);
-		popolaFinanziatoDaAvanzo(d0, anno0, CompareOperator.EQUALS);
+		// SIAC-8839 aggiunto il parametro ente.getUid()
+		popolaFinanziatoDaFPV(ente.getUid(), d0, anno0, CompareOperator.EQUALS);
+		// SIAC-8839 aggiunto il parametro ente.getUid()
+		popolaFinanziatoDaAvanzo(ente.getUid(), d0, anno0, CompareOperator.EQUALS);
+		
+		//SIAC-8838
+		popolaCancellazioniEconomie(d0, ImportoDerivatoFunctionEnum.impegnatoUGEconb1.getFunctionName());
 		
 		popolaImpegnatoDaPrenotazione(d0, anno0, CompareOperator.EQUALS);
 		
@@ -96,8 +108,13 @@ public class RicercaDisponibilitaCapitoloUscitaGestioneService extends CheckedAc
 		popolaImpegnatoDaRiaccertamento(d1, anno1, CompareOperator.EQUALS);
 		popolaImpegnatoDaEserciziPrec(d1, anno1, CompareOperator.EQUALS,anno0);
 		// SIAC-6899 
-		popolaFinanziatoDaFPV(d1, anno1, CompareOperator.EQUALS);
-		popolaFinanziatoDaAvanzo(d1, anno1, CompareOperator.EQUALS);
+		// SIAC-8839 aggiunto il parametro ente.getUid()
+		popolaFinanziatoDaFPV(ente.getUid(), d1, anno1, CompareOperator.EQUALS);
+		// SIAC-8839 aggiunto il parametro ente.getUid()
+		popolaFinanziatoDaAvanzo(ente.getUid(), d1, anno1, CompareOperator.EQUALS);
+		
+		//SIAC-8838
+		popolaCancellazioniEconomie(d1,ImportoDerivatoFunctionEnum.impegnatoUGEconb2.getFunctionName());
 		
 		popolaImpegnatoDaPrenotazione(d1, anno1, CompareOperator.EQUALS);
 		res.setDisponibilitaCapitoloUscitaGestioneAnno1(d1);
@@ -112,8 +129,13 @@ public class RicercaDisponibilitaCapitoloUscitaGestioneService extends CheckedAc
 		popolaImpegnatoDaEserciziPrec(d2, anno2, CompareOperator.EQUALS,anno0);
 		
 		// SIAC-6899 
-		popolaFinanziatoDaFPV(d2, anno2, CompareOperator.EQUALS);
-		popolaFinanziatoDaAvanzo(d2, anno2, CompareOperator.EQUALS);
+		// SIAC-8839 aggiunto il parametro ente.getUid()
+		popolaFinanziatoDaFPV(ente.getUid(), d2, anno2, CompareOperator.EQUALS);
+		// SIAC-8839 aggiunto il parametro ente.getUid()
+		popolaFinanziatoDaAvanzo(ente.getUid(), d2, anno2, CompareOperator.EQUALS);
+		
+		//SIAC-8838
+		popolaCancellazioniEconomie(d2,ImportoDerivatoFunctionEnum.impegnatoUGEconb3.getFunctionName());
 		
 		popolaImpegnatoDaPrenotazione(d2, anno2, CompareOperator.EQUALS);
 		res.setDisponibilitaCapitoloUscitaGestioneAnno2(d2);
@@ -163,16 +185,25 @@ public class RicercaDisponibilitaCapitoloUscitaGestioneService extends CheckedAc
 	
 	
 	// SIAC-6899 
-	
-	private void popolaFinanziatoDaAvanzo(DisponibilitaCapitoloUscitaGestione d, Integer anno, CompareOperator compareOperator) {
-		List<String>  avavincoloTipoCode = Arrays.asList("AAM");
-		BigDecimal finanziatodaAvanzo = capitoloUscitaGestioneDad.computeTotaleImportidaAvanzodaFPVNonAnnullatiCapitoloByAnno(uids, anno, compareOperator,avavincoloTipoCode);
+	// SIAC-8839 aggiunto il parametro ente.getUid()
+	private void popolaFinanziatoDaAvanzo(Integer enteProprietarioId, DisponibilitaCapitoloUscitaGestione d, Integer anno, CompareOperator compareOperator) {
+		List<String>  avavincoloTipoCode = Arrays.asList(CategoriaCapitoloEnum.AAM.getCodice());
+		
+		BigDecimal finanziatodaAvanzo = capitoloUscitaGestioneDad.computeTotaleImportidaAvanzodaFPVNonAnnullatiCapitoloByAnno(enteProprietarioId, uids, anno, compareOperator,avavincoloTipoCode);
 		d.setFinanziatoDaAvanzo0(finanziatodaAvanzo);
 	}
-	private void popolaFinanziatoDaFPV(DisponibilitaCapitoloUscitaGestione d, Integer anno, CompareOperator compareOperator) {
-		List<String>  avavincoloTipoCode = Arrays.asList("FPVSC","FPVCC");
-		BigDecimal finanziatodaFPV = capitoloUscitaGestioneDad.computeTotaleImportidaAvanzodaFPVNonAnnullatiCapitoloByAnno(uids, anno, compareOperator,avavincoloTipoCode);
+	
+	// SIAC-8839 aggiunto il parametro ente.getUid()
+	private void popolaFinanziatoDaFPV(Integer enteProprietarioId, DisponibilitaCapitoloUscitaGestione d, Integer anno, CompareOperator compareOperator) {
+		List<String>  avavincoloTipoCode = Arrays.asList(CategoriaCapitoloEnum.FPVSC.getCodice(),CategoriaCapitoloEnum.FPVCC.getCodice());
+		BigDecimal finanziatodaFPV = capitoloUscitaGestioneDad.computeTotaleImportidaAvanzodaFPVNonAnnullatiCapitoloByAnno(enteProprietarioId, uids, anno, compareOperator,avavincoloTipoCode);
 		d.setFinanziatoDaFPV0(finanziatodaFPV);
+	}
+	
+	//SIAC-8838
+	private void popolaCancellazioniEconomie(DisponibilitaCapitoloUscitaGestione d, String function) {
+		BigDecimal cancellazioniEconomie = capitoloUscitaGestioneDad.computeTotaleImportiModificheNegativeEdEconbCapitoloByAnno(uids, function);
+		d.setCancellazioniEconomie(cancellazioniEconomie);
 	}
 	
 	

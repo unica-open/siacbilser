@@ -13,16 +13,20 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilser.business.service.base.Helper;
 import it.csi.siac.siacbilser.business.service.documento.MovimentoGestioneServiceCallGroup;
 import it.csi.siac.siacbilser.business.utility.Utility;
+import it.csi.siac.siacbilser.integration.dad.EntitaConsultabileDad;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoEntrataDad;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siacbilser.model.ContoCorrentePredocumentoEntrata;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siacfin2ser.model.CausaleEntrata;
+import it.csi.siac.siacfin2ser.model.ContoCorrente;
 import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.SubAccertamento;
+import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
 /**
@@ -40,6 +44,9 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 	private final CausaleEntrata causaleEntrata;
 	private final Date dataCompetenzaDa;
 	private final Date dataCompetenzaA;
+	//SIAC-6780
+	private ContoCorrentePredocumentoEntrata contoCorrente;
+	private List<Integer> uidPredocumentiDaCompletare = new ArrayList<Integer>();
 	
 	// Dati per aggiornamento
 	private final Accertamento accertamento;
@@ -49,28 +56,35 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 	
 	private final BigDecimal disponibilitaIncassare;
 	
+	//SIAC-6780
+	private final ProvvisorioDiCassa provvisorioDiCassa;
 	
-	private final LogUtil log;
+	private final LogSrvUtil log;
 	private final List<Messaggio> messaggi;
 	
 	private boolean skip;
 	private BigDecimal sommaPredoc;
+	private BigDecimal sommaPredocSenzaProvCassaCompletamento;
 	// Per il log
 	private List<PreDocumentoEntrata> preDocumentiCompletati;
 	
 	/**
-	 * Construttore dell'helper
+	 * Construttore dell'helper.
+	 *
 	 * @param preDocumentoEntrataDad il dad del predocumento di entrata
 	 * @param mgscg il call group per il movimento di gestione
 	 * @param ente l'ente
 	 * @param causaleEntrata la causale di entrata
 	 * @param dataCompetenzaDa la data di competenza da
 	 * @param dataCompetenzaA la data di competenza a
+	 * @param contoCorrente the conto corrente
+	 * @param uidPredocumentiDaFiltrare the uid predocumenti da filtrare
 	 * @param accertamento l'accertamento
 	 * @param subAccertamento lil subaccertamento
 	 * @param attoAmministrativo l'atto amministrativo
 	 * @param soggetto il soggetto
 	 * @param disponibilitaIncassare la disponibilitì&agrave; ad incassare dell'accertamento o del sub
+	 * @param provvisorioDiCassa the provvisorio di cassa
 	 */
 	public CompletaDefiniscePreDocumentoEntrataCompletamentoHelper(
 			PreDocumentoEntrataDad preDocumentoEntrataDad,
@@ -79,11 +93,15 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 			CausaleEntrata causaleEntrata,
 			Date dataCompetenzaDa,
 			Date dataCompetenzaA,
+			ContoCorrentePredocumentoEntrata contoCorrente,
+			List<Integer> uidPredocumentiDaFiltrare,
 			Accertamento accertamento,
 			SubAccertamento subAccertamento,
 			AttoAmministrativo attoAmministrativo,
 			Soggetto soggetto,
-			BigDecimal disponibilitaIncassare) {
+			BigDecimal disponibilitaIncassare,
+			//SIAC-6780
+			ProvvisorioDiCassa provvisorioDiCassa) {
 		
 		this.preDocumentoEntrataDad = preDocumentoEntrataDad;
 		this.mgscg = mgscg;
@@ -92,15 +110,18 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 		this.causaleEntrata = causaleEntrata;
 		this.dataCompetenzaDa = dataCompetenzaDa;
 		this.dataCompetenzaA = dataCompetenzaA;
+		this.contoCorrente = contoCorrente;
+		this.uidPredocumentiDaCompletare = uidPredocumentiDaFiltrare;
 		
 		this.accertamento = accertamento;
 		this.subAccertamento = subAccertamento;
 		this.attoAmministrativo = attoAmministrativo;
 		this.soggetto = soggetto;
 		this.disponibilitaIncassare = disponibilitaIncassare;
+		this.provvisorioDiCassa = provvisorioDiCassa;
 		
 		this.messaggi = new ArrayList<Messaggio>();
-		this.log = new LogUtil(getClass());
+		this.log = new LogSrvUtil(getClass());
 		
 		this.skip = false;
 		this.preDocumentiCompletati = new ArrayList<PreDocumentoEntrata>();
@@ -110,9 +131,14 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 	public Void helpExecute() {
 		final String methodName = "helpExecute";
 		// 1. Somma da completare e controllo capienza
+		
 		calcoloSommaDaCompletare();
+		
+		calcoloSommaDaCompletareSenzaProvCassa();
+		
 		checkCapienza();
 		log.debug(methodName, "Controllo preliminare somma da completare e capienza completato");
+		
 		// Controllo se devo uscire
 		if(skip) {
 			log.info(methodName, "Completamento dei predocumenti non necessario");
@@ -129,6 +155,7 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 		return null;
 	}
 	
+
 	/**
 	 * @return the messaggi
 	 */
@@ -156,23 +183,37 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 		final String methodName = "calcoloSommaDaCompletare";
 		
 		// Calcolo dell'importo dei predoc
-		PreDocumentoEntrata preDoc = new PreDocumentoEntrata();
-		preDoc.setEnte(ente);
-		preDoc.setStatoOperativoPreDocumento(StatoOperativoPreDocumento.INCOMPLETO);
-		preDoc.setCausaleEntrata(causaleEntrata);
+//		PreDocumentoEntrata preDoc = new PreDocumentoEntrata();
+//		preDoc.setEnte(ente);
+//		preDoc.setStatoOperativoPreDocumento(StatoOperativoPreDocumento.INCOMPLETO);
+//		preDoc.setCausaleEntrata(causaleEntrata);
+//		
+//		//SIAC-6780
+//		preDoc.setProvvisorioDiCassa(provvisorioDiCassa);
+//		preDoc.setContoCorrente(contoCorrente);
 		
-		sommaPredoc = preDocumentoEntrataDad.ricercaSinteticaPreDocumentoImportoTotale(preDoc,
-				null,
-				dataCompetenzaDa,
-				dataCompetenzaA,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null);
+		
+		sommaPredoc = preDocumentoEntrataDad.getImportoPredocByIds(this.uidPredocumentiDaCompletare);
+		
+
+		log.debug(methodName, "Somma dei predocumenti associati ai parametri di ricerca: " + sommaPredoc);
+	}
+	
+	/**
+	 * Viene calcolata la somma degli importi di tutti i pre-documenti in stato INCOMPLETO che rispettano i parametri di ricerca.
+	 * <ul>
+	 *     <li>SE la somma risultasse nulla vuol dire che non ci sono pre-documenti da completare e si passa alla seconda fase,
+	 *     quella della Elaborazione Definizione indicandolo nel log (&rdquo;non sono presenti predisposizioni pagamento da completare&ldquo;)</li>
+	 *     <li>SE la somma &eacute; &gt; 0 anche questo importo andr&agrave; indicato nel log (&rdquo;Elaboro predisposizioni incasso per &euro; 999.999.999,99&rdquo;)</li>
+	 * </ol>
+	 */
+	private void calcoloSommaDaCompletareSenzaProvCassa() {
+		final String methodName = "calcoloSommaDaCompletareSenzaProvCassa";
+		if(this.provvisorioDiCassa == null || this.provvisorioDiCassa.getUid() == 0) {
+			return;
+		}
+		sommaPredocSenzaProvCassaCompletamento = preDocumentoEntrataDad.getImportoPredocByIdsNoProvcassa(this.uidPredocumentiDaCompletare, this.provvisorioDiCassa);
+		
 
 		log.debug(methodName, "Somma dei predocumenti associati ai parametri di ricerca: " + sommaPredoc);
 	}
@@ -187,6 +228,12 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 	 */
 	private void checkCapienza() {
 		final String methodName = "checkCapienza";
+		boolean provvisorioPresente = provvisorioDiCassa != null && provvisorioDiCassa.getUid() != 0;  
+		//SIAC-7457
+		if(provvisorioPresente && (provvisorioDiCassa.getImportoDaRegolarizzare() == null || this.sommaPredocSenzaProvCassaCompletamento == null || provvisorioDiCassa.getImportoDaRegolarizzare().compareTo(sommaPredocSenzaProvCassaCompletamento) < 0) ) {
+			skip = true;
+			return;			
+		}
 		// Controllo che ci sia dell'importo da completare
 		if(BigDecimal.ZERO.compareTo(sommaPredoc) == 0) {
 			addMessaggio("Elaborazione Convalida non eseguita: non ci sono Predisposizione di Incasso da completare");
@@ -232,10 +279,10 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 		if(importoModifica.compareTo(accertamento.getDisponibilitaIncassare()) > 0){
 			// Inserimento contestuale della modifica accertamento
 			BigDecimal importoModificaAccertamento = importoModifica.subtract(accertamento.getDisponibilitaIncassare());
-			mgscg.inserisciModificaImportoMovimentoGestioneEntrataSuccess(accertamento, null, importoModificaAccertamento, Constanti.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
+			mgscg.inserisciModificaImportoMovimentoGestioneEntrataSuccess(accertamento, null, importoModificaAccertamento, CostantiFin.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
 		}
 		
-		mgscg.inserisciModificaImportoMovimentoGestioneEntrataSuccess(accertamento, subAccertamento, importoModifica, Constanti.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
+		mgscg.inserisciModificaImportoMovimentoGestioneEntrataSuccess(accertamento, subAccertamento, importoModifica, CostantiFin.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
 	}
 	
 	/**
@@ -246,7 +293,7 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 	 * @param importoModifica l'importo della modifica
 	 */
 	private void inserisciModificaAccertamento(BigDecimal importoModifica) {
-		mgscg.inserisciModificaImportoMovimentoGestioneEntrataSuccess(accertamento, null, importoModifica, Constanti.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
+		mgscg.inserisciModificaImportoMovimentoGestioneEntrataSuccess(accertamento, null, importoModifica, CostantiFin.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
 	}
 
 	/**
@@ -261,12 +308,21 @@ public class CompletaDefiniscePreDocumentoEntrataCompletamentoHelper implements 
 		tmp.setStatoOperativoPreDocumento(StatoOperativoPreDocumento.COMPLETO);
 		tmp.setEnte(ente);
 		
-		preDocumentiCompletati = preDocumentoEntrataDad.associaMovgestAttoAmmSoggettoByCausaleDataCompetenzaAndStatiOperativi(
+		//SIAC-6780
+		tmp.setProvvisorioDiCassa(provvisorioDiCassa);
+		
+		//SIAC-7561
+		//devo controllare anche gli stati operativi in stato completo per assicurarmi che abbiano un provvisorio associato
+		StatoOperativoPreDocumento[] arrStOpPreDoc = { StatoOperativoPreDocumento.INCOMPLETO , StatoOperativoPreDocumento.COMPLETO };
+		
+		preDocumentiCompletati = preDocumentoEntrataDad.associaMovgestAttoAmmSoggettoByIds(
 				tmp,
-				causaleEntrata != null ? causaleEntrata.getUid() : null,
-				dataCompetenzaDa,
-				dataCompetenzaA,
-				StatoOperativoPreDocumento.INCOMPLETO);
+				null,
+				null,
+				null,
+				null,
+				uidPredocumentiDaCompletare,
+				arrStOpPreDoc);
 	}
 	
 	/**

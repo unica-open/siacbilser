@@ -17,7 +17,7 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.common.RicercaAttributiMovimentoGestioneOttimizzatoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSubAccertamentiDiUnAccertamento;
@@ -77,7 +77,9 @@ public class RicercaSubAccertamentiDiUnAccertamentoService extends RicercaAttrib
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = req.getDatiOpzionaliElencoSubTuttiConSoloGliIds();
 		
-		EsitoRicercaMovimentoPkDto esito = accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoAccertamento, numeroAccertamento, paginazioneSubMovimentiDto,caricaDatiOpzionaliDto, Constanti.MOVGEST_TIPO_ACCERTAMENTO, true);
+		EsitoRicercaMovimentoPkDto esito = accertamentoOttimizzatoDad.ricercaMovimentoPk(
+				richiedente, ente, annoEsercizio, annoAccertamento, numeroAccertamento, paginazioneSubMovimentiDto,
+				caricaDatiOpzionaliDto, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, true, req.isCaricalistaModificheCollegate());
 	
 		if(esito!=null && esito.getMovimentoGestione()!=null){
 			accertamento = ((Accertamento) esito.getMovimentoGestione());

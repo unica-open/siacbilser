@@ -9,12 +9,14 @@ import java.util.List;
 
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.business.utility.Utility;
+import it.csi.siac.siacbilser.integration.dad.ModificaMovimentoGestioneBilDad;
+import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.integration.dao.SiacTModificaBilRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTMovgestTRepository;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTsDetTipoEnum;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -34,10 +36,10 @@ import it.csi.siac.siacgenser.model.RegistrazioneMovFin;
  * @author Domenico
  */
 public class ModificaMovimentoGestioneEntrataMovimentoHandler extends MovimentoHandler<ModificaMovimentoGestioneEntrata> {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private SiacTMovgestTRepository siacTMovgestTRepository;
-	private SiacTModificaBilRepository siacTModificaRepository;
+	private ModificaMovimentoGestioneBilDad modificaMovimentoGestioneDad;
 	
 	
 
@@ -45,7 +47,11 @@ public class ModificaMovimentoGestioneEntrataMovimentoHandler extends MovimentoH
 		super(serviceExecutor, richiedente, ente, bilancio);
 		
 		this.siacTMovgestTRepository = Utility.getBeanViaDefaultName(serviceExecutor.getAppCtx(), SiacTMovgestTRepository.class);
-		this.siacTModificaRepository = Utility.getBeanViaDefaultName(serviceExecutor.getAppCtx(), SiacTModificaBilRepository.class);
+		
+		this.modificaMovimentoGestioneDad = serviceExecutor.getAppCtx().getBean(ModificaMovimentoGestioneBilDad.class);		
+		modificaMovimentoGestioneDad.setEnte(ente);
+		
+		
 		
 	}
 
@@ -104,7 +110,7 @@ public class ModificaMovimentoGestioneEntrataMovimentoHandler extends MovimentoH
 	private BigDecimal ottieniImporto(ModificaMovimentoGestioneEntrata modifica) {
 		final String methodName = "ottieniImporto";
 		
-		BigDecimal importoModifica = siacTModificaRepository.findMovgestTsDetImportoModByModIdAndMovgestTsDetTipoCode(modifica.getUid(), SiacDMovgestTsDetTipoEnum.Attuale.getCodice());
+		BigDecimal importoModifica = modificaMovimentoGestioneDad.estraiImportoAttualeModifica(modifica);
 		if(importoModifica!=null){
 			log.debug(methodName, "importoModifica: "+importoModifica);
 			return importoModifica;
@@ -132,6 +138,7 @@ public class ModificaMovimentoGestioneEntrataMovimentoHandler extends MovimentoH
 		
 		throw new BusinessException(ErroreCore.OPERAZIONE_ABBANDONATA.getErrore("Impossibile ottenere l'importo della modifica [uid: " + modifica.getUid() + "]"));
 	}
+
 	
 
 	@Override
@@ -146,8 +153,11 @@ public class ModificaMovimentoGestioneEntrataMovimentoHandler extends MovimentoH
 	public Soggetto getSoggetto(RegistrazioneMovFin registrazioneMovFin) { 
 		Entita movimento = registrazioneMovFin.getMovimento();
 		ModificaMovimentoGestioneEntrata modifica = (ModificaMovimentoGestioneEntrata) movimento;
-		return modifica.getSoggetto();
+		Soggetto soggettoModifica = modificaMovimentoGestioneDad.estraiSoggettoDellaModifica(modifica);
+		return soggettoModifica;
 	}
+	
+	
 
 	@Override
 	public String ottieniDescrizioneMovimentoEP(RegistrazioneMovFin registrazioneMovFin) { 

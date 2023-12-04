@@ -32,10 +32,10 @@ public class AggiornaDatiDurcSoggettoService extends CheckedAccountBaseService<A
 		checkCondition(
 				TipoFonteDurc.AUTOMATICA.getCodice().equals(req.getTipoFonteDurc()) || 
 				TipoFonteDurc.MANUALE.getCodice().equals(req.getTipoFonteDurc()), 
-				ErroreCore.VALORE_NON_VALIDO.getErrore("tipo fonte durc", "- valori validi: '"
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("tipo fonte durc", "- valori validi: '"
 						+ TipoFonteDurc.MANUALE.getCodice() + "', '" + TipoFonteDurc.AUTOMATICA.getCodice() + "'"));
 		checkCondition(StringUtils.isEmpty(req.getFonteDurcAutomatica()) || req.getFonteDurcClassifId() == null, 
-				ErroreCore.VALORE_NON_VALIDO.getErrore("fonte durc", "- fonteDurcClassifId e fonteDurcAutomatica sono mutuamente esclusivi"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("fonte durc", "- fonteDurcClassifId e fonteDurcAutomatica sono mutuamente esclusivi"));
 	}
 	
 	@Override

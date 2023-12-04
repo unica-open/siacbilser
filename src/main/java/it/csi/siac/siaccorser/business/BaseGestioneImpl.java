@@ -7,10 +7,10 @@ package it.csi.siac.siaccorser.business;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginataImpl;
 
@@ -24,7 +24,7 @@ public abstract class BaseGestioneImpl implements BaseGestione{
 	protected Mapper dozerBeanMapper;
 
 	/** The log. */
-	protected static final Logger log = Logger.getLogger(BaseGestioneImpl.class.getName());
+	protected static final LogSrvUtil log = new LogSrvUtil(BaseGestioneImpl.class);
 
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siaccorser.business.BaseGestione#getDozerBeanMapper()

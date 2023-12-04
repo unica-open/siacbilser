@@ -113,6 +113,9 @@ public class InserisceCapitoloUscitaPrevisioneService extends CrudCapitoloBaseSe
 	
 	@Override
 	protected void execute() {
+		//SIAC-7722 Pulisco le descrizioni da eventuali "a capo"
+		req.setCapitoloUscitaPrevisione(pulisciDescrizioni(req.getCapitoloUscitaPrevisione()));
+		
 		//SIAC-5007
 		checkCapitoloUscitaPrevisioneSeStandard(req.getCapitoloUscitaPrevisione());
 		checkCapitoloUscitaPrevisioneSeFPV(req.getCapitoloUscitaPrevisione());

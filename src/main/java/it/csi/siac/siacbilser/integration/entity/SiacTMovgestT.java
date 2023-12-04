@@ -18,8 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
-
 // TODO: Auto-generated Javadoc
 /**
  * The persistent class for the siac_t_movgest_ts database table.
@@ -123,10 +121,6 @@ public class SiacTMovgestT extends SiacTEnteBase {
 	@OneToMany(mappedBy="siacTMovgestT")
 	private List<SiacRMovgestTsStato> siacRMovgestTsStatos;
 
-	//bi-directional many-to-one association to SiacRMutuoVoceMovgest
-	@OneToMany(mappedBy="siacTMovgestT")
-	private List<SiacRMutuoVoceMovgest> siacRMutuoVoceMovgests;
-
 	//bi-directional many-to-one association to SiacROrdinativoTsMovgestT
 	@OneToMany(mappedBy="siacTMovgestT")
 	private List<SiacROrdinativoTsMovgestT> siacROrdinativoTsMovgestTs;
@@ -167,6 +161,15 @@ public class SiacTMovgestT extends SiacTEnteBase {
 	@ManyToOne
 	@JoinColumn(name="siope_assenza_motivazione_id")
 	private SiacDSiopeAssenzaMotivazione siacDSiopeAssenzaMotivazione;
+	
+	//SIAC-8195
+	//bi-directional many-to-one association to SiacTMovgestTsDetModFin
+	@OneToMany(mappedBy="siacTMovgestT")
+	private List<SiacTMovgestTsDetMod> siacTMovgestTsDetMods;
+	
+	@OneToMany(mappedBy="siacTMovgestT")
+	private List<SiacRMutuoMovgestT> siacRMutuoMovgestTs;
+	
 
 	/**
 	 * Instantiates a new siac t movgest t.
@@ -644,28 +647,6 @@ public class SiacTMovgestT extends SiacTEnteBase {
 		return siacRMovgestTsStato;
 	}
 
-	public List<SiacRMutuoVoceMovgest> getSiacRMutuoVoceMovgests() {
-		return this.siacRMutuoVoceMovgests;
-	}
-
-	public void setSiacRMutuoVoceMovgests(List<SiacRMutuoVoceMovgest> siacRMutuoVoceMovgests) {
-		this.siacRMutuoVoceMovgests = siacRMutuoVoceMovgests;
-	}
-
-	public SiacRMutuoVoceMovgest addSiacRMutuoVoceMovgest(SiacRMutuoVoceMovgest siacRMutuoVoceMovgest) {
-		getSiacRMutuoVoceMovgests().add(siacRMutuoVoceMovgest);
-		siacRMutuoVoceMovgest.setSiacTMovgestT(this);
-
-		return siacRMutuoVoceMovgest;
-	}
-
-	public SiacRMutuoVoceMovgest removeSiacRMutuoVoceMovgest(SiacRMutuoVoceMovgest siacRMutuoVoceMovgest) {
-		getSiacRMutuoVoceMovgests().remove(siacRMutuoVoceMovgest);
-		siacRMutuoVoceMovgest.setSiacTMovgestT(null);
-
-		return siacRMutuoVoceMovgest;
-	}
-
 	public List<SiacROrdinativoTsMovgestT> getSiacROrdinativoTsMovgestTs() {
 		return this.siacROrdinativoTsMovgestTs;
 	}
@@ -848,6 +829,20 @@ public class SiacTMovgestT extends SiacTEnteBase {
 		this.siacDSiopeAssenzaMotivazione = siacDSiopeAssenzaMotivazione;
 	}
 
+	/**
+	 * @return the siacTMovgestTsDetMods
+	 */
+	public List<SiacTMovgestTsDetMod> getSiacTMovgestTsDetMods() {
+		return siacTMovgestTsDetMods;
+	}
+	
+	/**
+	 * @param siacTMovgestTsDetMods the siacTMovgestTsDetMods to set
+	 */
+	public void setSiacTMovgestTsDetMods(List<SiacTMovgestTsDetMod> siacTMovgestTsDetMods) {
+		this.siacTMovgestTsDetMods = siacTMovgestTsDetMods;
+	}
+
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siaccommonser.integration.entity.SiacTBase#getUid()
 	 */
@@ -879,6 +874,14 @@ public class SiacTMovgestT extends SiacTEnteBase {
 
 	public void setSiacRMovgestT2s(List<SiacRMovgestT> siacRMovgestT2s) {
 		this.siacRMovgestT2s = siacRMovgestT2s;
+	}
+
+	public List<SiacRMutuoMovgestT> getSiacRMutuoMovgestTs() {
+		return siacRMutuoMovgestTs;
+	}
+
+	public void setSiacRMutuoMovgestTs(List<SiacRMutuoMovgestT> siacRMutuoMovgestTs) {
+		this.siacRMutuoMovgestTs = siacRMutuoMovgestTs;
 	}
 
 }

@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
+import it.csi.siac.siacbilser.integration.dad.mapper.progetto.SiacTProgrammaProgettoMapper;
+import it.csi.siac.siacbilser.integration.dad.mapper.util.MapperDecoratorHelper;
 import it.csi.siac.siacbilser.integration.dao.EnumEntityFactory;
 import it.csi.siac.siacbilser.integration.dao.ProgettoDao;
 import it.csi.siac.siacbilser.integration.dao.SiacTClassDao;
@@ -48,6 +50,7 @@ import it.csi.siac.siacbilser.model.StatoOperativoProgetto;
 import it.csi.siac.siacbilser.model.TipoAmbito;
 import it.csi.siac.siacbilser.model.TipoProgetto;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -86,6 +89,11 @@ public class ProgettoDad extends ExtendedBaseDadImpl {
 	@Autowired
 	private EnumEntityFactory eef;
 	
+	@Autowired
+	private MapperDecoratorHelper mapperDecoratorHelper;
+	@Autowired
+	private SiacTProgrammaProgettoMapper siacTProgrammaProgettoMapper;
+	
 	/**
 	 * Persiste il Progetto su DB.
 	 * 
@@ -123,6 +131,9 @@ public class ProgettoDad extends ExtendedBaseDadImpl {
 		return map(siacTProgramma, Progetto.class, BilMapId.SiacTProgramma_Progetto);
 	}
 	
+	
+	
+	
 	/**
 	 * Ottiene un vincolo a partire dalla chiave fornita.
 	 * 
@@ -130,14 +141,20 @@ public class ProgettoDad extends ExtendedBaseDadImpl {
 	 * 
 	 * @return il progetto corrispondente alla chiave, se esistente
 	 */
-	public Progetto findProgettoById(Integer chiaveProgetto) {
+	
+	public Progetto findProgettoById(Integer chiaveProgetto, ModelDetailEnum...progettoModelDetails) {
 		final String methodName = "findProgettoById";
 		log.debug(methodName, "Id: " + chiaveProgetto);
 		SiacTProgramma siacTProgramma = siacTProgrammaRepository.findOne(chiaveProgetto);
 		if(siacTProgramma == null) {
 			throw new IllegalArgumentException("Impossibile trovare il vincolo con id: " + chiaveProgetto);
 		}
-		return map(siacTProgramma, Progetto.class, BilMapId.SiacTProgramma_Progetto);
+		
+		Progetto progetto = map(siacTProgramma, Progetto.class, BilMapId.SiacTProgramma_Progetto);
+		
+		siacTProgrammaProgettoMapper.decorate(siacTProgramma, progetto,mapperDecoratorHelper.getDecoratorsFromModelDetails(progettoModelDetails));
+		
+		return progetto;
 	}
 	
 	/**
@@ -230,6 +247,21 @@ public class ProgettoDad extends ExtendedBaseDadImpl {
 			ente.getUid());
 		
 		return convertiLista(siacTClasses, TipoAmbito.class,  BilMapId.SiacTClass_ClassificatoreGenerico);
+	}
+	
+	public TipoAmbito ricercaTipoAmbito(Integer anno, String codice) {
+		SiacTClass siacTClass = siacTClassDao.findClassifByCodiceAndEnteAndTipoCode(
+			codice,
+			ente.getUid(),
+			anno,
+			SiacDClassTipoEnum.TipoAmbito.getCodice()
+		);
+		
+		TipoAmbito tipoAmbito = new TipoAmbito();
+		
+		mapNotNull(siacTClass, tipoAmbito, BilMapId.SiacTClass_ClassificatoreGenerico);
+		
+		return tipoAmbito;
 	}
 	
 	/**
@@ -385,27 +417,43 @@ public class ProgettoDad extends ExtendedBaseDadImpl {
 	 * @param anno the anno
 	 * @return the list
 	 */
-	public List<ProspettoRiassuntivoCronoprogramma> calcoloProspettoRiassuntivoCronoprogrammaDiGestione(Progetto progetto, Integer anno) {
+	public List<ProspettoRiassuntivoCronoprogramma> calcoloProspettoRiassuntivoCronoprogrammaDiGestioneAggiorna(Progetto progetto, Integer anno) {
 
-		List<Object[]> listaProspettoCronoprogrammaDiGestione = progettoDao.calcoloProspettoRiassuntivoCronoprogrammaDiGestione(progetto.getUid(), ""+anno);
+		List<Object[]> listaProspettoCronoprogrammaDiGestione = progettoDao.calcoloProspettoRiassuntivoCronoprogrammaDiGestioneAggiorna(progetto.getUid(), anno.toString());
 		
 		List<ProspettoRiassuntivoCronoprogramma> result = new ArrayList<ProspettoRiassuntivoCronoprogramma>();
 		for (Object[] lp : listaProspettoCronoprogrammaDiGestione) {
 			ProspettoRiassuntivoCronoprogramma lpec = new ProspettoRiassuntivoCronoprogramma();
-			
-			
-
-			
 			//lp[0]
 			lpec.setAnno(Integer.valueOf((String)lp[0]));
 			
 			//lp[1]
-			 lpec.setTotaliEntrate((BigDecimal)lp[1]);
-			
+			 lpec.setTotaliEntrate((BigDecimal)lp[1]);			
 			
 			//lp[2]
 			 lpec.setTotaliSpese((BigDecimal)lp[2]);
+	
+			result.add(lpec);
+		}
+		
+		return result;
+	}
 
+	public List<ProspettoRiassuntivoCronoprogramma> calcoloProspettoRiassuntivoCronoprogrammaDiGestioneConsulta(Progetto progetto, Integer anno) {
+
+		List<Object[]> listaProspettoCronoprogrammaDiGestione = progettoDao.calcoloProspettoRiassuntivoCronoprogrammaDiGestioneConsulta(progetto.getUid(), anno.toString());
+		
+		List<ProspettoRiassuntivoCronoprogramma> result = new ArrayList<ProspettoRiassuntivoCronoprogramma>();
+		for (Object[] lp : listaProspettoCronoprogrammaDiGestione) {
+			ProspettoRiassuntivoCronoprogramma lpec = new ProspettoRiassuntivoCronoprogramma();
+			//lp[0]
+			lpec.setAnno(Integer.valueOf((String)lp[0]));
+			
+			//lp[1]
+			 lpec.setTotaliEntrate((BigDecimal)lp[1]);			
+			
+			//lp[2]
+			 lpec.setTotaliSpese((BigDecimal)lp[2]);
 	
 			result.add(lpec);
 		}
@@ -480,4 +528,11 @@ public class ProgettoDad extends ExtendedBaseDadImpl {
 		SiacTBil siacTBil = siacTProgrammaRepository.findBilancioProgetto(progetto.getUid());
 		return mapNotNull(siacTBil, Bilancio.class, BilMapId.SiacTBil_Bilancio);
 	}
+	
+	public Progetto ricercaProgetto(Progetto progetto, ModelDetailEnum... progettoModelDetails) {
+		
+		SiacTProgramma siacTProgramma  = progettoDao.findById(progetto.getUid());
+
+		return siacTProgrammaProgettoMapper.map(siacTProgramma, mapperDecoratorHelper.getDecoratorsFromModelDetails(progettoModelDetails));
+	}	
 }

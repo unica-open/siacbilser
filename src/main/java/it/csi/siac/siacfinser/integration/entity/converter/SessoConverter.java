@@ -9,7 +9,7 @@ package it.csi.siac.siacfinser.integration.entity.converter;
 
 import org.dozer.DozerConverter;
 
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto.Sesso;
 
@@ -28,10 +28,10 @@ public class SessoConverter extends  DozerConverter<String, Soggetto>{
 			return null;
 		}
 		
-		if(Constanti.SESSO_M.equalsIgnoreCase(source)){
+		if(CostantiFin.SESSO_M.equalsIgnoreCase(source)){
 			    destination.setSesso(Sesso.MASCHIO); 
 		     	return destination;
-		}else if(Constanti.SESSO_F.equalsIgnoreCase(source)){
+		}else if(CostantiFin.SESSO_F.equalsIgnoreCase(source)){
 			    destination.setSesso(Sesso.FEMMINA); 
 		     	return destination;
 		}else{
@@ -53,9 +53,9 @@ public class SessoConverter extends  DozerConverter<String, Soggetto>{
 		 
 		 String ris ="";
 		  if(source.getSesso() ==  Sesso.MASCHIO){
-			  		ris = Constanti.SESSO_M.toLowerCase();
+			  		ris = CostantiFin.SESSO_M.toLowerCase();
 		  } else if(source.getSesso() ==  Sesso.FEMMINA){
-		     		ris = Constanti.SESSO_F.toLowerCase();
+		     		ris = CostantiFin.SESSO_F.toLowerCase();
 		  } else ris = "";   
 		  
 		  return ris;

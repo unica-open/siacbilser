@@ -10,7 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.integration.dao.EnumEntityFinFactory;
 import it.csi.siac.siacfinser.integration.entity.SiacDCartacontStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRCartacontStatoFin;
@@ -22,7 +22,7 @@ import it.csi.siac.siacfinser.model.carta.CartaContabile.StatoOperativoCartaCont
 public class CartaContabileStatoConverter extends FinExtendedDozerConverter<StatoOperativoCartaContabile, SiacTCartacontFin> { 
 
 
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	@Autowired
 	private EnumEntityFinFactory eef;

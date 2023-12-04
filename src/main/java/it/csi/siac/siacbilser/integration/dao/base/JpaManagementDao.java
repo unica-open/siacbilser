@@ -4,9 +4,12 @@
 */
 package it.csi.siac.siacbilser.integration.dao.base;
 
+import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
+
 public interface JpaManagementDao {
 	
 	public void flush();
 	public void flushAndClear();
+	public void detach(SiacTBase siacTBase);
 
 }

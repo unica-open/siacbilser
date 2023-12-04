@@ -55,4 +55,11 @@ public interface SiacTAccountRepository extends JpaRepository<SiacTAccount, Inte
 			+ " AND rac.siacTClass.siacDClassTipo.classifTipoCode IN (:classifTipoCodes) ")
 	List<SiacTClass> findSiacTClassByAccountIdAndClassifTipoCodes(@Param("accountId") Integer accountId, @Param("classifTipoCodes") Collection<String> classifTipoCodes);
 	
+	@Query(" SELECT rac.siacTClass "
+			+ " FROM SiacRAccountClass rac "
+			+ " WHERE rac.dataCancellazione IS NULL "
+			+ " AND rac.siacTAccount.accountId = :accountId "
+			+ " AND rac.siacTClass.classifId = :classifId ")
+	List<SiacTClass> findSiacTClassByAccountIdAndClassifId(@Param("accountId") Integer accountId, @Param("classifId") Integer classifId);
+	
 }

@@ -17,7 +17,7 @@ import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAvanzovincolo;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAvanzovincoloResponse;
@@ -53,7 +53,7 @@ public class RicercaAvanzovincoloService extends AbstractBaseService<RicercaAvan
 		setBilancio(req.getBilancio());
 		Integer annoBilancio = getBilancio().getAnno();
 		
-		DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.RICERCA, Constanti.AMBITO_FIN, annoBilancio);
+		DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.RICERCA, CostantiFin.AMBITO_FIN, annoBilancio);
 		avanzovincoliList = accertamentoOttimizzatoDad.ricercaAvanzovincolo(datiOperazione);
 		
 		List<Avanzovincolo> paginata = getPaginata(avanzovincoliList, req.getNumPagina(), req.getNumRisultatiPerPagina());

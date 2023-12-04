@@ -10,71 +10,153 @@ SPDX-License-Identifier: EUPL-1.2
 	<!-- Data Source dev usata per test -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="org.postgresql.Driver" />
+		
+		
+	<!-- #################### LOCALE #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://localhost:5432/siac" /> -->
+<!-- 		<property name="username" value="siac" /> -->
+<!-- 		<property name="password" value="siac" /> -->
+		
+		<!-- 
+        
+                _  _ _ _  _ ____ _    ____ 
+                |\ | | |  | |  | |    |__| 
+                | \| |  \/  |__| |___ |  | 
+                                           
+        
+		 -->
+
 
 		<!-- #################### DEV-RP #################### -->
-		<!-- <property name="url" value="jdbc:postgresql://10.136.6.151:5432/siac" />
-		<property name="username" value="siac" />
-		<property name="password" value="siac" /> -->
-		
-		<!-- #################### DEV-MULT #################### -->
-<!-- 		<property name="url" value="jdbc:postgresql://10.136.6.151:5432/siac_consip_20170628_mult" /> -->
+<!-- 		<property name="url" value="jdbc:postgresql://10.136.6.151:5432/siac" /> -->
 <!-- 		<property name="username" value="siac" /> -->
 <!-- 		<property name="password" value="siac" /> -->
 		
 		<!-- #################### CONSIP-MULT #################### -->
-<!-- 		<property name="url" value="jdbc:postgresql://tst-dbsiac-consip.bilancio.csi.it:5432/CONSIP-MULT" /> -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb07.bilancio.csi.it:5432/CONSIP-MULT" /> -->
 <!-- 		<property name="username" value="siac" /> -->
 <!-- 		<property name="password" value="mypass" /> -->
 
-		<!-- #################### CONSIP-RP #################### -->
-		<property name="url" value="jdbc:postgresql://tst-dbsiac-consip.bilancio.csi.it:5432/CONSIP-RP" />
+<!-- #################### CONSIP-RP #################### -->
+		<property name="url" value="jdbc:postgresql://10.138.154.6:10276/CONSIP-RP" />
 		<property name="username" value="siac" />
 		<property name="password" value="mypass" />
 		
-		<!-- #################### TST #################### -->
-<!-- 		<property name="url" value="jdbc:postgresql://10.136.6.151:5432/siac_forn2_20170330" /> -->
-<!-- 		<property name="username" value="siac" /> -->
-<!-- 		<property name="password" value="siac" /> -->
+		<!-- #################### CONSIP-CMTO #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://10.138.154.6:10276/CONSIP-CMTO" />
+		<property name="username" value="siac" />
+		<property name="password" value="mypass" /> -->
 		
 		
 		<!-- #################### COLL ################### -->
-<!-- 		<property name="url" value="jdbc:postgresql://coll-db1.bilancio.csi.it:5432/COLL-MULT" /> -->
+<!-- 		<property name="url" value="jdbc:postgresql://10.138.154.6:10218/TSTBIL1" /> -->
 <!-- 		<property name="username" value="siac" /> -->
 <!-- 		<property name="password" value="mypass" /> -->
 
 		<!-- #################### FORN1 ################## -->
-<!-- 		<property name="url" value="jdbc:postgresql://tst-dbsiac-forn1.bilancio.csi.it:5432/TSTBIL1" /> -->
+<!-- 		<property name="url" value="jdbc:postgresql://10.138.154.6:10275/TSTBIL1" /> -->
 <!-- 		<property name="username" value="siac" /> -->
 <!-- 		<property name="password" value="mypass" /> -->
 
-		<!-- #################### FORN2-RP ################## -->
-<!-- 		<property name="url" value="jdbc:postgresql://tst-dbsiac-forn2.bilancio.csi.it:5432/FORN2-RP" /> -->
+		<!-- #################### FORN2 ################## -->
+<!-- 		<property name="url" value="jdbc:postgresql://10.138.154.6:10215/TSTBIL1" /> -->
 <!-- 		<property name="username" value="siac" /> -->
 <!-- 		<property name="password" value="mypass" /> -->
 
-		<!-- #################### FORN2-CMTO ################## -->
-<!-- 		<property name="url" value="jdbc:postgresql://tst-dbsiac-forn2.bilancio.csi.it:5432/FORN2-CMTO" /> -->
+		<!-- #################### INTEG #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://10.138.154.6:10739/TSTBIL1" /> -->
 <!-- 		<property name="username" value="siac" /> -->
 <!-- 		<property name="password" value="mypass" /> -->
 
-		<!-- #################### FORN2-MULT ################## -->
-<!-- 		<property name="url" value="jdbc:postgresql://tst-dbsiac-forn2.bilancio.csi.it:5432/FORN2-MULT" /> -->
+	<!-- #################### TST-UTENTE        #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://10.138.154.6:10754/TSTBIL1" /> -->
+<!-- 		<property name="username" value="siac_rw" /> -->
+<!-- 		<property name="password" value="UserP4ssword" /> -->
+
+	<!-- 
+                           
+                   _ ____ ____ _    ____ 
+                   | [__  |  | |    |__| 
+                   | ___] |__| |___ |  | 
+                                         
+		 -->
+
+		<!-- #################### CONSIP-RP #################### -->
+		<!-- <property name="url" value="jdbc:postgresql://tst-bilancio-vdb07.bilancio.csi.it:5432/CONSIP-RP" />
+		<property name="username" value="siac" />
+		<property name="password" value="mypass" />
+		 -->
+		<!-- #################### CONSIP-CMTO #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb07.bilancio.csi.it:5432/CONSIP-CMTO" />
+		<property name="username" value="siac" />
+		<property name="password" value="mypass" /> -->
+		
+		
+		<!-- #################### COLL ################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb06.bilancio.csi.it:5432/TSTBIL1" /> -->
 <!-- 		<property name="username" value="siac" /> -->
 <!-- 		<property name="password" value="mypass" /> -->
 
-       <!-- #################### FORN2-9.6 ################## -->
-		<!-- <property name="url" value="jdbc:postgresql://tst-bilancio-vdb02.bilancio.csi.it:5432/PRODBIL1-MULT" />
+		<!-- #################### FORN1 ################## -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb04.bilancio.csi.it:5432/TSTBIL1" />
 		<property name="username" value="siac" />
 		<property name="password" value="mypass" /> -->
 
-
-		<!-- #################### INTEG #################### -->
-<!-- 		<property name="url" value="jdbc:postgresql://tst-dbsiac-integ.bilancio.csi.it:5432/TSTBIL1" /> -->
+		<!-- #################### FORN2 ################## -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb02.bilancio.csi.it:5432/TSTBIL1" /> -->
 <!-- 		<property name="username" value="siac" /> -->
 <!-- 		<property name="password" value="mypass" /> -->
 
-		<!-- #################### TST-UTENTE: fare attenzione!!! #################### -->
-<!-- 		<property name="url" value="jdbc:postgresql://tst-dbsiac-tu.bilancio.csi.it:5432/TSTBIL1" /> -->
+		<!-- #################### INTEG #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb05.bilancio.csi.it:5432/TSTBIL1" /> -->
+<!-- 		<property name="username" value="siac" /> -->
+<!-- 		<property name="password" value="mypass" /> -->
+
+	<!-- #################### TST-UTENTE 9.6: fare attenzione!!! #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-pg96.bilancio.csi.it:5432/TSTBIL1" /> -->
+<!-- 		<property name="username" value="siac_rw" /> -->
+<!-- 		<property name="password" value="UserP4ssword" /> -->
+
+	<!-- ================================= #################################### NIVOLA #################################### ================================= -->
+
+		<!-- #################### DEV-RP #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://10.136.6.151:5432/siac" /> -->
+<!-- 		<property name="username" value="siac" /> -->
+<!-- 		<property name="password" value="siac" /> -->
+		
+		<!-- #################### CONSIP-MULT #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb07.bilancio.csi.it:5432/CONSIP-MULT" /> -->
+<!-- 		<property name="username" value="siac" /> -->
+<!-- 		<property name="password" value="mypass" /> -->
+
+		<!-- #################### CONSIP-RP #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb07.bilancio.csi.it:5432/CONSIP-RP" /> -->
+<!-- 		<property name="username" value="siac" /> -->
+<!-- 		<property name="password" value="mypass" /> -->
+		
+		<!-- #################### CONSIP-CMTO #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb07.bilancio.csi.it:5432/CONSIP-CMTO" />
+		<property name="username" value="siac" />
+		<property name="password" value="mypass" /> -->
+		
+		
+		<!-- #################### COLL ################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb06.bilancio.csi.it:5432/TSTBIL1" /> -->
+<!-- 		<property name="username" value="siac" /> -->
+<!-- 		<property name="password" value="mypass" /> -->
+
+		<!-- #################### FORN1 ################## -->
+<!--  		<property name="url" value="jdbc:postgresql://10.138.154.6:10275/TSTBIL1" /> -->
+<!-- 		<property name="username" value="siac" /> -->
+<!-- 		<property name="password" value="mypass" /> -->
+
+		<!-- #################### FORN2 ################## -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb02.bilancio.csi.it:5432/TSTBIL1" /> -->
+<!-- 		<property name="username" value="siac" /> -->
+<!-- 		<property name="password" value="mypass" /> -->
+
+		<!-- #################### INTEG #################### -->
+<!-- 		<property name="url" value="jdbc:postgresql://tst-bilancio-vdb05.bilancio.csi.it:5432/TSTBIL1" /> -->
 <!-- 		<property name="username" value="siac" /> -->
 <!-- 		<property name="password" value="mypass" /> -->
 

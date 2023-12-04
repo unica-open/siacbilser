@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoModpagFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTClassFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTProvCassaFin;
 
 public interface SiacTProvCassaRepository extends JpaRepository<SiacTProvCassaFin, Integer> {
@@ -32,6 +33,16 @@ public interface SiacTProvCassaRepository extends JpaRepository<SiacTProvCassaFi
 	
 	@Query("FROM SiacTProvCassaFin pdc WHERE provcId IN (:listaIds) ")
 	public List<SiacTProvCassaFin> findByListIds(@Param("listaIds")List<Integer> listaIds);
+	
+	@Query(" SELECT rclass.siacTClass"
+			+ " FROM SiacRProvCassaClassFin rclass, SiacTProvCassaFin pdc "
+			+ " WHERE rclass.siacTProvCassaFin = pdc "
+			+ " AND pdc.provcId = :provcId "
+			+ " AND rclass.dataCancellazione IS NULL "
+			+ " AND pdc.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			+ " AND " +condizioneProv
+			)
+	public List<SiacTClassFin> findSiacTClassValido(@Param("provcId") Integer provcId,@Param("enteProprietarioId") Integer enteProprietarioId,@Param("dataInput") Timestamp  dataInput);
 	
 //	@Query("FROM SiacTProvCassaFin pdc WHERE pdc.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ")
 //	public List<SiacTProvCassaFin> findAllByEnte(@Param("enteProprietarioId") Integer enteProprietarioId);

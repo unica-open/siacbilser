@@ -6,10 +6,11 @@ package it.csi.siac.siacfinser.integration.dao.classificatorefin;
 
 import java.util.List;
 
-import it.csi.siac.siaccommonser.integration.dao.base.BaseDao;
+import it.csi.siac.siaccommonser.integration.dao.base.Dao;
 import it.csi.siac.siacfinser.integration.entity.SiacCodifica;
+import it.csi.siac.siacfinser.integration.entity.SiacTClassFin;
 
-public interface SiacTClassFinDao extends BaseDao{
+public interface SiacTClassFinDao extends Dao<SiacTClassFin, Integer>{
 	
 	
 	/*******************************************

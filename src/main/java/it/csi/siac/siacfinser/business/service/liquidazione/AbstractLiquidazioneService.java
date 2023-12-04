@@ -20,7 +20,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioQuotaSpes
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioQuotaSpesaResponse;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.integration.dad.LiquidazioneDad;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
@@ -60,7 +60,7 @@ public abstract class AbstractLiquidazioneService <REQ extends ServiceRequest, R
 			// 11/11/2014 patch per mancanza di analisi precedente: 
 			// Se esiste un subdocumento legato lo leggo ma ...leggi sotto
 			// RM 28/03/2017 : lo carico solo se NON sono richiamata dall'emettitore			
-			if(liquidazione.getSubdocumentoSpesa()!=null && !tipoRicerca.equalsIgnoreCase(Constanti.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO)){
+			if(liquidazione.getSubdocumentoSpesa()!=null && !tipoRicerca.equalsIgnoreCase(CostantiFin.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO)){
 				// mi metto da parte il Documento ricavato nella ricerca per chiave della liquidazione
 				// cosi da non perderlo nel setSubdocumentoSpesa dopo la ricerca del dettaglio quote
 				DocumentoSpesa docSpesa = liquidazione.getSubdocumentoSpesa().getDocumento(); 

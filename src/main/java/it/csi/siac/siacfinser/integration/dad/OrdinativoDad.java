@@ -15,22 +15,22 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloUscitaGestioneService;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDClassTipoEnum;
+import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.ClassificatoreStipendi;
-import it.csi.siac.siacbilser.model.ImportiCapitoloEG;
-import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloEGest;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloUGest;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Entita;
@@ -39,17 +39,20 @@ import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.TipoClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.model.CausaleEntrata;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.DettaglioOnere;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoOnere;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfin2ser.model.TipoOrdinativo;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.ReintroitoUtils;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.integration.dao.common.SiacDAmbitoRepository;
@@ -71,7 +74,6 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.OrdinativoInReintroitoD
 import it.csi.siac.siacfinser.integration.dao.common.dto.OrdinativoInReintroitoInfoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneModalitaPagamentoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneMovGestDto;
-import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneMutuoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneOrdinativoIncassoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneOrdinativoPagamentoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneSoggettoDto;
@@ -83,7 +85,6 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.RitenuteReintroitoConSt
 import it.csi.siac.siacfinser.integration.dao.common.dto.SediEModPagOrdinativoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.SubOrdinativoImportoVariatoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.SubOrdinativoInModificaInfoDto;
-import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacDContotesoreriaFinRepository;
 import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacDDistintaRepository;
 import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacRLiquidazioneOrdRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTAttoAmmFinRepository;
@@ -93,6 +94,7 @@ import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestTsRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.OrdinativoDao;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDCodiceBolloFinRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDCommissioneTipoRepository;
+import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDContotesoreriaFinRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDNoteTesoriereFinRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDOrdinativoStatoRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDOrdinativoTipoRepository;
@@ -101,6 +103,7 @@ import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacRDocOnereOrdinativo
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoAttoAmmRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoBilElemRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoClassRepository;
+import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoContotesNoDispFinRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoModpagRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoProvCassaRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoRepository;
@@ -141,11 +144,12 @@ import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneOrdFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoAttoAmmFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoBilElemFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoClassFin;
+import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoContotesNoDispFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoFirma;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoModpagFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoProvCassaFin;
-import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoQuietanza;
+import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoQuietanzaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoTsMovgestTFin;
@@ -168,16 +172,17 @@ import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTsDetFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTProvCassaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSubdocFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTVincoloFin;
 import it.csi.siac.siacfinser.integration.entity.enumeration.SiacDOilRicevutaTipoEnum;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.EntityOrdinativiToModelOrdinativiConverter;
 import it.csi.siac.siacfinser.integration.util.EntityToModelConverter;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.integration.util.TransazioneElementareEntityToModelConverter;
 import it.csi.siac.siacfinser.integration.util.dto.SiacTOrdinativoCollegatoCustom;
 import it.csi.siac.siacfinser.model.Accertamento;
-import it.csi.siac.siacfinser.model.ContoTesoreria;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Distinta;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.MovimentoGestione;
@@ -192,8 +197,6 @@ import it.csi.siac.siacfinser.model.codifiche.NoteTesoriere;
 import it.csi.siac.siacfinser.model.codifiche.TipoAvviso;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
-import it.csi.siac.siacfinser.model.mutuo.Mutuo;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.ordinativo.DatiOrdinativoTrasmesso;
 import it.csi.siac.siacfinser.model.ordinativo.Ordinativo;
 import it.csi.siac.siacfinser.model.ordinativo.Ordinativo.StatoOperativoOrdinativo;
@@ -259,6 +262,9 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	
 	@Autowired
 	SiacDContotesoreriaFinRepository siacDContotesoreriaRepository;
+	
+	@Autowired
+	SiacROrdinativoContotesNoDispFinRepository siacROrdinativoContotesNoDispFinRepository;
 	
 	@Autowired
 	SiacDNoteTesoriereFinRepository siacDNoteTesoriereRepository;
@@ -452,9 +458,11 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if(listaSubOrdinativiDaEliminare!=null && listaSubOrdinativiDaEliminare.size()>0){
 			//ELIMINA RIMOSSI
 			for(SiacTOrdinativoTFin iterato : listaSubOrdinativiDaEliminare){
-				DatiOperazioneUtils.annullaRecord(iterato, siacTOrdinativoTRepository, datiOperazione,siacTAccountRepository);
+				DatiOperazioneUtil.annullaRecord(iterato, siacTOrdinativoTRepository, datiOperazione,siacTAccountRepository);
 			}
 		}
+		//SIAC-8638 e SIAC-8017-CMTO
+		aggiornaSiacROrdinativoContotesNoDispFin(datiOperazione, siacTOrdinativoModificato, ordinativo, ordinativo.getContoTesoreriaSenzaCapienza(), ordinativo.getContoTesoreria(), ordinativoInModificaInfoDto);
 		
 		// REGOLARIZZAZIONI DI CASSA : INIZIO
 		RegolarizzazioniDiCassaInModificaInfoDto infoModificheRegolarizzazioniDiCassa = ordinativoInModificaInfoDto.getInfoModificheRegolarizzazioniDiCassa();
@@ -467,13 +475,13 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		if(listaRegolarizzazioniDiCassaDaInserire!=null && listaRegolarizzazioniDiCassaDaInserire.size()>0){
 			//INSERIMENTO NUOVI
-			List<SiacROrdinativoProvCassaFin> l = salvaSiacROrdinativoProvCassa(listaRegolarizzazioniDiCassaDaInserire, datiOperazione, siacTOrdinativoModificato, Constanti.D_PROV_CASSA_TIPO_SPESA);
+			List<SiacROrdinativoProvCassaFin> l = salvaSiacROrdinativoProvCassa(listaRegolarizzazioniDiCassaDaInserire, datiOperazione, siacTOrdinativoModificato, CostantiFin.D_PROV_CASSA_TIPO_SPESA, BigDecimal.ZERO);
 			listaRegolarizzazioniDiCassaValideDopoUpdate = addAll(listaRegolarizzazioniDiCassaValideDopoUpdate,l);
 		}
 
 		if(listaRegolarizzazioniDiCassaDaAggiornare!=null && listaRegolarizzazioniDiCassaDaAggiornare.size()>0){
 			//AGGIORNAMENTO MODIFICATI
-			List<SiacROrdinativoProvCassaFin> l = aggiornaSiacROrdinativoProvCassa(listaRegolarizzazioniDiCassaDaAggiornare, datiOperazione, siacTOrdinativoModificato, Constanti.D_PROV_CASSA_TIPO_SPESA);
+			List<SiacROrdinativoProvCassaFin> l = aggiornaSiacROrdinativoProvCassa(listaRegolarizzazioniDiCassaDaAggiornare, datiOperazione, siacTOrdinativoModificato, CostantiFin.D_PROV_CASSA_TIPO_SPESA);
 			listaRegolarizzazioniDiCassaValideDopoUpdate = addAll(listaRegolarizzazioniDiCassaValideDopoUpdate,l);
 		}
 		
@@ -491,7 +499,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if(listaRegolarizzazioniDiCassaDaEliminare!=null && listaRegolarizzazioniDiCassaDaEliminare.size()>0){
 			//ELIMINA RIMOSSI
 			for(SiacROrdinativoProvCassaFin iterato : listaRegolarizzazioniDiCassaDaEliminare){
-				DatiOperazioneUtils.cancellaRecord(iterato, siacROrdinativoProvCassaRepository, datiOperazione, siacTAccountRepository);
+				DatiOperazioneUtil.cancellaRecord(iterato, siacROrdinativoProvCassaRepository, datiOperazione, siacTAccountRepository);
 			}
 		}
 		// REGOLARIZZAZIONI DI CASSA : FINE
@@ -502,13 +510,13 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		List<SiacROrdinativoFin> siacROrdinativoListTutti = siacTOrdinativoModificato.getSiacROrdinativos1();
 		
 		//DEVO ESCLUDERE DALLA VALUTAZIONE QUELLI GIA' ELIMINATI:
-		List<SiacROrdinativoFin> siacROrdinativoList = CommonUtils.soloValidiSiacTBase(siacROrdinativoListTutti, getNow());
+		List<SiacROrdinativoFin> siacROrdinativoList = CommonUtil.soloValidiSiacTBase(siacROrdinativoListTutti, getNow());
 		//
 		
 		// prima condizione controllo se non arrivano ordinativi da inserire mentre sul db ne ho, quinid devo cancellare tutto!
-		boolean cancellaTuttiICollegati = StringUtils.isEmpty(ordinativo.getElencoOrdinativiCollegati()) &&  !StringUtils.isEmpty(siacROrdinativoList);
+		boolean cancellaTuttiICollegati = StringUtilsFin.isEmpty(ordinativo.getElencoOrdinativiCollegati()) &&  !StringUtilsFin.isEmpty(siacROrdinativoList);
 		
-		boolean inserisciTuttiICollegati =  !StringUtils.isEmpty(ordinativo.getElencoOrdinativiCollegati()) && StringUtils.isEmpty(siacROrdinativoList);
+		boolean inserisciTuttiICollegati =  !StringUtilsFin.isEmpty(ordinativo.getElencoOrdinativiCollegati()) && StringUtilsFin.isEmpty(siacROrdinativoList);
 		
 		//System.out.println("inserisciTuttiICollegati: " + inserisciTuttiICollegati);
 		//System.out.println("cancellaTuttiICollegati: " + cancellaTuttiICollegati);
@@ -563,7 +571,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 					}
 					
 					if(!esiste){
-						DatiOperazioneUtils.cancellaRecord(siacROrdinativo, siacROrdinativoRepository, datiOperazione, siacTAccountRepository);
+						DatiOperazioneUtil.cancellaRecord(siacROrdinativo, siacROrdinativoRepository, datiOperazione, siacTAccountRepository);
 					}
 				}
 			}else{
@@ -577,7 +585,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			if(cancellaTuttiICollegati){
 				
 				for (SiacROrdinativoFin siacROrdinativo : siacTOrdinativoModificato.getSiacROrdinativos1()) {
-					DatiOperazioneUtils.cancellaRecord(siacROrdinativo, siacROrdinativoRepository, datiOperazione, siacTAccountRepository);
+					DatiOperazioneUtil.cancellaRecord(siacROrdinativo, siacROrdinativoRepository, datiOperazione, siacTAccountRepository);
 				}
 				
 				ordinativo.setElencoOrdinativiCollegati(new ArrayList<Ordinativo>());
@@ -593,14 +601,14 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 
 		// Restituisco l'ordinativo inserito
 		if(ordinativo instanceof OrdinativoPagamento){
-			ordinativoDaRestituire = componiOrdinativoModel(attributoInfo, datiOperazione, richiedente, bilancio.getAnno(),Constanti.D_ORDINATIVO_TIPO_PAGAMENTO);
+			ordinativoDaRestituire = componiOrdinativoModel(attributoInfo, datiOperazione, richiedente, bilancio.getAnno(),CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO);
 				
 			if(ordinativo.getElencoOrdinativiCollegati()!=null){				
 				ordinativoDaRestituire.setElencoOrdinativiCollegati(ordinativo.getElencoOrdinativiCollegati());
 			}
 			
 		} else if(ordinativo instanceof OrdinativoIncasso){
-			ordinativoDaRestituire = componiOrdinativoModel(attributoInfo, datiOperazione, richiedente, bilancio.getAnno(),Constanti.D_ORDINATIVO_TIPO_INCASSO);
+			ordinativoDaRestituire = componiOrdinativoModel(attributoInfo, datiOperazione, richiedente, bilancio.getAnno(),CostantiFin.D_ORDINATIVO_TIPO_INCASSO);
 		
 			//DICEMBRE 2017 ANCHE PER INCASSO ABBIAMO GLI ORDINATIVI COLLEGATI:
 			if(ordinativo.getElencoOrdinativiCollegati()!=null){				
@@ -652,9 +660,9 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	private <O extends Object> String getDOrdinativoTipo(O o){
 		String tipoOrdinativo = null;
 		if(o instanceof SubOrdinativoIncasso || o instanceof OrdinativoIncasso){
-			tipoOrdinativo = Constanti.D_ORDINATIVO_TIPO_INCASSO;
+			tipoOrdinativo = CostantiFin.D_ORDINATIVO_TIPO_INCASSO;
 		} else if(o instanceof SubOrdinativoPagamento || o instanceof OrdinativoPagamento){
-			tipoOrdinativo = Constanti.D_ORDINATIVO_TIPO_PAGAMENTO;
+			tipoOrdinativo = CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO;
 		}
 		return tipoOrdinativo;
 	}
@@ -667,9 +675,9 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	private String getTipoProvvisorioCassa(Ordinativo ordinativo){
 		String tipoProvvisorioDiCassa =  null;
 		if(ordinativo instanceof OrdinativoPagamento){
-			tipoProvvisorioDiCassa = Constanti.D_PROV_CASSA_TIPO_SPESA;
+			tipoProvvisorioDiCassa = CostantiFin.D_PROV_CASSA_TIPO_SPESA;
 		} else if(ordinativo instanceof OrdinativoIncasso){
-			tipoProvvisorioDiCassa = Constanti.D_PROV_CASSA_TIPO_ENTRATA;
+			tipoProvvisorioDiCassa = CostantiFin.D_PROV_CASSA_TIPO_ENTRATA;
 		}
 		return tipoProvvisorioDiCassa;
 	}
@@ -728,7 +736,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		// Eventuale regolarizzazione di provvisori
 		List<RegolarizzazioneProvvisorio> elencoRegolarizzazioneProvvisori = ordinativo.getElencoRegolarizzazioneProvvisori();
 		String tipoProvvisorioDiCassa = getTipoProvvisorioCassa(ordinativo);
-		salvaSiacROrdinativoProvCassa(elencoRegolarizzazioneProvvisori, datiOperazioneDto, siacTOrdinativoInsert, tipoProvvisorioDiCassa);
+		salvaSiacROrdinativoProvCassa(elencoRegolarizzazioneProvvisori, datiOperazioneDto, siacTOrdinativoInsert, tipoProvvisorioDiCassa, BigDecimal.ZERO);
 		
 		//ORDINATIVI COLLEGATI:
 		if(ordinativo.getElencoOrdinativiCollegati()!=null && !ordinativo.getElencoOrdinativiCollegati().isEmpty()){
@@ -763,7 +771,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		//CONTROLLI SIOPE PLUS GENERICI:
 		List<Errore> errSiopePlus = controlliSiopePlus(ordPag.getSiopeTipoDebito(), ordPag.getSiopeAssenzaMotivazione(), ordPag.getCig(), datiOperazione,daImpegno);
-		if(!StringUtils.isEmpty(errSiopePlus)){
+		if(!StringUtilsFin.isEmpty(errSiopePlus)){
 			return errSiopePlus;
 		}
 		//
@@ -787,7 +795,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		OrdinativoPagamento ordinativoPagamento = (OrdinativoPagamento) ordinativo;
 				
-		SiacTOrdinativoFin siacTOrdinativoInsert = inserisciSiacTOrdinativo(bilancio, ordinativo,Constanti.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneDto, usaDatiLoginOrig);
+		SiacTOrdinativoFin siacTOrdinativoInsert = inserisciSiacTOrdinativo(bilancio, ordinativo,CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneDto, usaDatiLoginOrig);
 		
 		//GESTIONE DEI SUBORDINATIVI:
 		List<S> elencoSubOrdinativi = null;
@@ -810,7 +818,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		// Eventuale regolarizzazione di provvisori
 		List<RegolarizzazioneProvvisorio> elencoRegolarizzazioneProvvisori = ordinativo.getElencoRegolarizzazioneProvvisori();
 		String tipoProvvisorioDiCassa = getTipoProvvisorioCassa(ordinativo);
-		salvaSiacROrdinativoProvCassa(elencoRegolarizzazioneProvvisori, datiOperazioneDto, siacTOrdinativoInsert, tipoProvvisorioDiCassa);
+		salvaSiacROrdinativoProvCassa(elencoRegolarizzazioneProvvisori, datiOperazioneDto, siacTOrdinativoInsert, tipoProvvisorioDiCassa, BigDecimal.ZERO);
 
 		
 		// Inserisco eventuali ordinativi collegati
@@ -833,10 +841,92 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			relOrdinativoClassificatore(siacTOrdinativoInsert.getOrdId(), cs.getUid(), datiOperazioneDto);
 		}
 		
+		salvaSiacROrdinativoContotesNoDispFin(datiOperazioneDto, siacTOrdinativoInsert,ordinativo.getContoTesoreriaSenzaCapienza());
+		
 		return ordinativoPagamento;			
 	}
 	
+	private void aggiornaSiacROrdinativoContotesNoDispFin(DatiOperazioneDto datiOperazioneDto,	SiacTOrdinativoFin siacTOrdinativoInsert, Ordinativo ordinativo, ContoTesoreria contoTesoreriaSenzaCapienza, ContoTesoreria contoTesoreriaOrdinativo, OrdinativoInModificaInfoDto ordinativoInModificaInfoDto) {
+		
+		if(contoTesoreriaSenzaCapienza == null || StringUtils.isBlank(contoTesoreriaSenzaCapienza.getCodice())) {
+			return;
+		}
+		
+		boolean sonoPresentiVecchiLegami = false;
+		
+		Ordinativo ordPrimaDellAggiornamento = null;
+		//vengono messi in due posti diversi, quindi non posso che legggere due posti diversi (modificare caricamento ritenuto pericoloso)
+		if(ordinativo instanceof OrdinativoIncasso) {
+			ordPrimaDellAggiornamento = ordinativoInModificaInfoDto != null && ordinativoInModificaInfoDto.getDatiOrdinativo() != null?
+					ordinativoInModificaInfoDto.getDatiOrdinativo().getOrdinativoIncasso() : null;
+		}else if(ordinativo instanceof OrdinativoPagamento) {
+			ordPrimaDellAggiornamento = ordinativoInModificaInfoDto != null?
+					ordinativoInModificaInfoDto.getOrdinativo() : null;
+		}
+		ContoTesoreria contoTesoreriaPrimaDellAggiornamento = ordPrimaDellAggiornamento !=null? ordPrimaDellAggiornamento.getContoTesoreria() : null;
+		ContoTesoreria contoTesoreriaSenzaCapienzaPrimaDellAggiornamento = ordPrimaDellAggiornamento !=null? ordPrimaDellAggiornamento.getContoTesoreriaSenzaCapienza() : null;
+//		List<SiacDContotesoreriaFin> founds = siacROrdinativoContotesNoDispFinRepository.findContoTesoreriaSenzaCapienzaByOrdinativoId(siacTOrdinativoInsert.getUid(), datiOperazioneDto.getSiacTEnteProprietario().getUid());
+//		
+		String codiceContoTesoreriaSenzaCapienzaSuDb = contoTesoreriaSenzaCapienzaPrimaDellAggiornamento != null?
+				StringUtils.defaultIfBlank(contoTesoreriaSenzaCapienzaPrimaDellAggiornamento.getCodice(), "") : "";
+		
+		if(isNecessarioInvalidareRelazioniPrecedentiSePresenti(contoTesoreriaSenzaCapienza, contoTesoreriaOrdinativo, contoTesoreriaPrimaDellAggiornamento, codiceContoTesoreriaSenzaCapienzaSuDb)) {
+			List<SiacROrdinativoContotesNoDispFin> siacROrdinativoContoOld = siacROrdinativoContotesNoDispFinRepository.findValidiByOrdinativoId(siacTOrdinativoInsert.getUid(), datiOperazioneDto.getSiacTEnteProprietario().getUid());
+			sonoPresentiVecchiLegami = siacROrdinativoContoOld != null && !siacROrdinativoContoOld.isEmpty();
+			
+			if(sonoPresentiVecchiLegami) {
+				//CANCELLO LOGICAMENTE IL LVECCHIO LEGAME:
+				DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(datiOperazioneDto.getCurrMillisec(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), datiOperazioneDto.getAccountCode());
+				for(SiacROrdinativoContotesNoDispFin siacROrld : siacROrdinativoContoOld) {
+					DatiOperazioneUtil.cancellaRecord(siacROrld, siacROrdinativoContotesNoDispFinRepository, datiOperazioneCancella, siacTAccountRepository);
+					
+				}
+			}
+		} 
+		if(!isContoTesoreriaSenzaCapienzaDaInserire(contoTesoreriaSenzaCapienza, codiceContoTesoreriaSenzaCapienzaSuDb)){
+			return;
+		}
+		
+		salvaSiacROrdinativoContotesNoDispFin(datiOperazioneDto, siacTOrdinativoInsert, contoTesoreriaSenzaCapienza);
+	}
+
+	//SIAC-8638
+	private boolean isNecessarioInvalidareRelazioniPrecedentiSePresenti(ContoTesoreria contoTesoreriaSenzaCapienza, ContoTesoreria contoTesoreriaOrdinativo, ContoTesoreria contoTesoreriaPrimaDellAggiornamento, String codiceContoTesoreriaSenzaCapienzaSuDb) {
+		 
+		if(contoTesoreriaPrimaDellAggiornamento == null || !StringUtils.equals(contoTesoreriaPrimaDellAggiornamento.getCodice(), contoTesoreriaOrdinativo.getCodice())){
+			// il conto tesoreria principale e' cambiato, devo sicuramente invalidare le relazioni precedenti
+			return true;
+		}
+
+		return StringUtils.isNotEmpty(codiceContoTesoreriaSenzaCapienzaSuDb) && !StringUtils.equals(codiceContoTesoreriaSenzaCapienzaSuDb, contoTesoreriaSenzaCapienza.getCodice());
+	}
 	
+	//SIAC-8638
+	private boolean isContoTesoreriaSenzaCapienzaDaInserire(ContoTesoreria contoTesoreriaSenzaCapienza, String codiceContoTesoreriaSenzaCapienzaSuDb ) {
+		if(contoTesoreriaSenzaCapienza == null || StringUtils.isEmpty(contoTesoreriaSenzaCapienza.getCodice())) {
+			return false;
+		}
+		
+		return !StringUtils.equals(codiceContoTesoreriaSenzaCapienzaSuDb, contoTesoreriaSenzaCapienza.getCodice());		
+	}
+	
+	private void salvaSiacROrdinativoContotesNoDispFin(DatiOperazioneDto datiOperazioneDto,	SiacTOrdinativoFin siacTOrdinativoInsert, ContoTesoreria contoTesoreriaSenzaCapienza) {
+		if(contoTesoreriaSenzaCapienza == null || StringUtils.isBlank(contoTesoreriaSenzaCapienza.getCodice())) {
+			return;
+		}
+		SiacROrdinativoContotesNoDispFin siacROrdinativoContotesNoDispFin = new SiacROrdinativoContotesNoDispFin();
+		
+		siacROrdinativoContotesNoDispFin.setSiacTOrdinativo(siacTOrdinativoInsert);
+		
+		DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoContotesNoDispFin, datiOperazioneDto,siacTAccountRepository);
+		
+		SiacDContotesoreriaFin siacDContotesoreriaFin = siacDContotesoreriaRepository.findContotesoreriaByCode(datiOperazioneDto.getSiacTEnteProprietario().getUid(), contoTesoreriaSenzaCapienza.getCodice(), datiOperazioneDto.getTs());
+		siacROrdinativoContotesNoDispFin.setSiacDContoTesoreria(siacDContotesoreriaFin);
+		
+		siacROrdinativoContotesNoDispFinRepository.saveAndFlush(siacROrdinativoContotesNoDispFin);
+
+	}
+
 	/**
 	 * Si occupa dell'inserimento nel sistema di un nuovo ordinativo
 	 * @param ordinativo
@@ -855,7 +945,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		OrdinativoIncasso ordinativoIncasso = (OrdinativoIncasso) ordinativo;
 		
-		SiacTOrdinativoFin siacTOrdinativoInsert = inserisciSiacTOrdinativo(bilancio, ordinativo,Constanti.D_ORDINATIVO_TIPO_INCASSO, datiOperazioneDto, false);
+		SiacTOrdinativoFin siacTOrdinativoInsert = inserisciSiacTOrdinativo(bilancio, ordinativo,CostantiFin.D_ORDINATIVO_TIPO_INCASSO, datiOperazioneDto, false);
 		
 		//GESTIONE DEI SUBORDINATIVI:
 		List<S> elencoSubOrdinativi = null;
@@ -876,10 +966,13 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			}
 		}
 
+		
 		// Eventuale regolarizzazione di provvisori
 		List<RegolarizzazioneProvvisorio> elencoRegolarizzazioneProvvisori = ordinativo.getElencoRegolarizzazioneProvvisori();
 		String tipoProvvisorioDiCassa = getTipoProvvisorioCassa(ordinativo);
-		salvaSiacROrdinativoProvCassa(elencoRegolarizzazioneProvvisori, datiOperazioneDto, siacTOrdinativoInsert, tipoProvvisorioDiCassa);
+		
+		//SIAC-8888 : passo l'importo del ripiano
+		salvaSiacROrdinativoProvCassa(elencoRegolarizzazioneProvvisori, datiOperazioneDto, siacTOrdinativoInsert, tipoProvvisorioDiCassa, ordinativo.getImportoRegolarizzato());
 
 		// Inserisco eventuali ordinativi collegati
 		// inserisco i collegati
@@ -888,11 +981,14 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			salvaRelazioneOrdinativiCollegati(datiOperazioneDto, siacTOrdinativoInsert, datiInsInfo, ordinativo.getElencoOrdinativiCollegati());
 		}
 
+		salvaSiacROrdinativoContotesNoDispFin(datiOperazioneDto, siacTOrdinativoInsert,ordinativo.getContoTesoreriaSenzaCapienza());
 		
 		//mappo prima i sub che poi incollo all'ordinativo, in modo che l'oggetto restituito sia completo
 		if(listaSiacTOrdinativoTFinInseriti!=null && listaSiacTOrdinativoTFinInseriti.size()> 0){
 			elencoSubOrdinativoIncassoInseriti = convertiLista(listaSiacTOrdinativoTFinInseriti, SubOrdinativoIncasso.class, FinMapId.SiacTOrdinativoT_SubOrdinativoIncasso);
 		}
+		
+		
 				
 		OrdinativoIncasso ordinativoIncassoDaRestituire = 
 					map(siacTOrdinativoInsert, OrdinativoIncasso.class, FinMapId.SiacTOrdinativo_OrdinativoIncasso);
@@ -911,7 +1007,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 
 	private SiacROrdinativoClassFin relOrdinativoClassificatore(Integer idOrdinativo, Integer idClassificatore, DatiOperazioneDto datiOperazioneDto) {
 
-		String loginOperazione = DatiOperazioneUtils.determinaUtenteLogin(datiOperazioneDto, siacTAccountRepository);
+		String loginOperazione = DatiOperazioneUtil.determinaUtenteLogin(datiOperazioneDto, siacTAccountRepository);
 		
 		siacROrdinativoClassRepository.removeValidSiacROrdinativoClass(
 				idOrdinativo, 
@@ -947,10 +1043,12 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	 * @param datiOperazioneDto
 	 * @param siacTOrdinativo
 	 * @param tipoProvvisorioDiCassa
+	 * @param ripiano (valorizzato solo nel caso di ripiano) SIAC-8888
 	 * @return
 	 * @throws RuntimeException
 	 */
-	private List<SiacROrdinativoProvCassaFin> salvaSiacROrdinativoProvCassa(List<RegolarizzazioneProvvisorio> elencoRegolarizzazioneProvvisori, DatiOperazioneDto datiOperazioneDto, SiacTOrdinativoFin siacTOrdinativo, String tipoProvvisorioDiCassa) throws RuntimeException {
+	//SIAC-8888
+	private List<SiacROrdinativoProvCassaFin> salvaSiacROrdinativoProvCassa(List<RegolarizzazioneProvvisorio> elencoRegolarizzazioneProvvisori, DatiOperazioneDto datiOperazioneDto, SiacTOrdinativoFin siacTOrdinativo, String tipoProvvisorioDiCassa, BigDecimal ripiano) throws RuntimeException {
 
 		List<SiacROrdinativoProvCassaFin> elencoSiacROrdinativoProvCassa = new ArrayList<SiacROrdinativoProvCassaFin>();
 		String methodName= "salvaSiacROrdinativoProvCassa";
@@ -962,7 +1060,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 				if(null!=provvisorioDiCassa && null!=provvisorioDiCassa.getAnno() && null!=provvisorioDiCassa.getNumero()){
 
 					SiacROrdinativoProvCassaFin siacROrdinativoProvCassa = new SiacROrdinativoProvCassaFin();
-					siacROrdinativoProvCassa = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoProvCassa, datiOperazioneDto,siacTAccountRepository);
+					siacROrdinativoProvCassa = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoProvCassa, datiOperazioneDto,siacTAccountRepository);
 					siacROrdinativoProvCassa.setSiacTOrdinativo(siacTOrdinativo);
 	
 					SiacTProvCassaFin siacTProvCassa = new SiacTProvCassaFin();
@@ -972,7 +1070,13 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 					siacROrdinativoProvCassa.setSiacTProvCassa(siacTProvCassa);
 	
 					// siacROrdinativoProvCassa.setOrdProvcImporto(provvisorioDiCassa.getImportoDaEmettere());
-					siacROrdinativoProvCassa.setOrdProvcImporto(regolarizzazioneProvvisorio.getImporto());
+					
+					//SIAC-8888
+					if(null!=ripiano && !BigDecimal.ZERO.equals(ripiano)) {
+						siacROrdinativoProvCassa.setOrdProvcImporto(ripiano);
+					} else {
+						siacROrdinativoProvCassa.setOrdProvcImporto(regolarizzazioneProvvisorio.getImporto());
+					}
 					//salvo sul db:
 					siacROrdinativoProvCassa = siacROrdinativoProvCassaRepository.saveAndFlush(siacROrdinativoProvCassa);
 
@@ -1019,7 +1123,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 				ProvvisorioDiCassa provvisorioDiCassa = regolarizzazioneProvvisorio.getProvvisorioDiCassa();
 				if(null!=provvisorioDiCassa && null!=provvisorioDiCassa.getAnno() && null!=provvisorioDiCassa.getNumero()){
 
-					siacROrdinativoProvCassa = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoProvCassa, datiOperazioneDto,siacTAccountRepository);
+					siacROrdinativoProvCassa = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoProvCassa, datiOperazioneDto,siacTAccountRepository);
 					siacROrdinativoProvCassa.setSiacTOrdinativo(siacTOrdinativo);
 	
 					SiacTProvCassaFin siacTProvCassa = new SiacTProvCassaFin();
@@ -1114,7 +1218,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		int idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 		SiacTEnteProprietarioFin siacTEnteProprietario = siacTEnteProprietarioRepository.findOne(idEnte);
 		
-		SiacDAmbitoFin  siacDAmbito = siacDAmbitoRepository.findAmbitoByCode(Constanti.AMBITO_FIN, idEnte);
+		SiacDAmbitoFin  siacDAmbito = siacDAmbitoRepository.findAmbitoByCode(CostantiFin.AMBITO_FIN, idEnte);
 		Integer idAmbito = siacDAmbito.getAmbitoId();
 		datiOperazioneDto.setSiacDAmbito(siacDAmbito);
 
@@ -1176,57 +1280,18 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		siacTOrdinativoInsert = impostaCodificheDOrdinativo(siacTOrdinativoInsert, ordinativo, tipoOrdinativo, datiOperazioneDto,true);
 		
 		// siac_t_ordinativo.ord_cast_cassa + siac_t_ordinativo.ord_cast_competenza + siac_t_ordinativo.ord_cast_emessi : inizio
-		CapitoloUscitaGestione capitoloUscitaGestione = null;
-		CapitoloEntrataGestione capitoloEntrataGestione = null;
-		if(diPagamento){
-			capitoloUscitaGestione = ordinativoDiPagamento.getCapitoloUscitaGestione();
-			List<ImportiCapitoloUG>  listaImportiCapitoloUG = capitoloUscitaGestione.getListaImportiCapitolo();
-			 if(null!=listaImportiCapitoloUG && listaImportiCapitoloUG.size() > 0) {
-					for(ImportiCapitoloUG importoCapitoloUG : listaImportiCapitoloUG) {
-						if(importoCapitoloUG.getAnnoCompetenza().intValue() == bilancio.getAnno()){
-
-							
-							
-							// FIXME: raffa 14-01-2016
-							// per ora forziamo a 0 l'importo dei tre castelletti: è cambiata la normativa e il loro importo non deriva piu da capitolo ma da una classificazione 
-							// Inoltre non è piu obbligatorio
-//							siacTOrdinativoInsert.setOrdCastCassa(importoCapitoloUG.getStanziamentoCassa());
-//							siacTOrdinativoInsert.setOrdCastCompetenza(importoCapitoloUG.getStanziamento());
-//							siacTOrdinativoInsert.setOrdCastEmessi(importoCapitoloUG.getTotalePagato());
-							
-							siacTOrdinativoInsert.setOrdCastCassa(BigDecimal.ZERO);
-							siacTOrdinativoInsert.setOrdCastCompetenza(BigDecimal.ZERO);
-							siacTOrdinativoInsert.setOrdCastEmessi(BigDecimal.ZERO);
-							
-						}
-					}				
-				}
-		} else {
-			capitoloEntrataGestione = ordinativoIncasso.getCapitoloEntrataGestione();
-			List<ImportiCapitoloEG>  listaImportiCapitoloEG =  capitoloEntrataGestione.getListaImportiCapitolo();
-			if(null!=listaImportiCapitoloEG && listaImportiCapitoloEG.size() > 0) {
-				for(ImportiCapitoloEG importoCapitoloEG : listaImportiCapitoloEG) {
-					if(importoCapitoloEG.getAnnoCompetenza().intValue() == bilancio.getAnno()){
-						
-						// FIXME: raffa 14-01-2016
-						// per ora forziamo a 0 l'importo dei tre castelletti: è cambiata la normativa e il loro importo non deriva piu da capitolo ma da una classificazione 
-						// Inoltre non è piu obbligatorio
-//						siacTOrdinativoInsert.setOrdCastCassa(importoCapitoloEG.getStanziamentoCassa());
-//						siacTOrdinativoInsert.setOrdCastCompetenza(importoCapitoloEG.getStanziamento());
-//						siacTOrdinativoInsert.setOrdCastEmessi(importoCapitoloEG.getTotaleIncassato());
-						
-						siacTOrdinativoInsert.setOrdCastCassa(BigDecimal.ZERO);
-						siacTOrdinativoInsert.setOrdCastCompetenza(BigDecimal.ZERO);
-						siacTOrdinativoInsert.setOrdCastEmessi(BigDecimal.ZERO);
-					}
-				}				
-			}
-		}
-		
+		// FIXME: raffa 14-01-2016
+		// per ora forziamo a 0 l'importo dei tre castelletti: è cambiata la normativa e il loro importo non deriva piu da capitolo ma da una classificazione 
+		// Inoltre non è piu obbligatorio
+		//SIAC-8589: la lettura errata interferiva con il nuovo caricamento
+		siacTOrdinativoInsert.setOrdCastCassa(BigDecimal.ZERO);
+		siacTOrdinativoInsert.setOrdCastCompetenza(BigDecimal.ZERO);
+		siacTOrdinativoInsert.setOrdCastEmessi(BigDecimal.ZERO);
+				
 		// siac_t_ordinativo.ord_cast_cassa + siac_t_ordinativo.ord_cast_competenza + siac_t_ordinativo.ord_cast_emessi : fine
 
 		// flag beneficiario multiplo
-		// non viene gestito con la stringa Constanti.TRUE / Constanti.FALSE perche' sul db il campo della tabella e' di tipo boolean 
+		// non viene gestito con la stringa CostantiFin.TRUE / CostantiFin.FALSE perche' sul db il campo della tabella e' di tipo boolean 
 		siacTOrdinativoInsert.setOrdBeneficiariomult(ordinativo.isFlagBeneficiMultiplo());
 		
 		siacTOrdinativoInsert.setLoginModifica(loginOperazione);
@@ -1245,7 +1310,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		// SIAC-6175
 		siacTOrdinativoInsert.setOrdDaTrasmettere(Boolean.valueOf(ordinativo.isDaTrasmettere()));
 		
-		siacTOrdinativoInsert = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTOrdinativoInsert, datiOperazioneDto,siacTAccountRepository);
+		siacTOrdinativoInsert = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTOrdinativoInsert, datiOperazioneDto,siacTAccountRepository);
 		
 		if (usaDatiLoginOrig) {
 			siacTOrdinativoInsert.setLoginCreazione(ordinativo.getLoginCreazione());
@@ -1258,9 +1323,9 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		// siac_r_ordinativo_bil_elem + siac_t_bil_elem : inizio
 		if(diPagamento){
-			salvaOrdinativoBilElem(capitoloUscitaGestione, datiOperazioneDto, siacTOrdinativoInsert);
+			salvaOrdinativoBilElem(ordinativoDiPagamento.getCapitoloUscitaGestione(), datiOperazioneDto, siacTOrdinativoInsert);
 		} else {
-			salvaOrdinativoBilElem(capitoloEntrataGestione, datiOperazioneDto, siacTOrdinativoInsert);
+			salvaOrdinativoBilElem(ordinativoIncasso.getCapitoloEntrataGestione(), datiOperazioneDto, siacTOrdinativoInsert);
 		}
 		// siac_r_ordinativo_bil_elem + siac_t_bil_elem : fine
 		
@@ -1286,15 +1351,15 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		attributoInfo.setSiacTOrdinativo(siacTOrdinativoInsert);
 
 		// siac_r_ordinativo_attr + siac_t_attr : inizio
-		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ordinativo.getNote(), Constanti.ORDINATIVO_T_ATTR_NOTE);
+		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ordinativo.getNote(), CostantiFin.ORDINATIVO_T_ATTR_NOTE);
 
 		//flag cartaceo
-		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ordinativo.isFlagAllegatoCartaceo(), Constanti.ORDINATIVO_T_ATTR_FLAG_ALLEGATO_CARTACEO);
+		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ordinativo.isFlagAllegatoCartaceo(), CostantiFin.ORDINATIVO_T_ATTR_FLAG_ALLEGATO_CARTACEO);
 
 		//SIOPE PLUS, per l'ordinativo di pagamento viene introdotto il CIG:
 		if(diPagamento){
 			String cig = ( (OrdinativoPagamento) ordinativo).getCig();
-			if(!StringUtils.isEmpty(cig)){
+			if(!StringUtilsFin.isEmpty(cig)){
 				salvaAttributoCig(attributoInfo, datiOperazioneDto, cig);
 			}
 		}
@@ -1305,7 +1370,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 
 		// tipo_avviso
 		if(ordinativo.getTipoAvviso()!=null){
-			salvaAttributoTClass(datiOperazioneDto, attributoInfo, ordinativo.getTipoAvviso().getCodice(), Constanti.D_CLASS_TIPO_TIPO_AVVISO);
+			salvaAttributoTClass(datiOperazioneDto, attributoInfo, ordinativo.getTipoAvviso().getCodice(), CostantiFin.D_CLASS_TIPO_TIPO_AVVISO);
 		}
 		
 
@@ -1330,10 +1395,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		//SIOPE TIPO DEBITO
 		SiopeTipoDebito siopeTipoDebito = ord.getSiopeTipoDebito();
-		if(siopeTipoDebito!=null && !StringUtils.isEmpty(siopeTipoDebito.getCodice())){
+		if(siopeTipoDebito!=null && !StringUtilsFin.isEmpty(siopeTipoDebito.getCodice())){
 			//recuperiamo il record della codifica ricevuta:
 			List<SiacDSiopeTipoDebitoFin> dstdebitos = siacDSiopeTipoDebitoFinRepository.findByCode(idEnte, datiOperazioneDto.getTs(), siopeTipoDebito.getCodice());
-			SiacDSiopeTipoDebitoFin siacDSiopeTipoDebito = CommonUtils.getFirst(dstdebitos);
+			SiacDSiopeTipoDebitoFin siacDSiopeTipoDebito = CommonUtil.getFirst(dstdebitos);
 			if(siacDSiopeTipoDebito!=null){
 				siacTOrdinativoFin.setSiacDSiopeTipoDebitoFin(siacDSiopeTipoDebito);
 			}
@@ -1345,10 +1410,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		//MOTIVAZIONE ASSENZA CIG
 		SiopeAssenzaMotivazione siopeAssenzaMotivazione = ord.getSiopeAssenzaMotivazione();
-		if(siopeAssenzaMotivazione!=null && !StringUtils.isEmpty(siopeAssenzaMotivazione.getCodice())){
+		if(siopeAssenzaMotivazione!=null && !StringUtilsFin.isEmpty(siopeAssenzaMotivazione.getCodice())){
 			//recuperiamo il record della codifica ricevuta:
 			List<SiacDSiopeAssenzaMotivazioneFin> aMtvs = siacDSiopeAssenzaMotivazioneFinRepository.findByCode(idEnte, datiOperazioneDto.getTs(), siopeAssenzaMotivazione.getCodice());
-			SiacDSiopeAssenzaMotivazioneFin siacDSiopeAssenzaMotivazione = CommonUtils.getFirst(aMtvs);
+			SiacDSiopeAssenzaMotivazioneFin siacDSiopeAssenzaMotivazione = CommonUtil.getFirst(aMtvs);
 			//puo' essere nullato a piacere (siacDSiopeAssenzaMotivazione puo' essere null):
 			siacTOrdinativoFin.setSiacDSiopeAssenzaMotivazione(siacDSiopeAssenzaMotivazione);
 		} else {
@@ -1377,9 +1442,9 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		//per ordinativo di incasso puo' essere indicata una causale di entrata
 		CausaleEntrata causaleEntrata = ordinativoIncasso.getCausale();
 		SiacDCausaleFin siacDCausale = null;
-		if(causaleEntrata!=null && !StringUtils.isEmpty(causaleEntrata.getCodice())){
+		if(causaleEntrata!=null && !StringUtilsFin.isEmpty(causaleEntrata.getCodice())){
 			String causCode = causaleEntrata.getCodice();
-			String causFamTipoCode = Constanti.CODE_TIPO_FAMIGLIA_CAUSALE_PREDOC_E;
+			String causFamTipoCode = CostantiFin.CODE_TIPO_FAMIGLIA_CAUSALE_PREDOC_E;
 			List<SiacDCausaleFin> casuali = siacDCausaleFinRepository.findCausaleValidaByCodice(idEnte, datiOperazioneDto.getTs(), causCode , causFamTipoCode );
 			if(casuali!=null && casuali.size()==1){
 				siacDCausale = casuali.get(0);
@@ -1417,10 +1482,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		CapitoloEntrataGestione capitoloEntrataGestione = null;
 		if(capitoloGestione instanceof CapitoloUscitaGestione){
 			capitoloUscitaGestione = (CapitoloUscitaGestione) capitoloGestione;
-			codiceGestione = Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG;
+			codiceGestione = CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG;
 		} else if(capitoloGestione instanceof CapitoloEntrataGestione){
 			capitoloEntrataGestione = (CapitoloEntrataGestione) capitoloGestione;
-			codiceGestione = Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG;
+			codiceGestione = CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG;
 		} else {
 			return null; //errore di invocazione
 		}
@@ -1464,7 +1529,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			}
 			
 			if(salvare){
-				siacROrdinativoBilElem = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoBilElem, datiOperazioneDto,siacTAccountRepository);
+				siacROrdinativoBilElem = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoBilElem, datiOperazioneDto,siacTAccountRepository);
 				siacROrdinativoBilElem.setSiacTBilElem(siacTBilElem);
 				siacROrdinativoBilElem.setSiacTOrdinativo(siacTOrdinativo);
 				//salvo sul db:
@@ -1494,7 +1559,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		Integer idOrdinativo = siacTOrdinativo.getOrdId();
 		
 		SiacDOrdinativoStatoFin siacDOrdinativoStato = new SiacDOrdinativoStatoFin();
-		siacDOrdinativoStato = siacDOrdinativoStatoRepository.findDOrdinativoStatoValidoByEnteAndCode(idEnte, Constanti.statoOperativoOrdinativoEnumToString(ordinativo.getStatoOperativoOrdinativo()), datiOperazioneDto.getTs());
+		siacDOrdinativoStato = siacDOrdinativoStatoRepository.findDOrdinativoStatoValidoByEnteAndCode(idEnte, CostantiFin.statoOperativoOrdinativoEnumToString(ordinativo.getStatoOperativoOrdinativo()), datiOperazioneDto.getTs());
 		
 		List<SiacROrdinativoStatoFin> caricatoDaDb = siacROrdinativoStatoRepository.findSiacROrdinativoStatoValidoByIdOrdinativo(idEnte, idOrdinativo, now);
 		
@@ -1502,17 +1567,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		if(caricatoDaDb!=null && caricatoDaDb.size()>0){
 			String methodName ="salvaSiacROrdinativoStato";
-			log.info(methodName , "siamo in modifica");
 			// SIAMO IN MODIFICA
 			datiOperazioneDto.setOperazione(Operazione.MODIFICA);
 			siacROrdinativoStato = caricatoDaDb.get(0);
 			//si controlla il (o gli) campo che puo' essere modificato:
-/*
-			log.info(methodName , "siacDOrdinativoStato.getOrdStatoCode() " + siacDOrdinativoStato== null);
-			log.info(methodName , "siacDOrdinativoStato " + siacDOrdinativoStato== null);
-			log.info(methodName , "siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode() " + siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode());
-			log.info(methodName , "siacDOrdinativoStato.getOrdStatoCode() " + siacDOrdinativoStato.getOrdStatoCode());
-*/
 			//SIAC-6646 se lo stato è firmato anche a fronte di modifica lo stato non va cambiato
 			if(!siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(siacDOrdinativoStato.getOrdStatoCode()) && !siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode().equals("F") ){
 				//se e' cambiato qualcosa devo aggiornare
@@ -1528,7 +1586,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		//if(true) throw new BusinessException("test");
 		
 		if(salvare){
-			siacROrdinativoStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoStato, datiOperazioneDto,siacTAccountRepository);
+			siacROrdinativoStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoStato, datiOperazioneDto,siacTAccountRepository);
 			siacROrdinativoStato.setSiacDOrdinativoStato(siacDOrdinativoStato);
 			siacROrdinativoStato.setSiacTOrdinativo(siacTOrdinativo);
 			//salvo sul db:
@@ -1583,7 +1641,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		}
 		
 		if(salvare){
-			siacROrdinativoSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoSoggetto, datiOperazioneDto,siacTAccountRepository);
+			siacROrdinativoSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoSoggetto, datiOperazioneDto,siacTAccountRepository);
 			siacROrdinativoSoggetto.setSiacTSoggetto(siacTSoggettoOrdine);
 			siacROrdinativoSoggetto.setSiacTOrdinativo(siacTOrdinativo);
 			//salvo sul db:
@@ -1648,7 +1706,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		}
 		
 		if(salvare){
-			siacROrdinativoModpag = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoModpag, datiOperazioneDto,siacTAccountRepository);
+			siacROrdinativoModpag = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoModpag, datiOperazioneDto,siacTAccountRepository);
 			siacROrdinativoModpag.setSiacTOrdinativo(siacTOrdinativo);
 			
 			log.debug(methodName,"AccreditoTipoCode: " + siacTModpagOrdinativo.getSiacDAccreditoTipo().getAccreditoTipoCode());
@@ -1723,7 +1781,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		}
 		
 		if(salvare){
-			siacROrdinativoAttoAmm = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoAttoAmm, datiOperazioneDto,siacTAccountRepository);
+			siacROrdinativoAttoAmm = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoAttoAmm, datiOperazioneDto,siacTAccountRepository);
 			siacROrdinativoAttoAmm.setSiacTOrdinativo(siacTOrdinativo);
 			siacROrdinativoAttoAmm.setSiacTAttoAmm(siacTAttoAmm);
 			//salvo sul db:
@@ -1780,7 +1838,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 					ordinativoCollegato.getTipoAssociazioneEmissione().toString());
 			
 			SiacROrdinativoFin siacROrdinativo = new SiacROrdinativoFin();
-			siacROrdinativo = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativo, datiOperazioneDto,siacTAccountRepository);
+			siacROrdinativo = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativo, datiOperazioneDto,siacTAccountRepository);
 			siacROrdinativo.setSiacTOrdinativo1(siacTOrdinativo); // da
 			siacROrdinativo.setSiacTOrdinativo2(siacTOrdinativo2); // a
 			siacROrdinativo.setSiacDRelazTipo(dRelazTipo); 
@@ -1799,7 +1857,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 					DettaglioOnere dettaglioOnere = subOrdinativo.getDettaglioOnere();
 					
 					SiacRDocOnereOrdinativoTsFin siacRDocOnereOrdinativoTFin = new SiacRDocOnereOrdinativoTsFin();
-					siacRDocOnereOrdinativoTFin = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRDocOnereOrdinativoTFin, 
+					siacRDocOnereOrdinativoTFin = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRDocOnereOrdinativoTFin, 
 							datiOperazioneDto,siacTAccountRepository);
 					
 					SiacRDocOnereFin rdocOnere = new SiacRDocOnereFin();
@@ -1880,18 +1938,18 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 //		siacRDocOnere.setUid(subOrdinativo.getDettaglioOnere().getUid());
 //		siacTOrdinativoTsInsert.setSiacRDocOnere(siacRDocOnere);
 		
-		siacTOrdinativoTsInsert = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTOrdinativoTsInsert, datiOperazioneDto,siacTAccountRepository);
+		siacTOrdinativoTsInsert = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTOrdinativoTsInsert, datiOperazioneDto,siacTAccountRepository);
 		//salvo sul db:
 		siacTOrdinativoTsInsert = siacTOrdinativoTRepository.saveAndFlush(siacTOrdinativoTsInsert);
 
 		// importo iniziale : inizio
 		SiacTOrdinativoTsDetFin iniziale =
-		salvaImportoOrdinativoTs(siacTOrdinativoTsInsert, datiOperazioneDto, subOrdinativo.getImportoIniziale(), Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_INIZIALE);
+		salvaImportoOrdinativoTs(siacTOrdinativoTsInsert, datiOperazioneDto, subOrdinativo.getImportoIniziale(), CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_INIZIALE);
 		// importo iniziale : fine
 
 		// importo attuale : inizio
 		SiacTOrdinativoTsDetFin attuale = 
-		salvaImportoOrdinativoTs(siacTOrdinativoTsInsert, datiOperazioneDto, subOrdinativo.getImportoAttuale(), Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE);
+		salvaImportoOrdinativoTs(siacTOrdinativoTsInsert, datiOperazioneDto, subOrdinativo.getImportoAttuale(), CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE);
 		// importo attuale : fine
 		
 		siacTOrdinativoTsInsert.setSiacTOrdinativoTsDets(toList(iniziale,attuale));
@@ -1956,18 +2014,18 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		Timestamp now = datiOperazioneDto.getTs();
 		SiacDOrdinativoTsDetTipoFin siacDOrdinativoTsDetTipo = siacDOrdinativoTsDetTipoRepository.findDOrdinativoTsDetTipoValidoByEnteAndCode(idEnte, codiceTipoImporto, datiOperazioneDto.getTs());
 		Integer idSiacTOrdinativoTs = siacTOrdinativoTs.getOrdTsId();
-		List<SiacTOrdinativoTsDetFin> importoCaricato = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs);
+		List<SiacTOrdinativoTsDetFin> importoCaricato = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs);
 		
 		if(importoCaricato!=null && importoCaricato.size()>0){
 			//SIAMO IN MODIFICA importoCaricato avra' un unico elemento caricato:
 			siacTOrdinativoTsDet = importoCaricato.get(0);
 			datiOperazioneDto.setOperazione(Operazione.MODIFICA);
-			siacTOrdinativoTsDet = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTOrdinativoTsDet, datiOperazioneDto,siacTAccountRepository);
+			siacTOrdinativoTsDet = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTOrdinativoTsDet, datiOperazioneDto,siacTAccountRepository);
 		} else {
 			//SIAMO IN INSERIMENTO
 			siacTOrdinativoTsDet = new SiacTOrdinativoTsDetFin();
 			datiOperazioneDto.setOperazione(Operazione.INSERIMENTO);
-			siacTOrdinativoTsDet = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTOrdinativoTsDet, datiOperazioneDto,siacTAccountRepository);
+			siacTOrdinativoTsDet = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTOrdinativoTsDet, datiOperazioneDto,siacTAccountRepository);
 		}
 		
 		siacTOrdinativoTsDet.setSiacTEnteProprietario(siacTEnteProprietario);
@@ -2019,7 +2077,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		}
 
 		if(salvare){
-			siacROrdinativoTsMovgestTs = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoTsMovgestTs, datiOperazioneDto,siacTAccountRepository);
+			siacROrdinativoTsMovgestTs = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoTsMovgestTs, datiOperazioneDto,siacTAccountRepository);
 			siacROrdinativoTsMovgestTs.setSiacTMovgestTs(siacTMovgestTs);
 			siacROrdinativoTsMovgestTs.setSiacTOrdinativoT(siacTOrdinativoTs);
 			//salvo sul db:
@@ -2041,7 +2099,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		SiacRSubdocOrdinativoTFin siacRSubdocOrdinativoTFin = new SiacRSubdocOrdinativoTFin();
 		datiOperazioneDto.setOperazione(Operazione.INSERIMENTO);
-		siacRSubdocOrdinativoTFin = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRSubdocOrdinativoTFin, datiOperazioneDto,siacTAccountRepository);
+		siacRSubdocOrdinativoTFin = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRSubdocOrdinativoTFin, datiOperazioneDto,siacTAccountRepository);
 		
 		SiacTSubdocFin siacTSubdoc = new SiacTSubdocFin();
 		siacTSubdoc.setUid(idSubDocumento);
@@ -2090,7 +2148,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		}
 
 		if(salvare){
-			siacRLiquidazioneOrd = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneOrd, datiOperazioneDto,siacTAccountRepository);
+			siacRLiquidazioneOrd = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneOrd, datiOperazioneDto,siacTAccountRepository);
 			siacRLiquidazioneOrd.setSiacTLiquidazione(siacTLiquidazione);
 			siacRLiquidazioneOrd.setSiacTOrdinativoT(siacTOrdinativoTs);
 			//salvo sul db:
@@ -2118,7 +2176,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		    OrdinativoPagamento ordinativoPagamentoDb = (OrdinativoPagamento)ordinativoInModificaInfoDto.getOrdinativo();
 	        
 			// Stato Operativo: l'operazione e' permessa solo se statoOperativoOrdinativo e' diverso da ANNULLATO
-			if(Constanti.D_ORDINATIVO_STATO_ANNULLATO.equalsIgnoreCase(Constanti.statoOperativoOrdinativoEnumToString(ordinativoPagamentoDb.getStatoOperativoOrdinativo()))){
+			if(CostantiFin.D_ORDINATIVO_STATO_ANNULLATO.equalsIgnoreCase(CostantiFin.statoOperativoOrdinativoEnumToString(ordinativoPagamentoDb.getStatoOperativoOrdinativo()))){
 				listaErrori.add(ErroreFin.OPERAZIONE_NON_POSSIBILE.getErrore("AGGIORNAMENTO ORDINATIVO"));
 			}
 			
@@ -2268,7 +2326,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 					BigDecimal delta = getDeltaVariazioneImporto(null,iterateOld,datiOperazioneDto);
 					
 					SubOrdinativo subOrdPag = null;
-					if(Constanti.ORDINATIVO_TIPO_PAGAMENTO.equals(tipoOrdinativo)){
+					if(CostantiFin.ORDINATIVO_TIPO_PAGAMENTO.equals(tipoOrdinativo)){
 						subOrdPag = caricaSubOrdinativoPagamento(iterateOld, null, datiOperazioneDto, richiedente, bilancio.getAnno());
 					} else {
 						subOrdPag = caricaSubOrdinativoIncasso(iterateOld, null, datiOperazioneDto, richiedente, bilancio.getAnno(), ente, null);
@@ -2318,11 +2376,11 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 //		boolean isPagamento = isPagamento(subOrdinativo);
 		
 		//IMPORTO:
-		List<SiacTOrdinativoTsDetFin> importoAttualeList = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs);
-		SiacTOrdinativoTsDetFin siacTOrdinativoTsDet = CommonUtils.getFirst(importoAttualeList);
+		List<SiacTOrdinativoTsDetFin> importoAttualeList = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs);
+		SiacTOrdinativoTsDetFin siacTOrdinativoTsDet = CommonUtil.getFirst(importoAttualeList);
 		BigDecimal importoOld = siacTOrdinativoTsDet.getOrdTsDetImporto();
 		BigDecimal importoNew = subOrdinativo.getImportoAttuale();
-		if(!StringUtils.sonoUguali(importoOld, importoNew)){
+		if(!StringUtilsFin.sonoUguali(importoOld, importoNew)){
 			isModificato = true;
 			return isModificato;
 		}
@@ -2331,7 +2389,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		Date dataScadenza = getDataScadenza(subOrdinativo);
 		Timestamp dataScadenzaNew = TimingUtils.convertiDataInTimeStamp(dataScadenza);
 		Timestamp dataScadenzaOld = siacTOrdinativoTs.getOrdTsDataScadenza();
-		if(!StringUtils.sonoUguali(dataScadenzaNew, dataScadenzaOld)){
+		if(!StringUtilsFin.sonoUguali(dataScadenzaNew, dataScadenzaOld)){
 			isModificato = true;
 			return isModificato;
 		}
@@ -2340,7 +2398,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		String descrizioneOld = siacTOrdinativoTs.getOrdTsDesc();
 		String descrizioneNew = subOrdinativo.getDescrizione();
 		
-		if(!StringUtils.sonoUguali(descrizioneOld, descrizioneNew)){
+		if(!StringUtilsFin.sonoUguali(descrizioneOld, descrizioneNew)){
 			isModificato = true;
 			return isModificato;
 		}
@@ -2361,8 +2419,8 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		Integer idSiacTOrdinativoTs = siacTOrdinativoTs.getOrdTsId();
 		Timestamp now = datiOperazioneDto.getTs();
 		//IMPORTO:
-		List<SiacTOrdinativoTsDetFin> importoAttualeList = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs);
-		SiacTOrdinativoTsDetFin siacTOrdinativoTsDet = CommonUtils.getFirst(importoAttualeList);
+		List<SiacTOrdinativoTsDetFin> importoAttualeList = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs);
+		SiacTOrdinativoTsDetFin siacTOrdinativoTsDet = CommonUtil.getFirst(importoAttualeList);
 		BigDecimal importoOld = siacTOrdinativoTsDet.getOrdTsDetImporto();
 		BigDecimal importoNew = subOrdinativo.getImportoAttuale();
 		if(importoOld!=null && importoNew!=null){
@@ -2387,8 +2445,8 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		BigDecimal importoOld = BigDecimal.ZERO;
 		if(siacTOrdinativoTs!=null){
 			Integer idSiacTOrdinativoTs = siacTOrdinativoTs.getOrdTsId();
-			List<SiacTOrdinativoTsDetFin> importoAttualeList = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs);
-			SiacTOrdinativoTsDetFin siacTOrdinativoTsDet = CommonUtils.getFirst(importoAttualeList);
+			List<SiacTOrdinativoTsDetFin> importoAttualeList = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs);
+			SiacTOrdinativoTsDetFin siacTOrdinativoTsDet = CommonUtil.getFirst(importoAttualeList);
 			importoOld = siacTOrdinativoTsDet.getOrdTsDetImporto();
 		}
 		BigDecimal importoNew = BigDecimal.ZERO;
@@ -2420,7 +2478,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		BigDecimal importoOld = siacROrdinativoProvCassaDb.getOrdProvcImporto();
 		BigDecimal importoNew = regolarizzazioneProvvisorio.getImporto();
 		
-		if(!StringUtils.sonoUguali(importoOld, importoNew)){
+		if(!StringUtilsFin.sonoUguali(importoOld, importoNew)){
 			isModificato = true;
 			return isModificato;
 		}
@@ -2452,7 +2510,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		int idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 		
 		//carico l'ambito:
-		SiacDAmbitoFin  siacDAmbito = siacDAmbitoRepository.findAmbitoByCode(Constanti.AMBITO_FIN, idEnte);
+		SiacDAmbitoFin  siacDAmbito = siacDAmbitoRepository.findAmbitoByCode(CostantiFin.AMBITO_FIN, idEnte);
 		datiOperazioneDto.setSiacDAmbito(siacDAmbito);
 		
 		// Se anno_ordinativo non istanziato o anno_ordinativo = 0, setto anno_ordinativo = anno_esercizio
@@ -2479,7 +2537,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		// tipo_avviso
 		if(ordinativo.getTipoAvviso()!=null){
-			salvaAttributoTClass(datiOperazioneDto, attributoInfo, ordinativo.getTipoAvviso().getCodice(), Constanti.D_CLASS_TIPO_TIPO_AVVISO);
+			salvaAttributoTClass(datiOperazioneDto, attributoInfo, ordinativo.getTipoAvviso().getCodice(), CostantiFin.D_CLASS_TIPO_TIPO_AVVISO);
 		}
 		
 		//SOGGETTO E SEDI:
@@ -2500,10 +2558,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		}
 
 		// siac_r_ordinativo_attr + siac_t_attr : inizio
-		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ordinativo.getNote(), Constanti.ORDINATIVO_T_ATTR_NOTE);
+		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ordinativo.getNote(), CostantiFin.ORDINATIVO_T_ATTR_NOTE);
 		
 		// flag cartaceo
-		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ordinativo.isFlagAllegatoCartaceo(), Constanti.ORDINATIVO_T_ATTR_FLAG_ALLEGATO_CARTACEO);
+		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ordinativo.isFlagAllegatoCartaceo(), CostantiFin.ORDINATIVO_T_ATTR_FLAG_ALLEGATO_CARTACEO);
 		
 		//refresh per entity hibernate:
 		aggiornaAllAttrValidiInEntityJPA(attributoInfo, datiOperazioneDto);
@@ -2533,11 +2591,11 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		//ricarichiamo i dati da db:
 		SiacTOrdinativoFin siacTOrdinativoDaAggiornare = ordinativoInModificaInfoDto.getSiacTOrdinativo();
 		
-		if(!StringUtils.isEmpty(ordinativo.getDescrizione())){
+		if(!StringUtilsFin.isEmpty(ordinativo.getDescrizione())){
 			siacTOrdinativoDaAggiornare.setOrdDesc(ordinativo.getDescrizione());
 		}
 
-		if(Constanti.D_ORDINATIVO_STATO_TRASMESSO.equalsIgnoreCase(Constanti.statoOperativoOrdinativoEnumToString(ordinativo.getStatoOperativoOrdinativo()))){
+		if(CostantiFin.D_ORDINATIVO_STATO_TRASMESSO.equalsIgnoreCase(CostantiFin.statoOperativoOrdinativoEnumToString(ordinativo.getStatoOperativoOrdinativo()))){
 			siacTOrdinativoDaAggiornare.setOrdVariazioneData(datiOperazioneDto.getTs());
 		}
 		
@@ -2553,7 +2611,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		// SIAC-6175
 		siacTOrdinativoDaAggiornare.setOrdDaTrasmettere(Boolean.valueOf(ordinativo.isDaTrasmettere()));
 		
-		siacTOrdinativoDaAggiornare = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTOrdinativoDaAggiornare, datiOperazioneDto, siacTAccountRepository);
+		siacTOrdinativoDaAggiornare = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTOrdinativoDaAggiornare, datiOperazioneDto, siacTAccountRepository);
 		//salvo sul db:
 		siacTOrdinativoDaAggiornare = siacTOrdinativoRepository.saveAndFlush(siacTOrdinativoDaAggiornare);
 
@@ -2616,10 +2674,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	         
 	         if(isPagamento){
 	        	 listaSubPag = ((OrdinativoPagamento)ordinativo).getElencoSubOrdinativiDiPagamento();
-	        	 infoModificheSubOrdinativi = valutaSubOrdinativi((List<S>) listaSubPag, siacTOrdinativo.getOrdId(),datiOperazioneDto,bilancio,richiedente,Constanti.ORDINATIVO_TIPO_PAGAMENTO,ente);
+	        	 infoModificheSubOrdinativi = valutaSubOrdinativi((List<S>) listaSubPag, siacTOrdinativo.getOrdId(),datiOperazioneDto,bilancio,richiedente,CostantiFin.ORDINATIVO_TIPO_PAGAMENTO,ente);
 	         } else {
 	        	 listaSubInc = ((OrdinativoIncasso)ordinativo).getElencoSubOrdinativiDiIncasso();
-	        	 infoModificheSubOrdinativi = valutaSubOrdinativi((List<S>) listaSubInc, siacTOrdinativo.getOrdId(),datiOperazioneDto,bilancio,richiedente,Constanti.ORDINATIVO_TIPO_INCASSO,ente);
+	        	 infoModificheSubOrdinativi = valutaSubOrdinativi((List<S>) listaSubInc, siacTOrdinativo.getOrdId(),datiOperazioneDto,bilancio,richiedente,CostantiFin.ORDINATIVO_TIPO_INCASSO,ente);
 	         }
 	        
 	        RegolarizzazioniDiCassaInModificaInfoDto infoRegolarizzazioniDiCassa = valutaRegolarizzazioniDiCassa(ordinativo.getElencoRegolarizzazioneProvvisori(), siacTOrdinativo.getOrdId(), datiOperazioneDto);
@@ -2686,16 +2744,16 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		siacTOrdinativoDaAggiornare.setSiacTEnteProprietario(siacTEnteProprietario);
 		
-		siacTOrdinativoDaAggiornare = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTOrdinativoDaAggiornare, datiOperazioneDto,siacTAccountRepository);
+		siacTOrdinativoDaAggiornare = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTOrdinativoDaAggiornare, datiOperazioneDto,siacTAccountRepository);
 		//salvo sul db:
 		siacTOrdinativoDaAggiornare = siacTOrdinativoTRepository.saveAndFlush(siacTOrdinativoDaAggiornare);
 
 		// importo iniziale : inizio
-		// salvaImportoOrdinativoTs(siacTOrdinativoTsInsert, datiOperazioneDto, subOrdinativoDiPagamento.getImportoIniziale(), Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_INIZIALE);
+		// salvaImportoOrdinativoTs(siacTOrdinativoTsInsert, datiOperazioneDto, subOrdinativoDiPagamento.getImportoIniziale(), CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_INIZIALE);
 		// importo iniziale : fine
 
 		// importo attuale : inizio
-		SiacTOrdinativoTsDetFin importo = salvaImportoOrdinativoTs(siacTOrdinativoDaAggiornare, datiOperazioneDto, subOrdinativo.getImportoAttuale(), Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE);
+		SiacTOrdinativoTsDetFin importo = salvaImportoOrdinativoTs(siacTOrdinativoDaAggiornare, datiOperazioneDto, subOrdinativo.getImportoAttuale(), CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE);
 		siacTOrdinativoDaAggiornare.setSiacTOrdinativoTsDets(toList(importo));
 		// importo attuale : fine
 		
@@ -2761,7 +2819,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		int idEnte = datiOperazioneDto.getSiacTEnteProprietario().getUid();
 		
 		//SI DETERMINA COSA E' ARRIVATO SE MOD PAG DI UNA SEDE O DEL SOGGETTO STESSO:
-		siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(Constanti.AMBITO_FIN,idEnte, ordinativo.getSoggetto().getCodiceSoggetto(), Constanti.SEDE_SECONDARIA, getNow());
+		siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(CostantiFin.AMBITO_FIN,idEnte, ordinativo.getSoggetto().getCodiceSoggetto(), CostantiFin.SEDE_SECONDARIA, getNow());
 		
 		if(ordinativo.getSoggetto().getElencoModalitaPagamento()!= null && ordinativo.getSoggetto().getElencoModalitaPagamento().size()>0){
 			
@@ -2822,12 +2880,12 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		int idEnte = datiOperazioneDto.getSiacTEnteProprietario().getUid();
 		
 		//SI DETERMINA COSA E' ARRIVATO SE MOD PAG DI UNA SEDE O DEL SOGGETTO STESSO:
-		siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(Constanti.AMBITO_FIN, idEnte, ordinativo.getSoggetto().getCodiceSoggetto(), Constanti.SEDE_SECONDARIA, datiOperazioneDto.getTs());
+		siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(CostantiFin.AMBITO_FIN, idEnte, ordinativo.getSoggetto().getCodiceSoggetto(), CostantiFin.SEDE_SECONDARIA, datiOperazioneDto.getTs());
 
-		SedeSecondariaSoggetto sede = CommonUtils.getFirst(ordinativo.getSoggetto().getSediSecondarie());
+		SedeSecondariaSoggetto sede = CommonUtil.getFirst(ordinativo.getSoggetto().getSediSecondarie());
 		if(sede!=null){
-			List<SiacTSoggettoFin> sediDb =  siacTSoggettoRepository.ricercaSedi(idEnte, siacTSoggetto.getSoggettoId(), Constanti.SEDE_SECONDARIA);
-			siacTSoggettoSedeSecondaria = DatiOperazioneUtils.getById(sediDb, sede.getUid());
+			List<SiacTSoggettoFin> sediDb =  siacTSoggettoRepository.ricercaSedi(idEnte, siacTSoggetto.getSoggettoId(), CostantiFin.SEDE_SECONDARIA);
+			siacTSoggettoSedeSecondaria = DatiOperazioneUtil.getById(sediDb, sede.getUid());
 			sediEModPagOrdinativoDto.setSiacTSedeSecondariaOrdine(siacTSoggettoSedeSecondaria);
 		}
 		sediEModPagOrdinativoDto.setSiacTSoggettoOrdine(siacTSoggetto);
@@ -2852,7 +2910,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	    Integer codiceEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 	    
 	    //CHIAMATA "CORE" DI RICERCA
-		SiacTOrdinativoFin siacTOrdinativo = ordinativoDao.ricercaOrdinativo(codiceEnte, pk, Constanti.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneDto.getTs());
+		SiacTOrdinativoFin siacTOrdinativo = ordinativoDao.ricercaOrdinativo(codiceEnte, pk, CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneDto.getTs());
 		///////////////////////////////
 		
 		if(siacTOrdinativo!=null && siacTOrdinativo.getUid()!=null){
@@ -2864,7 +2922,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			
 			//CONVERSIONE DATI:
 			//DATI MAPPATI SUL MODEL
-			ordinativoPagamento = componiOrdinativoModel(attributoInfo, datiOperazioneDto, richiedente, pk.getBilancio().getAnno(),Constanti.D_ORDINATIVO_TIPO_PAGAMENTO);
+			ordinativoPagamento = componiOrdinativoModel(attributoInfo, datiOperazioneDto, richiedente, pk.getBilancio().getAnno(),CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO);
 			//
 			
 			//capitolo spesa
@@ -2872,7 +2930,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			if(null != listaSiacROrdinativoBilElem && listaSiacROrdinativoBilElem.size() > 0){
 				for(SiacROrdinativoBilElemFin siacROrdinativoBilElem : listaSiacROrdinativoBilElem){
 					if(null!= siacROrdinativoBilElem && siacROrdinativoBilElem.getDataFineValidita() == null){
-						if(Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG.equalsIgnoreCase(siacROrdinativoBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())) {
+						if(CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG.equalsIgnoreCase(siacROrdinativoBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())) {
 						    RicercaDettaglioCapitoloUGest ricercaDettaglioCapitoloUGest = new RicercaDettaglioCapitoloUGest();
 							ricercaDettaglioCapitoloUGest.setChiaveCapitolo(siacROrdinativoBilElem.getSiacTBilElem().getElemId());
 							ordinativoPagamentoDto.setRicercaDettaglioCapitoloUGest(ricercaDettaglioCapitoloUGest);
@@ -2883,7 +2941,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			
 			//provvedimento
 			List<SiacROrdinativoAttoAmmFin> listaSiacROrdinativoAttoAmm = siacTOrdinativo.getSiacROrdinativoAttoAmms();
-			SiacROrdinativoAttoAmmFin siacROrdinativoAttoAmm = DatiOperazioneUtils.getValido(listaSiacROrdinativoAttoAmm, null);
+			SiacROrdinativoAttoAmmFin siacROrdinativoAttoAmm = DatiOperazioneUtil.getValido(listaSiacROrdinativoAttoAmm, null);
 			if(siacROrdinativoAttoAmm!=null){
 				RicercaAtti ricercaAtti = buildRicercaAtti(siacROrdinativoAttoAmm.getSiacTAttoAmm());
 				ordinativoPagamentoDto.setRicercaAtti(ricercaAtti);
@@ -2941,9 +2999,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 				
 					// leggo i dati quietanza
 					if(siacTOilRicevuta.getSiacROrdinativoQuietanzas()!=null && !siacTOilRicevuta.getSiacROrdinativoQuietanzas().isEmpty()){
-						for (SiacROrdinativoQuietanza siacROrdinativoQuietanza : siacTOilRicevuta.getSiacROrdinativoQuietanzas()) {
+						for (SiacROrdinativoQuietanzaFin siacROrdinativoQuietanza : siacTOilRicevuta.getSiacROrdinativoQuietanzas()) {
 							if(siacROrdinativoQuietanza.getDataCancellazione()==null){
 								oil.setDataQuietanza(siacROrdinativoQuietanza.getOrdQuietanzaData());
+								oil.setNumeroQuietanza(siacROrdinativoQuietanza.getOrdQuietanzaNumero());
 								oil.setCro(siacROrdinativoQuietanza.getOrdQuietanzaCro());
 								break;
 							}
@@ -2975,7 +3034,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		String codSoggetto = null;
 		boolean isSedeSecondaria = false;
 		
-		SiacROrdinativoSoggettoFin siacROrdinativoSoggetto = DatiOperazioneUtils.getValido(siacTOrdinativo.getSiacROrdinativoSoggettos(), getNow());
+		SiacROrdinativoSoggettoFin siacROrdinativoSoggetto = DatiOperazioneUtil.getValido(siacTOrdinativo.getSiacROrdinativoSoggettos(), getNow());
 		
 		if(null != siacROrdinativoSoggetto){
 //			System.out.println("siacROrdinativoSoggetto.getSiacTOrdinativo().getUid():" + siacROrdinativoSoggetto.getSiacTOrdinativo().getUid());
@@ -3017,7 +3076,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		    }
 		}
 		
-		SiacROrdinativoModpagFin siacROrdinativoModpag = DatiOperazioneUtils.getValido(siacTOrdinativo.getSiacROrdinativoModpags(), getNow());
+		SiacROrdinativoModpagFin siacROrdinativoModpag = DatiOperazioneUtil.getValido(siacTOrdinativo.getSiacROrdinativoModpags(), getNow());
 		if(null != siacROrdinativoModpag){
 			//aggiunto il parametro codiceMDP = null
 			Integer uidSiacROrdinativoModpag = null;
@@ -3079,7 +3138,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			Richiedente richiedente, int annoBilancio,String tipoOrdinativo){
 		int codiceEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 		SiacTOrdinativoFin siacTOrdinativo = attributoInfo.getSiacTOrdinativo(); 
-		datiOperazioneDto.setCurrMillisec(getCurrentMillisecondsTrentaMaggio2017());
+		datiOperazioneDto.setCurrMillisec(currentTimeMillis());
 		
 		
 		long startZero = System.currentTimeMillis();
@@ -3091,7 +3150,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		long startUno = System.currentTimeMillis();
 		
 		O ordinativo = null;
-		if(Constanti.D_ORDINATIVO_TIPO_INCASSO.equals(tipoOrdinativo)){
+		if(CostantiFin.D_ORDINATIVO_TIPO_INCASSO.equals(tipoOrdinativo)){
 			ordinativo = (O) new OrdinativoPagamento();
 			ordinativo = (O) map(siacTOrdinativo, OrdinativoIncasso.class, FinMapId.SiacTOrdinativo_OrdinativoIncasso);
 		} else {
@@ -3100,7 +3159,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	    }
 		ordinativo.setDataCreazioneSupport(ordinativo.getDataCreazione());
 		
-		if(Constanti.D_ORDINATIVO_TIPO_INCASSO.equals(tipoOrdinativo)){
+		if(CostantiFin.D_ORDINATIVO_TIPO_INCASSO.equals(tipoOrdinativo)){
 			ordinativo = (O) EntityOrdinativiToModelOrdinativiConverter.siacTOrdinativoEntityToOrdinativoIncassoModel(siacTOrdinativo, (OrdinativoIncasso) ordinativo);
 		} else {
 			ordinativo = (O) EntityOrdinativiToModelOrdinativiConverter.siacTOrdinativoEntityToOrdinativoPagamentoModel(siacTOrdinativo, (OrdinativoPagamento) ordinativo);
@@ -3112,7 +3171,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	    	ordinativo.setDistinta(distinta);
 		}
 	
-		if(Constanti.D_ORDINATIVO_TIPO_PAGAMENTO.equals(tipoOrdinativo)){
+		if(CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO.equals(tipoOrdinativo)){
 			// commissioni
 			if (siacTOrdinativo.getSiacDCommissioneTipo() != null) {
 				CommissioneDocumento commissioneDocumento = map(siacTOrdinativo.getSiacDCommissioneTipo(), CommissioneDocumento.class, FinMapId.SiacDCommissioneTipo_CommissioneDocumento);
@@ -3124,6 +3183,13 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if (siacTOrdinativo.getSiacDContotesoreria() != null) {
 		    ContoTesoreria contoTesoreria = map(siacTOrdinativo.getSiacDContotesoreria(), ContoTesoreria.class, FinMapId.SiacDContotesoreria_Contotesoreria);
 			ordinativo.setContoTesoreria(contoTesoreria);
+		}
+		
+		//contotesoreria senza capienza
+		List<SiacROrdinativoContotesNoDispFin> founds = siacROrdinativoContotesNoDispFinRepository.findValidiByOrdinativoId(siacTOrdinativo.getOrdId(), siacTOrdinativo.getSiacTEnteProprietario().getUid());
+		if(founds != null && !founds.isEmpty() && founds.get(0) != null) {
+			ContoTesoreria contoTesoreriaSenzaCapienza = map(founds.get(0).getSiacDContoTesoreria(), ContoTesoreria.class, FinMapId.SiacDContotesoreria_Contotesoreria);
+			ordinativo.setContoTesoreriaSenzaCapienza(contoTesoreriaSenzaCapienza);
 		}
 		
 		//note tesoriere
@@ -3139,26 +3205,26 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		}
 		
 		//note
-		//String note = getValoreAttr(attributoInfo, datiOperazioneDto, codiceEnte, Constanti.T_ATTR_CODE_NOTE_ORDINATIVO);
-		String note = getValoreAttrSenzaChiamataDb(attributoInfo, Constanti.T_ATTR_CODE_NOTE_ORDINATIVO);
+		//String note = getValoreAttr(attributoInfo, datiOperazioneDto, codiceEnte, CostantiFin.T_ATTR_CODE_NOTE_ORDINATIVO);
+		String note = getValoreAttrSenzaChiamataDb(attributoInfo, CostantiFin.T_ATTR_CODE_NOTE_ORDINATIVO);
 		ordinativo.setNote(note);
 		
 		//flag Allegato Cartaceo
-		String stringAllegatoCartaceo = getValoreAttrSenzaChiamataDb(attributoInfo, Constanti.T_ATTR_CODE_FLAG_ALLEGATO_CARTACEO);
-		//String stringAllegatoCartaceo = getValoreAttr(attributoInfo, datiOperazioneDto, codiceEnte, Constanti.T_ATTR_CODE_FLAG_ALLEGATO_CARTACEO);
+		String stringAllegatoCartaceo = getValoreAttrSenzaChiamataDb(attributoInfo, CostantiFin.T_ATTR_CODE_FLAG_ALLEGATO_CARTACEO);
+		//String stringAllegatoCartaceo = getValoreAttr(attributoInfo, datiOperazioneDto, codiceEnte, CostantiFin.T_ATTR_CODE_FLAG_ALLEGATO_CARTACEO);
 		Boolean flagAllegatoCartaceo = "S".equalsIgnoreCase(stringAllegatoCartaceo);
 		ordinativo.setFlagAllegatoCartaceo(flagAllegatoCartaceo);
 		
 		//CIG PER SIOPE PLUS:
-		if(Constanti.D_ORDINATIVO_TIPO_PAGAMENTO.equals(tipoOrdinativo)){
-			String cig = getValoreAttrSenzaChiamataDb(attributoInfo, Constanti.T_ATTR_CODE_CIG);
+		if(CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO.equals(tipoOrdinativo)){
+			String cig = getValoreAttrSenzaChiamataDb(attributoInfo, CostantiFin.T_ATTR_CODE_CIG);
 			((OrdinativoPagamento)ordinativo).setCig(cig);
 		}
 		
 		
 		// tipo avviso
 		TipoAvviso tipoAvviso = new TipoAvviso();
-		SiacROrdinativoClassFin siacROrdinativoClass =  getRClassEsistentiSenzaQueryDb(attributoInfo, Constanti.D_CLASS_TIPO_TIPO_AVVISO);
+		SiacROrdinativoClassFin siacROrdinativoClass =  getRClassEsistentiSenzaQueryDb(attributoInfo, CostantiFin.D_CLASS_TIPO_TIPO_AVVISO);
 		if(siacROrdinativoClass!=null){
 			tipoAvviso.setCodice(siacROrdinativoClass.getSiacTClass().getClassifCode());
 			tipoAvviso.setDescrizione(siacROrdinativoClass.getSiacTClass().getClassifDesc());
@@ -3166,12 +3232,12 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		ordinativo.setTipoAvviso(tipoAvviso);
 		
 		//CREDITORE/DEBITORE
-		Soggetto creditore = componiSoggettoDiOrdinativo(siacTOrdinativo, Constanti.AMBITO_FIN, codiceEnte,datiOperazioneDto,datiOttimizzazione);
+		Soggetto creditore = componiSoggettoDiOrdinativo(siacTOrdinativo, CostantiFin.AMBITO_FIN, codiceEnte,datiOperazioneDto,datiOttimizzazione);
 		ordinativo.setSoggetto(creditore);
 		
 		//transazione elementare
 		List<SiacROrdinativoClassFin> listaSiacROrdinativoClass = siacTOrdinativo.getSiacROrdinativoClasses();
-		if(Constanti.D_ORDINATIVO_TIPO_INCASSO.equals(tipoOrdinativo)){
+		if(CostantiFin.D_ORDINATIVO_TIPO_INCASSO.equals(tipoOrdinativo)){
 			ordinativo = (O) TransazioneElementareEntityToModelConverter.
 					convertiDatiTransazioneElementare((OrdinativoIncasso) ordinativo, listaSiacROrdinativoClass,siacTOrdinativo.getSiacROrdinativoAttrs());
 		} else {
@@ -3187,7 +3253,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		long startDue = System.currentTimeMillis();
 		
 		//quote ordinativo
-		if(Constanti.D_ORDINATIVO_TIPO_INCASSO.equals(tipoOrdinativo)){
+		if(CostantiFin.D_ORDINATIVO_TIPO_INCASSO.equals(tipoOrdinativo)){
 			ordinativo = (O) completaDatiSubOrdinativoIncasso((OrdinativoIncasso) ordinativo, siacTOrdinativo, datiOperazioneDto, richiedente, annoBilancio);
 		} else {
 			ordinativo = (O) completaDatiSubOrdinativoPagamento((OrdinativoPagamento) ordinativo, siacTOrdinativo, datiOperazioneDto, richiedente, annoBilancio,datiOttimizzazione);
@@ -3249,8 +3315,8 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		long totUno = endUno - startUno;
 		long totDue = endDue - startDue;
 		
-		CommonUtils.println("totZero: " + totZero);
-		CommonUtils.println("totUno: " + totUno + " - totDue: " + totDue + " - totTre: " + totTre);
+		CommonUtil.println("totZero: " + totZero);
+		CommonUtil.println("totUno: " + totUno + " - totDue: " + totDue + " - totTre: " + totTre);
 		
 		return ordinativo;
 	}
@@ -3259,7 +3325,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		for (SiacROrdinativoClassFin oc : listaSiacROrdinativoClass) {
 			
-			if(oc.getDataCancellazione() != null || oc.getSiacTClass() == null || !Constanti.D_CLASS_TIPO_CLASSIFICATORE_STIPENDI.equals(oc.getSiacTClass().getSiacDClassTipo().getClassifTipoCode())) {
+			if(oc.getDataCancellazione() != null || oc.getSiacTClass() == null || !CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_STIPENDI.equals(oc.getSiacTClass().getSiacDClassTipo().getClassifTipoCode())) {
 				continue;
 			}
 		
@@ -3305,7 +3371,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if(datiOttimizzazione!=null){
 			//RAMO OTTIMIZZATO
 			listaSiacTOrdinativoT = datiOttimizzazione.getListaSubOrdinativiCoinvolti();
-			listaSiacTOrdinativoT = CommonUtils.soloValidiSiacTBase(listaSiacTOrdinativoT, getNow());
+			listaSiacTOrdinativoT = CommonUtil.soloValidiSiacTBase(listaSiacTOrdinativoT, getNow());
 		} else {
 			//RAMO CLASSICO 
 			listaSiacTOrdinativoT = siacTOrdinativo.getSiacTOrdinativoTs();
@@ -3364,7 +3430,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 				    	    							
 				    	    							// Leggo il Pdc
 				    	    							CodificaFin codifica = EntityToModelConverter.convertiCodificaFromSiacTClass(siacROrdinativoTsMovgestTs.getSiacTMovgestTs().getSiacRMovgestClasses(), 
-				    	    										Constanti.D_CLASS_TIPO_PIANO_DEI_CONTI_I, true);
+				    	    										CostantiFin.D_CLASS_TIPO_PIANO_DEI_CONTI_I, true);
 				    	    							
 				    	    							
 				    	    							accertamento.setIdPdc(codifica.getUid());
@@ -3412,7 +3478,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 						    	    		
 						    	    		for (SiacRSubdocOrdinativoTFin siacRSubdocOrdinativoTFin : listaSiacSubdocOrdinativo) {
 						    	    			//SIAC-6831						    	    			
-						    	    			if(siacRSubdocOrdinativoTFin.getDataCancellazione() != null || !CommonUtils.isValidoSiacTBase(siacRSubdocOrdinativoTFin, null)) {
+						    	    			if(siacRSubdocOrdinativoTFin.getDataCancellazione() != null || !CommonUtil.isValidoSiacTBase(siacRSubdocOrdinativoTFin, null)) {
 						    	    				continue;
 						    	    			}
 						    	    			
@@ -3509,7 +3575,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			if(rSubDocs!=null && rSubDocs.size()>0){
 				SiacRSubdocOrdinativoTFin siacRSubdocOrdinativoTFin = rSubDocs.get(0);
 				//SIAC-6831
-				if(siacRSubdocOrdinativoTFin!=null && siacRSubdocOrdinativoTFin.getDataCancellazione()!= null &&  CommonUtils.isValidoSiacTBase(siacRSubdocOrdinativoTFin, null)){
+				if(siacRSubdocOrdinativoTFin!=null && siacRSubdocOrdinativoTFin.getDataCancellazione()!= null &&  CommonUtil.isValidoSiacTBase(siacRSubdocOrdinativoTFin, null)){
 					SiacTSubdocFin siacTSubdocFin = siacRSubdocOrdinativoTFin.getSiacTSubdoc();
 					if(siacTSubdocFin!=null){
 						
@@ -3582,11 +3648,6 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			listaSiacRLiquidazioneOrd = siacTOrdinativoT.getSiacRLiquidazioneOrds();
 		}
 		
-		OttimizzazioneMutuoDto ottimizzazioneMutui=null;
-    	if(datiOttimizzazione!=null && datiOttimizzazione.getOttimizzazioneMovimentiCoinvolti() != null){
-    		//RAMO OTTIMIZZATO MUTUI
-    		ottimizzazioneMutui = datiOttimizzazione.getOttimizzazioneMovimentiCoinvolti().getOttimizzazioneMutuoDto();
-    	}
 		
     	if(null != listaSiacRLiquidazioneOrd && listaSiacRLiquidazioneOrd.size() > 0){
     	    	
@@ -3605,25 +3666,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		    			    	}
 		    			    	//
 		    			    	
-		    			    	Liquidazione liquidazione = liquidazioneDad.ricercaLiquidazionePerChiave(liquidazioneT, Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE, 
-		    			    			richiedente, annobilancio, Constanti.AMBITO_FIN, richiedente.getAccount().getEnte(),datiOperazioneDto,datiOttimizzazione);
+		    			    	Liquidazione liquidazione = liquidazioneDad.ricercaLiquidazionePerChiave(liquidazioneT, CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE, 
+		    			    			richiedente, annobilancio, CostantiFin.AMBITO_FIN, richiedente.getAccount().getEnte(),datiOperazioneDto,datiOttimizzazione);
 		    			    	
 		    			    	
-		    			    	if(liquidazione.getImpegno().getListaVociMutuo()!=null && !liquidazione.getImpegno().getListaVociMutuo().isEmpty()){
-			    			    	for(VoceMutuo voceMutuo : liquidazione.getImpegno().getListaVociMutuo()) {
-			    			    	    	int i = 0;
-			    			    	    	Mutuo mutuo = null;
-			    			    	    	if(ottimizzazioneMutui!=null){
-			    			    	    		//RAMO OTTIMIZZATO 
-			    			    	    		mutuo = ricercaMutuo(codiceEnte, voceMutuo.getNumeroMutuo(), datiOperazioneDto.getTs(),ottimizzazioneMutui);
-			    			    	    	} else {
-			    			    	    		//RAMO CLASSICO
-			    			    	    		mutuo = ricercaMutuo(codiceEnte, voceMutuo.getNumeroMutuo(), datiOperazioneDto.getTs());
-			    			    	    	}
-			    			    	    	liquidazione.getImpegno().getListaVociMutuo().get(i).setMutuo(mutuo);
-			    			    	    	i++;
-			    			    	}
-    	    	    	    	}
 		    			    	subOrdinativoPagamento.setLiquidazione(liquidazione);
 		    			    	
 		    			    	//Estrazione dati importo Quota
@@ -3718,7 +3764,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		} else {
 			//RAMO CLASSICO
 			listaSiacROrdinativoTsMovgestTFin = siacTOrdinativoT.getSiacROrdinativoTsMovgestTs();
-			listaSiacROrdinativoTsMovgestTFin = CommonUtils.soloValidiSiacTBase(listaSiacROrdinativoTsMovgestTFin, null);
+			listaSiacROrdinativoTsMovgestTFin = CommonUtil.soloValidiSiacTBase(listaSiacROrdinativoTsMovgestTFin, null);
 		}
 		
 		
@@ -3729,7 +3775,8 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 				String annoEsercizio = movGest.getSiacTBil().getSiacTPeriodo().getAnno();
 				BigDecimal numeroMovimento = movGest.getMovgestNumero();
 				Integer annoMovimento = movGest.getMovgestAnno();
-				MovimentoGestione accertamento = accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoMovimento, numeroMovimento, Constanti.MOVGEST_TIPO_ACCERTAMENTO, false);
+				MovimentoGestione accertamento = accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, 
+						annoEsercizio, annoMovimento, numeroMovimento, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, false, false);
 				subOrdinativoIncasso.setAccertamento((Accertamento) accertamento);
 			}
 			
@@ -3832,13 +3879,13 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	 */
 	private SiacDContotesoreriaFin caricaContoTesoreria(Ordinativo ordinativoRicevuto,DatiOperazioneDto datiOperazione){
 		SiacDContotesoreriaFin siacDContotesoreria = null;
-		Date dateInserimento = new Date(getCurrentMillisecondsTrentaMaggio2017());
+		Date dateInserimento = new Date(currentTimeMillis());
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);
 		
 		String codiceRicevuto = ordinativoRicevuto.getContoTesoreria() != null ? ordinativoRicevuto.getContoTesoreria().getCodice()  : "" ;
 		Integer idEnte = datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId();
 		
-		if (!StringUtils.isEmpty(codiceRicevuto)) {
+		if (!StringUtilsFin.isEmpty(codiceRicevuto)) {
 				siacDContotesoreria = siacDContotesoreriaRepository.findContotesoreriaByCode(idEnte, codiceRicevuto, datiOperazione.getTs());
 		}else{
 			List<SiacDContotesoreriaFin> siacDContotesoreriaList = siacDContotesoreriaRepository.findContotesoreriaByEnte(idEnte, timestampInserimento);
@@ -3876,7 +3923,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if(ordinativoRicevuto!=null && ordinativoRicevuto.getCommissioneDocumento() != null ){
 			String codiceRicevuto = ordinativoRicevuto.getCommissioneDocumento().getCodice();
 			Integer idEnte = datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId();
-			if (!StringUtils.isEmpty(codiceRicevuto)) {
+			if (!StringUtilsFin.isEmpty(codiceRicevuto)) {
 				SiacDCommissioneTipoFin siacDCommissioneTipo = new SiacDCommissioneTipoFin();
 				siacDCommissioneTipo = siacDCommissioneTipoRepository.findDCommissioneTipoValidoByEnteAndCode(idEnte, codiceRicevuto, datiOperazione.getTs());
 				siacTOrdinativo.setSiacDCommissioneTipo(siacDCommissioneTipo);
@@ -3896,7 +3943,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if(ordinativoRicevuto!=null && ordinativoRicevuto.getNoteTesoriere() != null ){
 			String codiceRicevuto = ordinativoRicevuto.getNoteTesoriere().getCodice();
 			Integer idEnte = datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId();
-			if (!StringUtils.isEmpty(codiceRicevuto)) {
+			if (!StringUtilsFin.isEmpty(codiceRicevuto)) {
 				SiacDNoteTesoriereFin siacDNoteTesoriere = new SiacDNoteTesoriereFin();
 				siacDNoteTesoriere = siacDNoteTesoriereRepository.findDNoteTesoriereValidoByEnteAndCode(idEnte, codiceRicevuto, datiOperazione.getTs());
 				siacTOrdinativo.setSiacDNoteTesoriere(siacDNoteTesoriere);
@@ -3916,7 +3963,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if(ordinativoRicevuto!=null && ordinativoRicevuto.getCodiceBollo() != null){
 			String codiceRicevuto = ordinativoRicevuto.getCodiceBollo().getCodice();
 			Integer idEnte = datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId();
-			if (!StringUtils.isEmpty(codiceRicevuto)) {
+			if (!StringUtilsFin.isEmpty(codiceRicevuto)) {
 				SiacDCodicebolloFin siacDCodicebollo = new SiacDCodicebolloFin();
 				siacDCodicebollo = siacDCodiceBolloRepository.findDCodiceBolloValidoByEnteAndCode(idEnte,codiceRicevuto, datiOperazione.getTs());
 				siacTOrdinativo.setSiacDCodicebollo(siacDCodicebollo);
@@ -3933,7 +3980,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	 * @return
 	 */
 	private SiacTOrdinativoFin impostaTipoOrdinativo(SiacTOrdinativoFin siacTOrdinativo, String tipoOrdinativo,DatiOperazioneDto datiOperazione){
-		if(!StringUtils.isEmpty(tipoOrdinativo)){
+		if(!StringUtilsFin.isEmpty(tipoOrdinativo)){
 			Integer idEnte = datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId();
 			SiacDOrdinativoTipoFin siacDOrdinativoTipo = new SiacDOrdinativoTipoFin();
 			siacDOrdinativoTipo = siacDOrdinativoTipoRepository.findDOrdinativoTipoValidoByEnteAndCode(idEnte, tipoOrdinativo, datiOperazione.getTs());
@@ -3963,22 +4010,22 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	 */
 	private SiacDDistintaFin caricaDistinta(Ordinativo ordinativoRicevuto,DatiOperazioneDto datiOperazione){
 		SiacDDistintaFin siacDDistinta = null;
-		Date dateInserimento = new Date(getCurrentMillisecondsTrentaMaggio2017());
+		Date dateInserimento = new Date(currentTimeMillis());
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);
 		
 		if(ordinativoRicevuto!=null ){
 			String tipoDistinta = "";
 			
 			if(ordinativoRicevuto instanceof OrdinativoPagamento){
-				tipoDistinta = Constanti.D_ORDINATIVO_DISTINTA_TIPO_SPESA;
+				tipoDistinta = CostantiFin.D_ORDINATIVO_DISTINTA_TIPO_SPESA;
 			} else if(ordinativoRicevuto instanceof OrdinativoIncasso){
-				tipoDistinta = Constanti.D_ORDINATIVO_DISTINTA_TIPO_ENTRATA;
+				tipoDistinta = CostantiFin.D_ORDINATIVO_DISTINTA_TIPO_ENTRATA;
 			} 
 			
 			String codiceRicevuto = ordinativoRicevuto.getDistinta()!=null ? ordinativoRicevuto.getDistinta().getCodice() : "";
 			Integer idEnte = datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId();
 			
-			if (!StringUtils.isEmpty(codiceRicevuto)){
+			if (!StringUtilsFin.isEmpty(codiceRicevuto)){
 				siacDDistinta = siacDDistintaRepository.findDDistintaValidaByEnteAndTipoAndCode(idEnte, tipoDistinta, codiceRicevuto, datiOperazione.getTs());
 			}
 			else{
@@ -4035,23 +4082,68 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 				datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId(),
 				annoOrdinativo, BigDecimal.valueOf(numeroOrdinativo), tipoOrdinativo, datiOperazioneDto.getTs());
 		
+		//SIAC-8237 non veniva gestita l'estrazione per gli ordinativo di incasso
+		List<SiacROrdinativoFin> siacROrdinativoList = null;
 		
-		List<SiacROrdinativoFin> siacROrdinativoList = 
-				siacROrdinativoRepository.findValideByIdOrdUno(siacTOrdinativo.getUid(), datiOperazioneDto.getTs(), 
-						toPageable(paginazioneOrdinativiCollegati!= null ? paginazioneOrdinativiCollegati : ParametriPaginazione.TUTTI_GLI_ELEMENTI));
+		//PAGAMENTO
+		if(TipoOrdinativo.PAGAMENTO.getCodice().equals(siacTOrdinativo.getSiacDOrdinativoTipo().getOrdTipoCode())) {
+			siacROrdinativoList = siacROrdinativoRepository.findValideByIdOrdUno(siacTOrdinativo.getUid(), datiOperazioneDto.getTs(), 
+					toPageable(paginazioneOrdinativiCollegati!= null ? paginazioneOrdinativiCollegati : ParametriPaginazione.TUTTI_GLI_ELEMENTI));
+
+			gestisciOrdinativiEntrataCollegati(siacTOrdinativoCollegatoCustomList, siacROrdinativoList);
+		} else {
+		//INCASSO
+			siacROrdinativoList = siacROrdinativoRepository.findValideByIdOrdDue(siacTOrdinativo.getUid(), datiOperazioneDto.getTs(), 
+					toPageable(paginazioneOrdinativiCollegati!= null ? paginazioneOrdinativiCollegati : ParametriPaginazione.TUTTI_GLI_ELEMENTI));
+			
+			gestisciOrdinativiSpesaCollegati(siacTOrdinativoCollegatoCustomList, siacROrdinativoList);
+		}
+		
+		return siacTOrdinativoCollegatoCustomList;
+	}
+
+	/**
+	 * SIAC-8237 separiamo la gestione dei due tipi di ordinativo
+	 * @param siacTOrdinativoCollegatoCustomList
+	 * @param siacROrdinativoList
+	 */
+	private void gestisciOrdinativiSpesaCollegati(List<SiacTOrdinativoCollegatoCustom> siacTOrdinativoCollegatoCustomList,
+			List<SiacROrdinativoFin> siacROrdinativoList) {
 		
 		if(siacROrdinativoList!=null && !siacROrdinativoList.isEmpty()){
 		
 			for (SiacROrdinativoFin siacROrdinativo : siacROrdinativoList) {
 				if(siacROrdinativo.getDataCancellazione() == null){
 					SiacTOrdinativoCollegatoCustom siacTOrdinativoCollegatoCustom = new SiacTOrdinativoCollegatoCustom();
+					//prendo l'ordinativo di spesa
+					siacTOrdinativoCollegatoCustom.setSiacTOrdinativo(siacROrdinativo.getSiacTOrdinativo1());
+					siacTOrdinativoCollegatoCustom.setRelazioneOrdinativiCollegati(siacROrdinativo.getSiacDRelazTipo().getRelazTipoCode());
+					siacTOrdinativoCollegatoCustomList.add(siacTOrdinativoCollegatoCustom);
+				}
+			}
+		}
+	}
+
+	/**
+	 * SIAC-8237 separiamo la gestione dei due tipi di ordinativo
+	 * @param siacTOrdinativoCollegatoCustomList
+	 * @param siacROrdinativoList
+	 */
+	private void gestisciOrdinativiEntrataCollegati(List<SiacTOrdinativoCollegatoCustom> siacTOrdinativoCollegatoCustomList,
+			List<SiacROrdinativoFin> siacROrdinativoList) {
+		
+		if(siacROrdinativoList!=null && !siacROrdinativoList.isEmpty()){
+			
+			for (SiacROrdinativoFin siacROrdinativo : siacROrdinativoList) {
+				if(siacROrdinativo.getDataCancellazione() == null){
+					SiacTOrdinativoCollegatoCustom siacTOrdinativoCollegatoCustom = new SiacTOrdinativoCollegatoCustom();
+					//prendo l'ordinativo di entrata
 					siacTOrdinativoCollegatoCustom.setSiacTOrdinativo(siacROrdinativo.getSiacTOrdinativo2());
 					siacTOrdinativoCollegatoCustom.setRelazioneOrdinativiCollegati(siacROrdinativo.getSiacDRelazTipo().getRelazTipoCode());
 					siacTOrdinativoCollegatoCustomList.add(siacTOrdinativoCollegatoCustom);
 				}
 			}
 		}
-		return siacTOrdinativoCollegatoCustomList;
 	}
 	
 	
@@ -4149,10 +4241,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			//
 			
 			//itero le relazioni cercando la presenza di quella SOS_ORD:
-			if(!StringUtils.isEmpty(relaz)){
+			if(!StringUtilsFin.isEmpty(relaz)){
 				for(SiacROrdinativoFin it: relaz){
 					if(it!=null && it.getSiacDRelazTipo()!=null
-							&& Constanti.D_SOSTITUZIONE_ORDINATIVO.equals(it.getSiacDRelazTipo().getRelazTipoCode())){
+							&& CostantiFin.D_SOSTITUZIONE_ORDINATIVO.equals(it.getSiacDRelazTipo().getRelazTipoCode())){
 						presenteReleazioneReintroito = true;
 						break;
 					}
@@ -4184,20 +4276,20 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 
 			for (SiacROrdinativoFin siacROrdinativo : siacROrdinativoList) {
 				
-				if(!DatiOperazioneUtils.isValido(siacROrdinativo, dataInput)) {
+				if(!DatiOperazioneUtil.isValido(siacROrdinativo, dataInput)) {
 					continue;
 				}
 				
 				List<SiacROrdinativoStatoFin>  siacROrdinativoStatoListCollegati = siacROrdinativo.getSiacTOrdinativo2().getSiacROrdinativoStatos();
 
-				siacROrdinativoStatoListCollegati = DatiOperazioneUtils.soloValidi(siacROrdinativoStatoListCollegati, dataInput);
+				siacROrdinativoStatoListCollegati = DatiOperazioneUtil.soloValidi(siacROrdinativoStatoListCollegati, dataInput);
 				
 				if(!siacROrdinativoStatoListCollegati.isEmpty()){
 
 					for (SiacROrdinativoStatoFin siacROrdinativoStatoFin : siacROrdinativoStatoListCollegati) {
 
 
-						if(!siacROrdinativoStatoFin.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(Constanti.D_ORDINATIVO_STATO_ANNULLATO)){
+						if(!siacROrdinativoStatoFin.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(CostantiFin.D_ORDINATIVO_STATO_ANNULLATO)){
 
 
 							SiacTOrdinativoCollegatoCustom siacTOrdinativoCollegatoCustom = new SiacTOrdinativoCollegatoCustom();
@@ -4231,7 +4323,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if (siacTOrdinativo!=null && siacTOrdinativo.getSiacROrdinativoStatos()!=null && siacTOrdinativo.getSiacROrdinativoStatos().size()>0) {
 			for (SiacROrdinativoStatoFin it : siacTOrdinativo.getSiacROrdinativoStatos()) {
 				if (it.getDataFineValidita()==null) {
-					if (it.getSiacDOrdinativoStato()!=null && it.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(Constanti.statoOperativoOrdinativoEnumToString(statoOperativoOrdinativo))) {
+					if (it.getSiacDOrdinativoStato()!=null && it.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(CostantiFin.statoOperativoOrdinativoEnumToString(statoOperativoOrdinativo))) {
 						return true;
 					}
 				}
@@ -4273,21 +4365,21 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	    Integer codiceEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 	    
 	    //RICERCA "CORE"
-		SiacTOrdinativoFin siacTOrdinativo = ordinativoDao.ricercaOrdinativo(codiceEnte, pk, Constanti.D_ORDINATIVO_TIPO_INCASSO, datiOperazioneDto.getTs());
+		SiacTOrdinativoFin siacTOrdinativo = ordinativoDao.ricercaOrdinativo(codiceEnte, pk, CostantiFin.D_ORDINATIVO_TIPO_INCASSO, datiOperazioneDto.getTs());
 		////////////////
 		
 		AttributoTClassInfoDto attributoInfo = new AttributoTClassInfoDto();
 		attributoInfo.setTipoOggetto(OggettoDellAttributoTClass.T_ORDINATIVO);
 		attributoInfo.setSiacTOrdinativo(siacTOrdinativo);
 		
-		ordinativoIncasso = componiOrdinativoModel(attributoInfo, datiOperazioneDto, richiedente, bilancio.getAnno(),Constanti.D_ORDINATIVO_TIPO_INCASSO);
+		ordinativoIncasso = componiOrdinativoModel(attributoInfo, datiOperazioneDto, richiedente, bilancio.getAnno(),CostantiFin.D_ORDINATIVO_TIPO_INCASSO);
 		
 		//capitolo entrata
 		List<SiacROrdinativoBilElemFin> listaSiacROrdinativoBilElem = siacTOrdinativo.getSiacROrdinativoBilElems();
 		if(null != listaSiacROrdinativoBilElem && listaSiacROrdinativoBilElem.size() > 0){
 			for(SiacROrdinativoBilElemFin siacROrdinativoBilElem : listaSiacROrdinativoBilElem){
 				if(null!= siacROrdinativoBilElem && siacROrdinativoBilElem.getDataFineValidita() == null){
-					if(Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG.equalsIgnoreCase(siacROrdinativoBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())) {
+					if(CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG.equalsIgnoreCase(siacROrdinativoBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())) {
 						RicercaDettaglioCapitoloEGest ricercaDettaglioCapitoloEGest = new RicercaDettaglioCapitoloEGest();
 						ricercaDettaglioCapitoloEGest.setChiaveCapitolo(siacROrdinativoBilElem.getSiacTBilElem().getElemId());
 						ordinativoIncassoDto.setRicercaDettaglioCapitoloEGest(ricercaDettaglioCapitoloEGest);
@@ -4298,7 +4390,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		//provvedimento
 		List<SiacROrdinativoAttoAmmFin> listaSiacROrdinativoAttoAmm = siacTOrdinativo.getSiacROrdinativoAttoAmms();
-		SiacROrdinativoAttoAmmFin siacROrdinativoAttoAmm = DatiOperazioneUtils.getValido(listaSiacROrdinativoAttoAmm, null);
+		SiacROrdinativoAttoAmmFin siacROrdinativoAttoAmm = DatiOperazioneUtil.getValido(listaSiacROrdinativoAttoAmm, null);
 		if(siacROrdinativoAttoAmm!=null){
 			RicercaAtti ricercaAtti = buildRicercaAtti(siacROrdinativoAttoAmm.getSiacTAttoAmm());
 			ordinativoIncassoDto.setRicercaAtti(ricercaAtti);
@@ -4321,7 +4413,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	private boolean isTestataAccertamento (SiacTMovgestTsFin siacTMovgestTs) {
 		boolean res = false;
 		if (null != siacTMovgestTs && null != siacTMovgestTs.getSiacDMovgestTsTipo()) {
-			if (Constanti.MOVGEST_TS_TIPO_TESTATA.equals(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())) {
+			if (CostantiFin.MOVGEST_TS_TIPO_TESTATA.equals(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())) {
 				res = true;
 			}
 		}
@@ -4396,7 +4488,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		//
 		
 		//CONTROLLIAMO GLI IMPEGNI DELLE RITENUTE:
-		if(!StringUtils.isEmpty(datiInput.getRitenuteSplit())){
+		if(!StringUtilsFin.isEmpty(datiInput.getRitenuteSplit())){
 			esito =  controlliEsistenzaEStatoMovimentiRitenute(datiInput, esito, richiedente, ente, datiOperazione,ordinativoPagamentoRicaricato, impegniCaricati,accertamentiCaricati);
 			if(esito.presenzaErrori()){
 				return esito;
@@ -4441,7 +4533,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		List<RitenutaSpiltPerReintroitoInfoDto> ritenuteSplit = esito.getListaRitenuteSplit();
 		
-		if(!StringUtils.isEmpty(ritenuteSplit)){
+		if(!StringUtilsFin.isEmpty(ritenuteSplit)){
 			for(RitenutaSpiltPerReintroitoInfoDto ritIt: ritenuteSplit){
 				
 				//CONTROLLIAMO IL SOGGETTO DELL'IMPEGNO
@@ -4469,7 +4561,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			String nomeEntita = ReintroitoUtils.buildNomeEntitaPerMessaggiDiErrore(accertamento.getKey(), false);
 			String codiceEntita = ReintroitoUtils.buildCodiceEntitaPerMessaggiDiErrore(accertamento.getKey());
 			String msg = "Non ha un soggetto compatibile con l'ordinativo di incasso.";
-			esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore(nomeEntita + ": " + codiceEntita, msg));
+			esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeEntita + ": " + codiceEntita, msg));
 		}
 		return esito;
 	}
@@ -4480,7 +4572,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			String nomeEntita = ReintroitoUtils.buildNomeEntitaPerMessaggiDiErrore(impegno.getKey(), true);
 			String codiceEntita = ReintroitoUtils.buildCodiceEntitaPerMessaggiDiErrore(impegno.getKey());
 			String msg = "Non ha un soggetto compatibile con l'ordinativo di pagamento.";
-			esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore(nomeEntita + ": " + codiceEntita, msg));
+			esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeEntita + ": " + codiceEntita, msg));
 		}
 		return esito;
 	}
@@ -4505,9 +4597,9 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		//soggOrd non puo' essere nullo
 		
 		//1. PER STESSO SOGG OK
-		if(soggMov!=null && !StringUtils.isEmpty(soggMov.getCodiceSoggetto())){
+		if(soggMov!=null && !StringUtilsFin.isEmpty(soggMov.getCodiceSoggetto())){
 			//IL MOVIMENTO HA UN SOGGETTO
-			if(StringUtils.sonoUguali(soggMov.getCodiceSoggetto() , soggOrd.getCodiceSoggetto())){
+			if(StringUtilsFin.sonoUguali(soggMov.getCodiceSoggetto() , soggOrd.getCodiceSoggetto())){
 				//STESSO SOGGETTO: ritorno true
 				 return true;
 			} else {
@@ -4527,7 +4619,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		
 		if(classeSoggMov!=null && !StringUtils.isEmpty(classeSoggMov.getCodice())){
 			String codClasse = classeSoggMov.getCodice();
-			SiacDSoggettoClasseFin siacDSoggettoClasseFin = CommonUtils.getFirst(siacDSoggettoClasseRepository.findValidoByCode(idEnte, datiOperazione.getSiacDAmbito().getAmbitoId(), codClasse,getNow()));
+			SiacDSoggettoClasseFin siacDSoggettoClasseFin = CommonUtil.getFirst(siacDSoggettoClasseRepository.findValidoByCode(idEnte, datiOperazione.getSiacDAmbito().getAmbitoId(), codClasse,getNow()));
 			if(siacDSoggettoClasseFin!=null){
 				int idClasse = siacDSoggettoClasseFin.getUid();
 				
@@ -4568,14 +4660,16 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	 * @return
 	 */
 	private OrdinativoInReintroitoInfoDto controlliDisponibilitaPagareAccertamenti(OrdinativoInReintroitoInfoDto esito,Richiedente richiedente){
+
+		
 		List<RitenutaSpiltPerReintroitoInfoDto> listaRitenuteInfo = esito.getListaRitenuteSplit();
 		// CONTROLLIAMO I DISP AD ACCERTARE DEGLI GLI ACCERTAMENTI (o sub) DELLE EVENTUALI RITENUTE:
 		
 		//PER CMTO:
-		boolean lanciaErrore = isAbilitato(richiedente.getAccount(), AzioniConsentite.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA.toString());
+		boolean lanciaErrore = isAzioneConsentita(richiedente.getAccount(), AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA);
 		//
 		
-		if(!StringUtils.isEmpty(listaRitenuteInfo)){
+		if(!StringUtilsFin.isEmpty(listaRitenuteInfo)){
 			
 			List<RitenuteReintroitoConStessoMovimentoDto> raggruppatePerStessoAccertamento = esito.raggruppatePerAccertamenti();
 			
@@ -4597,7 +4691,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 						//CASO PARTICOLARE PER CMTO che conduce ad errore bloccante
 						String nomeEntita = ReintroitoUtils.buildNomeEntitaPerMessaggiDiErrore(movKey, false);
 						String codiceEntita = ReintroitoUtils.buildCodiceEntitaPerMessaggiDiErrore(movKey);
-						esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore(nomeEntita + ": " + codiceEntita, "La sua disponibilita' a pagare e' minore degli importi da reintroitare"));
+						esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeEntita + ": " + codiceEntita, "La sua disponibilita' a pagare e' minore degli importi da reintroitare"));
 						return esito;
 					} else {
 						//per l'accertamento la mancata disponibilita ad incassare non conduce ad un errore bloccante
@@ -4658,7 +4752,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		}
 		
 		// CONTROLLIAMO I DISP A LIQUIDARE E A PAGARE DEI CAPITOLI DEGLI GLI ALTRI IMPEGNI (o sub) :
-		if(!StringUtils.isEmpty(listaRitenuteInfo)){
+		if(!StringUtilsFin.isEmpty(listaRitenuteInfo)){
 			for(RitenutaSpiltPerReintroitoInfoDto ritenutaIt: listaRitenuteInfo){
 				//DEVO ESCLUDERE QUELLO DESTINAZIONE IN QUANTO E' GIA' STATO VERIFICATO SOPRA:
 				if(!ReintroitoUtils.sonoUguali(ritenutaIt.getImpegno().getKey(), impegnoDestinazioneKey)){
@@ -4709,7 +4803,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if(dispLiqImpOSub.compareTo(importoNetto.add(sommaImportiOrdinativiCollegati))<0){
 			String nomeEntita = ReintroitoUtils.buildNomeEntitaPerMessaggiDiErrore(movKey, true);
 			String codiceEntita = ReintroitoUtils.buildCodiceEntitaPerMessaggiDiErrore(movKey);
-			esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore(nomeEntita + ": " + codiceEntita, "La sua disponibilita' a liquidare e' minore degli importi da reintroitare"));
+			esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeEntita + ": " + codiceEntita, "La sua disponibilita' a liquidare e' minore degli importi da reintroitare"));
 			return esito;
 		}
 		return esito;
@@ -4745,7 +4839,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		if(dispPagareCapitolo.compareTo(importoNetto.add(sommaImportiOrdinativiCollegati))<0){
 			String nomeEntita = ReintroitoUtils.buildNomeEntitaPerMessaggiDiErrore(movKey, true);
 			String codiceEntita = ReintroitoUtils.buildCodiceEntitaPerMessaggiDiErrore(movKey);
-			esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore(nomeEntita + ": " + codiceEntita, "La sua disponibilita' a pagare del suo capitolo e' minore degli importi da reintroitare"));
+			esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeEntita + ": " + codiceEntita, "La sua disponibilita' a pagare del suo capitolo e' minore degli importi da reintroitare"));
 			return esito;
 		}
 		return esito;
@@ -4781,7 +4875,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			OrdinativoPagamento ordinativoPagamentoRicaricato,
 			HashMap<String, EsitoRicercaMovimentoPkDto> impegniCaricati,HashMap<String, EsitoRicercaMovimentoPkDto> accertamentiCaricati){
 		
-		if(!StringUtils.isEmpty(datiInput.getRitenuteSplit())){
+		if(!StringUtilsFin.isEmpty(datiInput.getRitenuteSplit())){
 			
 			List<RitenutaSpiltPerReintroitoInfoDto> listaRitenuteSplit = new ArrayList<RitenutaSpiltPerReintroitoInfoDto>();
 			
@@ -4867,7 +4961,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		accInfo.setMovGestInfoAccertamento(mgiDtoAcc);
 		//
 		accInfo.setAccertamento(acc);
-		if(!StringUtils.isEmpty(acc.getElencoSubAccertamenti())){
+		if(!StringUtilsFin.isEmpty(acc.getElencoSubAccertamenti())){
 			SubAccertamento subAccertamento = acc.getElencoSubAccertamenti().get(0);
 			//Carico i dati di movgest e movgestts:
 			MovGestInfoDto mgiDtoSubAcc = caricaSiactMovgestBySubAccertamento(subAccertamento);
@@ -4893,7 +4987,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		impInfo.setMovGestInfoImpegno(mgiDtoImp);
 		//
 		impInfo.setImpegno(imp);
-		if(!StringUtils.isEmpty(imp.getElencoSubImpegni())){
+		if(!StringUtilsFin.isEmpty(imp.getElencoSubImpegni())){
 			SubImpegno subImpegno = imp.getElencoSubImpegni().get(0);
 			//Carico i dati di movgest e movgestts:
 			MovGestInfoDto mgiDtoSubImp = caricaSiactMovgestBySubImpegno(subImpegno);
@@ -4971,20 +5065,20 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			
 			//CONTROLLO PER IMPEGNO
 			
-			if(!Constanti.D_CLASS_TIPO_PIANO_DEI_CONTI_V.equalsIgnoreCase(movimento.getCodicePdc())
+			if(!CostantiFin.D_CLASS_TIPO_PIANO_DEI_CONTI_V.equalsIgnoreCase(movimento.getCodicePdc())
 					|| !movimento.getCodPdc().equalsIgnoreCase("U.7.01.99.01.001")){
 				String errorePdc = " - Attenzione l'impegno selezionato non e' in partita di giro, deve appartenere al piano dei conti: U.7.01.99.01.001";
-				esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore(nomeEsteso, errorePdc));
+				esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeEsteso, errorePdc));
 			}
 			
 		} else {
 			
 			//CONTROLLO PER ACCERTAMENTO
 			
-			if(!Constanti.D_CLASS_TIPO_PIANO_DEI_CONTI_V.equalsIgnoreCase(movimento.getCodicePdc())
+			if(!CostantiFin.D_CLASS_TIPO_PIANO_DEI_CONTI_V.equalsIgnoreCase(movimento.getCodicePdc())
 					|| !movimento.getCodPdc().equalsIgnoreCase("E.9.01.99.99.999")){
 				String errorePdc = " - Attenzione l'accertamento selezionato non e' in partita di giro, deve appartenere al piano dei conti: E.9.01.99.99.999";
-				esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore(nomeEsteso, errorePdc));
+				esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeEsteso, errorePdc));
 			}
 			
 		}
@@ -5007,9 +5101,9 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		String codiceEntita = ReintroitoUtils.buildCodiceEntitaPerMessaggiDiErrore(impRichiesto);
 		
 		boolean errore = false;
-		if(caricatoItImp==null || caricatoItImp.getMovimentoGestione()==null || caricatoItImp.getMovimentoGestione().getNumero()==null){
+		if(caricatoItImp==null || caricatoItImp.getMovimentoGestione()==null || caricatoItImp.getMovimentoGestione().getNumeroBigDecimal()==null){
 			errore = true;
-		} else if(CommonUtils.maggioreDiZero(impRichiesto.getNumeroSubMovimento()) && caricatoItImp != null && caricatoItImp.getMovimentoGestione()!=null){
+		} else if(CommonUtil.maggioreDiZero(impRichiesto.getNumeroSubMovimento()) && caricatoItImp != null && caricatoItImp.getMovimentoGestione()!=null){
 			//CONTROLLIA DI NON ESSERE NEL CASO IN CUI SIA STATO INDICATO UN SUB
 			//MA IL SERVIZIO NON CI HA RESITUITO TALE SUB DOVE E' ATTESO
 			errore = subRichiestoNonTrovato(caricatoItImp, impRichiesto, impegno);
@@ -5038,23 +5132,23 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		boolean errore = false;
 		if(impegno){
 			Impegno imp = (Impegno) caricatoItImp.getMovimentoGestione();
-			if(StringUtils.isEmpty(imp.getElencoSubImpegni())){
+			if(StringUtilsFin.isEmpty(imp.getElencoSubImpegni())){
 				errore = true;
 			} else {
 				SubImpegno subCheMiApetto = imp.getElencoSubImpegni().get(0);
-				if(subCheMiApetto == null || subCheMiApetto.getNumero()==null 
-						|| (subCheMiApetto.getNumero().intValue()!= impRichiesto.getNumeroSubMovimento().intValue())){
+				if(subCheMiApetto == null || subCheMiApetto.getNumeroBigDecimal()==null 
+						|| (subCheMiApetto.getNumeroBigDecimal().intValue()!= impRichiesto.getNumeroSubMovimento().intValue())){
 					errore = true;
 				}
 			}
 		} else {
 			Accertamento acc = (Accertamento) caricatoItImp.getMovimentoGestione();
-			if(StringUtils.isEmpty(acc.getElencoSubAccertamenti())){
+			if(StringUtilsFin.isEmpty(acc.getElencoSubAccertamenti())){
 				errore = true;
 			} else {
 				SubAccertamento subCheMiApetto = acc.getElencoSubAccertamenti().get(0);
-				if(subCheMiApetto == null || subCheMiApetto.getNumero()==null 
-						|| (subCheMiApetto.getNumero().intValue()!= impRichiesto.getNumeroSubMovimento().intValue())){
+				if(subCheMiApetto == null || subCheMiApetto.getNumeroBigDecimal()==null 
+						|| (subCheMiApetto.getNumeroBigDecimal().intValue()!= impRichiesto.getNumeroSubMovimento().intValue())){
 					errore = true;
 				}
 			}
@@ -5064,7 +5158,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	
 	private OrdinativoInReintroitoInfoDto controlloStatoMovimento(EsitoRicercaMovimentoPkDto caricatoItImp,MovimentoKey impRichiesto,OrdinativoInReintroitoInfoDto esito,boolean impegno) {
 		
-		boolean isSub = CommonUtils.maggioreDiZero(impRichiesto.getNumeroSubMovimento());
+		boolean isSub = CommonUtil.maggioreDiZero(impRichiesto.getNumeroSubMovimento());
 		
 		String nomeEntita = ReintroitoUtils.buildNomeEntitaPerMessaggiDiErrore(impRichiesto, impegno);
 		String codiceEntita = ReintroitoUtils.buildCodiceEntitaPerMessaggiDiErrore(impRichiesto);
@@ -5090,7 +5184,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			}
 		}
 		
-		if(!Constanti.MOVGEST_STATO_DEFINITIVO.equals(statoCode) && !Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(statoCode)){
+		if(!CostantiFin.MOVGEST_STATO_DEFINITIVO.equals(statoCode) && !CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(statoCode)){
 			esito.addErrore(ErroreFin.OPERAZIONE_INCOMPATIBILE_CON_STATO_ENTITA.getErrore(nomeEntita + " " +codiceEntita," non definitivo"));
 		}
 		
@@ -5110,7 +5204,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		ReintroitoRitenute ritenute = datiInput.getRitenute();
 		List<ReintroitoRitenutaSplit> ritenuteSplit = datiInput.getRitenuteSplit();
 		if(!ReintroitoUtils.isEmpty(ritenute) && ReintroitoUtils.isEmpty(ritenuteSplit)
-				&& !StringUtils.isEmpty(ordinativiIncassoSulDb)){
+				&& !StringUtilsFin.isEmpty(ordinativiIncassoSulDb)){
 			List<ReintroitoRitenutaSplit> ritSplits = ReintroitoUtils.buildSplits(ritenute, ordinativiIncassoSulDb);
 			//setto l'elenco esploso:
 			datiInput.setRitenuteSplit(ritSplits);
@@ -5133,7 +5227,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	private OrdinativoInReintroitoInfoDto controlliRitenute(OrdinativoPagamento ordinativoPagamentoRicaricato,OrdinativoInReintroitoDatiDiInputDto datiInput, OrdinativoInReintroitoInfoDto esito,DatiOperazioneDto datiOperazione){
 		List<Ordinativo> elencoOrdinativiIncasso = ordinativoPagamentoRicaricato.getElencoOrdinativiCollegati();
 		
-		if(!StringUtils.isEmpty(elencoOrdinativiIncasso)){
+		if(!StringUtilsFin.isEmpty(elencoOrdinativiIncasso)){
 			//SE L'ORDINATIVO DI PAGAMENTO HA DEGLI ORDINATIVI DI INCASSO MI ASPETTO
 			//CHE IL CHIAMANTE MI ABBIA INDICATO COME REINTROITARLI 
 			
@@ -5144,21 +5238,21 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			if(!ReintroitoUtils.tuttiCoerenti(ritenuteSplit)){
 				//ALMENO UNA RIGA E' SPROVVISTA DI UN DATO TRA ORDINATIVO DI INCASSO, IMPEGNO E ACCERTAMENTO
 				//(CHE INVECE DEVONO ESSERCI TUTTI PER OGNI RIGA)
-				esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Ritenute", "Compilare tutte le righe con ordinativi, impegni e accertamenti"));
+				esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Ritenute", "Compilare tutte le righe con ordinativi, impegni e accertamenti"));
 				return esito;
 			}
 			
 			//INDICARE ritenute o ritenuteSpli:
 			if(ReintroitoUtils.isEmpty(ritenute) && ReintroitoUtils.isEmpty(ritenuteSplit)){
 				//L'ord di pagamento ha degli ord incasso collegati occorre indicare come reintroitarli
-				esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Ritenute", "L'ordinativo ha degli ordinativi di incasso collegati, indicare come reintroitarli."));
+				esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Ritenute", "L'ordinativo ha degli ordinativi di incasso collegati, indicare come reintroitarli."));
 				return esito;
 			}
 			
 			//INDICARE uno solo tra ritenute e ritenuteSplit:
 			if(!ReintroitoUtils.isEmpty(ritenute) && !ReintroitoUtils.isEmpty(ritenuteSplit)){
 				//L'ord di pagamento ha degli ord incasso collegati occorre indicare come reintroitarli
-				esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Ritenute", "Indicare uno solo tra ritenute e ritenuteSplit."));
+				esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Ritenute", "Indicare uno solo tra ritenute e ritenuteSplit."));
 				return esito;
 			}
 			
@@ -5217,7 +5311,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 				boolean presenteInListaInput = ReintroitoUtils.contenutoInLista(ordinativiInInputKey, dbIt);
 				if(!presenteInListaInput){
 					String annoNumero = dbIt.getAnno()+"/"+dbIt.getNumero();
-					esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Ritenute", "Non e' stato indicato come reintroitare l'ordinativo di incasso: "+annoNumero));
+					esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Ritenute", "Non e' stato indicato come reintroitare l'ordinativo di incasso: "+annoNumero));
 					return esito;
 				}
 			}
@@ -5229,7 +5323,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 				boolean presenteSuDb = ReintroitoUtils.contenutoInLista(ordinativiDbKeys, ricevutoIt);
 				if(!presenteSuDb){
 					String annoNumero = ricevutoIt.getAnno()+"/"+ricevutoIt.getNumero();
-					esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Ritenute", "L'ordinativo di incasso: "+annoNumero + " non fa parte di quelli collegati all'ordinativo di pagamento."));
+					esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Ritenute", "L'ordinativo di incasso: "+annoNumero + " non fa parte di quelli collegati all'ordinativo di pagamento."));
 					return esito;
 				}
 			}
@@ -5286,7 +5380,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		boolean caricaDatiUlteriori = true;
 		//
 		
-		String tipoMovimento = Constanti.MOVGEST_TIPO_IMPEGNO;
+		String tipoMovimento = CostantiFin.MOVGEST_TIPO_IMPEGNO;
 		DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		caricaDatiOpzionaliDto.setEscludiAnnullati(true);
 		caricaDatiOpzionaliDto.setCaricaDisponibilePagare(false);
@@ -5308,7 +5402,8 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		String annoEsercizio = impKey.getAnnoEsercizio().toString();
 		OttimizzazioneMovGestDto ottimizazioneDaChiamante = null;
 		
-		esito =  impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoMovimento, numeroMovimento, paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, tipoMovimento, caricaDatiUlteriori, ottimizazioneDaChiamante );
+		esito =  impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoMovimento, numeroMovimento, 
+				paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, tipoMovimento, caricaDatiUlteriori, ottimizazioneDaChiamante, false);
 	
 		//aggiungo alla cache:
 		if(impegniCaricati!=null){
@@ -5337,7 +5432,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		boolean caricaDatiUlteriori = true;
 		//
 		
-		String tipoMovimento = Constanti.MOVGEST_TIPO_ACCERTAMENTO;
+		String tipoMovimento = CostantiFin.MOVGEST_TIPO_ACCERTAMENTO;
 		DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		caricaDatiOpzionaliDto.setEscludiAnnullati(true);
 		
@@ -5358,7 +5453,8 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		String annoEsercizio = accKey.getAnnoEsercizio().toString();
 		OttimizzazioneMovGestDto ottimizazioneDaChiamante = null;
 		
-		esito = accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoMovimento, numeroMovimento, paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, tipoMovimento, caricaDatiUlteriori, ottimizazioneDaChiamante );
+		esito = accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoMovimento, numeroMovimento, 
+				paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, tipoMovimento, caricaDatiUlteriori, ottimizazioneDaChiamante, false);
 		
 		//aggiungo alla cache:
 		if(accertamentiCaricati!=null){
@@ -5408,14 +5504,14 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 					subIt.setSiacRLiquidazioneOrds(toList(siacRLiquidazioneOrd));
 					
 					//E GLI SETTO COME IMPORTO LA SOMMA DI TUTTI I SUB ORDINATIVI (restara' solo lui):
-					salvaImportoOrdinativoTs(subIt, datiOperazioneDto, sommaSub, Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE);
+					salvaImportoOrdinativoTs(subIt, datiOperazioneDto, sommaSub, CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE);
 					first = false;
 					continue;
 					
 				}
 				//SEGNO DA ELIMINARE TUTTI I SUB ORDINATIVI SUCCESSIVI AL PRIMO
 //				subDaEliminare.add(subIt); SIAC-6801
-				DatiOperazioneUtils.annullaRecord(subIt, siacTOrdinativoTRepository, datiOperazioneDto,siacTAccountRepository);
+				DatiOperazioneUtil.annullaRecord(subIt, siacTOrdinativoTRepository, datiOperazioneDto,siacTAccountRepository);
 				//SIAC-6665
 				aggiornaImportoAttualeOrdinativo(subIt,  BigDecimal.ZERO);
 				//SIAC-6801
@@ -5425,7 +5521,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		}
 		
 		//ELIMINO I SUB ORDINATIVI SUCCESSIVI AL PRIMO:
-		if(!StringUtils.isEmpty(subDaEliminare)){
+		if(!StringUtilsFin.isEmpty(subDaEliminare)){
 			//ELIMINA RIMOSSI
 			for(SiacTOrdinativoTFin iterato : subDaEliminare){
 				
@@ -5464,7 +5560,7 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			if(siacRLiquidazioneOrdFin.getDataCancellazione() != null || siacRLiquidazioneOrdFin.getDataFineValidita() != null) {
 				continue;
 			}
-			DatiOperazioneUtils.cancellaRecord(siacRLiquidazioneOrdFin, siacRLiquidazioneOrdRepository, datiOperazioneDto, siacTAccountRepository);					
+			DatiOperazioneUtil.cancellaRecord(siacRLiquidazioneOrdFin, siacRLiquidazioneOrdRepository, datiOperazioneDto, siacTAccountRepository);					
 		}
 	}
 
@@ -5505,10 +5601,10 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	private void rimuoviSubDocumento(SiacTOrdinativoTFin subOrdinativo, DatiOperazioneDto datiOperazioneDto){
 		//RIMUOVO l'eventuale DOCUMENTO:
 		List<SiacRSubdocOrdinativoTFin> rDocs = subOrdinativo.getSiacRSubdocOrdinativoTs();
-		List<SiacRSubdocOrdinativoTFin> rDocsValidi = CommonUtils.soloValidiSiacTBase(rDocs, datiOperazioneDto.getTs());
-		if(!StringUtils.isEmpty(rDocsValidi)){
+		List<SiacRSubdocOrdinativoTFin> rDocsValidi = CommonUtil.soloValidiSiacTBase(rDocs, datiOperazioneDto.getTs());
+		if(!StringUtilsFin.isEmpty(rDocsValidi)){
 			for(SiacRSubdocOrdinativoTFin it: rDocsValidi){
-				DatiOperazioneUtils.cancellaRecord(it, siacRSubdocOrdinativoTFinRepository, datiOperazioneDto,siacTAccountRepository);
+				DatiOperazioneUtil.cancellaRecord(it, siacRSubdocOrdinativoTFinRepository, datiOperazioneDto,siacTAccountRepository);
 			}
 		}
 	}
@@ -5528,8 +5624,8 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 		Integer idSiacTOrdinativoTs = siacTOrdinativoTFin.getOrdTsId();
 		Integer idEnte = datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId();
 		Timestamp now = datiOperazione.getTs();
-		List<SiacTOrdinativoTsDetFin> importoAttualeList = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs );
-		SiacTOrdinativoTsDetFin siacTOrdinativoTsDet = CommonUtils.getFirst(importoAttualeList);
+		List<SiacTOrdinativoTsDetFin> importoAttualeList = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, now, CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, idSiacTOrdinativoTs );
+		SiacTOrdinativoTsDetFin siacTOrdinativoTsDet = CommonUtil.getFirst(importoAttualeList);
 		return siacTOrdinativoTsDet.getOrdTsDetImporto();
 	}
 	
@@ -5629,9 +5725,9 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 			DatiOperazioneDto datiOperazioneCancella = clone(datiOperazione);
 			datiOperazioneCancella.setOperazione(Operazione.CANCELLAZIONE_LOGICA_RECORD);
 			for(SiacRDocOnereOrdinativoTsFin it : listaRel){
-				if(DatiOperazioneUtils.isValido(it, ts)){
+				if(DatiOperazioneUtil.isValido(it, ts)){
 					//CANCELLO LOGICAMENTE IL LEGAME CON IL VECCHIO STATO:
-					DatiOperazioneUtils.cancellaRecord(it, siacRDocOnereOrdinativoTsFinRepository, datiOperazioneCancella, siacTAccountRepository);
+					DatiOperazioneUtil.cancellaRecord(it, siacRDocOnereOrdinativoTsFinRepository, datiOperazioneCancella, siacTAccountRepository);
 					//
 				}
 			}
@@ -5648,8 +5744,8 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	protected void settaImportiSubOrdinativo(OttimizzazioneOrdinativoPagamentoDto datiOttimizzazione,
 			SubOrdinativo subOrdinativoIt,SiacTOrdinativoTFin siacTOrdinativoT){
 		//importi sub:
-		BigDecimal iniziale = datiOttimizzazione.estraiImportoSubOrdinativo(siacTOrdinativoT, Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_INIZIALE);
-		BigDecimal attuale = datiOttimizzazione.estraiImportoSubOrdinativo(siacTOrdinativoT, Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE);
+		BigDecimal iniziale = datiOttimizzazione.estraiImportoSubOrdinativo(siacTOrdinativoT, CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_INIZIALE);
+		BigDecimal attuale = datiOttimizzazione.estraiImportoSubOrdinativo(siacTOrdinativoT, CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE);
 		subOrdinativoIt.setImportoAttuale(attuale);
 		subOrdinativoIt.setImportoIniziale(iniziale);
 		//
@@ -5659,4 +5755,35 @@ public abstract class OrdinativoDad <T extends Ordinativo, S extends SubOrdinati
 	protected void setDaTrasmettere(Integer idOrdinativo, Boolean daTrasmettere) {
 		siacTOrdinativoRepository.setDaTrasmettere(idOrdinativo, daTrasmettere);
 	}
+	
+	public boolean isContoTesoreriaVincolatoSuCapitolo(ContoTesoreria conto, Capitolo<?,?> cap, Ente ente) {
+//		SiacDContotesoreriaFin contoTes = siacDContotesoreriaRepository.findContotesoreriaVincolatosuCapitoloByCode(ente.getUid(), conto.getCodice(), cap.getUid());
+		//la siac_r_vincolo_sottoconto puo' anche non esserci, in quel caso e' stato richiesto di considerare il saldo a zero.
+		SiacDContotesoreriaFin contoTes = siacDContotesoreriaRepository.findContotesoreriaVincolatoByCode(ente.getUid(), conto.getCodice());
+		if(contoTes == null || contoTes.getUid() == 0) {
+			return false;
+		}
+        SiacTVincoloFin vincolo = siacTBilElemRepository.findVincoloSuCapitoloByCode(ente.getUid(), cap.getUid());
+		return vincolo != null && vincolo.getUid() != 0;
+	}
+
+	public ContoTesoreria caricaContoTesoreriaPerRipianamento(Ente ente){
+		List<SiacDContotesoreriaFin> contos = siacDContotesoreriaRepository.findContoTesoreriaPerRipianamentoByCode(ente.getUid());
+		if(contos == null || contos.isEmpty() || contos.get(0) == null) {
+			return null;
+		}
+		return map(contos.get(0), ContoTesoreria.class, FinMapId.SiacDContotesoreria_Contotesoreria);
+	}
+	
+	public String caricaCodiceContoTesoreriaSenzaCapienzaCollegatoAdOrdinativo(Ordinativo ord, Ente ente){
+		List<SiacDContotesoreriaFin> contos = siacROrdinativoContotesNoDispFinRepository.findContoTesoreriaSenzaCapienzaByOrdinativoId(ord.getUid(),  ente.getUid());
+		if(contos == null || contos.isEmpty() || contos.get(0) == null) {
+			return null;
+		}
+		if(contos.size() > 1 ) {
+			throw new BusinessException(ErroreCore.ERRORE_DI_SISTEMA.getErrore("presenti piu conti senza capienza validi collegati all'ordinativo."));
+		}
+		return contos.get(0).getContotesCode();
+	}
+	
 }

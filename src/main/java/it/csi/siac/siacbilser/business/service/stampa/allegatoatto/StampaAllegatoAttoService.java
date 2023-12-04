@@ -5,9 +5,7 @@
 package it.csi.siac.siacbilser.business.service.stampa.allegatoatto;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +65,7 @@ public class StampaAllegatoAttoService extends SyncReportBaseService<StampaAlleg
 	@Override
 	protected void initReportHandler() {
 		reportHandler.setAllegatoAtto(allegatoAtto);
+		reportHandler.setAllegatoAttoChecklist(req.getAllegatoAttoChecklist());
 		reportHandler.setEnte(req.getEnte());
 		reportHandler.setRichiedente(req.getRichiedente());
 		
@@ -126,13 +125,7 @@ public class StampaAllegatoAttoService extends SyncReportBaseService<StampaAlleg
 		res.setReport(report);
 	}
 
-	@Override
-	protected void postElaborationError(ReportElaborationException e) {
-		final String methodName = "postElaborationError";
-		log.info(methodName, "post start elaborazione avvenuta con errori: " + e.getMessage());
-		// Rilancio l'eccezione
-		throw e;
-	}
+
 	//stampa nei log i dettaglio (info) dell'allegato atto
 	private void stampaDettaglioOperazione() {
 		StringBuilder sb = new StringBuilder();

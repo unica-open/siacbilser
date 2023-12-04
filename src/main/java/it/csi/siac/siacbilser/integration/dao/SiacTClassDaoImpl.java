@@ -141,7 +141,6 @@ public class SiacTClassDaoImpl extends JpaDao<SiacTClass, Integer> implements Si
 	 */
 	public SiacTClass findClassificatore(String annoEsercizio, SiacDClassTipoEnum tipoClassificatore, Integer siacTEnteProprietarioId, String... classifCodes) {
 		final String methodName = "findClassificatore";		
-		
 		if(classifCodes == null || classifCodes.length==0 || classifCodes[0] == null){
 			throw new IllegalArgumentException("E' necessario specificare il codice del classificatore da ricercare.");
 		}
@@ -156,12 +155,20 @@ public class SiacTClassDaoImpl extends JpaDao<SiacTClass, Integer> implements Si
 			throw new IllegalStateException("Impossibile trovare il classificatore di tipo "+tipoClassificatore + " con codice: "+classifCodes[0] + ".");
 		}	
 				
-		if(classifCodes.length == 1) {	
+		if(!SiacDClassTipoEnum.Cdc.getCodice().equals(tipoClassificatore.getCodice()) || classifCodes.length == 1) {//task-100	
 			SiacTClass tclass = tclasses.get(0);						
 			log.debug(methodName, "Returning first element found of " + tclasses.size() + " (1 was expected) elements.");
 			log.debug(methodName, "Returning: id: " + tclass.getClassifId() + " code: " + tclass.getClassifCode() + " desc: " + tclass.getClassifDesc());
-			return tclass;			
-		} 
+			return tclass;	
+		}else if(classifCodes.length == 2) {//task-90
+			SiacTClass tclass = null;
+			for(SiacTClass classs : tclasses) {
+				if(classs.getClassifId().toString().equals(classifCodes[1]))
+					tclass = classs;
+			}
+			return tclass;
+		}
+		
 		
 		return recursiveFindClassificatore(tclasses.get(0),tipoClassificatore.getClassTipoFiglio(), Arrays.copyOfRange(classifCodes, 1, classifCodes.length));
 		

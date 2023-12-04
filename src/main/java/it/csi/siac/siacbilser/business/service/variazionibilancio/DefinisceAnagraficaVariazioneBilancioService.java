@@ -5,10 +5,7 @@
 package it.csi.siac.siacbilser.business.service.variazionibilancio;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -29,20 +26,17 @@ import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitolo
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
+import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
+import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
+import it.csi.siac.siacbilser.processi.GestoreProcessiVariazioneBilancio;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
-import it.csi.siac.siaccorser.frontend.webservice.msg.ExecAzioneRichiesta;
-import it.csi.siac.siaccorser.frontend.webservice.msg.ExecAzioneRichiestaResponse;
-import it.csi.siac.siaccorser.model.Azione;
-import it.csi.siac.siaccorser.model.AzioneRichiesta;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
-import it.csi.siac.siaccorser.model.TipoAzione;
-import it.csi.siac.siaccorser.model.VariabileProcesso;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
@@ -57,7 +51,9 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {
 		variazione = req.getVariazioneImportoCapitolo();
-		
+		// Ho bisogno che sia impostato nella response per l'async responseHandler.
+		res.setVariazioneImportoCapitolo(variazione);
+
 		checkEntita(variazione, "variazione importi capitolo");	
 		checkNotNull(variazione.getNumero(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("variazione importi capitolo"), false);
 		
@@ -70,9 +66,9 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 		checkNotNull(variazione.getStatoOperativoVariazioneDiBilancio(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("stato operativo variazione"), false);
 		
 		variazione.setListaDettaglioVariazioneImporto(null);
-		
-		checkNotNull(req.getIdAttivita(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("id attivita"));
-		checkNotNull(req.getListaVariabiliProcesso(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("varibiali processo"));
+		//SIAC-8332
+//		checkNotNull(req.getIdAttivita(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("id attivita"));
+//		checkNotNull(req.getListaVariabiliProcesso(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("varibiali processo"));
 	}
 	
 	@Override
@@ -88,13 +84,13 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRES_NEW, timeout=AsyncBaseService.TIMEOUT) //hook per l'async
+	@Transactional(propagation=Propagation.REQUIRES_NEW, timeout=AsyncBaseService.TIMEOUT*4) //SIAC-7403
 	public DefinisceAnagraficaVariazioneBilancioResponse executeServiceTxRequiresNew(DefinisceAnagraficaVariazioneBilancio serviceRequest) {
 		return super.executeServiceTxRequiresNew(serviceRequest);
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(timeout=AsyncBaseService.TIMEOUT*4)//SIAC-7403
 	public DefinisceAnagraficaVariazioneBilancioResponse executeService(DefinisceAnagraficaVariazioneBilancio serviceRequest) {
 		return super.executeService(serviceRequest);
 	}
@@ -106,7 +102,9 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 		
 		checkNecessarioAttoAmministrativoVariazioneDiBilancio();
 		
-		checkImporti();
+		//SIAC-7972
+		loadAndCheckImportiInDiminuzione();
+		
 		boolean isQuadraturaCorrettaStanziamento = isQuadraturaCorrettaStanziamento();
 		res.setIsQuadraturaCorrettaStanziamento(Boolean.valueOf(isQuadraturaCorrettaStanziamento));
 		checkBusinessCondition(isQuadraturaCorrettaStanziamento, ErroreBil.QUADRATURA_NON_CORRETTA.getErrore("Definizione variazione"));
@@ -117,8 +115,23 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 		//Non si vuole nemmeno avere l'errore sull'errore di quadratura della cassa! si suppone che essendo arrivati qui 
 		//L'utente abbia gia' scelto nel task precedente di voler bypassare il controllo di quadratura.
 //		checkBusinessCondition(isQuadraturaCorrettaStanziamentoCassa, ErroreBil.QUADRATURA_NON_CORRETTA.getErrore("Definizione variazione"));
+				
+		//task-276 (stato precedente nel caso di due utenti che modificano la stessa variazione, contiene lo stato pre-definizione) 
+		StatoOperativoVariazioneBilancio statoPrecedente = variazione.getStatoOperativoVariazioneDiBilancio();
 		
-		variazione.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.DEFINITIVA);
+		StatoOperativoVariazioneBilancio statoCorrente = findStatoOperativoCorrente();
+		
+		if (!statoPrecedente.getVariableName().equals(statoCorrente.getVariableName())) {
+			throw new BusinessException(ErroreBil.VARIAZIONE_MODIFICATA.getErrore());
+		}
+		
+		StatoOperativoVariazioneBilancio statoSuccessivo = GestoreProcessiVariazioneBilancio.getStatoFinaleVariazioneDiBilancio(statoCorrente, isQuadraturaCorrettaStanziamento);
+		if(statoSuccessivo == null) {
+			//qua non dovrei mai finire in quanto la quadratura e' gia' controllata prima, ma lo metto per sicurezza
+			//task-276: ci si finisce in caso di concorrenza
+			throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impossibile evolvere il processo allo stato successivo."));
+		}
+		variazione.setStatoOperativoVariazioneDiBilancio(statoSuccessivo);
 		variazioniDad.aggiornaAnagraficaVariazioneImportoCapitolo(variazione);
 		
 		// SIAC-6881: gestione delle componenti annegato nell'aggiornaImportiCapitolo
@@ -127,8 +140,16 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 		aggiornaStatoCapitoliProvvisori();
 		
 		res.setVariazioneImportoCapitolo(variazione);
-		definisciProcessoVariazioneDiBilancio();
 	}
+	
+	//task-276
+	private StatoOperativoVariazioneBilancio findStatoOperativoCorrente() {
+		final String methodName = "findStatoOperativoCorrente";
+		log.debug(methodName, "popolo i dati della variazione con uid : " + variazione.getUid());
+		StatoOperativoVariazioneBilancio statoCorrente = variazioniDad.findStatoOperativoVariazioneDiBilancio(variazione);
+		return statoCorrente;
+	}
+	
 	
 	private void popolaDatiDellaVariazione() {
 		final String methodName = "popolaDatiDellaVariazione";
@@ -174,59 +195,6 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 		return stato != null && StatoOperativoElementoDiBilancio.PROVVISORIO.equals(stato);
 	}
 
-	/**
-	 * Definisci processo variazione di bilancio.
-	 */
-	private void definisciProcessoVariazioneDiBilancio() {
-		ExecAzioneRichiesta execAzioneRichiesta = new ExecAzioneRichiesta();
-		execAzioneRichiesta.setRichiedente(req.getRichiedente());
-		execAzioneRichiesta.setDataOra(new Date());
-		
-		AzioneRichiesta azioneRichiesta = new AzioneRichiesta();
-		Azione azione = new Azione();
-		azioneRichiesta.setAzione(azione);
-		//ID DELL'attività ovvero id istanza. Ad esempio: "VariazioneDiBilancio--1.0--12--VariazioneDiBilancio_AggiornamentoVariazione--it1--mainActivityInstance--noLoop"
-		azioneRichiesta.setIdAttivita(req.getIdAttivita());
-		azione.setTipo(TipoAzione.ATTIVITA_PROCESSO);
-		azione.setNomeProcesso("VariazioneDiBilancio");
-		azione.setNomeTask("VariazioneDiBilancio-DefinizioneDellaVariazione");
-		
-		List<VariabileProcesso> variabiliToUse = new ArrayList<VariabileProcesso>(req.getListaVariabiliProcesso());
-		
-		setVariabileProcesso(azioneRichiesta, variabiliToUse, "descrizione");
-		setVariabileProcesso(azioneRichiesta, variabiliToUse, "descrizioneBreve");
-		setVariabileProcesso(azioneRichiesta, variabiliToUse, "siacSacProcesso");
-		setVariabileProcesso(azioneRichiesta, variabiliToUse, "invioGiunta");
-		setVariabileProcesso(azioneRichiesta, variabiliToUse, "invioConsiglio");
-		setVariabileProcesso(azioneRichiesta, "annullaVariazione", Boolean.FALSE);
-		setVariabileProcesso(azioneRichiesta, "quadraturaVariazioneDiBilancio", Boolean.TRUE);
-		setVariabileProcesso(azioneRichiesta, "statoVariazioneDiBilancio", StatoOperativoVariazioneDiBilancio.DEFINITIVA.toString());
-		
-		execAzioneRichiesta.setAzioneRichiesta(azioneRichiesta);
-		
-		log.logXmlTypeObject(execAzioneRichiesta, "Request per il servizio ExecAzioneRichiesta.");
-		ExecAzioneRichiestaResponse execAzioneRichiestaResponse = coreService.execAzioneRichiesta(execAzioneRichiesta);
-		log.logXmlTypeObject(execAzioneRichiestaResponse, "Risposta ottenuta dal servizio ExecAzioneRichiesta.");
-		checkServiceResponseFallimento(execAzioneRichiestaResponse);
-	}
-	
-	
-	protected void setVariabileProcesso(AzioneRichiesta azioneRichiesta, List<VariabileProcesso> oldVariabiliProcesso, String nome) {
-		Object valore = null;
-		boolean found = false;
-		
-		for(Iterator<VariabileProcesso> it = oldVariabiliProcesso.iterator(); it.hasNext() && !found;) {
-			VariabileProcesso vp = it.next();
-			if(vp != null && nome.equals(vp.getNome())) {
-				valore = vp.getValore();
-				found = true;
-				it.remove();
-			}
-		}
-		
-		super.setVariabileProcesso(azioneRichiesta, nome, valore);
-	}
-	
 	
 	/**
 	 * Controlla la coerenza della variazione con la fase del bilancio.
@@ -316,11 +284,30 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 		importiCap.addStanziamento(stanziamento);
 		importiCap.addStanziamentoResiduo(stanziamentoResiduo);
 		importiCap.addStanziamentoCassa(stanziamentoCassa);
+		//SIAC-7784
+		adeguaMassimoImpegnabile(stanziamento, importiCap);
+		
 		((Capitolo)capitolo).getListaImportiCapitolo().set(delta, importiCap);
 		if(delta == 0) {
 			((Capitolo)capitolo).setImportiCapitolo(importiCap);
 		}
 		importiCapitoloDad.aggiornaImportiCapitolo(capitolo, importiCap, anno);
+	}
+
+	//SIAC-7784
+	private void adeguaMassimoImpegnabile(BigDecimal deltaVariazione, ImportiCapitolo importiCap) {
+		//SIAC-8008
+		if((deltaVariazione != null && BigDecimal.ZERO.compareTo(deltaVariazione) <= 0) || ! (importiCap instanceof ImportiCapitoloUG)) {
+			//variazione importo positiva oppure capitolo non di uscita gestione, esco
+			return;
+		}
+		BigDecimal massimoImpegnabile =	((ImportiCapitoloUG) importiCap).getMassimoImpegnabile();
+		BigDecimal importoSta = importiCap.getStanziamento();
+		//SIAC-8008
+		if(importoSta != null && massimoImpegnabile != null && importoSta.compareTo(massimoImpegnabile) <0) {
+			//lo stanziamento e' minore del masismo impegnabile: lo adeguo
+			 ((ImportiCapitoloUG) importiCap).setMassimoImpegnabile(importoSta);
+		}
 	}
 	
 	/**
@@ -337,7 +324,7 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 				// Elimina la componente
 				componenteImportiCapitoloDad.annullaRigaComponenteImportiCapitolo(dvcic.getComponenteImportiCapitolo());
 			} else {
-				aggiornaImportoComponente(dvcic);
+				aggiornaImportoComponente(dvcic, dettVarImp);
 			}
 		}
 	}
@@ -365,13 +352,125 @@ public class DefinisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 	}
 
 	/**
-	 * Aggiornamento dell'importo della componente con il dato della variazione
-	 * @param dvcic il dettaglio della variazione importo
+	 * Aggiornamento degli importi sulle componenti.
+	 * Il capitolo ha un  <code> siac_t_bil_ele_det </code> (lo stanziamento) a cui e' associato un <code> siac_t_bil_elem_det_comp </code> 
+	 * (la componente relativa allo stanziamento). 
+	 * Quando l'utente associa un capitolo alla variazione, il sistema va a creare un 
+	 * <code>siac_t_bil_elem_det_var</code> collegato al <code>siac_t_bil_elem_det </code> (lo stanziamento che si sta variando) perche' e' 
+	 * necessario avere un legame tra l'importo (ad esempio "-10,00") ed il <code> siac_t_bil_elem_det </code> su cui andrà applicato. 
+	 * Analogamente va a scrivere un <code>siac_t_bil_elem_det_comp_var </code> che è collegato al <code> siac_t_bil_elem_det_comp </code>.
+	 * <br>
+	 * <strong> Cosa succede quando l'utente decide di inserire una nuova componente sul capitolo? </strong><br> 
+	 * Il sistema puo' scrivere un record sulla <code> siac_t_bil_elem_det_var </code> e collegarlo al <code> siac_t_bil_elem_det</code>
+	 *  ma quando prova a scrivere un <code> siac_t_bil_elem_det_comp_var </code> non c'e' ancora un record sulla <code> siac_t_bil_elem_det_comp</code>. 
+	 *  Il sistema e' pertanto costretto a inserire una componente "provvisoria". Il fatto che tale componente non venga mostrata come gia' collegata al capitolo e' 
+	 *  garantito dal fatto che in consultazione del capitolo non vengono tirate su le componenti collegate a variazioni in stato non definitivo e marcate con il flag "nuova componente"
+	 *
+	 * @param dvcic the dvcic
+	 * @param dettVarImp the dett var imp
 	 */
-	private void aggiornaImportoComponente(DettaglioVariazioneComponenteImportoCapitolo dvcic) {
-		BigDecimal newImporto = dvcic.getComponenteImportiCapitolo().computeImportoByTipoDettaglio(dvcic.getTipoDettaglioComponenteImportiCapitolo()).add(dvcic.getImporto());
-		dvcic.getComponenteImportiCapitolo().impostaImportoByTipoDettaglio(newImporto, dvcic.getTipoDettaglioComponenteImportiCapitolo());
-		componenteImportiCapitoloDad.aggiornaComponenteImportiCapitolo(dvcic.getComponenteImportiCapitolo());
+	//SIAC-7688
+	private void aggiornaImportoComponente(DettaglioVariazioneComponenteImportoCapitolo dvcic, DettaglioVariazioneImportoCapitolo dettVarImp) {
+		//1 - considero la componente associata alla siac_t_bil_elem_det_var_comp
+		ComponenteImportiCapitolo componenteDelDettaglio = dvcic.getComponenteImportiCapitolo();
+		// la componente e' segnata come nuova componente??
+		boolean gestioneNuovaComponente = dvcic.isFlagNuovaComponenteCapitolo()
+				//controllo se vi siano altre componenti dello stesso tipo associate al capitolo tramite variazioni concorrente
+				&& hasComponentiDefinitiveEProvvisorieAssociate(dettVarImp.getCapitolo(), componenteDelDettaglio.getTipoComponenteImportiCapitolo());
+		
+		//se la componente e' nuova, devo controllare che non sia gia' stata inserita da una variazione concorrente
+		if(gestioneNuovaComponente) {
+			gestisciComponenteNuovaSuCapitolo(dvcic, dettVarImp, componenteDelDettaglio);
+			return;
+		}
+		
+		effettuaAggiornamentoImportoComponenteSuDB(dvcic, componenteDelDettaglio);
+	}
+
+	/**
+	 * Gestisco i casi in cui la componente sia associata al capitolo tramite la variazione
+	 * @param dvcic
+	 * @param dettVarImp
+	 * @param componenteDelDettaglio
+	 */
+	//SIAC-7688
+	private void gestisciComponenteNuovaSuCapitolo(DettaglioVariazioneComponenteImportoCapitolo dvcic, DettaglioVariazioneImportoCapitolo dettVarImp, ComponenteImportiCapitolo componenteDelDettaglio) {
+		ComponenteImportiCapitolo componenteImportiCapitoloCollegataAVariazone = dvcic.getComponenteImportiCapitolo();
+		//carico la componente asociata al capitolo tramite un'altra variazione resa definitiva nel periodo tra la creazione di questa variazione e adesso (la sua definizione)
+		ComponenteImportiCapitolo cicDefinitivaSuCapitolo = caricaComponenteCorrispondenteCollegatalCapitoloEAVariazioneDefONoVariazione(dettVarImp.getCapitolo(), componenteDelDettaglio);
+		
+		if(cicDefinitivaSuCapitolo == null || cicDefinitivaSuCapitolo.getUid() == componenteImportiCapitoloCollegataAVariazone.getUid()) {
+			//non esiste nessuna componente associata al capitolo e collegata a variazione degfinitiva: sono la prima delle variazioni concorrenti che 
+			//cerca di inserire la nuova componente sul capitolo, mi comporto come se fossi l'unica e aggiorno la componente a me collegata.
+			effettuaAggiornamentoImportoComponenteSuDB(dvcic, componenteImportiCapitoloCollegataAVariazone);
+			return;
+		}
+		//la componente era nuova quando e' stata inserita la variazione,  ma nel frattempo un'altra variazione ha collegato quella stessa componente al capitolo.
+		//aggiorno pertanto la componente gia' associata al capitolo per non avere record duplicati
+		effettuaAggiornamentoImportoComponenteSuDB(dvcic, cicDefinitivaSuCapitolo);
+		// il record di dettaglio va spostato sulla componente del capitolo e la riga di componente "vecchia" eliminata
+		componenteImportiCapitoloDad.spostaDettaglioVariazioneSuComponente(dvcic, cicDefinitivaSuCapitolo);
+		return;
+	}
+
+	/**
+	 * Effettua aggiornamento dell'importo della componente su DB.
+	 *
+	 * @param dvcic the dvcic
+	 * @param componenteImportoCapitoloDaAggiornare the componente importo capitolo da aggiornare
+	 */
+	private void effettuaAggiornamentoImportoComponenteSuDB(DettaglioVariazioneComponenteImportoCapitolo dvcic,	ComponenteImportiCapitolo componenteImportoCapitoloDaAggiornare) {
+		BigDecimal newImporto = componenteImportoCapitoloDaAggiornare.computeImportoByTipoDettaglio(dvcic.getTipoDettaglioComponenteImportiCapitolo()).add(dvcic.getImporto());
+		componenteImportoCapitoloDaAggiornare.impostaImportoByTipoDettaglio(newImporto, dvcic.getTipoDettaglioComponenteImportiCapitolo());
+		componenteImportiCapitoloDad.aggiornaComponenteImportiCapitolo(componenteImportoCapitoloDaAggiornare);
+	}
+
+	/**
+	 * Checks for componenti definitive E provvisorie associate.
+	 * Considero il seguente caso (limite);
+	 * <ul>
+	 *    <li> l'utente inserisce la variazione A che aggiunge la componente di tipo a' sul capitolo alpha e la lascia in stato BOZZA
+	 *    <li> l'utente inserisce la variazione B che anch'essa aggiunge la componente di tipo a' sul capitolo alpha e lascia anche tale variazioni in stato BOZZA.
+	 * </ul>
+	 * Il sistema in questo caso sia per la variazione A che per la variazione B ha inserito tre record (uno per ogni anno) della componente a' sul capitolo alpha.
+	 * Quindi il capitolo è in totale collegato a 6 siac_t_bil_elem_det_comp per la componente di tipo a' con importo a zero. 
+	 * Tutte le componenti collegate ad un capitolo E ad una variazione in stato <> 'D' non vengono considerate nella lettura delle componenti e quindi nessuna 
+	 * delle sei componenti di cui sopra appare in consultazione del capitolo. Pertanto vengono considerate per semplicita' "provvisorie".
+	 * <ul>
+	 *    <li> l'utente rende definitiva la variazione B
+	 * </ul>
+	 * Quando questo accade, l'importo del capitolo viene aggiornato ed i 3 record siac_t_bil_elem_det_comp collegati al capitolo tramite la variazione B 
+	 * vengono considerati collegati effettivamente al capitolo. Per semplicita, nel metodo si chiamano queste componenti "definitive".
+	 * 
+	 * Questo metodo si occupa di controllare se, per un dato capitolo ed un dato tipo componente, vi siano piu' componenti  (siac_t_bil_elem_det_comp) 
+	 * associate a questo capitolo, quindi se e' stato in qualche modo seguito l'iter descritto sopra. 
+	 * 
+	 * @param cp the cp
+	 * @param tc the tc
+	 * @return true, if successful
+	 */
+	private boolean hasComponentiDefinitiveEProvvisorieAssociate(Capitolo<?,?> cp, TipoComponenteImportiCapitolo tc) {
+		return componenteImportiCapitoloDad.hasComponentiDefinitiveEProvvisorieAssociate(cp, tc);
+	}
+
+	/**
+	 * Dato un capitolo ed una componente, ottengo la componente (ove presente) che abbia lo stesso tipo della componente input, 
+	 * sia relativa allo stesso anno, ma sia collegata al capitolo e ad una variazione definitiva o a nessuna variazione.
+	 *
+	 * @param capitolo the capitolo
+	 * @param comp the comp
+	 * @return the componente importi capitolo
+	 */
+	private ComponenteImportiCapitolo caricaComponenteCorrispondenteCollegatalCapitoloEAVariazioneDefONoVariazione(Capitolo<?,?> capitolo, ComponenteImportiCapitolo comp) {
+
+		return componenteImportiCapitoloDad.caricaComponenteConStessoTipoCollegataAlCapitoloEAVariazioneDefONoVariazione(capitolo, comp);
+		
+	}
+	
+	@Override
+	protected boolean isAnnullamentoVariazione() {
+		//nello step di definizione non e' consentito l'annullamento della variazione
+		return false;
 	}
 	
 }

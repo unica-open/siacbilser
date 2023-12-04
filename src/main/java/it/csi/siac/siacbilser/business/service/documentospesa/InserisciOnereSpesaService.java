@@ -82,6 +82,8 @@ public class InserisciOnereSpesaService extends CheckedAccountBaseService<Inseri
 	 */
 	@Override
 	protected void execute() {
+		//SIAC-7834
+		dettaglioOnere.getTipoOnere().setEnte(ente);
 		// SIAC-6099: l'imponibile non deve essere superiore all'importo del documento
 		checkImportoOnere();
 		onereSpesaDad.inserisciAnagraficaDettaglioOnere(dettaglioOnere);
@@ -100,7 +102,7 @@ public class InserisciOnereSpesaService extends CheckedAccountBaseService<Inseri
 		BigDecimal imponibile = dettaglioOnere.getImportoImponibile() == null ? BigDecimal.ZERO : dettaglioOnere.getImportoImponibile();
 		
 		if(imponibile.compareTo(importoDocumento) > 0) {
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("imponibile", "non puo' essere maggiore dell'importo del documento ("
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("imponibile", "non puo' essere maggiore dell'importo del documento ("
 					+ "importo documento: " + Utility.formatCurrencyAsString(importoDocumento)
 					+ ", imponibile oneri: " + Utility.formatCurrencyAsString(imponibile) + ")"));
 		}

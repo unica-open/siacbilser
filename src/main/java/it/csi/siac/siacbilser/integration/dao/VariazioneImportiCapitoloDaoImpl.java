@@ -267,7 +267,7 @@ public class VariazioneImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacTVariaz
 	public Page<SiacTVariazione> ricercaSinteticaVariazioneDiBilancio(Collection<SiacDVariazioneTipoEnum> variazioneTipo, Integer enteProprietarioId, 
 			String annoBilancio, Integer variazioneNum, String variazioneDesc, Date dataAperturaProposta, Date dataChiusuraProposta, Integer direzioneProponenteId, SiacDVariazioneStatoEnum variazioneStato,
 			Integer attoAmmId,	Integer capitoloId, Integer capitoloCodificaId, Integer capitoloSorgenteId, Integer capitoloDestinazioneId, 
-			List<SiacDBilElemTipoEnum> bilElemsTipo, List<SiacDBilElemTipoEnum> bilElemsCodificaTipo, String operatoreImporti, Integer attoAmmVarBilId, Integer attoAmmIdMultiple, Pageable pageable) {
+			List<SiacDBilElemTipoEnum> bilElemsTipo, List<SiacDBilElemTipoEnum> bilElemsCodificaTipo, String operatoreImporti, Integer attoAmmVarBilId, Integer attoAmmIdMultiple, boolean limitaRisultatiDefinitiveODecentrate, Pageable pageable) {
 		
 		StringBuilder  jpql = new StringBuilder();
 //		jpql.append("SELECT var ");
@@ -387,6 +387,15 @@ public class VariazioneImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacTVariaz
 			param.put("attoAmmId", attoAmmVarBilId);
 		}
 		
+		//SIAC-8771-REGP
+		if(limitaRisultatiDefinitiveODecentrate) {
+			jpql.append("       AND EXISTS ( ");
+			jpql.append("             FROM var.siacRVariazioneStatos rvarstato ");
+			jpql.append("             WHERE rvarstato.siacDVariazioneStato.variazioneStatoTipoCode IN ");
+			jpql.append(String.format("('%s', '%s')", SiacDVariazioneStatoEnum.CODICE_DEFINITIVA, SiacDVariazioneStatoEnum.CODICE_PRE_BOZZA));
+			jpql.append(" 			  AND rvarstato.dataCancellazione is NULL ) ");
+		}
+		
 		
 		if(capitoloCodificaId!=null && capitoloCodificaId!=0){
 			
@@ -416,7 +425,7 @@ public class VariazioneImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacTVariaz
 			
 			jpql.append("     ) ");
 			jpql.append(" ) ");
-				
+			
 			param.put("capitoloId", capitoloId);
 		}
 
@@ -667,5 +676,298 @@ public class VariazioneImportiCapitoloDaoImpl extends ExtendedJpaDao<SiacTVariaz
 //		return Long.valueOf(res);
 	}
 
+
+	@Override
+	public Page<SiacTVariazione> ricercaSinteticaVariazioneNeutreDiBilancio(Collection<SiacDVariazioneTipoEnum> variazioneTipo, Integer enteProprietarioId, 
+			String annoBilancio, Integer variazioneNum, String variazioneDesc, Date dataAperturaProposta, Date dataChiusuraProposta, Integer direzioneProponenteId, SiacDVariazioneStatoEnum variazioneStato,
+			Integer attoAmmId,	Integer capitoloId, Integer capitoloCodificaId, Integer capitoloSorgenteId, Integer capitoloDestinazioneId, 
+			List<SiacDBilElemTipoEnum> bilElemsTipo, List<SiacDBilElemTipoEnum> bilElemsCodificaTipo, String operatoreImporti, Integer attoAmmVarBilId, Integer attoAmmIdMultiple, Pageable pageable) {
+		
+		StringBuilder  jpql = new StringBuilder();
+//		jpql.append("SELECT var ");
+		jpql.append("FROM   SiacTVariazione var ");
+		jpql.append("WHERE  siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ");
+		jpql.append("       AND siacTBil.siacTPeriodo.anno = :annoBilancio ");
+		jpql.append("       AND var.dataCancellazione is NULL ");
+		
+				
+		Map<String,Object> param = new HashMap<String, Object>();
+		param.put("enteProprietarioId", enteProprietarioId);
+		param.put("annoBilancio", annoBilancio);
+		
+		
+		if(variazioneTipo!=null && !variazioneTipo.isEmpty()){
+			Collection<String> variazioneTipoCodes = new ArrayList<String>();
+			for(SiacDVariazioneTipoEnum sdvte : variazioneTipo) {
+				variazioneTipoCodes.add(sdvte.getCodice());
+			}
+			
+			jpql.append("       AND siacDVariazioneTipo.variazioneTipoCode IN (:variazioneTipoCodes) ");
+			param.put("variazioneTipoCodes", variazioneTipoCodes);
+		}
+		
+		
+		if(bilElemsTipo!=null && !bilElemsTipo.isEmpty()){
+			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE ");
+			jpql.append("       			  rvarstato.dataCancellazione IS NULL ");
+			jpql.append("                     AND EXISTS (FROM rvarstato.siacTBilElemDetVars rvarstatoelemdet ");
+			jpql.append("       			 			 WHERE rvarstatoelemdet.dataCancellazione IS NULL ");
+			jpql.append("                                AND rvarstatoelemdet.siacTBilElem.siacDBilElemTipo.elemTipoCode IN ("+SiacDBilElemTipoEnum.getCodiciSingleQuoteCommaSeparated(bilElemsTipo)+") ");
+			jpql.append(" 							  ) ) ) ");	
+		}
+		
+		if(bilElemsCodificaTipo!=null && !bilElemsCodificaTipo.isEmpty()){
+			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE ");
+			jpql.append("       			  rvarstato.dataCancellazione IS NULL ");
+			jpql.append("                     AND EXISTS (FROM rvarstato.siacRBilElemClassVars rvarstatoelemdet ");
+			jpql.append("       			 			 WHERE rvarstatoelemdet.dataCancellazione IS NULL ");
+			jpql.append("                                AND rvarstatoelemdet.siacTBilElem.siacDBilElemTipo.elemTipoCode IN ("+SiacDBilElemTipoEnum.getCodiciSingleQuoteCommaSeparated(bilElemsCodificaTipo)+") ");
+			jpql.append(" 							  ) ) ) ");	
+		}
+			
+		
+		if(variazioneNum!=null && variazioneNum!=0){
+			jpql.append("       AND variazioneNum = :variazioneNum ");
+			param.put("variazioneNum", variazioneNum);
+		}
+		
+		if(StringUtils.isNotBlank(variazioneDesc)){
+			//jpql.append("       AND variazioneDesc = :variazioneDesc ");
+			jpql.append("       AND ( "+Utility.toJpqlSearchLike("variazioneDesc", "CONCAT('%',:variazioneDesc,'%')" )+" ) ");
+			param.put("variazioneDesc", variazioneDesc);
+		}
+		
+		if(dataAperturaProposta!=null){
+			
+			jpql.append(" 		AND var.dataAperturaProposta  >= :dataAperturaProposta ");
+			param.put("dataAperturaProposta", dataAperturaProposta);
+
+			Calendar dataAperturaPropostaRange = Calendar.getInstance();
+			dataAperturaPropostaRange.setTime(dataAperturaProposta);
+			
+			dataAperturaPropostaRange.set(Calendar.HOUR_OF_DAY,23);
+			dataAperturaPropostaRange.set(Calendar.MINUTE,59);
+			dataAperturaPropostaRange.set(Calendar.SECOND,59);
+			dataAperturaPropostaRange.set(Calendar.MILLISECOND,0);
+
+			jpql.append(" 		AND var.dataAperturaProposta  <= :dataAperturaPropostaRange ");
+			param.put("dataAperturaPropostaRange", dataAperturaPropostaRange.getTime());
+			
+			
+		}
+		
+		if(dataChiusuraProposta!=null){
+			jpql.append(" 		AND var.dataChiusuraProposta  >= :dataChiusuraProposta ");
+			param.put("dataChiusuraProposta", dataChiusuraProposta);
+
+			Calendar dataChiusuraPropostaRange = Calendar.getInstance();
+			dataChiusuraPropostaRange.setTime(dataChiusuraProposta);
+			
+			dataChiusuraPropostaRange.set(Calendar.HOUR_OF_DAY,23);
+			dataChiusuraPropostaRange.set(Calendar.MINUTE,59);
+			dataChiusuraPropostaRange.set(Calendar.SECOND,59);
+			dataChiusuraPropostaRange.set(Calendar.MILLISECOND,0);
+
+			jpql.append(" 		AND var.dataChiusuraProposta  <= :dataChiusuraPropostaRange ");
+			param.put("dataChiusuraPropostaRange", dataChiusuraPropostaRange.getTime());
+		}
+		
+		if(direzioneProponenteId!=null){
+			jpql.append("       AND siacTClass.classifId IN (:direzioneProponenteId) ");
+			param.put("direzioneProponenteId", direzioneProponenteId);
+		}
+		
+//		if(direzioneProponenteId!=null){
+//			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE rvarstato.siacDVariazioneStato.variazioneStatoTipoCode = :variazioneStatoTipoCode ");
+//			jpql.append(" 					AND rvarstato.dataCancellazione is NULL )) ");
+//			param.put("variazioneStatoTipoCode", variazioneStato.getCodice());
+//		}
+		
+		if(variazioneStato!=null){
+			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE rvarstato.siacDVariazioneStato.variazioneStatoTipoCode = :variazioneStatoTipoCode ");
+			jpql.append(" 					AND rvarstato.dataCancellazione is NULL )) ");
+			param.put("variazioneStatoTipoCode", variazioneStato.getCodice());
+		}
+		
+		if(attoAmmId!=null && attoAmmId!=0){
+			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE rvarstato.siacTAttoAmm.attoammId = :attoAmmId ");
+			jpql.append(" 					AND rvarstato.dataCancellazione is NULL )) ");
+			param.put("attoAmmId", attoAmmId);
+		}
+		
+		if(attoAmmVarBilId!=null && attoAmmVarBilId!=0){
+			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE rvarstato.siacTAttoAmmVarbil.attoammId = :attoAmmId ");
+			jpql.append(" 					AND rvarstato.dataCancellazione is NULL )) ");
+			param.put("attoAmmId", attoAmmVarBilId);
+		}
+		
+		
+		if(capitoloCodificaId!=null && capitoloCodificaId!=0){
+			
+			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE ");
+			jpql.append("       			  rvarstato.dataCancellazione IS NULL ");
+			jpql.append("                     AND EXISTS (FROM rvarstato.siacRBilElemClassVars rvarstatoelemdet ");
+			jpql.append("       			  		  WHERE rvarstatoelemdet.dataCancellazione IS NULL ");
+			jpql.append("                             AND rvarstatoelemdet.siacTBilElem.elemId = :capitoloCodificaId  ) )) ");
+				
+			param.put("capitoloCodificaId", capitoloCodificaId);
+		}
+		
+		
+		if(capitoloId!=null && capitoloId!=0){
+			
+			jpql.append(" AND EXISTS ( ");
+			jpql.append("     FROM var.siacRVariazioneStatos rvarstato ");
+			jpql.append("     WHERE rvarstato.dataCancellazione IS NULL ");
+			jpql.append("     AND EXISTS ( ");
+			jpql.append("         FROM rvarstato.siacTBilElemDetVars rvarstatoelemdet ");
+			jpql.append("         WHERE rvarstatoelemdet.dataCancellazione IS NULL ");
+			jpql.append("         AND rvarstatoelemdet.siacTBilElem.elemId = :capitoloId ");
+			
+			if(StringUtils.isNotBlank(operatoreImporti)) {
+				jpql.append("         AND rvarstatoelemdet.elemDetImporto ").append(operatoreImporti).append(" 0 ");
+				//SIAC-7735-VG-GM
+				jpql.append(" AND EXISTS (FROM rvarstatoelemdet.siacTBilElemDetVarComps comp WHERE comp.elemDetImporto != 0) ");
+				
+			}
+			
+			jpql.append("     ) ");
+			jpql.append(" ) ");
+				
+			
+			//CONTABILIA-285
+//			jpql.append("         AND (( SELECT SUM(COALESCE(itbedv.elemDetImporto, 0))");
+//			jpql.append("         FROM SiacTVariazione siacTVariazione");
+//			jpql.append(" 		  LEFT JOIN siacTVariazione.siacRVariazioneStatos siacRVariazioneStato  ");
+//			jpql.append(" 		  LEFT JOIN siacRVariazioneStato.siacTBilElemDetVars itbedv  ");
+//			jpql.append("         WHERE siacTVariazione.dataCancellazione IS NULL ");
+//			jpql.append("         AND  siacTVariazione.variazioneId = var.variazioneId");
+//			jpql.append("         AND  itbedv.siacTBilElem.elemId = :capitoloId");
+//			jpql.append(") = 0)");
+			
+		
+//			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE ");
+//			jpql.append("       			  rvarstato.dataCancellazione IS NULL ");
+//			jpql.append("                     AND EXISTS (FROM rvarstato.siacTBilElemDetVars rvarstatoelemdet ");
+//			jpql.append("       			  		  WHERE rvarstatoelemdet.dataCancellazione IS NULL ");
+//			jpql.append(" AND EXISTS (FROM rvarstatoelemdet.siacTBilElemDetVarComps comp WHERE comp.elemDetImporto != 0) ");
+//			jpql.append(" 							  ) )) ");
+			
+			
+			//
+			param.put("capitoloId", capitoloId);
+		}
+		if(capitoloSorgenteId!=null && capitoloSorgenteId!=0){
+			
+			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE ");
+			jpql.append("       			  rvarstato.dataCancellazione IS NULL ");
+			jpql.append("                     AND EXISTS (FROM rvarstato.siacTBilElemDetVars rvarstatoelemdet ");
+			jpql.append("       			  		  WHERE rvarstatoelemdet.dataCancellazione IS NULL ");
+			jpql.append("                             AND rvarstatoelemdet.siacTBilElem.elemId = :capitoloSorgenteId ");
+			jpql.append("							  AND rvarstatoelemdet.elemDetFlag = '"+SiacTBilElemDetVarElemDetFlagEnum.Sorgente.getCodice()+"' ) )) ");
+				
+			param.put("capitoloSorgenteId", capitoloSorgenteId);
+		}
+		
+		if(capitoloDestinazioneId!=null && capitoloDestinazioneId!=0){
+			jpql.append("       AND (EXISTS ( FROM var.siacRVariazioneStatos rvarstato WHERE ");
+			jpql.append("       			  rvarstato.dataCancellazione IS NULL ");
+			jpql.append("                     AND EXISTS (FROM rvarstato.siacTBilElemDetVars rvarstatoelemdet ");
+			jpql.append("       			  		  WHERE rvarstatoelemdet.dataCancellazione IS NULL ");
+			jpql.append("                             AND rvarstatoelemdet.siacTBilElem.elemId = :capitoloDestinazioneId ");
+			jpql.append(" 							  AND rvarstatoelemdet.elemDetFlag = '"+SiacTBilElemDetVarElemDetFlagEnum.Destinazione.getCodice()+"') )) ");
+			
+			param.put("capitoloDestinazioneId", capitoloDestinazioneId);
+		}
+		
+		// SIAC-4815
+		if(attoAmmIdMultiple != null && attoAmmIdMultiple.intValue() != 0) {
+			jpql.append(" AND EXISTS ( ")
+				.append("     FROM var.siacRVariazioneStatos rvarstato ")
+				.append("     WHERE rvarstato.dataCancellazione is NULL ")
+				.append("     AND ( ")
+				.append("         rvarstato.siacTAttoAmm.attoammId = :attoAmmIdMult ")
+				.append("         OR rvarstato.siacTAttoAmmVarbil.attoammId = :attoAmmIdMult ")
+				.append("     ) ")
+				.append(" ) ");
+			param.put("attoAmmIdMult", attoAmmIdMultiple);
+		}
+		
+		jpql.append(" ORDER BY variazioneNum ");
+		
+		
+		return getPagedList(jpql.toString(), param, pageable);	
+
+	}
+
+
+	@Override
+	public List<Object[]> findStanziamentoCapitoloInVariazioneInDiminuzione(Integer idVariazione, Collection<Integer> idCapitoliDaEscludere) {
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		jpql.append(" SELECT dv.siacTBilElem.elemId, dv.siacTBilElem.siacDBilElemTipo.elemTipoCode, dv.siacTPeriodo.anno, dv.siacDBilElemDetTipo.elemDetTipoCode, dv.elemDetImporto ");
+		jpql.append(" FROM SiacTBilElemDetVar dv");
+		jpql.append(" WHERE dv.dataCancellazione IS NULL");
+		jpql.append(" AND dv.siacTBilElem.dataCancellazione IS NULL ");
+		
+		if(idCapitoliDaEscludere != null && !idCapitoliDaEscludere.isEmpty() ) {
+			jpql.append(" AND dv.siacTBilElem.elemId NOT IN (:elemIdsDaEscludere)");
+			params.put("elemIdsDaEscludere", idCapitoliDaEscludere);
+		}
+		
+//		if(uidCapitoloDaIncludere != null && uidCapitoloDaIncludere.intValue() != 0 ) {
+//			jpql.append(" AND dv.siacTBilElem.elemId  = :elemIdDaIncludere");
+//			params.put("elemIdDaIncludere", uidCapitoloDaIncludere);
+//		}
+		//SIAC-8736
+		jpql.append(" AND dv.siacDBilElemDetTipo.elemDetTipoCode IN ('STA', 'SCA', 'STR')");
+		jpql.append(" AND dv.elemDetImporto < 0 ");
+		jpql.append(" AND EXISTS ( ");
+		jpql.append("   FROM dv.siacRVariazioneStato rvs ");
+		jpql.append("   WHERE rvs.dataCancellazione IS NULL ");
+		jpql.append("   AND rvs.siacTVariazione.variazioneId = :variazioneId");
+		jpql.append(" ) ");
+		jpql.append(" ORDER BY dv.siacTBilElem.siacDBilElemTipo.elemTipoCode, dv.siacTBilElem.elemId");
+		params.put("variazioneId", idVariazione);
+		
+		return getList(jpql.toString(), params);
+	}
+
+
+	@Override
+	public List<Object[]> findStanziamentoComponenteCapitoloInVariazioneInDiminuzione(Integer idVariazione, List<Integer> idCapitolispesa) {
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		jpql.append(" SELECT dv.siacTBilElem.elemId, dv.siacTBilElem.siacDBilElemTipo.elemTipoCode, dvc.siacTBilElemDetComp.siacDBilElemDetCompTipo.elemDetCompTipoId, dvc.siacTBilElemDetComp.siacDBilElemDetCompTipo.elemDetCompTipoDesc, dv.siacTPeriodo.anno, dv.siacDBilElemDetTipo.elemDetTipoCode, dvc.elemDetImporto ");
+		jpql.append(" FROM SiacTBilElemDetVarComp dvc, SiacTBilElemDetVar dv");
+		jpql.append(" WHERE dvc.siacTBilElemDetVar = dv ");
+		jpql.append(" AND dvc.dataCancellazione IS NULL ");
+		jpql.append(" AND dv.dataCancellazione IS NULL ");
+		jpql.append(" AND dv.siacTBilElem.dataCancellazione IS NULL ");
+		
+		if(idCapitolispesa != null && !idCapitolispesa.isEmpty() ) {
+			jpql.append(" AND dv.siacTBilElem.elemId NOT IN (:elemIdsDaEscludere)");
+			params.put("elemIdsDaEscludere", idCapitolispesa);
+		}
+		
+//		if(uidCapitoloDaIncludere != null && uidCapitoloDaIncludere.intValue() != 0 ) {
+//			jpql.append(" AND dv.siacTBilElem.elemId  = :elemIdDaIncludere");
+//			params.put("elemIdDaIncludere", uidCapitoloDaIncludere);
+//		}
+		
+		jpql.append(" AND dv.siacDBilElemDetTipo.elemDetTipoCode IN ('STA', 'SCA')");
+		jpql.append(" AND dvc.elemDetImporto < 0 ");
+		jpql.append(" AND EXISTS ( ");
+		jpql.append("   FROM dv.siacRVariazioneStato rvs ");
+		jpql.append("   WHERE rvs.dataCancellazione IS NULL ");
+		jpql.append("   AND rvs.siacTVariazione.variazioneId = :variazioneId");
+		jpql.append(" ) ");
+		jpql.append(" ORDER BY dv.siacTBilElem.siacDBilElemTipo.elemTipoCode, dv.siacTBilElem.elemId");
+		params.put("variazioneId", idVariazione);
+		
+		return getList(jpql.toString(), params);
+	}
 	
 }

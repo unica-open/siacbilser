@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacbilser.business.service.componenteimpcap;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 
@@ -16,10 +17,14 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceComponenteImporti
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceComponenteImportiCapitoloResponse;
 import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
 import it.csi.siac.siacbilser.model.Capitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.DettaglioComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
+import it.csi.siac.siacbilser.model.Macroaggregato;
+import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.utils.TipoImportoCapitolo;
 import it.csi.siac.siaccommon.util.cache.Cache;
 import it.csi.siac.siaccommon.util.cache.CacheElementInitializer;
@@ -75,15 +80,24 @@ public class InserisceComponenteImportiCapitoloService extends BaseGestioneCompo
 	@Override
 	protected void execute() {
 		initCapitolo(req.getCapitolo().getUid());
-		
+		//task-236
+		CategoriaCapitolo categoria = capitoloDad.findCategoriaCapitolo(Integer.valueOf(req.getCapitolo().getUid()));
 		loadAndCheckComponentiImportiCapitolo();
+		
 		
 		for(ComponenteImportiCapitolo cic : req.getListaComponenteImportiCapitolo()) {
 			// Save componente
 			componenteImportiCapitoloDad.inserisciComponenteImportiCapitolo(cic);
 			// Aggiornamento importi
 			updateImportoCapitolo(cic.getImportiCapitolo().getAnnoCompetenza(), getImporto(cic), TipoImportoCapitolo.Values.STANZIAMENTO);
-			updateImportoCapitolo(cic.getImportiCapitolo().getAnnoCompetenza(), getImporto(cic), TipoImportoCapitolo.Values.CASSA);
+			
+			//task-236
+			if(req.getCapitolo().getTipoCapitolo().equals(TipoCapitolo.CAPITOLO_USCITA_PREVISIONE) && categoria != null && 
+				(CategoriaCapitoloEnum.FPV.getCodice().equals(categoria.getCodice()) || CategoriaCapitoloEnum.DAM.getCodice().equals(categoria.getCodice()))) { 
+				updateImportoCapitolo(cic.getImportiCapitolo().getAnnoCompetenza(), BigDecimal.ZERO, TipoImportoCapitolo.Values.CASSA);
+			} else {
+				updateImportoCapitolo(cic.getImportiCapitolo().getAnnoCompetenza(), getImporto(cic), TipoImportoCapitolo.Values.CASSA);
+			}
 			res.getListaComponenteImportiCapitolo().add(cic);
 		}
 		componenteImportiCapitoloDad.flushAndClear();

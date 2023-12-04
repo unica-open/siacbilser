@@ -23,9 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dao.common.AbstractDao;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoRicercaPageableDto;
@@ -35,8 +35,8 @@ import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTsDetFin;
-import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DataValiditaUtil;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.model.ordinativo.Ordinativo;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaOrdinativoIncasso;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaOrdinativoPagamento;
@@ -207,14 +207,17 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		StringBuilder jpql = new StringBuilder(str);
 		
 		boolean indicatoImpegno = (prop.getNumeroImpegno()!= null && prop.getNumeroImpegno().intValue() != 0)||
-				(prop.getAnnoImpegno() != null && prop.getAnnoImpegno().intValue() != 0) ||
-				(prop.getNumeroMutuo()!=null && prop.getNumeroMutuo().intValue()!=0);
+				(prop.getAnnoImpegno() != null && prop.getAnnoImpegno().intValue() != 0);
 		
 		
 		//atto amministrativo!
 		if((null!=prop.getAnnoProvvedimento() && prop.getAnnoProvvedimento().intValue()!=0  
-				&&  null!=prop.getNumeroProvvedimento() && prop.getNumeroProvvedimento().intValue()!=0) 
-				|| prop.getUidProvvedimento()!=null && prop.getUidProvvedimento()!=0){
+			&&  null!=prop.getNumeroProvvedimento() && prop.getNumeroProvvedimento().intValue()!=0) 
+			|| 
+			(null!=prop.getAnnoProvvedimento() && prop.getAnnoProvvedimento().intValue()!=0  
+			&& null!=prop.getCodiceTipoProvvedimento() && !StringUtilsFin.isEmpty(prop.getCodiceTipoProvvedimento()))
+			||
+			prop.getUidProvvedimento()!=null && prop.getUidProvvedimento()!=0){
 			
 			jpql.append(", SiacROrdinativoAttoAmmFin rOrdinativoAttoAmm");
 		
@@ -228,8 +231,8 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		
 		//CASI IN CUI SI AGGIUNGE LA RELAZIONE VERSO LO STATO:
 		if( prop.getDataTrasmissioneOIL()!=null
-			|| !StringUtils.isEmpty(prop.getStatoOperativo())
-			|| !StringUtils.isEmpty(prop.getStatiDaEscludere())){
+			|| !StringUtilsFin.isEmpty(prop.getStatoOperativo())
+			|| !StringUtilsFin.isEmpty(prop.getStatiDaEscludere())){
 			jpql.append(", SiacROrdinativoStatoFin rOrdinativoStato");
 		}
 		//
@@ -245,10 +248,6 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			
 			aliasRLiquidazioneOrdPresente = true;
 			
-			//FROM mutuo
-			if(prop.getNumeroMutuo() !=null && prop.getNumeroMutuo().intValue() != 0){					
-				jpql.append(", SiacRMutuoVoceLiquidazioneFin rMutuoVoceLiquidazione");
-			}	
 		}
 
 		//FROM capitolo	//jira 1327 - ricerca capitolo per 0
@@ -272,12 +271,12 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		}
 
 		//FROM soggetto
-		if(!StringUtils.isEmpty(prop.getCodiceCreditore())){
+		if(!StringUtilsFin.isEmpty(prop.getCodiceCreditore())){
 			jpql.append(", SiacROrdinativoSoggettoFin rOrdinativoSoggetto");
 		}
 		
 		//SOGGETTO CESSIONE INCASSO:
-		if(!StringUtils.isEmpty(prop.getCodiceCreditoreCessioneIncasso())){
+		if(!StringUtilsFin.isEmpty(prop.getCodiceCreditoreCessioneIncasso())){
 			jpql.append(", SiacROrdinativoModpagFin rOrdinativoModpagFin left join rOrdinativoModpagFin.cessioneId rSoggettoRelazFin");
 		}
 		
@@ -289,10 +288,10 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		param.put("annoEsercizio", annoEsercizio.toString());
 		
 		jpql.append(" AND ordinativo.siacDOrdinativoTipo.ordTipoCode = :codeTipoOrdinativo");
-		param.put("codeTipoOrdinativo", Constanti.D_ORDINATIVO_TIPO_PAGAMENTO);
+		param.put("codeTipoOrdinativo", CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO);
 		
 		//DESCRIZIONE LIKE:
-		if(!StringUtils.isEmpty(prop.getDescrizione())){
+		if(!StringUtilsFin.isEmpty(prop.getDescrizione())){
 			buildClausolaLikeGenerico(jpql,"ordinativo.ordDesc", prop.getDescrizione(), "likeDescrizione", param);
 		}
 		
@@ -305,11 +304,11 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		Date nowDate = TimingUtils.getNowDate();
 		if(prop.getDataTrasmissioneOIL()==null){
 			//solo se non c'e questo filtro per non interferire
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("ordinativo"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("ordinativo"));
 		}
 		
-		//WHERE OrdinativoPagamento
+		//WHERE Mandato
 		if(prop.getNumeroOrdinativoDa()!=null && prop.getNumeroOrdinativoA()!=null){
 			jpql.append(" AND ordinativo.ordNumero >= :numeroOrdinativoDa");
 			jpql.append(" AND ordinativo.ordNumero <= :numeroOrdinativoA");
@@ -406,18 +405,18 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		}
 		
 		//MARCO - da verficare stato operativo
-		if(!StringUtils.isEmpty(prop.getStatoOperativo()) || !StringUtils.isEmpty(prop.getStatiDaEscludere()) ){
+		if(!StringUtilsFin.isEmpty(prop.getStatoOperativo()) || !StringUtilsFin.isEmpty(prop.getStatiDaEscludere()) ){
 			
 			jpql.append(" AND ordinativo.ordId = rOrdinativoStato.siacTOrdinativo.ordId");
 			
-			if(!StringUtils.isEmpty(prop.getStatoOperativo())){
+			if(!StringUtilsFin.isEmpty(prop.getStatoOperativo())){
 				//APRILE 2018, SIAC-6098, ottimizzazione query:
 				if(indicatoImpegno){
 					//indicando l'impegno sembra piu' efficiente usare questa:
 					jpql.append(" AND EXISTS ( ");
 					jpql.append(" SELECT sdos1 FROM SiacDOrdinativoStatoFin sdos1, SiacROrdinativoStatoFin sros1 ");
 					jpql.append(" WHERE sdos1.ordStatoId = sros1.siacDOrdinativoStato.ordStatoId ");
-					jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("sros1"));
+					jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("sros1"));
 					jpql.append(" AND sdos1.ordStatoCode = :statoOperativo ");
 					jpql.append(" AND sros1.siacDOrdinativoStato.ordStatoId = rOrdinativoStato.siacDOrdinativoStato.ordStatoId ");
 					jpql.append(" ) ");
@@ -427,14 +426,14 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 				}
 				param.put("statoOperativo", prop.getStatoOperativo());
 			}
-			if(!StringUtils.isEmpty(prop.getStatiDaEscludere()) ){
+			if(!StringUtilsFin.isEmpty(prop.getStatiDaEscludere()) ){
 				//APRILE 2018, SIAC-6098, ottimizzazione query:
 				if(indicatoImpegno){
 					//indicando l'impegno sembra piu' efficiente usare questa:
 					jpql.append(" AND EXISTS ( ");
 					jpql.append(" SELECT sdos FROM SiacDOrdinativoStatoFin sdos, SiacROrdinativoStatoFin sros ");
 					jpql.append(" WHERE sdos.ordStatoId = sros.siacDOrdinativoStato.ordStatoId ");
-					jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("sros"));
+					jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("sros"));
 					jpql.append(" AND sdos.ordStatoCode NOT IN :statiDaEscludere ");
 					jpql.append(" AND sros.siacDOrdinativoStato.ordStatoId = rOrdinativoStato.siacDOrdinativoStato.ordStatoId ");
 					jpql.append(" ) ");
@@ -445,8 +444,8 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 				param.put("statiDaEscludere", prop.getStatiDaEscludere());
 			}
 			
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rOrdinativoStato"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rOrdinativoStato"));
 		}
 		
 		
@@ -482,14 +481,14 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		}
 		
 		//Distinta
-		if(!StringUtils.isEmpty(prop.getCodiceDistinta())){
+		if(!StringUtilsFin.isEmpty(prop.getCodiceDistinta())){
 			jpql.append(" AND ordinativo.siacDDistinta.distCode = :codiceDistinta");				
 
 			param.put("codiceDistinta", prop.getCodiceDistinta());
 		}
 		
 		//Conto del tesoriere
-		if(!StringUtils.isEmpty(prop.getContoDelTesoriere())){
+		if(!StringUtilsFin.isEmpty(prop.getContoDelTesoriere())){
 			jpql.append(" AND ordinativo.siacDContotesoreria.contotesCode = :codiceContoDelTesoriere");				
 
 			param.put("codiceContoDelTesoriere", prop.getContoDelTesoriere());
@@ -503,12 +502,12 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			jpql.append(" AND rLiquidazioneOrd.siacTLiquidazione.liqId = rLiquidazioneMovgest.siacTLiquidazione.liqId");
 							
 			//correttiva anomalia 1132
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rLiquidazioneOrd.siacTOrdinativoT"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rLiquidazioneOrd.siacTOrdinativoT"));
 			
 			// SIAC-5561
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rLiquidazioneOrd"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rLiquidazioneOrd"));
 
 			//impegno
 			if(prop.getNumeroImpegno()!= null && prop.getNumeroImpegno().intValue() != 0){
@@ -534,14 +533,6 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 				param.put("annoImpegno",prop.getAnnoImpegno());
 			}
 
-			//Mutuo
-			if(prop.getNumeroMutuo()!=null && prop.getNumeroMutuo().intValue()!=0){
-				jpql.append(" AND rLiquidazioneMovgest.siacTLiquidazione.liqId = rMutuoVoceLiquidazione.siacTLiquidazione.liqId");
-
-				jpql.append(" AND rMutuoVoceLiquidazione.siacTMutuoVoce.siacTMutuo.mutCode = :numeroMutuo");
-				param.put("numeroMutuo", prop.getNumeroMutuo().toString());
-			}
-			
 			
 			jpql.append(" AND (rLiquidazioneMovgest.dataFineValidita IS NULL AND rLiquidazioneMovgest.dataCancellazione IS NULL) ");
 		}
@@ -585,8 +576,8 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 				jpql.append(" AND rLiquidazioneOrd.siacTLiquidazione.liqAnno = :annoLiquidazione");
 				param.put("annoLiquidazione", prop.getAnnoLiquidazione());	
 			}
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rLiquidazioneOrd"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rLiquidazioneOrd"));
 		}
 		
 		//WHERE Provvisorio Cassa
@@ -602,21 +593,10 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 				jpql.append(" AND rOrdinativoProvCassa.siacTProvCassa.provcAnno = :annoProvvCassa");
 				param.put("annoProvvCassa", prop.getAnnoProvvCassa());	
 			}
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rOrdinativoProvCassa"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rOrdinativoProvCassa"));
 		}
 		
-		//WHERE mutuo
-		if(prop.getNumeroMutuo()!=null && prop.getNumeroMutuo().intValue()!=0){
-			jpql.append(" AND rLiquidazioneOrd.siacTOrdinativoT.siacTOrdinativo.ordId = ordinativo.ordId");	
-			jpql.append(" AND rLiquidazioneOrd.siacTLiquidazione.liqId = rLiquidazioneMovgest.siacTLiquidazione.liqId");											
-			jpql.append(" AND rLiquidazioneMovgest.siacTLiquidazione.liqId = rMutuoVoceLiquidazione.siacTLiquidazione.liqId");
-
-			jpql.append(" AND rMutuoVoceLiquidazione.siacTMutuoVoce.siacTMutuo.mutCode = :numeroMutuo");
-			
-			param.put("numeroMutuo", prop.getNumeroMutuo().toString());
-		}
-
 		
 		
 		//Provvedimento: se arriva l'uid vado direttamente a cercare per quello
@@ -632,7 +612,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			if((null!=prop.getAnnoProvvedimento() && prop.getAnnoProvvedimento().intValue()!=0  
 					&& null!=prop.getNumeroProvvedimento() && prop.getNumeroProvvedimento().intValue()!=0) || 
 					(null!=prop.getAnnoProvvedimento() && prop.getAnnoProvvedimento().intValue()!=0  
-					&& null!=prop.getCodiceTipoProvvedimento() && !StringUtils.isEmpty(prop.getCodiceTipoProvvedimento()))){
+					&& null!=prop.getCodiceTipoProvvedimento() && !StringUtilsFin.isEmpty(prop.getCodiceTipoProvvedimento()))){
 				
 				jpql.append(" AND rOrdinativoAttoAmm.siacTOrdinativo.ordId = ordinativo.ordId");
 				jpql.append(" AND (rOrdinativoAttoAmm.dataFineValidita IS NULL or rOrdinativoAttoAmm.dataCancellazione IS NULL)");
@@ -661,7 +641,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		}
 		
 		//WHERE soggetto
-		if(!StringUtils.isEmpty(prop.getCodiceCreditore())){
+		if(!StringUtilsFin.isEmpty(prop.getCodiceCreditore())){
 			jpql.append(" AND rOrdinativoSoggetto.siacTOrdinativo.ordId = ordinativo.ordId");
 			jpql.append(" AND rOrdinativoSoggetto.dataFineValidita IS NULL");
 			jpql.append(" AND rOrdinativoSoggetto.siacTSoggetto.soggettoCode = :codiceCreditore");
@@ -669,14 +649,14 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		} 
 		
 		//soggetto cessione incasso
-		if(!StringUtils.isEmpty(prop.getCodiceCreditoreCessioneIncasso())){
+		if(!StringUtilsFin.isEmpty(prop.getCodiceCreditoreCessioneIncasso())){
 			jpql.append(" AND  rOrdinativoModpagFin.siacTOrdinativo.ordId = ordinativo.ordId " );
 			jpql.append(" AND rSoggettoRelazFin.siacTSoggetto2.soggettoCode = :codiceCredCessIncasso");
 			param.put("codiceCredCessIncasso", prop.getCodiceCreditoreCessioneIncasso()); 
 			
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rOrdinativoModpagFin"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rSoggettoRelazFin"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rOrdinativoModpagFin"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rSoggettoRelazFin"));
 		}
 
 		if(soloCount==false){
@@ -734,7 +714,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		param.put("annoEsercizio", annoEsercizio.toString());
 		
 		jpql.append(" AND ordinativo.siacDOrdinativoTipo.ordTipoCode = :codeTipoOrdinativo");
-		param.put("codeTipoOrdinativo", Constanti.D_ORDINATIVO_TIPO_PAGAMENTO);
+		param.put("codeTipoOrdinativo", CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO);
 		
 		//legame tra ordinativo e sub:
 		jpql.append(" AND subOrdinativo.siacTOrdinativo.ordId = ordinativo.ordId");
@@ -753,8 +733,8 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 				jpql.append(" AND rOrdinativoProvCassa.siacTProvCassa.provcAnno = :annoProvvCassa");
 				param.put("annoProvvCassa", prop.getAnnoProvvCassa());	
 			}
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rOrdinativoProvCassa"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rOrdinativoProvCassa"));
 		}
 
 		jpql.append(" ORDER BY ordinativo.ordNumero, subOrdinativo.ordTsCode");
@@ -814,7 +794,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		param.put("annoEsercizio", annoEsercizio.toString());
 		
 		jpql.append(" AND ordinativo.siacDOrdinativoTipo.ordTipoCode = :codeTipoOrdinativo");
-		param.put("codeTipoOrdinativo", Constanti.D_ORDINATIVO_TIPO_INCASSO);
+		param.put("codeTipoOrdinativo", CostantiFin.D_ORDINATIVO_TIPO_INCASSO);
 		
 		//legame tra ordinativo e sub:
 		jpql.append(" AND subOrdinativo.siacTOrdinativo.ordId = ordinativo.ordId");
@@ -834,8 +814,8 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 				jpql.append(" AND rOrdinativoProvCassa.siacTProvCassa.provcAnno = :annoProvvCassa");
 				param.put("annoProvvCassa", prop.getAnnoProvvCassa());	
 			}
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rOrdinativoProvCassa"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rOrdinativoProvCassa"));
 		}
 
 		jpql.append(" ORDER BY ordinativo.ordNumero, subOrdinativo.ordTsCode");
@@ -854,7 +834,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 	private BigDecimal calcolatotImportiOrdinativi(List<Integer> ordIds) {
 		BigDecimal totImporti = BigDecimal.ZERO;
 		if(ordIds!=null && ordIds.size()>0){
-			List<List<Integer>> esploso = StringUtils.esplodiInListe(ordIds, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<Integer>> esploso = StringUtilsFin.esplodiInListe(ordIds, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<Integer> listaIt : esploso){
 					BigDecimal risultatoParziale = calcolatotImportiOrdinativiCORE(listaIt);
@@ -870,7 +850,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 	private BigDecimal calcolatotImportiSubOrdinativi(List<Integer> ordTIds) {
 		BigDecimal totImporti = BigDecimal.ZERO;
 		if(ordTIds!=null && ordTIds.size()>0){
-			List<List<Integer>> esploso = StringUtils.esplodiInListe(ordTIds, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<Integer>> esploso = StringUtilsFin.esplodiInListe(ordTIds, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<Integer> listaIt : esploso){
 					BigDecimal risultatoParziale = calcolatotImportiSubOrdinativiCORE(listaIt);
@@ -916,9 +896,9 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			
 			jpql.append(" AND ordTsDet.siacDOrdinativoTsDetTipo.ordTsDetTipoCode = 'A' ");
 			
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("ordTsDet"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("ordinativoT"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("ordTsDet"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("ordinativoT"));
 			
 			query = createQuery(jpql.toString(), param);	
 			
@@ -960,9 +940,9 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			
 			jpql.append(" AND ordTsDet.siacDOrdinativoTsDetTipo.ordTsDetTipoCode = 'A' ");
 			
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("ordTsDet"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("ordinativoT"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("ordTsDet"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("ordinativoT"));
 			
 			query = createQuery(jpql.toString(), param);	
 			
@@ -1002,8 +982,12 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		
 		//atto amministrativo!
 		if((null!=parametroRicercaOrdinativoIncasso.getAnnoProvvedimento() && parametroRicercaOrdinativoIncasso.getAnnoProvvedimento().intValue()!=0  
-				&& null!=parametroRicercaOrdinativoIncasso.getNumeroProvvedimento() && parametroRicercaOrdinativoIncasso.getNumeroProvvedimento().intValue()!=0)
-				|| parametroRicercaOrdinativoIncasso.getUidProvvedimento()!=null && parametroRicercaOrdinativoIncasso.getUidProvvedimento()!=0){
+			&& null!=parametroRicercaOrdinativoIncasso.getNumeroProvvedimento() && parametroRicercaOrdinativoIncasso.getNumeroProvvedimento().intValue()!=0)
+		    || 
+		    (null!=parametroRicercaOrdinativoIncasso.getAnnoProvvedimento() && parametroRicercaOrdinativoIncasso.getAnnoProvvedimento().intValue()!=0  
+			&& null!=parametroRicercaOrdinativoIncasso.getCodiceTipoProvvedimento() && !StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceTipoProvvedimento()))				
+			|| 
+			parametroRicercaOrdinativoIncasso.getUidProvvedimento()!=null && parametroRicercaOrdinativoIncasso.getUidProvvedimento()!=0){
 			
 			jpql.append(", SiacROrdinativoAttoAmmFin rOrdinativoAttoAmm");
 		
@@ -1015,8 +999,8 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		
 		//CASI IN CUI SI AGGIUNGE LA RELAZIONE VERSO LO STATO:
 		if( parametroRicercaOrdinativoIncasso.getDataTrasmissioneOIL()!=null
-			|| !StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getStatoOperativo())
-			|| !StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getStatiDaEscludere())){
+			|| !StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getStatoOperativo())
+			|| !StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getStatiDaEscludere())){
 			jpql.append(", SiacROrdinativoStatoFin rOrdinativoStato");
 		}
 		//
@@ -1038,7 +1022,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 
 		
 		//FROM soggetto
-		if(!StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceCreditore())){
+		if(!StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceCreditore())){
 			jpql.append(", SiacROrdinativoSoggettoFin rOrdinativoSoggetto");
 		}
 		
@@ -1058,11 +1042,11 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		jpql.append(" AND ordinativo.siacTBil.siacTPeriodo.anno = :annoEsercizio");
 		param.put("annoEsercizio", annoEsercizio.toString());
 		jpql.append(" AND ordinativo.siacDOrdinativoTipo.ordTipoCode = :codeTipoOrdinativo");
-		param.put("codeTipoOrdinativo", Constanti.D_ORDINATIVO_TIPO_INCASSO);
+		param.put("codeTipoOrdinativo", CostantiFin.D_ORDINATIVO_TIPO_INCASSO);
 		
 		
 		//DESCRIZIONE LIKE:
-		if(!StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getDescrizione())){
+		if(!StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getDescrizione())){
 			buildClausolaLikeGenerico(jpql,"ordinativo.ordDesc", parametroRicercaOrdinativoIncasso.getDescrizione(), "likeDescrizione", param);
 		}
 		
@@ -1076,18 +1060,18 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		Date nowDate = TimingUtils.getNowDate();
 		if(parametroRicercaOrdinativoIncasso.getDataTrasmissioneOIL()==null){
 			//solo se non c'e questo filtro per non interferire
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("ordinativo"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("ordinativo"));
 		}
 		
 		if((parametroRicercaOrdinativoIncasso.getNumeroMovimento()!= null && parametroRicercaOrdinativoIncasso.getNumeroMovimento().intValue() != 0) ||
 				(parametroRicercaOrdinativoIncasso.getAnnoMovimento() != null && parametroRicercaOrdinativoIncasso.getAnnoMovimento().intValue() != 0) ||
 				(parametroRicercaOrdinativoIncasso.getNumeroSubMovimento() != null && parametroRicercaOrdinativoIncasso.getNumeroSubMovimento().intValue() != 0)){
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rOrdinativoTsMovgestT"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rOrdinativoTsMovgestT"));
 		}
 		
 		//CAUSALE:
-		if(!StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceCausale())){
+		if(!StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceCausale())){
 			jpql.append(" AND ordinativo.siacDCausale.causCode = :codiceCausale");
 			param.put("codiceCausale", parametroRicercaOrdinativoIncasso.getCodiceCausale());
 		}
@@ -1105,12 +1089,12 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 				jpql.append(" AND rOrdinativoProvCassa.siacTProvCassa.provcAnno = :annoProvvCassa");
 				param.put("annoProvvCassa", parametroRicercaOrdinativoIncasso.getAnnoProvvCassa());	
 			}
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rOrdinativoProvCassa"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rOrdinativoProvCassa"));
 		}
 		
 
-		//WHERE OrdinativoPagamento
+		//WHERE Mandato
 		if(parametroRicercaOrdinativoIncasso.getNumeroOrdinativoDa()!=null && parametroRicercaOrdinativoIncasso.getNumeroOrdinativoA()!=null){
 		
 			jpql.append(" AND ordinativo.ordNumero >= :numeroOrdinativoDa");
@@ -1207,22 +1191,22 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		}
 			
 		//MARCO - da verficare stato operativo
-		if(!StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getStatoOperativo()) || !StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getStatiDaEscludere())  ){
+		if(!StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getStatoOperativo()) || !StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getStatiDaEscludere())  ){
 			
 			jpql.append(" AND ordinativo.ordId = rOrdinativoStato.siacTOrdinativo.ordId");
 			
-			if(!StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getStatoOperativo())){
+			if(!StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getStatoOperativo())){
 				jpql.append(" AND rOrdinativoStato.siacDOrdinativoStato.ordStatoCode = :statoOperativo");
 				param.put("statoOperativo", parametroRicercaOrdinativoIncasso.getStatoOperativo());
 			}
-			if(!StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getStatiDaEscludere()) ){
+			if(!StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getStatiDaEscludere()) ){
 				String statiDaEscludere = buildElencoPerClausolaIN(parametroRicercaOrdinativoIncasso.getStatiDaEscludere());
 				jpql.append(" AND rOrdinativoStato.siacDOrdinativoStato.ordStatoCode NOT IN :statiDaEscludere");
 				param.put("statiDaEscludere", statiDaEscludere);
 			}
 			
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rOrdinativoStato"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rOrdinativoStato"));
 		}
 			
 		//MARCO - Implementare filtro Data trasmissione OIL
@@ -1255,18 +1239,18 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			param.put("dataTrasmissioneOILFrom", from);
 			param.put("dataTrasmissioneOILTo", to);
 
-			param.put("statoOperativoTrasmesso",Constanti.D_ORDINATIVO_STATO_TRASMESSO);
+			param.put("statoOperativoTrasmesso",CostantiFin.D_ORDINATIVO_STATO_TRASMESSO);
 		}
 		
 		//Distinta
-		if(!StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceDistinta())){
+		if(!StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceDistinta())){
 			jpql.append(" AND ordinativo.siacDDistinta.distCode = :codiceDistinta");				
 
 			param.put("codiceDistinta", parametroRicercaOrdinativoIncasso.getCodiceDistinta());
 		}
 		
 		//Conto del tesoriere
-		if(!StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getContoDelTesoriere())){
+		if(!StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getContoDelTesoriere())){
 			jpql.append(" AND ordinativo.siacDContotesoreria.contotesCode = :codiceContoDelTesoriere");				
 
 			param.put("codiceContoDelTesoriere", parametroRicercaOrdinativoIncasso.getContoDelTesoriere());
@@ -1337,7 +1321,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			if((null!=parametroRicercaOrdinativoIncasso.getAnnoProvvedimento() && parametroRicercaOrdinativoIncasso.getAnnoProvvedimento().intValue()!=0  
 					&& null!=parametroRicercaOrdinativoIncasso.getNumeroProvvedimento() && parametroRicercaOrdinativoIncasso.getNumeroProvvedimento().intValue()!=0) || 
 					(null!=parametroRicercaOrdinativoIncasso.getAnnoProvvedimento() && parametroRicercaOrdinativoIncasso.getAnnoProvvedimento().intValue()!=0  
-					&& null!=parametroRicercaOrdinativoIncasso.getCodiceTipoProvvedimento() && !StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceTipoProvvedimento()))){
+					&& null!=parametroRicercaOrdinativoIncasso.getCodiceTipoProvvedimento() && !StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceTipoProvvedimento()))){
 				
 				jpql.append(" AND rOrdinativoAttoAmm.siacTOrdinativo.ordId = ordinativo.ordId");
 				jpql.append(" AND (rOrdinativoAttoAmm.dataFineValidita IS NULL or rOrdinativoAttoAmm.dataCancellazione IS NULL) ");
@@ -1365,7 +1349,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 		}
 		
 		//WHERE soggetto
-		if(!StringUtils.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceCreditore())){
+		if(!StringUtilsFin.isEmpty(parametroRicercaOrdinativoIncasso.getCodiceCreditore())){
 			jpql.append(" AND rOrdinativoSoggetto.siacTOrdinativo.ordId = ordinativo.ordId");
 			jpql.append(" AND rOrdinativoSoggetto.dataFineValidita IS NULL");
 			jpql.append(" AND rOrdinativoSoggetto.siacTSoggetto.soggettoCode = :codiceCreditore");
@@ -1484,9 +1468,9 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 
 		Ordinativo ord;
 	    	 
-    	 if (Constanti.D_ORDINATIVO_TIPO_PAGAMENTO.equals(codeTipoOrdinativo)) {
+    	 if (CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO.equals(codeTipoOrdinativo)) {
     		 ord = ((RicercaOrdinativoPagamentoK) pk).getOrdinativoPagamento();
-    	 } else if (Constanti.D_ORDINATIVO_TIPO_INCASSO.equals(codeTipoOrdinativo)) {
+    	 } else if (CostantiFin.D_ORDINATIVO_TIPO_INCASSO.equals(codeTipoOrdinativo)) {
     		 ord = ((RicercaOrdinativoIncassoK) pk).getOrdinativoIncasso();
     	 } else {
     		 throw new IllegalArgumentException("Tipo ordinativo non valido: " + codeTipoOrdinativo);
@@ -1701,7 +1685,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			Query query =  createQuery(jpql.toString(), param);
 			listaRitorno = query.getResultList();
 			
-			listaRitorno = DatiOperazioneUtils.soloValidi(listaRitorno, getNow());
+			listaRitorno = DatiOperazioneUtil.soloValidi(listaRitorno, getNow());
 		}
 		//Termino restituendo l'oggetto di ritorno: 
         return listaRitorno;
@@ -1732,7 +1716,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			Query query =  createQuery(jpql.toString(), param);
 			listaRitorno = query.getResultList();
 			
-			listaRitorno = DatiOperazioneUtils.soloValidi(listaRitorno, getNow());
+			listaRitorno = DatiOperazioneUtil.soloValidi(listaRitorno, getNow());
 		}
 		//Termino restituendo l'oggetto di ritorno: 
         return listaRitorno;
@@ -1763,7 +1747,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			Query query =  createQuery(jpql.toString(), param);
 			listaRitorno = query.getResultList();
 			
-			listaRitorno = DatiOperazioneUtils.soloValidi(listaRitorno, getNow());
+			listaRitorno = DatiOperazioneUtil.soloValidi(listaRitorno, getNow());
 		}
 		//Termino restituendo l'oggetto di ritorno: 
         return listaRitorno;
@@ -1794,7 +1778,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			Query query =  createQuery(jpql.toString(), param);
 			listaRitorno = query.getResultList();
 			
-			listaRitorno = DatiOperazioneUtils.soloValidi(listaRitorno, getNow());
+			listaRitorno = DatiOperazioneUtil.soloValidi(listaRitorno, getNow());
 		}
 		//Termino restituendo l'oggetto di ritorno: 
         return listaRitorno;
@@ -1803,7 +1787,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 	public <ST extends SiacTBase>  List<ST> ricercaBySiacTOrdinativoTFinMassive(List<SiacTOrdinativoTFin> listaInput, String nomeEntity) {
 		List<ST> listaRitorno = new ArrayList<ST>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTOrdinativoTFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTOrdinativoTFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTOrdinativoTFin> listaIt : esploso){
 					List<ST> risultatoParziale = ricercaBySiacTOrdinativoTFinMassiveCORE(listaIt, nomeEntity);
@@ -1812,7 +1796,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1847,8 +1831,8 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -1863,7 +1847,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 	public <ST extends SiacTBase>  List<ST> ricercaBySiacTOrdinativoFinMassive(List<SiacTOrdinativoFin> listaInput, String nomeEntity) {
 		List<ST> listaRitorno = new ArrayList<ST>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTOrdinativoFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTOrdinativoFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTOrdinativoFin> listaIt : esploso){
 					List<ST> risultatoParziale = ricercaBySiacTOrdinativoFinMassiveCORE(listaIt, nomeEntity);
@@ -1872,7 +1856,7 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1907,8 +1891,8 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -1921,11 +1905,45 @@ public class OrdinativoDaoImpl extends AbstractDao<SiacTOrdinativoFin, Integer> 
 	
 	protected List<String> codiciStatiOrdinativo(){
 		List<String> codici = new ArrayList<String>();
-		codici.add(Constanti.D_ORDINATIVO_STATO_INSERITO);
-		codici.add(Constanti.D_ORDINATIVO_STATO_TRASMESSO);
-		codici.add(Constanti.D_ORDINATIVO_STATO_FIRMATO);
-		codici.add(Constanti.D_ORDINATIVO_STATO_QUIETANZATO);
-		codici.add(Constanti.D_ORDINATIVO_STATO_ANNULLATO);
+		codici.add(CostantiFin.D_ORDINATIVO_STATO_INSERITO);
+		codici.add(CostantiFin.D_ORDINATIVO_STATO_TRASMESSO);
+		codici.add(CostantiFin.D_ORDINATIVO_STATO_FIRMATO);
+		codici.add(CostantiFin.D_ORDINATIVO_STATO_QUIETANZATO);
+		codici.add(CostantiFin.D_ORDINATIVO_STATO_ANNULLATO);
 		return codici;
 	}
-}
+
+	@Override
+	public BigDecimal findDisponibilitaPagareSottoContoVincolato(Integer uidContoTesoreria, Integer uidCapitolo,
+			Integer enteProprietarioId) {
+		final String methodName = "findDisponibilitaPagareSottoContoVincolato";
+		String functionName = "fnc_siac_disp_pagare_sottoconto_vincolo";
+		log.debug(methodName, "Calling functionName: "+ functionName );
+		String sql = "SELECT * FROM "+ functionName + "(:uidContoTesoreria, :uidCapitolo, :enteProprietarioId)";
+		
+		Query query = entityManager.createNativeQuery(sql);
+		
+		query.setParameter("uidContoTesoreria", uidContoTesoreria);
+		query.setParameter("uidCapitolo", uidCapitolo);
+		query.setParameter("enteProprietarioId", enteProprietarioId);
+				
+		
+		return (BigDecimal) query.getSingleResult();
+	}
+
+	@Override
+	public BigDecimal findDisponibilitaIncassareSottoContoVincolato(Integer uidContoTesoreria, Integer uidCapitolo,	Integer enteProprietarioId) {
+		final String methodName = "findDisponibilitaIncassareSottoContoVincolato";
+		String functionName = "fnc_siac_disp_incassare_sottoconto_vincolo";
+		log.debug(methodName, "Calling functionName: "+ functionName );
+		String sql = "SELECT * FROM "+ functionName + "(:uidContoTesoreria, :uidCapitolo, :enteProprietarioId)";
+		
+		Query query = entityManager.createNativeQuery(sql);
+		
+		query.setParameter("uidContoTesoreria", uidContoTesoreria);
+		query.setParameter("uidCapitolo", uidCapitolo);
+		query.setParameter("enteProprietarioId", enteProprietarioId);
+				
+		
+		return (BigDecimal) query.getSingleResult();
+	}}

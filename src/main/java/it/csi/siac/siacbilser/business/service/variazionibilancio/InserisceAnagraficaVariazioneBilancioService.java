@@ -5,7 +5,6 @@
 package it.csi.siac.siacbilser.business.service.variazionibilancio;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -16,13 +15,8 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceAnagraficaVariazi
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceAnagraficaVariazioneBilancioResponse;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.processi.GestoreProcessiVariazioneBilancio;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
-import it.csi.siac.siaccorser.frontend.webservice.msg.ExecAzioneRichiesta;
-import it.csi.siac.siaccorser.frontend.webservice.msg.ExecAzioneRichiestaResponse;
-import it.csi.siac.siaccorser.model.Azione;
-import it.csi.siac.siaccorser.model.AzioneRichiesta;
-import it.csi.siac.siaccorser.model.TipoAzione;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
@@ -78,56 +72,17 @@ public class InserisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 		Integer numeroVariazione = variazioniDad.staccaNumeroVariazione();
 		variazione.setNumero(numeroVariazione);
 		
+		//SIAC-6884: se la variazione è decentrata non dobbiamo invocare Bonita
+		//SIAC-8332-REGP
+		variazione.setStatoOperativoVariazioneDiBilancio(GestoreProcessiVariazioneBilancio.getStatoAvvioProcessoVariazioneDiBilancio(variazione.isDecentrata()));
+		
 		variazioniDad.inserisciAnagraficaVariazioneImportoCapitolo(variazione);
 		
 		res.setVariazioneImportoCapitolo(variazione);
-		//SIAC-6884: se la variazione è decentrata non dobbiamo invocare Bonita
-		if(!variazione.isDecentrata())
-			avviaProcessoVariazioneDiBilancio();
-
+		
 	}
 
-	/**
-	 * Avvia processo variazione di bilancio.
-	 */
-	private void avviaProcessoVariazioneDiBilancio() {
-		ExecAzioneRichiesta execAzioneRichiesta = new ExecAzioneRichiesta();
-		execAzioneRichiesta.setRichiedente(req.getRichiedente());
-		execAzioneRichiesta.setDataOra(new Date());
-
-		AzioneRichiesta azioneRichiesta = new AzioneRichiesta();
-		Azione azione = new Azione();
-		azioneRichiesta.setAzione(azione);
-		azione.setTipo(TipoAzione.AVVIO_PROCESSO);
-		azione.setNomeProcesso("VariazioneDiBilancio");
-		azione.setNomeTask("VariazioneDiBilancio-InserimentoVariazione");
-
-		setVariabileProcesso(azioneRichiesta, "tipoVariazioneBilancio", "Importo");
-		setVariabileProcesso(azioneRichiesta, "descrizione", variazione.getNumero() + " - " + variazione.getDescrizione() + " - "+ variazione.getTipoVariazione().getDescrizione());
-		setVariabileProcesso(azioneRichiesta, "descrizioneBreve", variazione.getNumero() + " - " + variazione.getDescrizione() + " - "+ variazione.getTipoVariazione().getDescrizione());
-		setVariabileProcesso(azioneRichiesta, "siacAnnoEsercizioProcesso","SIAC-ANNO-ESERCIZIO-" + variazione.getBilancio().getAnno());
-		setVariabileProcesso(azioneRichiesta, "siacEnteProprietarioProcesso","SIAC-ENTE-PROPRIETARIO-" + variazione.getEnte().getUid());
-		setVariabileProcesso(azioneRichiesta, "variazioneDiBilancioDem", variazione.getUid() +"|"+variazione.getNumero());
-		setVariabileProcesso(azioneRichiesta, "siacSacProcesso", "SIAC-SAC-strutture");
-		setVariabileProcesso(azioneRichiesta, "invioGiunta", req.getInvioOrganoAmministrativo());
-		setVariabileProcesso(azioneRichiesta, "invioConsiglio", req.getInvioOrganoLegislativo());
-		setVariabileProcesso(azioneRichiesta, "annullaVariazione", Boolean.FALSE);
-		// CR-2304 e 3213
-		setVariabileProcesso(azioneRichiesta, "quadraturaVariazioneDiBilancio", (req.isSaltaCheckStanziamentoCassa() || Boolean.TRUE.equals(res.getIsQuadraturaCorrettaStanziamentoCassa())) 
-				&& Boolean.TRUE.equals(res.getIsQuadraturaCorrettaStanziamento()) 
-				&& Boolean.TRUE.equals(res.getIsProvvedimentoPresenteDefinitivo()));
-		setVariabileProcesso(azioneRichiesta, "statoVariazioneDiBilancio", StatoOperativoVariazioneDiBilancio.BOZZA.toString());
-
-		execAzioneRichiesta.setAzioneRichiesta(azioneRichiesta);
-
-		ExecAzioneRichiestaResponse execAzioneRichiestaResponse = coreService.execAzioneRichiesta(execAzioneRichiesta);
-		log.logXmlTypeObject(execAzioneRichiestaResponse, "Risposta ottenuta dal servizio ExecAzioneRichiesta.");
-		checkServiceResponseFallimento(execAzioneRichiestaResponse);
-		// SIAC-6881: clono i dettagli in response
-		res.setIdTask(execAzioneRichiestaResponse.getIdTask());
-		res.setNomeTask(execAzioneRichiestaResponse.getNomeTask());
-		res.setVariabiliDiProcesso(execAzioneRichiestaResponse.getVariabiliDiProcesso());
-	}
+	
 
 	private void checkProvvedimentoPresenteEDefinitivo() {
 		boolean isProvvedimentoPresenteDefinitivo = isProvvedimentoPresenteDefinitivo();
@@ -138,6 +93,11 @@ public class InserisceAnagraficaVariazioneBilancioService extends VariazioneDiBi
 	protected BigDecimal adeguaDisponibilitaVariare(BigDecimal stanziamento, BigDecimal disponibilita, String tipoDisponibilita, Capitolo<?, ?> capitolo, int delta) {
 		//In inserimento il calcolo della disponibilitaVariare non va adeguato.
 		return disponibilita;
+	}
+
+	@Override
+	protected boolean isAnnullamentoVariazione() {
+		return false;
 	}
 	
 }

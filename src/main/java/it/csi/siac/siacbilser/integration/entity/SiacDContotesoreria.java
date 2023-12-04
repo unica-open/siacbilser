@@ -45,6 +45,12 @@ public class SiacDContotesoreria extends SiacTEnteBase {
 	@Column(name="contotes_desc")
 	private String contotesDesc;
 
+	@Column(name="vincolato")
+	private Boolean vincolato;
+
+	@Column(name="per_ripianamento")
+	private Boolean perRipianamento;
+
 	//bi-directional many-to-one association to SiacTCartacontDet
 	@OneToMany(mappedBy="siacDContotesoreria")
 	private List<SiacTCartacontDet> siacTCartacontDets;
@@ -295,6 +301,22 @@ public class SiacDContotesoreria extends SiacTEnteBase {
 	public void setUid(Integer uid) {
 		this.contotesId = uid;
 		
+	}
+
+	public Boolean getVincolato() {
+		return vincolato;
+	}
+
+	public void setVincolato(Boolean vincolato) {
+		this.vincolato = vincolato;
+	}
+
+	public Boolean getPerRipianamento() {
+		return perRipianamento;
+	}
+
+	public void setPerRipianamento(Boolean perRipianamento) {
+		this.perRipianamento = perRipianamento;
 	}
 
 }

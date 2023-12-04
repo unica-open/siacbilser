@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.service.registrocomunicazionipcc.InserisciRegistroComunicazioniPCCService;
+import it.csi.siac.siacbilser.business.utility.BilUtilities;
 import it.csi.siac.siacbilser.business.utility.ElaborazioniAttiveKeyHandler;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
 import it.csi.siac.siacbilser.integration.dad.CapitoloUscitaGestioneDad;
@@ -1077,7 +1078,7 @@ public class AggiornaStatoDocumentoDiSpesaService extends CheckedAccountBaseServ
 				}
 				
 				if(AliquotaIvaTipo.COMMERCIALE.equals(ati) && 
-					new BigDecimal("100").compareTo(asi.getAliquotaIva().getPercentualeIndetraibilita()) == 0){
+						BilUtilities.BIG_DECIMAL_ONE_HUNDRED.compareTo(asi.getAliquotaIva().getPercentualeIndetraibilita()) == 0){
 					
 					log.debug(methodName, "AliquotaIva di tipo COMMERCIALE con uid "+asi.getUid()+" esclusa dal conteggio perche' con percentuale indetraibilita' = 100.");
 					continue;
@@ -1336,7 +1337,7 @@ public class AggiornaStatoDocumentoDiSpesaService extends CheckedAccountBaseServ
 	 */
 	private List<DocumentoSpesa> getListaNoteCreditoSpesaCollegateEsclusivamenteAlDocumento() {
 		if(noteCreditoSpesa == null) {
-			noteCreditoSpesa = documentoSpesaDad.ricercaNoteCreditoSpesaCollegateEsclusivamenteAlDocumento(doc.getUid()); //TODO Specificare i ModelDetail che servono!
+			noteCreditoSpesa = documentoSpesaDad.ricercaNoteCreditoSpesaCollegateEsclusivamenteAlDocumento(doc.getUid()); //TODO Specificare i ModelDetailEnum che servono!
 		}
 		return noteCreditoSpesa;
 	}
@@ -1348,7 +1349,7 @@ public class AggiornaStatoDocumentoDiSpesaService extends CheckedAccountBaseServ
 	 */
 	private List<DocumentoSpesa> getListaNoteCreditoSpesaCollegateEsclusivamenteAlDocumentoOld() {
 		if(noteCreditoSpesaOld == null) {
-			noteCreditoSpesaOld = documentoSpesaDad.ricercaNoteCreditoSpesaCollegateEsclusivamenteAlDocumentoTxRequiresNew(doc.getUid()); //TODO Specificare i ModelDetail che servono!
+			noteCreditoSpesaOld = documentoSpesaDad.ricercaNoteCreditoSpesaCollegateEsclusivamenteAlDocumentoTxRequiresNew(doc.getUid()); //TODO Specificare i ModelDetailEnum che servono!
 		}
 		return noteCreditoSpesaOld;
 	}
@@ -1472,7 +1473,7 @@ public class AggiornaStatoDocumentoDiSpesaService extends CheckedAccountBaseServ
 	private Integer findUidMovgestByAnnoNumeroBilancio(Impegno impegno, Bilancio bilancioAnnoPrecedente) {
 		return impegnoBilDad.findUidMovgestByAnnoNumeroBilancio(
 				impegno.getAnnoMovimento(), 
-				impegno.getNumero(),
+				impegno.getNumeroBigDecimal(),
 				Impegno.class,
 				bilancioAnnoPrecedente.getUid());
 	}
@@ -1480,8 +1481,8 @@ public class AggiornaStatoDocumentoDiSpesaService extends CheckedAccountBaseServ
 	private Integer findUidMovgestByAnnoNumeroBilancio(Impegno impegno, SubImpegno subImpegno, Bilancio bilancioAnnoPrecedente) {
 		return impegnoBilDad.findUidMovgestTsByAnnoNumeroBilancio(
 				impegno.getAnnoMovimento(), 
-				impegno.getNumero(), 
-				String.valueOf(subImpegno.getNumero()),
+				impegno.getNumeroBigDecimal(), 
+				String.valueOf(subImpegno.getNumeroBigDecimal()),
 				Impegno.class,
 				bilancioAnnoPrecedente.getUid());
 	}

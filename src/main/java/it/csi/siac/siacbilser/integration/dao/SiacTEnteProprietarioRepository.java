@@ -59,5 +59,21 @@ public interface SiacTEnteProprietarioRepository extends JpaRepository<SiacTEnte
 	List<String> findExtsysEnteCodeByEnteUidAndExtsysCode(@Param("enteProprietarioId") Integer enteProprietarioId, @Param("extsysCode") String extsysCode);
 	
 	
+	 /**
+     * @deprecated
+     * This method is no longer used.
+     * <p> See {@link it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum}.
+     */	
+	@Deprecated
+	@Query(" SELECT config.siacDConfigTipo.configTipoCode, config.configEnteValore "
+			+ " FROM SiacTConfigEnte config "
+			+ " WHERE config.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId"
+			+ " AND config.dataCancellazione IS NULL"
+			+ " AND ( :configTipoCodes IS NULL  "
+			+ "  OR config.siacDConfigTipo.configTipoCode IN (:configTipoCodes)"
+			+ " )"
+	)
+	List<Object[]> caricaConfigurazioniByEnte(@Param("enteProprietarioId") Integer enteProprietarioId, @Param("configTipoCodes") List<String> configTipoCodes);
+	
 	
 }

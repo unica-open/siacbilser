@@ -14,7 +14,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDEventoTipoEnum
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Esito;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;

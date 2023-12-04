@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneModalitaPagamentoDto;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacTNazioneRepository;
 import it.csi.siac.siacfinser.integration.entity.SiacTNazioneFin;
@@ -175,7 +175,7 @@ public class ModalitaPagamentoSoggettoHelper {
 		String descStato = null;
 		SiacTNazioneFin nazione = null;
 		//FIX PER RECUPERARE IL NOME
-		if(ottimizzazioneModPag!=null && !StringUtils.isEmpty(ottimizzazioneModPag.getDistintiSiacTNazioneFinCoinvolti()) ){
+		if(ottimizzazioneModPag!=null && !StringUtilsFin.isEmpty(ottimizzazioneModPag.getDistintiSiacTNazioneFinCoinvolti()) ){
 			//RAMO OTTIMIZZATO
 			 nazione = ottimizzazioneModPag.findSiacTNazioneFinCode(nazioneCode);
 		} else {

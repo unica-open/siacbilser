@@ -222,7 +222,7 @@ public class TipoOnereTest extends BaseJunit4TestCase {
 		Accertamento acc = new Accertamento();
 		acc.setUid(95425);
 		acc.setAnnoMovimento(2015);
-		acc.setNumero(BigDecimal.valueOf(42));
+		acc.setNumeroBigDecimal(BigDecimal.valueOf(42));
 		caus.setAccertamento(acc);
 		
 		Distinta distinta = new Distinta();

@@ -86,6 +86,10 @@ public class SiacTAzione extends SiacTEnteBase {
 	//bi-directional many-to-one association to SiacTOperazioneAsincrona
 	@OneToMany(mappedBy="siacTAzione")
 	private List<SiacTOperazioneAsincrona> siacTOperazioneAsincronas;
+	
+	/** The siac t visibilitas. */
+	@OneToMany(mappedBy="siacTAzione")
+	private List<SiacTVisibilita> siacTVisibilitas;
 
 	/**
 	 * Instantiates a new siac t azione.
@@ -385,6 +389,20 @@ public class SiacTAzione extends SiacTEnteBase {
 		siacTOperazioneAsincrona.setSiacTAzione(null);
 
 		return siacTOperazioneAsincrona;
+	}
+
+	/**
+	 * @return the siacTVisibilitas
+	 */
+	public List<SiacTVisibilita> getSiacTVisibilitas() {
+		return this.siacTVisibilitas;
+	}
+
+	/**
+	 * @param siacTVisibilitas the siacTVisibilitas to set
+	 */
+	public void setSiacTVisibilitas(List<SiacTVisibilita> siacTVisibilitas) {
+		this.siacTVisibilitas = siacTVisibilitas;
 	}
 
 	/* (non-Javadoc)

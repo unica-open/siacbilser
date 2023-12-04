@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
@@ -46,7 +46,7 @@ public class ImpegnoPerDoppiaGestioneInfoDto extends ImpSubImpPerDoppiaGestioneI
 	}	
 	
 	public ArrayList<SubImpegnoPerDoppiaGestioneInfoDto> getSubImpegni(){
-		return StringUtils.hashMapToArrayList(mappaSub);
+		return StringUtilsFin.hashMapToArrayList(mappaSub);
 	}
 	
 	/**

@@ -104,7 +104,7 @@ public class SpezzaQuotaEntrataService extends CheckedAccountBaseService<SpezzaQ
 	private void checkSubdocumento() {
 		// NUOVO IMPORTO QUOTA: Deve essere < importo quota originale e > 0
 		if(importoOriginale.compareTo(req.getSubdocumentoEntrata().getImporto()) <= 0) {
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("importo", "deve essere inferiore l'importo originale del subdocumento"));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo", "deve essere inferiore l'importo originale del subdocumento"));
 		}
 		// SIAC-5468
 		if(subdocumentoEntrata.getImportoDaDedurre() != null && subdocumentoEntrata.getImportoDaDedurre().signum() > 0) {
@@ -136,7 +136,7 @@ public class SpezzaQuotaEntrataService extends CheckedAccountBaseService<SpezzaQ
 			pdc.setImportoDaRegolarizzare(importoDaRegolarizzare);
 		} else {
 			checkBusinessCondition(pdc.getImportoDaRegolarizzare() == null || pdc.getImportoDaRegolarizzare().compareTo(req.getSubdocumentoEntrata().getImporto()) >= 0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("importo", "non deve essere superiore all'importo da regolarizzare del provvisorio di cassa (" + pdc.getImportoDaRegolarizzare().toPlainString() + ")"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo", "non deve essere superiore all'importo da regolarizzare del provvisorio di cassa (" + pdc.getImportoDaRegolarizzare().toPlainString() + ")"));
 		}
 		
 		provvisorioDiCassa = pdc;

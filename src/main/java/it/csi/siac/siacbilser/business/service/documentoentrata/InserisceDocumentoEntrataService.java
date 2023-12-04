@@ -5,6 +5,7 @@
 package it.csi.siac.siacbilser.business.service.documentoentrata;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.documentospesa.InserisceDocumentoSpesaService;
+import it.csi.siac.siacbilser.integration.dad.FatturaFELDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceDocumentoEntrata;
@@ -30,6 +32,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoFamigliaDocumento;
 import it.csi.siac.siacfin2ser.model.TipoRelazione;
+import it.csi.siac.sirfelser.model.StatoAcquisizioneFEL;
 
 /**
  * Inserimento dell'anagrafica del Documento di Entrata .
@@ -48,6 +51,9 @@ public class InserisceDocumentoEntrataService extends CrudDocumentoDiEntrataBase
 	
 	/** The inserisce documento spesa service. */
 	private InserisceDocumentoSpesaService inserisceDocumentoSpesaService;
+	
+	@Autowired 
+	private FatturaFELDad fatturaFELDad;
 	
 	/** The app ctx. */
 	@Autowired
@@ -133,6 +139,8 @@ public class InserisceDocumentoEntrataService extends CrudDocumentoDiEntrataBase
 	protected void init() {
 		documentoEntrataDad.setLoginOperazione(loginOperazione);
 		documentoEntrataDad.setEnte(doc.getEnte());
+		fatturaFELDad.setLoginOperazione(loginOperazione);
+		fatturaFELDad.setEnte(ente);
 		
 		inserisceDocumentoSpesaService = appCtx.getBean("inserisceDocumentoSpesaService", InserisceDocumentoSpesaService.class);
 	}
@@ -179,6 +187,8 @@ public class InserisceDocumentoEntrataService extends CrudDocumentoDiEntrataBase
 			doc.getListaSubdocumenti().set(0,subdocumentoEntrata);
 		}
 		
+		gestisciFatturaFEL();
+		
 		caricaTipoDocumento();
 		gestisciFlagRegolarizzazione();
 		
@@ -207,7 +217,19 @@ public class InserisceDocumentoEntrataService extends CrudDocumentoDiEntrataBase
 	}
 	
 	
-	
+	private void gestisciFatturaFEL() {
+		final String methodName = "gestisciFatturaFEL";
+		
+		if(doc.getFatturaFEL() != null && doc.getFatturaFEL().getIdFattura() != null){
+			log.debug(methodName, "Inserisco il legame tra il documento[uid:"+doc.getUid()+"] e la fatturaFEL[idFattura:"+doc.getFatturaFEL().getIdFattura()+"]");
+			
+			fatturaFELDad.inserisciRelazioneDocumentoFattura(doc, doc.getFatturaFEL());
+			fatturaFELDad.aggiornaStatoFattura(doc.getFatturaFEL(), StatoAcquisizioneFEL.IMPORTATA);
+			fatturaFELDad.impostaDataCaricamentoFattura(doc.getFatturaFEL(), new Date());
+			//TODO corrispettivo oneri in entrata?
+//			elaboraDettagliOnereDocumento();
+		}
+	}
 	
 
 	/**

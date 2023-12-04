@@ -31,6 +31,7 @@ import it.csi.siac.siacbilser.integration.dao.SiacTOrdineRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacDCodicebollo;
 import it.csi.siac.siacbilser.integration.entity.SiacDDocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacDDocTipo;
+import it.csi.siac.siacbilser.integration.entity.SiacDSiopeDocumentoTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacRDocOnere;
 import it.csi.siac.siacbilser.integration.entity.SiacRDocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTBil;
@@ -52,6 +53,7 @@ import it.csi.siac.siacfin2ser.model.DettaglioOnere;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesaModelDetail;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
+import it.csi.siac.siacfin2ser.model.PreDocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoIvaSpesa;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
@@ -60,6 +62,7 @@ import it.csi.siac.siacfin2ser.model.TipoIvaSplitReverse;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 import it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoPagamento;
+import it.csi.siac.siacfinser.model.siopeplus.SiopeDocumentoTipo;
 
 /**
  * Data access delegate di un DocumentoSpesa .
@@ -329,6 +332,10 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 				null,
 				null,
 				null,
+				
+				//SIAC-6780
+				null,
+				
 				toPageable(parametriPaginazione));
 
 		if(lista.getContent().isEmpty()) {
@@ -352,11 +359,12 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 	 * @param bilancioLiquidazione
 	 * @param collegatoCEC
 	 * @param contabilizzaGenPcc 
+	 * @param preDocumentoSpesa 
 	 * @param parametriPaginazione
 	 * @return documenti
 	 */
 	public ListaPaginata<DocumentoSpesa> ricercaSinteticaDocumentoSpesa(DocumentoSpesa doc, AttoAmministrativo attoAmministrativo, Impegno impegno, Boolean rilevanteIva,
-			ElencoDocumentiAllegato elencoDocumenti, Liquidazione liquidazione, Bilancio bilancioLiquidazione, Boolean collegatoCEC, Boolean contabilizzaGenPcc, ParametriPaginazione parametriPaginazione) {
+			ElencoDocumentiAllegato elencoDocumenti, Liquidazione liquidazione, Bilancio bilancioLiquidazione, Boolean collegatoCEC, Boolean contabilizzaGenPcc, PreDocumentoSpesa preDocumentoSpesa, ParametriPaginazione parametriPaginazione) {
 			
 		Page<SiacTDoc> lista = documentoDao.ricercaSinteticaDocumento(
 				doc.getEnte().getUid(),
@@ -395,6 +403,9 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 				doc.getRegistroRepertorio(),
 				contabilizzaGenPcc,
 				doc.getStatoSDI(),
+				//SIAC-6780
+				preDocumentoSpesa != null? preDocumentoSpesa.getNumero() : null,
+				
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(lista, DocumentoSpesa.class, BilMapId.SiacTDoc_DocumentoSpesa);
@@ -414,11 +425,12 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 	 * @param bilancioLiquidazione
 	 * @param collegatoCEC
 	 * @param contabilizzaGenPcc 
+	 * @param preDocumentoSpesa 
 	 * @param parametriPaginazione
 	 * @return documenti
 	 */
 	public ListaPaginata<DocumentoSpesa> ricercaSinteticaModulareDocumentoSpesa(DocumentoSpesa doc, AttoAmministrativo attoAmministrativo, Impegno impegno, Boolean rilevanteIva,
-			ElencoDocumentiAllegato elencoDocumenti, Liquidazione liquidazione, Bilancio bilancioLiquidazione, Boolean collegatoCEC, Boolean contabilizzaGenPcc, ParametriPaginazione parametriPaginazione,
+			ElencoDocumentiAllegato elencoDocumenti, Liquidazione liquidazione, Bilancio bilancioLiquidazione, Boolean collegatoCEC, Boolean contabilizzaGenPcc, PreDocumentoSpesa preDocumentoSpesa, ParametriPaginazione parametriPaginazione,
 			DocumentoSpesaModelDetail... documentoSpesaModelDetails) {
 			
 		Page<SiacTDoc> lista = documentoDao.ricercaSinteticaDocumento(
@@ -456,6 +468,9 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 				doc.getRegistroRepertorio(),
 				contabilizzaGenPcc,
 				doc.getStatoSDI(),
+				//SIAC-6780
+				preDocumentoSpesa != null? preDocumentoSpesa.getNumero() : null,
+				
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(lista, DocumentoSpesa.class, BilMapId.SiacTDoc_DocumentoSpesa_ModelDetail, documentoSpesaModelDetails);
@@ -509,6 +524,8 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 				null,
 				null,
 				null,
+				//SIAC-6780
+				null,
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(lista, DocumentoSpesa.class, BilMapId.SiacTDoc_DocumentoSpesa);
@@ -524,11 +541,12 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 	 * @param attoAmministrativo the atto amministrativo
 	 * @param impegno the impegno
 	 * @param rilevanteIva the rilevante iva
+	 * @param preDocumentoSpesa 
 	 * @param parametriPaginazione the parametri paginazione
 	 * @return the big decimal
 	 */
 	public BigDecimal ricercaSinteticaDocumentoSpesaImportoTotale(DocumentoSpesa doc, AttoAmministrativo attoAmministrativo, Impegno impegno, Boolean rilevanteIva,
-			ElencoDocumentiAllegato elencoDocumenti, Liquidazione liquidazione, Bilancio bilancioLiquidazione, Boolean collegatoCEC, Boolean contabilizzaGenPcc, ParametriPaginazione parametriPaginazione) {
+			ElencoDocumentiAllegato elencoDocumenti, Liquidazione liquidazione, Bilancio bilancioLiquidazione, Boolean collegatoCEC, Boolean contabilizzaGenPcc, PreDocumentoSpesa preDocumentoSpesa, ParametriPaginazione parametriPaginazione) {
 		
 		BigDecimal importoTotale = documentoDao.ricercaSinteticaDocumentoImportoTotale(
 				doc.getEnte().getUid(),
@@ -565,6 +583,8 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 				doc.getRegistroRepertorio(),
 				contabilizzaGenPcc,
 				doc.getStatoSDI(),
+				//SIAC-6780
+				preDocumentoSpesa != null? preDocumentoSpesa.getNumero() : null,
 				toPageable(parametriPaginazione));
 		
 		return importoTotale;
@@ -606,6 +626,7 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 				attoAmministrativo != null ?  mapToUidIfNotZero(attoAmministrativo.getStrutturaAmmContabile()) : null,		
 	
 				doc.getSoggetto() != null ? doc.getSoggetto().getUid() : null, 
+				null,
 				null,
 				null,
 				null,
@@ -1030,6 +1051,12 @@ public class DocumentoSpesaDad extends ExtendedBaseDadImpl {
 	public List<DocumentoSpesa> findPenaliByUidDocumento(Integer uid, DocumentoSpesaModelDetail... modelDetails) {
 		List<SiacTDoc> siacTDocs = siacTDocRepository.findSiacTDocSubordinatiByDocIdAndTipoCollegamento(uid, SiacDRelazTipoEnum.Subdocumento.getCodice(), "PNL");
 		return convertiLista(siacTDocs, DocumentoSpesa.class, BilMapId.SiacTDoc_DocumentoSpesa_ModelDetail, Converters.byModelDetails(modelDetails));
+	}
+	
+	//SIAC-8301
+	public SiopeDocumentoTipo getSiopeDocumentoTipoByDocId(DocumentoSpesa doc) {
+		SiacDSiopeDocumentoTipo siacDDocumentoTipo = siacTDocRepository.findSiacDSiopeDocumentoTipoByDocId(doc.getUid(),ente.getUid());
+		return mapNotNull(siacDDocumentoTipo, SiopeDocumentoTipo.class, BilMapId.SiacDSiopeDocumentoTipo_SiopeDocumentoTipo);
 	}
 
 }

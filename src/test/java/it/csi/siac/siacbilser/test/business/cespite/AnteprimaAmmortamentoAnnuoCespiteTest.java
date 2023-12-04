@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbilser.business.service.cespiti.InserisciAnteprimaAmmortamentoAnnuoCespiteService;
 import it.csi.siac.siacbilser.business.service.cespiti.InserisciPrimeNoteAmmortamentoAnnuoCespiteService;
 import it.csi.siac.siacbilser.business.service.cespiti.RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespiteService;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccespser.frontend.webservice.msg.InserisciAnteprimaAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.InserisciAnteprimaAmmortamentoAnnuoCespiteResponse;
@@ -22,6 +21,7 @@ import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaDettaglio
 import it.csi.siac.siaccespser.frontend.webservice.msg.RicercaSinteticaDettaglioAnteprimaAmmortamentoAnnuoCespiteResponse;
 import it.csi.siac.siaccespser.model.AnteprimaAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 
 public class AnteprimaAmmortamentoAnnuoCespiteTest extends BaseJunit4TestCase {
 
@@ -38,7 +38,7 @@ public class AnteprimaAmmortamentoAnnuoCespiteTest extends BaseJunit4TestCase {
 		req.setAnnoBilancio(2017);
 		req.setDataOra(new Date());
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
-		req.setModelDetails(new ModelDetail[] {DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail.AnteprimaAmmortamento});
+		req.setModelDetails(new ModelDetailEnum[] {DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail.AnteprimaAmmortamento});
 		req.setParametriPaginazione(getParametriPaginazioneTest());
 		req.setAnteprimaAmmortamentoAnnuoCespite(create(AnteprimaAmmortamentoAnnuoCespite.class, 0));
 		req.getAnteprimaAmmortamentoAnnuoCespite().setAnno(Integer.valueOf(2018));

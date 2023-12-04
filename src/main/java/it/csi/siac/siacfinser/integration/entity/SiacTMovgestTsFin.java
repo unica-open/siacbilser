@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import it.csi.siac.siacbilser.integration.entity.SiacRSubdocMovgestT;
 import it.csi.siac.siacfinser.integration.entity.base.SiacLoginMultiplo;
 
 
@@ -49,7 +50,7 @@ public class SiacTMovgestTsFin extends SiacLoginMultiplo {
 
 	@Column(name="movgest_ts_scadenza_data")
 	private Timestamp movgestTsScadenzaData;
-
+	
 	private String ordine;
 
 	//bi-directional many-to-one association to SiacRMovgestClassFin
@@ -111,9 +112,6 @@ public class SiacTMovgestTsFin extends SiacLoginMultiplo {
 	@OneToMany(mappedBy="siacTMovgestT")
 	private List<SiacRMovgestTsAttoAmmFin> siacRMovgestTsAttoAmms;
 	
-	//bi-directional many-to-one association to SiacRMutuoVoceMovgestFin
-	@OneToMany(mappedBy="siacTMovgestTs")
-	private List<SiacRMutuoVoceMovgestFin> siacRMutuoVoceMovgests;
 
 	//bi-directional many-to-one association to SiacRCartacontDetMovgestTFin
 	@OneToMany(mappedBy="siacTMovgestT")
@@ -141,6 +139,19 @@ public class SiacTMovgestTsFin extends SiacLoginMultiplo {
 	//bi-directional many-to-one associationsiacTMovgestT to SiacRMovgestTsSogclasseModFin
 	@OneToMany(mappedBy="siacTMovgestT")
 	private List<SiacRMovgestTsCronopElemFin> siacRMovgestTsCronopElemFins;
+	
+	//SIAC-6997
+	//bi-directional many-to-one association to SiacRSubdocMovgestT
+	@OneToMany(mappedBy="siacTMovgestT")
+	private List<SiacRSubdocMovgestTFin> siacRSubdocMovgestTs;
+	
+	//bi-directional many-to-one association to SiacRMovgestT
+	@OneToMany(mappedBy="siacTMovgestTsB")
+	private List<SiacRMovgestTsFin> siacRMovgestTsB;
+
+	//bi-directional many-to-one association to SiacRMovgestT
+	@OneToMany(mappedBy="siacTMovgestTsA")
+	private List<SiacRMovgestTsFin> siacRMovgestTsA;
 	
 	/**
 	 * @return the siacRMovgestTsCronopElemFins
@@ -191,16 +202,6 @@ public class SiacTMovgestTsFin extends SiacLoginMultiplo {
 		return siacRLiquidazioneMovgest;
 	}
 	// 02/07/2914 : fine
-	
-	
-	//bi-directional many-to-one association to SiacRMovgestT
-	@OneToMany(mappedBy="siacTMovgestTsB")
-	private List<SiacRMovgestTsFin> siacRMovgestTsB;
-
-	//bi-directional many-to-one association to SiacRMovgestT
-	@OneToMany(mappedBy="siacTMovgestTsA")
-	private List<SiacRMovgestTsFin> siacRMovgestTsA;
-
 	
 	
 	public SiacTMovgestTsFin() {
@@ -520,27 +521,7 @@ public class SiacTMovgestTsFin extends SiacLoginMultiplo {
 		return siacRMovgestTsAttoAmm;
 	}
 	
-	public List<SiacRMutuoVoceMovgestFin> getSiacRMutuoVoceMovgests() {
-		return this.siacRMutuoVoceMovgests;
-	}
-
-	public void setSiacRMutuoVoceMovgests(List<SiacRMutuoVoceMovgestFin> siacRMutuoVoceMovgests) {
-		this.siacRMutuoVoceMovgests = siacRMutuoVoceMovgests;
-	}
-
-	public SiacRMutuoVoceMovgestFin addSiacRMutuoVoceMovgest(SiacRMutuoVoceMovgestFin siacRMutuoVoceMovgest) {
-		getSiacRMutuoVoceMovgests().add(siacRMutuoVoceMovgest);
-		siacRMutuoVoceMovgest.setSiacTMovgestTs(this);
-
-		return siacRMutuoVoceMovgest;
-	}
-
-	public SiacRMutuoVoceMovgestFin removeSiacRMutuoVoceMovgest(SiacRMutuoVoceMovgestFin siacRMutuoVoceMovgest) {
-		getSiacRMutuoVoceMovgests().remove(siacRMutuoVoceMovgest);
-		siacRMutuoVoceMovgest.setSiacTMovgestTs(null);
-
-		return siacRMutuoVoceMovgest;
-	}
+	
 
 	public List<SiacRCartacontDetMovgestTFin> getSiacRCartacontDetMovgestTs() {
 		return this.siacRCartacontDetMovgestTs;
@@ -614,6 +595,20 @@ public class SiacTMovgestTsFin extends SiacLoginMultiplo {
 
 	public void setSiacRMovgestTsCronopElems(List<SiacRMovgestTsCronopElemFin> siacRMovgestTsCronopElems) {
 		this.siacRMovgestTsCronopElems = siacRMovgestTsCronopElems;
+	}
+
+	/**
+	 * @return the siacRSubdocMovgestTs
+	 */
+	public List<SiacRSubdocMovgestTFin> getSiacRSubdocMovgestTs() {
+		return siacRSubdocMovgestTs;
+	}
+
+	/**
+	 * @param siacRSubdocMovgestTs the siacRSubdocMovgestTs to set
+	 */
+	public void setSiacRSubdocMovgestTs(List<SiacRSubdocMovgestTFin> siacRSubdocMovgestTs) {
+		this.siacRSubdocMovgestTs = siacRSubdocMovgestTs;
 	}
 	
 }

@@ -190,7 +190,8 @@ public class EliminaGestioneCapitoloUscitaGestioneServiceTest extends CapitoloUs
 	 * Inizializza uid capitolo.
 	 */
 	private void inizializzaUidCapitolo() {
-				
+		final String methodName = "inizializzaUidCapitolo";
+
 		RicercaPuntualeCapitoloUscitaGestioneResponse ricercaPuntualeResponse = ricercaPuntuale(capitoloUscitaGestioneService);
 		/*String msgCapNonEsiste = "Capitolo da aggiornare non trovato! Il capitolo deve esistere per poter testare l'aggiornamento!";
 		assertNotNull(msgCapNonEsiste, ricercaPuntualeResponse);
@@ -199,7 +200,7 @@ public class EliminaGestioneCapitoloUscitaGestioneServiceTest extends CapitoloUs
 		if (ricercaPuntualeResponse.getCapitoloUscitaGestione() != null)
 		{
 			this.uidCapi = ricercaPuntualeResponse.getCapitoloUscitaGestione().getUid();
-			log.debug("Capitolo da aggiornare trovato con uid: "+this.uidCapi);
+			log.debug(methodName, "Capitolo da aggiornare trovato con uid: "+this.uidCapi);
 		}
 		else this.uidCapi = 1;		
 	}

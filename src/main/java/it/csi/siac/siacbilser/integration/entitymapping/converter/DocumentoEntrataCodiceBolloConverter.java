@@ -16,7 +16,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacDDocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRDocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTDoc;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDDocStatoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 
 // TODO: Auto-generated Javadoc
@@ -27,7 +27,7 @@ import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 public class DocumentoEntrataCodiceBolloConverter extends DozerConverter<StatoOperativoDocumento, SiacTDoc > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

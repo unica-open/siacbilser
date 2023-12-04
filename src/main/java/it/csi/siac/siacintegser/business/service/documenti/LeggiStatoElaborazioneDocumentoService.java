@@ -68,7 +68,7 @@ public class LeggiStatoElaborazioneDocumentoService extends IntegBaseService<Leg
 		GetOperazioneAsincResponse getOperazioneAsincResponse = operazioneAsincronaService
 				.getOperazioneAsinc(getOperazioneAsinc);
 
-		checkBusinessServiceResponse(getOperazioneAsincResponse);
+		checkServiceResponse(getOperazioneAsincResponse);
 
 		return getOperazioneAsincResponse;
 	}
@@ -84,7 +84,7 @@ public class LeggiStatoElaborazioneDocumentoService extends IntegBaseService<Leg
 		GetDettaglioOperazioneAsincronaResponse getDettaglioOperazioneAsincronaResponse = operazioneAsincronaService
 				.getDettaglioOperazioneAsincrona(getDettaglioOperazioneAsincrona);
 
-		checkBusinessServiceResponse(getDettaglioOperazioneAsincronaResponse);
+		checkServiceResponse(getDettaglioOperazioneAsincronaResponse);
 
 		return getDettaglioOperazioneAsincronaResponse;
 

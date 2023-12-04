@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceQuotaDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceQuotaDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
@@ -56,7 +56,7 @@ public class InserisceQuotaDocumentoEntrataService extends CrudDocumentoDiEntrat
 				 ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero provvisorio di cassa") );
 		
 		checkCondition(subdoc.getAccertamento()==null || subdoc.getAccertamento().getUid() == 0 ||
-				(subdoc.getAccertamento().getAnnoMovimento()!=0 && subdoc.getAccertamento().getNumero()!=null), 
+				(subdoc.getAccertamento().getAnnoMovimento()!=0 && subdoc.getAccertamento().getNumeroBigDecimal()!=null), 
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero accertamento")); 
 		
 		checkCondition(subdoc.getAttoAmministrativo()==null || subdoc.getAttoAmministrativo().getUid() != 0,
@@ -146,9 +146,17 @@ public class InserisceQuotaDocumentoEntrataService extends CrudDocumentoDiEntrat
 	protected boolean isDSIAbilitatoASfondareAccertamento() {
 		final String methodName = "isPossibileSfondareAccertamento";
 		       //non sono CMTO: non controllo nulla, nel caso verra' poi inserita una modifica automatica di accertamento nell'emissione ordinativi
-		return !isAzioneConsentita(AzioniConsentite.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA.getNomeAzione()) 
+		return !isAzioneConsentita(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA.getNomeAzione()) 
 				//sono CMTO ma sto arrivando da un definisci predocumento: salto il controllo sulla disponibilita
-				|| req.isSaltaControlloDisponibilitaAccertamento();
+				|| req.isSaltaControlloDisponibilita();
+	}
+	
+	@Override
+	protected void checkProvvisorioDiCassa() {
+		if(req.isSaltaControlloDisponibilita()) {
+			return;
+		}
+		super.checkProvvisorioDiCassa();
 	}
 	
 }

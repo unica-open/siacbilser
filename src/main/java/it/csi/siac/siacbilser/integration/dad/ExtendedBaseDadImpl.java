@@ -20,16 +20,21 @@ import org.dozer.CustomConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.dao.base.JpaManagementDao;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
-import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converter;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
-import it.csi.siac.siacbilser.model.ModelDetail;
+import it.csi.siac.siacbilser.integration.entitymapping.mapper.ModelDetailMapperDecorator;
+import it.csi.siac.siacbilser.model.mutuo.MutuoAttoAmministrativoComposedModelDetail;
+import it.csi.siac.siaccommon.model.ComposedModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
+import it.csi.siac.siaccommon.util.mapper.BaseMapperDecorator;
+import it.csi.siac.siaccommon.util.mapper.MapperDecorator;
 import it.csi.siac.siaccommonser.integration.dad.base.BaseDadImpl;
+import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
+import it.csi.siac.siaccommonser.integration.entitymapping.Converter;
 import it.csi.siac.siaccommonser.util.dozer.MapId;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Entita;
@@ -58,21 +63,17 @@ public class ExtendedBaseDadImpl extends BaseDadImpl {
 	 * @param ente the ente to set
 	 */
 	public void setEnte(Ente ente) {
-		this.ente = ente;
-		this.siacTEnteProprietario = map(ente, SiacTEnteProprietario.class, BilMapId.SiacTEnteProprietario_Ente_Base);
+		setEnte(ente, true);
 	}
 	/**
-	 * @param siacTEnteProprietario the siacTEnteProprietario to set
-	 * @deprecated Non dovrebbe essere usato: l'uso potrebbe significare un erroneo uso degli strati applicativi, in quanto
-	 * il DAD dovrebbe essere <strong>@Autowired</strong> solo nelle classi di servizio, che non dovrebbero avere accesso
-	 * alle entities.
-	 * <br/>
-	 * Usare {@link #setEnte(Ente)}
+	 * @param ente the ente to set
+	 * @param mapEntity whether to map to the entity
 	 */
-	@Deprecated
-	public void setSiacTEnteProprietario(SiacTEnteProprietario siacTEnteProprietario) {
-		this.siacTEnteProprietario = siacTEnteProprietario;
-		this.ente = map(siacTEnteProprietario, Ente.class, BilMapId.SiacTEnteProprietario_Ente_Base);
+	public void setEnte(Ente ente, boolean mapEntity) {
+		this.ente = ente;
+		if(mapEntity) {
+			this.siacTEnteProprietario = map(ente, SiacTEnteProprietario.class, BilMapId.SiacTEnteProprietario_Ente_Base);
+		}
 	}
 	/**
 	 * @param loginOperazione the loginOperazione to set
@@ -129,7 +130,7 @@ public class ExtendedBaseDadImpl extends BaseDadImpl {
 
 	}
 	
-	protected <T, E> ListaPaginata<T> toListaPaginata(Page<E> pagedList, Class<T> classDest, MapId mapId, ModelDetail... modelDetails) {
+	protected <T, E> ListaPaginata<T> toListaPaginata(Page<E> pagedList, Class<T> classDest, MapId mapId, ModelDetailEnum... modelDetails) {
 		final String methodName = "toListaPaginata";
 		ListaPaginataImpl<T> list = new ListaPaginataImpl<T>();
 
@@ -180,7 +181,7 @@ public class ExtendedBaseDadImpl extends BaseDadImpl {
 	 * @param modelDetails the model details
 	 * @return the lista paginata
 	 */
-	protected <T extends Serializable, E> ListaPaginata<T> toListaPaginata(Page<E> pagedList, T destSample, MapId mapId, ModelDetail... modelDetails) {
+	protected <T extends Serializable, E> ListaPaginata<T> toListaPaginata(Page<E> pagedList, T destSample, MapId mapId, ModelDetailEnum... modelDetails) {
 		final String methodName = "toListaPaginata";
 		ListaPaginataImpl<T> list = new ListaPaginataImpl<T>();
 
@@ -236,169 +237,7 @@ public class ExtendedBaseDadImpl extends BaseDadImpl {
 	
 	//---------------------------------------
 	
-	protected <T> T map(Object source, Class<T> clazz, MapId mapId, Class<? extends CustomConverter>... converterClasses) {
-		T dest = super.map(source, clazz, mapId);
-		return (T) applyConverters(source, dest, converterClasses);
-	}
-	
-	protected <T> T mapNotNull(Object source, Class<T> clazz, MapId mapId, Class<? extends CustomConverter>... converterClasses) {
-		if(source==null){
-			return null;
-		}
-		return map(source, clazz, mapId, converterClasses);
-	}
-	
-	protected <T> T map(Object source, T dest, MapId mapId, Class<? extends CustomConverter>... converterClasses) {
-		super.map(source, dest, mapId);
-		return applyConverters(source, dest, converterClasses);
-	}
-	
-	protected <T> T mapNotNull(Object source, T dest, MapId mapId, Class<? extends CustomConverter>... converterClasses) {
-		if(source==null){
-			return null;
-		}
-		return map(source, dest, mapId, converterClasses);
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected <T> T applyConverter(Object source , T dest, Class<? extends CustomConverter> converterClass) {		
-		CustomConverter converter = instantiateConverter(converterClass); 
-		dest = (T) converter.convert(dest, source, dest.getClass(), source.getClass());
-		return dest;
-	}
-	
-	protected  <T> T applyConverters(Object source , T dest, Class<? extends CustomConverter>... converterClasses){
-		for (Class<? extends CustomConverter> converterClass : converterClasses) {
-			dest = applyConverter(source, dest, converterClass);			
-		}		
-		return dest;		
-	}
-	
-	protected  <T> T applyConverters(Object source , T dest, List<Class<? extends CustomConverter>> converterClasses){
-		for (Class<? extends CustomConverter> converterClass : converterClasses) {
-			dest = applyConverter(source, dest, converterClass);			
-		}		
-		return dest;		
-	}
-	
-	protected  <T> T map(Object source, T dest, MapId mapId, Converter... converter) {	
-		super.map(source, dest, mapId);
-		return applyConverters(source, dest, converter);
-	}
-	
-	protected  <T> T mapNotNull(Object source, T dest, MapId mapId, Converter... converter) {
-		if(source==null){
-			return null;
-		}
-		return map(source, dest, mapId, converter);
-	}
-	
-	protected  <T> T map(Object source, Class<T> clazz, MapId mapId, Converter... converter) {	
-		T dest = super.map(source, clazz, mapId);
-		return applyConverters(source, dest, converter);
-	}
-	
-	protected  <T> T mapNotNull(Object source, Class<T> clazz, MapId mapId, Converter... converter) {	
-		if(source==null){
-			return null;
-		}
-		return map(source, clazz, mapId, converter);
-	}
-	
-	protected <T> T  applyConverters(Object a , T b, Converter... converter) {	
-		List<Class<? extends CustomConverter>> converterClass = toCustomConverterClasses(converter);
-		return applyConverters(a, b, converterClass);
-	}
-	
-	protected CustomConverter instantiateConverter(Converter converter) {
-		return instantiateConverter(converter.getCustomConverterClass());
-	}
-	
-	protected CustomConverter instantiateConverter(Class<? extends CustomConverter> converterClass) {
-//		try{
-//			return appCtx.getBean(converterClass);
-//		}catch(NoSuchBeanDefinitionException nsbde){
-//			try {
-//				return converterClass.newInstance();
-//			} catch (InstantiationException e) {
-//				throw new IllegalArgumentException("Impossibile istanziare il Converter "+ converterClass);
-//			} catch (IllegalAccessException e) {
-//				throw new IllegalArgumentException("Impossibile accedere al costruttore del Converter "+ converterClass);
-//			}
-//		}
 		
-		
-		if(converterClass.getAnnotation(Component.class) != null){
-			return appCtx.getBean(Utility.toDefaultBeanName(converterClass), converterClass);
-		}
-		
-		try {
-			return converterClass.newInstance();
-		} catch (InstantiationException e) {
-			throw new IllegalArgumentException("Impossibile istanziare il Converter "+ converterClass, e);
-		} catch (IllegalAccessException e) {
-			throw new IllegalArgumentException("Impossibile accedere al costruttore del Converter "+ converterClass, e);
-		}
-		
-	}
-	
-	/**
-	 * Ottiene l'elenco dei {@link CustomConverter} a partire da un elenco di
-	 * {@link Converter}
-	 * 
-	 * @param converter
-	 * @return elenco dei {@link CustomConverter} associati ai
-	 *         {@link Converter} passati come parametro.
-	 */
-	private static List<Class<? extends CustomConverter>> toCustomConverterClasses(Converter... converter) {
-		List<Class<? extends CustomConverter>> result = new ArrayList<Class<? extends CustomConverter>>();
-		for (Converter md : converter) {
-			Class<? extends CustomConverter> conv = md.getCustomConverterClass();
-			result.add(conv);
-		}
-
-		return result;
-	}
-	
-	/**
-	 * Converter un intera lista (senza paginazione) specificando un mapId di base i Converter aggiuntivi da applicare.
-	 * 
-	 * @param listDa
-	 * @param classA
-	 * @param mapId
-	 * @param converters
-	 * @return lista convertita
-	 */
-	protected <A, DA> List<A> convertiLista(List<DA> listDa, Class<A> classA, MapId mapId, Converter... converters) {
-
-		List<A> listA = new ArrayList<A>();
-		if (listDa == null) {
-			return listA;
-		}
-
-		for (DA source : listDa) {
-			A dest = mapNotNull(source, classA, mapId, converters);
-			listA.add(dest);
-		}
-
-		return listA;
-	}
-	
-	/**
-	 * Converti lista senza paginazione, richiamanso il metodo {@link #convertiLista(List, Class, MapId, Converter...)}
-	 *
-	 * @param <A> the generic type
-	 * @param <DA> the generic type
-	 * @param listDa the list da
-	 * @param classA the class A
-	 * @param mapId the map id
-	 * @param modelDetails the model details
-	 * @return the list
-	 */
-	protected <A, DA> List<A> convertiLista(List<DA> listDa, Class<A> classA, MapId mapId, ModelDetail... modelDetails) {
-		return convertiLista( listDa, classA, mapId, Converters.byModelDetails(modelDetails));
-	}
-	
 	/**
 	 * Controlla se l'entit&agrave; fornita abbia l'uid valorizzato
 	 * @param e l'entit&agrave; da controllare
@@ -485,11 +324,30 @@ public class ExtendedBaseDadImpl extends BaseDadImpl {
 		}
 		return projectToCode(Arrays.asList(decodifiche));
 	}
+
+	public void detach(SiacTBase siacTBase) {
+		jpaManagementDao.detach(siacTBase);
+	}
 	
 	public void flush() {
 		jpaManagementDao.flush();
 	}
+
 	public void flushAndClear() {
 		jpaManagementDao.flushAndClear();
+	}
+	
+	@Override
+	protected Converter[] getConverterByModelDetail(ModelDetailEnum... modelDetails) {
+		return Converters.byModelDetails(modelDetails);
+	}
+	
+	@Override
+	protected CustomConverter getConverterFromComponent(Class<? extends CustomConverter> converterClass) {
+		return appCtx.getBean(Utility.toDefaultBeanName(converterClass), converterClass);
+	}
+	
+	protected Integer getAnnoBilancio ( ) {
+		return Integer.valueOf(Utility.BTL.get().getAnno());
 	}
 }

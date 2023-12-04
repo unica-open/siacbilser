@@ -95,10 +95,6 @@ public class SiacTAttoAmm extends SiacTEnteBase {
 	@OneToMany(mappedBy="siacTAttoAmm")
 	private List<SiacRMovgestTsAttoAmm> siacRMovgestTsAttoAmms;
 
-	//bi-directional many-to-one association to SiacRMutuoAttoAmm
-	@OneToMany(mappedBy="siacTAttoAmm")
-	private List<SiacRMutuoAttoAmm> siacRMutuoAttoAmms;
-
 	//bi-directional many-to-one association to SiacROrdinativoAttoAmm
 	@OneToMany(mappedBy="siacTAttoAmm")
 	private List<SiacROrdinativoAttoAmm> siacROrdinativoAttoAmms;
@@ -455,27 +451,6 @@ public class SiacTAttoAmm extends SiacTEnteBase {
 		return siacRMovgestTsAttoAmm;
 	}
 
-	public List<SiacRMutuoAttoAmm> getSiacRMutuoAttoAmms() {
-		return this.siacRMutuoAttoAmms;
-	}
-
-	public void setSiacRMutuoAttoAmms(List<SiacRMutuoAttoAmm> siacRMutuoAttoAmms) {
-		this.siacRMutuoAttoAmms = siacRMutuoAttoAmms;
-	}
-
-	public SiacRMutuoAttoAmm addSiacRMutuoAttoAmm(SiacRMutuoAttoAmm siacRMutuoAttoAmm) {
-		getSiacRMutuoAttoAmms().add(siacRMutuoAttoAmm);
-		siacRMutuoAttoAmm.setSiacTAttoAmm(this);
-
-		return siacRMutuoAttoAmm;
-	}
-
-	public SiacRMutuoAttoAmm removeSiacRMutuoAttoAmm(SiacRMutuoAttoAmm siacRMutuoAttoAmm) {
-		getSiacRMutuoAttoAmms().remove(siacRMutuoAttoAmm);
-		siacRMutuoAttoAmm.setSiacTAttoAmm(null);
-
-		return siacRMutuoAttoAmm;
-	}
 
 	public List<SiacROrdinativoAttoAmm> getSiacROrdinativoAttoAmms() {
 		return this.siacROrdinativoAttoAmms;

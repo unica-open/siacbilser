@@ -180,7 +180,7 @@ public class SiacTOrdinativoFin extends SiacLoginMultiplo {
 
 	//bi-directional many-to-one association to SiacROrdinativoQuietanza
 	@OneToMany(mappedBy="siacTOrdinativo")
-	private List<SiacROrdinativoQuietanza> siacROrdinativoQuietanzas;
+	private List<SiacROrdinativoQuietanzaFin> siacROrdinativoQuietanzas;
 
 
 	public SiacTOrdinativoFin() {
@@ -620,7 +620,7 @@ public class SiacTOrdinativoFin extends SiacLoginMultiplo {
 	/**
 	 * @return the siacROrdinativoQuietanzas
 	 */
-	public List<SiacROrdinativoQuietanza> getSiacROrdinativoQuietanzas() {
+	public List<SiacROrdinativoQuietanzaFin> getSiacROrdinativoQuietanzas() {
 		return siacROrdinativoQuietanzas;
 	}
 
@@ -628,7 +628,7 @@ public class SiacTOrdinativoFin extends SiacLoginMultiplo {
 	 * @param siacROrdinativoQuietanzas the siacROrdinativoQuietanzas to set
 	 */
 	public void setSiacROrdinativoQuietanzas(
-			List<SiacROrdinativoQuietanza> siacROrdinativoQuietanzas) {
+			List<SiacROrdinativoQuietanzaFin> siacROrdinativoQuietanzas) {
 		this.siacROrdinativoQuietanzas = siacROrdinativoQuietanzas;
 	}
 

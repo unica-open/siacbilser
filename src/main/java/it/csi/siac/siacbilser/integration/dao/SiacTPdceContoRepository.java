@@ -88,11 +88,14 @@ public interface SiacTPdceContoRepository extends JpaRepository<SiacTPdceConto, 
 			)
 	Long countPrimeNoteNonAnnullateAssociateAiConti(@Param("siacTPdceContos") List<SiacTPdceConto> siacTPdceContos);
 
-
+	//SIAC-7892 aggiunti controlli su dataFineValidita
 	@Query(" SELECT r.siacDClassFam " +
 			" FROM SiacRPdceFamClassFam r " +
 			" WHERE r.dataCancellazione IS NULL" +
-			" AND r.siacDPdceFam.pdceFamId = :pdceFamId ")
+			" AND r.siacDPdceFam.pdceFamId = :pdceFamId " +
+			" AND ( r.dataFineValidita IS NULL OR r.dataFineValidita > CURRENT_TIMESTAMP ) " +
+			" AND r.siacDPdceFam.dataCancellazione IS NULL " +
+			" AND ( r.siacDPdceFam.dataFineValidita IS NULL OR r.siacDPdceFam.dataFineValidita > CURRENT_TIMESTAMP ) ")
 	SiacDClassFam findClassFamByClassePiano(@Param("pdceFamId") Integer pdceFamId);
 
 

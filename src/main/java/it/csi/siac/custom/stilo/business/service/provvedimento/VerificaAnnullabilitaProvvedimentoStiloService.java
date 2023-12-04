@@ -9,7 +9,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import it.csi.siac.custom.stilo.integration.dad.ProvvedimentoStiloDad;
+import it.csi.siac.custom.stilo.integration.dad.AttoAmministrativoStiloDad;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilser.business.service.provvedimento.VerificaAnnullabilitaProvvedimentoService;
 
@@ -18,18 +18,18 @@ import it.csi.siac.siacbilser.business.service.provvedimento.VerificaAnnullabili
 public class VerificaAnnullabilitaProvvedimentoStiloService extends VerificaAnnullabilitaProvvedimentoService {
 
 	@Autowired
-	private ProvvedimentoStiloDad provvedimentoStiloDad;
+	private AttoAmministrativoStiloDad attoAmministrativoStiloDad;
 
 	@Override
 	protected void init() {
 		super.init();
 		
-		provvedimentoStiloDad.setLoginOperazione(loginOperazione);
-		provvedimentoStiloDad.setEnte(ente);
+		attoAmministrativoStiloDad.setLoginOperazione(loginOperazione);
+		attoAmministrativoStiloDad.setEnte(ente);
 	}
 
 	@Override
 	protected Boolean isAnnullabile(AttoAmministrativo attoAmministrativo) {
-		return provvedimentoStiloDad.isAnnullabile(attoAmministrativo);
+		return attoAmministrativoStiloDad.isAnnullabile(attoAmministrativo);
 	}
 }

@@ -4,7 +4,9 @@
 */
 package it.csi.siac.siacbilser.integration.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.TypedQuery;
 
@@ -24,135 +26,68 @@ import it.csi.siac.siaccorser.integration.dao.CodificaDaoImpl;
 @Transactional
 public class CodificaBilDaoImpl extends CodificaDaoImpl implements CodificaBilDao {
 
+	
+	
 	@Override
 	public List<SiacTClass> findCodificheByTipoElemBilancio(
 			int anno, int enteProprietarioId, String codiceTipoElemBilancio) {
+		
+		return findCodificheByTipoElemBilancio(anno, enteProprietarioId, codiceTipoElemBilancio, null);
+	}
+	
+	@Override
+	public List<SiacTClass> findCodificheByTipoElemBilancio(
+			int anno, int enteProprietarioId, String codiceTipoElemBilancio, String classifTipoCode) {
 		final String methodName = "findCodificheByTipoElemBilancio";
-
+		
 		log.debugStart(methodName, "");
-
 		
-		TypedQuery<SiacTClass> query = entityManager
-				.createQuery("SELECT c FROM SiacTClass c, SiacDClassTipo d " 
-//						" LEFT OUTER JOIN c.codificheFamigliaTreeDto cf " +
-//						" LEFT OUTER JOIN c.padre.enteProprietario e "
-						+ " WHERE c.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
-						//+ " AND c.padre is null"
-						//+ " AND c.codificaFamiglia is null"
-						
-//						+ " AND EXISTS ( "
-//						+ " 	FROM SiacDBilElemTipo bet "
-//						+ "		WHERE bet.elemTipoCode = :elemTipoCode "
-//						+ "		AND bet.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
-//						+ " 	AND EXISTS ("
-//						+ " 		FROM bet.siacRBilElemTipoClassTips betct "
-//						+ "			WHERE betct.siacDClassTipo = c.siacDClassTipo "
-//						+ "  		AND betct.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
-//						+ "		)"
-//                      + " ) "
-						
-						+ " AND c.siacDClassTipo = d "
-						+ " AND d.dataCancellazione IS NULL "
-						+ " AND EXISTS(FROM d.siacRBilElemTipoClassTips rbetct "
-						+ "            WHERE rbetct.dataCancellazione IS NULL "
-						+ "            AND rbetct.siacDBilElemTipo.elemTipoCode = :elemTipoCode "
-						+ "           ) "
-
-
-
-//							+ " select teb from TipoElementoBilancioDto teb, "
-//							+ " IN(teb.tipoElementoBilancio) r "
-//							+ " where teb.elemTipoCode=:codiceTipoElemBilancio "
-//							+ " AND r.tipoClassificatore=c.tipoClassificatore "
-//							+ " AND c.enteProprietario=c.tipoClassificatore.enteProprietario "
-//							+ " AND c.enteProprietario=teb.enteProprietario "
-//							+ " AND c.enteProprietario=r.enteProprietario "
-						
-						+ " AND c.dataCancellazione IS NULL "
-//						+ " AND c.dataInizioValidita BETWEEN :startAnnoEsercizioDate AND :endAnnoEsercizioDate "
-						
-//						+ " AND c.dataInizioValidita <= :startAnnoEsercizioDate "
-//						+ " AND  (c.dataFineValidita is null or c.dataFineValidita >= :endAnnoEsercizioDate)"
-						
-						//+ " AND c.dataInizioValidita <= (SELECT MAX(c2.dataInizioValidita) FROM SiacTClass c2 where c2.dataInizioValidita < :endAnnoEsercizioDate) "
-						
-						// Pre - SIAC-1630
-						// + " AND (c.dataFineValidita = :endAnnoEsercizioDate OR c.dataFineValidita IS NULL) "
-						// Post -SIAC-1630
-						+ getSiacTClassDataValiditaSql("c", "anno")
-
-						//+ " ORDER BY c.classifCode",
-						+ " ORDER BY d.classifTipoCode, c.classifCode",
-						SiacTClass.class);
-
-//		Date startAnnoEsercizioDate = new YearDateConverter().convert(anno);
-//		Date endAnnoEsercizioDate = DateUtils.addDays(DateUtils.addYears(startAnnoEsercizioDate, 1), -1);
+		StringBuilder jpql = new StringBuilder();
 		
-//		GregorianCalendar gc = new GregorianCalendar(anno, Calendar.DECEMBER, 31);		
-//		Date endAnnoEsercizioDate = gc.getTime();
-
+		jpql.append("SELECT c FROM SiacTClass c")
+		.append(" WHERE c.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ")
+		.append(" AND c.siacDClassTipo.dataCancellazione IS NULL ")
+		.append(" AND c.dataCancellazione IS NULL" )
+		.append(getSiacTClassDataValiditaSql("c", "anno"));
+	
+		if (codiceTipoElemBilancio != null) {
+			jpql.append(" AND EXISTS(FROM c.siacDClassTipo.siacRBilElemTipoClassTips rbetct "
+				+ " WHERE rbetct.dataCancellazione IS NULL "
+				+ "            AND rbetct.siacDBilElemTipo.elemTipoCode = :elemTipoCode "
+				+ ")");
+		}
+	
+		if (classifTipoCode != null) {
+			jpql.append(" AND c.siacDClassTipo.classifTipoCode= :classifTipoCode");
+		}		
+		
+		jpql.append(" ORDER BY c.siacDClassTipo.classifTipoCode, c.classifCode");
+		
+		TypedQuery<SiacTClass> query = entityManager.createQuery(jpql.toString(), SiacTClass.class);
+		
 		query.setParameter("enteProprietarioId", enteProprietarioId);
-		query.setParameter("elemTipoCode", codiceTipoElemBilancio);
-		//query.setParameter("startAnnoEsercizioDate", startAnnoEsercizioDate);
 		query.setParameter("anno", anno);
 		
-		long time = System.currentTimeMillis();
-		List<SiacTClass> siacTClasses = query.getResultList();
-		log.debug(methodName, "Query time: " + (System.currentTimeMillis() - time));
-
-		if (log.isDebugEnabled()) {
-			for (SiacTClass siacTClass : siacTClasses) {
-				log.debug(methodName, String.format("siacTClass.siacDClassTipo: %s %s -- s",
-						siacTClass.getSiacDClassTipo().getClassifTipoCode(), 
-						siacTClass.getSiacDClassTipo().getClassifTipoDesc()));
-			}
+		if (classifTipoCode != null) {
+			query.setParameter("classifTipoCode", classifTipoCode);
 		}
-
+		
+		if (codiceTipoElemBilancio != null) {
+			query.setParameter("elemTipoCode", codiceTipoElemBilancio);
+		}
+		
+		List<SiacTClass> siacTClasses = query.getResultList();
+		
 		return siacTClasses;
 	}
 	
-	
 	@Override
 	public List<SiacTClass> findCodificheGenericiTipoElemBilancio(
-			int anno, int enteProprietarioId, String codiceTipoElemBilancio) {
+			int anno, int enteProprietarioId, String codiceTipoElemBilancio, String classifTipoCode) {
 		final String methodName = "findCodificheGenericiTipoElemBilancio";
-		/*
-		log.debugStart("findCodificheByTipoElemBilancio", "");
-
 		
-		TypedQuery<SiacTClass> query = entityManager
-				.createQuery("select c from CodificaGenericaDto c " 
-						+ " where c.enteProprietario.uid = :enteProprietarioId "
-						+ " AND  EXISTS ( "
-						+ " select teb from TipoElementoBilancioDto teb, "
-						+ " IN(teb.tipoElementoBilancio) r "
-						+ " where teb.elemTipoCode=:codiceTipoElemBilancio "
-						+ " AND r.tipoClassificatore=c.tipoClassificatore "
-						+ " AND c.enteProprietario=c.tipoClassificatore.enteProprietario "
-						+ " AND c.enteProprietario=teb.enteProprietario "
-						+ " AND c.enteProprietario=r.enteProprietario "
-						+ ")"
-						+ " AND c.dataCancellazione is null "
-						
-						//+ " AND c.dataInizioValidita <= (SELECT MAX(c2.dataInizioValidita) FROM SiacTClass c2 where c2.dataInizioValidita < :endAnnoEsercizioDate) "
-						
-						+ " AND (c.dataFineValidita = :endAnnoEsercizioDate OR c.dataFineValidita IS NULL) "
-
-						+ " order by c.codice",
-						SiacTClass.class);
-
-		GregorianCalendar gc = new GregorianCalendar(anno, Calendar.DECEMBER, 31);		
-		Date endAnnoEsercizioDate = gc.getTime();
-
-		query.setParameter("enteProprietarioId", enteProprietarioId);
-		query.setParameter("codiceTipoElemBilancio", codiceTipoElemBilancio);
-		query.setParameter("endAnnoEsercizioDate", endAnnoEsercizioDate);
-		
-		List<SiacTClass> dtos = query.getResultList();
-
-		return dtos;*/
 		log.debug(methodName, "Delegating to findCodificheByTipoElemBilancio");
-		return findCodificheByTipoElemBilancio(anno, enteProprietarioId, codiceTipoElemBilancio);
+		return findCodificheByTipoElemBilancio(anno, enteProprietarioId, codiceTipoElemBilancio, classifTipoCode);
 	}
 	
 	
@@ -167,22 +102,11 @@ public class CodificaBilDaoImpl extends CodificaDaoImpl implements CodificaBilDa
 		
 		TypedQuery<SiacTClass> query = entityManager
 				.createQuery("SELECT c FROM SiacTClass c " 
-//						" LEFT OUTER JOIN c.codificheFamigliaTreeDto cf " +
-//						" LEFT OUTER JOIN c.padre.enteProprietario e "
 						+ " WHERE c.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
-//						+ " AND c.padre is null"
 						+ " AND EXISTS ( "
 						+ "		FROM c.siacRClassFamTreesFiglio f "
 						+ " 	WHERE f.siacTClassPadre.classifId IS NULL "
 						+ " ) "
-						
-						// XXX: nella query originale c'era, ma richiedeva fosse null una colonna not null. Controllare
-//						+ " AND c.codificaFamiglia is null"
-//						+ " AND EXISTS ( "
-//						+ " 	FROM c.siacRClassFamTreesFiglio f "
-//						+ " 	WHERE f.siacTClassFamTree.siacDClassFam IS NULL "
-//						+ " ) "
-						
 						+ " AND EXISTS ( "
 						+ " 	FROM SiacDBilElemTipo bet "
 						+ "		WHERE bet.elemTipoCode = :elemTipoCode "
@@ -192,40 +116,15 @@ public class CodificaBilDaoImpl extends CodificaDaoImpl implements CodificaBilDa
 						+ "			WHERE betct.siacDClassTipo = c.siacDClassTipo "
 						+ "  		AND betct.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
 						+ "		)"
-//							+ " select teb from TipoElementoBilancioDto teb, "
-//							+ " IN(teb.tipoElementoBilancio) r "
-//							+ " where teb.elemTipoCode=:codiceTipoElemBilancio "
-//							+ " AND r.tipoClassificatore=c.tipoClassificatore "
-//							+ " AND c.enteProprietario=c.tipoClassificatore.enteProprietario "
-//							+ " AND c.enteProprietario=teb.enteProprietario "
-//							+ " AND c.enteProprietario=r.enteProprietario "
 						+ " ) "
 						+ " AND c.dataCancellazione IS NULL "
-//						+ " AND c.dataInizioValidita BETWEEN :startAnnoEsercizioDate AND :endAnnoEsercizioDate "
-						
-//						+ " AND c.dataInizioValidita <= :startAnnoEsercizioDate "
-//						+ " AND  (c.dataFineValidita is null or c.dataFineValidita >= :endAnnoEsercizioDate)"
-						
-						//+ " AND c.dataInizioValidita <= (SELECT MAX(c2.dataInizioValidita) FROM SiacTClass c2 where c2.dataInizioValidita < :endAnnoEsercizioDate) "
-						
-						
-						//+ " AND (c.dataFineValidita = :endAnnoEsercizioDate OR c.dataFineValidita IS NULL) "
 						+ getSiacTClassDataValiditaSql("c", "anno")
-
 						+ " ORDER BY c.classifCode",
 						SiacTClass.class);
 
-//		Date startAnnoEsercizioDate = new YearDateConverter().convert(anno);
-//		Date endAnnoEsercizioDate = DateUtils.addDays(DateUtils.addYears(startAnnoEsercizioDate, 1), -1);
-		
-//		GregorianCalendar gc = new GregorianCalendar(anno, Calendar.DECEMBER, 31);		
-//		Date endAnnoEsercizioDate = gc.getTime();
-
-		
 		query.setParameter("enteProprietarioId", enteProprietarioId);
 		query.setParameter("elemTipoCode", codiceTipoElemBilancio);
 		
-		//query.setParameter("startAnnoEsercizioDate", startAnnoEsercizioDate);
 		query.setParameter("anno", anno);
 
 		List<SiacTClass> siacTClasses = query.getResultList();
@@ -251,10 +150,7 @@ public class CodificaBilDaoImpl extends CodificaDaoImpl implements CodificaBilDa
 		jpql.append("SELECT c ");
 		jpql.append(" from SiacTClass c ");
 		
-//		if(idCodificaPadre != null && idCodificaPadre != 0 ){
-//			jpql.append(", IN (c.codificheFiglie) cf ");
-//		}
-		
+	
 		jpql.append(" WHERE c.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ");
 		jpql.append(" AND EXISTS ( ");
 		jpql.append(" 	FROM c.siacRClassFamTreesFiglio f ");
@@ -290,19 +186,9 @@ public class CodificaBilDaoImpl extends CodificaDaoImpl implements CodificaBilDa
 		
 		TypedQuery<SiacTClass> query = entityManager.createQuery(jpql.toString(), SiacTClass.class);	
 
-//		Date startAnnoEsercizioDate = new YearDateConverter().convert(anno);
-//		Date endAnnoEsercizioDate = DateUtils.addDays(
-//				DateUtils.addYears(startAnnoEsercizioDate, 1), -1);
-		
-//		GregorianCalendar gc = new GregorianCalendar(anno, Calendar.DECEMBER, 31);		
-//		Date endAnnoEsercizioDate = gc.getTime();
-		
-
-		//query.setParameter("startAnnoEsercizioDate", startAnnoEsercizioDate);
 		query.setParameter("anno", anno);
 		query.setParameter("enteProprietarioId", enteProprietarioId);
 		query.setParameter("classifFamCode", famigliaTreeCodice);
-//		query.setParameter("famigliaTreeCodice", Integer.parseInt(famigliaTreeCodice));
 		if(idCodificaPadre != null  && idCodificaPadre != 0 ){
 			query.setParameter("classifIdPadre", idCodificaPadre);
 		}

@@ -60,7 +60,7 @@ public class LiquidazioneImpegnoPianoDeiContiConverter extends GenericImpegnoSub
 		SiacTMovgest siacTMovgest = siacTMovgestT.getSiacTMovgest();
 		Impegno impegno = new Impegno();
 		impegno.setUid(siacTMovgest.getUid());
-		impegno.setNumero(siacTMovgest.getMovgestNumero());
+		impegno.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 		impegno.setDescrizione(siacTMovgest.getMovgestDesc());
 		impegno.setAnnoMovimento(siacTMovgest.getMovgestAnno());
 		impegno.setDataEmissione(siacTMovgestT.getDataCreazione());
@@ -77,7 +77,7 @@ public class LiquidazioneImpegnoPianoDeiContiConverter extends GenericImpegnoSub
 		s.setUid(siacTMovgestT.getUid());
 		
 		try{
-			s.setNumero(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
+			s.setNumeroBigDecimal(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
 		} catch(RuntimeException re) {
 			log.error(methodName, "Impssibile ottenere un BigDecimal a partire dalla stringa: \"" + siacTMovgestT.getMovgestTsCode() + "\". Returning null!", re);
 		}

@@ -27,7 +27,8 @@ import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimentoResponse;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
-import it.csi.siac.siaccommon.util.CoreUtils;
+import it.csi.siac.siacbilser.business.utility.BilUtilities;
+import it.csi.siac.siaccommon.util.CoreUtil;
 import it.csi.siac.siaccommon.util.codicefiscale.CodiceFiscale;
 import it.csi.siac.siaccommon.util.date.DateConverter;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
@@ -103,7 +104,7 @@ public abstract class ElaboraPredocumentiService<P extends Predocumento> extends
 	{
 		File file = req.getFile();
 
-		Class<P> predocumentoType = CoreUtils.getGenericTypeClass(this.getClass(), ElaboraPredocumentiService.class, 0);
+		Class<P> predocumentoType = CoreUtil.getGenericTypeClass(this.getClass(), ElaboraPredocumentiService.class, 0);
 		delimitedFileParser = new DelimitedFileParser<P>(new ByteArrayInputStream(file.getContenuto()),
 				predocumentoType);
 
@@ -237,7 +238,7 @@ public abstract class ElaboraPredocumentiService<P extends Predocumento> extends
 	protected BigDecimal parseImporto(String importo)
 	{
 		
-		return new BigDecimal(importo).divide(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
+		return new BigDecimal(importo).divide(BilUtilities.BIG_DECIMAL_ONE_HUNDRED).setScale(2, BigDecimal.ROUND_HALF_UP);
 	}
 
 	protected String getLineMessage(String message)
@@ -258,7 +259,7 @@ public abstract class ElaboraPredocumentiService<P extends Predocumento> extends
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, timeout=AsyncBaseService.TIMEOUT)
-	protected abstract Soggetto ricercaSoggetto(P predocumento);
+	protected abstract Soggetto ottieniSoggetto(P predocumento);
 
 	protected StrutturaAmministrativoContabile ricercaStrutturaAmministrativoContabile(String codiceSac)
 	{

@@ -33,6 +33,8 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 
@@ -43,7 +45,7 @@ import it.csi.siac.siacbilser.integration.utility.threadlocal.ModelDetailThreadL
 import it.csi.siac.siacbilser.integration.utility.threadlocal.MovimentoDettaglioThreadLocal;
 import it.csi.siac.siacbilser.model.ImportoPersistente;
 import it.csi.siac.siaccommon.util.JAXBUtility;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommon.util.threadlocal.ThreadLocalUtil;
 import it.csi.siac.siaccorser.model.Entita;
 
@@ -53,7 +55,7 @@ import it.csi.siac.siaccorser.model.Entita;
 public class Utility {
 	
 	/** The LOG. */
-	private static final LogUtil LOG = new LogUtil(Utility.class);
+	private static final LogSrvUtil LOG = new LogSrvUtil(Utility.class);
 	/** Thread local per le date */
 	private static final ThreadLocal<DateFormat> dateFormatTL = new ThreadLocal<DateFormat>() {
 		@Override
@@ -306,6 +308,18 @@ public class Utility {
 	}
 	
 	/**
+	 * Restituisce il codice jpql per la ricerca per data minore.
+	 *
+	 * @param jpqlParamA the jpql param a
+	 * @param jpqlParamB the jpql param b
+	 * @return the string
+	 */
+	public static String toJpqlDateParamLesser(String jpqlParamA, String jpqlParamB) {
+		return toJpqlDateParamOperator(jpqlParamA, jpqlParamB, "<");
+	}
+	
+	
+	/**
 	 * Restituisce il codice jpql per la ricerca per data operatorialmente valida rispetto al parametro.
 	 *
 	 * @param jpqlParamA the jpql param a
@@ -316,6 +330,52 @@ public class Utility {
 	 */
 	public static String toJpqlDateParamOperator(String jpqlParamA, String jpqlParamB, String operator) {
 		return "DATE_TRUNC('day', CAST(" + jpqlParamA + " AS date)) " + operator + " DATE_TRUNC('day', CAST(" + jpqlParamB + " AS date)) ";
+	}
+	
+	/**
+	 * Adds the data in the JPQL handler if not null
+	 * @param jpql the JPQL string builder
+	 * @param params the parameters
+	 * @param segment the new JPQL segment
+	 * @param field the field to register
+	 * @param value the value to register
+	 */
+	public static void jpqlAddIfNotNull(StringBuilder jpql, Map<String, Object> params, String segment, String field, Object value) {
+		if(value != null) {
+			jpql.append(segment);
+			params.put(field, value);
+		}
+	}
+	
+	/**
+	 * INject the JPQL ORDER BY string segment via the sorting data
+	 * @param jpql the JPQL string builder
+	 * @param sort the sorting data
+	 */
+	public static void jpqlInjectSortingString(StringBuilder jpql, Sort sort) {
+		if(sort == null) {
+			return;
+		}
+		jpql.append(" ORDER BY ");
+		boolean first = true;
+		for(Order order : sort) {
+			if(!first) {
+				jpql.append(", ");
+			}
+			jpql.append(order.getProperty()).append(" ").append(order.getDirection());
+			first = false;
+		}
+	}
+	
+	/**
+	 * Aggiunta delle condizioni di validit&agrave; in formato JPQL
+	 * @param jpql il JPQL
+	 * @param alias l'alias della tabella
+	 */
+	public static void addJpqlCondizioniValidita(StringBuilder jpql, String alias) {
+		jpql.append(" AND ").append(alias).append(".dataCancellazione IS NULL ");
+		jpql.append(" AND ").append(alias).append(".dataInizioValidita < CURRENT_TIMESTAMP ");
+		jpql.append(" AND (").append(alias).append(".dataFineValidita IS NULL OR ").append(alias).append(".dataFineValidita > CURRENT_TIMESTAMP) ");
 	}
 	
 	/**
@@ -729,4 +789,33 @@ public class Utility {
 		return res;
 	}
 	
+	/**
+	 * Set minimum value between al values given
+	 * @param values the values to check
+	 * @return the minimum value
+	 */
+	public static BigDecimal min(BigDecimal... values) {
+		BigDecimal minimum = null;
+		for(BigDecimal value : values) {
+			if(value != null) {
+				minimum = minimum == null ? value : minimum.min(value);
+			}
+		}
+		return minimum;
+	}
+	
+	/**
+	 * Set maximum value between al values given
+	 * @param values the values to check
+	 * @return the maximum value
+	 */
+	public static BigDecimal max(BigDecimal... values) {
+		BigDecimal maximum = null;
+		for(BigDecimal value : values) {
+			if(value != null) {
+				maximum = maximum == null ? value : maximum.max(value);
+			}
+		}
+		return maximum;
+	}
 }

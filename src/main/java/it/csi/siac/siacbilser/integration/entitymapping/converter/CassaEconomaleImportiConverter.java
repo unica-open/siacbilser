@@ -22,7 +22,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTCassaEcon;
 import it.csi.siac.siacbilser.model.ImportiCassaEconomaleEnum;
 import it.csi.siac.siacbilser.model.ImportoDerivato;
 import it.csi.siac.siaccecser.model.CassaEconomale;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * The Class CassaEconomaleImportiConverter.
@@ -64,7 +64,7 @@ public class CassaEconomaleImportiConverter extends ExtendedDozerConverter<Cassa
 	 * @author Marchino Alessandro
 	 */
 	private static class PopolaImportiDerivatiCassaEconomaleFieldCallback implements FieldCallback {
-		private final LogUtil log = new LogUtil(getClass());
+		private final LogSrvUtil log = new LogSrvUtil(getClass());
 		
 		private final Set<ImportiCassaEconomaleEnum> importiDerivatiRichiesti;
 		private final Integer annoBilancio;

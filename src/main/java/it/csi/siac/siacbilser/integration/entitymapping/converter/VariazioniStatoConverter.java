@@ -7,6 +7,7 @@ package it.csi.siac.siacbilser.integration.entitymapping.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.dozer.DozerConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,9 +17,9 @@ import it.csi.siac.siacbilser.integration.entity.SiacDVariazioneStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRVariazioneStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTVariazione;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDVariazioneStatoEnum;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.VariazioneDiBilancio;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 
 /**
@@ -28,7 +29,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class VariazioniStatoConverter extends DozerConverter<VariazioneDiBilancio, SiacTVariazione > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired
@@ -46,8 +47,8 @@ public class VariazioniStatoConverter extends DozerConverter<VariazioneDiBilanci
 		for (SiacRVariazioneStato siacRVariazioneStato : src.getSiacRVariazioneStatos()) {
 			if(siacRVariazioneStato.getDataCancellazione()==null){
 				//return new VariazioneStatoConverter().convertFrom(siacRVariazioneStato.getSiacDVariazioneStato(),null);
-				StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio = SiacDVariazioneStatoEnum.byCodice(siacRVariazioneStato.getSiacDVariazioneStato().getVariazioneStatoTipoCode()).getStatoOperativoVariazioneDiBilancio();
-				dest.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneDiBilancio);
+				StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio = SiacDVariazioneStatoEnum.byCodice(siacRVariazioneStato.getSiacDVariazioneStato().getVariazioneStatoTipoCode()).getStatoOperativoVariazioneDiBilancio();
+				dest.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneBilancio);
 				return dest;
 			}
 			
@@ -66,10 +67,9 @@ public class VariazioniStatoConverter extends DozerConverter<VariazioneDiBilanci
 			return dest;
 		}
 		
-		List<SiacRVariazioneStato> siacRVariazioneStatos = new ArrayList<SiacRVariazioneStato>();
-		SiacRVariazioneStato siacRVariazioneStato = new SiacRVariazioneStato();
+		List<SiacRVariazioneStato> siacRVariazioneStatos = dest.getSiacRVariazioneStatos() == null ? new ArrayList<SiacRVariazioneStato>() : dest.getSiacRVariazioneStatos();
+		SiacRVariazioneStato siacRVariazioneStato = siacRVariazioneStatos.isEmpty() ? new SiacRVariazioneStato() : siacRVariazioneStatos.remove(0);
 	
-		//SiacDVariazioneStato siacDVariazioneStato = new VariazioneStatoConverter().convertTo(src,null);
 		SiacDVariazioneStatoEnum variazioneStato =  SiacDVariazioneStatoEnum.byStatoOperativoVariazioneDiBilancio(src.getStatoOperativoVariazioneDiBilancio());
 		SiacDVariazioneStato siacDVariazioneStato = eef.getEntity(variazioneStato, dest.getSiacTEnteProprietario().getUid(), SiacDVariazioneStato.class); 
 		

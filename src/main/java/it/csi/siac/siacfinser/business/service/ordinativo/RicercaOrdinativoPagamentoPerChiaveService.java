@@ -20,7 +20,7 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.business.service.AbstractBaseServiceRicercaOrdinativo;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativoPagamentoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativoPagamentoPerChiaveResponse;
@@ -84,8 +84,6 @@ public class RicercaOrdinativoPagamentoPerChiaveService extends AbstractBaseServ
 		OrdinativoPagamento ordinativoPagamento = ottieniOrdinativoPagamento(pk, datiOperazione, richiedente);
 		
 		
-		log.info(methodName, "prima del controllo sull'ordinativo ");
-		
 		//CONTROLLO ORDINATIVO NON TROVATO:
 		if(ordinativoPagamento==null || ordinativoPagamento.getNumero()==null){
 			//non trovato
@@ -121,7 +119,7 @@ public class RicercaOrdinativoPagamentoPerChiaveService extends AbstractBaseServ
 		long totUno = endUno - startUno;
 		long totDue = endDue - startDue;
 		
-		CommonUtils.println("totUno: " + totUno + " - totDue: " + totDue);
+		CommonUtil.println("totUno: " + totUno + " - totDue: " + totDue);
 		
 		//5. Viene composta la response:
 		res.setEsito(Esito.SUCCESSO);

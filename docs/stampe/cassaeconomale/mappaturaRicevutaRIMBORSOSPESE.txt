@@ -1,4 +1,4 @@
-﻿INTESTAZIONE RICEVUTA
+INTESTAZIONE RICEVUTA
 -	<<Ente>>:  </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/ente/nome>
 -	<<direzione>>: </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneDirezione>
 -	<<settore>> : </stampaRicevutaRichiestaEconomaleReportModel/richiestaEconomale/cassaEconomale/variabiliStampa/intestazioneSettore>

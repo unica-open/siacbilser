@@ -180,11 +180,6 @@ public class PreDocumentoSpesaServiceImpl implements PreDocumentoSpesaService {
 	}
 
 	@Override
-	public LeggiContiTesoreriaResponse leggiContiTesoreria(LeggiContiTesoreria parameters) {
-		return BaseServiceExecutor.execute(appCtx, LeggiContiTesoreriaService.class, parameters);
-	}
-
-	@Override
 	public AggiornaStatoPreDocumentoDiSpesaResponse aggiornaStatoPreDocumentoDiSpesa(AggiornaStatoPreDocumentoDiSpesa parameters) {
 		return BaseServiceExecutor.execute(appCtx, AggiornaStatoPreDocumentoDiSpesaService.class, parameters);
 	}

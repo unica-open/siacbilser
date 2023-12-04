@@ -17,7 +17,7 @@ import it.csi.siac.siacbilser.business.service.capitolouscitagestione.AnnullaCap
 import it.csi.siac.siacbilser.business.service.capitolouscitaprevisione.AnnullaCapitoloUscitaPrevisioneService;
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.BaseService;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 
@@ -58,7 +58,7 @@ public enum CapitoloServiceEnum {
 	private Map<String,String> propertyMap;
 	
 	/** The log. */
-	private transient LogUtil log = new LogUtil(this.getClass());
+	private transient LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/**
 	 * Instantiates a new capitolo service enum.

@@ -57,7 +57,7 @@ public class ProgettoClassifConverter extends ExtendedDozerConverter<Progetto, S
 				dest.setTipoAmbito(tipoAmbito);
 			}
 			
-			if(SiacDClassTipoEnum.Cdc.equals(siacDClassTipoEnum) || SiacDClassTipoEnum.CentroDiRespondabilita.equals(siacDClassTipoEnum)) {
+			if(SiacDClassTipoEnum.Cdc.equals(siacDClassTipoEnum) || SiacDClassTipoEnum.CentroDiResponsabilita.equals(siacDClassTipoEnum)) {
 				StrutturaAmministrativoContabile sac = siacDClassTipoEnum.getCodificaInstance();
 				map(siacTClass, sac, BilMapId.SiacTClass_ClassificatoreGerarchico);
 				dest.setStrutturaAmministrativoContabile(sac);

@@ -1,0 +1,22 @@
+------------------------
+SIAC Bil Application
+------------------------
+
+TODOs:
+
+- Versione 1.15.0
+	- Modificare le JSP dei capitoli, provvedimenti, storniUEB, variazioni: spostare l'include dei JavaScript al fondo della pagina
+------------------------
+
+	- Storni UEB:
+		- Inserimento:
+			- La chiamata AJAX al servizio di calcolo disponibilità del capitolo è alquanto fittizia
+			  (cfr. js/storniUEB/inserisci.js, l. 172). Da implementare quando vi sarà il servizio e si
+			  saprà quali parametri passare
+			  
+	
+	- Calcolo CF:
+		- Per le classi Java:
+			- Utilizzare DataValidator.isValidCodiceFiscale(String)
+		- Per il JavaScript
+			- Utilizzare http://jsfiddle.net/XV7Uw/

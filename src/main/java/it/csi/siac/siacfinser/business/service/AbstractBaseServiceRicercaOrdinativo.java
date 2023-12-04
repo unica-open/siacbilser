@@ -7,6 +7,7 @@ package it.csi.siac.siacfinser.business.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimentoResponse;
@@ -18,14 +19,16 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloEn
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloEntrataGestioneResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioCapitoloUscitaGestioneResponse;
+import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
+import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService;
 import it.csi.siac.siacfinser.integration.dad.LiquidazioneDad;
 import it.csi.siac.siacfinser.integration.dad.OrdinativoIncassoDad;
@@ -34,6 +37,7 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaOrdinativoPerChiaveDto;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoFin;
 import it.csi.siac.siacfinser.integration.util.dto.SiacTOrdinativoCollegatoCustom;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.model.ordinativo.Ordinativo;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoIncasso;
@@ -193,7 +197,7 @@ public abstract class AbstractBaseServiceRicercaOrdinativo<REQ extends ServiceRe
 						ordinativoPagamento.getAnno(), 
 						ordinativoPagamento.getNumero(), 
 						ordinativoPagamento.getStatoOperativoOrdinativo(), 
-						Constanti.D_ORDINATIVO_TIPO_PAGAMENTO, 
+						CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO, 
 						paginazioneOrdinativiCollegati, 
 						datiOperazione);
 		
@@ -215,7 +219,7 @@ public abstract class AbstractBaseServiceRicercaOrdinativo<REQ extends ServiceRe
 	 */
 	protected OrdinativoPagamento completaOrdinativiACuiSonoCollegato(OrdinativoPagamento ordinativoPagamento, DatiOperazioneDto datiOperazione, Richiedente richiedente){
 		List<Ordinativo> listaOrdinativiCollegati = new ArrayList<Ordinativo>();
-		List<SiacTOrdinativoCollegatoCustom> listaSiacTOrdinativoCollegatoCustom = ordinativoPagamentoDad.checkOrdinativiACuiSonoCollegato(ordinativoPagamento.getAnno(), ordinativoPagamento.getNumero(), ordinativoPagamento.getStatoOperativoOrdinativo(), Constanti.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazione);
+		List<SiacTOrdinativoCollegatoCustom> listaSiacTOrdinativoCollegatoCustom = ordinativoPagamentoDad.checkOrdinativiACuiSonoCollegato(ordinativoPagamento.getAnno(), ordinativoPagamento.getNumero(), ordinativoPagamento.getStatoOperativoOrdinativo(), CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazione);
 		listaOrdinativiCollegati = caricaOrdinativiInCollegamento(listaSiacTOrdinativoCollegatoCustom, datiOperazione, richiedente);
 		ordinativoPagamento.setElencoOrdinativiACuiSonoCollegato(listaOrdinativiCollegati);
 		return ordinativoPagamento;
@@ -226,7 +230,7 @@ public abstract class AbstractBaseServiceRicercaOrdinativo<REQ extends ServiceRe
 	if(listaSiacTOrdinativoCollegatoCustom!=null && listaSiacTOrdinativoCollegatoCustom.size()>0){
 		for(SiacTOrdinativoCollegatoCustom siacTOrdinativoCollegatoCustom : listaSiacTOrdinativoCollegatoCustom){
 			SiacTOrdinativoFin siacTOrdinativo = siacTOrdinativoCollegatoCustom.getSiacTOrdinativo();
-			if (Constanti.D_ORDINATIVO_TIPO_PAGAMENTO.equals(siacTOrdinativo.getSiacDOrdinativoTipo().getOrdTipoCode())) {
+			if (CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO.equals(siacTOrdinativo.getSiacDOrdinativoTipo().getOrdTipoCode())) {
 				RicercaOrdinativoPagamentoK pkC = new RicercaOrdinativoPagamentoK();
 				Bilancio bilancio = new Bilancio();
 				bilancio.setAnno(Integer.parseInt(siacTOrdinativo.getSiacTBil().getSiacTPeriodo().getAnno()));
@@ -236,9 +240,9 @@ public abstract class AbstractBaseServiceRicercaOrdinativo<REQ extends ServiceRe
 				pkC.setBilancio(bilancio);
 				pkC.setOrdinativoPagamento(ord);
 				OrdinativoPagamento ordPagColl = ottieniOrdinativoPagamento(pkC, datiOperazione, richiedente);
-				ordPagColl.setTipoAssociazioneEmissione(Constanti.tipoAssociazioneEmissioneStringToEnum(siacTOrdinativoCollegatoCustom.getRelazioneOrdinativiCollegati()));
+				ordPagColl.setTipoAssociazioneEmissione(CostantiFin.tipoAssociazioneEmissioneStringToEnum(siacTOrdinativoCollegatoCustom.getRelazioneOrdinativiCollegati()));
 				listaOrdinativiCollegati.add(ordPagColl);
-			} else if (Constanti.D_ORDINATIVO_TIPO_INCASSO.equals(siacTOrdinativo.getSiacDOrdinativoTipo().getOrdTipoCode())) {
+			} else if (CostantiFin.D_ORDINATIVO_TIPO_INCASSO.equals(siacTOrdinativo.getSiacDOrdinativoTipo().getOrdTipoCode())) {
 				RicercaOrdinativoIncassoK pkC = new RicercaOrdinativoIncassoK();
 				Bilancio bilancio = new Bilancio();
 				bilancio.setAnno(Integer.parseInt(siacTOrdinativo.getSiacTBil().getSiacTPeriodo().getAnno()));
@@ -248,7 +252,7 @@ public abstract class AbstractBaseServiceRicercaOrdinativo<REQ extends ServiceRe
 				pkC.setBilancio(bilancio);
 				pkC.setOrdinativoIncasso(ord);
 				OrdinativoIncasso ordIncColl = ottieniOrdinativoIncasso(pkC, datiOperazione, richiedente);
-				ordIncColl.setTipoAssociazioneEmissione(Constanti.tipoAssociazioneEmissioneStringToEnum(siacTOrdinativoCollegatoCustom.getRelazioneOrdinativiCollegati()));
+				ordIncColl.setTipoAssociazioneEmissione(CostantiFin.tipoAssociazioneEmissioneStringToEnum(siacTOrdinativoCollegatoCustom.getRelazioneOrdinativiCollegati()));
 				listaOrdinativiCollegati.add(ordIncColl);
 			}
 		}
@@ -282,6 +286,28 @@ public abstract class AbstractBaseServiceRicercaOrdinativo<REQ extends ServiceRe
 			}
 		}
 		return true;
+	}
+	
+	protected boolean isCondizioniGestioneContoVincolatoSoddisfatte(ContoTesoreria contoTesoreriaOrdinativo, Capitolo<?,?> capitolo) {
+		return isEnteGestioneContoVincolato() 
+				//SIAC-8778
+				&& contoTesoreriaOrdinativo != null
+				&& isContoVincolatoSuCapitolo(contoTesoreriaOrdinativo, capitolo); 
+		
+	}
+	
+	private boolean isEnteGestioneContoVincolato() {
+		if(ente.getGestioneLivelli().isEmpty()) {
+			return false;
+		}
+		String gestioneContiVincolati = ente.getGestioneLivelli().get(TipologiaGestioneLivelli.GESTIONE_CONTI_VINCOLATI);
+		
+		return !StringUtils.isEmpty(gestioneContiVincolati) &&"TRUE".equals(gestioneContiVincolati); 
+		
+	}
+
+	private boolean isContoVincolatoSuCapitolo(ContoTesoreria contoTesoreriaOrdinativo, Capitolo<?,?> capitolo) {
+		return ordinativoIncassoDad.isContoTesoreriaVincolatoSuCapitolo(contoTesoreriaOrdinativo, capitolo, this.ente);
 	}
 	
 	

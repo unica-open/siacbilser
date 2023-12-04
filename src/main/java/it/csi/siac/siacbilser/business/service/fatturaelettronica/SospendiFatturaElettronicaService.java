@@ -16,7 +16,7 @@ import it.csi.siac.siacbilser.integration.dad.FatturaFELDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.sirfelser.frontend.webservice.msg.SospendiFatturaElettronica;
 import it.csi.siac.sirfelser.frontend.webservice.msg.SospendiFatturaElettronicaResponse;

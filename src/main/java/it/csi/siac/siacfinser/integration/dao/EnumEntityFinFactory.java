@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.integration.entity.converter.EnumEntityFin;
 
 
@@ -37,7 +37,7 @@ import it.csi.siac.siacfinser.integration.entity.converter.EnumEntityFin;
 @Transactional(propagation=Propagation.SUPPORTS)
 public class EnumEntityFinFactory {
 	
-	private static LogUtil log = new LogUtil(EnumEntityFinFactory.class);
+	private static LogSrvUtil log = new LogSrvUtil(EnumEntityFinFactory.class);
 	
 	@PersistenceContext
 	protected EntityManager entityManager;

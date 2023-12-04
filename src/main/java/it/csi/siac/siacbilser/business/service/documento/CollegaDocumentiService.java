@@ -30,6 +30,7 @@ import it.csi.siac.siacfin2ser.model.Documento;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
+import it.csi.siac.siacfin2ser.model.StatoSDIDocumento;
 import it.csi.siac.siacfin2ser.model.TipoRelazione;
 
 /**
@@ -96,6 +97,12 @@ public class CollegaDocumentiService extends CheckedAccountBaseService<AggiornaR
 		checkCollegamentoGiaPresente();
 		
 		if(TipoRelazione.NOTA_CREDITO.equals(req.getTipoRelazione())){
+			//SIAC-6988 Inizio  FL Controllo che lo stato non sia con stato SDI diverso da INVIATA A FEL; ACCETTATA / CONSEGNATA; IN DECORRENZA TERMINI.
+			if(checkStatoSDIFEL(documentoDad.findStatoSDIDocumento(docFiglio))){
+				String msg = "la nota di accredito è già stata inviata a FEL" ;
+				throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore(msg));
+			}
+			//SIAC-6988 Fine  FL
 			impostaImportoDaDedurreSuFattura();
 			
 			
@@ -119,6 +126,19 @@ public class CollegaDocumentiService extends CheckedAccountBaseService<AggiornaR
 		
 	}
 
+	//SIAC-6988 Inizio  FL
+	private  boolean checkStatoSDIFEL(String statoSDI) {
+		boolean flagStatoSDI= false;
+		if (statoSDI != null && !statoSDI.equals("")) {
+				if (StatoSDIDocumento.DECORR_TERMINI.getCodice().equalsIgnoreCase(statoSDI)  ||
+					StatoSDIDocumento.ACCET_CONSEG.getCodice().equalsIgnoreCase(statoSDI)  ||
+					StatoSDIDocumento.INVIATA_FEL.getCodice().equalsIgnoreCase(statoSDI)) {
+					flagStatoSDI= true; 
+				}
+		}
+		return flagStatoSDI;
+	}
+	//SIAC-6988 Fine  FL
 	/**
 	 * Imposta l'importo da dedurre su fattura con il massimo importo disponibile per la nota di credito.
 	 * Ovvero: importoNotaCredito-totaleImportoDaDedurreSuFattura
@@ -142,8 +162,8 @@ public class CollegaDocumentiService extends CheckedAccountBaseService<AggiornaR
 				totaleImportoDaDedurreSuFattura, 
 				importoDaDedurreSuFattura,
 				importoNotaCredito));
-		
-		if(importoDaDedurreSuFattura.compareTo(BigDecimal.ZERO)<=0){
+		//SIAC-6988 - l'importo deve essere minore di 0 perchè se il saldo è uguale a 0 significa che c'è totale copertura di importi
+		if(importoDaDedurreSuFattura.compareTo(BigDecimal.ZERO) < 0){
 			String msg = MessageFormat.format("Il totale importo da dedurre su fattura deve essere minore o uguale dell''importo della nota di credito. "
 					+ "Totale importo da dedurre su altre fatture: {0,number,###,##0.00} €. "
 					+ "Importo nota credito: {1,number,###,##0.00} €.", 

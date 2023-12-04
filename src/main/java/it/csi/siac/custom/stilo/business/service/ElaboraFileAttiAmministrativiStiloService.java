@@ -26,8 +26,8 @@ public class ElaboraFileAttiAmministrativiStiloService extends ElaboraFileAttiAm
 	}
 
 	@Override
-	protected AttoAmministrativoElab getAttoAmministrativoElabInstance(String line, String codiceAccount) {
-		return attoAmministrativoStiloFactory.newInstanceFromFlussoAttiAmministrativi(line, codiceAccount);
+	protected AttoAmministrativoElab getAttoAmministrativoElabInstance(String line, int lineNumber, String codiceAccount) {
+		return attoAmministrativoStiloFactory.newInstanceFromFlussoAttiAmministrativi(line, lineNumber, codiceAccount);
 	}
 	
 	@Override

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.integration.entity.SiacRBilStatoOp;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilStatoOpEnum;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.StatoBilancio;
+import it.csi.siac.siaccorser.model.StatoBilancio;
 
 /**
  * Converter per lo stato del Bilancio.

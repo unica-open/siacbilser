@@ -6,6 +6,7 @@ package it.csi.siac.siacbilser.integration.dad;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,13 @@ import it.csi.siac.siacbilser.integration.entity.SiacDBilElemDetCompTipo;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemDetCompMacroTipoEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.model.DecodificaTipoComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.ImpegnabileComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.PropostaDefaultComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.SottotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.StatoTipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
-import it.csi.siac.siacbilser.model.TipoGestioneComponenteImportiCapitolo;
+//import it.csi.siac.siacbilser.model.TipoGestioneComponenteImportiCapitolo;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2ser.model.DecodificaEnum;
@@ -73,13 +75,16 @@ public class TipoComponenteImportiCapitoloDad extends ExtendedBaseDadImpl{
 			MacrotipoComponenteImportiCapitolo[] macrotipoComponenteImportiCapitoloDaEscludere,
 			SottotipoComponenteImportiCapitolo[] sottotipoComponenteImportiCapitoloDaEscludere,
 			PropostaDefaultComponenteImportiCapitolo[] propostaDefaultComponenteImportiCapitoloDaEscludere,
+			//SIAC-7349
+			ImpegnabileComponenteImportiCapitolo[] impegnabileComponenteImportiCapitoloDaEscludere,
 			Integer annoBilancio,
 			boolean soloValidiPerBilancio,
 			TipoComponenteImportiCapitoloModelDetail... modelDetails) {
 		
 		List<SiacDBilElemDetCompTipo> siacDBilElemDetCompTipoList = tipoComponenteImportiCapitoloDao.ricercaTipoComponenteImportiCapitolo(
 				siacTEnteProprietario.getEnteProprietarioId(),
-				tipoComponenteImportiCapitolo.getTipoGestioneComponenteImportiCapitolo() != null ? Boolean.valueOf(TipoGestioneComponenteImportiCapitolo.SOLO_AUTOMATICA.equals(tipoComponenteImportiCapitolo.getTipoGestioneComponenteImportiCapitolo())) : null,
+				//SIAC-7349
+				//tipoComponenteImportiCapitolo.getTipoGestioneComponenteImportiCapitolo() != null ? Boolean.valueOf(TipoGestioneComponenteImportiCapitolo.SOLO_AUTOMATICA.equals(tipoComponenteImportiCapitolo.getTipoGestioneComponenteImportiCapitolo())) : null,
 				tipoComponenteImportiCapitolo.getDescrizione(),
 				getCodice(tipoComponenteImportiCapitolo.getMacrotipoComponenteImportiCapitolo()),
 				getCodice(tipoComponenteImportiCapitolo.getSottotipoComponenteImportiCapitolo()),
@@ -87,13 +92,17 @@ public class TipoComponenteImportiCapitoloDad extends ExtendedBaseDadImpl{
 				getCodice(tipoComponenteImportiCapitolo.getFonteFinanziariaComponenteImportiCapitolo()),
 				getCodice(tipoComponenteImportiCapitolo.getMomentoComponenteImportiCapitolo()),
 				getCodice(tipoComponenteImportiCapitolo.getPropostaDefaultComponenteImportiCapitolo()),
+				//SIAC-7349
+				getCodice(tipoComponenteImportiCapitolo.getImpegnabileComponenteImportiCapitolo()),
 				getCodice(tipoComponenteImportiCapitolo.getStatoTipoComponenteImportiCapitolo()),
 				tipoComponenteImportiCapitolo.getAnno(),
 				annoBilancio,
 				Boolean.valueOf(soloValidiPerBilancio),
 				projectToCode(macrotipoComponenteImportiCapitoloDaEscludere),
 				projectToCode(sottotipoComponenteImportiCapitoloDaEscludere),
-				projectToCode(propostaDefaultComponenteImportiCapitoloDaEscludere));
+				projectToCode(propostaDefaultComponenteImportiCapitoloDaEscludere),
+				//SIAC-7349
+				projectToCode(impegnabileComponenteImportiCapitoloDaEscludere));
 		
 		return convertiLista(siacDBilElemDetCompTipoList, TipoComponenteImportiCapitolo.class, BilMapId.SiacDBilElemDetCompTipo_TipoComponenteImportiCapitolo_ModelDetail, modelDetails);
 	}
@@ -103,6 +112,10 @@ public class TipoComponenteImportiCapitoloDad extends ExtendedBaseDadImpl{
 			MacrotipoComponenteImportiCapitolo[] macrotipoComponenteImportiCapitoloDaEscludere,
 			SottotipoComponenteImportiCapitolo[] sottotipoComponenteImportiCapitoloDaEscludere,
 			PropostaDefaultComponenteImportiCapitolo[] propostaDefaultComponenteImportiCapitoloDaEscludere,
+			//SIAC-7349
+			ImpegnabileComponenteImportiCapitolo[] impegnabileComponenteImportiCapitoloDaEscludere,			
+			//SIAC-7873
+			boolean saltaControlloSuDateValidita,
 			Integer annoBilancio,
 			boolean soloValidiPerBilancio,
 			ParametriPaginazione parametriPaginazione,
@@ -110,7 +123,8 @@ public class TipoComponenteImportiCapitoloDad extends ExtendedBaseDadImpl{
 		
 		Page<SiacDBilElemDetCompTipo> siacDBilElemDetCompTipoPagedList = tipoComponenteImportiCapitoloDao.ricercaPaginataTipoComponenteImportiCapitolo(
 				siacTEnteProprietario.getEnteProprietarioId(), 
-				tipoComponenteImportiCapitolo.getTipoGestioneComponenteImportiCapitolo() != null ? Boolean.valueOf(TipoGestioneComponenteImportiCapitolo.SOLO_AUTOMATICA.equals(tipoComponenteImportiCapitolo.getTipoGestioneComponenteImportiCapitolo())) : null,
+				//SIAC-7349
+				//tipoComponenteImportiCapitolo.getTipoGestioneComponenteImportiCapitolo() != null ? Boolean.valueOf(TipoGestioneComponenteImportiCapitolo.SOLO_AUTOMATICA.equals(tipoComponenteImportiCapitolo.getTipoGestioneComponenteImportiCapitolo())) : null,
 				tipoComponenteImportiCapitolo.getDescrizione(), 
 				getCodice(tipoComponenteImportiCapitolo.getMacrotipoComponenteImportiCapitolo()),
 				getCodice(tipoComponenteImportiCapitolo.getSottotipoComponenteImportiCapitolo()),
@@ -118,13 +132,19 @@ public class TipoComponenteImportiCapitoloDad extends ExtendedBaseDadImpl{
 				getCodice(tipoComponenteImportiCapitolo.getFonteFinanziariaComponenteImportiCapitolo()),
 				getCodice(tipoComponenteImportiCapitolo.getMomentoComponenteImportiCapitolo()),
 				getCodice(tipoComponenteImportiCapitolo.getPropostaDefaultComponenteImportiCapitolo()),
+				//SIAC-7349
+				getCodice(tipoComponenteImportiCapitolo.getImpegnabileComponenteImportiCapitolo()),
 				getCodice(tipoComponenteImportiCapitolo.getStatoTipoComponenteImportiCapitolo()),
+				//SIAC-7873
+				saltaControlloSuDateValidita,
 				tipoComponenteImportiCapitolo.getAnno(),
 				annoBilancio,
 				Boolean.valueOf(soloValidiPerBilancio),
 				projectToCode(macrotipoComponenteImportiCapitoloDaEscludere),
 				projectToCode(sottotipoComponenteImportiCapitoloDaEscludere),
 				projectToCode(propostaDefaultComponenteImportiCapitoloDaEscludere),
+				//SIAC-7349
+				projectToCode(impegnabileComponenteImportiCapitoloDaEscludere),
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(siacDBilElemDetCompTipoPagedList, TipoComponenteImportiCapitolo.class, BilMapId.SiacDBilElemDetCompTipo_TipoComponenteImportiCapitolo_ModelDetail, modelDetails);
@@ -187,4 +207,23 @@ public class TipoComponenteImportiCapitoloDad extends ExtendedBaseDadImpl{
 		}
 		return res;
 	}
+	
+	//SIAC-7349
+	public List<TipoComponenteImportiCapitolo> findAllByOnlyEnteProprietarioId(TipoComponenteImportiCapitolo tipoComponenteImportiCapitolo, TipoComponenteImportiCapitoloModelDetail... modelDetails) {
+		
+		List<SiacDBilElemDetCompTipo> siacDBilElemDetCompTipoList = 
+				siacDBilElemDetCompTipoRepository.findAllByOnlyEnteProprietarioId(siacTEnteProprietario.getEnteProprietarioId());
+		
+		return convertiLista(siacDBilElemDetCompTipoList, TipoComponenteImportiCapitolo.class, BilMapId.SiacDBilElemDetCompTipo_TipoComponenteImportiCapitolo_ModelDetail, modelDetails);
+	}
+	
+	//SIAC-7349
+	public List<TipoComponenteImportiCapitolo> findAllByEnteProprietarioIdImpegnabili(TipoComponenteImportiCapitolo tipoComponenteImportiCapitolo, TipoComponenteImportiCapitoloModelDetail... modelDetails) {
+		
+		List<SiacDBilElemDetCompTipo> siacDBilElemDetCompTipoList = 
+				siacDBilElemDetCompTipoRepository.findAllByEnteProprietarioIdImpegnabili(siacTEnteProprietario.getEnteProprietarioId());
+		
+		return convertiLista(siacDBilElemDetCompTipoList, TipoComponenteImportiCapitolo.class, BilMapId.SiacDBilElemDetCompTipo_TipoComponenteImportiCapitolo_ModelDetail, modelDetails);
+	}
+	
 }

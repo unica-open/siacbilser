@@ -69,6 +69,7 @@ public interface VariazioneImportiCapitoloDao extends Dao<SiacTVariazione, Integ
 	 * @param bilElemsTipo the bil elems tipo
 	 * @param bilElemsCodificaTipo the bil elems codifica tipo
 	 * @param operatoreImporti the operatore importi
+	 * @param limitaRisultatiDefinitiveODecentrate 
 	 * @param pageable the pageable
 	 * 
 	 * @return la lista paginata delle variazioni trovate
@@ -91,8 +92,54 @@ public interface VariazioneImportiCapitoloDao extends Dao<SiacTVariazione, Integ
 			String operatoreImporti, // L'operatore da utilizzare per gli importi: <, <=, =, >=, > di zero
 			Integer attoAmmVarBilId,
 			Integer attoAmmIdMultiple, // Il provvedimento sia PEG che variazione
-			Pageable pageable);
+			boolean limitaRisultatiDefinitiveODecentrate, Pageable pageable);
 
+	
+	
+	/** CONTABILIA-285
+	 * Ricerca sintetica di una variazione di bilancio.
+	 *
+	 * @param variazioneTipo the variazione tipo
+	 * @param enteProprietarioId the ente proprietario id
+	 * @param annoBilancio the anno bilancio
+	 * @param variazioneNum the variazione num
+	 * @param variazioneDesc the variazione desc
+	 * @param variazioneStato the variazione stato
+	 * @param attoAmmId the atto amm id
+	 * @param capitoloId the capitolo id
+	 * @param capitoloCodificaId the capitolo codifica id
+	 * @param capitoloSorgenteId the capitolo sorgente id
+	 * @param capitoloDestinazioneId the capitolo destinazione id
+	 * @param bilElemsTipo the bil elems tipo
+	 * @param bilElemsCodificaTipo the bil elems codifica tipo
+	 * @param operatoreImporti the operatore importi
+	 * @param pageable the pageable
+	 * 
+	 * @return la lista paginata delle variazioni trovate
+	 */
+	Page<SiacTVariazione> ricercaSinteticaVariazioneNeutreDiBilancio(Collection<SiacDVariazioneTipoEnum> variazioneTipo, Integer enteProprietarioId, 
+			String annoBilancio, 
+			Integer variazioneNum, 
+			String variazioneDesc,
+			Date dataAperturaProposta,
+			Date dataChiusuraProposta,
+			Integer direzioneProponenteId,
+			SiacDVariazioneStatoEnum variazioneStato,			
+			Integer attoAmmId,
+			Integer capitoloId, //capitolo legato alla variazione di bilancio (importo)
+			Integer capitoloCodificaId, //capitolo legato alla variazine di codifica
+			Integer capitoloSorgenteId,  //capitolo sorgente storno
+			Integer capitoloDestinazioneId, //capitolo destinazione storno
+			List<SiacDBilElemTipoEnum> bilElemsTipo, //tipi di capitolo sul quale opera la variazione di bilancio (importo)
+			List<SiacDBilElemTipoEnum> bilElemsCodificaTipo, //tipi di capitolo sul quale opera la variazione di codifica
+			String operatoreImporti, // L'operatore da utilizzare per gli importi: <, <=, =, >=, > di zero
+			Integer attoAmmVarBilId,
+			Integer attoAmmIdMultiple, // Il provvedimento sia PEG che variazione
+			Pageable pageable);
+	
+	
+	
+	
 	/**
 	 * Aggiorna solo l'anagrafica di una SiacTVariazione.
 	 *
@@ -127,4 +174,10 @@ public interface VariazioneImportiCapitoloDao extends Dao<SiacTVariazione, Integ
 
 	//Page<SiacTBilElem> findPrimoCapitoloNellaVariazioneByUid(int uidVariazione, String tipoCapitolo, Pageable pageable);
 	
-    Long countCapitoliComuni(Integer uidVariazione, List<Integer> uidVariaziones);}
+    Long countCapitoliComuni(Integer uidVariazione, List<Integer> uidVariaziones);
+
+	List<Object[]> findStanziamentoCapitoloInVariazioneInDiminuzione(Integer idVariazione, Collection<Integer> idCapitoliDaEscludere);
+
+	List<Object[]> findStanziamentoComponenteCapitoloInVariazioneInDiminuzione(Integer idVariazione, List<Integer> idCapitolispesa);
+	
+}

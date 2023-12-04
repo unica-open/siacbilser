@@ -81,12 +81,15 @@ public class RicercaSinteticaImpegniSubimpegniService extends AbstractBaseServic
 		// 2. Viene invocato il metodo che si occupa di ricercare e restituire l'elenco di Impegni e SubImpegni che trovano riscontro
 		// rispetto al filtro di ricerca ricevuto in input al servio, leggo prima il numero degi impegni x settare il totale degli impegni trovati
 		// poi ricerco paginando
-		Integer totImpegniTrovati = impegnoOttimizzatoDad.getCountRicercaImpegniSubImpegni(req.getEnte(), req.getRichiedente(), paramRic);
+		//task-168
+		Integer totImpegniTrovati = impegnoOttimizzatoDad.getCountRicercaImpegniSubImpegni(req.getEnte(), req.getRichiedente(), paramRic, req.getProgrammaCodeStrict());
 		
 		List<Impegno> listaImpegni = new ArrayList<Impegno>();
 		
 		if(totImpegniTrovati!=null && totImpegniTrovati > 0){
-			listaImpegni = impegnoOttimizzatoDad.ricercaSinteticaImpegniSubImpegni(req.getEnte(), req.getRichiedente(), paramRic, numPagina, numRisPerPagina);
+			//task-168
+			listaImpegni = impegnoOttimizzatoDad.ricercaSinteticaImpegniSubImpegni(req.getEnte(), req.getRichiedente(), paramRic,
+					numPagina, numRisPerPagina, req.getProgrammaCodeStrict()); 
 			listaImpegni = impegnoOttimizzatoDad.completaPresenzaSub(listaImpegni);
 		}
 		

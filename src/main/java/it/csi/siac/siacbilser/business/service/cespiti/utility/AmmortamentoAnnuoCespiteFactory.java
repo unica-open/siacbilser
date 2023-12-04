@@ -19,7 +19,7 @@ import it.csi.siac.siaccespser.model.AmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.CategoriaCespiti;
 import it.csi.siac.siaccespser.model.Cespite;
 import it.csi.siac.siaccespser.model.DettaglioAmmortamentoAnnuoCespite;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
@@ -28,7 +28,7 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
  */
 public final class AmmortamentoAnnuoCespiteFactory {
 	
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/**
 	 * Instantiates a new ammortamento annuo cespite factory.

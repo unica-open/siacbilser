@@ -23,9 +23,10 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 /**
  * utility per la parte server
  * 
@@ -34,7 +35,7 @@ import org.springframework.beans.BeanWrapperImpl;
  */
 public class Utility {
 		
-		private static Logger log = Logger.getLogger(Utility.class);
+		private static LogSrvUtil log = new LogSrvUtil(Utility.class);
 
 		/**
 		 * Logga un oggetto complesso con annotazione XmlType.
@@ -51,13 +52,13 @@ public class Utility {
 					result = toXml(obj);
 				} catch (PropertyException e) {
 					result = e.getMessage();
-					log.warn("Impossibile loggare "+msg,e);
+					log.warn(methodName, "Impossibile loggare "+msg,e);
 				} catch (JAXBException e) {
 					result = e.getMessage();
-					log.warn("Impossibile loggare "+msg,e);
+					log.warn(methodName, "Impossibile loggare "+msg,e);
 				}
 				
-				log.debug(methodName + msg +": "+result);
+				log.debug(methodName, msg +": "+result);
 			}
 		}
 

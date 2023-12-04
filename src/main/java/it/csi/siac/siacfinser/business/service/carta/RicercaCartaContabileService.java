@@ -28,8 +28,8 @@ import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaCartaContabile;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaCartaContabileResponse;
@@ -93,7 +93,7 @@ public class RicercaCartaContabileService extends AbstractBaseService<RicercaCar
 		Long conteggioRecords = cartaContabileDad.calcolaNumeroCarteContabiliDaEstrarre(parametroRicercaCartaContabile, datiOperazione);
 		
 		// verifica sul massimo di righe visualizzabili
-		if(conteggioRecords <= Constanti.MAX_RIGHE_ESTRAIBILI.longValue()){
+		if(conteggioRecords <= CostantiFin.MAX_RIGHE_ESTRAIBILI.longValue()){
 			
 			// Caching delle entita' soggetto, mdp e atto amm
 			HashMap<String, Soggetto> cacheSoggetto = new HashMap<String, Soggetto>();
@@ -239,7 +239,7 @@ public class RicercaCartaContabileService extends AbstractBaseService<RicercaCar
 											Impegno imp = (Impegno)impegnoDad.ricercaMovimentoPkByUid(subdocumentoSpesaIterato.getImpegno().getUid(),
 													                                                  richiedente,
 													                                                  ente,
-													                                                  Constanti.MOVGEST_TIPO_IMPEGNO,
+													                                                  CostantiFin.MOVGEST_TIPO_IMPEGNO,
 													                                                  false);
 											
 											if(imp!=null){
@@ -384,9 +384,9 @@ public class RicercaCartaContabileService extends AbstractBaseService<RicercaCar
 				Integer numeroProvvedimento = parametroRicercaCartaContabile.getNumeroProvvedimento();
 				String tipoProvvedimento = parametroRicercaCartaContabile.getTipoProvvedimento();
 				
-				if((annoProvvedimento!=null || numeroProvvedimento!=null || !StringUtils.isEmpty(tipoProvvedimento))){
+				if((annoProvvedimento!=null || numeroProvvedimento!=null || !StringUtilsFin.isEmpty(tipoProvvedimento))){
 					if(annoProvvedimento!=null){						
-						if(numeroProvvedimento==null && StringUtils.isEmpty(tipoProvvedimento)){
+						if(numeroProvvedimento==null && StringUtilsFin.isEmpty(tipoProvvedimento)){
 							if(elencoParametriErrati.length() > 0){
 								elencoParametriErrati = elencoParametriErrati + ", NUMERO_PROVVEDIMENTO o TIPO_PROVVEDIMENTO OBBLIGATORI CON ANNO_PROVVEDIMENTO";
 							}else{
@@ -395,7 +395,7 @@ public class RicercaCartaContabileService extends AbstractBaseService<RicercaCar
 						}						
 					}
 					
-					if(numeroProvvedimento!=null || !StringUtils.isEmpty(tipoProvvedimento)){
+					if(numeroProvvedimento!=null || !StringUtilsFin.isEmpty(tipoProvvedimento)){
 						if(annoProvvedimento==null){
 							if(elencoParametriErrati.length() > 0){
 								elencoParametriErrati = elencoParametriErrati + ", ANNO_PROVVEDIMENTO OBBLIGATORIO CON NUMERO_PROVVEDIMENTO o TIPO_PROVVEDIMENTO";
@@ -451,11 +451,11 @@ public class RicercaCartaContabileService extends AbstractBaseService<RicercaCar
 			}
 		}
 		
-		if(!StringUtils.isEmpty(elencoParametriNonInizializzati)){
+		if(!StringUtilsFin.isEmpty(elencoParametriNonInizializzati)){
 			res.setErrori(Arrays.asList(ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(elencoParametriNonInizializzati)));
 			res.setEsito(Esito.FALLIMENTO);
 			res.setElencoCarteContabili(null);
-		} else if(!StringUtils.isEmpty(elencoParametriErrati)){
+		} else if(!StringUtilsFin.isEmpty(elencoParametriErrati)){
 			res.setErrori(Arrays.asList(ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(elencoParametriErrati)));
 			res.setEsito(Esito.FALLIMENTO);
 			res.setElencoCarteContabili(null);

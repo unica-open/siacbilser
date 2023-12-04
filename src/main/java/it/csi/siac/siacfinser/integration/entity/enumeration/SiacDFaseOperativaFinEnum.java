@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfinser.integration.entity.enumeration;
 
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacfinser.integration.entity.converter.EnumEntityFin;
 
 

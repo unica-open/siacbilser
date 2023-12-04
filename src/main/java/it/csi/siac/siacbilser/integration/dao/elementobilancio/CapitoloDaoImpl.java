@@ -5,6 +5,7 @@
 package it.csi.siac.siacbilser.integration.dao.elementobilancio;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -12,7 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Query;
+import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +29,9 @@ import it.csi.siac.siacbilser.integration.dao.SiacTBilElemRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTClassDao;
 import it.csi.siac.siacbilser.integration.dao.SiacTClassRepository;
 import it.csi.siac.siacbilser.integration.dao.base.ExtendedJpaDao;
+import it.csi.siac.siacbilser.integration.dao.common.dto.ImportiImpegnatoPerComponenteAnniSuccNoStanzDto;
+import it.csi.siac.siacbilser.integration.dao.common.dto.ImportiImpegnatoPerComponenteDto;
+import it.csi.siac.siacbilser.integration.dao.common.dto.ImportiImpegnatoPerComponenteTriennioNoStanzDto;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemAttr;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemCategoria;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemClass;
@@ -37,8 +44,12 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemTipoEnu
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDClassTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
 import it.csi.siac.siacbilser.integration.utility.CompareOperator;
+import it.csi.siac.siacbilser.model.wrapper.ImportiImpegnatoPerComponente;
+import it.csi.siac.siacbilser.model.wrapper.ImportiImpegnatoPerComponenteAnniSuccNoStanz;
+import it.csi.siac.siacbilser.model.wrapper.ImportiImpegnatoPerComponenteTriennioNoStanz;
+import it.csi.siac.siaccommon.util.number.NumberUtil;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class CapitoloDaoImpl.
  */
@@ -60,9 +71,6 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 	
 	
 
-	/* (non-Javadoc)
-	 * @see it.csi.siac.siacbilser.integration.dao.elementobilancio.CapitoloDao#create(it.csi.siac.siacbilser.integration.entity.SiacTBilElem)
-	 */
 	@Override
 	public SiacTBilElem create(SiacTBilElem bilElem) {
 		Date now = new Date();
@@ -107,9 +115,6 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		return bilElem;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.csi.siac.siaccommonser.integration.dao.base.JpaDao#update(java.lang.Object)
-	 */
 	@Override
 	public SiacTBilElem update(SiacTBilElem bilElem) {	
 		
@@ -202,11 +207,7 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 	
 	
 
-	/**
-	 * Aggiorna esclusivamente la relazione tra il capitolo e i classificatori lasciando invariato il resto.
-	 *
-	 * @param bilElem the bil elem
-	 */
+	@Override
 	public void aggiornaClassificatori(SiacTBilElem bilElem) {
 		final String methodName = "aggiornaClassificatori";
 		Date now = new Date();	
@@ -294,9 +295,7 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 	
 	
 	
-	/* (non-Javadoc)
-	 * @see it.csi.siac.siacbilser.integration.dao.elementobilancio.CapitoloDao#deleteLogical(it.csi.siac.siacbilser.integration.entity.SiacTBilElem)
-	 */
+	@Override
 	public SiacTBilElem deleteLogical(SiacTBilElem bilElem) {
 		
 		Date now = new Date();		
@@ -401,6 +400,8 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 			String codicePianoDeiConti,
 			String codiceCofog, String codiceTipoCofog,
 			String codiceStruttAmmCont, String codiceTipoStruttAmmCont,
+			//task-90
+			String idStruttAmmCont,
 			String codiceSiopeEntrata, String codiceTipoSiopeEntrata,
 			String codiceSiopeSpesa, String codiceTipoSiopeSpesa,
 			String codiceMissione, String codiceProgrmma,
@@ -415,7 +416,17 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 			String attoleggeTipoCode,
 			// SIAC-4088
 			Boolean collegatoFondiDubbiaEsigibilita,
-						
+			
+
+			//SIAC-7192
+			String codiceRisorsaAccantonata,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE,
+			//SIAC-8581
+			Integer versioneAccFcde,
+			String tipoAccFcde,
+			//SIAC-8191
+			Boolean includiSoloCapitoliPerPrevisioneImpegnatoaccertato,
 			Pageable pageable){
 		
 		StringBuilder jpql = new StringBuilder();
@@ -490,24 +501,51 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 				codiceClassificatoreGenerico50,
 				findFigliClassificatoreIdsPianoDeiConti(annoEsercizio, enteDto, codicePianoDeiConti),
 				findFigliClassificatoreIdsCofog(annoEsercizio, enteDto, codiceCofog, codiceTipoCofog),
-				findFigliClassificatoreIdsStrutturaAmministrativaContabile(annoEsercizio, enteDto, codiceStruttAmmCont, codiceTipoStruttAmmCont),
+				//task-90
+				findFigliClassificatoreIdsStrutturaAmministrativaContabileWithId(annoEsercizio, enteDto, codiceStruttAmmCont, codiceTipoStruttAmmCont, idStruttAmmCont),
+				
+				//findFigliClassificatoreIdsStrutturaAmministrativaContabile(annoEsercizio, enteDto, codiceStruttAmmCont, codiceTipoStruttAmmCont),
 				findFigliClassificatoreIdsSiopeEntrata(annoEsercizio, enteDto, codiceSiopeEntrata, codiceTipoSiopeEntrata),
 				findFigliClassificatoreIdsSiopeSpesa(annoEsercizio, enteDto, codiceSiopeSpesa, codiceTipoSiopeSpesa),
-				findFigliClassificatoreIdsMissioneProgramma(annoEsercizio, enteDto, codiceMissione, codiceProgrmma), 
-				findFigliClassificatoreIdsTitoloUscitaMacroaggregato(annoEsercizio, enteDto, codiceTitoloSpesa, codiceMacroaggregato), 
-				findFigliClassificatoreIdsEntrataTipologiaCategoria(annoEsercizio, enteDto, codiceTitoloEntrata, codiceTipologia, codiceCategoria),
+				findFigliClassificatoreIdsMissioneProgramma(annoEsercizio, enteDto, codiceMissione, codiceProgrmma), //task-138
+				findFigliClassificatoreIdsTitoloUscitaMacroaggregato(annoEsercizio, enteDto, codiceTitoloSpesa, codiceMacroaggregato), //task-138
+				//task-133
+				findClassificatoreIdsEntrataTipologiaCategoria(annoEsercizio, enteDto, codiceTitoloEntrata, codiceTipologia, codiceCategoria),
 				attoleggeNumero,
 				attoleggeAnno,
 				attoleggeArticolo,
 				attoleggeComma,
 				attoleggePunto,
 				attoleggeTipoCode,
-				collegatoFondiDubbiaEsigibilita);
+				collegatoFondiDubbiaEsigibilita,
+				codiceRisorsaAccantonata,
+				flagEntrataDubbiaEsigFCDE,
+				//SIAC-8581
+				versioneAccFcde,
+				tipoAccFcde,
+				includiSoloCapitoliPerPrevisioneImpegnatoaccertato);
 		
 		jpql.append(" ORDER BY cup.elem_code, cup.elem_code2, cup.elem_code3 ");
 		
 		return getNativePagedList(jpql.toString(), param, pageable, SiacTBilElem.class);
 	}
+	
+	//task-133
+	private List<Integer> findClassificatoreIdsEntrataTipologiaCategoria(String annoEsercizio, SiacTEnteProprietario siacTEnteProprietario, String codiceTitoloEntrata, String codiceTipologia, String codiceCategoria) {
+		List<Integer> classifIdTitoloEntrataTipologiaCategoria = new ArrayList<Integer>();
+	
+		if(codiceTitoloEntrata != null && codiceTipologia == null && codiceCategoria == null ) {
+			classifIdTitoloEntrataTipologiaCategoria = findFigliClassificatoreIdsEntrataTipologiaCategoria(annoEsercizio, siacTEnteProprietario, codiceTitoloEntrata, codiceTipologia, codiceCategoria);
+		}else if(codiceTitoloEntrata != null && codiceTipologia != null && codiceCategoria == null) {
+			classifIdTitoloEntrataTipologiaCategoria = siacTClassRepository.findClassifIdTipoClassificatoreByCodiceTipologia(codiceTipologia, siacTEnteProprietario.getEnteProprietarioId());
+		}else if(codiceTitoloEntrata != null && codiceTipologia != null && codiceCategoria != null ) {
+			classifIdTitoloEntrataTipologiaCategoria = siacTClassRepository.findClassifIdTipoClassificatoreByCodiceCategoria(codiceCategoria, siacTEnteProprietario.getEnteProprietarioId());
+		}
+		
+		return classifIdTitoloEntrataTipologiaCategoria;
+	}
+	
+	
 
 	/**
 	 * Find figli classificatore ids entrata tipologia categoria.
@@ -547,17 +585,14 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 	 * @return the list
 	 */
 	private List<Integer> findFigliClassificatoreIdsTitoloUscitaMacroaggregato(String annoEsercizio, SiacTEnteProprietario siacTEnteProprietario, String codiceTitoloSpesa, String codiceMacroaggregato) {
-		//SpesaTitolimacroaggregati			-> TitoloSpesa, Macroaggregato		  (solo Uscita)
-//		String codiceTitoloSpesaMacroaggregato = codiceMacroaggregato;
-//		SiacDClassTipoEnum tipoTitoloSpesaMacroaggregato = SiacDClassTipoEnum.Macroaggregato;
-//		if(codiceTitoloSpesaMacroaggregato==null){
-//			codiceTitoloSpesaMacroaggregato = codiceTitoloSpesa;
-//			tipoTitoloSpesaMacroaggregato = SiacDClassTipoEnum.TitoloSpesa;
-//		}	
-//		List<Integer> classifIdTitoloUscitaMacroaggregato = siacTClassDao.findFigliClassificatoreIds(codiceTitoloSpesaMacroaggregato, tipoTitoloSpesaMacroaggregato, SiacDClassFamEnum.SpesaTitolimacroaggregati);
+		//task-138
+		List<Integer> classifIdTitoloUscitaMacroaggregato= new ArrayList<>();
 		
-		List<Integer> classifIdTitoloUscitaMacroaggregato = siacTClassDao.findFigliClassificatoreIds(annoEsercizio, SiacDClassTipoEnum.TitoloSpesa, siacTEnteProprietario.getEnteProprietarioId(), codiceTitoloSpesa, codiceMacroaggregato);
-		
+		if(codiceTitoloSpesa != null && codiceMacroaggregato == null) {
+			classifIdTitoloUscitaMacroaggregato= siacTClassDao.findFigliClassificatoreIds(annoEsercizio, SiacDClassTipoEnum.TitoloSpesa, siacTEnteProprietario.getEnteProprietarioId(), codiceTitoloSpesa, codiceMacroaggregato);
+		}else if(codiceTitoloSpesa != null && codiceMacroaggregato != null) {
+			classifIdTitoloUscitaMacroaggregato = siacTClassRepository.findClassifIdTipoClassificatoreByCodiceMacroaggregato(codiceMacroaggregato, siacTEnteProprietario.getEnteProprietarioId());
+		}
 		
 		return classifIdTitoloUscitaMacroaggregato;
 	}
@@ -571,19 +606,14 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 	 * @return the list
 	 */
 	private List<Integer> findFigliClassificatoreIdsMissioneProgramma(String annoEsercizio, SiacTEnteProprietario siacTEnteProprietario, String codiceMissione, String codiceProgrmma) {
-		//SpesaMissioniprogrammi			-> Missione, Programma (solo Uscita)
-//		String codiceMissioneProgramma = codiceProgrmma;
-//		SiacDClassTipoEnum tipoMissioneProgramma = SiacDClassTipoEnum.Programma;
-//		if(codiceMissioneProgramma==null){
-//			codiceMissioneProgramma = codiceMissione;
-//			tipoMissioneProgramma = SiacDClassTipoEnum.Missione;
-//		}	
-//		List<Integer> classifIdMissioneProgramma = siacTClassDao.findFigliClassificatoreIds(codiceMissioneProgramma, tipoMissioneProgramma, SiacDClassFamEnum.SpesaMissioniprogrammi);
+		//task-138
+		List<Integer> classifIdMissioneProgramma = new ArrayList<>();
 		
-		
-		
-		
-		List<Integer> classifIdMissioneProgramma = siacTClassDao.findFigliClassificatoreIds(annoEsercizio, SiacDClassTipoEnum.Missione, siacTEnteProprietario.getEnteProprietarioId(), codiceMissione, codiceProgrmma);		
+		if(codiceMissione != null && codiceProgrmma == null) {
+			classifIdMissioneProgramma = siacTClassDao.findFigliClassificatoreIds(annoEsercizio, SiacDClassTipoEnum.Missione, siacTEnteProprietario.getEnteProprietarioId(), codiceMissione, codiceProgrmma);		
+		}else if(codiceMissione != null && codiceProgrmma != null) {
+			classifIdMissioneProgramma = siacTClassRepository.findClassifIdTipoClassificatoreByCodiceProgramma(codiceProgrmma, siacTEnteProprietario.getEnteProprietarioId());
+		}
 		
 		return classifIdMissioneProgramma;
 	}
@@ -605,6 +635,16 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		
 		return classifIdStruttAmmCont;
 	}
+	//task-90
+	private List<Integer> findFigliClassificatoreIdsStrutturaAmministrativaContabileWithId(String annoEsercizio, SiacTEnteProprietario siacTEnteProprietario, String codiceStruttAmmCont, String codiceTipoStruttAmmCont, String idStruttAmmCont) {
+		//StrutturaAmministrativaContabile 	-> Centro di Responsabilità, CDC (Settore)
+		//codiceStruttAmmCont-codiceTipoStruttAmmCont  //005-CDR troverà //004-CDC
+		//List<Integer> classifIdStruttAmmCont = siacTClassDao.findFigliClassificatoreIds(codiceStruttAmmCont, SiacDClassTipoEnum.byCodiceEvenNull(codiceTipoStruttAmmCont) , SiacDClassFamEnum.StrutturaAmministrativaContabile);
+		
+		List<Integer> classifIdStruttAmmCont = siacTClassDao.findFigliClassificatoreIds(annoEsercizio, SiacDClassTipoEnum.byCodiceEvenNull(codiceTipoStruttAmmCont), siacTEnteProprietario.getEnteProprietarioId(), codiceStruttAmmCont, idStruttAmmCont);
+		
+		return classifIdStruttAmmCont;
+}
 	
 	/**
 	 * Find figli classificatore ids siope entrata.
@@ -759,6 +799,8 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 			String attoleggeTipoCode,
 			
 			Boolean collegatoFondiDubbiaEsigibilita,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE,
 						
 			Pageable pageable) {
 		
@@ -811,7 +853,8 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 				attoleggeComma,
 				attoleggePunto,
 				attoleggeTipoCode,
-				collegatoFondiDubbiaEsigibilita);
+				collegatoFondiDubbiaEsigibilita,
+				flagEntrataDubbiaEsigFCDE);
 		jpql.append(" ORDER BY cup.elemCode, cup.elemCode2, cup.elemCode3 ");
 		
 		
@@ -883,6 +926,7 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 	 * @param attoleggeTipoCode the attolegge tipo code
 	 * @param groupUeb the group ueb
 	 * @param codiceClassificatoreGenerico31 
+	 * @param flagEntrataDubbiaEsigFCDE
 	 */
 	private void componiQueryRicercaSinteticaCapitolo(StringBuilder jpql, Map<String, Object> param, 
 			SiacTEnteProprietario enteDto, String annoEsercizio, SiacDBilElemTipoEnum tipoCapitolo, Integer uidCategoriaCapitolo, String codiceCategoriaCapitolo,  String annoCapitolo,
@@ -931,7 +975,9 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 			String attoleggeComma,
 			String attoleggePunto,
 			String attoleggeTipoCode,
-			Boolean collegatoFondiDubbiaEsigibilita) {
+			Boolean collegatoFondiDubbiaEsigibilita,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE) {
 		
 		String annoBilancio = annoEsercizio != null ? annoEsercizio : annoCapitolo;
 		
@@ -1020,6 +1066,8 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		appendFlagFilter(jpql,param, flagTrasferimentoOrganiComunitari, SiacTAttrEnum.FlagTrasferimentoOrganiComunitari); 
 		appendFlagFilter(jpql, param, flagEntrateRicorrenti, SiacTAttrEnum.FlagEntrateRicorrenti);
 		appendFlagFilter(jpql, param, flagFondoPluriennaleVinc, SiacTAttrEnum.FlagFondoPluriennaleVinc);
+		// SIAC-7858
+		appendFlagFilter(jpql, param, flagEntrataDubbiaEsigFCDE, SiacTAttrEnum.FlagEntrataDubbiaEsigFCDE);
 		
 			
 		//classificatori generici
@@ -1175,7 +1223,15 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 			String attoleggeComma,
 			String attoleggePunto,
 			String attoleggeTipoCode,
-			Boolean collegatoFondiDubbiaEsigibilita) {
+			Boolean collegatoFondiDubbiaEsigibilita,
+			String codiceRisorsaAccantonata,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE,
+			//SIAC-8581
+			Integer versioneAccFcde,
+			String tipoAccFcde,
+			//SIAC-8581
+			Boolean capitoliPerPrevisioneImpegnatoAccertato) {
 		
 		String annoBilancio = annoEsercizio != null ? annoEsercizio : annoCapitolo;
 		
@@ -1247,7 +1303,7 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		}
 		// Descrizione articolo
 		if(StringUtils.isNotBlank(descrizioneArticolo)){
-			where.append(" AND ").append(Utility.toJpqlSearchLike("cup.elemDesc2", "CONCAT('%',:descrizioneArticolo,'%')"));
+			where.append(" AND ").append(Utility.toJpqlSearchLike("cup.elem_desc2", "CONCAT('%',:descrizioneArticolo,'%')"));
 			param.put("descrizioneArticolo", descrizioneArticolo);
 		}
 		// Fase bilancio
@@ -1270,6 +1326,7 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		appendFlagNativeFilter(where, joins, param, flagTrasferimentoOrganiComunitari, SiacTAttrEnum.FlagTrasferimentoOrganiComunitari); 
 		appendFlagNativeFilter(where, joins, param, flagEntrateRicorrenti, SiacTAttrEnum.FlagEntrateRicorrenti);
 		appendFlagNativeFilter(where, joins, param, flagFondoPluriennaleVinc, SiacTAttrEnum.FlagFondoPluriennaleVinc);
+		appendFlagNativeFilter(where, joins, param, flagEntrataDubbiaEsigFCDE, SiacTAttrEnum.FlagEntrataDubbiaEsigFCDE);
 		
 		// Classificatori generici
 		appendClassifCodeNativeFilter(where, joins, param, codiceTipoFinanziamento, SiacDClassTipoEnum.TipoFinanziamento);
@@ -1282,6 +1339,9 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		appendClassifCodeNativeFilter(where, joins, param, codiceTransazioneUnioneEuropeaEntrata, SiacDClassTipoEnum.TransazioneUnioneEuropeaEntrata);
 		appendClassifCodeNativeFilter(where, joins, param, codiceTransazioneUnioneEuropeaSpesa, SiacDClassTipoEnum.TransazioneUnioneEuropeaSpesa);
 		appendClassifCodeNativeFilter(where, joins, param, codicePoliticheRegionaliUnitarie, SiacDClassTipoEnum.PoliticheRegionaliUnitarie);
+		//SIAC-7192
+		appendClassifCodeNativeFilter(where, joins, param, codiceRisorsaAccantonata, SiacDClassTipoEnum.RisorsaAccantonata);
+		
 		appendClassifCodeNativeFilter(where, joins, param, codiceClassificatoreGenerico1, SiacDClassTipoEnum.Classificatore1);
 		appendClassifCodeNativeFilter(where, joins, param, codiceClassificatoreGenerico2, SiacDClassTipoEnum.Classificatore2);
 		appendClassifCodeNativeFilter(where, joins, param, codiceClassificatoreGenerico3, SiacDClassTipoEnum.Classificatore3);
@@ -1324,14 +1384,29 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		appendClassifIdsNativeFilter(where, joins, classifIdSiopeSpesa, param, "classifIdSiopeSpesa");
 		appendClassifIdsNativeFilter(where, joins, classifIdCofog, param, "classifIdCofog");
 		
-		// SIAC-4088
-		if(collegatoFondiDubbiaEsigibilita != null) {
+		// SIAC-4088 e SIAC-8581
+		if(collegatoFondiDubbiaEsigibilita != null && NumberUtil.isValidAndGreaterThanZero(versioneAccFcde) && StringUtils.isNotBlank(tipoAccFcde)) {
 			where.append(" AND ").append(Boolean.TRUE.equals(collegatoFondiDubbiaEsigibilita) ? "" : "NOT ").append(" EXISTS ( ");
 			where.append("     SELECT 1 ");
-			where.append("     FROM siac_r_bil_elem_acc_fondi_dubbia_esig rbeafde ");
-			where.append("     JOIN siac_t_acc_fondi_dubbia_esig tafde ON (tafde.acc_fde_id = rbeafde.acc_fde_id AND tafde.data_cancellazione IS NULL) ");
-			where.append("     WHERE rbeafde.elem_id = cup.elem_id ");
-			where.append("     AND rbeafde.data_cancellazione IS NULL ");
+			where.append("     FROM siac_t_acc_fondi_dubbia_esig tafde ");
+			where.append("     JOIN siac_t_acc_fondi_dubbia_esig_bil tafdeb ON ( tafde.afde_bil_id = tafdeb.afde_bil_id ) ");
+			where.append("     JOIN siac_d_acc_fondi_dubbia_esig_tipo dafdet ON ( tafde.afde_tipo_id = dafdet.afde_tipo_id ) ");
+			where.append("     WHERE tafde.elem_id = cup.elem_id ");
+			where.append("     AND tafdeb.afde_bil_versione = :versioneAccFcde ");
+			where.append("     AND dafdet.afde_tipo_code = :tipoAccFcde ");
+			where.append("     AND tafde.data_cancellazione IS NULL ");
+			where.append(" ) ");
+			param.put("versioneAccFcde", versioneAccFcde);
+			param.put("tipoAccFcde", tipoAccFcde);
+		}
+		
+		//SIAC-8191
+		if(capitoliPerPrevisioneImpegnatoAccertato != null) {
+			where.append(" AND ").append(Boolean.TRUE.equals(capitoliPerPrevisioneImpegnatoAccertato) ? "" : "NOT ").append(" EXISTS ( ");
+			where.append("     SELECT 1 ");
+			where.append("     FROM siac_r_bil_elem_previsione_impacc rbepi ");
+			where.append("     WHERE rbepi.elem_id = cup.elem_id ");
+			where.append("     AND rbepi.data_cancellazione IS NULL ");
 			where.append(" ) ");
 		}
 		
@@ -1399,35 +1474,41 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 	
 	private void appendAttoLeggeNativeFilter(StringBuilder where, Map<String, String> joins, Map<String, Object> param, Integer attoleggeNumero, String attoleggeAnno,
 			String attoleggeArticolo, String attoleggeComma, String attoleggePunto, String attoleggeTipoCode) {
-		if(StringUtils.isBlank(attoleggeAnno) || (attoleggeAnno == null && StringUtils.isBlank(attoleggeArticolo) && StringUtils.isBlank(attoleggeComma) || StringUtils.isBlank(attoleggePunto) || StringUtils.isBlank(attoleggeTipoCode))) {
-			return;
-		}
-		joins.put("siac_r_bil_elem_atto_legge", "siac_r_bil_elem_atto_legge rbeal ON (rbeal.elem_id = cup.elem_id AND rbeal.data_cancellazione IS NULL)");
-		joins.put("siac_t_atto_legge", "siac_t_atto_legge tal ON (tal.attolegge_id = rbeal.attolegge_id)");
-		
-		where.append(" AND tal.attolegge_anno = :attoleggeAnno ");
-		param.put("attoleggeAnno", attoleggeAnno);
-		
-		if(attoleggeNumero != null){
-			where.append(" AND tal.attolegge_numero = :attoleggeNumero ");
-			param.put("attoleggeNumero", attoleggeNumero);
-		}
-		if(StringUtils.isNotBlank(attoleggeArticolo)){
-			where.append(" AND tal.attolegge_articolo = :attoleggeArticolo ");
-			param.put("attoleggeArticolo", attoleggeArticolo);
-		}
-		if(StringUtils.isNotBlank(attoleggeComma)){
-			where.append(" AND tal.attolegge_comma = :attoleggeComma ");
-			param.put("attoleggeComma", attoleggeComma);
-		}
-		if(StringUtils.isNotBlank(attoleggePunto)){
-			where.append(" AND tal.attolegge_punto = :attoleggePunto ");
-			param.put("attoleggePunto", attoleggePunto);
-		}
-		if(StringUtils.isNotBlank(attoleggeTipoCode)){
-			joins.put("siac_d_atto_legge_tipo", "siac_d_atto_legge_tipo dalt ON (dalt.attolegge_tipo_id = tal.attolegge_tipo_id)");
-			where.append(" AND dalt.attolegge_tipo_code = :attoleggeTipoCode ");
-			param.put("attoleggeTipoCode", attoleggeTipoCode);
+		boolean valorizzatoAlmenoUnoTraNumeroETipo =  (attoleggeNumero != null && attoleggeNumero.intValue() != 0) ^ StringUtils.isBlank(attoleggeTipoCode);
+		if(!StringUtils.isBlank(attoleggeAnno) && 
+				(attoleggeNumero!=null 
+				|| !StringUtils.isBlank(attoleggeArticolo)
+				|| !StringUtils.isBlank(attoleggeComma)
+				|| !StringUtils.isBlank(attoleggePunto)
+				|| !StringUtils.isBlank(attoleggeTipoCode))
+				){
+			joins.put("siac_r_bil_elem_atto_legge", "siac_r_bil_elem_atto_legge rbeal ON (rbeal.elem_id = cup.elem_id AND rbeal.data_cancellazione IS NULL)");
+			joins.put("siac_t_atto_legge", "siac_t_atto_legge tal ON (tal.attolegge_id = rbeal.attolegge_id)");
+			
+			where.append(" AND tal.attolegge_anno = :attoleggeAnno ");
+			param.put("attoleggeAnno", attoleggeAnno);
+			
+			if(attoleggeNumero != null){
+				where.append(" AND tal.attolegge_numero = :attoleggeNumero ");
+				param.put("attoleggeNumero", attoleggeNumero);
+			}
+			if(StringUtils.isNotBlank(attoleggeArticolo)){
+				where.append(" AND tal.attolegge_articolo = :attoleggeArticolo ");
+				param.put("attoleggeArticolo", attoleggeArticolo);
+			}
+			if(StringUtils.isNotBlank(attoleggeComma)){
+				where.append(" AND tal.attolegge_comma = :attoleggeComma ");
+				param.put("attoleggeComma", attoleggeComma);
+			}
+			if(StringUtils.isNotBlank(attoleggePunto)){
+				where.append(" AND tal.attolegge_punto = :attoleggePunto ");
+				param.put("attoleggePunto", attoleggePunto);
+			}
+			if(StringUtils.isNotBlank(attoleggeTipoCode)){
+				joins.put("siac_d_atto_legge_tipo", "siac_d_atto_legge_tipo dalt ON (dalt.attolegge_tipo_id = tal.attolegge_tipo_id)");
+				where.append(" AND dalt.attolegge_tipo_code = :attoleggeTipoCode ");
+				param.put("attoleggeTipoCode", attoleggeTipoCode);
+			}
 		}
 	}
 
@@ -1486,7 +1567,7 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 			joins.put("siac_t_periodo::old", "siac_t_periodo tp_old ON (tp_old.periodo_id = tb_old.periodo_id)");
 			
 			where.append(" AND tp_old.anno = :exAnnoCapitolo");
-			param.put("exAnnoCapitolo", faseBilancio);
+			param.put("exAnnoCapitolo", exAnnoCapitolo); //SIAC-8541 refuso
 		}
 		if (StringUtils.isNotBlank(exNumeroCapitolo)) {
 			where.append(" AND tbe_old.elem_code = :exNumeroCapitolo ");
@@ -1585,7 +1666,25 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		if(StringUtils.isBlank(classifCode)){
 			return;
 		}
+		
 		String paramName = "codice" + classifType.name();
+		
+		//SIAC-7793
+		if("CLASSIFICATORE_3".equals(classifType.getCodice()) && "02".equals(classifCode)) {
+			where.append(" AND NOT EXISTS ( ");
+			where.append("     SELECT 1 ");
+			where.append("     FROM siac_r_bil_elem_class rbecl ");
+			where.append("     JOIN siac_t_class tc ON (tc.classif_id = rbecl.classif_id) ");
+			where.append("     JOIN siac_d_class_tipo dct ON (dct.classif_tipo_id = tc.classif_tipo_id) ");
+			where.append("     WHERE rbecl.elem_id = cup.elem_id ");
+			where.append("     AND rbecl.data_cancellazione IS NULL ");
+			where.append("     AND dct.classif_tipo_code = '").append(classifType.getCodice()).append("'");
+			where.append("     AND tc.classif_code = :").append(paramName);
+			where.append(" ) ");
+			
+			param.put(paramName, "01");
+			return;
+		}
 		
 		where.append(" AND EXISTS ( ");
 		where.append("     SELECT 1 ");
@@ -1597,7 +1696,9 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		where.append("     AND dct.classif_tipo_code = '").append(classifType.getCodice()).append("'");
 		where.append("     AND tc.classif_code = :").append(paramName);
 		where.append(" ) ");
+	
 		param.put(paramName, classifCode);
+
 	}
 	
 
@@ -1688,7 +1789,9 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 			String attoleggeComma,
 			String attoleggePunto,
 			String attoleggeTipoCode,
-			Boolean collegatoFondiDubbiaEsigibilita
+			Boolean collegatoFondiDubbiaEsigibilita,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE
 			) {
 		
 		
@@ -1769,7 +1872,9 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 				attoleggePunto,
 				attoleggeTipoCode,
 				
-				collegatoFondiDubbiaEsigibilita
+				collegatoFondiDubbiaEsigibilita,
+				// SIAC-7858
+				flagEntrataDubbiaEsigFCDE
 				);
 		
 		
@@ -1827,7 +1932,9 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 			String attoleggeComma,
 			String attoleggePunto,
 			String attoleggeTipoCode,
-			Boolean collegatoFondiDubbiaEsigibilita) {
+			Boolean collegatoFondiDubbiaEsigibilita,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE) {
 				
 		
 		StringBuilder jpql = new StringBuilder();
@@ -1881,7 +1988,8 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 				attoleggeComma,
 				attoleggePunto,
 				attoleggeTipoCode,
-				collegatoFondiDubbiaEsigibilita);
+				collegatoFondiDubbiaEsigibilita,
+				flagEntrataDubbiaEsigFCDE);
 		jpql.append(" GROUP BY cup.elemCode, cup.elemCode2 ");
 		
 		Query query = createQuery(jpql.toString(), param);		
@@ -1947,7 +2055,9 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 			String codiceCofog, String codiceTipoCofog, String codiceStruttAmmCont, String codiceTipoStruttAmmCont, String codiceSiopeEntrata, String codiceTipoSiopeEntrata,
 			String codiceSiopeSpesa, String codiceTipoSiopeSpesa, String codiceMissione, String codiceProgrmma, String codiceTitoloSpesa, String codiceMacroaggregato,
 			String codiceTitoloEntrata, String codiceTipologia, String codiceCategoria, Integer attoleggeNumero, String attoleggeAnno, String attoleggeArticolo,
-			String attoleggeComma, String attoleggePunto, String attoleggeTipoCode, Boolean collegatoFondiDubbiaEsigibilita) {
+			String attoleggeComma, String attoleggePunto, String attoleggeTipoCode, Boolean collegatoFondiDubbiaEsigibilita, String codiceRisorsaAccantonata,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE) {
 		
 		StringBuilder jpql = new StringBuilder();
 		Map<String,Object> param = new HashMap<String, Object>();
@@ -2027,14 +2137,21 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 				findFigliClassificatoreIdsSiopeSpesa(annoEsercizio, enteDto, codiceSiopeSpesa, codiceTipoSiopeSpesa),
 				findFigliClassificatoreIdsMissioneProgramma(annoEsercizio, enteDto, codiceMissione, codiceProgrmma), 
 				findFigliClassificatoreIdsTitoloUscitaMacroaggregato(annoEsercizio, enteDto, codiceTitoloSpesa, codiceMacroaggregato), 
-				findFigliClassificatoreIdsEntrataTipologiaCategoria(annoEsercizio, enteDto, codiceTitoloEntrata, codiceTipologia, codiceCategoria),
+				//task-133
+				findClassificatoreIdsEntrataTipologiaCategoria(annoEsercizio, enteDto, codiceTitoloEntrata, codiceTipologia, codiceCategoria),
+				//findFigliClassificatoreIdsEntrataTipologiaCategoria(annoEsercizio, enteDto, codiceTitoloEntrata, codiceTipologia, codiceCategoria),
 				attoleggeNumero,
 				attoleggeAnno,
 				attoleggeArticolo,
 				attoleggeComma,
 				attoleggePunto,
 				attoleggeTipoCode,
-				collegatoFondiDubbiaEsigibilita);
+				collegatoFondiDubbiaEsigibilita,
+				codiceRisorsaAccantonata,
+				flagEntrataDubbiaEsigFCDE,
+				null,
+				null,
+				null);
 		
 		jpql.append(" ) ");
 		jpql.append(" SELECT dbedt.elem_det_tipo_code, COALESCE(SUM(tbed.elem_det_importo), 0) ");
@@ -2206,44 +2323,56 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		
 		String attrCode = SiacTAttrEnum.FlagDaRiaccertamento.getCodice();
 		
-		jpql.append(" SELECT COALESCE(SUM(tmtd1.movgestTsDetImporto), 0) ");
-		jpql.append(" FROM SiacTMovgestTsDet tmtd1 ");
-		jpql.append(" WHERE tmtd1.movgestTsDetId IN ( ");
-		jpql.append("     SELECT DISTINCT tmtd.movgestTsDetId ");
-		jpql.append("     FROM SiacTMovgestTsDet tmtd, SiacTMovgestT tmt, SiacTMovgest tm, SiacRMovgestBilElem rmbe, SiacRMovgestTsStato rmts, SiacRMovgestTsAttoAmm rmtam, SiacTAttoAmm tam");
-		jpql.append("     WHERE tmtd.siacTMovgestT = tmt ");
-		jpql.append("     AND rmbe.siacTMovgest = tm ");
-		jpql.append("     AND tmt.siacTMovgest = tm ");
-		jpql.append("     AND rmts.siacTMovgestT = tmt ");
-		jpql.append("     AND rmtam.siacTMovgestT = tmt ");
-		jpql.append("     AND rmtam.siacTAttoAmm = tam ");		
-		jpql.append("     AND tmtd.dataCancellazione IS NULL ");
-		jpql.append("     AND tm.dataCancellazione IS NULL ");
-		jpql.append("     AND tm.dataFineValidita IS NULL ");
-		jpql.append("     AND rmbe.dataCancellazione IS NULL ");
-		jpql.append("     AND rmbe.dataFineValidita IS NULL ");
-		jpql.append("     AND tmt.dataCancellazione IS NULL ");
-		jpql.append("     AND tmt.dataFineValidita IS NULL ");
-		jpql.append("     AND rmts.dataCancellazione IS NULL ");
-		jpql.append("     AND rmts.dataFineValidita IS NULL ");
-		jpql.append("     AND rmtam.dataCancellazione IS NULL ");
-		jpql.append("     AND rmtam.dataFineValidita IS NULL ");
-		jpql.append("     AND tmt.siacDMovgestTsTipo.movgestTsTipoCode = 'T' ");
-		jpql.append("     AND tm.movgestAnno ").append(jpqlCompareOperator.getJpql()).append(" :movgestAnno ");
-		jpql.append("     AND rmbe.siacTBilElem.elemId IN (:elemIds) ");
-		jpql.append("     AND rmts.siacDMovgestStato.movgestStatoCode <> 'A' ");
-		jpql.append("     AND tmtd.siacDMovgestTsDetTipo.movgestTsDetTipoCode = 'A' ");
-		jpql.append("     AND tam.attoammAnno < :bilAnno ");
-// SIAC-5173
-		jpql.append("     AND NOT EXISTS ( ");
-		jpql.append("         SELECT 1 FROM SiacRMovgestTsAttr rmta "); 
-		jpql.append("     	  WHERE rmta.siacTMovgestT = tmt ");
-		jpql.append("         AND rmta.dataCancellazione IS NULL ");
-		jpql.append("         AND rmta.dataFineValidita IS NULL ");
-		jpql.append("         AND rmta.siacTAttr.attrCode = :attrCode");
-		jpql.append("         AND rmta.boolean_ = 'S' ");				
-		jpql.append("     ) ");
-		jpql.append(" ) ");
+		jpql.append(" SELECT COALESCE(SUM(tmtd1.movgestTsDetImporto), 0) ")
+			.append(" FROM SiacTMovgestTsDet tmtd1 ")
+			.append(" WHERE tmtd1.movgestTsDetId IN ( ")
+			.append("     SELECT DISTINCT tmtd.movgestTsDetId ")
+			.append("     FROM SiacTMovgestTsDet tmtd, SiacTMovgestT tmt, SiacTMovgest tm, SiacRMovgestBilElem rmbe, SiacRMovgestTsStato rmts, SiacRMovgestTsAttoAmm rmtam, SiacTAttoAmm tam")
+			.append("     WHERE tmtd.siacTMovgestT = tmt ")
+			.append("     AND rmbe.siacTMovgest = tm ")
+			.append("     AND tmt.siacTMovgest = tm ")
+			.append("     AND rmts.siacTMovgestT = tmt ")
+			.append("     AND ( rmtam.siacTMovgestT = tmt ")
+
+			.append("     OR EXISTS ( ")
+			.append("  		SELECT 1 FROM rmtam.siacTMovgestT tmt2, SiacRMovgestAggiudicazione rma ")
+			.append("  			WHERE rma.siacTMovgestDa = tmt2.siacTMovgest ")
+			.append("     		AND rma.siacTMovgestA = tm")
+			.append("     		AND rma.dataCancellazione IS NULL ")
+			.append("     		AND rma.dataFineValidita IS NULL ")
+			.append("     		AND rma.siacTMovgestDa.dataCancellazione IS NULL ")
+			.append("     		AND rma.siacTMovgestDa.dataFineValidita IS NULL ")
+			.append( ") ) ")	
+			
+			.append("     AND rmtam.siacTAttoAmm = tam ")	
+			.append("     AND tmtd.dataCancellazione IS NULL ")
+			.append("     AND tm.dataCancellazione IS NULL ")
+			.append("     AND tm.dataFineValidita IS NULL ")
+			.append("     AND rmbe.dataCancellazione IS NULL ")
+			.append("     AND rmbe.dataFineValidita IS NULL ")
+			.append("     AND tmt.dataCancellazione IS NULL ")
+			.append("     AND tmt.dataFineValidita IS NULL ")
+			.append("     AND rmts.dataCancellazione IS NULL ")
+			.append("     AND rmts.dataFineValidita IS NULL ")
+			.append("     AND rmtam.dataCancellazione IS NULL ")
+			.append("     AND rmtam.dataFineValidita IS NULL ")
+			.append("     AND tmt.siacDMovgestTsTipo.movgestTsTipoCode = 'T' ")
+			.append("     AND tm.movgestAnno ").append(jpqlCompareOperator.getJpql()).append(" :movgestAnno ")
+			.append("     AND rmbe.siacTBilElem.elemId IN (:elemIds) ")
+			.append("     AND rmts.siacDMovgestStato.movgestStatoCode <> 'A' ")
+			.append("     AND tmtd.siacDMovgestTsDetTipo.movgestTsDetTipoCode = 'A' ")
+			.append("     AND tam.attoammAnno < :bilAnno ")
+	// SIAC-5173
+			.append("     AND NOT EXISTS ( ")
+			.append("         SELECT 1 FROM SiacRMovgestTsAttr rmta ") 
+			.append("     	  WHERE rmta.siacTMovgestT = tmt ")
+			.append("         AND rmta.dataCancellazione IS NULL ")
+			.append("         AND rmta.dataFineValidita IS NULL ")
+			.append("         AND rmta.siacTAttr.attrCode = :attrCode")
+			.append("         AND rmta.boolean_ = 'S' ")				
+			.append("     ) ")
+			.append(" ) ")
+		;
 		
 		param.put("elemIds", elemIds);
 		param.put("movgestAnno", movgestAnno);
@@ -2261,8 +2390,9 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 	
 	
 	// SIAC-6899 
+	// SIAC-8839 aggiunto il parametro ente.getUid()
 	@Override
-	public BigDecimal sumMovgestImportoFinanziatodaAvanzodaFPVNonAnnullatiByBilElemIdsAndMovgestAnnoAndOperator(List<Integer> elemIds, Integer movgestAnno, CompareOperator jpqlCompareOperator,List<String>  avavincoloTipoCode) {
+	public BigDecimal sumMovgestImportoFinanziatodaAvanzodaFPVNonAnnullatiByBilElemIdsAndMovgestAnnoAndOperator(Integer enteProprietarioId, List<Integer> elemIds, Integer movgestAnno, CompareOperator jpqlCompareOperator,List<String>  avavincoloTipoCode) {
 		StringBuilder jpql = new StringBuilder();
 		final String methodName = "sumMovgestImportoFinanziatodaAvanzoNonAnnullatiByBilElemIdsAndMovgestAnnoAndOperator";
 		BigDecimal result = BigDecimal.ZERO;
@@ -2270,7 +2400,8 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 
 		String attrCode = SiacTAttrEnum.FlagDaRiaccertamento.getCodice();
 
-		String sqlQuery = " select COALESCE( sum(det.movgest_ts_det_importo)		, 0) 	                             "+
+		//SIAC-7622
+		String sqlQuery = " select COALESCE( sum(r.movgest_ts_importo)		, 0) 	                             "+
 				" from siac_t_movgest mov,siac_d_movgest_tipo tipo,                                                      "+
 				"      siac_r_movgest_bil_elem re,                                    									  "+
 				"      siac_t_movgest_ts ts,siac_d_movgest_ts_tipo tipots,                                               "+
@@ -2278,7 +2409,7 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 				"      siac_t_movgest_ts_det det,siac_d_movgest_ts_det_tipo tipod,                            		     "+
 				"      siac_r_movgest_ts r, siac_t_avanzovincolo avav,siac_d_avanzovincolo_tipo avtipo,                  "+
 				"      siac_t_bil bil,siac_t_periodo per                                                                 "+
-				" where tipo.ente_proprietario_id=2                                                                      "+
+				" where tipo.ente_proprietario_id= :enteProprietarioId                                                                      "+
 				" and   tipo.movgest_tipo_code='I'                                                                       "+
 				" and   mov.movgest_tipo_id=tipo.movgest_tipo_id                                                         "+
 				" and   cast(mov.movgest_anno as integer)= :movgestAnno                                                  "+
@@ -2318,6 +2449,7 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 
 
 		Query query = entityManager.createNativeQuery(sqlQuery);
+		query.setParameter("enteProprietarioId", enteProprietarioId);
 		query.setParameter("elemIds", elemIds);
 		query.setParameter("movgestAnno", movgestAnno);
 		query.setParameter("avavincoloTipoCode", avavincoloTipoCode);
@@ -2334,7 +2466,31 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		return result;
 	}
 	
+	//SIAC-8838
+	public BigDecimal computeTotaleImportiModificheNegativeEdEconbCapitoloByAnno(List<Integer> bilElemId, String functionName) {
 	
+		final String methodName = "ImportiModificheNegativeEdEconbCapitolo";
+		
+		Query query = entityManager.createNativeQuery("SELECT "+ functionName + "(:bilElemId)");
+		
+		
+		query.setParameter("bilElemId", bilElemId);
+		
+		long startTimeMillis = System.currentTimeMillis();
+		BigDecimal result = (BigDecimal) query.getSingleResult();
+		
+		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		
+		log.debug(methodName, "Returning result: "+ result + " for bilElemId: "+ bilElemId + " and functionName: "+ functionName + " elapsed millis: " + elapsedTimeMillis);
+		
+		
+		if(result == null) {
+			log.warn(methodName, "L'invocazione della function " + functionName + " per capitolo " + bilElemId + " restituisce null. Risultato non accettabile: ritorno 0");
+			result = BigDecimal.ZERO;
+		}
+		
+		return result.abs();
+	}
 	
 	
 	@Override
@@ -2616,39 +2772,88 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object[]> findCapitoliBySubdocIds(List<Integer> subdocIds) {
+	public List<Object[]> findCapitoliBySubdocIds(List<Integer> subdocIds, List<String> tipoCapitoloCodes) {
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> param = new HashMap<String, Object>();
 
-		jpql.append(" SELECT rmbe.siacTBilElem.elemId, ");
-		jpql.append("     CAST(rmbe.siacTBilElem.siacTBil.siacTPeriodo.anno AS integer), ");
-		jpql.append("     CAST(rmbe.siacTBilElem.elemCode AS integer), ");
-		jpql.append("     CAST(rmbe.siacTBilElem.elemCode2 AS integer), ");
-		jpql.append("     CAST(rmbe.siacTBilElem.elemCode3 AS integer), ");
-		jpql.append("     rsmt.siacTSubdoc.subdocId, ");
-		jpql.append("     rsmt.siacTSubdoc.siacTDoc.docAnno, ");
-		jpql.append("     rsmt.siacTSubdoc.siacTDoc.docNumero, ");
-		jpql.append("     rsmt.siacTSubdoc.subdocNumero, ");
-		jpql.append("     rsmt.siacTSubdoc.subdocImporto, ");
-		jpql.append("     rsmt.siacTSubdoc.subdocImportoDaDedurre ");
-		jpql.append(" FROM SiacRMovgestBilElem rmbe, SiacRSubdocMovgestT rsmt ");
+		jpql.append("SELECT tbe.elemId,");
+		jpql.append("    CAST(tbe.siacTBil.siacTPeriodo.anno AS integer),");
+		jpql.append("    CAST(tbe.elemCode AS integer),                  ");
+		jpql.append("    CAST(tbe.elemCode2 AS integer),                 ");
+		jpql.append("    CAST(tbe.elemCode3 AS integer),                 ");
+		jpql.append("    rsmt.siacTSubdoc.subdocId,                      ");
+		jpql.append("    rsmt.siacTSubdoc.siacTDoc.docAnno,              ");
+		jpql.append("    rsmt.siacTSubdoc.siacTDoc.docNumero,            ");
+		jpql.append("    rsmt.siacTSubdoc.subdocNumero,                  ");
+		jpql.append("    rsmt.siacTSubdoc.subdocImporto,                 ");
+		jpql.append("    rsmt.siacTSubdoc.subdocImportoDaDedurre         ");
+		jpql.append(" FROM SiacRMovgestBilElem rmbe, SiacRSubdocMovgestT rsmt, SiacTBilElem tbe ");
 		jpql.append(" WHERE rmbe.dataCancellazione IS NULL ");
-		jpql.append(" AND rsmt.siacTMovgestT.siacTMovgest = rmbe.siacTMovgest ");
 		jpql.append(" AND rsmt.dataCancellazione IS NULL ");
+		jpql.append(" AND rsmt.siacTMovgestT.siacTMovgest.movgestId = rmbe.siacTMovgest.movgestId ");
+		jpql.append(" AND rmbe.siacTBilElem.elemId = tbe.elemId ");
 		jpql.append(" AND rsmt.siacTSubdoc.subdocId IN (:subdocIds) ");
-		jpql.append(" ORDER BY rmbe.siacTBilElem.elemId ");
-		
 		param.put("subdocIds", subdocIds);
+		
+		if(tipoCapitoloCodes != null && !tipoCapitoloCodes.isEmpty()) {
+			//SIAC-8363
+			jpql.append(" AND EXISTS ( ");
+			jpql.append("	FROM SiacDBilElemTipo tp");
+			jpql.append("	WHERE tbe.siacDBilElemTipo.elemTipoId = tp.elemTipoId");
+			jpql.append("	AND tp.elemTipoCode IN ( :elemTipoCodes )");
+			jpql.append(" )");
+			param.put("elemTipoCodes", tipoCapitoloCodes);
+		}
+		
+		jpql.append(" ORDER BY tbe.elemId ");
+		
+		
 		Query query = createQuery(jpql.toString(), param);
 		return query.getResultList();
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object[]> findCapitoliByElenco(List<Integer> eldocIds) {
+	public List<Object[]> findCapitoliByElenco(List<Integer> eldocIds, List<String> tipoCapitoloCodes) {
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> param = new HashMap<String, Object>();
 
+		jpql.append("SELECT tbe.elemId,");
+		jpql.append("    CAST(tbe.siacTBil.siacTPeriodo.anno AS integer),");
+		jpql.append("    CAST(tbe.elemCode AS integer),                  ");
+		jpql.append("    CAST(tbe.elemCode2 AS integer),                 ");
+		jpql.append("    CAST(tbe.elemCode3 AS integer),                 ");
+		jpql.append("    rsmt.siacTSubdoc.subdocId,                      ");
+		jpql.append("    rsmt.siacTSubdoc.siacTDoc.docAnno,              ");
+		jpql.append("    rsmt.siacTSubdoc.siacTDoc.docNumero,            ");
+		jpql.append("    rsmt.siacTSubdoc.subdocNumero,                  ");
+		jpql.append("    rsmt.siacTSubdoc.subdocImporto,                 ");
+		jpql.append("    rsmt.siacTSubdoc.subdocImportoDaDedurre         ");
+		jpql.append("FROM SiacRMovgestBilElem rmbe, SiacRSubdocMovgestT rsmt, SiacTBilElem tbe ");
+		jpql.append("WHERE rmbe.dataCancellazione IS NULL ");
+		jpql.append("AND rsmt.dataCancellazione IS NULL ");
+		jpql.append("AND rsmt.siacTMovgestT.siacTMovgest.movgestId = rmbe.siacTMovgest.movgestId ");
+		jpql.append("AND rmbe.siacTBilElem.elemId = tbe.elemId ");
+		if(tipoCapitoloCodes != null && !tipoCapitoloCodes.isEmpty()) {
+			//SIAC-8363
+			jpql.append("AND EXISTS ( ");
+			jpql.append("	FROM SiacDBilElemTipo tp");
+			jpql.append("	WHERE tbe.siacDBilElemTipo.elemTipoId = tp.elemTipoId");
+			jpql.append("	AND tp.elemTipoCode IN ( :elemTipoCodes )");
+			jpql.append(")");
+			param.put("elemTipoCodes", tipoCapitoloCodes);
+		}
+		jpql.append("AND EXISTS ( ");
+		jpql.append("     FROM SiacRElencoDocSubdoc reds ");
+		jpql.append("     WHERE reds.siacTElencoDoc.eldocId IN (:eldocIds)");
+		jpql.append("     AND rsmt.siacTSubdoc = reds.siacTSubdoc");
+		jpql.append("     AND reds.dataCancellazione IS NULL");
+		jpql.append("     AND reds.siacTSubdoc.dataCancellazione IS NULL");
+		jpql.append(" )");
+		param.put("eldocIds", eldocIds);
+		jpql.append(" ORDER BY tbe.elemId ");
+		
+		/*
 		jpql.append(" SELECT rmbe.siacTBilElem.elemId, ");
 		jpql.append("     CAST(rmbe.siacTBilElem.siacTBil.siacTPeriodo.anno AS integer), ");
 		jpql.append("     CAST(rmbe.siacTBilElem.elemCode AS integer), ");
@@ -2664,9 +2869,16 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		jpql.append(" WHERE rmbe.dataCancellazione IS NULL ");
 		jpql.append(" AND rsmt.siacTMovgestT.siacTMovgest = rmbe.siacTMovgest ");
 		jpql.append(" AND rsmt.dataCancellazione IS NULL ");
+		//SIAC-8363
+		if(tipoCapitoloCodes != null && !tipoCapitoloCodes.isEmpty()) {
+			//SIAC-8363
+			jpql.append(" AND rmbe.siacTBilElem.siacDBilElemTipo.elemTipoCode IN ( :elemTipoCodes ) ");
+			param.put("elemTipoCodes", tipoCapitoloCodes);
+		}
 		jpql.append(" AND EXISTS (");
 		jpql.append("     FROM SiacRElencoDocSubdoc reds  ");
 		jpql.append("     WHERE reds.siacTElencoDoc.eldocId IN (:eldocIds) ");
+		param.put("eldocIds", eldocIds);
 		jpql.append("     AND rsmt.siacTSubdoc = reds.siacTSubdoc ");
 		jpql.append("     AND reds.dataCancellazione IS NULL ");
 		jpql.append("     AND reds.siacTSubdoc.dataCancellazione IS NULL ");
@@ -2678,9 +2890,8 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 //		jpql.append("     AND reds.dataCancellazione IS NULL ");
 //		jpql.append("     AND reds.siacTSubdoc.dataCancellazione is null ");
 //		jpql.append( " ) ");
-		jpql.append(" ORDER BY rmbe.siacTBilElem.elemId ");
+		jpql.append(" ORDER BY rmbe.siacTBilElem.elemId ");*/
 		
-		param.put("eldocIds", eldocIds);
 		Query query = createQuery(jpql.toString(), param);
 		return query.getResultList();
 	}
@@ -2718,6 +2929,431 @@ public class CapitoloDaoImpl extends ExtendedJpaDao<SiacTBilElem, Integer> imple
 		Query query = createQuery(jpql.toString(), params);
 		return query.getResultList();
 	}
+	
+	//SIAC-7349  - START - MR -  SR90 - 02/04/2020 Calcolo della disponibilita impegnare per capitolo UG
+	@Override
+	public BigDecimal findDisponibilitaImpegnareComponente(Integer bilElemId, Integer compId, String functionName) {
+		final String methodName = "findImportoDerivatoComponente";
+		
+		Query query = entityManager.createNativeQuery("SELECT "+ functionName + "(:bilElemId, :compId)");
+		
+		query.setParameter("bilElemId", bilElemId);
+		query.setParameter("compId", compId);	
+		
+		long startTimeMillis = System.currentTimeMillis();
+		BigDecimal result = (BigDecimal) query.getSingleResult();
+		
+		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		
+		log.debug(methodName, "Returning result: "+ result + " for bilElemId: "+ bilElemId + ", compId: "+compId+ " and functionName: "+ functionName + " elapsed millis: " + elapsedTimeMillis);
+
+		if(result == null) {
+			log.warn(methodName, "L'invocazione della function " + functionName + " per capitolo " + bilElemId + " restituisce null. Risultato non accettabile: ritorno 0");
+			result = BigDecimal.ZERO;
+		}
+		
+		return result;
+	}
+	//SIAC-7349 - FIne
+	
+	//SIAC-7349  - START - MR -  SR210 - 16/04/2020 Calcolo della disponibilita a variare per capitolo UG
+	@Override
+	public BigDecimal findDisponibilitaVariareComponente(Integer bilElemId, Integer compId, String functionName) {
+		final String methodName = "findDisponibilitaVariareComponente";
+			
+		Query query = entityManager.createNativeQuery("SELECT "+ functionName + "(:bilElemId, :compId)");
+			
+		query.setParameter("bilElemId", bilElemId);
+		query.setParameter("compId", compId);	
+			
+		long startTimeMillis = System.currentTimeMillis();
+		BigDecimal result = (BigDecimal) query.getSingleResult();
+			
+		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+			
+		log.debug(methodName, "Returning result: "+ result + " for bilElemId: "+ bilElemId + ", compId: "+compId+ " and functionName: "+ functionName + " elapsed millis: " + elapsedTimeMillis);
+
+		if(result == null) {
+			log.warn(methodName, "L'invocazione della function " + functionName + " per capitolo " + bilElemId + " restituisce null. Risultato non accettabile: ritorno 0");
+			result = BigDecimal.ZERO;
+		}
+			
+		return result;
+	}
+	//SIAC-7349 - FIne
+	
+	//SIAC-7349  - START - MR - SR200- 09/04/2020 Calcolo dell'impegnato per capitolo UP
+	@Override
+	public List<ImportiImpegnatoPerComponente> findImpegnatoComponente(Integer bilElemId, Integer compId, String functionName) {
+		final String methodName = "findImportoImpegnatoComponente";
+		List<ImportiImpegnatoPerComponente> impegniPerComponente = new java.util.ArrayList<ImportiImpegnatoPerComponente>();
+		List<ImportiImpegnatoPerComponenteDto> listaDto = new java.util.ArrayList<ImportiImpegnatoPerComponenteDto>();
+		
+		Query query = entityManager.createNativeQuery("SELECT * FROM "+ functionName + "(:bilElemId, :compId)");
+		
+		query.setParameter("bilElemId", bilElemId);
+		query.setParameter("compId", compId);	
+		
+		long startTimeMillis = System.currentTimeMillis();
+		List<Object[]> result = (List<Object[]>) query.getResultList();
+		
+		listaDto = mapResultQueryIntoDto(result);
+		if(!listaDto.isEmpty()){
+			impegniPerComponente = mapDtoIntoImpegnoPerComponente(listaDto);			
+		}
+		
+		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		
+		log.debug(methodName, "Returning result: "+ result + " for bilElemId: "+ bilElemId + ", compId: "+compId+ " and functionName: "+ functionName + " elapsed millis: " + elapsedTimeMillis);
+
+		if(result == null) {
+			log.warn(methodName, "L'invocazione della function " + functionName + " per capitolo " + bilElemId + " restituisce null. Risultato non accettabile: ritorno 0");
+			result = null;
+		}
+		
+		return impegniPerComponente;
+	}
+	
+
+	//SIAC-7349 - FINE
+	
+	//SIAC-7349  - START - MR - SR200- 09/04/2020 Mapping per resultList
+	private List<ImportiImpegnatoPerComponenteDto> mapResultQueryIntoDto(List<Object[]> result) {
+		List<ImportiImpegnatoPerComponenteDto> elencoImpegnatoAnnualitaDto = new java.util.ArrayList<ImportiImpegnatoPerComponenteDto>(); 
+
+		if (!result.isEmpty()) {
+
+			for (Object[] lp : result) {
+				ImportiImpegnatoPerComponenteDto importiImpegnatoPerComponenteDto = new ImportiImpegnatoPerComponenteDto();
+
+				importiImpegnatoPerComponenteDto.setIndiceAnnualita((Integer) lp[0]);
+				importiImpegnatoPerComponenteDto.setElemDetCompId((Integer) lp[1]);
+				importiImpegnatoPerComponenteDto.setImpegnatoDefinitivo((BigDecimal) lp[2]);
+				elencoImpegnatoAnnualitaDto.add(importiImpegnatoPerComponenteDto);
+
+			}
+
+		}
+		return elencoImpegnatoAnnualitaDto;
+	}
+	
+	//SIAC-7349  - START - MR - SR200- 09/04/2020 Mapping per resultList
+	private List<ImportiImpegnatoPerComponenteAnniSuccNoStanzDto> mapResultQueryIntoAnniSuccDto(List<Object[]> result) {
+		List<ImportiImpegnatoPerComponenteAnniSuccNoStanzDto> elencoImpegnatoAnnualitaAnniSuccDto = new java.util.ArrayList<ImportiImpegnatoPerComponenteAnniSuccNoStanzDto>(); 
+
+		if (!result.isEmpty()) {
+
+			for (Object[] lp : result) {
+				ImportiImpegnatoPerComponenteAnniSuccNoStanzDto importiImpegnatoPerComponenteAnniSuccDto = new ImportiImpegnatoPerComponenteAnniSuccNoStanzDto();
+
+				importiImpegnatoPerComponenteAnniSuccDto.setIdComponente((Integer) lp[0]);
+				importiImpegnatoPerComponenteAnniSuccDto.setDescrizioneComponente((String) lp[1]);
+				importiImpegnatoPerComponenteAnniSuccDto.setImporto((BigDecimal) lp[2]);
+				importiImpegnatoPerComponenteAnniSuccDto.setDescrizioneMacrotipoComponente((String) lp[3]);
+				elencoImpegnatoAnnualitaAnniSuccDto.add(importiImpegnatoPerComponenteAnniSuccDto);
+
+			}
+
+		}
+		return elencoImpegnatoAnnualitaAnniSuccDto;
+	}
+	
+	
+	//SIAC-7349  - GS - 17/07/2020
+	private List<ImportiImpegnatoPerComponenteTriennioNoStanzDto> mapResultQueryIntoTriennioDto(List<Object[]> result) {
+		List<ImportiImpegnatoPerComponenteTriennioNoStanzDto> elencoImpegnatoAnnualitaTriennioDto = new java.util.ArrayList<ImportiImpegnatoPerComponenteTriennioNoStanzDto>(); 
+
+		if (!result.isEmpty()) {
+
+			for (Object[] lp : result) {
+				ImportiImpegnatoPerComponenteTriennioNoStanzDto importiImpegnatoPerComponenteTriennioDto = new ImportiImpegnatoPerComponenteTriennioNoStanzDto();
+
+				importiImpegnatoPerComponenteTriennioDto.setIdComponente((Integer) lp[0]);
+				importiImpegnatoPerComponenteTriennioDto.setDescrizioneComponente((String) lp[1]);
+				importiImpegnatoPerComponenteTriennioDto.setAnnoImpegnato((Integer) lp[2]);
+				importiImpegnatoPerComponenteTriennioDto.setImporto((BigDecimal) lp[3]);
+				importiImpegnatoPerComponenteTriennioDto.setDescrizioneMacrotipoComponente((String) lp[4]);
+				elencoImpegnatoAnnualitaTriennioDto.add(importiImpegnatoPerComponenteTriennioDto);
+
+			}
+
+		}
+		return elencoImpegnatoAnnualitaTriennioDto;
+	}
+	
+	
+	private List<ImportiImpegnatoPerComponente> mapDtoIntoImpegnoPerComponente(
+			List<ImportiImpegnatoPerComponenteDto> importiImpegnatoPerComponenteDto) {
+
+		List<ImportiImpegnatoPerComponente> listToReturn = new java.util.ArrayList<ImportiImpegnatoPerComponente>();
+		for(ImportiImpegnatoPerComponenteDto iipc : importiImpegnatoPerComponenteDto){
+			ImportiImpegnatoPerComponente objToReturn = new ImportiImpegnatoPerComponente();
+			objToReturn.setIndiceAnnualita(iipc.getIndiceAnnualita());
+			objToReturn.setElemDetCompId(iipc.getElemDetCompId());
+			objToReturn.setImpegnatoDefinitivo(iipc.getImpegnatoDefinitivo());
+			listToReturn.add(objToReturn);
+		}
+
+		return listToReturn;
+	}
+	
+	private List<ImportiImpegnatoPerComponenteAnniSuccNoStanz> mapDtoIntoComAnniSuccNoStanz(
+			List<ImportiImpegnatoPerComponenteAnniSuccNoStanzDto> listaDto) {
+		
+		List<ImportiImpegnatoPerComponenteAnniSuccNoStanz> listToReturn = new java.util.ArrayList<ImportiImpegnatoPerComponenteAnniSuccNoStanz>();
+		
+		for(ImportiImpegnatoPerComponenteAnniSuccNoStanzDto iipc : listaDto){
+			ImportiImpegnatoPerComponenteAnniSuccNoStanz objToReturn = new ImportiImpegnatoPerComponenteAnniSuccNoStanz();
+			objToReturn.setIdComp(iipc.getIdComponente());
+			objToReturn.setDescrizioneComponente(iipc.getDescrizioneComponente());
+			objToReturn.setImporto(iipc.getImporto());
+			objToReturn.setDescrizioneMacrotipoComponente(iipc.getDescrizioneMacrotipoComponente());
+			listToReturn.add(objToReturn);
+		}
+
+		return listToReturn;
+	}
+	
+	//SIAC-7349 - GS 17/07/2020
+	private List<ImportiImpegnatoPerComponenteTriennioNoStanz> mapDtoIntoComTriennioNoStanz(
+			List<ImportiImpegnatoPerComponenteTriennioNoStanzDto> listaDto) {
+		
+		List<ImportiImpegnatoPerComponenteTriennioNoStanz> listToReturn = new java.util.ArrayList<ImportiImpegnatoPerComponenteTriennioNoStanz>();
+		
+		for(ImportiImpegnatoPerComponenteTriennioNoStanzDto iipc : listaDto){
+			ImportiImpegnatoPerComponenteTriennioNoStanz objToReturn = new ImportiImpegnatoPerComponenteTriennioNoStanz();
+			objToReturn.setIdComp(iipc.getIdComponente());
+			objToReturn.setDescrizioneComponente(iipc.getDescrizioneComponente());
+			objToReturn.setAnnoImpegnato(iipc.getAnnoImpegnato());
+			objToReturn.setImporto(iipc.getImporto());
+			objToReturn.setDescrizioneMacrotipoComponente(iipc.getDescrizioneMacrotipoComponente());
+			listToReturn.add(objToReturn);
+		}
+
+		return listToReturn;
+	}
+	
+	//SIAC-7349 - SR200 - MR - 07/05/2020 Metodo per ottenere tramite stor proc le componenti con impegni ma senza stanziamento
+	@Override
+	public List<ImportiImpegnatoPerComponenteAnniSuccNoStanz> findImpegnatoAnniSuccNoStanz(Integer uid,
+			List<Integer> uidComp, String fncImportoImpAnniSuccNoStanz) {
+		final String methodName = "findImportoImpegnatoComponente";
+		List<ImportiImpegnatoPerComponenteAnniSuccNoStanz> impegniPerComponenteAnniSuccNoStanz = new java.util.ArrayList<ImportiImpegnatoPerComponenteAnniSuccNoStanz>();
+		List<ImportiImpegnatoPerComponenteAnniSuccNoStanzDto> listaDto = new java.util.ArrayList<ImportiImpegnatoPerComponenteAnniSuccNoStanzDto>();
+		
+		//SIAC-7349 - SR200 - MR - Start - 08/05/2020
+		//Hibernate non tratta Array vuoti, dunque trattiamo l'array vuoto con una componente fittizia a cui associamo uid=-1
+		final String noComponenti = "-1";
+
+		String arrayParam = "";
+		for (Integer id : uidComp) {
+			arrayParam = arrayParam+(String.valueOf(id))+",";
+		}
+		
+		if(StringUtils.isBlank(arrayParam)){//non ci sono componenti
+			arrayParam = noComponenti;
+		}else{			
+			arrayParam = StringUtils.chop(arrayParam);			
+		}
+
+		Query query = entityManager.createNativeQuery("SELECT * FROM "+ fncImportoImpAnniSuccNoStanz + "(:bilElemId, ARRAY[" + arrayParam + "])");		
+		query.setParameter("bilElemId", uid);
+
+		long startTimeMillis = System.currentTimeMillis();
+		List<Object[]> result = (List<Object[]>) query.getResultList();
+		
+		listaDto = mapResultQueryIntoAnniSuccDto(result);
+		if(!listaDto.isEmpty()){
+			impegniPerComponenteAnniSuccNoStanz = mapDtoIntoComAnniSuccNoStanz(listaDto);			
+		}
+		
+		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		
+		log.debug(methodName, "Returning result: "+ result + " for bilElemId: "+ uid + ", compId: "+arrayParam+ " and functionName: "+ fncImportoImpAnniSuccNoStanz + " elapsed millis: " + elapsedTimeMillis);
+
+		if(result == null) {
+			log.warn(methodName, "L'invocazione della function " + fncImportoImpAnniSuccNoStanz + " per capitolo " + uid + " restituisce null. Risultato non accettabile: ritorno 0");
+			result = null;
+		}
+		
+		return impegniPerComponenteAnniSuccNoStanz;
+
+	}
+
+	
+	
+	//SIAC-7349 - GS 17/07/2020 Metodo per ottenere tramite stor proc le componenti con impegni ma senza stanziamento nel triennio
+	@Override
+	public List<ImportiImpegnatoPerComponenteTriennioNoStanz> findImpegnatoTriennioNoStanz(Integer uid,
+			List<Integer> uidComp, String fncImportoImpTriennioNoStanz) {
+		final String methodName = "findImpegnatoTriennioNoStanz";
+		List<ImportiImpegnatoPerComponenteTriennioNoStanz> impegniPerComponenteTriennioNoStanz = new java.util.ArrayList<ImportiImpegnatoPerComponenteTriennioNoStanz>();
+		List<ImportiImpegnatoPerComponenteTriennioNoStanzDto> listaDto = new java.util.ArrayList<ImportiImpegnatoPerComponenteTriennioNoStanzDto>();
+		
+		//SIAC-7349 - SR200 - MR - Start - 08/05/2020
+		//Hibernate non tratta Array vuoti, dunque trattiamo l'array vuoto con una componente fittizia a cui associamo uid=-1
+		final String noComponenti = "-1";
+
+		String arrayParam = "";
+		for (Integer id : uidComp) {
+			arrayParam = arrayParam+(String.valueOf(id))+",";
+		}
+		
+		if(StringUtils.isBlank(arrayParam)){//non ci sono componenti
+			arrayParam = noComponenti;
+		}else{			
+			arrayParam = StringUtils.chop(arrayParam);			
+		}
+
+		Query query = entityManager.createNativeQuery("SELECT * FROM "+ fncImportoImpTriennioNoStanz + "(:bilElemId, ARRAY[" + arrayParam + "])");		
+		query.setParameter("bilElemId", uid);
+
+		long startTimeMillis = System.currentTimeMillis();
+		List<Object[]> result = (List<Object[]>) query.getResultList();
+		
+		listaDto = mapResultQueryIntoTriennioDto(result);
+		if(!listaDto.isEmpty()){
+			impegniPerComponenteTriennioNoStanz = mapDtoIntoComTriennioNoStanz(listaDto);			
+		}
+		
+		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		
+		log.debug(methodName, "Returning result: "+ result + " for bilElemId: "+ uid + ", compId: "+arrayParam+ " and functionName: "+ fncImportoImpTriennioNoStanz + " elapsed millis: " + elapsedTimeMillis);
+
+		if(result == null) {
+			log.warn(methodName, "L'invocazione della function " + fncImportoImpTriennioNoStanz + " per capitolo " + uid + " restituisce null. Risultato non accettabile: ritorno 0");
+			result = null;
+		}
+		
+		return impegniPerComponenteTriennioNoStanz;
+
+	}
+
+	/**
+	 * SIAC-8012
+	 *
+	 * Calcolo della somma degli importi dei movimenti associati al capitolo
+	 * per ogni componente associata ad esso, controllando i movimenti 
+	 * di tipo testata ('T') e gli importi attuali ('A')
+	 * 
+	 * return List<Tuple>
+	 */
+	@Override
+	public List<Tuple> findImpegnatoComponentiByCapitoloUid(Integer uidCapitolo, Integer anno) {
+		final String methodName = "findImpegnatoComponentiByCapitoloUid";
+		List<Tuple> listaComponentiAnno = null;
+		
+		StringBuilder jpql = new StringBuilder()
+				.append(" SELECT sdbedct.elemDetCompTipoId, SUM(stmtd.movgestTsDetImporto) ")
+				.append(" FROM SiacTBilElem stbe ")
+				.append(" JOIN stbe.siacTBil stb ")
+				.append(" JOIN stb.siacTPeriodo stp ")
+				.append(" JOIN stbe.siacRMovgestBilElems srmbe ")
+				.append(" JOIN srmbe.siacDBilElemDetCompTipo sdbedct ")
+				.append(" JOIN srmbe.siacTMovgest stm ")
+				.append(" JOIN stm.siacTMovgestTs stmt ")
+				.append(" JOIN stmt.siacDMovgestTsTipo sdmtt ")
+				.append(" JOIN stmt.siacTMovgestTsDets stmtd ")
+				.append(" JOIN stmtd.siacDMovgestTsDetTipo sdmtdt ")
+				.append(" WHERE stbe.elemId = :uidCapitolo ")
+				.append(" AND stp.anno = :anno ")
+				.append(" AND sdmtt.movgestTsTipoCode = 'T' ")
+				.append(" AND sdmtdt.movgestTsDetTipoCode = 'A' ")
+				.append(" AND stbe.dataCancellazione IS NULL ")
+				.append(" AND ((stbe.dataInizioValidita < NOW()) AND (stbe.dataFineValidita IS NULL OR NOW() < stbe.dataFineValidita)) ")
+				.append(" AND srmbe.dataCancellazione IS NULL ")
+				.append(" AND ((srmbe.dataInizioValidita < NOW()) AND (srmbe.dataFineValidita IS NULL OR NOW() < srmbe.dataFineValidita)) ")
+				.append(" AND sdbedct.dataCancellazione IS NULL ")
+				.append(" AND stm.dataCancellazione IS NULL ")
+				.append(" AND stmt.dataCancellazione IS NULL ")
+				.append(" AND sdmtt.dataCancellazione IS NULL ")
+				.append(" AND stmtd.dataCancellazione IS NULL ")
+				.append(" AND sdmtdt.dataCancellazione IS NULL ")
+				.append(" GROUP BY sdbedct.elemDetCompTipoId ");
+		
+		TypedQuery<Tuple> typedQuery = entityManager.createQuery(jpql.toString(), Tuple.class)
+				.setParameter("uidCapitolo", uidCapitolo)
+				.setParameter("anno", anno.toString());
+		
+		listaComponentiAnno = typedQuery.getResultList();
+		
+		if(CollectionUtils.isEmpty(listaComponentiAnno)) {
+			log.debug(methodName, "No ammount was found!");
+		} else {
+			log.debug(methodName, listaComponentiAnno);
+		}
+		
+		return listaComponentiAnno != null ? listaComponentiAnno : new java.util.ArrayList<Tuple>();
+	}
+
+	@Override
+	public BigDecimal findDisponibilitaPagareSottoContoVincolato(Integer uidContoTesoreria, Integer uidCapitolo,
+			Integer enteProprietarioId) {
+		final String methodName = "findDisponibilitaPagareSottoContoVincolato";
+		String functionName = "fnc_siac_disp_pagare_sottoconto_vincolo";
+		log.debug(methodName, "Calling functionName: "+ functionName );
+		String sql = "SELECT * FROM "+ functionName + "(:uidContoTesoreria, :uidCapitolo, :enteProprietarioId)";
+		
+		Query query = entityManager.createNativeQuery(sql);
+		
+		query.setParameter("uidContoTesoreria", uidContoTesoreria);
+		query.setParameter("uidCapitolo", uidCapitolo);
+		query.setParameter("enteProprietarioId", enteProprietarioId);
+				
+		
+		return (BigDecimal) query.getSingleResult();
+	}
+
+	@Override
+	public BigDecimal findDisponibilitaIncassareSottoContoVincolato(Integer uidContoTesoreria, Integer uidCapitolo,	Integer enteProprietarioId) {
+		final String methodName = "findDisponibilitaIncassareSottoContoVincolato";
+		String functionName = "fnc_siac_disp_incassare_sottoconto_vincolo";
+		log.debug(methodName, "Calling functionName: "+ functionName );
+		String sql = "SELECT * FROM "+ functionName + "(:uidContoTesoreria, :uidCapitolo, :enteProprietarioId)";
+		
+		Query query = entityManager.createNativeQuery(sql);
+		
+		query.setParameter("uidContoTesoreria", uidContoTesoreria);
+		query.setParameter("uidCapitolo", uidCapitolo);
+		query.setParameter("enteProprietarioId", enteProprietarioId);
+				
+		
+		return (BigDecimal) query.getSingleResult();
+	}
+	
+	@Override
+	public List<Integer> findIdsContoTesoreriaCapitoliBySubdocIds(List<Integer> subdocIds){
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append("SELECT DISTINCT rsaldo.siacDContoTesoreria.contotesId ");
+		jpql.append("FROM SiacRSaldoVincoloSottoConto rsaldo, SiacTVincolo vinc ");
+		jpql.append("WHERE rsaldo.dataCancellazione IS NULL ");
+		jpql.append("AND rsaldo.siacTVincolo = vinc ");
+		jpql.append("AND EXISTS ( ");
+		jpql.append("	FROM SiacRVincoloStato rst ");
+		jpql.append("	WHERE rst.dataCancellazione IS NULL ");
+		jpql.append("	AND rst.siacDVincoloStato.vincoloStatoCode <> 'A' ");
+		jpql.append("	AND rst.siacTVincolo = vinc ");
+		jpql.append(") ");
+		jpql.append("AND EXISTS ( ");
+		jpql.append("	FROM SiacRMovgestBilElem rmbe, SiacRSubdocMovgestT rsmt,  SiacRVincoloBilElem rvinc ");
+		jpql.append("	WHERE rmbe.dataCancellazione IS NULL  ");
+		jpql.append("	AND rsmt.dataCancellazione IS NULL  ");
+		jpql.append("	AND rvinc.dataCancellazione IS NULL ");
+		jpql.append("	AND rvinc.siacTVincolo = vinc ");
+		jpql.append("	AND rsmt.siacTMovgestT.siacTMovgest.movgestId = rmbe.siacTMovgest.movgestId  ");
+		jpql.append("	AND rmbe.siacTBilElem = rvinc.siacTBilElem  ");
+		jpql.append("	AND rsmt.siacTSubdoc.subdocId IN (:subdocIds) ");
+		jpql.append(") ");
+		
+		param.put("subdocIds", subdocIds);
+		Query query = createQuery(jpql.toString(), param);
+		return query.getResultList();
+
+		
+	}
+	
 	
 	
 	

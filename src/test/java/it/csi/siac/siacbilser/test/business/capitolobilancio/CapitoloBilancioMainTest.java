@@ -7,11 +7,11 @@ package it.csi.siac.siacbilser.test.business.capitolobilancio;
 import java.util.Collection;
 
 import it.csi.siac.siacbilser.model.StatoOperativoAttualeVariazioneDiBilancio;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.test.business.capitolo.CapitoloMainTestBase;
 import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.StatoBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.model.StatoBilancio;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -73,7 +73,7 @@ public class CapitoloBilancioMainTest  extends CapitoloMainTestBase {
 		StatoOperativoAttualeVariazioneDiBilancio statoper = new StatoOperativoAttualeVariazioneDiBilancio();
 
 		try {
-			statoper.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.valueOf(statoVar));
+			statoper.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneBilancio.valueOf(statoVar));
 		} catch (Exception e) {
 		}
 

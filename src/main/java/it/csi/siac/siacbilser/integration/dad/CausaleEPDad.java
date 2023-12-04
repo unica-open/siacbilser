@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -233,10 +234,10 @@ public class CausaleEPDad extends ExtendedBaseDadImpl {
 	 */
 	public ListaPaginata<CausaleEP> ricercaSinteticaCausaleEP(CausaleEP causaleEP, TipoEvento tipoEvento, ParametriPaginazione parametriPaginazione) {
 		
-		ContoTipoOperazione cto = !causaleEP.getContiTipoOperazione().isEmpty() ? causaleEP.getContiTipoOperazione().get(0) : null;
+		ContoTipoOperazione cto = CollectionUtils.isNotEmpty(causaleEP.getContiTipoOperazione()) ? causaleEP.getContiTipoOperazione().get(0) : null;
 		causaleEP.setContiTipoOperazione(null);
 		Conto conto = cto != null ? cto.getConto() : null;
-		Evento evento = !causaleEP.getEventi().isEmpty() ? causaleEP.getEventi().get(0) : null;
+		Evento evento = CollectionUtils.isNotEmpty(causaleEP.getEventi()) ? causaleEP.getEventi().get(0) : null;
 		causaleEP.setEventi(null);
 		
 		Page<SiacTCausaleEp> lista = causaleEPDao.ricercaSintetica(
@@ -252,7 +253,8 @@ public class CausaleEPDad extends ExtendedBaseDadImpl {
 				mapToUidIfNotZero(evento),
 				mapToUidIfNotZero(causaleEP.getElementoPianoDeiConti()),
 				mapToUidIfNotZero(causaleEP.getSoggetto()),
-				SiacDConciliazioneClasseEnum.byClasseDiConciliazioneEvenNull(causaleEP.getContiTipoOperazione()!=null && !causaleEP.getContiTipoOperazione().isEmpty()?causaleEP.getContiTipoOperazione().get(0).getClasseDiConciliazione():null),
+				//SIAC-8169
+				SiacDConciliazioneClasseEnum.byClasseDiConciliazioneEvenNull(cto != null ? cto.getClasseDiConciliazione() : null),
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(lista, causaleEP, GenMapId.SiacTCausaleEp_CausaleEP_Base);
@@ -270,11 +272,9 @@ public class CausaleEPDad extends ExtendedBaseDadImpl {
 	 */
 	public ListaPaginata<CausaleEP> ricercaSinteticaCausaleEP(CausaleEP causaleEP, TipoEvento tipoEvento, ParametriPaginazione parametriPaginazione, CausaleEPModelDetail... modelDetails) {
 		
-		ContoTipoOperazione cto = !causaleEP.getContiTipoOperazione().isEmpty() ? causaleEP.getContiTipoOperazione().get(0) : null;
+		ContoTipoOperazione cto = CollectionUtils.isNotEmpty(causaleEP.getContiTipoOperazione()) ? causaleEP.getContiTipoOperazione().get(0) : null;
 		Conto conto = cto != null ? cto.getConto() : null;
-		Evento evento = !causaleEP.getEventi().isEmpty() ? causaleEP.getEventi().get(0) : null;
-		
-		
+		Evento evento = CollectionUtils.isNotEmpty(causaleEP.getEventi())  ? causaleEP.getEventi().get(0) : null;
 		
 		Page<SiacTCausaleEp> lista = causaleEPDao.ricercaSintetica(
 				ente.getUid(),
@@ -289,7 +289,8 @@ public class CausaleEPDad extends ExtendedBaseDadImpl {
 				mapToUidIfNotZero(evento),
 				mapToUidIfNotZero(causaleEP.getElementoPianoDeiConti()),
 				mapToUidIfNotZero(causaleEP.getSoggetto()),
-				SiacDConciliazioneClasseEnum.byClasseDiConciliazioneEvenNull(causaleEP.getContiTipoOperazione()!=null && !causaleEP.getContiTipoOperazione().isEmpty()?causaleEP.getContiTipoOperazione().get(0).getClasseDiConciliazione():null),
+				//SIAC-8169
+				SiacDConciliazioneClasseEnum.byClasseDiConciliazioneEvenNull(cto != null ? cto.getClasseDiConciliazione() : null),
 				toPageable(parametriPaginazione));
 		
 		CausaleEP cep = new CausaleEP();

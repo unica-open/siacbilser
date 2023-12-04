@@ -208,7 +208,7 @@ public abstract class InserisceAggiornaRichiestaEconomaleService<REQ extends Ser
 		RicercaImpegnoPerChiaveOttimizzatoResponse resRIPC = movimentoGestioneServiceCallGroup.ricercaImpegnoPerChiaveOttimizzatoCached(impegnoOSubImpegno, ramgo, datiOpzionaliCapitoli, richiestaEconomale.getSubImpegno());
 		
 		if(resRIPC.getImpegno() == null) {
-			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", this.impegnoOSubImpegno.getAnnoMovimento() + "/" + this.impegnoOSubImpegno.getNumero()));
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", this.impegnoOSubImpegno.getAnnoMovimento() + "/" + this.impegnoOSubImpegno.getNumeroBigDecimal()));
 		}
 		
 		this.impegnoOSubImpegno = resRIPC.getImpegno();

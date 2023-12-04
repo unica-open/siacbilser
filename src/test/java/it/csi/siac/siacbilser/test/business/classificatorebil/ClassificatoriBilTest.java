@@ -20,6 +20,7 @@ import it.csi.siac.siacbilser.business.service.classificatorebil.LeggiElementoPi
 import it.csi.siac.siacbilser.business.service.classificatorebil.LeggiTreeSiopeSpesaService;
 import it.csi.siac.siacbilser.business.service.classificatorebil.RicercaTipoClassificatoreGenericoService;
 import it.csi.siac.siacbilser.business.service.classificatorebil.RicercaTipoClassificatoreService;
+import it.csi.siac.siacbilser.business.service.conto.LeggiTreeCodiceBilancioService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoreGerarchicoByCodiceAndTipoAndAnno;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoreGerarchicoByCodiceAndTipoAndAnnoResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriBilByIdFiglio;
@@ -36,17 +37,24 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoClassificatore;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoClassificatoreGenerico;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoClassificatoreGenericoResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipoClassificatoreResponse;
+import it.csi.siac.siacbilser.integration.dao.CodificaBilDao;
 import it.csi.siac.siacbilser.integration.dao.SiacTClassRepository;
+import it.csi.siac.siacbilser.integration.dao.SiacTPdceContoRepository;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.Missione;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccommon.util.JAXBUtility;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.ClassificatoreGerarchico;
 import it.csi.siac.siaccorser.model.Codifica;
+import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.TipoClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
+import it.csi.siac.siacgenser.frontend.webservice.msg.LeggiTreeCodiceBilancio;
+import it.csi.siac.siacgenser.frontend.webservice.msg.LeggiTreeCodiceBilancioResponse;
+import it.csi.siac.siacgenser.model.ClassePiano;
+import it.csi.siac.siacgenser.model.CodiceBilancio;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -56,7 +64,7 @@ public class ClassificatoriBilTest extends BaseJunit4TestCase
 {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	/** The leggi classificatori by relazione service. */
 	@Autowired
@@ -82,7 +90,17 @@ public class ClassificatoriBilTest extends BaseJunit4TestCase
 	private RicercaTipoClassificatoreGenericoService ricercaTipoClassificatoreGenericoService;
 	
 	@Autowired
+	private LeggiTreeCodiceBilancioService leggiTreeCodiceBilancioService;
+
+	@Autowired
 	private SiacTClassRepository siacTClassRepository;
+
+	@Autowired
+	private SiacTPdceContoRepository siacTPdceContoRepository;
+	
+	@Autowired
+	private CodificaBilDao codificaBilDao;
+
 	
 	/**
 	 * Test leggi classificatori by relazione.
@@ -333,5 +351,49 @@ public class ClassificatoriBilTest extends BaseJunit4TestCase
 		
 		RicercaTipoClassificatoreGenericoResponse res = ricercaTipoClassificatoreGenericoService.executeService(req);
 		assertNotNull(res);
+	}
+	
+	@Test
+	public void ba() {
+		final String methodName = "leggiTreeCodiceBilancioService";
+		
+		//PARAMS
+		Integer anno = 2018;
+		Integer uidClasse = 277;
+		Integer uidEnte = 2;
+		Integer uidRichiedente = 52;
+		String codiceFiscaleOperatore = "AAAAAA00A11C000K";
+		//
+		
+		//REQUEST PARAMS
+		LeggiTreeCodiceBilancio reqLTCB = new LeggiTreeCodiceBilancio();
+		reqLTCB.setAnno(anno);
+		reqLTCB.setAnnoBilancio(anno);
+		ClassePiano classePiano = new ClassePiano();
+		classePiano.setUid(uidClasse);
+		reqLTCB.setClassePiano(classePiano);
+		reqLTCB.setDataOra(new Date());
+		reqLTCB.setRichiedente(getRichiedenteTest(codiceFiscaleOperatore, uidRichiedente, uidEnte));
+		//
+		
+		LeggiTreeCodiceBilancioResponse resLTCB = leggiTreeCodiceBilancioService.executeService(reqLTCB);
+
+		boolean trovato = false;
+		
+		for (CodiceBilancio iterable_element : resLTCB.getTreeCodiciBilancio()) {
+			if (iterable_element.getUid() == 75647050
+					|| iterable_element.getUid() == 75647051) {
+				trovato = true;
+				log.debug(methodName, "TROVATO");
+				System.out.println("############################################################################################");
+			}
+		}
+		
+		assertTrue(trovato);
+		assertNotNull(resLTCB);
+		assertNotNull(resLTCB.getTreeCodiciBilancio());
+		assertTrue(Esito.SUCCESSO.equals(resLTCB.getEsito()));
+		
+		
 	}
 }

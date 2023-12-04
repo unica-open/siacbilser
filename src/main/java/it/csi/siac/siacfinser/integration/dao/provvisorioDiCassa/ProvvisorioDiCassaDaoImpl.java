@@ -21,14 +21,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.utility.Utility;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dao.common.AbstractDao;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacTProvCassaRepository;
 import it.csi.siac.siacfinser.integration.entity.SiacTProvCassaFin;
-import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
+import it.csi.siac.siacfinser.integration.util.DataValiditaUtil;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaProvvisorio;
 
 
@@ -75,8 +75,8 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 //		param.put("dataInput", now);
 		
 		Date nowDate = TimingUtils.getNowDate();
-		param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("provvisorio"));
+		param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("provvisorio"));
 		
 		//WHERE Provvisorio
 		if(prp.getTipoProvvisorio()!=null){
@@ -114,24 +114,24 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 			param.put("numeroAProv", new BigDecimal(prp.getNumeroA()));
 		}
 		
-		if(!StringUtils.isEmpty(prp.getDescCausale())){
+		if(!StringUtilsFin.isEmpty(prp.getDescCausale())){
 			jpql.append(" AND UPPER(provvisorio.provcCausale) LIKE UPPER(CONCAT('%', :descCausale, '%'))");
 			String descCausaleLike = prp.getDescCausale();//buildLikeString(prp.getDescCausale());
 			param.put("descCausale", descCausaleLike);
 		}
 		
-		if(!StringUtils.isEmpty(prp.getSubCausale())){
+		if(!StringUtilsFin.isEmpty(prp.getSubCausale())){
 			jpql.append(" AND UPPER(provvisorio.provcSubcausale) LIKE UPPER(CONCAT('%', :subCausale, '%'))");//LIKE UPPER (:subCausale)");
 			String descSubCausaleLike = prp.getSubCausale();// buildLikeString(prp.getSubCausale());
 			param.put("subCausale", descSubCausaleLike);
 		}
 		
-		if(!StringUtils.isEmpty(prp.getContoTesoriere())){
+		if(!StringUtilsFin.isEmpty(prp.getContoTesoriere())){
 			jpql.append(" AND UPPER(provvisorio.provcCodiceContoEvidenza)=UPPER(:contoTesoriere)");
 			param.put("contoTesoriere", prp.getContoTesoriere());
 		}
 		
-		if(!StringUtils.isEmpty(prp.getDenominazioneSoggetto())){
+		if(!StringUtilsFin.isEmpty(prp.getDenominazioneSoggetto())){
 			jpql.append(" AND UPPER(provvisorio.provcDenomSoggetto) LIKE UPPER(CONCAT('%', :soggProvv, '%'))"); //LIKE UPPER (:soggProvv)");
 			String descSoggLike = prp.getDenominazioneSoggetto();//buildLikeString(prp.getDenominazioneSoggetto());
 			param.put("soggProvv", descSoggLike);
@@ -144,7 +144,9 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 			for(String par :lricPa){					
 				//jpql.append(Utility.toJpqlSearchLike("provvisorio.causale", "CONCAT(:par" + i + ", '%')"));
 				jpql.append(or);
-				jpql.append(Utility.toJpqlSearchLike("provvisorio.provcCausale", "CONCAT('%', :par_" + i + ", '%')"));				
+				//SIAC-7563 
+				//per il pagoPA cerco solo quei provvisori che INIZIANO con i parametri presi da SiacTRicercaCausaliPagopaFin
+				jpql.append(Utility.toJpqlSearchLike("provvisorio.provcCausale", "CONCAT(:par_" + i + ", '%')"));				
 				param.put("par_" + i, par);
 				or = " OR ";
 				i++;
@@ -325,8 +327,18 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 		}
 
 		if(prp.getDataFineInvioServizio() != null) {
-			jpql.append(" AND DATE_TRUNC('day', provvisorio.provcDataInvioServizio) < DATE_TRUNC('day', CAST(:dataFineInvioServizio AS date)) ");
+			jpql.append(" AND DATE_TRUNC('day', provvisorio.provcDataInvioServizio) <= DATE_TRUNC('day', CAST(:dataFineInvioServizio AS date)) ");
 			param.put("dataFineInvioServizio", prp.getDataFineInvioServizio());
+		}
+		
+		if(prp.getDataInizioPresaInCaricoServizio() != null) {
+			jpql.append(" AND DATE_TRUNC('day', provvisorio.provcDataPresaInCaricoServizio) >= DATE_TRUNC('day', CAST(:dataInizioPresaInCaricoServizio AS date)) ");
+			param.put("dataInizioPresaInCaricoServizio", prp.getDataInizioPresaInCaricoServizio());
+		}
+
+		if(prp.getDataFinePresaInCaricoServizio() != null) {
+			jpql.append(" AND DATE_TRUNC('day', provvisorio.provcDataPresaInCaricoServizio) <= DATE_TRUNC('day', CAST(:dataFinePresaInCaricoServizio AS date)) ");
+			param.put("dataFinePresaInCaricoServizio", prp.getDataFinePresaInCaricoServizio());
 		}
 		
 		if(prp.getDataInizioRifiutoErrataAttribuzione() != null) {
@@ -335,7 +347,7 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 		}
 
 		if(prp.getDataFineRifiutoErrataAttribuzione() != null) {
-			jpql.append(" AND DATE_TRUNC('day', provvisorio.provcDataRifiutoErrataAttribuzione) < DATE_TRUNC('day', CAST(:dataFineRifiutoErrataAttribuzione AS date)) ");
+			jpql.append(" AND DATE_TRUNC('day', provvisorio.provcDataRifiutoErrataAttribuzione) <= DATE_TRUNC('day', CAST(:dataFineRifiutoErrataAttribuzione AS date)) ");
 			param.put("dataFineRifiutoErrataAttribuzione", prp.getDataFineRifiutoErrataAttribuzione());
 		}
 		
@@ -346,7 +358,7 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 		/*
 		if(prp.getFlagDaRegolarizzare()!=null){
 			//Da regolarizzare: no relazioni con SubDoc- PreDoc- Ord
-			if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(Constanti.TRUE)){										
+			if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(CostantiFin.TRUE)){										
 				
 				//Da gestire in AND anche con SiacRPredocProvCassaFin e SiacRSubdocProvCassaFin
 				jpql.append(" AND provvisorio.provcId NOT IN (SELECT sropc.siacTProvCassa.provcId FROM SiacROrdinativoProvCassaFin sropc WHERE "
@@ -363,14 +375,19 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 			
 		}*/
 		
-		if(prp.getFlagAnnullato()!=null && !StringUtils.isEmpty(prp.getFlagAnnullato())){
-			if(prp.getFlagAnnullato().equalsIgnoreCase(Constanti.FALSE)){
+		if(prp.getFlagAnnullato()!=null && !StringUtilsFin.isEmpty(prp.getFlagAnnullato())){
+			if(prp.getFlagAnnullato().equalsIgnoreCase(CostantiFin.FALSE)){
 				jpql.append(" AND provvisorio.provcDataAnnullamento IS NULL");					
 			}
 			
-			if(prp.getFlagAnnullato().equalsIgnoreCase(Constanti.TRUE)){
+			if(prp.getFlagAnnullato().equalsIgnoreCase(CostantiFin.TRUE)){
 				jpql.append(" AND provvisorio.provcDataAnnullamento IS NOT NULL");					
 			}
+		}
+		
+		
+		if (prp.getFlagAccettato() != null) {
+				jpql.append(" AND provvisorio.accettato IS " + (prp.getFlagAccettato() ? "TRUE" : "FALSE") + " ");					
 		}
 		
 		
@@ -388,7 +405,7 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 		//STRUTTURA AMMINISTRATIVA:
 		if(prp.getIdStrutturaAmministrativa()!=null && prp.getIdStrutturaAmministrativa().intValue() != 0){
 			jpql.append(" AND relazioneConStruttAmm.siacTProvCassaFin.provcId = provvisorio.provcId ");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("relazioneConStruttAmm"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("relazioneConStruttAmm"));
 			jpql.append(" AND relazioneConStruttAmm.siacTClass.classifId = :uidStrutturaAmmProvvedimento ");
 			param.put("uidStrutturaAmmProvvedimento", prp.getIdStrutturaAmministrativa());
 		}
@@ -476,13 +493,13 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 		
 		//POST FILTRO SU REGOLARIZZARE TRAMITE FUNCION MASSIVE:
 		List<Integer> idsRegolarizzare = null;
-		if(!StringUtils.isEmpty(prp.getFlagDaRegolarizzare())){
-			if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(Constanti.TRUE)){	
+		if(!StringUtilsFin.isEmpty(prp.getFlagDaRegolarizzare())){
+			if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(CostantiFin.TRUE)){	
 				idsRegolarizzare = elencoProvvisoriIdsDaRegolarizzare(enteUid);
-			} else if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(Constanti.FALSE)){
+			} else if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(CostantiFin.FALSE)){
 				idsRegolarizzare = elencoProvvisoriIdsRegolarizzati(enteUid);
 			}
-			idList = CommonUtils.soloQuelliInEntrambe(idsDaQueryPrincipale, idsRegolarizzare);
+			idList = CommonUtil.soloQuelliInEntrambe(idsDaQueryPrincipale, idsRegolarizzare);
 		}else {
 			//NO FILTRO
 			idList = idsDaQueryPrincipale;
@@ -512,18 +529,18 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 		List<Integer> idsDaQueryPrincipale = ( List<Integer> )query.getResultList();
 		
 		//POST FILTRO SU REGOLARIZZARE: 
-		if(!StringUtils.isEmpty(prp.getFlagDaRegolarizzare())){
+		if(!StringUtilsFin.isEmpty(prp.getFlagDaRegolarizzare())){
 			if(idsDaQueryPrincipale!=null && idsDaQueryPrincipale.size()>0){
 				for(Integer it : idsDaQueryPrincipale){
 					if(it!=null){
 						BigDecimal importoIT = calcolaImportoDaRegolarizzare(it);
 						
-						if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(Constanti.TRUE)){	
+						if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(CostantiFin.TRUE)){	
 							if(importoIT!=null && importoIT.longValue()!=0){
 								//DA REGOLARIZZARE SI
 								idList.add(it);
 							}
-						} else if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(Constanti.FALSE)){	
+						} else if(prp.getFlagDaRegolarizzare().equalsIgnoreCase(CostantiFin.FALSE)){	
 							if(importoIT==null || importoIT.longValue()==0){
 								//DA REGOLARIZZARE NO
 								idList.add(it);
@@ -620,7 +637,7 @@ public class ProvvisorioDiCassaDaoImpl extends AbstractDao<SiacTProvCassaFin, In
 					}
 				}
 			}
-			result = StringUtils.getElementiNonNulli(result);
+			result = StringUtilsFin.getElementiNonNulli(result);
 		}
 		return result;
 	}

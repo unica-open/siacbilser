@@ -37,7 +37,7 @@ public class EmettiFatturaFelTest extends BaseJunit4TestCase {
 		int[] uids = new int[] {
 //				94283,
 //				94284 //,
-				94286
+142704
 
 		};
 		for (int uid : uids) {

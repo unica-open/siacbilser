@@ -5,12 +5,8 @@
 package it.csi.siac.siacfinser.business.service.movgest;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -26,21 +22,18 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.common.RicercaAttributiMovimentoGestioneService;
 import it.csi.siac.siacfinser.business.service.util.Utility;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoOSubPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoOSubPerChiaveResponse;
 import it.csi.siac.siacfinser.integration.dad.ImpegnoOptSubDad;
-import it.csi.siac.siacfinser.integration.dad.MutuoDad;
 import it.csi.siac.siacfinser.integration.dad.datacontainer.DisponibilitaMovimentoGestioneContainer;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesa;
 import it.csi.siac.siacfinser.model.movgest.VincoloImpegno;
-import it.csi.siac.siacfinser.model.mutuo.Mutuo;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 
 
 
@@ -51,8 +44,6 @@ public class RicercaImpegnoOSubPerChiaveService extends RicercaAttributiMoviment
 	@Autowired
 	ImpegnoOptSubDad impegnoDad;
 	
-	@Autowired
-	MutuoDad mutuoDad;
 	
 	@Override
 	protected void init() {
@@ -77,7 +68,7 @@ public class RicercaImpegnoOSubPerChiaveService extends RicercaAttributiMoviment
 		BigDecimal numeroSub = req.getNumeroSubImpegno();
 		
 		//2. Si richiama il metodo interno di ricerca per chiave per impegni o accertamenti:
-		impegno = (Impegno) impegnoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoImpegno, numeroImpegno,numeroSub , Constanti.MOVGEST_TIPO_IMPEGNO, true);
+		impegno = (Impegno) impegnoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoImpegno, numeroImpegno,numeroSub , CostantiFin.MOVGEST_TIPO_IMPEGNO, true);
 		
 		if(null!=impegno){
 			
@@ -103,34 +94,6 @@ public class RicercaImpegnoOSubPerChiaveService extends RicercaAttributiMoviment
 		impegno = completaDatiRicercaImpegnoPkCUSTOM(richiedente, impegno, annoEsercizio,numeroSub);
 		
 		
-		// completo con i MUTUI
-		if(impegno.getListaVociMutuo()!=null && !impegno.getListaVociMutuo().isEmpty()){
-			List<String> listaNumeriMutuo =  impegnoDad.listaNumeriMutuo(impegno.getListaVociMutuo());
-			impegno.setElencoMutui(impegnoDad.getListaMutuiAssociati(listaNumeriMutuo,idEnte));
-		}		
-		
-		//Jira 1887 se il mutuo non e' associato all'impegno 
-		if(impegno.getElencoSubImpegni()!=null && !impegno.getElencoSubImpegni().isEmpty()){
-			
-			for (SubImpegno subIterato : impegno.getElencoSubImpegni()) {
-				
-				
-				if(numeroSub!=null && subIterato.getNumero()!=null && subIterato.getNumero().intValue()==numeroSub.intValue()){
-					//E' il sub richiesto
-					
-					List<VoceMutuo> listaVociMutuo = subIterato.getListaVociMutuo();
-					if(listaVociMutuo!=null && listaVociMutuo.size()>0){
-						if(subIterato.getElencoMutui()==null || subIterato.getElencoMutui().size()==0){
-							//Completo i dati dei mutui solo se non sono gia caricati dal chiamanete:
-							List<String> listaNumeriMutuo =  impegnoDad.listaNumeriMutuo(listaVociMutuo);
-							subIterato.setElencoMutui(impegnoDad.getListaMutuiAssociati(listaNumeriMutuo,idEnte));
-						}
-					}
-					
-				}
-			}
-			
-		}	
 		
 		return impegno;
 	}
@@ -184,7 +147,7 @@ public class RicercaImpegnoOSubPerChiaveService extends RicercaAttributiMoviment
 			for (SubImpegno subImpegno : elencoSubImpegni) {
 				
 				
-				if(numeroSub!=null && subImpegno.getNumero()!=null && subImpegno.getNumero().intValue()==numeroSub.intValue()){
+				if(numeroSub!=null && subImpegno.getNumeroBigDecimal()!=null && subImpegno.getNumeroBigDecimal().intValue()==numeroSub.intValue()){
 					//E' il sub richiesto
 					
 					
@@ -241,7 +204,7 @@ public class RicercaImpegnoOSubPerChiaveService extends RicercaAttributiMoviment
 				
 				// vincoloImpegno.getAccertamento().setCapitoloEntrataGestione(capitoloEntrataGestione);
 
-				Accertamento acc = (Accertamento) accertamentoDad.ricercaMovimentoPk(richiedente,capitoloEntrataGestione.getEnte(),annoEsercizio, vincoloImpegno.getAccertamento().getAnnoMovimento(), vincoloImpegno.getAccertamento().getNumero(),Constanti.MOVGEST_TIPO_ACCERTAMENTO, false);
+				Accertamento acc = (Accertamento) accertamentoDad.ricercaMovimentoPk(richiedente,capitoloEntrataGestione.getEnte(),annoEsercizio, vincoloImpegno.getAccertamento().getAnnoMovimento(), vincoloImpegno.getAccertamento().getNumeroBigDecimal(),CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, false);
 				
 				vincoloImpegno.setAccertamento(acc);
 
@@ -259,7 +222,7 @@ public class RicercaImpegnoOSubPerChiaveService extends RicercaAttributiMoviment
 
 		DisponibilitaMovimentoGestioneContainer disponibilitaVincolare;
 
-		if (!impegno.getStatoOperativoMovimentoGestioneSpesa().equals(Constanti.MOVGEST_STATO_ANNULLATO)) {
+		if (!impegno.getStatoOperativoMovimentoGestioneSpesa().equals(CostantiFin.MOVGEST_STATO_ANNULLATO)) {
 			BigDecimal sommaVincoli = BigDecimal.ZERO;
 			if (impegno.getVincoliImpegno() != null) {
 				for (VincoloImpegno vincolo : impegno.getVincoliImpegno()) {
@@ -311,37 +274,4 @@ public class RicercaImpegnoOSubPerChiaveService extends RicercaAttributiMoviment
 	}	
 	
 	
-	private List<Mutuo> getListaMutuiAssociati(List<String> listaNumeriMutuo){
-		
-		List<Mutuo> elencoMutui = new ArrayList<Mutuo>();
-		if(null!=listaNumeriMutuo && !listaNumeriMutuo.isEmpty()){
-			
-			for (String numeroMutuo : listaNumeriMutuo) {
-				elencoMutui.add(mutuoDad.ricercaMutuo(req.getEnte().getUid(), numeroMutuo, getNow()));
-			}
-		}
-		
-		return elencoMutui;	
-	}
-	
-	private List<String> listaNumeriMutuo(List<VoceMutuo> vociMutuo){
-		List<String> listaNumeriMutuo = new ArrayList<String>();
-		HashMap<String, String> mappa = new HashMap<String, String>();
-		
-		for (VoceMutuo voceMutuo : vociMutuo) {
-		   mappa.put(voceMutuo.getNumeroMutuo(), voceMutuo.getNumeroMutuo());	
-		}
-		
-		Set<Entry<String, String>> setMappa = mappa.entrySet();
-		Iterator<Entry<String, String>> itMappa = setMappa.iterator();
-		
-		while(itMappa.hasNext()){
-			
-			Entry<String, String> hm = itMappa.next();
-			listaNumeriMutuo.add((String)hm.getKey());
-		}
-		
-		return listaNumeriMutuo;
-		
-	}
 }

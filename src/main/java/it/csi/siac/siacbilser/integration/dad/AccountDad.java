@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.integration.dao.SiacTAccountRepository;
+import it.csi.siac.siacbilser.integration.dao.SiacTClassRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacTAccount;
 import it.csi.siac.siacbilser.integration.entity.SiacTClass;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
@@ -36,6 +37,8 @@ public class AccountDad extends BaseDadImpl  {
 	/** The siac t bil repository. */
 	@Autowired
 	private SiacTAccountRepository siacTAccountRepository;
+	@Autowired
+	private SiacTClassRepository siacTClassRepository;
 	
 	
 	public String findLoginOperazioneByAccountId(int uidAccount) {
@@ -72,7 +75,7 @@ public class AccountDad extends BaseDadImpl  {
 	public List<StrutturaAmministrativoContabile> findStruttureAmministrativoContabiliByAccount(Account account) {
 		// Filtro solo per CDC e CDR
 		Collection<String> classifTipoCodes = new HashSet<String>();
-		classifTipoCodes.add(SiacDClassTipoEnum.CentroDiRespondabilita.getCodice());
+		classifTipoCodes.add(SiacDClassTipoEnum.CentroDiResponsabilita.getCodice());
 		classifTipoCodes.add(SiacDClassTipoEnum.Cdc.getCodice());
 		
 		List<SiacTClass> siacTClasses = siacTAccountRepository.findSiacTClassByAccountIdAndClassifTipoCodes(account.getUid(), classifTipoCodes);
@@ -81,7 +84,25 @@ public class AccountDad extends BaseDadImpl  {
 	}
 	
 	
-
+	public boolean isSacCollegataAdAccount(Account account, StrutturaAmministrativoContabile sac, Integer annoEsercizio) {
+		List<SiacTClass> found = siacTAccountRepository.findSiacTClassByAccountIdAndClassifId(account.getUid(), sac.getUid());
+		//sac direttamente legata all'account
+		if(found != null && !found.isEmpty()) {
+			return true;
+		}
+		//la sac non e' direattamente legata, considero che se il padre lo e' lo e' anche la figlia
+		List<SiacTClass> classifsPadre = siacTClassRepository.findPadreClassificatoreByClassifIdAndAnnoEsercizio(sac.getUid(), annoEsercizio.toString());
+		if(classifsPadre == null || classifsPadre.isEmpty()) {
+			return false;
+		}
+		for (SiacTClass siacTClass : classifsPadre) {
+			List<SiacTClass> padreAfferente = siacTAccountRepository.findSiacTClassByAccountIdAndClassifId(account.getUid(), siacTClass.getUid());
+			if(padreAfferente != null && !padreAfferente.isEmpty()) {
+				return true;
+			}
+		}
+		return false;
+	}
    
 		
 }

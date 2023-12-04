@@ -17,7 +17,7 @@ import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamErr
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.msg.ValidazioneMassivaPrimaNotaIntegrata;
 import it.csi.siac.siacgenser.frontend.webservice.msg.ValidazioneMassivaPrimaNotaIntegrataResponse;

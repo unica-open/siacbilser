@@ -207,7 +207,7 @@ public class CapitoloEntrataGestioneMainTest extends CapitoloMainTestBase {
 	 */
 	protected RicercaPuntualeCapitoloEntrataGestioneResponse ricercaPuntuale(CapitoloEntrataGestioneService capitoloEntrataGestioneService) {
 	       
-		log.debug("Ricerco il capitolo: "+ annoEser+"|"+annoCapi+"|"+numCapi+"|"+numArti+"|"+numUEB+"|"+statoCapi);
+		log.debug("ricercaPuntuale", "Ricerco il capitolo: "+ annoEser+"|"+annoCapi+"|"+numCapi+"|"+numArti+"|"+numUEB+"|"+statoCapi);
              
 		RicercaPuntualeCapitoloEGest criteriRicerca = 
 					getCriteriRicerca(annoEser, annoCapi, numCapi, numArti, numUEB, statoCapi);

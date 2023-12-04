@@ -94,7 +94,7 @@ public class AggiornaOnereSpesaService extends CheckedAccountBaseService<Aggiorn
 		BigDecimal imponibile = dettaglioOnere.getImportoImponibile() == null ? BigDecimal.ZERO : dettaglioOnere.getImportoImponibile();
 		
 		if(imponibile.compareTo(importoDocumento) > 0) {
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("imponibile", "non puo' essere maggiore dell'importo del documento ("
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("imponibile", "non puo' essere maggiore dell'importo del documento ("
 					+ "importo documento: " + Utility.formatCurrencyAsString(importoDocumento)
 					+ ", imponibile onere: " + Utility.formatCurrencyAsString(imponibile) + ")"));
 		}

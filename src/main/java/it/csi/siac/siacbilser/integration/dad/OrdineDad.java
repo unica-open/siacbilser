@@ -18,6 +18,7 @@ import it.csi.siac.siacbilser.integration.dao.SiacTOrdineRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacRDocOrdine;
 import it.csi.siac.siacbilser.integration.entity.SiacTOrdine;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
+import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.Ordine;
 
@@ -95,6 +96,17 @@ public class OrdineDad extends ExtendedBaseDadImpl {
 	 */
 	public List<Ordine> ricercaOrdiniDocumento(DocumentoSpesa documento) {
 		List<SiacTOrdine> siacTOrdines = siacTOrdineRepository.findOrdiniByDocumentoSpesa(documento.getUid());
+		return convertiLista(siacTOrdines, Ordine.class, BilMapId.SiacTOrdine_Ordine);
+	}
+	
+	/**
+	 * Ricerca ordini documento.
+	 *
+	 * @param documento the documento
+	 * @return the list
+	 */
+	public List<Ordine> ricercaOrdiniDocumento(DocumentoEntrata documento) {
+		List<SiacTOrdine> siacTOrdines = siacTOrdineRepository.findOrdiniByDocumentoEntrata(documento.getUid());
 		return convertiLista(siacTOrdines, Ordine.class, BilMapId.SiacTOrdine_Ordine);
 	}
 	

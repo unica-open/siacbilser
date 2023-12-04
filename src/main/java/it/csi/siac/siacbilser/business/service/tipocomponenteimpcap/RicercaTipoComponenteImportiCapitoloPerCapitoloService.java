@@ -42,6 +42,8 @@ public class RicercaTipoComponenteImportiCapitoloPerCapitoloService extends Base
 				null,
 				null,
 				null,
+				//SIAC-7349
+				null,
 				req.getAnnoBilancio(),
 				req.isSoloValidiPerBilancio(),
 				TipoComponenteImportiCapitoloModelDetail.values());

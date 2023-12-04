@@ -11,7 +11,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovgest</class-b>
 		
 		<field>
-			<a>numero</a>
+			<a>numeroBigDecimal</a>
 			<b>movgestNumero</b>
 		</field>
 		
@@ -32,7 +32,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTMovgest</class-b>
 		
 		<field>
-			<a>numero</a>
+			<a>numeroBigDecimal</a>
 			<b>movgestNumero</b>
 		</field>
 		
@@ -75,7 +75,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<b>movgestTsId</b>
 		</field>
 		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BigDecimalToStringConverter">
-			<a>numero</a>
+			<a>numeroBigDecimal</a>
 			<b>movgestTsCode</b>
 		</field>
 		<field>
@@ -108,7 +108,7 @@ SPDX-License-Identifier: EUPL-1.2
 		</field>
 		
 		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.BigDecimalToStringConverter">
-			<a>numero</a>
+			<a>numeroBigDecimal</a>
 			<b>movgestTsCode</b>
 		</field>
 		

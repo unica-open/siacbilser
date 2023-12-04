@@ -38,12 +38,14 @@ import it.csi.siac.siacbilser.integration.entity.SiacDSommaNonSoggettaTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacDTrasportoMezzo;
 import it.csi.siac.siacbilser.integration.entity.SiacDValuta;
 import it.csi.siac.siacbilser.integration.entity.SiacDVincoloGenere;
+import it.csi.siac.siacbilser.integration.entity.SiacDVincoloRisorseVincolate;
 import it.csi.siac.siacbilser.integration.entity.SiacRAccreditoTipoCassaEcon;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.CecMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.CespMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.GenMapId;
 import it.csi.siac.siacbilser.model.GenereVincolo;
+import it.csi.siac.siacbilser.model.RisorsaVincolata;
 import it.csi.siac.siacbilser.model.ModalitaAffidamentoProgetto;
 import it.csi.siac.siaccecser.model.MezziDiTrasporto;
 import it.csi.siac.siaccecser.model.ModalitaAccreditoCassaEconomale;
@@ -124,6 +126,9 @@ public enum CodificheEnum {
 	CausaleSospensione(CausaleSospensione.class, SiacDCausaleSospensione.class, "causSospCode", "causSospDesc"),
 	// SIAC-5076
 	GenereVincolo(GenereVincolo.class, SiacDVincoloGenere.class, "vincoloGenCode", "vincoloGenDesc"),
+	
+	// SIAC-7129
+	RisorsaVincolata(RisorsaVincolata.class, SiacDVincoloRisorseVincolate.class, "vincoloRisorseVincolateCode", "vincoloRisorseVincolateDesc"),
 	
 	// SIAC-5311 SIOPE+
 	SiopeDocumentoTipo(SiopeDocumentoTipo.class, SiacDSiopeDocumentoTipo.class, "siopeDocumentoTipoCode", "siopeDocumentoTipoDesc"),

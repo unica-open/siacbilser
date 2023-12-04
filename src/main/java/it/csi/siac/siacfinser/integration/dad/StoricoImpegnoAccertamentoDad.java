@@ -27,7 +27,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsStoricoImpAccFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.StoricoImpegnoAccertamento;
@@ -84,7 +84,7 @@ public class StoricoImpegnoAccertamentoDad extends AbstractFinDad {
 	 */
 	public void cancellaStorico(StoricoImpegnoAccertamento storico, DatiOperazioneDto datiOperazioneDto) {
 		SiacRMovgestTsStoricoImpAccFin siacRMovgestTsStoricoImpAcc = siacRMovgestTsStoricoImpAccRepository.findOne(storico.getUid());
-		DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsStoricoImpAcc, datiOperazioneDto, siacTAccountRepository);
+		DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsStoricoImpAcc, datiOperazioneDto, siacTAccountRepository);
 		siacRMovgestTsStoricoImpAcc = siacRMovgestTsStoricoImpAccRepository.saveAndFlush(siacRMovgestTsStoricoImpAcc);
 	}
 	
@@ -100,7 +100,7 @@ public class StoricoImpegnoAccertamentoDad extends AbstractFinDad {
 		}
 		log.debug(methodName, "Sono presenti degli storici collegati all'impegno, li cancello.");
 		for (SiacRMovgestTsStoricoImpAccFin siacRMovgestTsStoricoImpAcc : storicos) {
-			DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsStoricoImpAcc, datiOperazioneDto, siacTAccountRepository);
+			DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsStoricoImpAcc, datiOperazioneDto, siacTAccountRepository);
 		}
 	}
 	
@@ -214,10 +214,10 @@ public class StoricoImpegnoAccertamentoDad extends AbstractFinDad {
 		
 		if(imp != null){
 			dto.setAnnoImpegno(imp.getAnnoMovimento() != 0? Integer.valueOf(imp.getAnnoMovimento()) : null);
-			dto.setNumeroImpegno(imp.getNumero() != null && BigDecimal.ZERO.compareTo(imp.getNumero()) < 0? imp.getNumero() : null);
+			dto.setNumeroImpegno(imp.getNumeroBigDecimal() != null && BigDecimal.ZERO.compareTo(imp.getNumeroBigDecimal()) < 0? imp.getNumeroBigDecimal() : null);
 		}
 		
-		dto.setNumeroSubImpegno(subImpegno != null && subImpegno.getNumero() != null && BigDecimal.ZERO.compareTo(subImpegno.getNumero()) < 0? subImpegno.getNumero() : null);
+		dto.setNumeroSubImpegno(subImpegno != null && subImpegno.getNumeroBigDecimal() != null && BigDecimal.ZERO.compareTo(subImpegno.getNumeroBigDecimal()) < 0? subImpegno.getNumeroBigDecimal() : null);
 		
 		if(bilancio != null) {
 			dto.setBilancio(bilancio);
@@ -225,10 +225,10 @@ public class StoricoImpegnoAccertamentoDad extends AbstractFinDad {
 		
 		if(acc != null){
 			dto.setAnnoAccertamento(acc.getAnnoMovimento() != 0? Integer.valueOf(acc.getAnnoMovimento()) : null);
-			dto.setNumeroAccertamento(acc.getNumero() != null && BigDecimal.ZERO.compareTo(acc.getNumero()) < 0? acc.getNumero() : null);
+			dto.setNumeroAccertamento(acc.getNumeroBigDecimal() != null && BigDecimal.ZERO.compareTo(acc.getNumeroBigDecimal()) < 0? acc.getNumeroBigDecimal() : null);
 		}
 		
-		dto.setNumeroSubAccertamento(subAccertamento != null && subAccertamento.getNumero() != null && BigDecimal.ZERO.compareTo(subAccertamento.getNumero()) < 0? subAccertamento.getNumero() : null);
+		dto.setNumeroSubAccertamento(subAccertamento != null && subAccertamento.getNumeroBigDecimal() != null && BigDecimal.ZERO.compareTo(subAccertamento.getNumeroBigDecimal()) < 0? subAccertamento.getNumeroBigDecimal() : null);
 		
 		dto.setEscludiSubImpegni(escludiSubImpegni);
 		
@@ -259,7 +259,7 @@ public class StoricoImpegnoAccertamentoDad extends AbstractFinDad {
 
 		Accertamento acc = new Accertamento();
 		acc.setAnnoMovimento(siacRMovgestTsStoricoImpAcc.getMovgestAnnoAcc());
-		acc.setNumero(siacRMovgestTsStoricoImpAcc.getMovgestNumeroAcc());
+		acc.setNumeroBigDecimal(siacRMovgestTsStoricoImpAcc.getMovgestNumeroAcc());
 		
 		storico.setAccertamento(acc);
 		
@@ -267,7 +267,7 @@ public class StoricoImpegnoAccertamentoDad extends AbstractFinDad {
 		
 		if(movgestSubnumeroAcc != null) {
 			SubAccertamento subAccertamento = new SubAccertamento();
-			subAccertamento.setNumero(movgestSubnumeroAcc);
+			subAccertamento.setNumeroBigDecimal(movgestSubnumeroAcc);
 			storico.setSubAccertamento(subAccertamento);
 		}
 		
@@ -294,10 +294,10 @@ public class StoricoImpegnoAccertamentoDad extends AbstractFinDad {
 
 		siacRMovgestTsStoricoImpAcc.setSiacTMovgestT(siacTMovgestTsFin);
 		siacRMovgestTsStoricoImpAcc.setMovgestAnnoAcc(storico.getAccertamento().getAnnoMovimento());
-		siacRMovgestTsStoricoImpAcc.setMovgestNumeroAcc(storico.getAccertamento().getNumero());
-		siacRMovgestTsStoricoImpAcc.setMovgestSubnumeroAcc(storico.getSubAccertamento() != null? storico.getSubAccertamento().getNumero() : null);		
+		siacRMovgestTsStoricoImpAcc.setMovgestNumeroAcc(storico.getAccertamento().getNumeroBigDecimal());
+		siacRMovgestTsStoricoImpAcc.setMovgestSubnumeroAcc(storico.getSubAccertamento() != null? storico.getSubAccertamento().getNumeroBigDecimal() : null);		
 		
-		siacRMovgestTsStoricoImpAcc = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsStoricoImpAcc, datiOperazioneDto, siacTAccountRepository);
+		siacRMovgestTsStoricoImpAcc = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsStoricoImpAcc, datiOperazioneDto, siacTAccountRepository);
 		return siacRMovgestTsStoricoImpAcc;
 	}
 

@@ -53,4 +53,11 @@ public interface SiacRMovgestClassRepository extends JpaRepository<SiacRMovgestC
 	public List<SiacRMovgestClassFin> findAllValidiByMovgestTs(@Param("enteProprietarioId") Integer enteProprietarioId,@Param("dataInput") Timestamp  dataInput,
 			@Param("idMovGestTs") Integer idMovGestTs);
 	
+	
+	@Query("FROM SiacRMovgestClassFin rmc "
+			+ " WHERE rmc.siacTMovgestT.movgestTsId=:idMovGestTs "
+			+ " AND rmc.siacTClass.siacDClassTipo.classifTipoCode=:classifTipoCode "
+			+ " AND rmc.dataCancellazione IS NOT NULL ")
+	public List<SiacRMovgestClassFin> findStoricoByClassifTipoCodeAndMovgestTs(@Param("idMovGestTs") Integer idMovGestTs, @Param("classifTipoCode") String classifTipoCodes);
+	
 }

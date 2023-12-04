@@ -19,9 +19,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dao.common.AbstractDao;
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaSoggettoParamDto;
@@ -51,8 +51,8 @@ import it.csi.siac.siacfinser.integration.entity.SiacTPersonaGiuridicaModFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTProvinciaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTRegioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin;
-import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DataValiditaUtil;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto.StatoOperativoAnagrafica;
 
 @Component
@@ -96,7 +96,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public Query creaQueryRicercaSoggetti(Integer enteUid, RicercaSoggettoParamDto prs,  String codiceAmbito, boolean soloCount){
 		Map<String,Object> param = new HashMap<String, Object>();
 		Date nowDate = TimingUtils.getNowDate();
-		param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
+		param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
 		Query query = null;
 		// PARAMETRI DI INPUT:
 		String codiceSoggetto = prs.getCodiceSoggetto();
@@ -106,7 +106,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 		String classe= prs.getClasse();
 		String titoloNaturaGiuridica= prs.getTitoloNaturaGiuridica();
 		String formaGiuridica= prs.getFormaGiuridica();
-		String statoSoggetto= prs.getStatoSoggetto();
+		String idStatoSoggetto= prs.getIdStatoSoggetto();
 		String matricola = prs.getMatricola();
 		//SIAC-6565-CR1215
 		String emailPec = prs.getEmailPec();
@@ -115,7 +115,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 		StringBuilder jpql = new StringBuilder("Select sogg FROM SiacTSoggettoFin sogg left join fetch sogg.siacDAmbito amb ");
 
 		// Condizione dinamiche dopo il WHERE			
-		if(!StringUtils.isEmpty(codiceSoggetto)){
+		if(!StringUtilsFin.isEmpty(codiceSoggetto)){
 			jpql.append(" WHERE sogg.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ");
 			
 			
@@ -124,15 +124,15 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			jpql.append(" AND sogg.soggettoCode = :codiceSoggetto ");
 			param.put("codiceSoggetto", codiceSoggetto); 
 		} else {
-			if(!StringUtils.isEmpty(classe)){
+			if(!StringUtilsFin.isEmpty(classe)){
 				jpql.append(" , SiacRSoggettoClasseFin rsogclas ");
 			}
 
-			if(!StringUtils.isEmpty(titoloNaturaGiuridica) || !StringUtils.isEmpty(formaGiuridica)){
+			if(!StringUtilsFin.isEmpty(titoloNaturaGiuridica) || !StringUtilsFin.isEmpty(formaGiuridica)){
 				jpql.append(" , SiacRFormaGiuridicaFin rformagiu ");
 			}
 
-			if(!StringUtils.isEmpty(statoSoggetto)){
+			if(!StringUtilsFin.isEmpty(idStatoSoggetto) || org.apache.commons.lang.StringUtils.isNotBlank(prs.getCodiceStatoSoggetto())){
 				jpql.append(" , SiacRSoggettoStatoFin rsoggStato ");
 			}
 
@@ -141,22 +141,22 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			param.put("enteProprietarioId", enteUid);
 			
 			
-			if(!StringUtils.isEmpty(partitaIva)){
+			if(!StringUtilsFin.isEmpty(partitaIva)){
 				jpql.append(" AND sogg.partitaIva = :partitaIva ");
 				param.put("partitaIva", partitaIva);
 			}
 
-			if(!StringUtils.isEmpty(codiceFiscale)){
+			if(!StringUtilsFin.isEmpty(codiceFiscale)){
 				jpql.append(" AND UPPER(sogg.codiceFiscale) = UPPER(:codiceFiscale) ");
 				param.put("codiceFiscale", codiceFiscale);
 			}
 
-			if(!StringUtils.isEmpty(prs.getCodiceFiscaleEstero())){
+			if(!StringUtilsFin.isEmpty(prs.getCodiceFiscaleEstero())){
 				jpql.append(" AND UPPER(sogg.codiceFiscaleEstero) = UPPER(:codiceFiscaleEstero) ");
 				param.put("codiceFiscaleEstero", prs.getCodiceFiscaleEstero());
 			}
 
-			if(!StringUtils.isEmpty(denominazione)){
+			if(!StringUtilsFin.isEmpty(denominazione)){
 				jpql.append(" AND UPPER(sogg.soggettoDesc) LIKE UPPER(:denominazione) ");
 				String denomLike = null;
 				if(denominazione.contains("%")){
@@ -167,7 +167,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 				param.put("denominazione", denomLike);
 			}
 			//SIAC-6565-CR1215
-			if(!StringUtils.isEmpty(emailPec)){
+			if(!StringUtilsFin.isEmpty(emailPec)){
 				jpql.append(" AND UPPER(sogg.emailPec) LIKE UPPER(:emailPec) ");
 				String denomLike = null;
 				if(emailPec.contains("%")){
@@ -177,7 +177,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 				}
 				param.put("emailPec", denomLike);
 			}
-			if(!StringUtils.isEmpty(codDestinatario)){
+			if(!StringUtilsFin.isEmpty(codDestinatario)){
 				jpql.append(" AND UPPER(sogg.codDestinatario) LIKE UPPER(:codDestinatario) ");
 				String denomLike = null;
 				if(codDestinatario.contains("%")){
@@ -188,30 +188,30 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 				param.put("codDestinatario", denomLike);
 			}
 
-			if(!StringUtils.isEmpty(classe)){
+			if(!StringUtilsFin.isEmpty(classe)){
 				jpql.append(" AND rsogclas.siacDSoggettoClasse.soggettoClasseId = :classe ");				
 				param.put("classe",  Integer.valueOf(classe));
 				//jpql.append(" and rsogclas.dataFineValidita is null ");
-				jpql.append(" AND  ").append(DataValiditaUtils.validitaForQuery("rsogclas"));
+				jpql.append(" AND  ").append(DataValiditaUtil.validitaForQuery("rsogclas"));
 				jpql.append(" and rsogclas.siacTSoggetto.soggettoId = sogg.soggettoId ");
 			}
 
-			if(!StringUtils.isEmpty(titoloNaturaGiuridica) || !StringUtils.isEmpty(formaGiuridica)){
+			if(!StringUtilsFin.isEmpty(titoloNaturaGiuridica) || !StringUtilsFin.isEmpty(formaGiuridica)){
 				jpql.append(" and rformagiu.siacTSoggetto.soggettoId = sogg.soggettoId ");
-				jpql.append(" AND  ").append(DataValiditaUtils.validitaForQuery("rformagiu"));
-				if(!StringUtils.isEmpty(titoloNaturaGiuridica)){
+				jpql.append(" AND  ").append(DataValiditaUtil.validitaForQuery("rformagiu"));
+				if(!StringUtilsFin.isEmpty(titoloNaturaGiuridica)){
 					jpql.append(" and rformagiu.siacTFormaGiuridica.formaGiuridicaDesc = :descFormaGiuridica ");
 					param.put("descFormaGiuridica", titoloNaturaGiuridica);
 				}
 
-				if(!StringUtils.isEmpty(formaGiuridica)){
+				if(!StringUtilsFin.isEmpty(formaGiuridica)){
 					jpql.append(" and rformagiu.siacTFormaGiuridica.formaGiuridicaId = :tipoFormaGiuridica ");
 					param.put("tipoFormaGiuridica", Integer.parseInt(formaGiuridica));
 				}
 			}
 
-			if(!StringUtils.isEmpty(statoSoggetto)){
-				SiacDSoggettoStatoFin siacDSoggettoStato = siacDSoggettoStatoRepository.findOne(Integer.parseInt(statoSoggetto));
+			if(!StringUtilsFin.isEmpty(idStatoSoggetto)){
+				SiacDSoggettoStatoFin siacDSoggettoStato = siacDSoggettoStatoRepository.findOne(Integer.parseInt(idStatoSoggetto));
 				List<SiacDSoggettoStatoFin> listaStati = siacDSoggettoStatoRepository.findValidoByEnteAndByCode(enteUid, new Timestamp(System.currentTimeMillis()), siacDSoggettoStato.getSoggettoStatoCode());
 
 				SiacDSoggettoStatoFin siacSoggettoStatoSelezionato = listaStati.get(0);
@@ -227,16 +227,26 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					param.put("stato", statoValido.getUid());
 
 					jpql.append(" AND EXISTS ( SELECT 1 FROM SiacTSoggettoModFin modp WHERE modp.siacTSoggetto=sogg ");
-					jpql.append(" AND  ").append(DataValiditaUtils.validitaForQuery("modp")).append(" ) ");
+					jpql.append(" AND  ").append(DataValiditaUtil.validitaForQuery("modp")).append(" ) ");
 				}else{
 					// Tutti gli altri stati
 					jpql.append(" and rsoggStato.siacDSoggettoStato.soggettoStatoId = :stato ");
-					param.put("stato", Integer.parseInt(statoSoggetto));
+					param.put("stato", Integer.parseInt(idStatoSoggetto));
 
 				}
 				
 				jpql.append(" and sogg.siacTEnteProprietario.enteProprietarioId = rsoggStato.siacTEnteProprietario.enteProprietarioId ");
-				jpql.append(" AND  ").append(DataValiditaUtils.validitaForQuery("rsoggStato"));
+				jpql.append(" AND  ").append(DataValiditaUtil.validitaForQuery("rsoggStato"));
+				jpql.append(" and rsoggStato.siacTSoggetto.soggettoId = sogg.soggettoId ");
+			}
+			
+
+			if(org.apache.commons.lang.StringUtils.isNotBlank(prs.getCodiceStatoSoggetto())){
+				jpql.append(" and rsoggStato.siacDSoggettoStato.soggettoStatoCode = :codiceStato ");
+				param.put("codiceStato", prs.getCodiceStatoSoggetto());
+				
+				jpql.append(" and sogg.siacTEnteProprietario.enteProprietarioId = rsoggStato.siacTEnteProprietario.enteProprietarioId ");
+				jpql.append(" AND  ").append(DataValiditaUtil.validitaForQuery("rsoggStato"));
 				jpql.append(" and rsoggStato.siacTSoggetto.soggettoId = sogg.soggettoId ");
 			}
 			
@@ -262,16 +272,16 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 		// per il soggetto in questione 
 		
 		jpql.append(" AND NOT EXISTS (SELECT 1 FROM SiacRSoggettoRelazFin srsr WHERE srsr.siacTSoggetto2.soggettoId=sogg.soggettoId AND ");
-		jpql.append(DataValiditaUtils.validitaForQuery("srsr"));
+		jpql.append(DataValiditaUtil.validitaForQuery("srsr"));
 		
 		
 		jpql.append(" AND srsr.siacTEnteProprietario.enteProprietarioId = sogg.siacTEnteProprietario.enteProprietarioId ");
 		jpql.append(" AND srsr.siacDRelazTipo.siacTEnteProprietario.enteProprietarioId = sogg.siacTEnteProprietario.enteProprietarioId ");
 		
 		jpql.append(" AND srsr.siacDRelazTipo.relazTipoCode = :tipoRelazioneSedeSecondaria ");
-		jpql.append(" AND  ").append(DataValiditaUtils.validitaForQuery("srsr.siacDRelazTipo")).append(" ) ");;
+		jpql.append(" AND  ").append(DataValiditaUtil.validitaForQuery("srsr.siacDRelazTipo")).append(" ) ");;
 		
-		param.put("tipoRelazioneSedeSecondaria", Constanti.SEDE_SECONDARIA);
+		param.put("tipoRelazioneSedeSecondaria", CostantiFin.SEDE_SECONDARIA);
 		
 		jpql.append("order by to_number(sogg.soggettoCode, '999999999999')");
 
@@ -288,8 +298,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTSoggettoFin> ricercaSoggetti(Integer enteUid, RicercaSoggettoParamDto prs, String codiceAmbito) throws RuntimeException{
 		List<SiacTSoggettoFin> lista = new ArrayList<SiacTSoggettoFin>();
 		Query query = creaQueryRicercaSoggetti(enteUid, prs, codiceAmbito, false);
-		if(query.getResultList().size() > Constanti.MAX_RIGHE_ESTRAIBILI){
-			lista = query.setMaxResults(Constanti.MAX_RIGHE_ESTRAIBILI + 1).getResultList();
+		if(query.getResultList().size() > CostantiFin.MAX_RIGHE_ESTRAIBILI){
+			lista = query.setMaxResults(CostantiFin.MAX_RIGHE_ESTRAIBILI + 1).getResultList();
 		}else{
 			lista = query.getResultList();
 		}
@@ -382,7 +392,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTSoggettoFin> ricercaBySiacRMovgestTsSogModFin(List<SiacRMovgestTsSogModFin> listaInput, Boolean validi) {
 		List<SiacTSoggettoFin> listaRitorno = new ArrayList<SiacTSoggettoFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRMovgestTsSogModFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRMovgestTsSogModFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRMovgestTsSogModFin> listaIt : esploso){
 					List<SiacTSoggettoFin> risultatoParziale = ricercaBySiacRMovgestTsSogModFinCORE(listaIt,validi);
@@ -391,7 +401,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -430,8 +440,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			jpql.append(" AND ( sf.soggettoId = rs.siacTSoggetto1.soggettoId OR sf.soggettoId = rs.siacTSoggetto2.soggettoId ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("sf"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("sf"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -441,7 +451,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 			
@@ -453,7 +463,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTSoggettoFin> ricercaBySiacTMovgestPkMassive(List<SiacTMovgestTsFin> listaInput) {
 		List<SiacTSoggettoFin> listaRitorno = new ArrayList<SiacTSoggettoFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTMovgestTsFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestTsFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestTsFin> listaIt : esploso){
 					List<SiacTSoggettoFin> risultatoParziale = ricercaBySiacTMovgestPkMassiveCORE(listaIt);
@@ -462,7 +472,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -495,8 +505,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacTSoggetto"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacTSoggetto"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 
 			
 			//LANCIO DELLA QUERY:
@@ -511,7 +521,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTSoggettoFin> ricercaBySiacTLiquidazionePkMassive(List<SiacTLiquidazioneFin> listaInput) {
 		List<SiacTSoggettoFin> listaRitorno = new ArrayList<SiacTSoggettoFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTLiquidazioneFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTLiquidazioneFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTLiquidazioneFin> listaIt : esploso){
 					List<SiacTSoggettoFin> risultatoParziale = ricercaBySiacTLiquidazionePkMassiveCORE(listaIt);
@@ -520,7 +530,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -552,8 +562,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacTSoggetto"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacTSoggetto"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -566,7 +576,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacRSoggettoRelazFin> ricercaSiacRSoggettoRelazMassive(List<SiacTSoggettoFin> listaInput) {
 		List<SiacRSoggettoRelazFin> listaRitorno = new ArrayList<SiacRSoggettoRelazFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTSoggettoFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTSoggettoFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTSoggettoFin> listaIt : esploso){
 					List<SiacRSoggettoRelazFin> risultatoParziale = ricercaSiacRSoggettoRelazMassiveCORE(listaIt);
@@ -575,7 +585,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -612,8 +622,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -626,7 +636,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTSoggettoFin> ricercaSiacTSoggettoFinBySiacRSoggettoRelazFin(List<SiacRSoggettoRelazFin> listaInput) {
 		List<SiacTSoggettoFin> listaRitorno = new ArrayList<SiacTSoggettoFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRSoggettoRelazFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRSoggettoRelazFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRSoggettoRelazFin> listaIt : esploso){
 					List<SiacTSoggettoFin> risultatoParziale = ricercaSiacTSoggettoFinBySiacRSoggettoRelazFinCORE(listaIt);
@@ -635,7 +645,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -690,8 +700,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("sogg"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("sogg"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -705,7 +715,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacRSoggrelModpagFin> ricercaSiacRSoggrelModpagFinMassive(List<SiacRSoggettoRelazFin> listaInput) {
 		List<SiacRSoggrelModpagFin> listaRitorno = new ArrayList<SiacRSoggrelModpagFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRSoggettoRelazFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRSoggettoRelazFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRSoggettoRelazFin> listaIt : esploso){
 					List<SiacRSoggrelModpagFin> risultatoParziale = ricercaSiacRSoggrelModpagFinMassiveCORE(listaIt);
@@ -714,7 +724,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -750,8 +760,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 
 			
 			//LANCIO DELLA QUERY:
@@ -765,7 +775,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacRSoggettoRelazStatoFin> ricercaSiacRSoggettoRelazStatoFinMassive(List<SiacRSoggettoRelazFin> listaInput) {
 		List<SiacRSoggettoRelazStatoFin> listaRitorno = new ArrayList<SiacRSoggettoRelazStatoFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRSoggettoRelazFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRSoggettoRelazFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRSoggettoRelazFin> listaIt : esploso){
 					List<SiacRSoggettoRelazStatoFin> risultatoParziale = ricercaSiacRSoggettoRelazStatoFinMassiveCORE(listaIt);
@@ -774,7 +784,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -805,8 +815,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -820,7 +830,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacRModpagOrdineFin> ricercaSiacRModpagOrdineFinBySiacTModpagFin(List<SiacTModpagFin> listaInput) {
 		List<SiacRModpagOrdineFin> listaRitorno = new ArrayList<SiacRModpagOrdineFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTModpagFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTModpagFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTModpagFin> listaIt : esploso){
 					List<SiacRModpagOrdineFin> risultatoParziale = ricercaSiacRModpagOrdineFinBySiacTModpagFinCORE(listaIt);
@@ -829,7 +839,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -856,8 +866,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -870,7 +880,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacRModpagStatoFin> ricercaSiacRModpagStatoBySiacTModpagFin(List<SiacTModpagFin> listaInput) {
 		List<SiacRModpagStatoFin> listaRitorno = new ArrayList<SiacRModpagStatoFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTModpagFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTModpagFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTModpagFin> listaIt : esploso){
 					List<SiacRModpagStatoFin> risultatoParziale = ricercaSiacRModpagStatoBySiacTModpagFinCORE(listaIt);
@@ -879,7 +889,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -906,8 +916,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -920,7 +930,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTModpagModFin> ricercaSiacTModpagModFinMassive(List<SiacTModpagFin> listaInput) {
 		List<SiacTModpagModFin> listaRitorno = new ArrayList<SiacTModpagModFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTModpagFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTModpagFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTModpagFin> listaIt : esploso){
 					List<SiacTModpagModFin> risultatoParziale = ricercaSiacTModpagModFinMassiveCORE(listaIt);
@@ -929,7 +939,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -965,8 +975,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -980,7 +990,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public <ST extends SiacTBase>  List<ST> ricercaBySoggettoMassive(List<SiacTSoggettoFin> listaInput, String nomeEntity) {
 		List<ST> listaRitorno = new ArrayList<ST>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTSoggettoFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTSoggettoFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTSoggettoFin> listaIt : esploso){
 					List<ST> risultatoParziale = ricercaBySoggettoMassiveCORE(listaIt,nomeEntity);
@@ -989,7 +999,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1023,8 +1033,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -1037,7 +1047,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTComuneFin> ricercaSiacTComuneFinBySiacTIndirizzoSoggettoFin(List<SiacTIndirizzoSoggettoFin> listaInput) {
 		List<SiacTComuneFin> listaRitorno = new ArrayList<SiacTComuneFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTIndirizzoSoggettoFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTIndirizzoSoggettoFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTIndirizzoSoggettoFin> listaIt : esploso){
 					List<SiacTComuneFin> risultatoParziale = ricercaSiacTComuneFinBySiacTIndirizzoSoggettoFinCORE(listaIt);
@@ -1046,7 +1056,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1079,8 +1089,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 				//ha senso lanciare la query
 				
 				//LANCIO DELLA QUERY:
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 				
 				//LANCIO DELLA QUERY:
 				Query query =  createQuery(jpql.toString(), param);
@@ -1095,7 +1105,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTComuneFin> ricercaSiacTComuneFinBySiacTPersonaFisicaFin(List<SiacTPersonaFisicaFin> listaInput) {
 		List<SiacTComuneFin> listaRitorno = new ArrayList<SiacTComuneFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTPersonaFisicaFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTPersonaFisicaFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTPersonaFisicaFin> listaIt : esploso){
 					List<SiacTComuneFin> risultatoParziale = ricercaSiacTComuneFinBySiacTPersonaFisicaFinCORE(listaIt);
@@ -1104,7 +1114,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1137,8 +1147,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 				//ha senso lanciare la query
 				
 				//LANCIO DELLA QUERY:
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 				
 				//LANCIO DELLA QUERY:
 				Query query =  createQuery(jpql.toString(), param);
@@ -1153,7 +1163,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacRComuneProvinciaFin> ricercaSiacRComuneProvinciaFinBySiacTComuneFin(List<SiacTComuneFin> listaInput) {
 		List<SiacRComuneProvinciaFin> listaRitorno = new ArrayList<SiacRComuneProvinciaFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTComuneFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTComuneFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTComuneFin> listaIt : esploso){
 					List<SiacRComuneProvinciaFin> risultatoParziale = ricercaSiacRComuneProvinciaFinBySiacTComuneFinCORE(listaIt);
@@ -1162,7 +1172,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1189,8 +1199,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -1204,7 +1214,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTProvinciaFin> ricercaSiacTProvinciaFinBySiacRComuneProvinciaFin(List<SiacRComuneProvinciaFin> listaInput) {
 		List<SiacTProvinciaFin> listaRitorno = new ArrayList<SiacTProvinciaFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRComuneProvinciaFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRComuneProvinciaFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRComuneProvinciaFin> listaIt : esploso){
 					List<SiacTProvinciaFin> risultatoParziale = ricercaSiacTProvinciaFinBySiacRComuneProvinciaFinCORE(listaIt);
@@ -1213,7 +1223,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1240,8 +1250,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -1255,7 +1265,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacRProvinciaRegioneFin> ricercaSiacRProvinciaRegioneFinBySiacTProvinciaFin(List<SiacTProvinciaFin> listaInput) {
 		List<SiacRProvinciaRegioneFin> listaRitorno = new ArrayList<SiacRProvinciaRegioneFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTProvinciaFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTProvinciaFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTProvinciaFin> listaIt : esploso){
 					List<SiacRProvinciaRegioneFin> risultatoParziale = ricercaSiacRProvinciaRegioneFinBySiacTProvinciaFinCORE(listaIt);
@@ -1264,7 +1274,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1291,8 +1301,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -1306,7 +1316,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTRegioneFin> ricercaSiacTRegioneFinFinBySiacRProvinciaRegioneFin(List<SiacRProvinciaRegioneFin> listaInput) {
 		List<SiacTRegioneFin> listaRitorno = new ArrayList<SiacTRegioneFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRProvinciaRegioneFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRProvinciaRegioneFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRProvinciaRegioneFin> listaIt : esploso){
 					List<SiacTRegioneFin> risultatoParziale = ricercaSiacTRegioneFinFinBySiacRProvinciaRegioneFinCORE(listaIt);
@@ -1315,7 +1325,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1342,8 +1352,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -1357,7 +1367,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacTNazioneFin> ricercaSiacTNazioneFinBySiacTComuneFin(List<SiacTComuneFin> listaInput) {
 		List<SiacTNazioneFin> listaRitorno = new ArrayList<SiacTNazioneFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTComuneFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTComuneFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTComuneFin> listaIt : esploso){
 					List<SiacTNazioneFin> risultatoParziale = ricercaSiacTNazioneFinBySiacTComuneFinCORE(listaIt);
@@ -1366,7 +1376,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1393,8 +1403,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -1408,7 +1418,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 	public List<SiacRComuneRegioneFin> ricercaSiacRComuneRegioneFinBySiacTComuneFin(List<SiacTComuneFin> listaInput) {
 		List<SiacRComuneRegioneFin> listaRitorno = new ArrayList<SiacRComuneRegioneFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTComuneFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTComuneFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTComuneFin> listaIt : esploso){
 					List<SiacRComuneRegioneFin> risultatoParziale = ricercaSiacRComuneRegioneFinBySiacTComuneFinCORE(listaIt);
@@ -1417,7 +1427,7 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1444,8 +1454,8 @@ public class SoggettoDaoImpl extends AbstractDao<SiacTSoggettoFin, Integer> impl
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);

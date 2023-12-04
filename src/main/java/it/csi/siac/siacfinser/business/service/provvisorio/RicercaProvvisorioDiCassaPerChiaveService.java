@@ -13,7 +13,7 @@ import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamErr
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisorioDiCassaPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisorioDiCassaPerChiaveResponse;
@@ -60,7 +60,7 @@ public class RicercaProvvisorioDiCassaPerChiaveService extends AbstractBaseServi
 		
 		Integer annoProvvisorio=pdck.getAnnoProvvisorioDiCassa();
 		Integer numeroProvvisorio=pdck.getNumeroProvvisorioDiCassa();
-		String tipoProvvisorio = Constanti.tipoProvvisorioDiCassaEnumToString(pdck.getTipoProvvisorioDiCassa());
+		String tipoProvvisorio = CostantiFin.tipoProvvisorioDiCassaEnumToString(pdck.getTipoProvvisorioDiCassa());
 		
 		//2. Si richiama il metodo "ricercaProvvisorioDiCassaPerChiave" 
 		//   il quale effettua la ricerca per chiave rispetto all'input ricevuto:

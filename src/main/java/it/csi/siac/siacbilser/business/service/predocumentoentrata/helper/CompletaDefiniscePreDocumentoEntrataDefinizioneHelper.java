@@ -13,8 +13,10 @@ import it.csi.siac.siacbilser.business.service.base.Helper;
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.DefiniscePreDocumentoEntrataService;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoEntrataDad;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siacbilser.model.ContoCorrentePredocumentoEntrata;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Bilancio;
+import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.DefiniscePreDocumentoEntrata;
@@ -38,9 +40,12 @@ public class CompletaDefiniscePreDocumentoEntrataDefinizioneHelper implements He
 	private final CausaleEntrata causaleEntrata;
 	private final Date dataCompetenzaDa;
 	private final Date dataCompetenzaA;
+	private final ContoCorrentePredocumentoEntrata contoCorrente;
+	private final List<Integer> listaUidDaDefinire;
 	
-	private final LogUtil log;
+	private final LogSrvUtil log;
 	private final List<Messaggio> messaggi;
+	private final List<Errore> errori;
 	
 	private List<PreDocumentoEntrata> preDocumentiEntrata;
 	
@@ -59,7 +64,9 @@ public class CompletaDefiniscePreDocumentoEntrataDefinizioneHelper implements He
 			Bilancio bilancio,
 			CausaleEntrata causaleEntrata,
 			Date dataCompetenzaDa,
-			Date dataCompetenzaA) {
+			Date dataCompetenzaA,
+			ContoCorrentePredocumentoEntrata contoCorrentePredocumentoEntrata,
+			List<Integer> listaUidDaDefinire) {
 		this.preDocumentoEntrataDad = preDocumentoEntrataDad;
 		this.serviceExecutor = serviceExecutor;
 		
@@ -68,9 +75,12 @@ public class CompletaDefiniscePreDocumentoEntrataDefinizioneHelper implements He
 		this.causaleEntrata = causaleEntrata;
 		this.dataCompetenzaDa = dataCompetenzaDa;
 		this.dataCompetenzaA = dataCompetenzaA;
+		this.contoCorrente = contoCorrentePredocumentoEntrata;
+		this.listaUidDaDefinire = listaUidDaDefinire;
 		
-		this.log = new LogUtil(getClass());
+		this.log = new LogSrvUtil(getClass());
 		this.messaggi = new ArrayList<Messaggio>();
+		this.errori = new ArrayList<Errore>();
 		
 		this.predocumentiElaborati = new ArrayList<PreDocumentoEntrata>();
 		this.predocumentiSaltati = new ArrayList<PreDocumentoEntrata>();
@@ -105,15 +115,22 @@ public class CompletaDefiniscePreDocumentoEntrataDefinizioneHelper implements He
 	private void leggiPredocumenti() {
 		// Caricamento dei predocumenti in stato COMPLETATO
 		preDocumentiEntrata = preDocumentoEntrataDad.findPreDocumentiByCausaleDataCompetenzaStati(
-				causaleEntrata != null ? causaleEntrata.getUid() : null,
-				dataCompetenzaDa,
-				dataCompetenzaA,
+				null,
+				null,
+				null,
+				null,
+				listaUidDaDefinire,
 				Arrays.asList(StatoOperativoPreDocumento.COMPLETO),
 				// Model detail
 				PreDocumentoEntrataModelDetail.Causale, PreDocumentoEntrataModelDetail.Classif, PreDocumentoEntrataModelDetail.Accertamento,
 				PreDocumentoEntrataModelDetail.ProvvisorioDiCassa, PreDocumentoEntrataModelDetail.Sogg, PreDocumentoEntrataModelDetail.Stato, PreDocumentoEntrataModelDetail.AttoAmm);
 		skip = preDocumentiEntrata == null || preDocumentiEntrata.isEmpty();
 	}
+
+	public List<Errore> getErrori() {
+		return errori;
+	}
+	
 
 	/**
 	 * @return the messaggi
@@ -161,6 +178,7 @@ public class CompletaDefiniscePreDocumentoEntrataDefinizioneHelper implements He
 		
 		// Aggiungo tutti i messaggi nella response
 		messaggi.addAll(res.getMessaggi());
+		errori.addAll(res.getErrori());
 	}
 	
 	/**
@@ -255,5 +273,5 @@ public class CompletaDefiniscePreDocumentoEntrataDefinizioneHelper implements He
 		result.add(tmp);
 		return result;
 	}
-	
+
 }

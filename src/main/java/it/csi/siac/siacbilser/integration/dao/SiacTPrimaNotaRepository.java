@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import it.csi.siac.siacbilser.integration.entity.SiacDAmbito;
 import it.csi.siac.siacbilser.integration.entity.SiacDEvento;
 import it.csi.siac.siacbilser.integration.entity.SiacTPdceConto;
 import it.csi.siac.siacbilser.integration.entity.SiacTPrimaNota;
@@ -116,6 +117,12 @@ public interface SiacTPrimaNotaRepository extends JpaRepository<SiacTPrimaNota, 
 			)
 	List<SiacDEvento> findEventoPrimaNotaLibera(@Param("pnotaId") Integer pnotaId, @Param("dataInput") Date dataInizioValiditaFiltro);
 	
-	
+	@Query(" SELECT pn.siacDAmbito "
+			+ " FROM SiacTPrimaNota pn "
+			+ " WHERE pn.dataCancellazione IS NULL "
+			+ " AND pn.pnotaId = :pnotaId "
+			+ " AND pn.siacTEnteProprietario.enteProprietarioId= :enteId "
+			)
+	SiacDAmbito findSiacDAmbito(@Param("pnotaId") Integer pnotaId, @Param("enteId") Integer enteId);
 	
 }

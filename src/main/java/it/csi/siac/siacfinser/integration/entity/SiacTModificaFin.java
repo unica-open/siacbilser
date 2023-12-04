@@ -45,6 +45,28 @@ public class SiacTModificaFin extends SiacTEnteBase {
 	@Column(name="mod_num")
 	private Integer modNum;
 
+	//SIAC-6997
+	@Column(name="elab_ror_reanno")
+	private Boolean elabRorReanno;
+	
+//	//SIAC-8650
+//	@OneToMany(mappedBy = "siacTmodifica")
+//	private List<SiacRModificaVincolo> siacRModificaVincolos;
+
+	
+	@OneToMany(mappedBy="siacTModifica")
+	private List<SiacRMovgestAggiudicazioneFin> SiacRMovgestAggiudicaziones;
+
+	
+	
+	public Boolean getElabRorReanno() {
+		return elabRorReanno;
+	}
+
+	public void setElabRorReanno(Boolean elabRorReanno) {
+		this.elabRorReanno = elabRorReanno;
+	}
+
 	//bi-directional many-to-one association to SiacRModificaStatoFin
 	@OneToMany(mappedBy="siacTModifica")
 	private List<SiacRModificaStatoFin> siacRModificaStatos;
@@ -142,5 +164,13 @@ public class SiacTModificaFin extends SiacTEnteBase {
 	public void setUid(Integer uid) {
 		// TODO Auto-generated method stub
 		this.modId = uid;
+	}
+
+	public List<SiacRMovgestAggiudicazioneFin> getSiacRMovgestAggiudicaziones() {
+		return SiacRMovgestAggiudicaziones;
+	}
+
+	public void setSiacRMovgestAggiudicaziones(List<SiacRMovgestAggiudicazioneFin> siacRMovgestAggiudicaziones) {
+		SiacRMovgestAggiudicaziones = siacRMovgestAggiudicaziones;
 	}
 }

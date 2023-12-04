@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import it.csi.siac.siaccommonser.integration.entity.SiacTBaseExt;
+
 // TODO: Auto-generated Javadoc
 /**
  * Entita comune per le tabelle che hanno ente_proprietario_id
@@ -29,6 +31,19 @@ public abstract class SiacTEnteBaseExt extends SiacTBaseExt {
 	@JoinColumn(name="ente_proprietario_id")
 	private SiacTEnteProprietario siacTEnteProprietario;
 
+	public SiacTEnteBaseExt(SiacTEnteBaseExt siacTEnteBaseExt) {
+		super(siacTEnteBaseExt);
+		this.siacTEnteProprietario = siacTEnteBaseExt.siacTEnteProprietario;
+	}
+	
+	
+
+	public SiacTEnteBaseExt() {
+		super();
+	}
+
+
+
 	/**
 	 * Gets the siac t ente proprietario.
 	 *
@@ -46,7 +61,5 @@ public abstract class SiacTEnteBaseExt extends SiacTBaseExt {
 	public void setSiacTEnteProprietario(SiacTEnteProprietario siacTEnteProprietario) {
 		this.siacTEnteProprietario = siacTEnteProprietario;
 	}
-	
-	
 	
 }

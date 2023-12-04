@@ -9,7 +9,7 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
 
 /**
- * Base per i ServiceHelper.
+ * Base per i IntegServiceHelper.
  * 
  * @author Domenico
  */

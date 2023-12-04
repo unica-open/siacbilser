@@ -13,7 +13,7 @@ import it.csi.siac.siacbilser.integration.dao.SiacTMovgestTRepository;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTsDetTipoEnum;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -33,7 +33,7 @@ import it.csi.siac.siacgenser.model.RegistrazioneMovFin;
  * @author Domenico
  */
 public class SubAccertamentoMovimentoHandler extends MovimentoHandler<SubAccertamento> {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private SiacTMovgestTRepository siacTMovgestTRepository;
 	private SoggettoDad soggettoDad;
@@ -112,7 +112,7 @@ public class SubAccertamentoMovimentoHandler extends MovimentoHandler<SubAccerta
 		Entita movimento = registrazioneMovFin.getMovimento();
 		SubAccertamento subAcc = (SubAccertamento) movimento;
 		String descrizione = subAcc.getDescrizione() != null ? subAcc.getDescrizione() : "";
-		return String.format("Acc %s %s", subAcc.getNumero(), descrizione);
+		return String.format("Acc %s %s", subAcc.getNumeroBigDecimal(), descrizione);
 	}
 
 	@Override

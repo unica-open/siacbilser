@@ -15,7 +15,7 @@ import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilser.integration.entity.SiacRProgrammaAttoAmm;
 import it.csi.siac.siacbilser.integration.entity.SiacTAttoAmm;
 import it.csi.siac.siacbilser.integration.entity.SiacTProgramma;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,7 +28,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class ProgettoAttoAmministrativoConverter extends DozerConverter<AttoAmministrativo, SiacTProgramma > {
 
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	/**
 	 * Instantiates a new progetto atto amministrativo converter.

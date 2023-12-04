@@ -6,6 +6,9 @@ package it.csi.siac.siacbilser.integration.entity;
 
 import java.util.List;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
@@ -22,8 +25,16 @@ import javax.persistence.Table;
 @NamedQuery(name="SirfelDNatura.findAll", query="SELECT s FROM SirfelDNatura s")
 public class SirfelDNatura extends SirfelTBase<SirfelDNaturaPK> {
 	private static final long serialVersionUID = 1L;
-
+ 
+	
+	//SIAC-7557 inizio FL
 	@EmbeddedId
+	@AttributeOverrides({
+        @AttributeOverride(name="enteProprietarioId",
+                           column=@Column(name="ente_proprietario_id")),
+        @AttributeOverride(name="codice",
+                           column=@Column(name="codice"))
+    })
 	private SirfelDNaturaPK id;
 
 	private String descrizione;
@@ -44,6 +55,9 @@ public class SirfelDNatura extends SirfelTBase<SirfelDNaturaPK> {
 //	@OneToMany(mappedBy="sirfelDNatura2")
 //	private List<SirfelTRiepilogoBeni> sirfelTRiepilogoBenis2;
 
+	
+	
+	
 	public SirfelDNatura() {
 	}
 

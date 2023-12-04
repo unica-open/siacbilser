@@ -48,6 +48,8 @@ public class InserisceAnagraficaVincoloService extends CheckedAccountBaseService
 		checkNotNull(vincolo.getCodice(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice Vincolo"));
 		checkNotNull(vincolo.getTipoVincoloCapitoli(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("tipo vincolo capitoli"));
 		checkNotNull(vincolo.getStatoOperativo(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("stato operativo"));
+		//SIAC-7192
+		checkNotNull(vincolo.getRisorsaVincolata(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("risorsa vincolata"));
 	}
 	
 	

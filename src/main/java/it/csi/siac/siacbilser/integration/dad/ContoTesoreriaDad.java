@@ -18,7 +18,6 @@ import it.csi.siac.siacbilser.integration.entity.SiacDContotesoreria;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siaccommonser.integration.dad.base.BaseDadImpl;
 import it.csi.siac.siaccorser.model.Ente;
-import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -39,20 +38,29 @@ public class ContoTesoreriaDad extends BaseDadImpl {
 	 * @param ente the ente
 	 * @return List&lt;TipoCausale&gt;
 	 */
-	public List<ContoTesoreria> ricercaContiTesoreriaByEnte(Ente ente) {
+	public List<it.csi.siac.siacfin2ser.model.ContoTesoreria> ricercaContiTesoreriaByEnte(Ente ente) {
 
 		List<SiacDContotesoreria> elencoSiacDContotesoreria = siacDContotesoreriaRepository.findContitesoreriaByEnte(ente.getUid());
 		if(elencoSiacDContotesoreria == null) {
-			return new ArrayList<ContoTesoreria>();
+			return new ArrayList<it.csi.siac.siacfin2ser.model.ContoTesoreria>();
 		}
 
-		List<ContoTesoreria> elencoContiTesoreria = convertiLista(elencoSiacDContotesoreria, ContoTesoreria.class, BilMapId.SiacDContotesoreria_ContoTesoreria);
+		List<it.csi.siac.siacfin2ser.model.ContoTesoreria> elencoContiTesoreria = convertiLista(elencoSiacDContotesoreria, 
+				it.csi.siac.siacfin2ser.model.ContoTesoreria.class, BilMapId.SiacDContotesoreria_ContoTesoreria);
 		return elencoContiTesoreria;
 	}
 
-	public it.csi.siac.siacfinser.model.ContoTesoreria findByUid(int uid) {
+	public it.csi.siac.siacfin2ser.model.ContoTesoreria findContoTesoreriaByEnteCodice(Ente ente, String codice) {
+
+		SiacDContotesoreria siacDContotesoreria = siacDContotesoreriaRepository.findContotesoreriaByEnteCodice(ente.getUid(), codice);
+
+		return siacDContotesoreria == null ? null : 
+			mapNotNull(siacDContotesoreria, it.csi.siac.siacfin2ser.model.ContoTesoreria.class, BilMapId.SiacDContotesoreria_ContoTesoreria);
+	}
+
+	public it.csi.siac.siacfin2ser.model.ContoTesoreria findByUid(int uid) {
 		SiacDContotesoreria siacDContotesoreria = siacDContotesoreriaRepository.findOne(uid);
-		it.csi.siac.siacfinser.model.ContoTesoreria contoTesoreria = mapNotNull(siacDContotesoreria, it.csi.siac.siacfinser.model.ContoTesoreria.class, BilMapId.SiacDContotesoreria_ContoTesoreria);
+		it.csi.siac.siacfin2ser.model.ContoTesoreria contoTesoreria = mapNotNull(siacDContotesoreria, it.csi.siac.siacfin2ser.model.ContoTesoreria.class, BilMapId.SiacDContotesoreria_ContoTesoreria);
 		return contoTesoreria;
 	}
 }

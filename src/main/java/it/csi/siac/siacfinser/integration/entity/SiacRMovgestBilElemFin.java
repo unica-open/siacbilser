@@ -41,6 +41,15 @@ public class SiacRMovgestBilElemFin extends SiacTEnteBase {
 	@ManyToOne
 	@JoinColumn(name="movgest_id")
 	private SiacTMovgestFin siacTMovgest;
+	
+	//SIAC-7349
+//	@ManyToOne
+//	@JoinColumn(name="elem_det_comp_id")
+//	private SiacTBilElemDetCompFin siacTBilElemDetComp;
+	//SIAC-7349
+	@ManyToOne
+	@JoinColumn(name="elem_det_comp_tipo_id")
+	private SiacDBilElemDetCompTipoFin siacDBilElemDetCompTipo;
 
 	public SiacRMovgestBilElemFin() {
 	}
@@ -80,4 +89,32 @@ public class SiacRMovgestBilElemFin extends SiacTEnteBase {
 		// TODO Auto-generated method stub
 		this.movgestAttoAmmId = uid;
 	}
+
+	/**
+	 * @return the siacDBilElemDetCompTipoFin
+	 */
+	public SiacDBilElemDetCompTipoFin getSiacDBilElemDetCompTipo() {
+		return siacDBilElemDetCompTipo;
+	}
+
+	/**
+	 * @param siacDBilElemDetCompTipoFin the siacDBilElemDetCompTipoFin to set
+	 */
+	public void setSiacDBilElemDetCompTipo(SiacDBilElemDetCompTipoFin siacDBilElemDetCompTipo) {
+		this.siacDBilElemDetCompTipo = siacDBilElemDetCompTipo;
+	}
+	
+//	/**
+//	 * @return the siacTBilElemDetComp
+//	 */
+//	public SiacTBilElemDetCompFin getSiacTBilElemDetComp() {
+//		return siacTBilElemDetComp;
+//	}
+//
+//	/**
+//	 * @param siacTBilElemDetComp the siacTBilElemDetComp to set
+//	 */
+//	public void setSiacTBilElemDetComp(SiacTBilElemDetCompFin siacTBilElemDetComp) {
+//		this.siacTBilElemDetComp = siacTBilElemDetComp;
+//	}
 }

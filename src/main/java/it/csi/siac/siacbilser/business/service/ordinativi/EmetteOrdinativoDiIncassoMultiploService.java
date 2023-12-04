@@ -164,5 +164,11 @@ public class EmetteOrdinativoDiIncassoMultiploService extends EmetteOrdinativiDa
 			return false; //Il subdocumento viene scartato. Si continua con il prossimo.
 		}
 	}
+	
+	@Override
+	//SIAC-8017-CMTO
+	protected void impostaMessaggiInResponse(List<Messaggio> messaggi) {
+		res.addMessaggi(messaggi);
+	}
 		
 }

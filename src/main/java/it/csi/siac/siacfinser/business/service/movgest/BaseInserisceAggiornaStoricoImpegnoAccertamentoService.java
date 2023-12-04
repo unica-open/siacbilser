@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.BaseInserisceAggiornaStoricoImpegnoAccertamento;
 import it.csi.siac.siacfinser.frontend.webservice.msg.BaseInserisceAggiornaStoricoImpegnoAccertamentoResponse;
@@ -63,12 +63,12 @@ public abstract class BaseInserisceAggiornaStoricoImpegnoAccertamentoService<REQ
 		checkNotNull(impegno, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("impegno non valorizzato"));
 		checkNotNull(accertamento, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("accertamento non valorizzato"));
 		
-		checkCondition(impegno.getAnnoMovimento() != 0 && impegno.getNumero() != null && impegno.getNumero().signum() == 1, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Anno/numero impegno"));
-		checkCondition(subImpegno == null || subImpegno.getNumero() == null || subImpegno.getNumero().signum() == 1, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero subimpegno"));
+		checkCondition(impegno.getAnnoMovimento() != 0 && impegno.getNumeroBigDecimal() != null && impegno.getNumeroBigDecimal().signum() == 1, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Anno/numero impegno"));
+		checkCondition(subImpegno == null || subImpegno.getNumeroBigDecimal() == null || subImpegno.getNumeroBigDecimal().signum() == 1, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero subimpegno"));
 
 		
-		checkCondition(accertamento.getAnnoMovimento() != 0 && accertamento.getNumero() != null && accertamento.getNumero().signum() == 1, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Anno/numero accertamento"));
-		checkCondition(subAccertamento == null || subAccertamento.getNumero() == null || subAccertamento.getNumero().signum() == 1, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero subimpegno"));
+		checkCondition(accertamento.getAnnoMovimento() != 0 && accertamento.getNumeroBigDecimal() != null && accertamento.getNumeroBigDecimal().signum() == 1, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Anno/numero accertamento"));
+		checkCondition(subAccertamento == null || subAccertamento.getNumeroBigDecimal() == null || subAccertamento.getNumeroBigDecimal().signum() == 1, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero subimpegno"));
 	}
 
 	
@@ -77,9 +77,9 @@ public abstract class BaseInserisceAggiornaStoricoImpegnoAccertamentoService<REQ
 	 */
 	protected void caricaDatiImpegnoSubimpegno(StoricoImpegnoAccertamento storicoImpegniAccertamenti) {
 		
-		BigDecimal numero = subImpegno != null? subImpegno.getNumero() : null;
+		BigDecimal numero = subImpegno != null? subImpegno.getNumeroBigDecimal() : null;
 		
-		impegno = getImpegno(impegno.getAnnoMovimento(), impegno.getNumero(), numero, String.valueOf(req.getBilancio().getAnno()));
+		impegno = getImpegno(impegno.getAnnoMovimento(), impegno.getNumeroBigDecimal(), numero, String.valueOf(req.getBilancio().getAnno()));
 		
 		if(impegno == null || (isStoricizzazioneSuSub(subImpegno) && !trovatoSubIndicato(impegno.getElencoSubImpegni(), subImpegno))) {
 			String msg = impegno == null? "Impossibile reperire l'impegno " : "Impossibile reperire il subimpegno"; 
@@ -110,7 +110,8 @@ public abstract class BaseInserisceAggiornaStoricoImpegnoAccertamentoService<REQ
 		DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		
 		EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(req.getRichiedente(),	ente, annoBilancioImpegno,
-				Integer.valueOf(annoImpegno), numeroImpegno, paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, Constanti.MOVGEST_TIPO_IMPEGNO, false);
+				Integer.valueOf(annoImpegno), numeroImpegno, paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, 
+				CostantiFin.MOVGEST_TIPO_IMPEGNO, false, false);
 		
 		
 		return (Impegno) esitoRicercaMov.getMovimentoGestione();
@@ -139,8 +140,8 @@ public abstract class BaseInserisceAggiornaStoricoImpegnoAccertamentoService<REQ
 			return;
 		}
 		String annoBilancioPiuUno = String.valueOf(req.getBilancio().getAnno() + 1);
-		BigDecimal numerosub = storicoImpegniAccertamenti.getSubImpegno() != null? storicoImpegniAccertamenti.getSubImpegno().getNumero() : null;
-		Impegno impegnoAnnoBilancioPiuUno = getImpegno(storicoImpegniAccertamenti.getImpegno().getAnnoMovimento(), storicoImpegniAccertamenti.getImpegno().getNumero(), numerosub, annoBilancioPiuUno);
+		BigDecimal numerosub = storicoImpegniAccertamenti.getSubImpegno() != null? storicoImpegniAccertamenti.getSubImpegno().getNumeroBigDecimal() : null;
+		Impegno impegnoAnnoBilancioPiuUno = getImpegno(storicoImpegniAccertamenti.getImpegno().getAnnoMovimento(), storicoImpegniAccertamenti.getImpegno().getNumeroBigDecimal(), numerosub, annoBilancioPiuUno);
 		boolean storicizzazioneSuSub = isStoricizzazioneSuSub(storicoImpegniAccertamenti.getSubImpegno());
 		if(impegnoAnnoBilancioPiuUno == null || (storicizzazioneSuSub && !trovatoSubIndicato(impegnoAnnoBilancioPiuUno.getElencoSubImpegni(), storicoImpegniAccertamenti.getSubImpegno()))) {
 			log.debug(methodName, "Non ho un impegno nell'anno di bilancio + 1. Non ribalto il colleghamento.");
@@ -161,7 +162,7 @@ public abstract class BaseInserisceAggiornaStoricoImpegnoAccertamentoService<REQ
 	 * @return
 	 */
 	protected boolean isStoricizzazioneSuSub(SubImpegno sub) {
-		return sub != null && sub.getNumero() != null && sub.getNumero().signum() ==1;
+		return sub != null && sub.getNumeroBigDecimal() != null && sub.getNumeroBigDecimal().signum() ==1;
 	}
 
 
@@ -171,7 +172,7 @@ public abstract class BaseInserisceAggiornaStoricoImpegnoAccertamentoService<REQ
 	 * @return
 	 */
 	protected boolean trovatoSubIndicato(List<SubImpegno> subImpegni, SubImpegno subImpegnoIndicato) {
-		return  subImpegni != null && !subImpegni.isEmpty() || subImpegnoIndicato.getNumero().compareTo(subImpegni.get(0).getNumero()) ==0;
+		return  subImpegni != null && !subImpegni.isEmpty() || subImpegnoIndicato.getNumeroBigDecimal().compareTo(subImpegni.get(0).getNumeroBigDecimal()) ==0;
 	}
 
 }

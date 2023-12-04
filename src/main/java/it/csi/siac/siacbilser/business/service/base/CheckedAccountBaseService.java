@@ -7,6 +7,7 @@ package it.csi.siac.siacbilser.business.service.base;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -15,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.dad.AccountDad;
+import it.csi.siac.siacbilser.integration.dad.EnteDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Entita;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnte;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
@@ -44,6 +47,10 @@ public abstract class CheckedAccountBaseService<REQ extends ServiceRequest,RES e
 	@Autowired
 	protected AccountDad accountDad;
 	
+	//SIAC-8362
+	@Autowired
+	private EnteDad enteDad;
+	
 	protected List<String> codiciAzioniConsentite;
 	
 	@Resource(name="azioniRichiesteProperties")
@@ -54,6 +61,8 @@ public abstract class CheckedAccountBaseService<REQ extends ServiceRequest,RES e
 	
 	/** Login operazione da propagare nei DAD. */
 	protected String loginOperazione;
+	
+	
 	
 	@Override
 	protected void checkRichiedente() throws ServiceParamError {
@@ -96,6 +105,27 @@ public abstract class CheckedAccountBaseService<REQ extends ServiceRequest,RES e
 	private void caricaAzioniConsentiteRichiedente() {
 		this.codiciAzioniConsentite = accountDad.findCodiciAzioniConsentite(req.getRichiedente().getAccount().getUid());
 		
+	}
+	
+	//SIAC-8362
+	 /**
+     * @deprecated
+     * This method is no longer used.
+     * <p> See {@link it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum}.
+     */	
+	@Deprecated
+	protected Map<ParametroConfigurazioneEnte, String> caricaMappaConfigurazioni(List<ParametroConfigurazioneEnte> parametri){
+		return enteDad.caricaConfigurazionePerEnte(ente, parametri);
+	}
+	
+	 /**
+     * @deprecated
+     * This method is no longer used.
+     * <p> See {@link it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum}.
+     */	
+	@Deprecated
+	protected Map<ParametroConfigurazioneEnte, String> caricaMappaConfigurazioni(){
+		return enteDad.caricaConfigurazionePerEnte(ente);
 	}
 
 	/**

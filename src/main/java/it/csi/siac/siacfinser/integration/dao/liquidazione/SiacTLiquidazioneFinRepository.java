@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import it.csi.siac.siacfinser.integration.entity.SiacRMutuoVoceLiquidazioneFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTBilElemFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTLiquidazioneFin;
 
 public interface SiacTLiquidazioneFinRepository extends JpaRepository<SiacTLiquidazioneFin, Integer> {
@@ -20,7 +20,6 @@ public interface SiacTLiquidazioneFinRepository extends JpaRepository<SiacTLiqui
 	String condizioneRstato = " ( (rstato.dataInizioValidita < :dataInput) AND (rstato.dataFineValidita IS NULL OR :dataInput < rstato.dataFineValidita) AND rstato.dataCancellazione IS NULL ) ";
 	String condizioneLiq = " ( (liq.dataInizioValidita < :dataInput)  AND (liq.dataFineValidita IS NULL OR :dataInput < liq.dataFineValidita) AND liq.dataCancellazione IS NULL ) ";
 	String condizioneRelLiqMovGest = " ( (relLiqMovGest.dataInizioValidita < :dataInput) AND (relLiqMovGest.dataFineValidita IS NULL OR :dataInput < relLiqMovGest.dataFineValidita) AND relLiqMovGest.dataCancellazione IS NULL ) ";
-	String condizioneRelMutuoVoceLiq = " ( (relMutuoVoceLiq.dataInizioValidita < :dataInput) AND (relMutuoVoceLiq.dataFineValidita IS NULL OR :dataInput < relMutuoVoceLiq.dataFineValidita) AND relMutuoVoceLiq.dataCancellazione IS NULL ) ";
 	
 	@Query("FROM SiacTLiquidazioneFin WHERE siacTEnteProprietario.enteProprietarioId = :enteProprietarioId AND liqId = :idLiq AND " + condizione)
 	public SiacTLiquidazioneFin findLiquidazioneValidaByEnteAndId(@Param("enteProprietarioId") Integer enteProprietarioId,
@@ -82,31 +81,27 @@ public interface SiacTLiquidazioneFinRepository extends JpaRepository<SiacTLiqui
 			                                     @Param("idMovGestTs") Integer idMovGestTs, @Param("statoLiquidazioneAnnullata") String statoLiquidazioneAnnullata, @Param("dataInput") Timestamp dataInput);
 	
 	
-	@Query("SELECT SUM(liq.liqImporto) FROM SiacTLiquidazioneFin liq, SiacRLiquidazioneStatoFin rstato, SiacRMutuoVoceLiquidazioneFin relMutuoVoceLiq "+
-			   " WHERE liq.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId AND " + condizioneLiq + " AND " +
-			   "       liq.liqId = rstato.siacTLiquidazione.liqId AND " + condizioneRstato + " AND " +
-			   "       rstato.dataFineValidita IS NULL AND " + 
-	           "       rstato.siacDLiquidazioneStato.liqStatoCode = :statoLiquidazione AND " +
-			   "       liq.liqId = relMutuoVoceLiq.siacTLiquidazione.liqId AND " + condizioneRelMutuoVoceLiq + " AND " +
-		       "       relMutuoVoceLiq.siacTMutuoVoce.mutVoceId = :idVoceMutuo ") 
 
-		public BigDecimal findDisponibilitaLiquidareVoceMutuo(@Param("enteProprietarioId") Integer enteProprietarioId, 
-				                                              @Param("idVoceMutuo") Integer idVoceMutuo,
-				                                              @Param("statoLiquidazione") String statoLiquidazione,
-				                                              @Param("dataInput") Timestamp dataInput);
 	
-	
-	@Query("SELECT DISTINCT relMutuoVoceLiq FROM SiacTLiquidazioneFin liq, SiacRLiquidazioneStatoFin rstato, SiacRMutuoVoceLiquidazioneFin relMutuoVoceLiq "+
-			   " WHERE liq.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId AND " + condizioneLiq + " AND " +
-			   "       liq.liqId = rstato.siacTLiquidazione.liqId AND " + condizioneRstato + " AND " +
-			   "       rstato.dataFineValidita IS NULL AND " + 
-	           "       rstato.siacDLiquidazioneStato.liqStatoCode = :statoLiquidazione AND " +
-			   "       liq.liqId = relMutuoVoceLiq.siacTLiquidazione.liqId AND " + condizioneRelMutuoVoceLiq + " AND " +
-		       "       relMutuoVoceLiq.siacTMutuoVoce.mutVoceId IN :idVoceMutuoList ") 
-		public List<SiacRMutuoVoceLiquidazioneFin> findSiacRMutuoVoceLiquidazioneFinByVociMutuo(@Param("enteProprietarioId") Integer enteProprietarioId, 
-															  @Param("idVoceMutuoList") List<Integer> idVoceMutuoList,
-				                                              @Param("statoLiquidazione") String statoLiquidazione,
-				                                              @Param("dataInput") Timestamp dataInput);
+
+	@Query( " SELECT rcap.siacTBilElem "
+			+ " FROM SiacTMovgestFin mov, SiacRMovgestBilElemFin rcap "
+			+ " WHERE rcap.siacTMovgest = mov "
+			+ " AND rcap.dataCancellazione IS NULL "			
+			+ " AND EXISTS ("
+			+ " 	FROM SiacRLiquidazioneMovgestFin rmov, SiacTLiquidazioneFin liq " //, SiacTPeriodo per"
+			+ "     WHERE rmov.siacTLiquidazione = liq "
+			+ " 	AND rmov.siacTMovgestT.siacTMovgest = mov "
+			+ " 	AND rmov.dataCancellazione IS NULL "
+			+ "     AND liq.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			+ "     AND liq.liqAnno = :liqAnno "
+			+ "     AND liq.liqNumero = :liqNumero "
+			+ "     AND liq.siacTBil.siacTPeriodo.anno = :annoBilancio "
+			+ " ) "
+			+ ")"
+						
+			)
+	public List<SiacTBilElemFin> caricaCapitoloAssociatoALiquidazione(@Param("liqAnno") Integer liqAnno,@Param("liqNumero") BigDecimal liqNumero, @Param("annoBilancio") String annoBilancio, @Param("enteProprietarioId") Integer enteProprietarioId );
 	
 	
 }

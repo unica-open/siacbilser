@@ -7,7 +7,7 @@ package it.csi.siac.siacbilser.business.service.base;
 import org.springframework.context.ApplicationContext;
 
 import it.csi.siac.siacbilser.business.utility.Utility;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.BaseService;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.ServiceRequest;
@@ -23,7 +23,7 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
  */
 public class BaseServiceExecutor {
 	
-	private static LogUtil log = new LogUtil(BaseServiceExecutor.class);
+	private static LogSrvUtil log = new LogSrvUtil(BaseServiceExecutor.class);
 	
 	/** Prevent instantiation */
 	private BaseServiceExecutor() {
@@ -77,6 +77,7 @@ public class BaseServiceExecutor {
 		final String methodName = "execute";
 		SRES serviceResponse;
 		try {
+			log.initializeUserSessionInfo(serviceRequest.getUserSessionInfo());
 			serviceResponse = service.executeService(serviceRequest);
 		} catch (Throwable t){
 			log.error(methodName, "Errore di sistema sollevato da executeService. Servizio: "+ serviceClass.getSimpleName(),t);

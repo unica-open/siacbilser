@@ -19,8 +19,9 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.business.service.movgest.RicercaAccertamentiSubAccertamentiService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentiSubAccertamenti;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentiSubAccertamentiResponse;
-import it.csi.siac.siacintegser.business.service.ServiceHelper;
 import it.csi.siac.siacintegser.business.service.base.RicercaPaginataBaseService;
+import it.csi.siac.siacintegser.business.service.helper.ProvvedimentoServiceHelper;
+import it.csi.siac.siacintegser.business.service.helper.StrutturaAmministrativoContabileServiceHelper;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.movimentoGestione.RicercaAccertamento;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.movimentoGestione.RicercaAccertamentoResponse;
@@ -31,10 +32,9 @@ import it.csi.siac.siacintegser.model.messaggio.MessaggioInteg;
 public class RicercaAccertamentoService extends
 		RicercaPaginataBaseService<RicercaAccertamento, RicercaAccertamentoResponse>
 {
+	@Autowired private StrutturaAmministrativoContabileServiceHelper strutturaAmministrativoContabileServiceHelper;
+	@Autowired private ProvvedimentoServiceHelper provvedimentoServiceHelper;
 	
-	@Autowired 
-	ServiceHelper serviceHelper;
-
 	@Override
 	protected RicercaAccertamentoResponse execute(RicercaAccertamento ireq)
 	{
@@ -44,14 +44,14 @@ public class RicercaAccertamentoService extends
 		RicercaAccertamentoResponse ires = instantiateNewIRes();
 		
 		if(!StringUtils.isEmpty(ireq.getCodiceStruttura()) && !StringUtils.isEmpty(ireq.getCodiceTipoStruttura())){
-			StrutturaAmministrativoContabile sac = serviceHelper.ricercaStrutturaByCodice(ente, richiedente, ireq.getCodiceStruttura(), ireq.getCodiceTipoStruttura());
+			StrutturaAmministrativoContabile sac = strutturaAmministrativoContabileServiceHelper.findStrutturaAmministrativoContabileByCodice(ente, richiedente, ireq.getCodiceStruttura(), ireq.getCodiceTipoStruttura());
 			if(sac ==null){
 				addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "il codice e il tipo della struttura non esistono");
 				return ires;
 			}else req.getParametroRicercaAccSubAcc().setUidStrutturaAmministrativoContabile(sac.getUid());
 		}
 		
-		TipoAtto tipoAtto = serviceHelper.ricercaTipoProvvedimentoByCodice(ente, richiedente, ireq.getCodiceTipoProvvedimento());
+		TipoAtto tipoAtto = provvedimentoServiceHelper.findTipoAttoByCodice(ente, richiedente, ireq.getCodiceTipoProvvedimento());
 		if(tipoAtto ==null){
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "il codice del provvedimento non esiste");
 			return ires;
@@ -59,7 +59,7 @@ public class RicercaAccertamentoService extends
 		
 
 		RicercaAccertamentiSubAccertamentiResponse res = appCtx.getBean(RicercaAccertamentiSubAccertamentiService.class).executeService(req);
-		checkBusinessServiceResponse(res);
+		checkServiceResponse(res);
 		
 		if(res.getListaAccertamenti()==null || res.getListaAccertamenti().isEmpty()){
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "nessun filtro di ricerca soddisfatto");
@@ -84,30 +84,30 @@ public class RicercaAccertamentoService extends
 		// controllo parametri in input
 		// se ho il provvedimento è sufficiente per eseguire la ricerca
 		// altrimenti diventa obbligatorio il numero impegno 
-		checkCondition((ireq.getNumeroAccertamento() != null && ireq.getAnnoAccertamento() != null) || ireq.getNumeroProvvedimento() != null
+		checkParamCondition((ireq.getNumeroAccertamento() != null && ireq.getAnnoAccertamento() != null) || ireq.getNumeroProvvedimento() != null
 				&& ireq.getAnnoProvvedimento() != null && ireq.getCodiceTipoProvvedimento()!=null,
 				ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("numero e anno accertamento"));
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || ireq.getAnnoProvvedimento() != null ||
 				ireq.getCodiceTipoProvvedimento() == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno provvedimento"));
 
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() != null || ireq.getAnnoProvvedimento() == null || 
 				ireq.getCodiceTipoProvvedimento()  == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || ireq.getAnnoProvvedimento() == null || 
 				ireq.getCodiceTipoProvvedimento()  != null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getCodiceStruttura() == null || ireq.getCodiceTipoStruttura() != null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo struttura"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getCodiceStruttura() != null || ireq.getCodiceTipoStruttura() == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice struttura"));	
 	}	

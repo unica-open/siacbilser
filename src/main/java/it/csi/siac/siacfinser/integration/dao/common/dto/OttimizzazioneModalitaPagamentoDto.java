@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.integration.entity.SiacTModpagFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTModpagModFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTNazioneFin;
@@ -31,7 +31,7 @@ public class OttimizzazioneModalitaPagamentoDto implements Serializable {
 	//UTILITIES:
 	
 	public SiacTModpagFin findSiacTModpagFinByID(Integer modpagId){
-		return CommonUtils.getByIdSiacTBase(distintiSiacTSiacTModpagFinCoinvolti, modpagId);
+		return CommonUtil.getByIdSiacTBase(distintiSiacTSiacTModpagFinCoinvolti, modpagId);
 	}
 	
 	
@@ -44,7 +44,7 @@ public class OttimizzazioneModalitaPagamentoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		if(filtrati!=null && filtrati.size()>0){
 			//IN TEORIA SEMPRE UNO ED UNO SOLO
 			return filtrati.get(0);
@@ -62,7 +62,7 @@ public class OttimizzazioneModalitaPagamentoDto implements Serializable {
 				}
 			}
 		}
-		return CommonUtils.getValidoSiacTBase(filtrati, null);
+		return CommonUtil.getValidoSiacTBase(filtrati, null);
 	}
 
 	public List<SiacTModpagModFin> getDistintiSiacTModpagModFinCoinvolti() {

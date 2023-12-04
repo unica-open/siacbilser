@@ -14,7 +14,7 @@ SPDX-License-Identifier: EUPL-1.2
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 	
-	<context:component-scan base-package="it.csi.siac.siacbilser, it.csi.siac.siaccorser, it.csi.siac.siacintegser, it.csi.siac.siacfinser" />
+	<context:component-scan base-package="it.csi.siac.siacbilser, it.csi.siac.siaccorser, it.csi.siac.siacintegser,it.csi.siac.custom,  it.csi.siac.siacfinser" />
 	<context:annotation-config />
 	
 	<task:annotation-driven executor="asyncServiceExecutor" scheduler="asyncServiceScheduler"/>

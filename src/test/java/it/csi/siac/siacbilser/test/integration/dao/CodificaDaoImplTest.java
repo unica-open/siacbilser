@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.integration.entity.SiacTClass;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.integration.dao.CodificaDao;
 
 // TODO: Auto-generated Javadoc
@@ -22,7 +22,7 @@ import it.csi.siac.siaccorser.integration.dao.CodificaDao;
  */
 public class CodificaDaoImplTest extends BaseJunit4TestCase {
 	
-	private final LogUtil l = new LogUtil(getClass());
+	private final LogSrvUtil l = new LogSrvUtil(getClass());
 	
 	// XXX: Per eseguire il test è necessario aggiungere l'annotazione @Component sulla classe CodificaDaoImpl
 	/** The codifica bil dao. */

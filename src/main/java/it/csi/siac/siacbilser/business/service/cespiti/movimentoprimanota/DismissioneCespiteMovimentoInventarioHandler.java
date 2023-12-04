@@ -8,7 +8,7 @@ import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.integration.dad.DismissioneCespiteDad;
 import it.csi.siac.siaccespser.model.DismissioneCespite;
 import it.csi.siac.siaccespser.model.DismissioneCespiteModelDetail;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
@@ -22,7 +22,7 @@ import it.csi.siac.siacgenser.model.PrimaNota;
  * @version 1.0.0 - 24-10-2018
  */
 public class DismissioneCespiteMovimentoInventarioHandler extends MovimentoInventarioHandler<DismissioneCespite> {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private DismissioneCespiteDad dismissioneCespiteDad;
 	

@@ -25,7 +25,7 @@ import it.csi.siac.siacbilser.business.service.provvedimento.InserisceProvvedime
 import it.csi.siac.siacbilser.business.service.provvedimento.RicercaProvvedimentoService;
 import it.csi.siac.siacbilser.business.service.provvedimento.TipiProvvedimentoService;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Entita.StatoEntita;
 import it.csi.siac.siaccorser.model.Richiedente;
@@ -35,7 +35,7 @@ import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
  * The Class ProvvedimentoImplDLTest.
  */
 public class ProvvedimentoImplTest extends BaseJunit4TestCase {
-	private static final LogUtil log = new LogUtil(ProvvedimentoImplTest.class);
+	private static final LogSrvUtil log = new LogSrvUtil(ProvvedimentoImplTest.class);
 	
 	/** The inserisce service. */
 	@Autowired
@@ -281,6 +281,47 @@ public class ProvvedimentoImplTest extends BaseJunit4TestCase {
 		RicercaProvvedimentoResponse res = ricercaService.executeService(req);
 		
 		assertNotNull(res);
+	}
+	
+	@Test
+	public void testRicercaAggiorna() {
+		final String methodName = "testRicercaAggiorna";
+		int uidAtto = 161165;
+		RicercaProvvedimento req = new RicercaProvvedimento();
+		
+		req.setAnnoBilancio(Integer.valueOf(2022));
+		req.setDataOra(new Date());
+		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
+		req.setEnte(req.getRichiedente().getAccount().getEnte());
+		
+		req.setRicercaAtti(new RicercaAtti());
+		req.getRicercaAtti().setUid(uidAtto);
+		
+		RicercaProvvedimentoResponse res = ricercaService.executeService(req);
+		
+		if(res.hasErrori() || res.getListaAttiAmministrativi() == null || res.getListaAttiAmministrativi().isEmpty()) {
+			log.error(methodName, "atto non trovato");
+			return;
+		}
+		
+		AggiornaProvvedimento reqAgg = new AggiornaProvvedimento();
+		
+		AttoAmministrativo attoAmministrativo = res.getListaAttiAmministrativi().get(0);
+//		attoAmministrativo.setStatoOperativo(StatoOperativoAtti.DEFINITIVO);
+//        reqAgg.setIsEsecutivo(Boolean.TRUE);
+		reqAgg.setAttoAmministrativo(attoAmministrativo);
+		reqAgg.setTipoAtto(attoAmministrativo.getTipoAtto());
+		reqAgg.setDataOra(new Date());
+		
+		reqAgg.setAnnoBilancio(Integer.valueOf(2022));
+		reqAgg.setDataOra(new Date());
+		reqAgg.setRichiedente(getRichiedenteByProperties("consip", "regp"));
+		reqAgg.setEnte(req.getRichiedente().getAccount().getEnte());
+
+		
+		aggiornaService.executeService(reqAgg);
+		
+		
 	}
 	
 	/**

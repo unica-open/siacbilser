@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
+import it.csi.siac.siacbilser.integration.dad.AccountDad;
+import it.csi.siac.siacbilser.integration.dad.DocumentoEntrataDad;
 import it.csi.siac.siacbilser.integration.dad.SubdocumentoEntrataDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
@@ -29,6 +31,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiIncasso
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
+import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 
 
 /**
@@ -54,6 +57,13 @@ public class EmetteOrdinativiDiIncassoDaElencoAsyncService extends AsyncBaseServ
 	
 	@Autowired
 	private SubdocumentoEntrataDad subdocumentoEntrataDad;
+	@Autowired
+	protected MovimentoGestioneService movimentoGestioneService;
+	@Autowired
+	protected DocumentoEntrataDad documentoEntrataDad;
+	@Autowired
+	protected AccountDad accountDad;
+	//FINE SIAC-7470
 	
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {

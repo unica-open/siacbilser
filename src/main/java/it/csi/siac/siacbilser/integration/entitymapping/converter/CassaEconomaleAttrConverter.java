@@ -28,7 +28,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTCassaEcon;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
 import it.csi.siac.siaccecser.model.CassaEconomale;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 
 // TODO: Auto-generated Javadoc
@@ -39,7 +39,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class CassaEconomaleAttrConverter extends DozerConverter<CassaEconomale, SiacTCassaEcon > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

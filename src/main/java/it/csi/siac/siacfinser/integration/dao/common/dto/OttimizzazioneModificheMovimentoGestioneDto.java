@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.integration.entity.SiacRModificaStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsSogModFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsSogclasseModFin;
@@ -41,6 +41,8 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 	private List<SiacTModificaFin> distintiSiacTModificaCoinvolti;
 	
 	private List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvolti;
+	//SIAC-6865
+	private List<Integer> uidsModificheImportoPreEsistentiValide;
 	
 	
 	public List<SiacRMovgestTsSogclasseModFin> filtraSiacRMovgestTsSogclasseModFinBySiacRModificaStato(SiacRModificaStatoFin siacRModificaStato){
@@ -56,7 +58,7 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -73,7 +75,7 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -90,7 +92,7 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -106,11 +108,11 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 	public List<SiacTMovgestTsDetModFin> filtraSiacTMovgestTsDetModFinBySiacTModifica(SiacTModificaFin siacTModificaFin){
 		List<SiacTMovgestTsDetModFin> filtrati = null;
 		List<SiacRModificaStatoFin> rmods = filtraSiacRModificaStatoFinBySiacTModifica(siacTModificaFin);
-		rmods =  CommonUtils.soloValidiSiacTBase(rmods, null);
+		rmods =  CommonUtil.soloValidiSiacTBase(rmods, null);
 		if(rmods!=null && rmods.size()>0){
 			SiacRModificaStatoFin valido = rmods.get(0);
 			filtrati = filtraSiacTMovgestTsDetModFinBySiacRModificaStato(valido);
-			filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+			filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		}
 		return filtrati;
 	}
@@ -128,7 +130,7 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -145,7 +147,7 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -162,7 +164,7 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -179,7 +181,7 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -266,5 +268,18 @@ public class OttimizzazioneModificheMovimentoGestioneDto implements Serializable
 			List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvolti) {
 		this.distintiSiacTMovgestTsDetModFinCoinvolti = distintiSiacTMovgestTsDetModFinCoinvolti;
 	}
-	
+
+	/**
+	 * @return the uidsModificheImportoPreEsistentiValide
+	 */
+	public List<Integer> getUidsModificheImportoPreEsistentiValide() {
+		return uidsModificheImportoPreEsistentiValide;
+	}
+
+	/**
+	 * @param uidsModificheImportoPreEsistentiValide the uidsModificheImportoPreEsistentiValide to set
+	 */
+	public void setUidsModificheImportoPreEsistentiValide(List<Integer> uidsModificheImportoPreEsistentiValide) {
+		this.uidsModificheImportoPreEsistentiValide = uidsModificheImportoPreEsistentiValide;
+	}	
 }

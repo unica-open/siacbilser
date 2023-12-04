@@ -4,8 +4,11 @@
 */
 package it.csi.siac.siacbilser.integration.dad;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -22,6 +25,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDSistemaEsterno
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siaccommonser.integration.dad.base.BaseDadImpl;
 import it.csi.siac.siaccorser.model.Ente;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnte;
 import it.csi.siac.siacfin2ser.model.SistemaEsterno;
 import it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
@@ -191,6 +195,50 @@ public class EnteDad extends BaseDadImpl {
 		return siacTSoggetto.getPartitaIva();
 	}
 	
+	//SIAC-8362
+	 /**
+     * @deprecated
+     * This method is no longer used.
+     * <p> See {@link it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum}.
+     */	
+	@Deprecated
+	public Map<ParametroConfigurazioneEnte, String> caricaConfigurazionePerEnte(Ente ente) {
+		return caricaConfigurazionePerEnte(ente, null);
+	}
 	
+	 /**
+     * @deprecated
+     * This method is no longer used.
+     * <p> See {@link it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum}.
+     */	
+	@Deprecated
+	//SIAC-8362
+	public Map<ParametroConfigurazioneEnte, String> caricaConfigurazionePerEnte(Ente ente, List<ParametroConfigurazioneEnte> parametri) {
+		List<String> codes = new ArrayList<String>();
+		if(parametri == null || parametri.isEmpty()) {
+			codes =  ParametroConfigurazioneEnte.getAllCodes();
+		} else {
+			for (ParametroConfigurazioneEnte par : parametri) {
+				codes.add(par.getCodice());
+			}
+		}
+		
+		
+		List<Object[]> configs = siacTEnteProprietarioRepository.caricaConfigurazioniByEnte(ente.getUid(), null);
+		Map<ParametroConfigurazioneEnte, String> mapPar = new HashMap<ParametroConfigurazioneEnte, String>();
+		for (Object[] cc : configs) {
+			if(cc.length <2) {
+				continue;
+			}
+			String codice = (String) cc[0];
+			String valore = (String) cc[1];
+			ParametroConfigurazioneEnte fromCodice = ParametroConfigurazioneEnte.fromCodice(codice);
+			if(fromCodice != null) {
+				mapPar.put(fromCodice, valore);
+			}
+		}
+		
+		return mapPar;
+	}
 
 }

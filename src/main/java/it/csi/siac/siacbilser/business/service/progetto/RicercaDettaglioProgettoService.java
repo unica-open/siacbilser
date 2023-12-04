@@ -74,7 +74,7 @@ public class RicercaDettaglioProgettoService extends CheckedAccountBaseService<R
 	 */
 	@Override
 	protected void execute() {
-		Progetto progetto = progettoDad.findProgettoById(req.getChiaveProgetto());
+		Progetto progetto = progettoDad.findProgettoById(req.getChiaveProgetto(), req.getProgettoModelDetails());
 		
 		popolaCronoprogrammi(progetto);
 		

@@ -119,7 +119,7 @@ public class RicercaDettaglioSoggettoService extends
 		RicercaSoggettoPerChiaveResponse ricercaSoggettoPerChiaveResponse = appCtx.getBean(
 				RicercaSoggettoPerChiaveService.class).executeService(ricercaSoggettoPerChiave);
 
-		checkBusinessServiceResponse(ricercaSoggettoPerChiaveResponse);
+		checkServiceResponse(ricercaSoggettoPerChiaveResponse);
 
 		codiceSoggettoMap.put(codiceSoggetto, ricercaSoggettoPerChiaveResponse.getSoggetto());
 
@@ -169,7 +169,7 @@ public class RicercaDettaglioSoggettoService extends
 		RicercaCodiceSoggettoResponse ricercaCodiceSoggettoResponse = appCtx
 				.getBean(RicercaCodiceSoggettoService.class).executeService(ricercaCodiceSoggetto);
 
-		checkBusinessServiceResponse(ricercaCodiceSoggettoResponse);
+		checkServiceResponse(ricercaCodiceSoggettoResponse);
 
 		return ricercaCodiceSoggettoResponse;
 	}

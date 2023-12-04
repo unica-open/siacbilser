@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbilser.business.service.progetto.CalcoloFondoPluriennaleVincolatoComplessivoService;
 import it.csi.siac.siacbilser.business.service.progetto.CalcoloFondoPluriennaleVincolatoEntrataService;
 import it.csi.siac.siacbilser.business.service.progetto.CalcoloFondoPluriennaleVincolatoSpesaService;
-import it.csi.siac.siacbilser.business.service.progetto.CalcoloProspettoRiassuntivoCronoprogrammaService;
 import it.csi.siac.siacbilser.business.service.progetto.CambiaFlagUsatoPerFpvCronoprogrammaService;
 import it.csi.siac.siacbilser.business.service.progetto.OttieniFondoPluriennaleVincolatoCronoprogrammaService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoComplessivo;
@@ -25,8 +24,6 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVin
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoEntrataResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoSpesa;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoSpesaResponse;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogramma;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CambiaFlagUsatoPerFpvCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CambiaFlagUsatoPerFpvCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.OttieniFondoPluriennaleVincolatoCronoprogramma;
@@ -53,8 +50,8 @@ public class CalcoloFPVTest extends BaseJunit4TestCase {
 	@Autowired
 	private CalcoloFondoPluriennaleVincolatoComplessivoService calcoloFondoPluriennaleVincolatoComplessivoService;
 	
-	@Autowired
-	private CalcoloProspettoRiassuntivoCronoprogrammaService calcoloProspettoRiassuntivoCronoprogrammaService;
+//	@Autowired
+//	private CalcoloProspettoRiassuntivoCronoprogrammaService calcoloProspettoRiassuntivoCronoprogrammaService;
 	
 	@Autowired
 	private CambiaFlagUsatoPerFpvCronoprogrammaService cambiaFlagUsatoPerFpvCronoprogrammaService;
@@ -123,22 +120,22 @@ public class CalcoloFPVTest extends BaseJunit4TestCase {
 		assertNotNull(res);
 	}
 	
-	@Test
-	public void calcoloProspettoRiassuntivoCronoprogrammaDiGestione(){
-		
-		CalcoloProspettoRiassuntivoCronoprogramma req = new CalcoloProspettoRiassuntivoCronoprogramma();
-		req.setRichiedente(getRichiedenteByProperties("consip","regp"));
-		
-		Progetto progetto=new Progetto();
-		progetto.setUid(3);
-
-		req.setProgetto(progetto);
-		req.setAnno(2014);
-		
-		CalcoloProspettoRiassuntivoCronoprogrammaResponse res = calcoloProspettoRiassuntivoCronoprogrammaService.executeService(req);
-		
-		assertNotNull(res);
-	}
+//	@Test
+//	public void calcoloProspettoRiassuntivoCronoprogrammaDiGestione(){
+//		
+//		CalcoloProspettoRiassuntivoCronoprogramma req = new CalcoloProspettoRiassuntivoCronoprogramma();
+//		req.setRichiedente(getRichiedenteByProperties("consip","regp"));
+//		
+//		Progetto progetto=new Progetto();
+//		progetto.setUid(3);
+//
+//		req.setProgetto(progetto);
+//		req.setAnno(2014);
+//		
+//		CalcoloProspettoRiassuntivoCronoprogrammaResponse res = calcoloProspettoRiassuntivoCronoprogrammaService.executeService(req);
+//		
+//		assertNotNull(res);
+//	}
 	
 	
 	/**

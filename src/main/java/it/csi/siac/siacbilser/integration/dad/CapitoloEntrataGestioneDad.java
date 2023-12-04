@@ -5,9 +5,13 @@
 package it.csi.siac.siacbilser.integration.dad;
 
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
@@ -15,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.csi.siac.siacbilser.integration.dao.SiacTBilElemRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemStato;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemStato;
@@ -53,16 +56,6 @@ import it.csi.siac.siacfin2ser.model.CapitoloEntrataGestioneModelDetail;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Transactional
 public class CapitoloEntrataGestioneDad extends CapitoloDad {	
-
-	/** The classificatori dad. */
-	@Autowired
-	private ClassificatoriDad classificatoriDad;	
-	
-	/** The siac t bil elem repository. */
-	@Autowired
-	private SiacTBilElemRepository siacTBilElemRepository;
-	
-	
 
 	/**
 	 * Creates the.
@@ -281,11 +274,12 @@ public class CapitoloEntrataGestioneDad extends CapitoloDad {
 		String codiceStato = criteriRicerca.getStatoOperativo()!=null?SiacDBilElemStatoEnum.byStatoOperativoElementoDiBilancio(criteriRicerca.getStatoOperativo()).getCodice():null;
 		
 		
+		
 		Page<SiacTBilElem> listaCapitoloEntrataGestione = capitoloDao.ricercaSinteticaCapitolo(enteDto, 
 				mapToString(criteriRicerca.getAnnoEsercizio(),null), 
 				SiacDBilElemTipoEnum.CapitoloEntrataGestione,
 				criteriRicerca.getCategoriaCapitolo()!=null && criteriRicerca.getCategoriaCapitolo().getUid()!=0?criteriRicerca.getCategoriaCapitolo().getUid():null,
-				criteriRicerca.getCategoriaCapitolo()!=null?criteriRicerca.getCategoriaCapitolo().getCodice():null,
+				criteriRicerca.getCategoriaCapitolo()!=null ? criteriRicerca.getCategoriaCapitolo().getCodice():null,
 				//SiacDBilElemCategoria.byCategoriaCapitoloEvenNull(criteriRicerca.getCategoriaCapitolo()),
 				mapToString(criteriRicerca.getAnnoCapitolo(),null), 
 				mapToString(criteriRicerca.getNumeroCapitolo(),null),  
@@ -319,43 +313,44 @@ public class CapitoloEntrataGestioneDad extends CapitoloDad {
 				criteriRicerca.getCodicePerimetroSanitarioEntrata(), null, //criteriRicerca.getCodicePerimetroSanitarioSpesa(),
 				criteriRicerca.getCodiceTransazioneUnioneEuropeaEntrata(), null, //criteriRicerca.getCodiceTransazioneUnioneEuropeaSpesa(),
 				null,//criteriRicerca.getCodicePoliticheRegionaliUnitarie(), 
-				criteriRicerca.getCodiceClassificatoreGenerico1(),
-				criteriRicerca.getCodiceClassificatoreGenerico2(),
-				criteriRicerca.getCodiceClassificatoreGenerico3(),
-				criteriRicerca.getCodiceClassificatoreGenerico4(),
-				criteriRicerca.getCodiceClassificatoreGenerico5(),
-				criteriRicerca.getCodiceClassificatoreGenerico6(),
-				criteriRicerca.getCodiceClassificatoreGenerico7(),
-				criteriRicerca.getCodiceClassificatoreGenerico8(),
-				criteriRicerca.getCodiceClassificatoreGenerico9(),
-				criteriRicerca.getCodiceClassificatoreGenerico10(),
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
 				
 				null,
 				null,
 				null,
 				null,
 				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
+				criteriRicerca.getCodiceClassificatoreGenerico36(),
+				criteriRicerca.getCodiceClassificatoreGenerico37(),
+				criteriRicerca.getCodiceClassificatoreGenerico38(),
+				criteriRicerca.getCodiceClassificatoreGenerico39(),
+				criteriRicerca.getCodiceClassificatoreGenerico40(),
+				criteriRicerca.getCodiceClassificatoreGenerico41(),
+				criteriRicerca.getCodiceClassificatoreGenerico42(),
+				criteriRicerca.getCodiceClassificatoreGenerico43(),
+				criteriRicerca.getCodiceClassificatoreGenerico44(),
+				criteriRicerca.getCodiceClassificatoreGenerico45(),
+				criteriRicerca.getCodiceClassificatoreGenerico46(),
+				criteriRicerca.getCodiceClassificatoreGenerico47(),
+				criteriRicerca.getCodiceClassificatoreGenerico48(),
+				criteriRicerca.getCodiceClassificatoreGenerico49(),
+				criteriRicerca.getCodiceClassificatoreGenerico50(),
 				
 				//classificatori gerarchici
 				criteriRicerca.getCodicePianoDeiConti(),
 				null,null,//criteriRicerca.getCodiceCofog(),criteriRicerca.getCodiceTipoCofog(),
 				criteriRicerca.getCodiceStrutturaAmmCont(), criteriRicerca.getCodiceTipoStrutturaAmmCont(),
-				
+				//task-90
+				mapToString(criteriRicerca.getIdStrutturaAmmCont(),null),
 				criteriRicerca.getCodiceSiopeEntrata(), criteriRicerca.getCodiceTipoSiopeEntrata(),
 				null,null,//criteriRicerca.getCodiceSiopeSpesa(), criteriRicerca.getCodiceTipoSiopeSpesa(),
 				
@@ -369,8 +364,12 @@ public class CapitoloEntrataGestioneDad extends CapitoloDad {
 				criteriRicerca.getCommaAttoDilegge(),
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
+				criteriRicerca.getRichiediAccantonamentoFondiDubbiaEsigibilita(),
 				null,
-				
+				criteriRicerca.getFlagEntrataDubbiaEsigFCDE(),
+				criteriRicerca.getVersioneAccFcde(),
+				criteriRicerca.getTipoAccFcde(),
+				criteriRicerca.getCapitoliIndicatiPerPrevisioneImpegnato(),
 				toPageable(parametriPaginazione));
 		
 				
@@ -431,37 +430,37 @@ public class CapitoloEntrataGestioneDad extends CapitoloDad {
 				null,
 				//criteriRicerca.getCodicePoliticheRegionaliUnitarie()
 				null,
-				criteriRicerca.getCodiceClassificatoreGenerico1(),
-				criteriRicerca.getCodiceClassificatoreGenerico2(),
-				criteriRicerca.getCodiceClassificatoreGenerico3(),
-				criteriRicerca.getCodiceClassificatoreGenerico4(),
-				criteriRicerca.getCodiceClassificatoreGenerico5(),
-				criteriRicerca.getCodiceClassificatoreGenerico6(),
-				criteriRicerca.getCodiceClassificatoreGenerico7(),
-				criteriRicerca.getCodiceClassificatoreGenerico8(),
-				criteriRicerca.getCodiceClassificatoreGenerico9(),
-				criteriRicerca.getCodiceClassificatoreGenerico10(),
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
 				
 				null,
 				null,
 				null,
 				null,
 				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
+				criteriRicerca.getCodiceClassificatoreGenerico36(),
+				criteriRicerca.getCodiceClassificatoreGenerico37(),
+				criteriRicerca.getCodiceClassificatoreGenerico38(),
+				criteriRicerca.getCodiceClassificatoreGenerico39(),
+				criteriRicerca.getCodiceClassificatoreGenerico40(),
+				criteriRicerca.getCodiceClassificatoreGenerico41(),
+				criteriRicerca.getCodiceClassificatoreGenerico42(),
+				criteriRicerca.getCodiceClassificatoreGenerico43(),
+				criteriRicerca.getCodiceClassificatoreGenerico44(),
+				criteriRicerca.getCodiceClassificatoreGenerico45(),
+				criteriRicerca.getCodiceClassificatoreGenerico46(),
+				criteriRicerca.getCodiceClassificatoreGenerico47(),
+				criteriRicerca.getCodiceClassificatoreGenerico48(),
+				criteriRicerca.getCodiceClassificatoreGenerico49(),
+				criteriRicerca.getCodiceClassificatoreGenerico50(),
 				
 				//classificatori gerarchici
 				criteriRicerca.getCodicePianoDeiConti(),
@@ -497,7 +496,10 @@ public class CapitoloEntrataGestioneDad extends CapitoloDad {
 				criteriRicerca.getCommaAttoDilegge(),
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
-				null);
+				null,
+				null,
+				criteriRicerca.getFlagEntrataDubbiaEsigFCDE()
+				);
 		if(objs == null) {
 			return null;
 		}
@@ -562,37 +564,37 @@ public class CapitoloEntrataGestioneDad extends CapitoloDad {
 				criteriRicerca.getCodiceTransazioneUnioneEuropeaEntrata(), null, //criteriRicerca.getCodiceTransazioneUnioneEuropeaSpesa(),
 				null,//criteriRicerca.getCodicePoliticheRegionaliUnitarie(), 
 				
-				criteriRicerca.getCodiceClassificatoreGenerico1(),
-				criteriRicerca.getCodiceClassificatoreGenerico2(),
-				criteriRicerca.getCodiceClassificatoreGenerico3(),
-				criteriRicerca.getCodiceClassificatoreGenerico4(),
-				criteriRicerca.getCodiceClassificatoreGenerico5(),
-				criteriRicerca.getCodiceClassificatoreGenerico6(),
-				criteriRicerca.getCodiceClassificatoreGenerico7(),
-				criteriRicerca.getCodiceClassificatoreGenerico8(),
-				criteriRicerca.getCodiceClassificatoreGenerico9(),
-				criteriRicerca.getCodiceClassificatoreGenerico10(),
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
 				
 				null,
 				null,
 				null,
 				null,
 				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
+				criteriRicerca.getCodiceClassificatoreGenerico36(),
+				criteriRicerca.getCodiceClassificatoreGenerico37(),
+				criteriRicerca.getCodiceClassificatoreGenerico38(),
+				criteriRicerca.getCodiceClassificatoreGenerico39(),
+				criteriRicerca.getCodiceClassificatoreGenerico40(),
+				criteriRicerca.getCodiceClassificatoreGenerico41(),
+				criteriRicerca.getCodiceClassificatoreGenerico42(),
+				criteriRicerca.getCodiceClassificatoreGenerico43(),
+				criteriRicerca.getCodiceClassificatoreGenerico44(),
+				criteriRicerca.getCodiceClassificatoreGenerico45(),
+				criteriRicerca.getCodiceClassificatoreGenerico46(),
+				criteriRicerca.getCodiceClassificatoreGenerico47(),
+				criteriRicerca.getCodiceClassificatoreGenerico48(),
+				criteriRicerca.getCodiceClassificatoreGenerico49(),
+				criteriRicerca.getCodiceClassificatoreGenerico50(),
 				
 				//classificatori gerarchici
 				criteriRicerca.getCodicePianoDeiConti(),
@@ -612,7 +614,8 @@ public class CapitoloEntrataGestioneDad extends CapitoloDad {
 				criteriRicerca.getCommaAttoDilegge(),
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
-				null
+				null,
+				criteriRicerca.getFlagEntrataDubbiaEsigFCDE()
 				);
 		
 				
@@ -888,11 +891,38 @@ public TipoFinanziamento ricercaClassificatoreTipoFinanziamento(CapitoloEntrataG
 		return count;		
 	}
 
-
-	
-
-	
-
-	
-	
+	// SIAC-7858
+	public Map<Integer, BigDecimal> getImportoContoResiduiPerAnno(int uidCapitolo, int annoMin, int annoMax) {
+		List<Object[]> importiPerAnno = siacTBilElemRepository.findImportoIncassatoResiduoPerAnno(uidCapitolo, annoMin, annoMax);
+		return toMapAnnoImporto(importiPerAnno);
+	}
+	public Map<Integer, BigDecimal> getImportoResiduoInizialePerAnno(int uidCapitolo, int annoMin, int annoMax) {
+		//List<Object[]> importiPerAnno = siacTBilElemRepository.findImportoResiduoInizialeByCapitoloPerAnno(uidCapitolo, annoMin, annoMax);
+		//SIAC-8751
+		//List<Integer> ids = siacTBilElemRepository.findElemIdsNelQuinquennio(uidCapitolo, annoMin, annoMax);
+		//SIAC-8705
+		//List<Object[]> importiPerAnno = siacTBilElemRepository.findImportoResiduoInizialeByMovimentoPerAnno(ids, "A", Arrays.asList("D", "N"), ente.getUid());
+		//return toMapAnnoImporto(importiPerAnno);
+		
+		
+		//SIAC-8797
+		List<Integer> ids = siacTBilElemRepository.findElemIdsNelQuinquennio(uidCapitolo, annoMin, annoMax);
+		List<Object[]> importiPerAnno=new ArrayList<Object[]>();
+		
+		if(ids==null || ids.isEmpty()) {
+			return  new HashMap<Integer, BigDecimal>();
+		}
+		
+		importiPerAnno = siacTBilElemRepository.findImportoResiduoInizialeByMovimentoPerAnno(ids, "A", Arrays.asList("D", "N"), ente.getUid());
+		return toMapAnnoImporto(importiPerAnno);
+		
+	}
+	public Map<Integer, BigDecimal> getImportoContoCompetenzaPerAnno(int uidCapitolo, int annoMin, int annoMax) {
+		List<Object[]> importiPerAnno = siacTBilElemRepository.findImportoIncassatoCompetenzaPerAnno(uidCapitolo, annoMin, annoMax);
+		return toMapAnnoImporto(importiPerAnno);
+	}
+	public Map<Integer, BigDecimal> getImportoAccertatoPerAnno(int uidCapitolo, int annoMin, int annoMax) {
+		List<Object[]> importiPerAnno = siacTBilElemRepository.findImportoAccertatoPerAnno(uidCapitolo, annoMin, annoMax);
+		return toMapAnnoImporto(importiPerAnno);
+	}
 }

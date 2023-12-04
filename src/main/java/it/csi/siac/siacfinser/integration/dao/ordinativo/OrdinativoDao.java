@@ -13,7 +13,7 @@ import javax.persistence.Query;
 import org.springframework.data.domain.Pageable;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
-import it.csi.siac.siaccommonser.integration.dao.base.BaseDao;
+import it.csi.siac.siaccommonser.integration.dao.base.Dao;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoRicercaPageableDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaEstesaOrdinativiDiPagamentoDto;
@@ -29,7 +29,7 @@ import it.csi.siac.siacfinser.model.ric.ParametroRicercaSubOrdinativoPagamento;
 import it.csi.siac.siacfinser.model.ric.RicercaOrdinativoK;
 
 
-public interface OrdinativoDao extends BaseDao {
+public interface OrdinativoDao extends Dao<SiacTOrdinativoFin, Integer> {
 
 	public List<SiacTOrdinativoFin> ricercaOrdinativiPagamento(Integer enteUid, ParametroRicercaOrdinativoPagamento prop, int numeroPagina, int numeroRisultatiPerPagina);
 	public List<SiacTOrdinativoTFin> ricercaSubOrdinativiPagamento(Integer enteUid, ParametroRicercaSubOrdinativoPagamento prop, int numeroPagina, int numeroRisultatiPerPagina);
@@ -60,6 +60,10 @@ public interface OrdinativoDao extends BaseDao {
 	
 	public BigDecimal totImportiIncasso(Integer enteUid, ParametroRicercaSubOrdinativoIncasso proi, int numeroPagina, int numeroRisultatiPerPagina);
 	public BigDecimal totImportiPagamento(Integer enteUid, ParametroRicercaSubOrdinativoPagamento prop, int numeroPagina, int numeroRisultatiPerPagina);
+	
+	BigDecimal findDisponibilitaPagareSottoContoVincolato(Integer uidContoTesoreria, Integer uidCapitolo, Integer enteProprietarioId);
+	BigDecimal findDisponibilitaIncassareSottoContoVincolato(Integer uidContoTesoreria, Integer uidCapitolo, Integer enteProprietarioId);
+	
 
 
 }

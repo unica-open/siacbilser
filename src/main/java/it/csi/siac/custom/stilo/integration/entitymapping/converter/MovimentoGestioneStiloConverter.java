@@ -13,19 +13,28 @@ import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacbilser.model.Progetto;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.MovimentoGestione;
 import it.csi.siac.siacfinser.model.SubAccertamento;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.codifiche.ClasseSoggetto;
+import it.csi.siac.siacfinser.model.movgest.ComponenteBilancioImpegno;
 import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneEntrata;
 import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesa;
 import it.csi.siac.siacfinser.model.movgest.VincoloImpegno;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione;
+import it.csi.siac.siacfinser.model.siopeplus.SiopeTipoDebito;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
+import it.csi.siac.siacintegser.model.custom.stilo.ClasseSoggettoStilo;
+//SIAC-7349 -> SIAC-7783
+//import it.csi.siac.siacintegser.model.custom.stilo.ComponenteBilancioStilo;
 import it.csi.siac.siacintegser.model.custom.stilo.MovimentoGestioneStilo;
+import it.csi.siac.siacintegser.model.custom.stilo.ProgettoStilo;
+import it.csi.siac.siacintegser.model.custom.stilo.SoggettoStilo;
+import it.csi.siac.siacintegser.model.custom.stilo.TipoDebitoSiopeStilo;
 import it.csi.siac.siacintegser.model.custom.stilo.VincoliStilo;
 import it.csi.siac.siacintegser.model.custom.stilo.VincoloImpegnoStilo;
 import it.csi.siac.siacintegser.model.integ.Capitolo;
@@ -59,25 +68,43 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 			//SUBIMPEGNO
 			 if(src instanceof SubImpegno){
 				SubImpegno subImp = (SubImpegno) src;
-				dest.setTipoMovimentoGestione(Constanti.STILO_MOVGEST_TIPO_SUB_IMPEGNO);
+				dest.setTipoMovimentoGestione(CostantiFin.STILO_MOVGEST_TIPO_SUB_IMPEGNO);
+				//IMPEGNO
+				dest.setImportoInizialeImpegno(subImp.getImportoInizialePadre());
+				dest.setImportoAttualeImpegno(subImp.getImportoAttualePadre());
+				dest.setDescrizioneImpegno(subImp.getDescrizionePadre());
+				//SIAC-7297
+				dest.setAnnoCompetenza(subImp.getAnnoImpegnoPadre());
 				dest.setNumeroImpegno(subImp.getNumeroImpegnoPadre());
-				dest.setNumeroSubImpegno(subImp.getNumero());
+				//PRENOTAZIONE E LIQUIDAZIONE
+				//SIAC-7408
+				if(subImp.isFlagPrenotazione()){
+					dest.setPrenotazione("SI");
+					dest.setPrenotazioneLiquidabile(subImp.isFlagPrenotazioneLiquidabile() ? "SI" : "NO");
+				}else{
+					dest.setPrenotazione("NO");
+				}
+				//SUB IMPEGNO
+				//SIAC-7297
+				dest.setAnnoCompetenzaSubImpegno(subImp.getAnnoMovimento());
+				//TIPO DEBITO SIOPE
+				buildSiopeTipoDebito( dest,subImp.getSiopeTipoDebito());
+				dest.setNumeroSubImpegno(subImp.getNumeroBigDecimal());
 				dest.setDescrizioneSubImpegno(subImp.getDescrizione());
 				dest.setImportoInizialeSubImpegno(subImp.getImportoIniziale());
 				dest.setImportoAttualeSubImpegno(subImp.getImportoAttuale());
 				//CAPITOLO
 				dest.setCapitolo(buildCapitolo(subImp.getCapitoloUscitaGestione()));
+				//SIAC-7349  -> SIAC-7783
+				//buildComponenteBilancio(dest, subImp.getComponenteBilancioImpegno());
+				
 				//SIAC-6929-II
 				dest.setCup(subImp.getCup());
 				dest.setCig(subImp.getCig());
 				buildMotivoAssenzaCig(dest,subImp.getSiopeAssenzaMotivazione());
-				buildCodiceSoggetto(dest,subImp.getSoggetto());
-				buildClasseSoggetto(dest,subImp.getClasseSoggetto()); 
-				//PADRE
-				dest.setImportoInizialeImpegno(subImp.getImportoInizialePadre());
-				dest.setImportoAttualeImpegno(subImp.getImportoAttualePadre());
-				dest.setDescrizioneImpegno(subImp.getDescrizionePadre());
-				dest.setAnnoCompetenza(subImp.getAnnoMovimento());
+				buildSoggetto(dest,subImp.getSoggetto());
+				//buildClasseSoggetto(dest,subImp.getClasseSoggetto()); 
+				
 				//CLASSIFICATORI
 				buildMissione(dest,subImp.getCodMissione(), subImp.getDescMissione());
 				buildCofog(dest, subImp.getCodCofog(), subImp.getDescCofog());
@@ -92,15 +119,13 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 				if(subImp.getVincoliImpegno()!= null && !subImp.getVincoliImpegno().isEmpty()){
 					dest.setVincoli(buildVincoli(subImp.getVincoliImpegno()));
 				}
-				//SIAC-7297
-				dest.setAnnoCompetenza(subImp.getAnnoImpegnoPadre());
-				dest.setAnnoCompetenzaSubImpegno(subImp.getAnnoMovimento());
+				
 			}else if(src instanceof SubAccertamento){
 				//SUBACCERTAMENTO
 				SubAccertamento subAcc = (SubAccertamento) src;
-				dest.setTipoMovimentoGestione(Constanti.STILO_MOVGEST_TIPO_SUB_ACCERTAMENTO);
+				dest.setTipoMovimentoGestione(CostantiFin.STILO_MOVGEST_TIPO_SUB_ACCERTAMENTO);
 				dest.setNumeroAccertamento(subAcc.getNumeroAccertamentoPadre());
-				dest.setNumeroSubAccertamento(subAcc.getNumero());
+				dest.setNumeroSubAccertamento(subAcc.getNumeroBigDecimal());
 				dest.setDescrizioneSubAccertamento(subAcc.getDescrizione());
 				dest.setImportoInizialeSubAccertamento(subAcc.getImportoIniziale());
 				dest.setImportoAttualeSubAccertamento(subAcc.getImportoAttuale());
@@ -108,10 +133,10 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 				dest.setCapitolo(buildCapitolo(subAcc.getCapitoloEntrataGestione()));
 				//SIAC-6929-II
 				dest.setCup(subAcc.getCup());
-				dest.setCig("");
+				//dest.setCig("");
 				buildMotivoAssenzaCig(dest,subAcc.getSiopeAssenzaMotivazione());
-				buildCodiceSoggetto(dest,subAcc.getSoggetto());
-				buildClasseSoggetto(dest,subAcc.getClasseSoggetto()); 
+				buildSoggetto(dest,subAcc.getSoggetto());
+				//buildClasseSoggetto(dest,subAcc.getClasseSoggetto()); 
 				//PADRE
 				dest.setImportoInizialeAccertamento(subAcc.getImportoInizialePadre());
 				dest.setImportoAttualeAccertamento(subAcc.getImportoAttualePadre());
@@ -129,12 +154,13 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 				//SIAC-7297
 				dest.setAnnoCompetenza(subAcc.getAnnoAccertamentoPadre());
 				dest.setAnnoCompetenzaSubAccertamento(subAcc.getAnnoMovimento());
+				
 			}
 			//IMEPGNO
 			else if(src instanceof Impegno){
 				Impegno imp = (Impegno) src;	
-				dest.setTipoMovimentoGestione(Constanti.STILO_MOVGEST_TIPO_IMPEGNO);
-					dest.setNumeroImpegno(src.getNumero());
+				dest.setTipoMovimentoGestione(CostantiFin.STILO_MOVGEST_TIPO_IMPEGNO);
+					dest.setNumeroImpegno(src.getNumeroBigDecimal());
 					dest.setDescrizioneImpegno(src.getDescrizione());
 					dest.setImportoAttualeImpegno(src.getImportoAttuale());
 					dest.setImportoInizialeImpegno(src.getImportoIniziale());
@@ -142,10 +168,12 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 					dest.setCup(imp.getCup());
 					dest.setCig(imp.getCig());
 					buildMotivoAssenzaCig(dest,imp.getSiopeAssenzaMotivazione());
-					buildCodiceSoggetto(dest,imp.getSoggetto());
+					buildSoggetto(dest,imp.getSoggetto());
 					buildClasseSoggetto(dest,imp.getClasseSoggetto()); 
 					//CAPITOLO
 					dest.setCapitolo(buildCapitolo(imp.getCapitoloUscitaGestione()));
+					//SIAC-7349  -> SIAC-7783
+					//buildComponenteBilancio(dest, imp.getComponenteBilancioImpegno());
 					//CLASSIFICATORI
 					buildMissione(dest,imp.getCodMissione(), imp.getDescMissione());
 					buildCofog(dest, imp.getCodCofog(), imp.getDescCofog());
@@ -161,20 +189,30 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 						dest.setVincoli(buildVincoli(imp.getVincoliImpegno()));
 					}
 					//SIAC-7297
-					dest.setAnnoCompetenza(src.getAnnoMovimento());
+					dest.setAnnoCompetenza(imp.getAnnoMovimento());
+					//SIAC-7408
+					if(imp.isFlagPrenotazione()){
+						dest.setPrenotazione("SI");
+						dest.setPrenotazioneLiquidabile(imp.isFlagPrenotazioneLiquidabile() ? "SI" : "NO");
+					}else{
+						dest.setPrenotazione("NO");
+					}
+					buildSiopeTipoDebito( dest,imp.getSiopeTipoDebito());
+					buildProgetto( dest, imp.getProgetto());
+					
 				}else if(src instanceof Accertamento){
 					//ACCERTAMENTO
 					Accertamento acc = (Accertamento) src;
-					dest.setTipoMovimentoGestione(Constanti.STILO_MOVGEST_TIPO_ACCERTAMENTO);
-					dest.setNumeroAccertamento(src.getNumero());
+					dest.setTipoMovimentoGestione(CostantiFin.STILO_MOVGEST_TIPO_ACCERTAMENTO);
+					dest.setNumeroAccertamento(src.getNumeroBigDecimal());
 					dest.setDescrizioneAccertamento(src.getDescrizione());
 					dest.setImportoAttualeAccertamento(src.getImportoAttuale());
 					dest.setImportoInizialeAccertamento(src.getImportoIniziale());
 					//SIAC-6929-II
 					dest.setCup(acc.getCup());
-					dest.setCig("");
+					//dest.setCig("");
 					buildMotivoAssenzaCig(dest,acc.getSiopeAssenzaMotivazione());
-					buildCodiceSoggetto(dest,acc.getSoggetto());
+					buildSoggetto(dest,acc.getSoggetto());
 					buildClasseSoggetto(dest,acc.getClasseSoggetto()); 
 					//CAPITOLO
 					dest.setCapitolo(buildCapitolo(acc.getCapitoloEntrataGestione()));
@@ -189,6 +227,8 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 					buildPerimetroSanitario(dest, acc.getCodPerimetroSanitario(), acc.getDescPerimetroSanitario());
 					//SIAC-7297
 					dest.setAnnoCompetenza(src.getAnnoMovimento());
+					//SIAC-7408
+					buildProgetto( dest, acc.getProgetto());
 				}
 				
 				//MODIFCHE 
@@ -196,36 +236,78 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 					//MODIFICA - IMPEGNO SUBIMPEGNO
 					ModificaMovimentoGestioneSpesa mgs = (ModificaMovimentoGestioneSpesa) src;
 					if(mgs.getTipoModificaMovimentoGestione()!= null && mgs.getTipoModificaMovimentoGestione().equals("T")){
-						dest.setTipoMovimentoGestione(Constanti.STILO_MOVGEST_TIPO_MODIFICA_IMPEGNO);
+						dest.setTipoMovimentoGestione(CostantiFin.STILO_MOVGEST_TIPO_MODIFICA_IMPEGNO);
 						if(mgs.getImpegno()!= null){
-							dest.setNumeroImpegno(mgs.getImpegno().getNumero());
+							dest.setNumeroImpegno(mgs.getImpegno().getNumeroBigDecimal());
 							dest.setDescrizioneImpegno(mgs.getImpegno().getDescrizione());
 							dest.setImportoAttualeImpegno(mgs.getImpegno().getImportoAttuale());
 							dest.setImportoInizialeImpegno(mgs.getImpegno().getImportoIniziale());
+							//Anno competenza quello dell impegno
+							dest.setAnnoCompetenza(mgs.getImpegno().getAnnoMovimento());
+							//SIAC-7480
+							//CIG, CUP, FLAG 
+							dest.setCup(mgs.getImpegno().getCup());
+							dest.setCig(mgs.getImpegno().getCig());
+							//SIAC-7408
+							if(mgs.getImpegno().isFlagPrenotazione()){
+								dest.setPrenotazione("SI");
+								dest.setPrenotazioneLiquidabile(mgs.getImpegno().isFlagPrenotazioneLiquidabile() ? "SI" : "NO");
+							}else{
+								dest.setPrenotazione("NO");
+							}
+							
+							//buildSiopeTipoDebito( dest,mgs.getImpegno().getSiopeTipoDebito());
+							buildSoggetto(dest,mgs.getImpegno().getSoggetto());
+							buildClasseSoggetto(dest,mgs.getImpegno().getClasseSoggetto()); 
+							buildProgetto( dest, mgs.getImpegno().getProgetto());
 						}
+						
+						//SIAC-7408
+						buildClasseSoggettoOld( dest, mgs.getClasseSoggettoOldMovimentoGestione());
+						buildClasseSoggettoNew( dest, mgs.getClasseSoggettoNewMovimentoGestione());
+						
 					}else{
-						dest.setTipoMovimentoGestione(Constanti.STILO_MOVGEST_TIPO_MODIFICA_SUB_IMPEGNO);
+						dest.setTipoMovimentoGestione(CostantiFin.STILO_MOVGEST_TIPO_MODIFICA_SUB_IMPEGNO);
 						if(mgs.getSubImpegno()!= null){
-							dest.setNumeroSubImpegno(mgs.getSubImpegno().getNumero());
+							dest.setNumeroSubImpegno(mgs.getSubImpegno().getNumeroBigDecimal());
 							dest.setNumeroImpegno(mgs.getSubImpegno().getNumeroImpegnoPadre());
 							dest.setDescrizioneSubImpegno(mgs.getSubImpegno().getDescrizione());
 							dest.setImportoAttualeSubImpegno(mgs.getSubImpegno().getImportoAttuale());
 							dest.setImportoInizialeSubImpegno(mgs.getSubImpegno().getImportoIniziale());
+							//Anno competenza quello dell impegno
+							dest.setAnnoCompetenza(mgs.getSubImpegno().getAnnoMovimento());
+							//SIAC-7480
+							//CIG, CUP, FLAG 
+							dest.setCup(mgs.getSubImpegno().getCup());
+							dest.setCig(mgs.getSubImpegno().getCig());
+							//SIAC-7408
+							//buildSiopeTipoDebito( dest,mgs.getSubImpegno().getSiopeTipoDebito());
+							buildSoggetto(dest,mgs.getSubImpegno().getSoggetto());
+							
+						
 						}
 					}
+					
+					//SIAC-7408
+					buildSoggettoOld( dest, mgs.getSoggettoOldMovimentoGestione());
+					buildSoggettoNew( dest, mgs.getSoggettoNewMovimentoGestione());
+					
+					
 					dest.setNumeroModifica(mgs.getNumeroModificaMovimentoGestione());
 					dest.setDescrizioneModifica(mgs.getDescrizione());
 					dest.setImportoModifica(mgs.getImportoNew());
 					
-					if(mgs.getImpegno()!= null){
+					if(mgs.getImpegno()!= null && mgs.getTipoModificaMovimentoGestione() != null && mgs.getTipoModificaMovimentoGestione().equals("T")){
 						//CAPITOLO
 						dest.setCapitolo(buildCapitolo(mgs.getImpegno().getCapitoloUscitaGestione()));
+						//SIAC-7349  -> SIAC-7783
+						//buildComponenteBilancio(dest, mgs.getImpegno().getComponenteBilancioImpegno());
 						//SIAC-6929-II
-						dest.setCup(mgs.getCup());
-						dest.setCig(mgs.getImpegno().getCig()); 
+//						dest.setCup(mgs.getCup());
+//						dest.setCig(mgs.getImpegno().getCig()); 
 						buildMotivoAssenzaCig(dest,mgs.getSiopeAssenzaMotivazione());
-						buildCodiceSoggetto(dest,mgs.getSoggetto());
-						buildClasseSoggetto(dest,mgs.getClasseSoggetto()); 
+//						buildCodiceSoggetto(dest,mgs.getSoggetto());
+//						buildClasseSoggetto(dest,mgs.getClasseSoggetto()); 
 						//CLASSIFICATORI
 						buildMissione(dest,mgs.getImpegno().getCodMissione(), mgs.getImpegno().getDescMissione());
 						buildCofog(dest, mgs.getImpegno().getCodCofog(), mgs.getImpegno().getDescCofog());
@@ -234,14 +316,27 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 						buildPcf(dest, mgs.getImpegno().getCodicePdc(), mgs.getImpegno().getDescPdc());
 						buildTitolo(dest, mgs.getImpegno().getCodTitolo(), mgs.getImpegno().getDescTitolo());
 						buildTipoFinanziamento(dest, mgs.getImpegno().getCodTipoFinanziamento(), mgs.getImpegno().getDescTipoFinanziamento());
-						buildCodTransazioneEuropea( dest, mgs.getImpegno().getCodTransazioneEuropeaSpesa(), mgs.getImpegno().getDescTransazioneEuropeaSpesa());
 						buildNaturaRicorrente(dest, mgs.getImpegno().getCodRicorrente(), mgs.getImpegno().getDescRicorrente());
-						buildPerimetroSanitario(dest, mgs.getImpegno().getCodPerimetroSanitario(), mgs.getImpegno().getDescPerimetroSanitario());
+						
 						if(mgs.getImpegno().getVincoliImpegno()!= null && !mgs.getImpegno().getVincoliImpegno().isEmpty()){
 							dest.setVincoli(buildVincoli(mgs.getImpegno().getVincoliImpegno()));
 						}
+						
 					}
-					dest.setAnnoCompetenza(mgs.getAnnoMovimento());
+					//task-144
+					if(!(mgs.getTipoModificaMovimentoGestione() != null && mgs.getTipoModificaMovimentoGestione().equals("T"))) {
+						//sub
+						buildPerimetroSanitario( dest, mgs.getSubImpegno().getCodPerimetroSanitario(), mgs.getSubImpegno().getDescPerimetroSanitario());
+						//SIAC-7408
+						buildSiopeTipoDebito( dest,mgs.getSubImpegno().getSiopeTipoDebito());
+					} else {
+						//imp
+						buildPerimetroSanitario( dest, mgs.getImpegno().getCodPerimetroSanitario(), mgs.getImpegno().getDescPerimetroSanitario());
+						buildSiopeTipoDebito( dest,mgs.getImpegno().getSiopeTipoDebito());
+						buildCodTransazioneEuropea( dest, mgs.getImpegno().getCodTransazioneEuropeaSpesa(), mgs.getImpegno().getDescTransazioneEuropeaSpesa());
+					}
+					
+					//dest.setAnnoCompetenza(mgs.getAnnoMovimento());
 					if(mgs.getDataModificaMovimentoGestione()!= null){
 						Calendar calendar = Calendar.getInstance();
 						calendar.setTime(mgs.getDataModificaMovimentoGestione());
@@ -252,26 +347,45 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 					//MODIFICA ACCERTAMENTO-SUBACCERTAMENTO
 					ModificaMovimentoGestioneEntrata mgs = (ModificaMovimentoGestioneEntrata) src;
 					if(mgs.getTipoModificaMovimentoGestione()!= null && mgs.getTipoModificaMovimentoGestione().equals("T")){
-						dest.setTipoMovimentoGestione(Constanti.STILO_MOVGEST_TIPO_MODIFICA_ACCERTAMENTO);
+						dest.setTipoMovimentoGestione(CostantiFin.STILO_MOVGEST_TIPO_MODIFICA_ACCERTAMENTO);
 						if(mgs.getAccertamento()!= null){
-							dest.setNumeroAccertamento(mgs.getAccertamento().getNumero());
+							dest.setNumeroAccertamento(mgs.getAccertamento().getNumeroBigDecimal());
 							dest.setDescrizioneAccertamento(mgs.getAccertamento().getDescrizione());
 							dest.setImportoAttualeAccertamento(mgs.getAccertamento().getImportoAttuale());
 							dest.setImportoInizialeAccertamento(mgs.getAccertamento().getImportoIniziale());
+							//Anno competenza quello dell accertamento
+							dest.setAnnoCompetenza(mgs.getAccertamento().getAnnoMovimento());
+							buildSoggetto(dest,mgs.getAccertamento().getSoggetto());
+							buildClasseSoggetto(dest,mgs.getAccertamento().getClasseSoggetto()); 
+							buildProgetto( dest, mgs.getAccertamento().getProgetto());
 						}
 						dest.setNumeroModifica(mgs.getNumeroModificaMovimentoGestione());
 						dest.setDescrizioneModifica(mgs.getDescrizione());
 						dest.setImportoModifica(mgs.getImportoNew());
+						
+						//SIAC-7408
+						buildClasseSoggettoOld( dest, mgs.getClasseSoggettoOldMovimentoGestione());
+						buildClasseSoggettoNew( dest, mgs.getClasseSoggettoNewMovimentoGestione());
+						
 					}else{
-						dest.setTipoMovimentoGestione(Constanti.STILO_MOVGEST_TIPO_MODIFICA_SUB_ACCERTAMENTO);
+						dest.setTipoMovimentoGestione(CostantiFin.STILO_MOVGEST_TIPO_MODIFICA_SUB_ACCERTAMENTO);
 						if(mgs.getSubAccertamento()!= null){
-							dest.setNumeroSubAccertamento(mgs.getSubAccertamento().getNumero());
-							dest.setNumeroImpegno(mgs.getSubAccertamento().getNumeroAccertamentoPadre());
+							dest.setNumeroSubAccertamento(mgs.getSubAccertamento().getNumeroBigDecimal());
+							dest.setNumeroAccertamento(mgs.getSubAccertamento().getNumeroAccertamentoPadre());
 							dest.setDescrizioneSubAccertamento(mgs.getSubAccertamento().getDescrizione());
 							dest.setImportoAttualeSubAccertamento(mgs.getSubAccertamento().getImportoAttuale());
 							dest.setImportoInizialeSubAccertamento(mgs.getSubAccertamento().getImportoIniziale());
+							//Anno competenza quello dell accertamento
+							dest.setAnnoCompetenza(mgs.getSubAccertamento().getAnnoMovimento());
+							buildSoggetto(dest,mgs.getSubAccertamento().getSoggetto());
 						}
+						
 					}
+					
+					//SIAC-7408
+					buildSoggettoOld( dest, mgs.getSoggettoOldMovimentoGestione());
+					buildSoggettoNew( dest, mgs.getSoggettoNewMovimentoGestione());
+					
 					dest.setNumeroModifica(mgs.getNumeroModificaMovimentoGestione());
 					dest.setDescrizioneModifica(mgs.getDescrizione());
 					dest.setImportoModifica(mgs.getImportoNew());
@@ -280,10 +394,10 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 						dest.setCapitolo(buildCapitolo(mgs.getAccertamento().getCapitoloEntrataGestione()));
 						//SIAC-6929-II
 						dest.setCup(mgs.getCup());
-						dest.setCig("");
+						//dest.setCig("");
 						buildMotivoAssenzaCig(dest,mgs.getSiopeAssenzaMotivazione());
-						buildCodiceSoggetto(dest,mgs.getSoggetto());
-						buildClasseSoggetto(dest,mgs.getClasseSoggetto()); 
+//						buildCodiceSoggetto(dest,mgs.getSoggetto());
+//						buildClasseSoggetto(dest,mgs.getClasseSoggetto()); 
 						//CLASSIFICATORI
 						buildMissione(dest,mgs.getAccertamento().getCodMissione(), mgs.getAccertamento().getDescMissione());
 						buildCofog(dest, mgs.getAccertamento().getCodCofog(), mgs.getAccertamento().getDescCofog());
@@ -293,17 +407,27 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 						buildTipoFinanziamento(dest, mgs.getAccertamento().getCodTipoFinanziamento(), mgs.getAccertamento().getDescTipoFinanziamento());
 						buildCategoria(dest, mgs.getAccertamento().getCodCategoria(), mgs.getAccertamento().getDescCategoria());
 						buildTipologia(dest, mgs.getAccertamento().getCodTipologia(), mgs.getAccertamento().getDescTipologia());
-						buildCodTransazioneEuropea( dest, mgs.getAccertamento().getCodTransazioneEuropeaEntrata(), mgs.getAccertamento().getDescTransazioneEuropeaEntrata());
 						buildNaturaRicorrente(dest, mgs.getAccertamento().getCodRicorrente(), mgs.getAccertamento().getDescRicorrente());
-						buildPerimetroSanitario(dest, mgs.getAccertamento().getCodPerimetroSanitario(), mgs.getAccertamento().getDescPerimetroSanitario());
+						
+						
 					}
 					//SIAC-7297
-					dest.setAnnoCompetenza(mgs.getAnnoMovimento());
+					//dest.setAnnoCompetenza(mgs.getAnnoMovimento());
 					if(mgs.getDataModificaMovimentoGestione()!= null){
 						Calendar calendar = Calendar.getInstance();
 						calendar.setTime(mgs.getDataModificaMovimentoGestione());
 						int annoModifica = calendar.get(Calendar.YEAR);
 						dest.setAnnoCompetenzaModifica(annoModifica);
+					}
+					
+					//task-144
+					if(!(mgs.getTipoModificaMovimentoGestione() != null && mgs.getTipoModificaMovimentoGestione().equals("T"))) {
+						//sub
+						buildPerimetroSanitario( dest, mgs.getSubAccertamento().getCodPerimetroSanitario(), mgs.getSubAccertamento().getDescPerimetroSanitario());
+					} else {
+						//acc
+						buildPerimetroSanitario( dest, mgs.getAccertamento().getCodPerimetroSanitario(), mgs.getAccertamento().getDescPerimetroSanitario());
+						buildCodTransazioneEuropea( dest, mgs.getAccertamento().getCodTransazioneEuropeaEntrata(), mgs.getAccertamento().getDescTransazioneEuropeaEntrata());
 					}
 					
 				}
@@ -331,9 +455,9 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 			vincoloStilo.setImporto(vincoli.get(i).getImporto());
 			//ACCERTAMENTO
 			if(vincoli.get(i).getAccertamento()!= null){
-				vincoloStilo.setNumeroAccertamento(vincoli.get(i).getAccertamento().getNumero());
+				vincoloStilo.setNumeroAccertamento(vincoli.get(i).getAccertamento().getNumeroBigDecimal());
 				vincoloStilo.setAnnoAccertamento(vincoli.get(i).getAccertamento().getAnnoAccertamentoOrigine());
-				vincoloStilo.setTipo(Constanti.STILO_MOVGEST_TIPO_ACCERTAMENTO);
+				vincoloStilo.setTipo(CostantiFin.STILO_MOVGEST_TIPO_ACCERTAMENTO);
 			}
 			//VINCOLO
 			if(vincoli.get(i).getAvanzoVincolo()!= null && vincoli.get(i).getAvanzoVincolo().getTipoAvanzovincolo()!= null){
@@ -355,15 +479,22 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 		}
 	}
 	
-	private void buildCodiceSoggetto(MovimentoGestioneStilo dest, Soggetto soggetto){
-		if(soggetto!= null){
-			dest.setCodiceSoggetto(soggetto.getCodiceSoggetto());
+	private void buildSoggetto(MovimentoGestioneStilo dest, Soggetto soggetto){
+		if(soggetto!= null && soggetto.getCodDestinatario()!= null){
+			SoggettoStilo sog = new SoggettoStilo();
+			sog.setCodice(soggetto.getCodDestinatario());
+			sog.setDescrizione(soggetto.getDenominazione());
+			dest.setSoggetto(sog);
 		}
 	}
 	
 	private void buildClasseSoggetto(MovimentoGestioneStilo dest, ClasseSoggetto classeSoggetto){
-		if(classeSoggetto!= null){
-			dest.setClasseSoggetto(classeSoggetto.getDescrizione());
+		if(classeSoggetto!= null && classeSoggetto.getCodice()!= null){
+			//dest.setClasseSoggetto(classeSoggetto.getDescrizione());
+			ClasseSoggettoStilo sog = new ClasseSoggettoStilo();
+			sog.setCodice(classeSoggetto.getCodice());
+			sog.setDescrizione(classeSoggetto.getDescrizione());
+			dest.setClasseSoggetto(sog);
 		}
 	}
 	
@@ -395,9 +526,7 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 	
 	private void buildMissione(MovimentoGestioneStilo dest, String codice, String descrizione){
 		if(codice!= null){
-			Missione missione = new Missione();
-			missione.setCodice(codice);
-			missione.setDescrizione(descrizione);
+			Missione missione = new Missione(codice, descrizione);
 			dest.setMissione(missione);
 		}
 	}
@@ -413,9 +542,7 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 	
 	private void buildProgramma(MovimentoGestioneStilo dest, String codice, String descrizione){
 		if(codice!= null){
-			Programma programma = new Programma();
-			programma.setCodice(codice);
-			programma.setDescrizione(descrizione);
+			Programma programma = new Programma(codice, descrizione);
 			dest.setProgramma(programma);
 		}
 	 }
@@ -423,18 +550,14 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 	
 	private void buildMacroaggregato(MovimentoGestioneStilo dest, String codice, String descrizione){
 		if(codice!= null){
-			Macroaggregato macroaggregato = new Macroaggregato();
-			macroaggregato.setCodice(codice);
-			macroaggregato.setDescrizione(descrizione);
+			Macroaggregato macroaggregato = new Macroaggregato(codice, descrizione);
 			dest.setMacroaggregato(macroaggregato);
 		}
 	 }
 	
 	private void buildPcf(MovimentoGestioneStilo dest, String codice, String descrizione){
 		if(codice!= null){
-			PianoDeiContiFinanziario obj = new PianoDeiContiFinanziario();
-			obj.setCodice(codice);
-			obj.setDescrizione(descrizione);
+			PianoDeiContiFinanziario obj = new PianoDeiContiFinanziario(codice, descrizione);
 			dest.setPianoDeiContiFinanziario(obj);
 		}
 	 }
@@ -442,36 +565,28 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 	
 	private void buildTipoFinanziamento(MovimentoGestioneStilo dest, String codice, String descrizione){
 		if(codice!= null){
-			TipoFinanziamento obj = new TipoFinanziamento();
-			obj.setCodice(codice);
-			obj.setDescrizione(descrizione);
+			TipoFinanziamento obj = new TipoFinanziamento(codice, descrizione);
 			dest.setTipoFinanziamento(obj);
 		}
 	 }
 	
 	private void buildTitolo(MovimentoGestioneStilo dest, String codice, String descrizione){
 		if(codice!= null){
-			Titolo obj = new Titolo();
-			obj.setCodice(codice);
-			obj.setDescrizione(descrizione);
+			Titolo obj = new Titolo(codice, descrizione);
 			dest.setTitolo(obj);
 		}
 	 }
 	
 	private void buildCategoria(MovimentoGestioneStilo dest, String codice, String descrizione){
 		if(codice!= null){
-			Categoria obj = new Categoria();
-			obj.setCodice(codice);
-			obj.setDescrizione(descrizione);
+			Categoria obj = new Categoria(codice, descrizione);
 			dest.setCategoria(obj);
 		}
 	 }
 	
 	private void buildTipologia(MovimentoGestioneStilo dest, String codice, String descrizione){
 		if(codice!= null){
-			Tipologia obj = new Tipologia();
-			obj.setCodice(codice);
-			obj.setDescrizione(descrizione);
+			Tipologia obj = new Tipologia(codice, descrizione);
 			dest.setTipologia(obj);
 		}
 	 }
@@ -506,5 +621,74 @@ public class MovimentoGestioneStiloConverter extends DozerConverter<MovimentoGes
 		}
 	 }
 	
+	private void buildSiopeTipoDebito(MovimentoGestioneStilo dest,SiopeTipoDebito siopeTipoDebito){
+		if(siopeTipoDebito!= null){
+			TipoDebitoSiopeStilo tipoDebitoSiope = new TipoDebitoSiopeStilo();
+			tipoDebitoSiope.setCodice(siopeTipoDebito.getCodice());
+			tipoDebitoSiope.setDescrizione(siopeTipoDebito.getDescrizione());
+			dest.setTipoDebitoSiope(tipoDebitoSiope);
+			
+		}
+		
+	}
+	
+	
+	private void buildSoggettoOld(MovimentoGestioneStilo dest, Soggetto soggetto){
+		if(soggetto!= null ){
+			SoggettoStilo sog = new SoggettoStilo();
+			sog.setCodice(soggetto.getCodiceSoggetto());
+			sog.setDescrizione(soggetto.getDenominazione());
+			dest.setSoggettoIniziale(sog);
+		}
+	}
+	
+	private void buildSoggettoNew(MovimentoGestioneStilo dest, Soggetto soggetto){
+		if(soggetto!= null ){
+			SoggettoStilo sog = new SoggettoStilo();
+			sog.setCodice(soggetto.getCodiceSoggetto());
+			sog.setDescrizione(soggetto.getDenominazione());
+			dest.setSoggettoFinale(sog);
+		}
+	}
+	
+	
+	private void buildClasseSoggettoOld(MovimentoGestioneStilo dest, ClasseSoggetto classeSoggetto){
+		if(classeSoggetto!= null ){
+			ClasseSoggettoStilo sog = new ClasseSoggettoStilo();
+			sog.setCodice(classeSoggetto.getCodice());
+			sog.setDescrizione(classeSoggetto.getDescrizione());
+			dest.setClasseSoggettoIniziale(sog);
+		}
+	}
+	
+	private void buildClasseSoggettoNew(MovimentoGestioneStilo dest, ClasseSoggetto classeSoggetto){
+		if(classeSoggetto!= null ){
+			ClasseSoggettoStilo sog = new ClasseSoggettoStilo();
+			sog.setCodice(classeSoggetto.getCodice());
+			sog.setDescrizione(classeSoggetto.getDescrizione());
+			dest.setClassseSoggettoFinale(sog);
+		}
+	}
+	
+	
+	private void buildProgetto(MovimentoGestioneStilo dest, Progetto progetto){
+		if(progetto!= null ){
+			ProgettoStilo prog = new ProgettoStilo();
+			prog.setCodice(progetto.getCodice());
+			prog.setDescrizione(progetto.getDescrizione());
+			dest.setProgetto(prog);
+		}
+	}
+	
+//	private void buildComponenteBilancio(MovimentoGestioneStilo dest, ComponenteBilancioImpegno cbi){
+//		if(cbi!= null){
+//			ComponenteBilancioStilo componeteBilancioImpegno = new ComponenteBilancioStilo();
+//			componeteBilancioImpegno.setDescrizione(cbi.getDescrizioneTipoComponente());
+//			componeteBilancioImpegno.setMacrotipo(cbi.getDescrizioneMacroComponente());
+//			componeteBilancioImpegno.setSottotipo(cbi.getDescrizioneSottoTipoComponente());
+//			dest.setComponenteBilancio(componeteBilancioImpegno);
+//		}
+//		
+//	}
 	
 }

@@ -19,6 +19,7 @@ import it.csi.siac.siacbilser.integration.dad.CapitoloUscitaGestioneDad;
 import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.ClassificazioneCofog;
+import it.csi.siac.siacbilser.model.RisorsaAccantonata;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
 import it.csi.siac.siacbilser.model.Macroaggregato;
@@ -180,6 +181,9 @@ public class RicercaDettaglioCapitoloUscitaGestioneService
 		
 		PoliticheRegionaliUnitarie pru = capitoloUscitaGestioneDad.ricercaClassificatorePoliticheRegionaliUnitarie(cap.getUid());
 		cap.setPoliticheRegionaliUnitarie(pru);
+		
+		RisorsaAccantonata ddd= capitoloUscitaGestioneDad.ricercaClassificatoreRisorsaAccantonata(cap.getUid());
+		cap.setRisorsaAccantonata(ddd);
 		
 		List<ClassificatoreGenerico> listaClassificatori = capitoloUscitaGestioneDad.ricercaClassificatoriGenerici(cap);
 		res.setListaClassificatori(listaClassificatori);

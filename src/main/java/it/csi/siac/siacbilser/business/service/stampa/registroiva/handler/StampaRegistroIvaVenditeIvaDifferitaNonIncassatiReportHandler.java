@@ -46,15 +46,15 @@ public class StampaRegistroIvaVenditeIvaDifferitaNonIncassatiReportHandler exten
 //		sie.setAnnoEsercizio(annoEsercizio);
 		sie.setEnte(getEnte());
 		sie.setRegistroIva(registroIva);
-//		CR-3661 (laura moscatelli) si chiama 'non incassate' ma devono essere visulizzate tutte, quindi anche quelle in stato provvisorio_definitivo
+		//		CR-3661 (laura moscatelli) si chiama 'non incassate' ma devono essere visulizzate tutte, quindi anche quelle in stato provvisorio_definitivo
 //		sie.setStatoSubdocumentoIva(StatoSubdocumentoIva.PROVVISORIO);
 		// inizio periodo
-		Date protocolloProvvisorioDa = p.getInizioPeriodo(getBilancio().getAnno());
+		Date docDataOperazioneDa = p.getInizioPeriodo(getBilancio().getAnno());
 		// fine periodo
-		Date protocolloProvvisorioA = p.getFinePeriodo(getBilancio().getAnno());
+		Date docDataOperazioneA = p.getFinePeriodo(getBilancio().getAnno());
 		
 		List<SubdocumentoIvaEntrata> listaSubdocumentoIvaEntrataNelPeriodo = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataNonQPID(sie,
-				protocolloProvvisorioDa, protocolloProvvisorioA, null, null);
+				null, null, null, null, docDataOperazioneDa, docDataOperazioneA);
 		
 		return listaSubdocumentoIvaEntrataNelPeriodo;
 		 

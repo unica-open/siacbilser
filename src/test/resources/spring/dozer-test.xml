@@ -22,6 +22,7 @@ SPDX-License-Identifier: EUPL-1.2
 					<value>classpath*:/dozer/fin/*-mapping.xml</value>
 					<value>classpath*:/dozer/gen/*-mapping.xml</value>
 					<value>classpath*:/dozer/cesp/*-mapping.xml</value>
+					<value>classpath*:/dozer/cor/*-mapping.xml</value>
 					<!-- escludo integ!!!! -->
 			</list>
 		</property>

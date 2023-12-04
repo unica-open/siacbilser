@@ -33,14 +33,16 @@ import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.integration.dad.datacontainer.DisponibilitaMovimentoGestioneContainer;
+import it.csi.siac.siacfinser.integration.dad.oil.AccreditoTipoOilIsPagoPADad;
 import it.csi.siac.siacfinser.integration.dao.common.SiacDAmbitoRepository;
 import it.csi.siac.siacfinser.integration.dao.common.SiacTEnteProprietarioFinRepository;
 import it.csi.siac.siacfinser.integration.dao.common.dto.AttributoTClassInfoDto;
@@ -61,7 +63,6 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaEstesaLiquidazio
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaLiquidazioneParamDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.SoggettoInRicercaLiquidazioneDto;
 import it.csi.siac.siacfinser.integration.dao.liquidazione.LiquidazioneFinDao;
-import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacDContotesoreriaFinRepository;
 import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacDDistintaRepository;
 import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacDLiquidazioneStatoRepository;
 import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacRLiquidazioneAttoAmmRepository;
@@ -76,8 +77,7 @@ import it.csi.siac.siacfinser.integration.dao.movgest.SiacTBilFinRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestTsDetRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestTsRepository;
-import it.csi.siac.siacfinser.integration.dao.mutuo.SiacRMutuoVoceLiquidazioneRepository;
-import it.csi.siac.siacfinser.integration.dao.mutuo.SiacTMutuoVoceRepository;
+import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDContotesoreriaFinRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacTOrdinativoTsDetRepository;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacRSoggettoRelazFinRepository;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacTModpagFinRepository;
@@ -102,11 +102,11 @@ import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestBilElemFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestClassFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsAttrFin;
-import it.csi.siac.siacfinser.integration.entity.SiacRMutuoVoceLiquidazioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRSoggettoRelazFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRSubdocLiquidazioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTAttoAmmFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTBilElemFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTBilFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTClassFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTDocFin;
@@ -115,18 +115,17 @@ import it.csi.siac.siacfinser.integration.entity.SiacTLiquidazioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTModpagFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin;
-import it.csi.siac.siacfinser.integration.entity.SiacTMutuoVoceFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTsDetFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.EntityLiquidazioneToModelLiquidazioneConverter;
 import it.csi.siac.siacfinser.integration.util.EntityToModelConverter;
 import it.csi.siac.siacfinser.integration.util.ObjectStreamerHandler;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.integration.util.TransazioneElementareEntityToModelConverter;
-import it.csi.siac.siacfinser.model.ContoTesoreria;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Distinta;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.MovimentoGestione;
@@ -139,8 +138,6 @@ import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione.StatoOperativoLiquidazione;
 import it.csi.siac.siacfinser.model.liquidazione.LiquidazioneAtti;
 import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesa;
-import it.csi.siac.siacfinser.model.mutuo.Mutuo;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.ordinativo.Ordinativo.StatoOperativoOrdinativo;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento;
 import it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoPagamento;
@@ -162,8 +159,6 @@ public class LiquidazioneDad extends AbstractFinDad {
 	@Autowired
 	ObjectStreamerHandler objectStreamerHandler;
 
-	@Autowired
-	SiacRMutuoVoceLiquidazioneRepository siacRMutuoVoceLiquidazioneRepository;
 
 	@Autowired
 	SiacRLiquidazioneAttoAmmRepository siacRLiquidazioneAttoAmmRepository;
@@ -207,8 +202,6 @@ public class LiquidazioneDad extends AbstractFinDad {
 	@Autowired
 	SiacDLiquidazioneStatoRepository siacDLiquidazioneStatoRepository;
 
-	@Autowired
-	SiacTMutuoVoceRepository siacTMutuoVoceRepository;
 
 	@Autowired
 	SiacDDistintaRepository siacDDistintaRepository;
@@ -255,6 +248,10 @@ public class LiquidazioneDad extends AbstractFinDad {
 	@Autowired
 	ImpegnoOttimizzatoDad impegnoDad;
 	
+	//SIAC-8853
+	@Autowired
+	private AccreditoTipoOilIsPagoPADad AccreditoTipoOilIsPagoPADad;
+	
 	@Autowired
 	private StoricoImpegnoAccertamentoDad storicoImpegnoAccertamentoDad;
 
@@ -272,7 +269,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		// Controlli di merito - inizio
 		Impegno impegnoliq = liquidazioneInput.getImpegno();
 		SubImpegno subImp = null;
-		String codiceStatoMovGest = Constanti.convertiStatoMovgest(impegnoliq.getStatoOperativoMovimentoGestioneSpesa());
+		String codiceStatoMovGest = CostantiFin.convertiStatoMovgest(impegnoliq.getStatoOperativoMovimentoGestioneSpesa());
 		
 		
 		// 	SIAC-3745 CR In INSERIMENTO LIQUIDAZIONE bloccare con errore l'operazione SE sono NULL i seguenti dati: 
@@ -283,7 +280,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		}
 		//
 		
-		if (!Constanti.MOVGEST_STATO_DEFINITIVO.equals(codiceStatoMovGest) && !Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(codiceStatoMovGest)) {	
+		if (!CostantiFin.MOVGEST_STATO_DEFINITIVO.equals(codiceStatoMovGest) && !CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(codiceStatoMovGest)) {	
 			return addErroreToList(esito, listaErrori, ErroreFin.IMPEGNO_STATO_DEF_O_NON_LIQ.getErrore(""));
 		}
 
@@ -292,12 +289,12 @@ public class LiquidazioneDad extends AbstractFinDad {
 			
 			// jira 3190
 			// se dovesse arrivare un sub annullato non lo considero
-			if(Constanti.MOVGEST_STATO_ANNULLATO.equals(Constanti.convertiStatoMovgest(subImp.getStatoOperativoMovimentoGestioneSpesa()))){
+			if(CostantiFin.MOVGEST_STATO_ANNULLATO.equals(CostantiFin.convertiStatoMovgest(subImp.getStatoOperativoMovimentoGestioneSpesa()))){
 				subImp = null;
 			}
 		}
 
-		if (subImp != null && !Constanti.MOVGEST_STATO_DEFINITIVO.equals(Constanti.convertiStatoMovgest(subImp.getStatoOperativoMovimentoGestioneSpesa()))) {
+		if (subImp != null && !CostantiFin.MOVGEST_STATO_DEFINITIVO.equals(CostantiFin.convertiStatoMovgest(subImp.getStatoOperativoMovimentoGestioneSpesa()))) {
 			return addErroreToList(esito, listaErrori,ErroreFin.SUB_IMP_NON_DEFINITIVO.getErrore("") );
 		}
 
@@ -310,10 +307,10 @@ public class LiquidazioneDad extends AbstractFinDad {
 		if(liquidazioneInput.getStatoOperativoLiquidazione()==null ){
 			if (attoAmministrativoEstratto != null) {
 				liquidazioneInput.setAttoAmministrativoLiquidazione(attoAmministrativoEstratto);
-				if (Constanti.STATO_ANNULLATO.equals(attoAmministrativoEstratto.getStatoOperativo())){
+				if (CostantiFin.STATO_ANNULLATO.equals(attoAmministrativoEstratto.getStatoOperativo())){
 					liquidazioneInput.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.ANNULLATO);
 				}	
-				else if (Constanti.STATO_PROVVISORIO.equals(attoAmministrativoEstratto.getStatoOperativo())){
+				else if (CostantiFin.STATO_PROVVISORIO.equals(attoAmministrativoEstratto.getStatoOperativo())){
 					liquidazioneInput.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.PROVVISORIO);
 				}	
 				else{
@@ -327,7 +324,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		}
 
 		// controllo x stato provvedimento
-		if (Constanti.STATO_ANNULLATO.equals(liquidazioneInput.getAttoAmministrativoLiquidazione().getStatoOperativo())) {
+		if (CostantiFin.STATO_ANNULLATO.equals(liquidazioneInput.getAttoAmministrativoLiquidazione().getStatoOperativo())) {
 			return addErroreToList(esito, listaErrori,ErroreFin.ATTO_AMM_ANNULLATO.getErrore(""));
 		}
 
@@ -337,7 +334,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 				return addErroreToList(esito, listaErrori,ErroreFin.SOGGETTO_BLOCCATO.getErrore(""));
 			}
 		} else {
-			Soggetto sogg = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN,idEnte, liquidazioneInput.getSoggettoLiquidazione().getCodiceSoggetto(), true, true);
+			Soggetto sogg = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN,idEnte, liquidazioneInput.getSoggettoLiquidazione().getCodiceSoggetto(), true, true);
 			if (sogg != null) {
 				if (StatoEntita.VALIDO != sogg.getStato()) {
 					return addErroreToList(esito, listaErrori,ErroreFin.SOGGETTO_BLOCCATO.getErrore(""));
@@ -370,7 +367,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		//CONTROLLI SIOPE PLUS:
 		boolean daImpegno = false;
 		List<Errore> errSiopePlus = controlliSiopePlus(liquidazioneInput.getSiopeTipoDebito(), liquidazioneInput.getSiopeAssenzaMotivazione(), liquidazioneInput.getCig(), datiOperazione,daImpegno);
-		if(!StringUtils.isEmpty(errSiopePlus)){
+		if(!StringUtilsFin.isEmpty(errSiopePlus)){
 			return addErroreToList(esito, listaErrori, errSiopePlus.get(0));
 		}
 		//
@@ -412,13 +409,13 @@ public class LiquidazioneDad extends AbstractFinDad {
 			
 		String datiMancanti = "";
 		boolean presentiDatiMancanti = false;
-		if(StringUtils.isEmpty(liquidazioneInput.getCodCofog())){
+		if(StringUtilsFin.isEmpty(liquidazioneInput.getCodCofog())){
 			datiMancanti = "COFOG";
 			presentiDatiMancanti = true;
 		}
 		
 		//2 SIOPE
-		if(StringUtils.isEmpty(liquidazioneInput.getCodSiope())){
+		if(StringUtilsFin.isEmpty(liquidazioneInput.getCodSiope())){
 			if(presentiDatiMancanti){
 				datiMancanti = datiMancanti + ", ";
 			}
@@ -445,11 +442,11 @@ public class LiquidazioneDad extends AbstractFinDad {
 	private boolean isPianoDeiContiDiQuintoLivello(int idEnte, Liquidazione liquidazioneInput){
 		boolean trovatoPianoDeiContiDiQuintoLivello = false;
 		String codicePianoDeiConti = liquidazioneInput.getCodPdc();
-		if(!StringUtils.isEmpty(codicePianoDeiConti)){
-			List<SiacTClassFin> lclass = siacTClassRepository.findByTipoCodesAndEnteAndSelezionato(idEnte,getNow(), Constanti.getCodiciPianoDeiConti(), codicePianoDeiConti);
+		if(!StringUtilsFin.isEmpty(codicePianoDeiConti)){
+			List<SiacTClassFin> lclass = siacTClassRepository.findByTipoCodesAndEnteAndSelezionato(idEnte,getNow(), CostantiFin.getCodiciPianoDeiConti(), codicePianoDeiConti);
 			if(lclass!=null && lclass.size()>0 && lclass.get(0)!=null && lclass.get(0).getSiacDClassTipo()!=null){
 				String codeConfronto = lclass.get(0).getSiacDClassTipo().getClassifTipoCode();
-				if(Constanti.D_CLASS_TIPO_PIANO_DEI_CONTI_V.equals(codeConfronto)){
+				if(CostantiFin.D_CLASS_TIPO_PIANO_DEI_CONTI_V.equals(codeConfronto)){
 					trovatoPianoDeiContiDiQuintoLivello = true;
 				}
 			}
@@ -550,7 +547,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 		SiacTEnteProprietarioFin siacTEnteProprietario = siacTEnteProprietarioRepository.findOne(idEnte);
 
-		SiacDAmbitoFin siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(Constanti.AMBITO_FIN, idEnte);
+		SiacDAmbitoFin siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(CostantiFin.AMBITO_FIN, idEnte);
 		Integer idAmbito = siacDAmbitoPerCode.getAmbitoId();
 		int anno = Integer.parseInt(annoEsercizio);
 
@@ -586,7 +583,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 				PaginazioneSubMovimentiDto paginazioneSubMovimentiDto = new PaginazioneSubMovimentiDto();
 				if(presenzaSub(impegnoOriginale)){
 					//Selezionato un SUB 
-					BigDecimal numeroSubOriginale = impegnoOriginale.getElencoSubImpegni().get(0).getNumero();
+					BigDecimal numeroSubOriginale = impegnoOriginale.getElencoSubImpegni().get(0).getNumeroBigDecimal();
 					paginazioneSubMovimentiDto.setNoSub(false);
 					paginazioneSubMovimentiDto.setNumeroSubMovimentoRichiesto(numeroSubOriginale);
 				} else {
@@ -596,7 +593,9 @@ public class LiquidazioneDad extends AbstractFinDad {
 				}
 				//
 				
-				EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente,String.valueOf(anno + 1),impegnoOriginale.getAnnoMovimento(),impegnoOriginale.getNumero(),paginazioneSubMovimentiDto,null,Constanti.MOVGEST_TIPO_IMPEGNO, false);
+				EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente,
+						String.valueOf(anno + 1), impegnoOriginale.getAnnoMovimento(), impegnoOriginale.getNumeroBigDecimal(),
+						paginazioneSubMovimentiDto, null, CostantiFin.MOVGEST_TIPO_IMPEGNO, false, false);
 
 				//SIAC-6989
 				if(esitoRicercaMov==null || esitoRicercaMov.getMovimentoGestione() == null) {
@@ -606,12 +605,12 @@ public class LiquidazioneDad extends AbstractFinDad {
 				Impegno impegnoDoppiaGestione = (Impegno) esitoRicercaMov.getMovimentoGestione();
 				
 				if (presenzaSub(impegnoOriginale)) {
-					BigDecimal numeroSubOriginale = impegnoOriginale.getElencoSubImpegni().get(0).getNumero();
+					BigDecimal numeroSubOriginale = impegnoOriginale.getElencoSubImpegni().get(0).getNumeroBigDecimal();
 
 					if (impegnoDoppiaGestione != null && impegnoDoppiaGestione.getElencoSubImpegni() != null && impegnoDoppiaGestione.getElencoSubImpegni().size() > 0) {
 						List<SubImpegno> elencoSubImpegniDoppiaGestione = new ArrayList<SubImpegno>();
 						for (SubImpegno subImpegno : impegnoDoppiaGestione.getElencoSubImpegni()) {
-							if (subImpegno.getNumero().compareTo(numeroSubOriginale) == 0) {
+							if (subImpegno.getNumeroBigDecimal().compareTo(numeroSubOriginale) == 0) {
 								elencoSubImpegniDoppiaGestione.add(subImpegno);
 								break;
 							}
@@ -706,7 +705,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 		// 1 insert liquidazione SiacTLiquidazioneFin
 		SiacTLiquidazioneFin siacTLiquidazioneInsert = new SiacTLiquidazioneFin();
-		siacTLiquidazioneInsert = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTLiquidazioneInsert,datiOperazioneDto, siacTAccountRepository);
+		siacTLiquidazioneInsert = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTLiquidazioneInsert,datiOperazioneDto, siacTAccountRepository);
 		
 		SiacTBilFin siacTBilNew = siacTBilRepository.findOne(bilancio.getUid());
 
@@ -714,7 +713,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		Integer liqAnno = Integer.decode(annoEsercizio);
 		if (fromDoppiaGestione) {
 			//MARZO 2018 - FIX per SIAC-6021:
-			if(CommonUtils.maggioreDiZero(annoLiquidazioneOrigine)){
+			if(CommonUtil.maggioreDiZero(annoLiquidazioneOrigine)){
 				//se indicato un annoLiquidazioneOrigine lo usiamo:
 				liqAnno = annoLiquidazioneOrigine;
 			} else {
@@ -731,10 +730,10 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 		siacTLiquidazioneInsert.setLiqImporto(liquidazioneInput.getImportoLiquidazione());
 
-		if (liquidazioneInput.getLiqManuale() != null && Constanti.LIQUIDAZIONE_MAUALE.equalsIgnoreCase(liquidazioneInput.getLiqManuale())) {
-			siacTLiquidazioneInsert.setLiqConvalidaManuale(Constanti.LIQUIDAZIONE_MAUALE_CODE);
-		} else if (liquidazioneInput.getLiqManuale() != null && Constanti.LIQUIDAZIONE_AUTOMATICA.equalsIgnoreCase(liquidazioneInput.getLiqManuale())) {
-			siacTLiquidazioneInsert.setLiqConvalidaManuale(Constanti.LIQUIDAZIONE_AUTOMATICA_CODE);
+		if (liquidazioneInput.getLiqManuale() != null && CostantiFin.LIQUIDAZIONE_MAUALE.equalsIgnoreCase(liquidazioneInput.getLiqManuale())) {
+			siacTLiquidazioneInsert.setLiqConvalidaManuale(CostantiFin.LIQUIDAZIONE_MAUALE_CODE);
+		} else if (liquidazioneInput.getLiqManuale() != null && CostantiFin.LIQUIDAZIONE_AUTOMATICA.equalsIgnoreCase(liquidazioneInput.getLiqManuale())) {
+			siacTLiquidazioneInsert.setLiqConvalidaManuale(CostantiFin.LIQUIDAZIONE_AUTOMATICA_CODE);
 		}
 		
 		
@@ -742,9 +741,9 @@ public class LiquidazioneDad extends AbstractFinDad {
 		// JIRA 1976 IMPORTANTE RM verificata con laura la mancata gestione in inserimento dell'informazione liqAutomatica
 		// sarà = S se il ser è chiamato da inserisciOrdinativoPagamento 
 		// sarà = N se il ser è richiamato dal cdu
-		if(!StringUtils.isEmpty(siacTLiquidazioneInsert.getLiqAutomatica())){
+		if(!StringUtilsFin.isEmpty(siacTLiquidazioneInsert.getLiqAutomatica())){
 			siacTLiquidazioneInsert.setLiqAutomatica(liquidazioneInput.getLiqAutomatica());
-		} else siacTLiquidazioneInsert.setLiqAutomatica(Constanti.LIQUIDAZIONE_LIQ_AUTOMATICA_NO); 
+		} else siacTLiquidazioneInsert.setLiqAutomatica(CostantiFin.LIQUIDAZIONE_LIQ_AUTOMATICA_NO); 
 
 		siacTLiquidazioneInsert.setLiqEmissioneData(timestampInserimento);
 		siacTLiquidazioneInsert.setLiqNumero(new BigDecimal(nuovoCode));
@@ -769,12 +768,12 @@ public class LiquidazioneDad extends AbstractFinDad {
 		// 1.2 ID distinta in siacTLiquidazione
 		Distinta distinta = liquidazioneInput.getDistinta();
 		if (distinta != null && distinta.getCodice() != null && !distinta.getCodice().isEmpty()) {
-			SiacDDistintaFin siacDDistinta = siacDDistintaRepository.findDistintaByCode(idEnte, distinta.getCodice(),timestampInserimento, Constanti.D_DISTINTA_TIPO_SPESA);
+			SiacDDistintaFin siacDDistinta = siacDDistintaRepository.findDistintaByCode(idEnte, distinta.getCodice(),timestampInserimento, CostantiFin.D_DISTINTA_TIPO_SPESA);
 			if (siacDDistinta != null){
 				siacTLiquidazioneInsert.setSiacDDistinta(siacDDistinta);
 			}
 		}else{
-			List<SiacDDistintaFin> siacDDistintaList = siacDDistintaRepository.findDistintaByCodTipo(idEnte,timestampInserimento, Constanti.D_DISTINTA_TIPO_SPESA); // uso questa perchè gia esiste
+			List<SiacDDistintaFin> siacDDistintaList = siacDDistintaRepository.findDistintaByCodTipo(idEnte,timestampInserimento, CostantiFin.D_DISTINTA_TIPO_SPESA); // uso questa perchè gia esiste
 			if (siacDDistintaList != null && !siacDDistintaList.isEmpty()){
 				SiacDDistintaFin siacDDistinta = siacDDistintaList.get(0);
 				siacTLiquidazioneInsert.setSiacDDistinta(siacDDistinta);
@@ -805,11 +804,11 @@ public class LiquidazioneDad extends AbstractFinDad {
 			// 1.4 stato operativo Liquidazione
 
 			SiacDLiquidazioneStatoFin siacDLiquidazioneStato = new SiacDLiquidazioneStatoFin();
-			String statoOP = Constanti.statoOperativoLiquidazioneEnumToString(liquidazioneInput.getStatoOperativoLiquidazione());
+			String statoOP = CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazioneInput.getStatoOperativoLiquidazione());
 			siacDLiquidazioneStato = siacDLiquidazioneStatoRepository.findDLiquidazioneStatoByCodeAndEnte(idEnte, statoOP,timestampInserimento);
 
 			SiacRLiquidazioneStatoFin siacRLiquidazioneStato = new SiacRLiquidazioneStatoFin();
-			siacRLiquidazioneStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneStato,datiOperazioneDto, siacTAccountRepository);
+			siacRLiquidazioneStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneStato,datiOperazioneDto, siacTAccountRepository);
 			siacRLiquidazioneStato.setSiacTLiquidazione(siacTLiquidazioneInsert);
 			siacRLiquidazioneStato.setSiacDLiquidazioneStato(siacDLiquidazioneStato);
 			//salvo sul db:
@@ -827,7 +826,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 			SiacRLiquidazioneMovgestFin siacRLiquidazioneMovgest = new SiacRLiquidazioneMovgestFin();
 
-			siacRLiquidazioneMovgest = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneMovgest,datiOperazioneDto, siacTAccountRepository);
+			siacRLiquidazioneMovgest = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneMovgest,datiOperazioneDto, siacTAccountRepository);
 
 			siacRLiquidazioneMovgest.setSiacTLiquidazione(siacTLiquidazioneInsert);
 
@@ -837,21 +836,19 @@ public class LiquidazioneDad extends AbstractFinDad {
 			
 			if (impInput != null) {
 				
-				// 2.1 Insert Subimpegno Voce di Mutuo-Liquidazione in
-				// relazionee
-				// siacRMutuoVoceLiquidazioneRepository se presente
+
 				List<SubImpegno> subImpList = impInput.getElencoSubImpegni();
 
 				if (subImpList != null && !subImpList.isEmpty()) {
 					SubImpegno subImpInput = subImpList.get(0);
-					String codeSubImp = subImpInput.getNumero().toString();
+					String codeSubImp = subImpInput.getNumeroBigDecimal().toString();
 					List<SiacTMovgestTsFin> l = siacTMovgestTsRepository.findSubMovgestTsByCodeAndMovgestId(idEnte,timestampInserimento,subImpInput.getIdMovimentoPadre(),codeSubImp);
 					if (l != null && l.size() > 0) {
 						SiacTMovgestTsFin siacTMovgestTsSubImpegno = l.get(0);
 
 						SiacRLiquidazioneMovgestFin siacRLiquidazioneMovgestSub = new SiacRLiquidazioneMovgestFin();
 
-						siacRLiquidazioneMovgestSub = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneMovgestSub,datiOperazioneDto,siacTAccountRepository);
+						siacRLiquidazioneMovgestSub = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneMovgestSub,datiOperazioneDto,siacTAccountRepository);
 
 						siacRLiquidazioneMovgestSub.setSiacTLiquidazione(siacTLiquidazioneInsert);
 
@@ -861,38 +858,11 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 					}
 
-					// 2.2 Insert Voce di Mutuo Impegno - Liquidazione in
-					// relazione siacRMutuoVoceLiquidazioneRepository
-					List<VoceMutuo> vociMutuoListSubImp = subImpInput.getListaVociMutuo();
-					if (vociMutuoListSubImp != null && !vociMutuoListSubImp.isEmpty()) {
-						VoceMutuo voceMutuoSubImpegno = new VoceMutuo();
-						//System.out.println("liquidazione.numeroMutuo: " + liquidazioneInput.getNumeroMutuo());
-						
-						for(VoceMutuo voceMutuo: vociMutuoListSubImp){
-							//System.out.println("vocediMutuo.numeroMutuo: " + voceMutuo.getNumeroMutuo());
-							if(voceMutuo.getNumeroMutuo().equals(String.valueOf(liquidazioneInput.getNumeroMutuo()))){
-								voceMutuoSubImpegno = voceMutuo;
-								break;
-							}
-						}
-						
-						if (voceMutuoSubImpegno != null) {
-							SiacTMutuoVoceFin siacTMutuoVoceSub = siacTMutuoVoceRepository.findOne(voceMutuoSubImpegno.getIdVoceMutuo().intValue());
 
-							if (siacTMutuoVoceSub != null) {
-								SiacRMutuoVoceLiquidazioneFin siacRMutuoVoceLiquidazione = new SiacRMutuoVoceLiquidazioneFin();
-								siacRMutuoVoceLiquidazione = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMutuoVoceLiquidazione,datiOperazioneDto,siacTAccountRepository);
-								siacRMutuoVoceLiquidazione.setSiacTLiquidazione(siacTLiquidazioneInsert);
-								siacRMutuoVoceLiquidazione.setSiacTMutuoVoce(siacTMutuoVoceSub);
-								//salvo sul db:
-								siacRMutuoVoceLiquidazioneRepository.saveAndFlush(siacRMutuoVoceLiquidazione);
-							}
-						}
-					}
 
 				} else {
 
-					SiacTMovgestFin siacTMovgest = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, annoEsercizio,impInput.getAnnoMovimento(),impInput.getNumero(),Constanti.MOVGEST_TIPO_IMPEGNO);
+					SiacTMovgestFin siacTMovgest = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, annoEsercizio,impInput.getAnnoMovimento(),impInput.getNumeroBigDecimal(),CostantiFin.MOVGEST_TIPO_IMPEGNO);
 					impegnoID = siacTMovgest.getUid();
 					
 					siacTMovgestTsList = siacTMovgestTsRepository.findMovgestTsByMovgest(idEnte,timestampInserimento, impegnoID);
@@ -904,37 +874,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 						siacRLiquidazioneMovgest = siacRLiquidazioneMovgestRepository.saveAndFlush(siacRLiquidazioneMovgest);
 					}
 
-					// 2.3 Insert Voce di Mutuo Impegno - Liquidazione in
-					// relazione siacRMutuoVoceLiquidazioneRepository
-
-					List<VoceMutuo> vociMutuoListImp = impInput.getListaVociMutuo();
-
-					if (vociMutuoListImp != null && !vociMutuoListImp.isEmpty()) {
-						//VoceMutuo voceMutuoImpegno = vociMutuoListImp.get(0);
-						VoceMutuo voceMutuoImpegno = new VoceMutuo();
-						//System.out.println("liquidazione.numeroMutuo: " + liquidazioneInput.getNumeroMutuo());
-						
-						for(VoceMutuo voceMutuo: vociMutuoListImp){
-							//System.out.println("vocediMutuo.numeroMutuo: " + voceMutuo.getNumeroMutuo());
-							
-							if(voceMutuo.getNumeroMutuo().equals(String.valueOf(liquidazioneInput.getNumeroMutuo()))){
-								voceMutuoImpegno = voceMutuo;
-								break;
-							}
-						}
-						
-						if (voceMutuoImpegno != null) {
-							SiacTMutuoVoceFin siacTMutuoVoce = siacTMutuoVoceRepository.findOne(voceMutuoImpegno.getIdVoceMutuo().intValue());
-							if (siacTMutuoVoce != null) {
-								SiacRMutuoVoceLiquidazioneFin siacRMutuoVoceLiquidazione = new SiacRMutuoVoceLiquidazioneFin();
-								siacRMutuoVoceLiquidazione = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMutuoVoceLiquidazione,datiOperazioneDto,siacTAccountRepository);
-								siacRMutuoVoceLiquidazione.setSiacTLiquidazione(siacTLiquidazioneInsert);
-								siacRMutuoVoceLiquidazione.setSiacTMutuoVoce(siacTMutuoVoce);
-								//salvo sul db:
-								siacRMutuoVoceLiquidazioneRepository.saveAndFlush(siacRMutuoVoceLiquidazione);
-							}
-						}
-					}
+				
 				}
 			}
 
@@ -959,7 +899,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 					SiacTSoggettoFin sedeSecondariaEntity = siacTSoggettoRepository.findOne(sedeSecondariaSoggetto.getUid());
 					if (sedeSecondariaEntity != null) {
 						SiacRLiquidazioneSoggettoFin siacRLiquidazioneSoggettoSedeSec = new SiacRLiquidazioneSoggettoFin();
-						siacRLiquidazioneSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneSoggettoSedeSec,datiOperazioneDto,siacTAccountRepository);
+						siacRLiquidazioneSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneSoggettoSedeSec,datiOperazioneDto,siacTAccountRepository);
 						siacRLiquidazioneSoggettoSedeSec.setSiacTLiquidazione(siacTLiquidazioneInsert);
 						siacRLiquidazioneSoggettoSedeSec.setSiacTSoggetto(sedeSecondariaEntity);
 						//salvo sul db:
@@ -968,9 +908,9 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 				} else {
 
-					siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(datiOperazioneDto.getSiacDAmbito().getAmbitoCode(), idEnte, codSoggetto,Constanti.SEDE_SECONDARIA, getNow());
+					siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(datiOperazioneDto.getSiacDAmbito().getAmbitoCode(), idEnte, codSoggetto,CostantiFin.SEDE_SECONDARIA, getNow());
 					if (siacTSoggetto != null) {
-						siacRLiquidazioneSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneSoggetto,datiOperazioneDto,siacTAccountRepository);
+						siacRLiquidazioneSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneSoggetto,datiOperazioneDto,siacTAccountRepository);
 						siacRLiquidazioneSoggetto.setSiacTLiquidazione(siacTLiquidazioneInsert);
 						siacRLiquidazioneSoggetto.setSiacTSoggetto(siacTSoggetto);
 						//salvo sul db:
@@ -988,7 +928,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 			
 			if (siacTAttoAmm != null) {
 				SiacRLiquidazioneAttoAmmFin siacRLiquidazioneAttoAmm = new SiacRLiquidazioneAttoAmmFin();
-				siacRLiquidazioneAttoAmm = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneAttoAmm,datiOperazioneDto, siacTAccountRepository);
+				siacRLiquidazioneAttoAmm = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneAttoAmm,datiOperazioneDto, siacTAccountRepository);
 				siacRLiquidazioneAttoAmm.setSiacTAttoAmm(siacTAttoAmm);
 				siacRLiquidazioneAttoAmm.setSiacTLiquidazione(siacTLiquidazioneInsert);
 				//salvo sul db:
@@ -1024,10 +964,10 @@ public class LiquidazioneDad extends AbstractFinDad {
 		
 		//SIOPE TIPO DEBITO
 		SiopeTipoDebito siopeTipoDebito = liquidazione.getSiopeTipoDebito();
-		if(siopeTipoDebito!=null && !StringUtils.isEmpty(siopeTipoDebito.getCodice())){
+		if(siopeTipoDebito!=null && !StringUtilsFin.isEmpty(siopeTipoDebito.getCodice())){
 			//recuperiamo il record della codifica ricevuta:
 			List<SiacDSiopeTipoDebitoFin> dstdebitos = siacDSiopeTipoDebitoFinRepository.findByCode(idEnte, datiOperazioneDto.getTs(), siopeTipoDebito.getCodice());
-			SiacDSiopeTipoDebitoFin siacDSiopeTipoDebito = CommonUtils.getFirst(dstdebitos);
+			SiacDSiopeTipoDebitoFin siacDSiopeTipoDebito = CommonUtil.getFirst(dstdebitos);
 			if(siacDSiopeTipoDebito!=null){
 				siacTLiquidazioneFin.setSiacDSiopeTipoDebitoFin(siacDSiopeTipoDebito);
 			}
@@ -1039,10 +979,10 @@ public class LiquidazioneDad extends AbstractFinDad {
 		
 		//MOTIVAZIONE ASSENZA CIG
 		SiopeAssenzaMotivazione siopeAssenzaMotivazione = liquidazione.getSiopeAssenzaMotivazione();
-		if(siopeAssenzaMotivazione!=null && !StringUtils.isEmpty(siopeAssenzaMotivazione.getCodice())){
+		if(siopeAssenzaMotivazione!=null && !StringUtilsFin.isEmpty(siopeAssenzaMotivazione.getCodice())){
 			//recuperiamo il record della codifica ricevuta:
 			List<SiacDSiopeAssenzaMotivazioneFin> aMtvs = siacDSiopeAssenzaMotivazioneFinRepository.findByCode(idEnte, datiOperazioneDto.getTs(), siopeAssenzaMotivazione.getCodice());
-			SiacDSiopeAssenzaMotivazioneFin siacDSiopeAssenzaMotivazione = CommonUtils.getFirst(aMtvs);
+			SiacDSiopeAssenzaMotivazioneFin siacDSiopeAssenzaMotivazione = CommonUtil.getFirst(aMtvs);
 			//puo' essere nullato a piacere (siacDSiopeAssenzaMotivazione puo' essere null):
 			siacTLiquidazioneFin.setSiacDSiopeAssenzaMotivazione(siacDSiopeAssenzaMotivazione);
 		} else {
@@ -1108,7 +1048,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 	 */
 	private Liquidazione riempiDatiLiquidazioneReturn(SiacTLiquidazioneFin siacTLiquidazioneInsertFull,Liquidazione liqReturn, int idEnte) {
 
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);
 		Timestamp timestampInserimento = null;
 		timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);
@@ -1137,9 +1077,9 @@ public class LiquidazioneDad extends AbstractFinDad {
 				SiacDLiquidazioneStatoFin dliqStato = siacRLiquidazioneStato.getSiacDLiquidazioneStato();
 				String statocod = dliqStato.getLiqStatoCode();
 				if(statocod != null) {
-					if (Constanti.D_LIQUIDAZIONE_STATO_VALIDO.endsWith(statocod)){
+					if (CostantiFin.D_LIQUIDAZIONE_STATO_VALIDO.endsWith(statocod)){
 						liqReturn.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.VALIDO);
-					} else if (Constanti.D_LIQUIDAZIONE_STATO_ANNULLATO.endsWith(statocod)){
+					} else if (CostantiFin.D_LIQUIDAZIONE_STATO_ANNULLATO.endsWith(statocod)){
 						liqReturn.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.ANNULLATO);
 					}else{
 						liqReturn.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.PROVVISORIO);
@@ -1179,8 +1119,8 @@ public class LiquidazioneDad extends AbstractFinDad {
 			mpag = siacTLiquidazioneInsertFull.getCessioneId();
 		}
 			
-		// List<ModalitaPagamentoSoggetto> modalitaPagamentoSoggettoList = soggettoDad.ricercaModalitaPagamentoPerChiave(Constanti.AMBITO_FIN, idEnte, codSogg , mpag.getUid(), null);
-		List<ModalitaPagamentoSoggetto> modalitaPagamentoSoggettoList = soggettoDad.ricercaModalitaPagamentoPerChiave(Constanti.AMBITO_FIN, idEnte, codSogg , mpag, null);
+		// List<ModalitaPagamentoSoggetto> modalitaPagamentoSoggettoList = soggettoDad.ricercaModalitaPagamentoPerChiave(CostantiFin.AMBITO_FIN, idEnte, codSogg , mpag.getUid(), null);
+		List<ModalitaPagamentoSoggetto> modalitaPagamentoSoggettoList = soggettoDad.ricercaModalitaPagamentoPerChiave(CostantiFin.AMBITO_FIN, idEnte, codSogg , mpag, null);
 		if(modalitaPagamentoSoggettoList!=null && !modalitaPagamentoSoggettoList.isEmpty()){
 			liqReturn.setModalitaPagamentoSoggetto(modalitaPagamentoSoggettoList.get(0));
 		}else{
@@ -1211,11 +1151,11 @@ public class LiquidazioneDad extends AbstractFinDad {
 							impegno.setUid(movgestTS.getSiacTMovgest().getUid());
 							impegno.setAnnoMovimento(movgestTS.getSiacTMovgest().getMovgestAnno());
 							impegno.setDescrizione(movgestTS.getSiacTMovgest().getMovgestDesc());
-							impegno.setNumero(movgestTS.getSiacTMovgest().getMovgestNumero());
+							impegno.setNumeroBigDecimal(movgestTS.getSiacTMovgest().getMovgestNumero());
 						}
 
 						// SubImpegno
-						subImpegno.setNumero(new BigDecimal(movgestTS.getMovgestTsCode()));
+						subImpegno.setNumeroBigDecimal(new BigDecimal(movgestTS.getMovgestTsCode()));
 						subImpegno.setDescrizione(movgestTS.getMovgestTsDesc());
 						subImpegno.setUid(movgestTS.getMovgestTsId());
 
@@ -1224,7 +1164,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 					} else {
 						if (movgestTS.getSiacTMovgest() != null) {
-							impegno.setNumero(movgestTS.getSiacTMovgest().getMovgestNumero());
+							impegno.setNumeroBigDecimal(movgestTS.getSiacTMovgest().getMovgestNumero());
 							impegno.setUid(movgestTS.getSiacTMovgest().getUid());
 							impegno.setAnnoMovimento(movgestTS.getSiacTMovgest().getMovgestAnno());
 							impegno.setDescrizione(movgestTS.getSiacTMovgest().getMovgestDesc());
@@ -1289,7 +1229,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 		if (siacRBilFaseOperativaValido != null) {
 			String bilCode = siacRBilFaseOperativaValido.getSiacDFaseOperativa().getFaseOperativaCode();
-			if (Constanti.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(bilCode)) {
+			if (CostantiFin.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(bilCode)) {
 				statoBilancioPerDoggiaGest = true;
 			}
 		}
@@ -1458,7 +1398,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 								List<SiacROrdinativoStatoFin> siacROrdinativoStato = siacROrdinativoStatoRepository.findSiacROrdinativoStatoValidoByIdOrdinativo(idEnte, siacTOrdinativoFin.getUid(), now);
 								String statoOrdinativo = siacROrdinativoStato.get(0).getSiacDOrdinativoStato().getOrdStatoCode();
 								
-								if(!statoOrdinativo.equalsIgnoreCase(Constanti.D_ORDINATIVO_STATO_ANNULLATO)){
+								if(!statoOrdinativo.equalsIgnoreCase(CostantiFin.D_ORDINATIVO_STATO_ANNULLATO)){
 									
 								
 									// trovo l'importo attuale della
@@ -1470,7 +1410,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 																				
 											SiacDOrdinativoTsDetTipoFin tipo = siacTOrdinativoTsDet.getSiacDOrdinativoTsDetTipo();
 											String tipoCode = siacTOrdinativoTsDet.getSiacDOrdinativoTsDetTipo().getOrdTsDetTipoCode();
-											if (tipo != null && tipoCode.equalsIgnoreCase(Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
+											if (tipo != null && tipoCode.equalsIgnoreCase(CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
 												disponibilitaPagare = disponibilitaPagare.subtract(siacTOrdinativoTsDet.getOrdTsDetImporto());
 											}
 										}
@@ -1654,7 +1594,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 			
 			if (siacRSubdocLiquidaziones != null)
 			{
-				if (tipoRicerca.equals(Constanti.TIPO_RICERCA_DA_ORDINATIVO))
+				if (tipoRicerca.equals(CostantiFin.TIPO_RICERCA_DA_ORDINATIVO))
 					if (!siacRSubdocLiquidaziones.isEmpty()){
 						// aggiungo il msg di errore! liquidazione agganciata a documento 
 						throw new BusinessException("Liquidazione collegata a documento", Esito.FALLIMENTO);
@@ -1768,10 +1708,10 @@ public class LiquidazioneDad extends AbstractFinDad {
 						// 	SIAC-5018 caricamento se sede deve essere fatto diversamente
 						boolean isSedeSecondaria = false;
 						List<SiacRSoggettoRelazFin> relazDue = ottimizzazioneSoggetto.filtraSiacRSoggettoRelaz2BySoggettoId(idSoggetto);
-						SiacRSoggettoRelazFin relaz = CommonUtils.getFirst(CommonUtils.soloValidiSiacTBase(relazDue, null));
+						SiacRSoggettoRelazFin relaz = CommonUtil.getFirst(CommonUtil.soloValidiSiacTBase(relazDue, null));
 						SiacTSoggettoFin soggettoDellaSede = null;
 						if(relaz!=null && relaz.getSiacDRelazTipo() != null){
-							if(Constanti.SEDE_SECONDARIA.equals(relaz.getSiacDRelazTipo().getRelazTipoCode())){
+							if(CostantiFin.SEDE_SECONDARIA.equals(relaz.getSiacDRelazTipo().getRelazTipoCode())){
 								isSedeSecondaria = true;
 								soggettoDellaSede = relaz.getSiacTSoggetto1();
 							}
@@ -1886,30 +1826,6 @@ public class LiquidazioneDad extends AbstractFinDad {
 				}
 			}
 
-			// Mutuo --> da spostare in entity
-			
-			
-			
-			List<SiacRMutuoVoceLiquidazioneFin> rMutuoVoceLiqs = null;
-			if(datiOttimizzazione!=null){
-				//RAMO OTTIMIZZATO
-				rMutuoVoceLiqs = datiOttimizzazione.filtraSiacRMutuoVoceLiquidazioneFinByLiqId(idLiquidazione);
-			} else {
-				//RAMO CLASSICO
-				rMutuoVoceLiqs  = siacTLiquidazione.getSiacRMutuoVoceLiquidaziones();
-			}
-			
-			for (SiacRMutuoVoceLiquidazioneFin rMutuoVoceLiquidaziones : rMutuoVoceLiqs) {
-				if (rMutuoVoceLiquidaziones.getDataFineValidita() == null) {
-					Mutuo mutuo = new Mutuo();
-					mutuo.setNumeroRegistrazioneMutuo(rMutuoVoceLiquidaziones.getSiacTMutuoVoce().getSiacTMutuo().getMutNumRegistrazione());
-					mutuo.setCodiceMutuo(rMutuoVoceLiquidaziones.getSiacTMutuoVoce().getSiacTMutuo().getMutCode());
-					// TO-DO: voce Mutuo da serivizio
-					// mutuoDad.ricercaMutuo(codiceEnte, numeroMutuo, now);
-					liquidazioneTrovata.setNumeroMutuo(Integer.valueOf(mutuo.getCodiceMutuo()));
-				}
-			}
-
 			// Impegno --> da spostare in entity
 			List<SiacRLiquidazioneMovgestFin> rLiqMovGests = null;
 			if(datiOttimizzazione!=null){
@@ -1952,19 +1868,19 @@ public class LiquidazioneDad extends AbstractFinDad {
 						impegno.setUid(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getUid());
 						impegno.setAnnoMovimento(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestAnno());
 						impegno.setDescrizione(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestDesc());
-						impegno.setNumero(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
+						impegno.setNumeroBigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
 
 						
 						// SubImpegno
 						BigDecimal numeroSubimpegno = new BigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getMovgestTsCode());
 						List<SubImpegno> listSubTrovati = new ArrayList<SubImpegno>();
 						
-						if(tipoRicerca.equalsIgnoreCase(Constanti.TIPO_RICERCA_DA_CONSULTA_LIQUIDAZIONE))
+						if(tipoRicerca.equalsIgnoreCase(CostantiFin.TIPO_RICERCA_DA_CONSULTA_LIQUIDAZIONE))
 						{
 							// RM Estrazione minimal dell'impegno! come richiesto dal consulta!!!
 							// Servono: Anno, Numero, SubImpegno, Descrizione impegno
 							SubImpegno sub = new SubImpegno();
-							sub.setNumero(numeroSubimpegno);
+							sub.setNumeroBigDecimal(numeroSubimpegno);
 							
 							listSub.add(sub);
 														
@@ -1987,7 +1903,9 @@ public class LiquidazioneDad extends AbstractFinDad {
 								//RAMO OTTIMIZZATO
 								ottimizzazioneDaChiamanteMovPk.setMovimentoDaChiamante(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest());
 							}
-							EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio.toString(),impegno.getAnnoMovimento(),impegno.getNumero(),paginazioneSubMovimentiDto,datiOpzionaliElencoSubAnnullati,Constanti.MOVGEST_TIPO_IMPEGNO, true,ottimizzazioneDaChiamanteMovPk);
+							EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente,
+									annoEsercizio.toString(), impegno.getAnnoMovimento(), impegno.getNumeroBigDecimal(), paginazioneSubMovimentiDto, 
+									datiOpzionaliElencoSubAnnullati,CostantiFin.MOVGEST_TIPO_IMPEGNO, true, ottimizzazioneDaChiamanteMovPk, false);
 							//
 							
 							if(esitoRicercaMov!=null){
@@ -1997,7 +1915,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 							listSubTrovati = impegno.getElencoSubImpegni();
 	
 							for (SubImpegno subImpegno : listSubTrovati) {
-								BigDecimal currentNumeroSub = subImpegno.getNumero();
+								BigDecimal currentNumeroSub = subImpegno.getNumeroBigDecimal();
 								if (numeroSubimpegno.equals(currentNumeroSub)) {
 									listSub.add(subImpegno);
 
@@ -2012,7 +1930,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 						impegno.setElencoSubImpegni(listSub);
 
 					} else {
-						impegno.setNumero(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
+						impegno.setNumeroBigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
 						impegno.setUid(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getUid());
 						impegno.setAnnoMovimento(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestAnno());
 						impegno.setDescrizione(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestDesc());
@@ -2035,8 +1953,11 @@ public class LiquidazioneDad extends AbstractFinDad {
 						//APRILE 2017 - escludo il disp a pagare per motivi di performance:
 					    DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 					    caricaDatiOpzionaliDto.setCaricaDisponibilePagare(false);
-						//EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio.toString(),impegno.getAnnoMovimento(),impegno.getNumero(),paginazioneSubMovimentiDto,null,Constanti.MOVGEST_TIPO_IMPEGNO, true,ottimizzazioneDaChiamanteMovPk);
-						EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio.toString(),impegno.getAnnoMovimento(),impegno.getNumero(),paginazioneSubMovimentiDto,caricaDatiOpzionaliDto ,Constanti.MOVGEST_TIPO_IMPEGNO, true,ottimizzazioneDaChiamanteMovPk);
+						//EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio.toString(),impegno.getAnnoMovimento(),impegno.getNumero(),paginazioneSubMovimentiDto,null,CostantiFin.MOVGEST_TIPO_IMPEGNO, true,ottimizzazioneDaChiamanteMovPk);
+						EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(
+								richiedente, ente, annoEsercizio.toString(), impegno.getAnnoMovimento(), impegno.getNumeroBigDecimal(),
+								paginazioneSubMovimentiDto,caricaDatiOpzionaliDto ,CostantiFin.MOVGEST_TIPO_IMPEGNO, true, 
+								ottimizzazioneDaChiamanteMovPk, false);
 						
 						
 						if(esitoRicercaMov!=null){
@@ -2088,7 +2009,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 			List<OrdinativoPagamento> listaOrdinativiLiquidazione = new ArrayList<OrdinativoPagamento>();
 
 			if (listaRLiquidazioneOrd != null && listaRLiquidazioneOrd.size() > 0) {
-				listaRLiquidazioneOrd = DatiOperazioneUtils.soloValidi(listaRLiquidazioneOrd, getNow());
+				listaRLiquidazioneOrd = DatiOperazioneUtil.soloValidi(listaRLiquidazioneOrd, getNow());
 
 				for (SiacRLiquidazioneOrdFin siacRLiquidazioneOrd : listaRLiquidazioneOrd) {
 					SiacTOrdinativoFin siacTOrdinativo = siacRLiquidazioneOrd.getSiacTOrdinativoT().getSiacTOrdinativo();
@@ -2114,7 +2035,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 							for (SiacROrdinativoStatoFin rOrdinativoStato : listaROrdinativoStato) {
 								if (rOrdinativoStato != null && rOrdinativoStato.getDataFineValidita() == null) {
 									String codeStato = rOrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode();
-									StatoOperativoOrdinativo statoOpOrdinativo = Constanti.statoOperativoOrdinativoStringToEnum(codeStato);
+									StatoOperativoOrdinativo statoOpOrdinativo = CostantiFin.statoOperativoOrdinativoStringToEnum(codeStato);
 									ordinativoPagamento.setStatoOperativoOrdinativo(statoOpOrdinativo);
 								}
 							}
@@ -2146,16 +2067,16 @@ public class LiquidazioneDad extends AbstractFinDad {
 		List<SiacTOrdinativoFin> ordinativi = new ArrayList<SiacTOrdinativoFin>();
 		if(siacTLiquidazione!=null){
 			List<SiacRLiquidazioneOrdFin> listaRLiquidazioneOrd = siacTLiquidazione.getSiacRLiquidazioneOrds();
-			listaRLiquidazioneOrd = DatiOperazioneUtils.soloValidi(listaRLiquidazioneOrd, getNow());
+			listaRLiquidazioneOrd = DatiOperazioneUtil.soloValidi(listaRLiquidazioneOrd, getNow());
 			for (SiacRLiquidazioneOrdFin siacRLiquidazioneOrd : listaRLiquidazioneOrd) {
 				SiacTOrdinativoFin siacTOrdinativo = siacRLiquidazioneOrd.getSiacTOrdinativoT().getSiacTOrdinativo();
 				if (siacTOrdinativo.getDataCancellazione() == null) {
 					
 					//valutiamo ancora la possibilita' che sia in stato annullato:
-					SiacROrdinativoStatoFin statoAttuale = DatiOperazioneUtils.getValido(siacTOrdinativo.getSiacROrdinativoStatos(), getNow());
+					SiacROrdinativoStatoFin statoAttuale = DatiOperazioneUtil.getValido(siacTOrdinativo.getSiacROrdinativoStatos(), getNow());
 					
 					if(statoAttuale!=null && statoAttuale.getSiacDOrdinativoStato() != null
-							&& !Constanti.D_ORDINATIVO_STATO_ANNULLATO.equals(statoAttuale.getSiacDOrdinativoStato().getOrdStatoCode())){
+							&& !CostantiFin.D_ORDINATIVO_STATO_ANNULLATO.equals(statoAttuale.getSiacDOrdinativoStato().getOrdStatoCode())){
 						ordinativi.add(siacTOrdinativo);
 					}
 				}
@@ -2219,7 +2140,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 					
 					for (SiacROrdinativoStatoFin rOrdinativoStato : listaROrdinativoStato) {
 						
-						if (CommonUtils.isValidoSiacTBase(rOrdinativoStato, null)) {
+						if (CommonUtil.isValidoSiacTBase(rOrdinativoStato, null)) {
 							
 							// se lo stato non è annullato considero l'importo dell'ordinativo 
 							if (!rOrdinativoStato.getSiacDOrdinativoStato().getOrdStatoDesc().equals(StatoOperativoOrdinativo.ANNULLATO.toString())){
@@ -2239,7 +2160,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 									for (SiacTOrdinativoTsDetFin siacTOrdinativoTsDet : listSiacTOrdinativoTsDet) {
 										SiacDOrdinativoTsDetTipoFin tipo = siacTOrdinativoTsDet.getSiacDOrdinativoTsDetTipo();
 										String tipoCode = siacTOrdinativoTsDet.getSiacDOrdinativoTsDetTipo().getOrdTsDetTipoCode();
-										if (tipo != null && tipoCode.equalsIgnoreCase(Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
+										if (tipo != null && tipoCode.equalsIgnoreCase(CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
 											disponibilitaPagare = disponibilitaPagare.subtract(siacTOrdinativoTsDet.getOrdTsDetImporto());
 										}
 									}
@@ -2255,7 +2176,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		
 		long totUno = endUno - startUno;
 				
-		CommonUtils.println("totUno: " + totUno );
+		CommonUtil.println("totUno: " + totUno );
 		
 		//Termino restituendo l'oggetto di ritorno: 
         return disponibilitaPagare;
@@ -2268,7 +2189,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 	 * @return
 	 */
 	private Liquidazione settaAttoAmministrativoInLiquidazione(List<SiacRLiquidazioneAttoAmmFin> siacRLiquidazioneAttoAmms, Liquidazione liquidazione) {
-		SiacRLiquidazioneAttoAmmFin siacRLiquidazioneAttoAmm = DatiOperazioneUtils.getValido(siacRLiquidazioneAttoAmms, null);
+		SiacRLiquidazioneAttoAmmFin siacRLiquidazioneAttoAmm = DatiOperazioneUtil.getValido(siacRLiquidazioneAttoAmms, null);
 		if (siacRLiquidazioneAttoAmm != null){
 			SiacTAttoAmmFin attoAmm = siacRLiquidazioneAttoAmm.getSiacTAttoAmm();
 			if (attoAmm != null){
@@ -2315,7 +2236,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		Liquidazione liquidazioneAnnullata = new Liquidazione();
 		
 		SiacDLiquidazioneStatoFin siacDLiquidazioneStato = new SiacDLiquidazioneStatoFin();
-		siacDLiquidazioneStato = siacDLiquidazioneStatoRepository.findDLiquidazioneStatoByCodeAndEnte(datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId(),Constanti.D_LIQUIDAZIONE_STATO_ANNULLATO.toString(),datiOperazioneDto.getTs());
+		siacDLiquidazioneStato = siacDLiquidazioneStatoRepository.findDLiquidazioneStatoByCodeAndEnte(datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId(),CostantiFin.D_LIQUIDAZIONE_STATO_ANNULLATO.toString(),datiOperazioneDto.getTs());
 
 		SiacTLiquidazioneFin siacTLiquidazione = siacTLiquidazioneRepository.findLiquidazioneByAnnoNumeroAnnoBilancio(datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId(),annoLiquidazione, numeroLiquidazione, annoEsercizio, datiOperazioneDto.getTs());
 
@@ -2328,16 +2249,16 @@ public class LiquidazioneDad extends AbstractFinDad {
 			if (listaRelLiquidazione != null && listaRelLiquidazione.size() > 0) {
 				for (SiacRLiquidazioneStatoFin itStati : listaRelLiquidazione) {
 					if (itStati.getDataFineValidita() == null) {
-						itStati = DatiOperazioneUtils.impostaDatiOperazioneLogin(itStati, datiOperazioneDto,siacTAccountRepository);
+						itStati = DatiOperazioneUtil.impostaDatiOperazioneLogin(itStati, datiOperazioneDto,siacTAccountRepository);
 						//salvo sul db:
 						siacRLiquidazioneStatoRepository.saveAndFlush(itStati);
 
 						// inserisco la riga con lo stato annullato
 						SiacRLiquidazioneStatoFin siacRLiquidazioneStato = new SiacRLiquidazioneStatoFin();
 
-						DatiOperazioneDto datiOperazioneInserimento = new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(),Operazione.INSERIMENTO,datiOperazioneDto.getSiacTEnteProprietario(),richiedente.getAccount().getId());
+						DatiOperazioneDto datiOperazioneInserimento = new DatiOperazioneDto(currentTimeMillis(),Operazione.INSERIMENTO,datiOperazioneDto.getSiacTEnteProprietario(),richiedente.getAccount().getId());
 
-						siacRLiquidazioneStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneStato,datiOperazioneInserimento,siacTAccountRepository);
+						siacRLiquidazioneStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneStato,datiOperazioneInserimento,siacTAccountRepository);
 						siacRLiquidazioneStato.setSiacTLiquidazione(siacTLiquidazione);
 						siacRLiquidazioneStato.setSiacDLiquidazioneStato(siacDLiquidazioneStato);
 						//salvo sul db:
@@ -2375,8 +2296,8 @@ public class LiquidazioneDad extends AbstractFinDad {
 		SiacTLiquidazioneFin siacTLiquidazioneResidua = siacTLiquidazioneRepository.findLiquidazioneByAnnoNumeroAnnoBilancio(datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId(),annoLiquidazione, numeroLiquidazione,annoEsercizioSucc, datiOperazioneDto.getTs());
 
 		if (siacTLiquidazioneResidua != null) {
-			DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(),Operazione.CANCELLAZIONE_LOGICA_RECORD,datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
-			DatiOperazioneUtils.cancellaRecord(siacTLiquidazioneResidua,siacTLiquidazioneRepository,datiOperazioneCancella, siacTAccountRepository);
+			DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(currentTimeMillis(),Operazione.CANCELLAZIONE_LOGICA_RECORD,datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
+			DatiOperazioneUtil.cancellaRecord(siacTLiquidazioneResidua,siacTLiquidazioneRepository,datiOperazioneCancella, siacTAccountRepository);
 		}
 		
 		return liquidazioneAnnullata;
@@ -2413,12 +2334,13 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 		//SIAC-7159
 		//si invalida la Modalita Pagamento PagoPA
-		if(checkModPagIsPagoPA(liquidazioneInput)) {
+		//SIAC-8853
+		if(checkModPagIsPagoPA(ente, liquidazioneInput)) {
 			return addErroreToList(esito, listaErrori, it.csi.siac.siacfin2ser.model.errore.ErroreFin.MOD_PAGO_PA_NON_AMMESSA.getErrore(""));
 		}
 		
 		// controllo x stato provvedimento
-		if (Constanti.STATO_ANNULLATO.equals(liquidazioneInput.getAttoAmministrativoLiquidazione().getStatoOperativo())) {
+		if (CostantiFin.STATO_ANNULLATO.equals(liquidazioneInput.getAttoAmministrativoLiquidazione().getStatoOperativo())) {
 			return addErroreToList(esito, listaErrori,ErroreFin.ATTO_AMM_ANNULLATO.getErrore(""));
 		}
 		
@@ -2458,7 +2380,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 				}
 				
 				//NUOVI CONTROLLI SULL'IMPORTO, SOLO SE LO STATO E' VALIDO:
-				if (Constanti.LIQUIDAZIONE_STATO_VALIDO.equalsIgnoreCase(statoLiq)) {
+				if (CostantiFin.LIQUIDAZIONE_STATO_VALIDO.equalsIgnoreCase(statoLiq)) {
 					
 					//3. L'importo della liquidazione deve essere maggiore uguale alla differenza di importo precedente meno disponibilita a pagare
 					BigDecimal disponibilitaPagareLiquidazione = calcolaDisponibiltaPagare(ente, siacTLiquidazioneFin);
@@ -2469,7 +2391,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 					
 					//4. L'importo della liquidazione deve essere minore uguale dell'importo precedente
 					if(newImportoLiquidazione.compareTo(importoPrecedente)>0){
-						return addErroreToList(esito, listaErrori,ErroreCore.VALORE_NON_VALIDO.getErrore("importo", "(importo solo in diminuzione)"));
+						return addErroreToList(esito, listaErrori,ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo", "(importo solo in diminuzione)"));
 					}
 					
 				}
@@ -2482,14 +2404,14 @@ public class LiquidazioneDad extends AbstractFinDad {
 		//CONTROLLI SIOPE PLUS:
 		boolean daImpegno = false;
 		List<Errore> errSiopePlus = controlliSiopePlus(liquidazioneInput.getSiopeTipoDebito(), liquidazioneInput.getSiopeAssenzaMotivazione(), liquidazioneInput.getCig(), datiOperazione,daImpegno);
-		if(!StringUtils.isEmpty(errSiopePlus)){
+		if(!StringUtilsFin.isEmpty(errSiopePlus)){
 			return addErroreToList(esito, listaErrori, errSiopePlus.get(0));
 		}
 		
-		if(!Constanti.LIQUIDAZIONE_STATO_PROVVISORIO.equalsIgnoreCase(statoLiq)) {
+		if(!CostantiFin.LIQUIDAZIONE_STATO_PROVVISORIO.equalsIgnoreCase(statoLiq)) {
 			//se non e' provvisoria non e' consentito modificare i dati di siope plus:
 			if(isSiopePlusModificata(siacTLiquidazioneFin, liquidazioneInput, datiOperazione)){
-				return addErroreToList(esito, listaErrori,ErroreCore.VALORE_NON_VALIDO.getErrore("SIOPE+", " (Per impegno non provvisorio non e' consentito modificare i dati di SIOPE+)"));
+				return addErroreToList(esito, listaErrori,ErroreCore.VALORE_NON_CONSENTITO.getErrore("SIOPE+", " (Per impegno non provvisorio non e' consentito modificare i dati di SIOPE+)"));
 			}
 		}
 		
@@ -2503,16 +2425,15 @@ public class LiquidazioneDad extends AbstractFinDad {
         return esito;
 	}
 	
-	//SIAC-7159
+	//SIAC-7159 //SIAC-8853
 	//si invalida la Modalita Pagamento PagoPA
-	private boolean checkModPagIsPagoPA(Liquidazione liquidazioneInput) {
+	private boolean checkModPagIsPagoPA(Ente ente, Liquidazione liquidazioneInput) {
 		//INDIVIDUIAMO LA MODALITA PAGAMENTO SELEZIONATA:
-		if(liquidazioneInput != null && liquidazioneInput.getModalitaPagamentoSoggetto() != null && "APA".equals(liquidazioneInput.getModalitaPagamentoSoggetto().getModalitaAccreditoSoggetto().getCodice())){
+		if(liquidazioneInput != null && liquidazioneInput.getModalitaPagamentoSoggetto() != null && AccreditoTipoOilIsPagoPADad.accreditoTipoOilIsPagoPA(ente.getUid(), liquidazioneInput.getModalitaPagamentoSoggetto().getModalitaAccreditoSoggetto().getCodice())){
 			return true;
 		}
 		return false;
 	}
-	
 	
 	public String getStatoCode(Integer idLiquidazione){
 		if(idLiquidazione!=null){
@@ -2533,7 +2454,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 	private String getStatoCode(SiacTLiquidazioneFin siacTLiquidazioneFin){
 		if(siacTLiquidazioneFin!=null){
 			List<SiacRLiquidazioneStatoFin> elencoSiacRLiquidazioneStato = siacTLiquidazioneFin.getSiacRLiquidazioneStatos();
-			SiacRLiquidazioneStatoFin siacRLiquidazioneStato = CommonUtils.getValidoSiacTBase(elencoSiacRLiquidazioneStato, getNow());
+			SiacRLiquidazioneStatoFin siacRLiquidazioneStato = CommonUtil.getValidoSiacTBase(elencoSiacRLiquidazioneStato, getNow());
 			if(!isStatoLiqNull(siacRLiquidazioneStato)){
 				return siacRLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoCode();
 			}
@@ -2575,9 +2496,9 @@ public class LiquidazioneDad extends AbstractFinDad {
 		// se lo stato operativo è passato sulla liquidazione non devo considerare quello dell'atto
 		if(liquidazioneInput.getStatoOperativoLiquidazione()==null){
 			 
-			if (Constanti.STATO_ANNULLATO.equals(liquidazione.getAttoAmministrativoLiquidazione().getStatoOperativo())){
+			if (CostantiFin.STATO_ANNULLATO.equals(liquidazione.getAttoAmministrativoLiquidazione().getStatoOperativo())){
 				liquidazione.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.ANNULLATO);
-			}else if (Constanti.STATO_PROVVISORIO.equals(liquidazione.getAttoAmministrativoLiquidazione().getStatoOperativo())){
+			}else if (CostantiFin.STATO_PROVVISORIO.equals(liquidazione.getAttoAmministrativoLiquidazione().getStatoOperativo())){
 				liquidazione.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.PROVVISORIO);
 			}else{
 				liquidazione.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.VALIDO);
@@ -2619,7 +2540,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 
 		String loginOperazione = richiedente.getAccount().getNome();
 
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);
 		Timestamp timestampInserimento = null;
 		timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);
@@ -2635,7 +2556,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 			bilancio.setUid(siacTBilCurrentList.get(0).getBilId());
 		}
 
-		liqReturn = aggiornamentoLiquidazione(liquidazioneInput, annoEsercizio,loginOperazione, Constanti.AMBITO_FIN, 
+		liqReturn = aggiornamentoLiquidazione(liquidazioneInput, annoEsercizio,loginOperazione, CostantiFin.AMBITO_FIN, 
 				idEnte, bilancio, datiOperazioneDto, timestampInserimento);
 
 		// Aggiornamento liquidazione residua in doppia gestione
@@ -2663,7 +2584,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		attributoInfo.setSiacTLiquidazione(siacTLiquidazione);
 		
 		//CIG:
-		if(isAttributoModificato(liquidazione.getCig(), Constanti.T_ATTR_CODE_CIG, datiOperazioneDto, attributoInfo)){
+		if(isAttributoModificato(liquidazione.getCig(), CostantiFin.T_ATTR_CODE_CIG, datiOperazioneDto, attributoInfo)){
 			return true;
 		}
 		
@@ -2693,20 +2614,20 @@ public class LiquidazioneDad extends AbstractFinDad {
 		
 		SiopeTipoDebito siopeTipoDebito = liquidazione.getSiopeTipoDebito();
 		SiacDSiopeTipoDebitoFin siacDSiopeTipoDebitoNew = null;
-		if(siopeTipoDebito!=null && !StringUtils.isEmpty(siopeTipoDebito.getCodice())){
+		if(siopeTipoDebito!=null && !StringUtilsFin.isEmpty(siopeTipoDebito.getCodice())){
 			//recuperiamo il record della codifica ricevuta:
 			List<SiacDSiopeTipoDebitoFin> dstdebitos = siacDSiopeTipoDebitoFinRepository.findByCode(idEnte, datiOperazioneDto.getTs(), siopeTipoDebito.getCodice());
-			siacDSiopeTipoDebitoNew = CommonUtils.getFirst(dstdebitos);
+			siacDSiopeTipoDebitoNew = CommonUtil.getFirst(dstdebitos);
 		}
 		
 		SiacDSiopeTipoDebitoFin siopeTipoDebitoOld = siacTLiquidazione.getSiacDSiopeTipoDebitoFin();
-		if(!CommonUtils.entrambiNullOrEntrambiIstanziati(siopeTipoDebitoOld, siacDSiopeTipoDebitoNew)){
+		if(!CommonUtil.entrambiNullOrEntrambiIstanziati(siopeTipoDebitoOld, siacDSiopeTipoDebitoNew)){
 			//uno dei due e' null e l'altro non lo e' --> sono sicuramenti diversi
 			isModificato = true;
 			return isModificato;
-		} else if(CommonUtils.entrambiDiversiDaNull(siopeTipoDebitoOld, siacDSiopeTipoDebitoNew)){
+		} else if(CommonUtil.entrambiDiversiDaNull(siopeTipoDebitoOld, siacDSiopeTipoDebitoNew)){
 			//c'e' la possibilita' che ci sia una modifica
-			if(!DatiOperazioneUtils.hannoLoStessoUid(siopeTipoDebitoOld, siacDSiopeTipoDebitoNew)){
+			if(!DatiOperazioneUtil.hannoLoStessoUid(siopeTipoDebitoOld, siacDSiopeTipoDebitoNew)){
 				isModificato = true;
 				return isModificato;
 			}
@@ -2727,20 +2648,20 @@ public class LiquidazioneDad extends AbstractFinDad {
 		
 		SiopeAssenzaMotivazione siopeAssenzaMotivazione = liquidazione.getSiopeAssenzaMotivazione();
 		SiacDSiopeAssenzaMotivazioneFin siacDSiopeAssenzaMotivazioneNew = null;
-		if(siopeAssenzaMotivazione!=null && !StringUtils.isEmpty(siopeAssenzaMotivazione.getCodice())){
+		if(siopeAssenzaMotivazione!=null && !StringUtilsFin.isEmpty(siopeAssenzaMotivazione.getCodice())){
 			//recuperiamo il record della codifica ricevuta:
 			List<SiacDSiopeAssenzaMotivazioneFin> aMtvs = siacDSiopeAssenzaMotivazioneFinRepository.findByCode(idEnte, datiOperazioneDto.getTs(), siopeAssenzaMotivazione.getCodice());
-			siacDSiopeAssenzaMotivazioneNew = CommonUtils.getFirst(aMtvs);
+			siacDSiopeAssenzaMotivazioneNew = CommonUtil.getFirst(aMtvs);
 		}
 		
 		SiacDSiopeAssenzaMotivazioneFin siacDSiopeAssenzaMotivazioneOld = siacTLiquidazione.getSiacDSiopeAssenzaMotivazione();
-		if(!CommonUtils.entrambiNullOrEntrambiIstanziati(siacDSiopeAssenzaMotivazioneOld, siacDSiopeAssenzaMotivazioneNew)){
+		if(!CommonUtil.entrambiNullOrEntrambiIstanziati(siacDSiopeAssenzaMotivazioneOld, siacDSiopeAssenzaMotivazioneNew)){
 			//uno dei due e' null e l'altro non lo e' --> sono sicuramenti diversi
 			isModificato = true;
 			return isModificato;
-		} else if(CommonUtils.entrambiDiversiDaNull(siacDSiopeAssenzaMotivazioneOld, siacDSiopeAssenzaMotivazioneNew)){
+		} else if(CommonUtil.entrambiDiversiDaNull(siacDSiopeAssenzaMotivazioneOld, siacDSiopeAssenzaMotivazioneNew)){
 			//c'e' la possibilita' che ci sia una modifica
-			if(!DatiOperazioneUtils.hannoLoStessoUid(siacDSiopeAssenzaMotivazioneOld, siacDSiopeAssenzaMotivazioneNew)){
+			if(!DatiOperazioneUtil.hannoLoStessoUid(siacDSiopeAssenzaMotivazioneOld, siacDSiopeAssenzaMotivazioneNew)){
 				isModificato = true;
 				return isModificato;
 			}
@@ -2784,8 +2705,8 @@ public class LiquidazioneDad extends AbstractFinDad {
 		EsitoGestioneLiquidazioneDto esito = new EsitoGestioneLiquidazioneDto();
 
 		String annoEsercizio = String.valueOf(bilancio.getAnno());
-		String statoOP = Constanti.statoOperativoLiquidazioneEnumToString(liquidazioneInput.getStatoOperativoLiquidazione());
-		if (!Constanti.LIQUIDAZIONE_STATO_VALIDO.equalsIgnoreCase(statoOP)) {
+		String statoOP = CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazioneInput.getStatoOperativoLiquidazione());
+		if (!CostantiFin.LIQUIDAZIONE_STATO_VALIDO.equalsIgnoreCase(statoOP)) {
 			log.debug(methodName, "Liquidazione non in stato valido, esco.");
 			return esito;
 		}
@@ -2842,8 +2763,8 @@ public class LiquidazioneDad extends AbstractFinDad {
 				//
 				
 				
-				DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(),Operazione.CANCELLAZIONE_LOGICA_RECORD,datiOperazioneDto.getSiacTEnteProprietario(),richiedente.getAccount().getId());
-				DatiOperazioneUtils.cancellaRecord(siacTLiquidazioneAnnoBilancioPiuUno,siacTLiquidazioneRepository,datiOperazioneCancella,siacTAccountRepository);
+				DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(currentTimeMillis(),Operazione.CANCELLAZIONE_LOGICA_RECORD,datiOperazioneDto.getSiacTEnteProprietario(),richiedente.getAccount().getId());
+				DatiOperazioneUtil.cancellaRecord(siacTLiquidazioneAnnoBilancioPiuUno,siacTLiquidazioneRepository,datiOperazioneCancella,siacTAccountRepository);
 			}
 			return esito;
 		} 
@@ -2852,17 +2773,17 @@ public class LiquidazioneDad extends AbstractFinDad {
 		liquidazioneDaRicercare.setNumeroLiquidazione(liquidazioneInput.getNumeroLiquidazione());
 
 		//18 novembre, fix su ambito non valorizzato:
-		String ambitoCode = Constanti.AMBITO_FIN;
+		String ambitoCode = CostantiFin.AMBITO_FIN;
 		if(datiOperazioneDto.getSiacDAmbito()!=null){
 			ambitoCode = datiOperazioneDto.getSiacDAmbito().getAmbitoCode();
 		}
 		//
 		
-		Liquidazione liquidazioneAnnoBilancioPiuUno = ricercaLiquidazionePerChiave(liquidazioneDaRicercare, Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE,
+		Liquidazione liquidazioneAnnoBilancioPiuUno = ricercaLiquidazionePerChiave(liquidazioneDaRicercare, CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE,
 				richiedente, bilancioPiuUno.getAnno(),ambitoCode, ente,datiOperazioneDto);
 
 		if (liquidazioneAnnoBilancioPiuUno != null) {
-			if (liquidazioneAnnoBilancioPiuUno.getCodiceStatoOperativoLiquidazione().equalsIgnoreCase(Constanti.LIQUIDAZIONE_STATO_ANNULLATO)) {
+			if (liquidazioneAnnoBilancioPiuUno.getCodiceStatoOperativoLiquidazione().equalsIgnoreCase(CostantiFin.LIQUIDAZIONE_STATO_ANNULLATO)) {
 				esito.addErrore(ErroreFin.OPERAZIONE_INCOMPATIBILE_CON_STATO_ENTITA.getErrore("liquidazione residua","annullato"));
 				return esito;
 			}
@@ -2901,7 +2822,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		PaginazioneSubMovimentiDto paginazioneSubMovimentiDto = new PaginazioneSubMovimentiDto();
 		if(presenzaSub(impegnoOriginale)){
 			//Selezionato un SUB 
-			BigDecimal numeroSubOriginale = impegnoOriginale.getElencoSubImpegni().get(0).getNumero();
+			BigDecimal numeroSubOriginale = impegnoOriginale.getElencoSubImpegni().get(0).getNumeroBigDecimal();
 			paginazioneSubMovimentiDto.setNoSub(false);
 			paginazioneSubMovimentiDto.setNumeroSubMovimentoRichiesto(numeroSubOriginale);
 		} else {
@@ -2911,7 +2832,9 @@ public class LiquidazioneDad extends AbstractFinDad {
 		}
 		//
 		
-		EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente,String.valueOf(anno + 1),impegnoOriginale.getAnnoMovimento(),impegnoOriginale.getNumero(),paginazioneSubMovimentiDto,null,Constanti.MOVGEST_TIPO_IMPEGNO, false);
+		EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(
+				richiedente, ente,String.valueOf(anno + 1), impegnoOriginale.getAnnoMovimento(), impegnoOriginale.getNumeroBigDecimal(), 
+				paginazioneSubMovimentiDto,null,CostantiFin.MOVGEST_TIPO_IMPEGNO, false, false);
 
 		Impegno impegnoDoppiaGestione = null;
 		if(esitoRicercaMov!=null){
@@ -2930,11 +2853,11 @@ public class LiquidazioneDad extends AbstractFinDad {
 			impegnoResiduoDaCreare.setImportoAttuale(dispPagareImp);
 			impegnoResiduoDaCreare.setImportoIniziale(dispPagareImp);
 			
-			SiacDAmbitoFin siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(Constanti.AMBITO_FIN, idEnte);
+			SiacDAmbitoFin siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(CostantiFin.AMBITO_FIN, idEnte);
 			
-			Integer numeroImpegno=new Integer(impegnoResiduoDaCreare.getNumero().intValue());
+			Integer numeroImpegno=new Integer(impegnoResiduoDaCreare.getNumeroBigDecimal().intValue());
 			impegnoResiduoDaCreare.setListaModificheMovimentoGestioneSpesa(new ArrayList<ModificaMovimentoGestioneSpesa>());
-			DatiOperazioneDto datiOperazioneDtoIns = new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(), Operazione.INSERIMENTO, datiOperazioneDto.getSiacTEnteProprietario(), siacDAmbitoPerCode, richiedente.getAccount().getId(), datiOperazioneDto.getAnnoBilancio());
+			DatiOperazioneDto datiOperazioneDtoIns = new DatiOperazioneDto(currentTimeMillis(), Operazione.INSERIMENTO, datiOperazioneDto.getSiacTEnteProprietario(), siacDAmbitoPerCode, richiedente.getAccount().getId(), datiOperazioneDto.getAnnoBilancio());
 			
 			//RISOLUAZIONE DEL CAPITOLO:
 			CapitoloUscitaGestione capitolo = impegnoResiduoDaCreare.getCapitoloUscitaGestione();
@@ -2981,12 +2904,12 @@ public class LiquidazioneDad extends AbstractFinDad {
 				
 		if (presenzaSub(impegnoOriginale)) {
 			
-			BigDecimal numeroSubOriginale = impegnoOriginale.getElencoSubImpegni().get(0).getNumero();
+			BigDecimal numeroSubOriginale = impegnoOriginale.getElencoSubImpegni().get(0).getNumeroBigDecimal();
 
 			if (impegnoDoppiaGestione.getElencoSubImpegni() != null && impegnoDoppiaGestione.getElencoSubImpegni().size() > 0) {
 				List<SubImpegno> elencoSubImpegniDoppiaGestione = new ArrayList<SubImpegno>();
 				for (SubImpegno subImpegno : impegnoDoppiaGestione.getElencoSubImpegni()) {
-					if (subImpegno.getNumero().compareTo(numeroSubOriginale) == 0) {
+					if (subImpegno.getNumeroBigDecimal().compareTo(numeroSubOriginale) == 0) {
 						elencoSubImpegniDoppiaGestione.add(subImpegno);
 						break;
 					}
@@ -3052,7 +2975,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 	
 		Ente ente = new Ente();
 		ente.setUid(datiOperazione.getSiacTEnteProprietario().getUid());
-		List<StoricoImpegnoAccertamento> storici = caricaStoricoImpegnoAccertamento(impegnoOldBilancio.getAnnoMovimento(), impegnoOldBilancio.getNumero(), bilancioOld, ente);
+		List<StoricoImpegnoAccertamento> storici = caricaStoricoImpegnoAccertamento(impegnoOldBilancio.getAnnoMovimento(), impegnoOldBilancio.getNumeroBigDecimal(), bilancioOld, ente);
 		
 		if(storici == null) {
 			log.debug(methodName, "Non sono presenti legami storici nell'impegno di origine, non li ribalto.");
@@ -3083,10 +3006,10 @@ public class LiquidazioneDad extends AbstractFinDad {
 	 */
 	private SubImpegno getSubImpegnoAnnoBilancioPiuUno(Impegno impegnoNewBilancio, DatiOperazioneDto datiOperazione, SubImpegno subImpegnoOldBilancio) {
 		
-		if(subImpegnoOldBilancio == null || subImpegnoOldBilancio.getNumero() == null) {
+		if(subImpegnoOldBilancio == null || subImpegnoOldBilancio.getNumeroBigDecimal() == null) {
 			return null;
 		}
-		List<SiacTMovgestTsFin> movgests = siacTMovgestTsRepository.findSubMovgestTsByCodeAndMovgestId(datiOperazione.getSiacTEnteProprietario().getUid(), getNow(), impegnoNewBilancio.getUid(), subImpegnoOldBilancio.getNumero().toString());
+		List<SiacTMovgestTsFin> movgests = siacTMovgestTsRepository.findSubMovgestTsByCodeAndMovgestId(datiOperazione.getSiacTEnteProprietario().getUid(), getNow(), impegnoNewBilancio.getUid(), subImpegnoOldBilancio.getNumeroBigDecimal().toString());
 		if(movgests == null || movgests.isEmpty()) {
 			return null;
 		}
@@ -3102,7 +3025,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		parametroRicercaStoricoImpegnoAccertamento.setStoricoImpegnoAccertamento(new StoricoImpegnoAccertamento());
 		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().setImpegno(new Impegno());
 		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().getImpegno().setAnnoMovimento(annoRiaccertato);
-		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().getImpegno().setNumero(numeroRiaccertato);
+		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().getImpegno().setNumeroBigDecimal(numeroRiaccertato);
 		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().setEnte(ente);
 		return storicoImpegnoAccertamentoDad.ricercaSinteticaStorico(ente, parametroRicercaStoricoImpegnoAccertamento, 0, Integer.MAX_VALUE);
 	}
@@ -3121,7 +3044,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		BigDecimal disponibilitaPagareResidua = calcolaDisponibiltaPagare(ente, liquidazioneId, importoLiquidazioneResidua,null);
 		BigDecimal giaPagato = importoLiquidazioneResidua.subtract(disponibilitaPagareResidua);
 		if(nuovoImportoLiq.compareTo(giaPagato)<0){
-			return ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("Aggiornamento Liquidazione residua non possibile, disponibilita' a pagare "+CommonUtils.convertiBigDecimalToImporto(disponibilitaPagareResidua));
+			return ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("Aggiornamento Liquidazione residua non possibile, disponibilita' a pagare "+CommonUtil.convertiBigDecimalToImporto(disponibilitaPagareResidua));
 		}
 		//
 		return errore;
@@ -3156,7 +3079,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		// - se presenzaOrdinativi == false tutti i campi sono modificabili
 		entityRefresh(siacTLiquidazioneUpdate);//per sicurezza assoluta prima di leggere gli ordinativi..
 		List<SiacTOrdinativoFin> ordinativiCollegati = getOrdinativiValidiNonAnnullati(siacTLiquidazioneUpdate);
-		boolean presenzaOrdinativi = !StringUtils.isEmpty(ordinativiCollegati);
+		boolean presenzaOrdinativi = !StringUtilsFin.isEmpty(ordinativiCollegati);
 		//
 		
 		if (siacTLiquidazioneUpdate != null) {
@@ -3229,7 +3152,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 							SubImpegno subImpegno = new SubImpegno();
 							List<SubImpegno> listSubs = new ArrayList<SubImpegno>();
 							
-							subImpegno.setNumero(new BigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getMovgestTsCode()));
+							subImpegno.setNumeroBigDecimal(new BigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getMovgestTsCode()));
 							subImpegno.setUid(rLiquidazioneMovgest.getSiacTMovgestTs().getUid());
 							
 							// mi serve anche il PDC
@@ -3245,7 +3168,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 						} 
 							
 						//IMPEGNO!
-						impegno.setNumero(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
+						impegno.setNumeroBigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
 						impegno.setUid(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getUid());
 						impegno.setAnnoMovimento(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestAnno());
 							
@@ -3300,7 +3223,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 				if(AttributoMovimentoGestione.FlagAttivaGsa.name().equalsIgnoreCase(codiceAttributo)){
 					
 					if(null!=siacRMovgestTsAttr.getBoolean_()){
-						if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+						if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 							impegno.setFlagAttivaGsa(true);
 						}else {
 							impegno.setFlagAttivaGsa(false);
@@ -3325,7 +3248,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 					
 					String tipoCode = rMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode();
 					
-					if(StringUtils.contenutoIn(tipoCode, Constanti.getCodiciPianoDeiConti())){
+					if(StringUtilsFin.contenutoIn(tipoCode, CostantiFin.getCodiciPianoDeiConti())){
 						
 						// PIANO DEI CONTI:
 						movgest.setCodPdc(rMovgestClass.getSiacTClass().getClassifCode()); 
@@ -3394,7 +3317,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 			DatiOperazioneDto datiOperazioneDto, SiacTLiquidazioneFin siacTLiquidazione) {
 		
 			// update stato liquidazione
-			String statoOP = Constanti.statoOperativoLiquidazioneEnumToString(liquidazione.getStatoOperativoLiquidazione());
+			String statoOP = CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazione.getStatoOperativoLiquidazione());
 			
 			List<SiacRLiquidazioneStatoFin> siacRLiquidazioneStatolist = siacTLiquidazione.getSiacRLiquidazioneStatos();
 			
@@ -3411,8 +3334,8 @@ public class LiquidazioneDad extends AbstractFinDad {
 							if (!dStatoLiqOld.getLiqStatoCode().equals(statoOP)) {
 																	
 								// annullo prima il legame vecchio e poi inserisco il nuovo
-								DatiOperazioneDto datiOperazioneCancellazioneLogica = new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), datiOperazioneDto.getAccountCode());
-								DatiOperazioneUtils.cancellaRecord(siacRLiquidazioneStato, siacRLiquidazioneStatoRepository, datiOperazioneCancellazioneLogica, siacTAccountRepository);
+								DatiOperazioneDto datiOperazioneCancellazioneLogica = new DatiOperazioneDto(currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), datiOperazioneDto.getAccountCode());
+								DatiOperazioneUtil.cancellaRecord(siacRLiquidazioneStato, siacRLiquidazioneStatoRepository, datiOperazioneCancellazioneLogica, siacTAccountRepository);
 								
 								
 								SiacDLiquidazioneStatoFin siacDLiquidazioneStato = siacDLiquidazioneStatoRepository.findDLiquidazioneStatoByCodeAndEnte(datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId(), statoOP, getNow());
@@ -3423,7 +3346,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 								siacRLiquidazioneStatoAggiornato.setSiacTLiquidazione(siacTLiquidazione);
 								
 								datiOperazioneDto.setOperazione(Operazione.INSERIMENTO);
-								siacRLiquidazioneStatoAggiornato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneStatoAggiornato,datiOperazioneDto,siacTAccountRepository);
+								siacRLiquidazioneStatoAggiornato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneStatoAggiornato,datiOperazioneDto,siacTAccountRepository);
 								//salvo sul db:
 								siacRLiquidazioneStatoRepository.saveAndFlush(siacRLiquidazioneStatoAggiornato);
 								
@@ -3434,7 +3357,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 								liqReturn.setAnnoLiquidazione(siacTLiquidazione.getLiqAnno());
 								
 								
-								StatoOperativoLiquidazione statoOpLiquidazione = Constanti.statoOperativoLiquidazioneStringToEnum(siacDLiquidazioneStato.getLiqStatoCode());
+								StatoOperativoLiquidazione statoOpLiquidazione = CostantiFin.statoOperativoLiquidazioneStringToEnum(siacDLiquidazioneStato.getLiqStatoCode());
 								liqReturn.setStatoOperativoLiquidazione(statoOpLiquidazione);
 									
 							} else {
@@ -3442,7 +3365,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 								liqReturn.setIdLiquidazione(siacTLiquidazione.getLiqId());
 								liqReturn.setNumeroLiquidazione(siacTLiquidazione.getLiqNumero());
 								liqReturn.setAnnoLiquidazione(siacTLiquidazione.getLiqAnno());
-								StatoOperativoLiquidazione statoOpLiquidazione = Constanti.statoOperativoLiquidazioneStringToEnum(dStatoLiqOld.getLiqStatoCode());
+								StatoOperativoLiquidazione statoOpLiquidazione = CostantiFin.statoOperativoLiquidazioneStringToEnum(dStatoLiqOld.getLiqStatoCode());
 								liqReturn.setStatoOperativoLiquidazione(statoOpLiquidazione);
 							}
 						}
@@ -3459,13 +3382,13 @@ public class LiquidazioneDad extends AbstractFinDad {
 	 */
 	public void impostaLiqManuale(String liqManualeDaAggiornare, SiacTLiquidazioneFin siacTLiquidazione) {
 		
-		if (Constanti.LIQUIDAZIONE_AUTOMATICA.equalsIgnoreCase(liqManualeDaAggiornare)) {
+		if (CostantiFin.LIQUIDAZIONE_AUTOMATICA.equalsIgnoreCase(liqManualeDaAggiornare)) {
 			
-			siacTLiquidazione.setLiqConvalidaManuale(Constanti.LIQUIDAZIONE_AUTOMATICA_CODE);
+			siacTLiquidazione.setLiqConvalidaManuale(CostantiFin.LIQUIDAZIONE_AUTOMATICA_CODE);
 			
-		} else if (Constanti.LIQUIDAZIONE_MAUALE.equalsIgnoreCase(liqManualeDaAggiornare)) {
+		} else if (CostantiFin.LIQUIDAZIONE_MAUALE.equalsIgnoreCase(liqManualeDaAggiornare)) {
 			
-			siacTLiquidazione.setLiqConvalidaManuale(Constanti.LIQUIDAZIONE_MAUALE_CODE);
+			siacTLiquidazione.setLiqConvalidaManuale(CostantiFin.LIQUIDAZIONE_MAUALE_CODE);
 		}
 	}
 	
@@ -3487,10 +3410,10 @@ public class LiquidazioneDad extends AbstractFinDad {
 		}	
 		String newLiqManuale = liquidazioneInput.getLiqManuale();
 
-		if (Constanti.LIQUIDAZIONE_AUTOMATICA.equalsIgnoreCase(newLiqManuale)) {
-			siacTLiquidazioneUpdate.setLiqConvalidaManuale(Constanti.LIQUIDAZIONE_AUTOMATICA_CODE);
-		} else if (Constanti.LIQUIDAZIONE_MAUALE.equalsIgnoreCase(newLiqManuale)) {
-			siacTLiquidazioneUpdate.setLiqConvalidaManuale(Constanti.LIQUIDAZIONE_MAUALE_CODE);
+		if (CostantiFin.LIQUIDAZIONE_AUTOMATICA.equalsIgnoreCase(newLiqManuale)) {
+			siacTLiquidazioneUpdate.setLiqConvalidaManuale(CostantiFin.LIQUIDAZIONE_AUTOMATICA_CODE);
+		} else if (CostantiFin.LIQUIDAZIONE_MAUALE.equalsIgnoreCase(newLiqManuale)) {
+			siacTLiquidazioneUpdate.setLiqConvalidaManuale(CostantiFin.LIQUIDAZIONE_MAUALE_CODE);
 		}
 
 		// update contotesoreria in siacTLiquidazione
@@ -3523,7 +3446,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 			String codNew = distintaNew.getCodice() == null ? "": distintaNew.getCodice();
 			String codOld = distintaOld.getDistCode() == null ? "": distintaOld.getDistCode();
 			if (!codNew.equals(codOld)) {
-				SiacDDistintaFin siacDDistinta = siacDDistintaRepository.findDistintaByCode(idEnte, codNew,timestampInserimento, Constanti.D_DISTINTA_TIPO_SPESA);
+				SiacDDistintaFin siacDDistinta = siacDDistintaRepository.findDistintaByCode(idEnte, codNew,timestampInserimento, CostantiFin.D_DISTINTA_TIPO_SPESA);
 				if (siacDDistinta != null){
 					siacTLiquidazioneUpdate.setSiacDDistinta(siacDDistinta);
 				}	
@@ -3533,7 +3456,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 			siacTLiquidazioneUpdate.setSiacDDistinta(null);
 	
 		} else if (distintaOld == null && distintaNew != null) {
-			SiacDDistintaFin siacDDistinta = siacDDistintaRepository.findDistintaByCode(idEnte, distintaNew.getCodice(),timestampInserimento, Constanti.D_DISTINTA_TIPO_SPESA);
+			SiacDDistintaFin siacDDistinta = siacDDistintaRepository.findDistintaByCode(idEnte, distintaNew.getCodice(),timestampInserimento, CostantiFin.D_DISTINTA_TIPO_SPESA);
 			if (siacDDistinta != null){
 				siacTLiquidazioneUpdate.setSiacDDistinta(siacDDistinta);
 			}	
@@ -3552,7 +3475,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		//  perche' sono colonne di fk dentro SiacTLiquidazioneFin )
 		impostaDatiSiopePlus(siacTLiquidazioneUpdate, liquidazioneInput, datiOperazioneDto);
 		
-		siacTLiquidazioneUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTLiquidazioneUpdate,datiOperazioneDto, siacTAccountRepository);
+		siacTLiquidazioneUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTLiquidazioneUpdate,datiOperazioneDto, siacTAccountRepository);
 		
 		//salvo sul db:
 		siacTLiquidazioneUpdate = siacTLiquidazioneRepository.saveAndFlush(siacTLiquidazioneUpdate);
@@ -3562,7 +3485,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 		attributoInfo.setSiacTLiquidazione(siacTLiquidazioneUpdate);
 
 		// update stato liquidazione
-		String statoOP = Constanti.statoOperativoLiquidazioneEnumToString(liquidazioneInput.getStatoOperativoLiquidazione());
+		String statoOP = CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazioneInput.getStatoOperativoLiquidazione());
 		List<SiacRLiquidazioneStatoFin> siacRLiquidazioneStatolist = siacTLiquidazioneUpdate.getSiacRLiquidazioneStatos();
 		if (siacRLiquidazioneStatolist != null && !siacRLiquidazioneStatolist.isEmpty()) {
 			for (SiacRLiquidazioneStatoFin siacRLiquidazioneStato : siacRLiquidazioneStatolist) {
@@ -3574,8 +3497,8 @@ public class LiquidazioneDad extends AbstractFinDad {
 							if (!dStatoLiqOld.getLiqStatoCode().equals(statoOP)) {
 																
 								// annullo prima il legame vecchio e poi inserisco il nuovo
-								DatiOperazioneDto datiOperazioneCancellazioneLogica = new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), datiOperazioneDto.getAccountCode());
-								DatiOperazioneUtils.cancellaRecord(siacRLiquidazioneStato, siacRLiquidazioneStatoRepository, datiOperazioneCancellazioneLogica, siacTAccountRepository);
+								DatiOperazioneDto datiOperazioneCancellazioneLogica = new DatiOperazioneDto(currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), datiOperazioneDto.getAccountCode());
+								DatiOperazioneUtil.cancellaRecord(siacRLiquidazioneStato, siacRLiquidazioneStatoRepository, datiOperazioneCancellazioneLogica, siacTAccountRepository);
 								
 								
 								SiacDLiquidazioneStatoFin siacDLiquidazioneStato = siacDLiquidazioneStatoRepository.findDLiquidazioneStatoByCodeAndEnte(idEnte, statoOP,timestampInserimento);
@@ -3586,7 +3509,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 								siacRLiquidazioneStatoAggiornato.setSiacTLiquidazione(siacTLiquidazioneUpdate);
 								
 								datiOperazioneDto.setOperazione(Operazione.INSERIMENTO);
-								siacRLiquidazioneStatoAggiornato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneStatoAggiornato,datiOperazioneDto,siacTAccountRepository);
+								siacRLiquidazioneStatoAggiornato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneStatoAggiornato,datiOperazioneDto,siacTAccountRepository);
 								//salvo sul db:
 								siacRLiquidazioneStatoRepository.saveAndFlush(siacRLiquidazioneStatoAggiornato);
 							}
@@ -3613,7 +3536,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 				SiacTSoggettoFin siacTSoggettoNew = siacTSoggettoRepository.findOne(sedeSecondariaSoggetto.getUid());
 				aggiornaSoggetto(idEnte, siacTLiquidazioneUpdate,siacTSoggettoNew, datiOperazioneDto);
 			} else {
-				SiacTSoggettoFin siacTSoggettoNew = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codSoggetto,Constanti.SEDE_SECONDARIA, getNow());
+				SiacTSoggettoFin siacTSoggettoNew = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codSoggetto,CostantiFin.SEDE_SECONDARIA, getNow());
 				aggiornaSoggetto(idEnte, siacTLiquidazioneUpdate, siacTSoggettoNew, datiOperazioneDto);
 			}
 		}
@@ -3635,7 +3558,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 							if (siacTAttoAmmOld != null) {
 								if (siacTAttoAmmNew.getUid() != siacTAttoAmmOld.getUid()) {
 									siacRLiquidazioneAttoAmm.setSiacTAttoAmm(siacTAttoAmmNew);
-									siacRLiquidazioneAttoAmm = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneAttoAmm,datiOperazioneDto,siacTAccountRepository);
+									siacRLiquidazioneAttoAmm = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneAttoAmm,datiOperazioneDto,siacTAccountRepository);
 									//salvo sul db:
 									siacRLiquidazioneAttoAmmRepository.saveAndFlush(siacRLiquidazioneAttoAmm);
 								}
@@ -3672,7 +3595,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 			siacTLiquidazioneUpdate.setLiqImporto(liqImportoNew);
 		}	
 		
-		siacTLiquidazioneUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTLiquidazioneUpdate,datiOperazioneDto, siacTAccountRepository);
+		siacTLiquidazioneUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTLiquidazioneUpdate,datiOperazioneDto, siacTAccountRepository);
 		
 		//salvo sul db:
 		siacTLiquidazioneUpdate = siacTLiquidazioneRepository.saveAndFlush(siacTLiquidazioneUpdate);
@@ -3695,7 +3618,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 					//solo se e' cambiato il soggetto:
 					SiacRLiquidazioneSoggettoFin siacRLiquidazioneSoggetto = new SiacRLiquidazioneSoggettoFin();
 					
-					siacRLiquidazioneSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRLiquidazioneSoggetto,datiOperazioneDto,siacTAccountRepository);
+					siacRLiquidazioneSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRLiquidazioneSoggetto,datiOperazioneDto,siacTAccountRepository);
 					siacRLiquidazioneSoggetto.setSiacTLiquidazione(siacTLiquidazioneUpdate);
 					siacRLiquidazioneSoggetto.setSiacTSoggetto(siacTSoggetto);
 					//salvo sul db:
@@ -3703,7 +3626,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 					
 					//ANNULLO L'OLD:
 					for(SiacRLiquidazioneSoggettoFin oldIt: soggettoOld){
-						DatiOperazioneUtils.annullaRecord(oldIt, siacRLiquidazioneSoggettoRepository, datiOperazioneDto, siacTAccountRepository);
+						DatiOperazioneUtil.annullaRecord(oldIt, siacRLiquidazioneSoggettoRepository, datiOperazioneDto, siacTAccountRepository);
 					}
 				}
 			}
@@ -3749,7 +3672,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 					if (siacRLiquidazioneOrd.getDataCancellazione() == null && siacRLiquidazioneOrd.getSiacTOrdinativoT().getDataFineValidita() == null && siacRLiquidazioneOrd.getSiacTOrdinativoT().getDataCancellazione() == null && siacRLiquidazioneOrd.getSiacTOrdinativoT().getSiacTOrdinativo().getDataFineValidita() == null && siacRLiquidazioneOrd.getSiacTOrdinativoT().getSiacTOrdinativo().getDataCancellazione() == null) {					
 						List<SiacROrdinativoStatoFin> listaROrdinativoStato = siacRLiquidazioneOrd.getSiacTOrdinativoT().getSiacTOrdinativo().getSiacROrdinativoStatos();
 						for (SiacROrdinativoStatoFin siacROrdinativoStato : listaROrdinativoStato) {
-							if (siacROrdinativoStato.getDataCancellazione() == null && siacROrdinativoStato.getDataFineValidita() == null && !siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(Constanti.D_ORDINATIVO_STATO_ANNULLATO)) {
+							if (siacROrdinativoStato.getDataCancellazione() == null && siacROrdinativoStato.getDataFineValidita() == null && !siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(CostantiFin.D_ORDINATIVO_STATO_ANNULLATO)) {
 								hasOrdinativi = true;
 								break;
 							}
@@ -3948,7 +3871,7 @@ public class LiquidazioneDad extends AbstractFinDad {
 				//NUOVI CONTROLLI SULL'IMPORTO, SOLO SE LO STATO E' VALIDO:
 				String statoLiq = getStatoCode(siacTLiquidazione);
 				
-				if (Constanti.LIQUIDAZIONE_STATO_VALIDO.equalsIgnoreCase(statoLiq)) {
+				if (CostantiFin.LIQUIDAZIONE_STATO_VALIDO.equalsIgnoreCase(statoLiq)) {
 					
 					//3. L'importo della liquidazione deve essere maggiore uguale alla differenza di importo precedente meno disponibilita a pagare
 					Ente ente = new Ente();
@@ -3963,14 +3886,14 @@ public class LiquidazioneDad extends AbstractFinDad {
 					//4. L'importo della liquidazione deve essere minore o uguale dell'importo precedente
 					if(newImportoLiquidazione.compareTo(importoPrecedente)>0){
 						log.error(methodName,"Controllo 5--> L'importo della liquidazione deve essere minore o uguale dell'importo precedente.");
-						throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("importo", "(importo solo in diminuzione)"));
+						throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo", "(importo solo in diminuzione)"));
 					}
 				}
 			}
 		}
 		
 		// se tutti i controlli sono ok aggiorno l'importo!
-		aggiornaImportoLiquidazioneCore(liquidazione.getImportoLiquidazione(), siacTLiquidazione, getNow(), idEnte, datiOperazioneDto, Constanti.AMBITO_FIN);
+		aggiornaImportoLiquidazioneCore(liquidazione.getImportoLiquidazione(), siacTLiquidazione, getNow(), idEnte, datiOperazioneDto, CostantiFin.AMBITO_FIN);
 		
 		log.trace(methodName,"Aggiornamento effettuato!");
 	}
@@ -3997,9 +3920,20 @@ public class LiquidazioneDad extends AbstractFinDad {
 		
 		SiacTEnteProprietarioFin tEnte = new SiacTEnteProprietarioFin();
 		tEnte.setUid(idEnte);
-		DatiOperazioneDto datiOperazione = new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(), Operazione.RICERCA, tEnte, uidAccount);
+		DatiOperazioneDto datiOperazione = new DatiOperazioneDto(currentTimeMillis(), Operazione.RICERCA, tEnte, uidAccount);
 		return impegnoDad.calcolaDisponibilitaALiquidare(tMovgestTs.getUid(), datiOperazione,annoEsercizio);
 	}
+	
+	public Integer caricaIdCapitoloAssociatoALiquidazione(Liquidazione liq, DatiOperazioneDto dati ) {
+		List<SiacTBilElemFin> bilElems = siacTLiquidazioneRepository.caricaCapitoloAssociatoALiquidazione(liq.getAnnoLiquidazione(), liq.getNumeroLiquidazione(),
+				String.valueOf(dati.getAnnoBilancio()), dati.getSiacTEnteProprietario().getUid());
+		if(bilElems == null || bilElems.isEmpty()) {
+			return null;
+		}
+		SiacTBilElemFin bilElem = bilElems.get(0);
+		return bilElem != null? bilElem.getUid() : null;
+	}
+	
 
 	public void flushAndClear()
 	{

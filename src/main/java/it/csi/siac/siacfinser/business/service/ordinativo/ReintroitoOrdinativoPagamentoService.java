@@ -33,11 +33,11 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiSpesaResponse;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.EntitaUtils;
 import it.csi.siac.siacfinser.ReintroitoUtils;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.business.service.liquidazione.InserisceLiquidazioneService;
 import it.csi.siac.siacfinser.business.service.liquidazione.RicercaLiquidazionePerChiaveService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaOrdinativoPagamento;
@@ -271,7 +271,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		//
 		
 		//OCCORRE NON CONSIDERARE I SUB ORDINATIVI ANNULLATI:
-		List<SubOrdinativoPagamento> subOrdNonAnnullati = CommonUtils.rimuoviSubOrdinativiPagAnnullati(ordinativoPagamentoRicaricato.getElencoSubOrdinativiDiPagamento());
+		List<SubOrdinativoPagamento> subOrdNonAnnullati = CommonUtil.rimuoviSubOrdinativiPagAnnullati(ordinativoPagamentoRicaricato.getElencoSubOrdinativiDiPagamento());
 		ordinativoPagamentoRicaricato.setElencoSubOrdinativiDiPagamento(subOrdNonAnnullati);
 		//
 		
@@ -279,7 +279,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		// COMPLETO L'ORDINATIVO CON GLI EVENTUALI ORDINATIVI DI INCASSO COLLEGATI:
 		ordinativoPagamentoRicaricato = completaOrdinativiCollegati(ordinativoPagamentoRicaricato, datiOperazione, richiedente);
 		//OCCORRE NON CONSIDERARE GLI ORDINATIVI DI INCASSO ANNULLATI:
-		List<Ordinativo> ordCollegatiNonAnnullati = CommonUtils.rimuoviOrdinativiAnnullati(ordinativoPagamentoRicaricato.getElencoOrdinativiCollegati());
+		List<Ordinativo> ordCollegatiNonAnnullati = CommonUtil.rimuoviOrdinativiAnnullati(ordinativoPagamentoRicaricato.getElencoOrdinativiCollegati());
 		//verifichiamo che non sia gia' coinvolto in un reintroito nel primo verso:
 		esito = controlloPresenzaReintroito(ordinativoPagamentoRicaricato, ordCollegatiNonAnnullati, esito);
 		if(esito.presenzaErrori()){
@@ -287,7 +287,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		}
 		//Tolgo eventuali relazioni verso ord pag perche' qui devono esserci solo ord incasso (non dovrebbero esserci
 		//ma non si sa mai di eventuali usi futuri):
-		List<Ordinativo> ordIncNonAnnullati = CommonUtils.rimuoviOrdinativiDiPagamento(ordCollegatiNonAnnullati);
+		List<Ordinativo> ordIncNonAnnullati = CommonUtil.rimuoviOrdinativiDiPagamento(ordCollegatiNonAnnullati);
 		ordinativoPagamentoRicaricato.setElencoOrdinativiCollegati(ordIncNonAnnullati);
 		//
 		
@@ -296,7 +296,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		// CONTROLLIAMO QUELLI COLLEGATI NELL'ALTRO VERSO DELLA RELAZIONE DA - A:
 		ordinativoPagamentoRicaricato = completaOrdinativiACuiSonoCollegato(ordinativoPagamentoRicaricato, datiOperazione, richiedente);
 		//Occorre non considerare gli ordinativi annullati:
-		List<Ordinativo> ordACuiSonoCollegato = CommonUtils.rimuoviOrdinativiAnnullati(ordinativoPagamentoRicaricato.getElencoOrdinativiACuiSonoCollegato());
+		List<Ordinativo> ordACuiSonoCollegato = CommonUtil.rimuoviOrdinativiAnnullati(ordinativoPagamentoRicaricato.getElencoOrdinativiACuiSonoCollegato());
 		//verifichiamo che non sia gia' coinvolto in un reintroito nel secondo verso:
 		esito = controlloPresenzaReintroito(ordinativoPagamentoRicaricato, ordACuiSonoCollegato, esito);
 		if(esito.presenzaErrori()){
@@ -321,12 +321,12 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 	 * @param esito
 	 */
 	private OrdinativoInReintroitoInfoDto controlloPresenzaReintroito(OrdinativoPagamento ordinativoPagamentoRicaricato, List<Ordinativo> ordInCollegamento,OrdinativoInReintroitoInfoDto esito){
-		if(CommonUtils.presenteTipoAssociazioneEmissione(ordInCollegamento, TipoAssociazioneEmissione.SOS_ORD)){
+		if(CommonUtil.presenteTipoAssociazioneEmissione(ordInCollegamento, TipoAssociazioneEmissione.SOS_ORD)){
 			OrdinativoKey ordKey = ReintroitoUtils.toOrdKey(ordinativoPagamentoRicaricato);
 			String nomeEntita = ReintroitoUtils.buildNomeEntitaPerMessaggiDiErrore(ordKey, true);
 			String codiceEntita = ReintroitoUtils.buildCodiceEntitaPerMessaggiDiErrore(ordKey);
 			String msg = "E' gia' coinvolto in una relazione di reintroito di tipo SOS_ORD";
-			esito.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore(nomeEntita + ": " + codiceEntita, msg));
+			esito.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeEntita + ": " + codiceEntita, msg));
 		}
 		return esito;
 	}
@@ -370,7 +370,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		
 		//SCRITTURE DELLE RITENUTE RAGGRUPPATE PER STESSO IMPEGNO:
 		List<ScritturaGenRitenuteStessoImpegnoInfoDto> raggruppateStessoImp = scrittureGen.getRitenuteRaggruppatePerImpegno();
-		if(!StringUtils.isEmpty(raggruppateStessoImp)){
+		if(!StringUtilsFin.isEmpty(raggruppateStessoImp)){
 			for(ScritturaGenRitenuteStessoImpegnoInfoDto it: raggruppateStessoImp){
 				
 				//A. LIQUIDAZIONE INSERITA
@@ -394,7 +394,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		
 		//SCRITTURE ORDINATIVI INCASSO RITENUTE:
 		List<OrdinativoIncassoScritturaGenInfoDto> ordIncassoSpostati = scrittureGen.getOrdinativiIncassoSpostati();
-		if(!StringUtils.isEmpty(ordIncassoSpostati)){
+		if(!StringUtilsFin.isEmpty(ordIncassoSpostati)){
 			for(OrdinativoIncassoScritturaGenInfoDto it: ordIncassoSpostati){
 				
 				OrdinativoIncasso ordIncasso = it.getOrdinativoIncasso();
@@ -549,7 +549,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		liquidazione.setAnnoLiquidazione(liquidazioneAppenaCreata.getAnnoLiquidazione());
 		liquidazione.setNumeroLiquidazione(liquidazioneAppenaCreata.getNumeroLiquidazione());
 		pRicercaLiquidazioneK.setLiquidazione(liquidazione );
-		pRicercaLiquidazioneK.setTipoRicerca(Constanti.TIPO_RICERCA_DA_ORDINATIVO);
+		pRicercaLiquidazioneK.setTipoRicerca(CostantiFin.TIPO_RICERCA_DA_ORDINATIVO);
 		pRicercaLiquidazioneK.setAnnoEsercizio(bilancio.getAnno());
 		ricercaRequest.setpRicercaLiquidazioneK(pRicercaLiquidazioneK);
 		ricercaRequest.setRichiedente(richiedente);
@@ -594,9 +594,9 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		//PER FARE ROLLBACKARE TUTTO:
 		if(esito==null){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("ricercaLiquidazionePerChiaveService: esito nullo"));
-		} else if(!StringUtils.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
+		} else if(!StringUtilsFin.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(esito.getErrori().get(0));
-		} else if(esito.getLiquidazione()==null || !CommonUtils.maggioreDiZero(esito.getLiquidazione().getNumeroLiquidazione())){
+		} else if(esito.getLiquidazione()==null || !CommonUtil.maggioreDiZero(esito.getLiquidazione().getNumeroLiquidazione())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("ricercaLiquidazionePerChiaveService: esito privo di liquidazione"));
 		}  else if(!Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("ricercaLiquidazionePerChiaveService: esito negativo"));
@@ -625,9 +625,9 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		//PER FARE ROLLBACKARE TUTTO:
 		if(esito==null){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("ricercaOrdinativoPagamentoPerChiave: esito nullo"));
-		} else if(!StringUtils.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
+		} else if(!StringUtilsFin.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(esito.getErrori().get(0));
-		} else if(esito.getOrdinativoPagamento()==null || !CommonUtils.maggioreDiZero(esito.getOrdinativoPagamento().getNumero())){
+		} else if(esito.getOrdinativoPagamento()==null || !CommonUtil.maggioreDiZero(esito.getOrdinativoPagamento().getNumero())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("ricercaOrdinativoPagamentoPerChiave: esito privo di liquidazione"));
 		}  else if(!Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("ricercaOrdinativoPagamentoPerChiave: esito negativo"));
@@ -640,7 +640,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		//SE sono presenti righe di ritenute SOMMARE raggruppandole per "IMPEGNO DESTINAZIONE" e per ogni gruppo:
 		List<RitenuteReintroitoConStessoMovimentoDto> raggruppatePerImp = datiReintroito.raggruppatePerImpegni();
 		
-		if(!StringUtils.isEmpty(raggruppatePerImp)){
+		if(!StringUtilsFin.isEmpty(raggruppatePerImp)){
 			
 			//predispongo i dto per le scritture gen:
 			List<ScritturaGenRitenuteStessoImpegnoInfoDto> scrittureStessoImp = new ArrayList<ScritturaGenRitenuteStessoImpegnoInfoDto>();
@@ -736,7 +736,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		
 		List<RitenutaSpiltPerReintroitoInfoDto> righe = datiReintroito.getListaRitenuteSplit();
 		
-		if(!StringUtils.isEmpty(righe)){
+		if(!StringUtilsFin.isEmpty(righe)){
 			
 			//predispongo i dto per le scritture gen:
 			List<OrdinativoIncassoScritturaGenInfoDto> scrittureOrdInc = new ArrayList<OrdinativoIncassoScritturaGenInfoDto>();
@@ -821,7 +821,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("operazioneInternaInserisciLiquidazione: esito nullo"));
 		} else if(!StringUtils.isEmpty(esito.getListaErrori())){
 			throw new BusinessException(esito.getListaErrori().get(0));
-		} else if(esito.getLiquidazione()==null || !CommonUtils.maggioreDiZero(esito.getLiquidazione().getNumeroLiquidazione())){
+		} else if(esito.getLiquidazione()==null || !CommonUtil.maggioreDiZero(esito.getLiquidazione().getNumeroLiquidazione())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("operazioneInternaInserisciLiquidazione: esito privo di liquidazione"));
 		}
 		return esito;
@@ -843,9 +843,9 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		//PER FARE ROLLBACKARE TUTTO:
 		if(esito==null){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("inserisciLiquidazione: esito nullo"));
-		} else if(!StringUtils.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
+		} else if(!StringUtilsFin.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(esito.getErrori().get(0));
-		} else if(esito.getLiquidazione()==null || !CommonUtils.maggioreDiZero(esito.getLiquidazione().getNumeroLiquidazione())){
+		} else if(esito.getLiquidazione()==null || !CommonUtil.maggioreDiZero(esito.getLiquidazione().getNumeroLiquidazione())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("inserisciLiquidazione: esito privo di liquidazione"));
 		}  else if(!Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("inserisciLiquidazione: esito negativo"));
@@ -869,9 +869,9 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		//PER FARE ROLLBACKARE TUTTO:
 		if(esito==null){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("inserisceOrdinativoPagamentoService: esito nullo"));
-		} else if(!StringUtils.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
+		} else if(!StringUtilsFin.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(esito.getErrori().get(0));
-		} else if(esito.getOrdinativoPagamentoInserito()==null || !CommonUtils.maggioreDiZero(esito.getOrdinativoPagamentoInserito().getNumero())){
+		} else if(esito.getOrdinativoPagamentoInserito()==null || !CommonUtil.maggioreDiZero(esito.getOrdinativoPagamentoInserito().getNumero())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("inserisceOrdinativoPagamentoService: esito privo di ordinativo"));
 		}  else if(!Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("inserisceOrdinativoPagamentoService: esito negativo"));
@@ -895,9 +895,9 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		//PER FARE ROLLBACKARE TUTTO:
 		if(esito==null){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("aggiornaOrdinativoPagamentoService: esito nullo"));
-		} else if(!StringUtils.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
+		} else if(!StringUtilsFin.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(esito.getErrori().get(0));
-		} else if(esito.getOrdinativoPagamentoAggiornato()==null || !CommonUtils.maggioreDiZero(esito.getOrdinativoPagamentoAggiornato().getNumero())){
+		} else if(esito.getOrdinativoPagamentoAggiornato()==null || !CommonUtil.maggioreDiZero(esito.getOrdinativoPagamentoAggiornato().getNumero())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("aggiornaOrdinativoPagamentoService: esito privo di ordinativo"));
 		}  else if(!Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("aggiornaOrdinativoPagamentoService: esito negativo"));
@@ -916,7 +916,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		//PER FARE ROLLBACKARE TUTTO:
 		if(esito==null){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("annullaOrdinativoPagamentoService: esito nullo"));
-		} else if(!StringUtils.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
+		} else if(!StringUtilsFin.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(esito.getErrori().get(0));
 		} else if(!Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("annullaOrdinativoPagamentoService: esito negativo"));
@@ -937,13 +937,13 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		if(ordinativoPagamentoRicaricato.getSiopeTipoDebito()!=null){
 			codiceTipoDebito = ordinativoPagamentoRicaricato.getSiopeTipoDebito().getCodice();
 		}
-		if(Constanti.SIOPE_CODE_COMMERCIALE.equals(codiceTipoDebito)){
+		if(CostantiFin.SIOPE_CODE_COMMERCIALE.equals(codiceTipoDebito)){
 			commerciale = true;
 		}
 		*/
 		
 		List<SubOrdinativoPagamento> elencoSubOrd = ordinativoPagamentoRicaricato.getElencoSubOrdinativiDiPagamento();
-		if(!StringUtils.isEmpty(elencoSubOrd)){
+		if(!StringUtilsFin.isEmpty(elencoSubOrd)){
 			for(SubOrdinativoPagamento itSubOrd: elencoSubOrd){
 				if(itSubOrd!=null &&
 						itSubOrd.getSubDocumentoSpesa()!=null &&
@@ -1209,8 +1209,8 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 	 */
 	private List<SubOrdinativoPagamento> subOrdinativiPerInserimento(List<SubOrdinativoPagamento> subOrd, Liquidazione liquidazione){
 		List<SubOrdinativoPagamento> nuovi = new ArrayList<SubOrdinativoPagamento>();
-		List<SubOrdinativoPagamento> senzaAnnullati = CommonUtils.rimuoviSubOrdinativiPagAnnullati(subOrd);
-		if(!StringUtils.isEmpty(senzaAnnullati)){
+		List<SubOrdinativoPagamento> senzaAnnullati = CommonUtil.rimuoviSubOrdinativiPagAnnullati(subOrd);
+		if(!StringUtilsFin.isEmpty(senzaAnnullati)){
 			for(SubOrdinativoPagamento it: senzaAnnullati){
 				
 				//clono i vari dati:
@@ -1321,7 +1321,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		//PER FARE ROLLBACKARE TUTTO:
 		if(esito==null){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("aggiornaStatoDocumentoDiSpesa: esito nullo"));
-		} else if(!StringUtils.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
+		} else if(!StringUtilsFin.isEmpty(esito.getErrori()) && !Esito.SUCCESSO.equals(esito.getEsito())){
 			throw new BusinessException(esito.getErrori().get(0));
 		} else if(esito.getDocumentoSpesa()==null || esito.getDocumentoSpesa().getNumero() == null){
 			throw new BusinessException(ErroreBil.ERRORE_GENERICO.getErrore("aggiornaStatoDocumentoDiSpesa: esito privo di documento"));
@@ -1464,7 +1464,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		liquidazione.setAttoAmministrativoLiquidazione(attoAmministrativo);
 		
 		//SETTIAMO IL SUB SE E' SUB:
-		if(subImpegno!=null && CommonUtils.maggioreDiZero(subImpegno.getNumero())){
+		if(subImpegno!=null && CommonUtil.maggioreDiZero(subImpegno.getNumeroBigDecimal())){
 			//bisogna settare il sub dentro l'impegno come unico sub perche'
 			//l'inserisci liquidazione ragiona cosi:
 			ArrayList<SubImpegno> subImpegni = new ArrayList<SubImpegno>();
@@ -1494,8 +1494,8 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		liquidazione.setDistinta(ordPag.getDistinta());		
 		
 		//LIQ MANUALE:
-		liquidazione.setLiqManuale(Constanti.LIQUIDAZIONE_MAUALE);
-		liquidazione.setLiqAutomatica(Constanti.LIQUIDAZIONE_LIQ_AUTOMATICA_NO);
+		liquidazione.setLiqManuale(CostantiFin.LIQUIDAZIONE_MAUALE);
+		liquidazione.setLiqAutomatica(CostantiFin.LIQUIDAZIONE_LIQ_AUTOMATICA_NO);
 		
 		liquidazione.setCodMissione(impOrSub.getCodMissione());
 		liquidazione.setCodProgramma(impOrSub.getCodProgramma());
@@ -1587,8 +1587,8 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		
 		List<SubOrdinativoPagamento> quote = ordPagConSubAggregato.getElencoSubOrdinativiDiPagamento();
 		
-		BigDecimal sommaSub = CommonUtils.sommaImportiAttualiNonAnnullatiSubOrdPag(quote);
-		SubOrdinativoPagamento primoSubNonAnnullato = CommonUtils.getFirstNonAnnullato(quote);
+		BigDecimal sommaSub = CommonUtil.sommaImportiAttualiNonAnnullatiSubOrdPag(quote);
+		SubOrdinativoPagamento primoSubNonAnnullato = CommonUtil.getFirstNonAnnullato(quote);
 		
 		SubOrdinativoPagamento nuovoSubAggregato = clone(primoSubNonAnnullato);
 		nuovoSubAggregato.setNumero(null);
@@ -1606,7 +1606,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 	}
 
 	private void effettuaModificheAutomaticheAccertamenti(OrdinativoInReintroitoInfoDto datiReintroito,DatiOperazioneDto datiOperazioneDto) {
-		if(!StringUtils.isEmpty(datiReintroito.getModificheAutomaticheNecessarie())){
+		if(!StringUtilsFin.isEmpty(datiReintroito.getModificheAutomaticheNecessarie())){
 			
 			//1. Come prima cosa aggreghiamo le modifiche che vertono sullo stesso subaccertamento
 			//   per capire quanto va modificato sull'accertamento di cui fanno parte
@@ -1633,15 +1633,18 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 	 */
 	private void creaModificheSubERelativiAccertamenti(List<SubAccertamentiModAutomaticaPerReintroitoInfoDto> modSubAccertamenti,
 			OrdinativoInReintroitoInfoDto datiReintroito, DatiOperazioneDto datiOperazioneDto){
-		if(!StringUtils.isEmpty(modSubAccertamenti)){
+		final String methodName ="creaModificheSubERelativiAccertamenti";
+		if(!StringUtilsFin.isEmpty(modSubAccertamenti)){
 			for(SubAccertamentiModAutomaticaPerReintroitoInfoDto subAccModAutIt: modSubAccertamenti){
+				 
+				Integer uIdAccertamento = subAccModAutIt.getAccertamento().getUid();
+
+				//SIAC-7505
+				Integer maxNumeroModificaDaBaseDati = accertamentoOttimizzatoDad.getMaxNumeroModificaDaBaseDati(uIdAccertamento, datiOperazioneDto.getSiacTEnteProprietario().getUid());
 				
-				Integer movgestTsIdAccertamento = subAccModAutIt.getMovGestInfoAccertamento().getSiacTMovgestTs().getMovgestTsId();
-				
-				int numeroModifiche = accertamentoOttimizzatoDad.countModificheTotali(movgestTsIdAccertamento, datiOperazioneDto);
+				int numeroModifiche = maxNumeroModificaDaBaseDati.intValue();
 				
 				List<AccertamentoModAutomaticaPerReintroitoInfoDto> listaModSub = subAccModAutIt.getModificheSub();
-				
 				
 				for(AccertamentoModAutomaticaPerReintroitoInfoDto amaInfoIt: listaModSub){
 					
@@ -1649,18 +1652,32 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 					AttoAmministrativo attoAmministrativo = ReintroitoUtils.attoAmministrativoDaUsare(amaInfoIt.getSubAccertamento(), datiReintroito);
 					//
 					
-					BigDecimal importoOld = amaInfoIt.getSubAccertamento().getImportoAttuale();
-					BigDecimal importoNew = importoOld.add(amaInfoIt.getModificaDaApportare());
+					BigDecimal importoAttualeSubAccertamento = amaInfoIt.getSubAccertamento().getImportoAttuale(); 
+					
+					BigDecimal importoNew = importoAttualeSubAccertamento.add(amaInfoIt.getModificaDaApportare());
+					BigDecimal importoOld = amaInfoIt.getModificaDaApportare();
+					
+					
 					
 					// Il metodo creaModifica sembra far
 					// distinzione tra sub e non sub per l'id, e per renderci la vita complicata:
 					//  1. se sub vuole il movegestTsId
 					//  2. se acc vuold il movgestId
 					// In questo caso essendo sub passiamo il movgestTsId:
-					Integer uIdAccertamento = subAccModAutIt.getMovGestInfoSubAccertamento().getSiacTMovgestTs().getMovgestTsId();
+					Integer uidTs = subAccModAutIt.getSubAccertamento().getUid();
 					
 					numeroModifiche = numeroModifiche + 1;
-					ModificaMovimentoGestioneEntrata modificaAcc = creaModifica(false, uIdAccertamento.intValue(), attoAmministrativo, importoOld, importoNew, datiOperazioneDto,numeroModifiche);
+					log.debug(methodName, new StringBuilder("Inserisco una modifica con numero ").append(numeroModifiche)
+							.append(" per il subaccertamento [uid: ").append(uidTs)
+							.append(" ] dell'accertamento [uid: ").append(uIdAccertamento)
+							.append(" ]. L'Importo attuale dell'accertamento e' ")
+							.append(amaInfoIt.getAccertamento().getImportoAttuale()).append(" , l'importo modifica da aggiungere e': ").append(amaInfoIt.getModificaDaApportare())
+							.append(" , importo new della modifica : " ).append(importoNew)
+							.append(" , importo old della modifica : " ).append(importoOld));
+					ModificaMovimentoGestioneEntrata movimento = popolaDatiBaseModifica(true, attoAmministrativo, importoOld, importoNew);
+					
+					accertamentoOttimizzatoDad.creaModificaImportoSub(uIdAccertamento, subAccModAutIt.getSubAccertamento(),
+							movimento, datiOperazioneDto, numeroModifiche);
 					
 				}
 				
@@ -1672,18 +1689,22 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 					AttoAmministrativo attoAmministrativo = ReintroitoUtils.attoAmministrativoDaUsare(subAccModAutIt.getAccertamento(), datiReintroito);
 					//
 					
-					BigDecimal importoOld = subAccModAutIt.getAccertamento().getImportoAttuale();
-					BigDecimal importoNew = importoOld.add(subAccModAutIt.getModificaAccertamento());
+					BigDecimal importoAttualeAccertamento = subAccModAutIt.getAccertamento().getImportoAttuale();
+					BigDecimal importoNew = importoAttualeAccertamento.add(subAccModAutIt.getModificaAccertamento());
+					BigDecimal importoOld = subAccModAutIt.getModificaAccertamento();
 					
 					// Il metodo creaModifica sembra far
 					// distinzione tra sub e non sub per l'id, e per renderci la vita complicata:
 					//  1. se sub vuole il movegestTsId
 					//  2. se acc vuold il movgestId
 					// In questo caso essendo acc passiamo il movgestId:
-					Integer uIdAccertamento = subAccModAutIt.getMovGestInfoAccertamento().getSiacTMovgest().getMovgestId();
-					
 					numeroModifiche = numeroModifiche + 1;
-					ModificaMovimentoGestioneEntrata modificaAcc = creaModifica(false, uIdAccertamento.intValue(), attoAmministrativo, importoOld, importoNew, datiOperazioneDto,numeroModifiche);
+					log.debug(methodName, new StringBuilder("Inserisco una modifica con numero").append(numeroModifiche).append(" per l'accertamento [uid: ").append(uIdAccertamento)
+							.append(" ]. L'Importo attuale dell'accertamento e' ")
+							.append(subAccModAutIt.getAccertamento().getImportoAttuale()).append(" , l'importo modifica da aggiungere e': ").append(subAccModAutIt.getModificaAccertamento())
+							.append(" , importo new della modifica : " ).append(importoNew)
+							.append(" , importo old della modifica : " ).append(importoOld));
+					creaModifica(false, uIdAccertamento.intValue(), attoAmministrativo, importoOld, importoNew, datiOperazioneDto,numeroModifiche);
 				}
 				
 			}
@@ -1697,21 +1718,13 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 	 */
 	private void creaModificheSoloAccertamenti(List<AccertamentoModAutomaticaPerReintroitoInfoDto> listaModAccertamenti,
 			OrdinativoInReintroitoInfoDto datiReintroito,DatiOperazioneDto datiOperazioneDto){
-		if(!StringUtils.isEmpty(listaModAccertamenti)){
+		final String methodName = "creaModificheSoloAccertamenti";
+		if(!StringUtilsFin.isEmpty(listaModAccertamenti)){
+			
 			for(AccertamentoModAutomaticaPerReintroitoInfoDto amaInfoIt: listaModAccertamenti){
 				
 				MovGestInfoDto movGestInfoAccertamento = amaInfoIt.getMovGestInfoAccertamento();
 				
-				Integer movgestTsIdAccertamento = movGestInfoAccertamento.getSiacTMovgestTs().getMovgestTsId();
-				
-				int numeroModifiche = accertamentoOttimizzatoDad.countModificheTotali(movgestTsIdAccertamento, datiOperazioneDto);
-				
-				//gestione atto amministrativo:
-				AttoAmministrativo attoAmministrativo = ReintroitoUtils.attoAmministrativoDaUsare(amaInfoIt.getAccertamento(), datiReintroito);
-				//
-				
-				BigDecimal importoOld = amaInfoIt.getAccertamento().getImportoAttuale();
-				BigDecimal importoNew = importoOld.add(amaInfoIt.getModificaDaApportare());
 				
 				// Il metodo creaModifica sembra far
 				// distinzione tra sub e non sub per l'id, e per renderci la vita complicata:
@@ -1719,9 +1732,24 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 				//  2. se acc vuold il movgestId
 				// In questo caso essendo acc passiamo il movgestId:
 				Integer uIdAccertamento = movGestInfoAccertamento.getSiacTMovgest().getMovgestId();
+
+				//gestione atto amministrativo:
+				AttoAmministrativo attoAmministrativo = ReintroitoUtils.attoAmministrativoDaUsare(amaInfoIt.getAccertamento(), datiReintroito);
+				//
 				
-				numeroModifiche = numeroModifiche + 1;
-				ModificaMovimentoGestioneEntrata modificaAcc = creaModifica(false, uIdAccertamento.intValue(), attoAmministrativo, importoOld, importoNew, datiOperazioneDto,numeroModifiche);
+				BigDecimal importoOld = amaInfoIt.getAccertamento().getImportoAttuale();
+				BigDecimal importoNew = importoOld.add(amaInfoIt.getModificaDaApportare());
+				
+//				int numeroModifiche = accertamentoOttimizzatoDad.countModificheTotali(movgestTsIdAccertamento, datiOperazioneDto);
+				Integer maxNumeroModificaDaBaseDati = accertamentoOttimizzatoDad.getMaxNumeroModificaDaBaseDati(uIdAccertamento, datiOperazioneDto.getSiacTEnteProprietario().getUid());
+				
+				int numeroModifiche = maxNumeroModificaDaBaseDati.intValue() +1;
+				log.debug(methodName, new StringBuilder("Inserisco una modifica con numero ").append(numeroModifiche).append(" per l'accertamento [uid: ").append(uIdAccertamento)
+						.append(" ]. L'Importo attuale dell'accertamento e' ")
+						.append(amaInfoIt.getAccertamento().getImportoAttuale()).append(" , l'importo modifica da aggiungere e': ").append(amaInfoIt.getModificaDaApportare())
+						.append(" , importo new della modifica : " ).append(importoNew));
+								
+				creaModifica(false, uIdAccertamento.intValue(), attoAmministrativo, importoOld, importoNew, datiOperazioneDto,numeroModifiche);
 				
 			}
 		}
@@ -1737,21 +1765,21 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 	 * @return
 	 */
 	private List<SubAccertamentiModAutomaticaPerReintroitoInfoDto> aggregaModificheSub(List<AccertamentoModAutomaticaPerReintroitoInfoDto> listaModInfo){
+		final String methodName="aggregaModificheSub";
 		List<SubAccertamentiModAutomaticaPerReintroitoInfoDto> modSubAccertamenti = new ArrayList<SubAccertamentiModAutomaticaPerReintroitoInfoDto>();
 		List<MovimentoKey> giaControllati = new ArrayList<MovimentoKey>();
-		if(!StringUtils.isEmpty(listaModInfo)){
+		if(!StringUtilsFin.isEmpty(listaModInfo)){
 			for(AccertamentoModAutomaticaPerReintroitoInfoDto modInfoIt: listaModInfo){
 				MovimentoKey movKey = modInfoIt.getKey();
-				if(!ReintroitoUtils.contenutoInLista(giaControllati, movKey)){
-					if(ReintroitoUtils.isSub(modInfoIt.getKey())){
-						List<AccertamentoModAutomaticaPerReintroitoInfoDto> conStessoSub = ReintroitoUtils.conStessoMovKey(listaModInfo, modInfoIt.getKey());
-						SubAccertamentiModAutomaticaPerReintroitoInfoDto subModInfo = new SubAccertamentiModAutomaticaPerReintroitoInfoDto();
-						subModInfo.setAccertamento(modInfoIt.getAccertamento());
-						subModInfo.setKey(ReintroitoUtils.subToMovKey(movKey));
-						subModInfo.setSubAccertamento(null);
-						subModInfo.setModificheSub(conStessoSub);
-						modSubAccertamenti.add(subModInfo);
-					}
+				log.debug(methodName, "movimento Key: " + movKey.getDescrizioneMovimentoKey());
+				if(!ReintroitoUtils.contenutoInLista(giaControllati, movKey) && ReintroitoUtils.isSub(movKey)){
+					List<AccertamentoModAutomaticaPerReintroitoInfoDto> conStessoSub = ReintroitoUtils.conStessoMovKey(listaModInfo, movKey);
+					SubAccertamentiModAutomaticaPerReintroitoInfoDto subModInfo = new SubAccertamentiModAutomaticaPerReintroitoInfoDto();
+					subModInfo.setAccertamento(modInfoIt.getAccertamento());
+					subModInfo.setKey(ReintroitoUtils.subToMovKey(movKey));
+					subModInfo.setSubAccertamento(modInfoIt.getSubAccertamento());
+					subModInfo.setModificheSub(conStessoSub);
+					modSubAccertamenti.add(subModInfo);
 				}
 			}
 		}
@@ -1772,7 +1800,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 	private List<AccertamentoModAutomaticaPerReintroitoInfoDto> aggregaModificheAcc(List<AccertamentoModAutomaticaPerReintroitoInfoDto> listaModInfo){
 		List<AccertamentoModAutomaticaPerReintroitoInfoDto> listaModAccertamenti = new ArrayList<AccertamentoModAutomaticaPerReintroitoInfoDto>();
 		List<MovimentoKey> giaControllati = new ArrayList<MovimentoKey>();
-		if(!StringUtils.isEmpty(listaModInfo)){
+		if(!StringUtilsFin.isEmpty(listaModInfo)){
 			for(AccertamentoModAutomaticaPerReintroitoInfoDto modInfoIt: listaModInfo){
 				MovimentoKey movKey = modInfoIt.getKey();
 				if(!ReintroitoUtils.contenutoInLista(giaControllati, movKey)){
@@ -1804,7 +1832,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		
 		List<SubAccertamento> elencoTuttiSub = esitoRicercaDiUnSub.getElencoSubAccertamentiTuttiConSoloGliIds();
 		
-		BigDecimal sommaSub = CommonUtils.sommaImportiAttualiNonAnnullati(elencoTuttiSub);
+		BigDecimal sommaSub = CommonUtil.sommaImportiAttualiNonAnnullati(elencoTuttiSub);
 		
 		BigDecimal sommaModificheSub = ReintroitoUtils.sommaImportiModifiche(modSubAccertamenti.getModificheSub());
 		
@@ -1834,7 +1862,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 	 * @return
 	 */
 	private List<SubAccertamentiModAutomaticaPerReintroitoInfoDto> calcolaImportoModificaSuAcccertamenti(List<SubAccertamentiModAutomaticaPerReintroitoInfoDto> modSubAccertamenti){
-		if(!StringUtils.isEmpty(modSubAccertamenti)){
+		if(!StringUtilsFin.isEmpty(modSubAccertamenti)){
 			for(SubAccertamentiModAutomaticaPerReintroitoInfoDto it: modSubAccertamenti){
 				it = calcolaImportoModificaSuAcccertamenti(it);
 			}
@@ -1863,7 +1891,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 		
 		//2. Itero le ritenute e completo i dati per i vari impegni e accertamenti:
 		List<RitenutaSpiltPerReintroitoInfoDto> listaRitenute = datiReintroito.getListaRitenuteSplit();
-		if(!StringUtils.isEmpty(listaRitenute)){
+		if(!StringUtilsFin.isEmpty(listaRitenute)){
 			for(RitenutaSpiltPerReintroitoInfoDto ritIt: listaRitenute){
 				
 				//IMPEGNO
@@ -1966,7 +1994,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 	
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {		
-		final String methodName = "AnnullaMutuoService : checkServiceParam()";
+		final String methodName = " : checkServiceParam()";
 		log.debug(methodName, "- Begin");
 		
 		//da fare come prima cosa:
@@ -2020,7 +2048,7 @@ public class ReintroitoOrdinativoPagamentoService extends AbstractInserisceAggio
 					 elencoParamentriNonInizializzati.append("Numero atto amministrativo non valorizzato");
 				 }
 				 
-				 if(attoAmm.getTipoAtto()==null || StringUtils.isEmpty(attoAmm.getTipoAtto().getCodice())){
+				 if(attoAmm.getTipoAtto()==null || StringUtilsFin.isEmpty(attoAmm.getTipoAtto().getCodice())){
 					 elencoParamentriNonInizializzati.append("Tipo atto amministrativo non valorizzato");
 				 }
 			 }

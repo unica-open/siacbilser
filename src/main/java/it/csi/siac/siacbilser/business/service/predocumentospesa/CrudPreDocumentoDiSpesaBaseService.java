@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
@@ -22,7 +21,7 @@ import it.csi.siac.siacbilser.integration.dad.BilancioDad;
 import it.csi.siac.siacbilser.integration.dad.CapitoloUscitaGestioneDad;
 import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoSpesaDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
@@ -55,7 +54,6 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisoriDiCassaRe
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.codifiche.ClasseSoggetto;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaProvvisorio;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
@@ -80,7 +78,7 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
 	
 	/** The provvedimento dad. */
 	@Autowired
-	protected ProvvedimentoDad provvedimentoDad;
+	protected AttoAmministrativoDad attoAmministrativoDad;
 	
 	/** The movimento gestione service. */
 	@Autowired
@@ -296,7 +294,7 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
     	if (preDoc.getAttoAmministrativo()==null || preDoc.getAttoAmministrativo().getUid()==0){
 			return;
 		}
-    	AttoAmministrativo attoAmministrativo = provvedimentoDad.findProvvedimentoById(preDoc.getAttoAmministrativo().getUid());
+    	AttoAmministrativo attoAmministrativo = attoAmministrativoDad.findProvvedimentoById(preDoc.getAttoAmministrativo().getUid());
     	
     	if ( StatoOperativoAtti.ANNULLATO.equals(attoAmministrativo.getStatoOperativoAtti())){
     		throw new BusinessException(ErroreAtt.PROVVEDIMENTO_ANNULLATO.getErrore(), Esito.FALLIMENTO);
@@ -313,7 +311,7 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
 	protected void checkImpegno(){
 		final String methodName = "checkImpegno";
 		log.debug(methodName, "l'impegno è null? " + preDoc.getImpegno() == null);
-		boolean voceMutuoValorizzato = preDoc.getVoceMutuo() !=null && preDoc.getVoceMutuo().getNumeroMutuo() !=null && StringUtils.isNotBlank(preDoc.getVoceMutuo().getNumeroMutuo());
+
     	if (preDoc.getImpegno()!=null && preDoc.getImpegno().getUid()!=0){
     		
     		log.debug(methodName, "sto per ricercare l'impegno con uid " + preDoc.getImpegno().getUid());
@@ -338,7 +336,7 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
 	    			}
     			}
     			if(subImpegno==null) {
-        			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno",preDoc.getSubImpegno().getNumero()+"/"+preDoc.getSubImpegno().getAnnoMovimento()+""), Esito.FALLIMENTO);
+        			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("SubImpegno",preDoc.getSubImpegno().getNumeroBigDecimal()+"/"+preDoc.getSubImpegno().getAnnoMovimento()+""), Esito.FALLIMENTO);
         		}
     			
     			//controllo validita' subimpegno
@@ -350,12 +348,7 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
         		if (subImpegno.getAnnoMovimento()> bilancio.getAnno()){
         			throw new BusinessException(ErroreFin.MOVIMENTO_GESTIONE_PLURIENNALE_NON_AMMESSO_PER_OPERAZIONE.getErrore("subimpegno",msgOperazione + " predisposizione di pagamento"), Esito.FALLIMENTO);
         		}
-        		//se e' valorizzato il numero di mutuo controllo voce mutuo e la sua disponibilita 
-        		if(voceMutuoValorizzato){
-        			caricaVoceMutuo();
-        			controllaDisponibilitaVoceMutuo();
-        			return;
-        		}
+
         		//controllo congruenza tra importo predocumento e disponibilita' subimpegno
         		Integer uidSubImpegnoPrecedente = caricaUidSubImpegnoPrecedente();
         		if(uidSubImpegnoPrecedente == null || uidSubImpegnoPrecedente != subImpegno.getUid()){
@@ -386,12 +379,7 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
 	    			throw new BusinessException(ErroreFin.MOVIMENTO_GESTIONE_PLURIENNALE_NON_AMMESSO_PER_OPERAZIONE.getErrore("impegno",msgOperazione + " predisposizione di pagamento"), Esito.FALLIMENTO);
 	    		}
 	    		
-        		//se e' valorizzato il numero di mutuo controllo voce mutuo e la sua disponibilita 
-        		if(voceMutuoValorizzato){
-        			caricaVoceMutuo();
-        			controllaDisponibilitaVoceMutuo();
-        			return;
-        		}
+
 	    		//controllo congruenza tra importo predocumento e disponibilita' impegno
 	    		Integer uidImpegnoPrecedente = caricaUidImpegnoPrecedente();
 	    		if(uidImpegnoPrecedente == null || uidImpegnoPrecedente != impegno.getUid()){
@@ -484,7 +472,7 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
 	protected Impegno ricercaImpegnoPerChiaveOttimizzato() {
 		RicercaAttributiMovimentoGestioneOttimizzato parametri = new RicercaAttributiMovimentoGestioneOttimizzato();
 		parametri.setEscludiSubAnnullati(true);
-		parametri.setCaricaSub(preDoc.getSubImpegno()!=null && preDoc.getSubImpegno().getNumero() != null);
+		parametri.setCaricaSub(preDoc.getSubImpegno()!=null && preDoc.getSubImpegno().getNumeroBigDecimal() != null);
 	
 		DatiOpzionaliElencoSubTuttiConSoloGliIds parametriElencoIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		parametriElencoIds.setEscludiAnnullati(true);
@@ -496,7 +484,7 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
 		Impegno impegno = resRIPC.getImpegno();
 		if(impegno==null) {
 			res.addErrori(resRIPC.getErrori());
-			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", preDoc.getImpegno().getNumero()+"/"+ preDoc.getImpegno().getAnnoMovimento()+""), Esito.FALLIMENTO);
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", preDoc.getImpegno().getNumeroBigDecimal()+"/"+ preDoc.getImpegno().getAnnoMovimento()+""), Esito.FALLIMENTO);
 		}
 	
 		return impegno;
@@ -580,6 +568,10 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
 		RicercaProvvisoriDiCassa ricercaProvvisoriDiCassa = new RicercaProvvisoriDiCassa();
 		ricercaProvvisoriDiCassa.setEnte(ente);
 		ricercaProvvisoriDiCassa.setRichiedente(req.getRichiedente());
+		//SIAC-7765
+		ricercaProvvisoriDiCassa.setNumPagina(1);
+		ricercaProvvisoriDiCassa.setNumRisultatiPerPagina(1);
+		//
 		
 		ParametroRicercaProvvisorio parametroRicercaProvvisorio = new ParametroRicercaProvvisorio();
 		parametroRicercaProvvisorio.setAnno(preDoc.getProvvisorioDiCassa().getAnno());
@@ -701,123 +693,6 @@ public abstract class CrudPreDocumentoDiSpesaBaseService<REQ extends ServiceRequ
 		return ris >=0;
 	}
 
-	/**
-	 * effettua tutti i controlli che riguardano il mutuo
-	 */
-	public void checkVoceMutuo() {
-		String methodName = "checkVoceMutuo";
-		boolean subImpegnoValorizzato = preDoc.getSubImpegno() != null && preDoc.getSubImpegno().getUid() != 0;
-		boolean impegnoValorizzato = preDoc.getImpegno() != null && preDoc.getImpegno().getUid() != 0;
-		if (preDoc.getVoceMutuo() != null && (preDoc.getVoceMutuo().getNumeroMutuo() != null || StringUtils.isNotBlank(preDoc.getVoceMutuo().getNumeroMutuo()))
-				&& (impegnoValorizzato || subImpegnoValorizzato)) {
-			log.debug(methodName, "Impegno o sub Non valorizzato ");
-			throw new BusinessException(ErroreFin.IMPEGNO_FINANZIATO_DA_MUTUO.getErrore());
-		}
 
-		if (impegnoValorizzato) {
-			if ((preDoc.getVoceMutuo() == null || preDoc.getVoceMutuo().getNumeroMutuo() == null) && "MUT".equals(preDoc.getImpegno().getTipoImpegno().getCodice())) {
-				log.debug(methodName, "Impegno finanziato da mutuo (numero mutuo non presente ) ");
-				throw new BusinessException(ErroreFin.IMPEGNO_FINANZIATO_DA_MUTUO.getErrore());
-			}
-			/*
-			 * Il mutuo c'e'. Devo vedere se: 1. l'impegno e' finanziato da
-			 * mutuo 2. il mutuo e' presente nell'elenco di quelli dell'impegno
-			 */
-			if (!"MUT".equals(preDoc.getImpegno().getTipoImpegno().getCodice()) && preDoc.getVoceMutuo() != null && preDoc.getVoceMutuo().getNumeroMutuo() != null) {
-				log.debug(methodName, "Impegno Non finanziato da mutuo  ");
-				throw new BusinessException(ErroreFin.IMPEGNO_NON_FINANZIATO_CON_MUTUO.getErrore());
-			}
-			caricaVoceMutuo();
-			controllaDisponibilitaVoceMutuo();
-		}
-		if (subImpegnoValorizzato) {
-			if ((preDoc.getVoceMutuo() == null || preDoc.getVoceMutuo().getNumeroMutuo() == null) && "MUT".equals(preDoc.getSubImpegno().getTipoImpegno().getCodice())) {
-				log.debug(methodName, "SubImpegno finanziato da mutuo (numero mutuo non presente ) ");
-				throw new BusinessException(ErroreFin.IMPEGNO_FINANZIATO_DA_MUTUO.getErrore());
-			}
-			/*
-			 * Il mutuo c'e'. Devo vedere se: 1. subImpegno e' finanziato da
-			 * mutuo 2. il mutuo e' presente nell'elenco di quelli del
-			 * subImpegno
-			 */
-			if (!"MUT".equals(preDoc.getSubImpegno().getTipoImpegno().getCodice()) && preDoc.getVoceMutuo() != null && preDoc.getVoceMutuo().getNumeroMutuo() != null) {
-				log.debug(methodName, "SubImpegno Non finanziato da mutuo  ");
-				throw new BusinessException(ErroreFin.IMPEGNO_NON_FINANZIATO_CON_MUTUO.getErrore());
-			}
 
-			caricaVoceMutuo();
-			controllaDisponibilitaVoceMutuo();
-		}
-
-	}
-
-	/**
-	 * carica voce mutuo cerca la voce mutuo tra la lista vociMutuo dell'impegno
-	 * o del subimpegno
-	 */
-	private void caricaVoceMutuo() {
-		String methodName = "caricaVoceMutuo";
-		boolean subImpegnoValorizzato = preDoc.getSubImpegno() != null && preDoc.getSubImpegno().getUid() != 0;
-		boolean impegnoValorizzato = preDoc.getImpegno() != null && preDoc.getImpegno().getUid() != 0;
-
-		if (subImpegnoValorizzato) {
-			log.debug(methodName, "subImpegno valorizzato");
-			VoceMutuo voceMutuo = null;
-			List<VoceMutuo> listaVociMutuo = preDoc.getSubImpegno().getListaVociMutuo();
-
-			if (listaVociMutuo != null && !listaVociMutuo.isEmpty()) {
-				for (VoceMutuo vm : listaVociMutuo) {
-					if (vm.getNumeroMutuo().equals(preDoc.getVoceMutuo().getNumeroMutuo())) {
-						voceMutuo = vm;
-						break;
-					}
-				}
-			}
-			// voce mutuo e' valida solo se il suo numero di mutuo e' uguale al
-			// numero di mutuo passato dall'utente
-			if (voceMutuo != null && voceMutuo.getUid() > 0) {
-				preDoc.setVoceMutuo(voceMutuo);
-				return;
-			}
-		}
-		if (impegnoValorizzato) {
-			log.debug(methodName, "Impegno valorizzato");
-			VoceMutuo voceMutuo = null;
-			List<VoceMutuo> listaVociMutuo = preDoc.getImpegno().getListaVociMutuo();
-
-			if (listaVociMutuo != null && !listaVociMutuo.isEmpty()) {
-				for (VoceMutuo vm : listaVociMutuo) {
-					if (vm.getNumeroMutuo().equals(preDoc.getVoceMutuo().getNumeroMutuo())) {
-						voceMutuo = vm;
-						break;
-					}
-				}
-			}
-			// voce mutuo e' valida solo se il suo numero di mutuo e' uguale al
-			// numero di mutuo passato dall'utente
-			if (voceMutuo != null && voceMutuo.getUid() > 0) {
-				preDoc.setVoceMutuo(voceMutuo);
-				return;
-			}
-		}
-		// Non ho i dati dell'impegno ne' del subimpegno: errore perche' in tal
-		// caso e' obbligatorio
-		// FIXME: trovare errore corretto
-		throw new BusinessException("mutuo non presente nell'elenco dei collegati al movimento di gestione");
-	}
-
-	/**
-	 * controlla la disponibilita a liquidare della voce mutuo
-	 * disponibilitaLiquidare + importo vecchio >= documento.importo
-	 */
-	protected void controllaDisponibilitaVoceMutuo() {
-		String methodName = "controllaDisponibilitaVoceMutuo";
-		BigDecimal importoDisponiblitaLiquidare = BigDecimal.ZERO;
-		importoDisponiblitaLiquidare = importoDisponiblitaLiquidare.add(preDoc.getVoceMutuo().getImportoDisponibileLiquidareVoceMutuo());
-		if (importoDisponiblitaLiquidare.compareTo(preDoc.getImporto()) < 0) {
-			log.debug(methodName, "Disponibilita insufficiente ");
-			throw new BusinessException(ErroreFin.DISPONIBILITA_INSUFFICIENTE_MOVIMENTO.getErrore("Aggiornamento quota documento spesa", "Voce Mutuo"));
-		}
-	}
-    // fine parte aggiunta il 16/06/2015
 }

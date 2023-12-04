@@ -98,7 +98,35 @@ public class PagopaTRiconciliazione extends SiacTEnteBase implements Serializabl
 
 	@Column(name = "pagopa_ric_flusso_num_accertamento")
 	private Integer pagopaRicFlussoNumAccertamento;
+	
+	//INIZIO MODIFICHE SIAC-7556 FL per curscotto PAGOPA
+	@ManyToOne
+	@JoinColumn(name="pagopa_ric_errore_id")
+	private PagopaDRiconciliazioneErrore pagopaDRiconciliazioneErrore;
+	
+ 
+	
+	
+	
+	
 
+	/**
+	 * @return the pagopaDRiconciliazioneErrore
+	 */
+	public PagopaDRiconciliazioneErrore getPagopaDRiconciliazioneErrore()
+	{
+		return pagopaDRiconciliazioneErrore;
+	}
+
+	/**
+	 * @param pagopaDRiconciliazioneErrore the pagopaDRiconciliazioneErrore to set
+	 */
+	public void setPagopaDRiconciliazioneErrore(PagopaDRiconciliazioneErrore pagopaDRiconciliazioneErrore)
+	{
+		this.pagopaDRiconciliazioneErrore = pagopaDRiconciliazioneErrore;
+	}
+
+	//FINE MODIFICHE SIAC-7556 FL per curscotto PAGOPA
 	public PagopaTRiconciliazione() {
 	}
 

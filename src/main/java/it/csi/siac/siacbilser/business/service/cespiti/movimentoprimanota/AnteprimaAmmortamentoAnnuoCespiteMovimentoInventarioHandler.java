@@ -6,7 +6,7 @@ package it.csi.siac.siacbilser.business.service.cespiti.movimentoprimanota;
 
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siaccespser.model.Cespite;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siacgenser.model.PrimaNota;
@@ -24,7 +24,7 @@ public class AnteprimaAmmortamentoAnnuoCespiteMovimentoInventarioHandler extends
 	}
 
 
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	@Override
 	public void caricaMovimento(PrimaNota primaNota) {

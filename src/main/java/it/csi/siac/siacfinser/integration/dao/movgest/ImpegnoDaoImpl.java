@@ -17,10 +17,11 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
+import it.csi.siac.siacfinser.integration.dad.CodiciMotiviModifiche;
 import it.csi.siac.siacfinser.integration.dao.common.AbstractDao;
 import it.csi.siac.siacfinser.integration.dao.common.dto.CodificaImportoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.ConsultaDettaglioImpegnoDto;
@@ -30,7 +31,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin;
 import it.csi.siac.siacfinser.integration.entity.ext.IdImpegnoSubimpegno;
 import it.csi.siac.siacfinser.integration.entity.ext.IdMovgestSubmovegest;
-import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
+import it.csi.siac.siacfinser.integration.util.DataValiditaUtil;
 
 @Component
 @Transactional
@@ -50,7 +51,7 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		
 		Map<String,Object> param = new HashMap<String, Object>();
 		Date nowDate = TimingUtils.getNowDate();
-		param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
+		param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
 		
 		//PARAMETRI DI INPUT
 		Integer annoBilancio = prs.getAnnoBilancio();
@@ -62,6 +63,7 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		String cup = prs.getCup(); //Impegno.cup
 		String progetto = prs.getProgetto(); //CodiceProgetto.codice
 		String flagDaRiaccerto = prs.getFlagDaRiaccertamento(); //Impegno.flagDaRiaccentramento
+		String flagDaReanno = prs.getFlagDaReanno(); //Impegno.flagDaRiaccentramento
 		Integer idCapitoloUscita = prs.getUidCapitolo();
 		Integer idProvvedimento = prs.getUidProvvedimento();
 		String codiceCreditore = prs.getCodiceCreditore(); // Soggetto.codice
@@ -103,21 +105,21 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		jpql.append(" left join movgestTs.siacRMovgestTsAttoAmms rTsAttoAmm left join rTsAttoAmm.siacTAttoAmm tAttoAmm");
 		
 		// struttura amministrativa
-		if(!StringUtils.isEmpty(uidStrutturaAmmProvvedimento)){
+		if(!StringUtilsFin.isEmpty(uidStrutturaAmmProvvedimento)){
 			jpql.append(" left join tAttoAmm.siacRAttoAmmClasses rAttoClass left join rAttoClass.siacTClass tClassAtto ");
 		}
 		
-		if(!StringUtils.isEmpty(idTipoProvvedimento)){
+		if(!StringUtilsFin.isEmpty(idTipoProvvedimento)){
 			jpql.append(" left join tAttoAmm.siacDAttoAmmTipo dTipoAtto ");
 		}
 		
 		
 		
-		if(!StringUtils.isEmpty(stato)){
+		if(!StringUtilsFin.isEmpty(stato)){
 			jpql.append(" left join movgestTs.siacRMovgestTsStatos rMovgestTsStato left join rMovgestTsStato.siacDMovgestStato dMovgestStato ");
 		}
 		
-		if(!StringUtils.isEmpty(tipoImpegno)){
+		if(!StringUtilsFin.isEmpty(tipoImpegno)){
 			jpql.append(" left join movgestTs.siacRMovgestClasses rMovgestClass left join rMovgestClass.siacTClass tClass ");
 		}
 		
@@ -126,38 +128,38 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		 */
 		
 		//soggetto
-		if(!StringUtils.isEmpty(codiceCreditore)){
+		if(!StringUtilsFin.isEmpty(codiceCreditore)){
 			jpql.append(" left join movgestTs.siacRMovgestTsSogs rSogg left join rSogg.siacTSoggetto sogg ");
 		}
 		
 		//classe soggetto
-		if(!StringUtils.isEmpty(codiceClasseSoggetto)){
+		if(!StringUtilsFin.isEmpty(codiceClasseSoggetto)){
 			jpql.append(" left join movgestTs.siacRMovgestTsSogclasses rClass left join rClass.siacDSoggettoClasse classe ");
 		}
 		
-		if(!StringUtils.isEmpty(elementoPianoDeiConti)){
+		if(!StringUtilsFin.isEmpty(elementoPianoDeiConti)){
 			jpql.append(" left join movgestTs.siacRMovgestClasses rPiano left join rPiano.siacTClass piano ");
 		}
 		
 		//Cig
-		if(!StringUtils.isEmpty(cig)){
+		if(!StringUtilsFin.isEmpty(cig)){
 			jpql.append(" left join movgestTs.siacRMovgestTsAttrs cigRAttr left join cigRAttr.siacTAttr cigAtt ");
 		}
 		
 		//Cup
-		if(!StringUtils.isEmpty(cup)){
+		if(!StringUtilsFin.isEmpty(cup)){
 			jpql.append(" left join movgestTs.siacRMovgestTsAttrs cupRAttr left join cupRAttr.siacTAttr cupAtt ");
 		}
 		
-		if(!StringUtils.isEmpty(pdc)){
+		if(!StringUtilsFin.isEmpty(pdc)){
 			jpql.append(" left join movgestTs.siacRMovgestClasses rMovgestPdcClass left join rMovgestPdcClass.siacTClass tPdcClass ");
 		}
 		
-		//Riaccertato
-		if(flagDaRiaccerto.equalsIgnoreCase("Si")){
+		//Riaccertato //SIAC-6997 aggiunto da reanno
+		if ((!StringUtilsFin.isEmpty(flagDaRiaccerto) && flagDaRiaccerto.equalsIgnoreCase("Si"))  || (!StringUtilsFin.isEmpty(flagDaReanno) && flagDaReanno.equalsIgnoreCase("Si"))) {
 			jpql.append(" left join movgestTs.siacRMovgestTsAttrs flagRAttr left join flagRAttr.siacTAttr flagAtt ");
 		}
-		
+
 		//Numero e Anno Riaccertato
 		if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
 			jpql.append(" left join movgestTs.siacRMovgestTsAttrs annoRiacRAttr left join annoRiacRAttr.siacTAttr annoRiacAtt ");
@@ -171,7 +173,7 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		}
 		
 		//Progetto
-		if(!StringUtils.isEmpty(progetto)){
+		if(!StringUtilsFin.isEmpty(progetto)){
 			jpql.append(" left join movgestTs.siacRMovgestTsProgrammas rProgrammas left join rProgrammas.siacTProgramma tProgramma ");
 		}
 		
@@ -184,39 +186,39 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		
 		param.put("enteProprietarioId", enteUid);
 		
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("mvg"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("mvg"));
 		
 		//Ricerca Soggetto
-		if(!StringUtils.isEmpty(codiceCreditore)){
+		if(!StringUtilsFin.isEmpty(codiceCreditore)){
 			jpql.append(" AND sogg.soggettoCode = :codiceSoggetto ");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rSogg"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rSogg"));
 			param.put("codiceSoggetto", codiceCreditore);
 		}
 		
-		if(!StringUtils.isEmpty(codiceClasseSoggetto)){
+		if(!StringUtilsFin.isEmpty(codiceClasseSoggetto)){
 			jpql.append(" AND classe.soggettoClasseCode = :codiceClasse ");				
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rClass"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rClass"));
 			param.put("codiceClasse", codiceClasseSoggetto);
 		}
 		
-		if(!StringUtils.isEmpty(elementoPianoDeiConti)){
+		if(!StringUtilsFin.isEmpty(elementoPianoDeiConti)){
 			jpql.append(" AND piano.classifCode = :codicePiano");
 			param.put("codicePiano", elementoPianoDeiConti);
 		}
 		
 		//Ricerca Stato
-		if(!StringUtils.isEmpty(stato)){
+		if(!StringUtilsFin.isEmpty(stato)){
 			jpql.append(" AND dMovgestStato.movgestStatoCode = :stato ");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rMovgestTsStato"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rMovgestTsStato"));
 			param.put("stato", stato.toUpperCase());
 			
 		}
 		
 		
 		//Tipo Impegno jpql.append(" left join movgestTs.siacRMovgestClass rMovgestClass left join rMovgestClass.siacDClassTipo dMovgestClassTipo ");
-		if(!StringUtils.isEmpty(tipoImpegno)){
+		if(!StringUtilsFin.isEmpty(tipoImpegno)){
 			jpql.append(" AND tClass.classifCode = :tipoImpegno ");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rMovgestClass"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rMovgestClass"));
 			param.put("tipoImpegno", tipoImpegno.toUpperCase());
 			
 		}
@@ -294,13 +296,13 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 				param.put("numeroProvvedimento", numeroProvvedimento);
 			}
 			
-			if(!StringUtils.isEmpty(idTipoProvvedimento)){
+			if(!StringUtilsFin.isEmpty(idTipoProvvedimento)){
 				jpql.append(" AND dTipoAtto.attoammTipoId = :idTipoProvvedimento");
 				param.put("idTipoProvvedimento", Integer.valueOf(idTipoProvvedimento));
 			}
 			
 			//aggiunto filtro per sac del provevdimento
-			if(!StringUtils.isEmpty(uidStrutturaAmmProvvedimento)){
+			if(!StringUtilsFin.isEmpty(uidStrutturaAmmProvvedimento)){
 				jpql.append(" AND tClassAtto.classifId = :uidStrutturaAmmProvvedimento ");
 				param.put("uidStrutturaAmmProvvedimento", Integer.valueOf(uidStrutturaAmmProvvedimento));
 			}
@@ -312,31 +314,36 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		 */
 		
 		//Cig
-		if(!StringUtils.isEmpty(cig)){
-			String clausolaCup = buildClausolaRicercaAttr(Constanti.T_ATTR_CODE_CIG, cig, "cigAtt", "cigRAttr", "cigLike", param);
+		if(!StringUtilsFin.isEmpty(cig)){
+			String clausolaCup = buildClausolaRicercaAttr(CostantiFin.T_ATTR_CODE_CIG, cig, "cigAtt", "cigRAttr", "cigLike", param);
 			jpql.append(clausolaCup);
 		}
 		
 		//Cup
-		if(!StringUtils.isEmpty(cup)){
-			String clausolaCup = buildClausolaRicercaAttr(Constanti.T_ATTR_CODE_CUP, cup, "cupAtt", "cupRAttr", "cupLike", param);
+		if(!StringUtilsFin.isEmpty(cup)){
+			String clausolaCup = buildClausolaRicercaAttr(CostantiFin.T_ATTR_CODE_CUP, cup, "cupAtt", "cupRAttr", "cupLike", param);
 			jpql.append(clausolaCup);
 		}
 		 
 		
 		//PDC Finanziario
-		if(!StringUtils.isEmpty(pdc)){
-			String clausolaPDC = buildClausolaRicercaTClass(Constanti.getCodiciPianoDeiConti(), pdc, "tPdcClass", "rMovgestPdcClass", "pdcLike", param);
+		if(!StringUtilsFin.isEmpty(pdc)){
+			String clausolaPDC = buildClausolaRicercaTClass(CostantiFin.getCodiciPianoDeiConti(), pdc, "tPdcClass", "rMovgestPdcClass", "pdcLike", param);
 			jpql.append(clausolaPDC);
 		}
 		
 		//Riaccertato
-		if(flagDaRiaccerto.equalsIgnoreCase("Si")){
+		if( (!StringUtilsFin.isEmpty(flagDaRiaccerto) && flagDaRiaccerto.equalsIgnoreCase("Si"))){
 			jpql.append(" AND  flagAtt.attrCode = 'flagDaRiaccertamento' AND UPPER(flagRAttr.boolean_) = 'S' ");
 		}
-		
+
+		//SIAC-6997 Reanno
+		if( (!StringUtilsFin.isEmpty(flagDaReanno) && flagDaReanno.equalsIgnoreCase("Si"))){
+				jpql.append(" AND  flagAtt.attrCode = 'flagDaReanno' AND UPPER(flagRAttr.boolean_) = 'S' ");
+		}
+
 		//Numero e Anno Riaccertato
-		if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
+		if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0) ){
 			jpql.append(" AND  annoRiacAtt.attrCode = 'annoRiaccertato' AND annoRiacRAttr.testo = :annoRiacc");
 			jpql.append(" AND  numRiacAtt.attrCode = 'numeroRiaccertato' AND numRiacRAttr.testo = :numeroRiacc");
 			param.put("annoRiacc", String.valueOf(annoImpegnoRiaccertato));
@@ -353,7 +360,7 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		
 		//SIAC-7144
 		//Progetto
-		if(!StringUtils.isEmpty(progetto)){
+		if(!StringUtilsFin.isEmpty(progetto)){
 			jpql.append(" AND UPPER(tProgramma.programmaCode) LIKE UPPER(:programmaCode)");
 			String progettoLike = null;
 			if(progetto.contains("%")){
@@ -372,8 +379,8 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 
 	
 		//CR 1907
-		//if(query.getResultList().size() > Constanti.MAX_RIGHE_ESTRAIBILI){
-		//	listaImpegni = query.setMaxResults(Constanti.MAX_RIGHE_ESTRAIBILI + 1).getResultList();
+		//if(query.getResultList().size() > CostantiFin.MAX_RIGHE_ESTRAIBILI){
+		//	listaImpegni = query.setMaxResults(CostantiFin.MAX_RIGHE_ESTRAIBILI + 1).getResultList();
 		//}else{
 		listaImpegni = query.getResultList();
 		//}	
@@ -389,14 +396,15 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IdImpegnoSubimpegno> ricercaImpegniSubImpegni(Integer enteUid, RicercaImpSubParamDto prs, boolean soloImpegni) {
+	//task-168
+	public List<IdImpegnoSubimpegno> ricercaImpegniSubImpegni(Integer enteUid, RicercaImpSubParamDto prs, boolean soloImpegni, boolean programmaCodeStrict) {
 		
 		
 		List<IdImpegnoSubimpegno> listaID = new ArrayList<IdImpegnoSubimpegno>();
 		
 		Map<String,Object> param = new HashMap<String, Object>();
 		Date nowDate = TimingUtils.getNowDate();
-		param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
+		param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
 		
 		// PARAMETRI DI INPUT
 		Integer annoEsercizio = prs.getAnnoEsercizio(); //Bilancio.anno , usato su competenza passata, attuale o futura
@@ -438,36 +446,56 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		boolean competenzaCorrente = prs.isCompetenzaCorrente(); 
 		boolean competenzaCompetenza = prs.isCompetenzaCompetenza();
 		boolean competenzaFuturi = prs.isCompetenzaFuturi();
+		boolean competenzaResiduiRor = prs.isCompetenzaResiduiRor();
+		
+		
+		
 		
 				
 		//Creo La query per il modulo FIN
-		StringBuilder jpql = new StringBuilder("SELECT NEW it.csi.siac.siacfinser.integration.entity.ext.IdImpegnoSubimpegno(mvg.movgestId, movgestTs.movgestTsIdPadre, mvg.movgestNumero, mvg.movgestAnno) ")
+		StringBuilder jpql = new StringBuilder("SELECT NEW it.csi.siac.siacfinser.integration.entity.ext.IdImpegnoSubimpegno(mvg.movgestId, movgestTs.movgestTsIdPadre, mvg.movgestNumero, mvg.movgestAnno"
+				+ ",movgestTs.movgestTsId, movgestTs.movgestTsCode, dMovgestTsTipo.movgestTsTipoCode) ")
 		.append(" FROM SiacTMovgestFin mvg ")
 		.append(" left join mvg.siacTMovgestTs movgestTs left join mvg.siacDMovgestTipo dMovgestTipo ")
 		.append(" left join movgestTs.siacDMovgestTsTipo dMovgestTsTipo ")
 		.append(" left join mvg.siacTBil tBil left join tBil.siacTPeriodo tPeriodo ")
 		.append(" left join mvg.siacRMovgestBilElems rBilElem left join rBilElem.siacTBilElem tBilElem  ");
 		
-		if(!StringUtils.isEmpty(tipoImpegno)){
+		//SIAC-7349
+		if(prs.getComponenteBilancioUid()!= null && prs.getComponenteBilancioUid().intValue()!=0){
+			jpql.append(" left join rBilElem.siacDBilElemDetCompTipo dBilElemDetCompTipo  ");
+		}
+		
+		
+		//SIAC-6997
+		if(!StringUtilsFin.isEmpty(tipoImpegno) || (prs.getStrutturaSelezionataCompetente()!= null && prs.getStrutturaSelezionataCompetente().length()>0)){
 			jpql.append(" left join movgestTs.siacRMovgestClasses rMovgestClass left join rMovgestClass.siacTClass tClass ");
 		}
 		
 		//Cig
-		if(!StringUtils.isEmpty(cig)){
+		if(!StringUtilsFin.isEmpty(cig) ){ 
 			jpql.append(" left join movgestTs.siacRMovgestTsAttrs cigRAttr left join cigRAttr.siacTAttr cigAtt ");
 		}
 		
 		//Cup
-		if(!StringUtils.isEmpty(cup)){
+		if(!StringUtilsFin.isEmpty(cup)){
 			jpql.append(" left join movgestTs.siacRMovgestTsAttrs cupRAttr left join cupRAttr.siacTAttr cupAtt ");
 		}
+		
+		//SIAC-6997 .....stessa condizione di prima per reanno ...sarebbe da sistemare 
+		if((prs.getReanno()!= null && Boolean.TRUE.equals(prs.getReanno()))){ 
+			jpql.append(" left join movgestTs.siacRMovgestTsAttrs relAttrs left join relAttrs.siacTAttr tabAttr ");
+		}
+		
+		
+		
 
-		boolean annoONumeroProvv = (CommonUtils.maggioreDiZero(annoProvvedimento) || CommonUtils.maggioreDiZero(numeroProvvedimento));
+		boolean annoONumeroProvv = (CommonUtil.maggioreDiZero(annoProvvedimento) || CommonUtil.maggioreDiZero(numeroProvvedimento));
 		
 		//Inserisco la join del provvedimento
 		jpql.append(" left join movgestTs.siacRMovgestTsAttoAmms rTsAttoAmm left join rTsAttoAmm.siacTAttoAmm tAttoAmm ");
 
-		if(!StringUtils.isEmpty(codiceTipoProvvedimento)){
+		if(!StringUtilsFin.isEmpty(codiceTipoProvvedimento)){
 			jpql.append(" left join tAttoAmm.siacDAttoAmmTipo dTipoAtto ");
 		}
 		
@@ -477,12 +505,12 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		}
 		
 		//soggetto
-		if(!StringUtils.isEmpty(codiceCreditore)){
+		if(!StringUtilsFin.isEmpty(codiceCreditore)){
 			jpql.append(" left join movgestTs.siacRMovgestTsSogs rSogg left join rSogg.siacTSoggetto sogg ");
 		}
 		
 		//progetto
-		if (!StringUtils.isEmpty(codiceProgetto)) {
+		if (!StringUtilsFin.isEmpty(codiceProgetto)) {
 			jpql.append(" left join movgestTs.siacRMovgestTsProgrammas rProgrammas left join rProgrammas.siacTProgramma tProgramma ");
 		}
 		
@@ -493,7 +521,7 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		
 		// CR - 1907 RM 
 		// aggiunto classe soggetto
-		if(!StringUtils.isEmpty(codiceClasseSoggetto)){
+		if(!StringUtilsFin.isEmpty(codiceClasseSoggetto)){
 			jpql.append(" left join movgestTs.siacRMovgestTsSogclasses rClass left join rClass.siacDSoggettoClasse classe ");
 		}
 		
@@ -512,81 +540,102 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		//jpql.append("left join mvg.siacRMovgestBilElems rBilElem left join rBilElem.siacTBilElem tBilElem  ");
 		//}
 		
-		if(!StringUtils.isEmpty(statoOperativo) || !StringUtils.isEmpty(prs.getStatiDaEscludere())){
+		if(!StringUtilsFin.isEmpty(statoOperativo) || !StringUtilsFin.isEmpty(prs.getStatiDaEscludere())){
 			jpql.append(" left join movgestTs.siacRMovgestTsStatos rMovgestTsStato left join rMovgestTsStato.siacDMovgestStato dMovgestStato");
 		}
 	
+		
+		//SIAC-6997
+		if(prs.isRicercaResiduiRorFlag()){
+			jpql.append(" left join movgestTs.siacTMovgestTsDets movgestDet left join movgestDet.siacDMovgestTsDetTipo movgestDetTipo ");
+		}
+		
+		
 		//WHERE 
 		jpql.append(" WHERE mvg.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ")
 						.append("AND dMovgestTipo.movgestTipoCode = :tipoMovimentoImpegno ")
 						.append("AND tPeriodo.anno = :annoBilancio ");
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("mvg"));
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("movgestTs"));
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rBilElem",null, true));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("mvg"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("movgestTs"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rBilElem",null, true));
 		
 		//FIX JIRA SIAC-3386 AGGIUNTE VALIDITA SU CAMPI OPZIONALI:
-		if(!StringUtils.isEmpty(codiceCreditore)){
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rSogg"));
+		if(!StringUtilsFin.isEmpty(codiceCreditore)){
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rSogg"));
 		}
-		if(!StringUtils.isEmpty(codiceClasseSoggetto)){
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rClass"));
+		if(!StringUtilsFin.isEmpty(codiceClasseSoggetto)){
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rClass"));
 		}
 		//
 		
 		//codice progetto
-		if(!StringUtils.isEmpty(codiceProgetto)){
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rProgrammas"));
+		if(!StringUtilsFin.isEmpty(codiceProgetto)){
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rProgrammas"));
 		}
 		
 		
 		param.put("annoBilancio", String.valueOf(prs.getAnnoEsercizio()));
 		param.put("enteProprietarioId", enteUid);
-		param.put("tipoMovimentoImpegno", Constanti.MOVGEST_TIPO_IMPEGNO);
+		param.put("tipoMovimentoImpegno", CostantiFin.MOVGEST_TIPO_IMPEGNO);
 
 		
-		if(!StringUtils.isEmpty(statoOperativo) || !StringUtils.isEmpty(prs.getStatiDaEscludere()) ){
+		if(!StringUtilsFin.isEmpty(statoOperativo) || !StringUtilsFin.isEmpty(prs.getStatiDaEscludere()) ){
 			
-			jpql.append(" AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestTs ");
-			param.put("tipoMovGestTs", Constanti.MOVGEST_TS_TIPO_TESTATA);
+			/*
+			 * SIAC-6997
+			 * Se solo impegni prendiamo la testata...
+			 * in caso di ror vengono presi anche i sub
+			 */
+			if(soloImpegni){
+				jpql.append(" AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestTs ");
+				param.put("tipoMovGestTs", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+			}
+			
 			// Rm: 19.06.2015:
 			// Se ricerco anche per stato mov. gestione non devo ricercare anche i sub ma solo gli impegni
-			
-			
-			if(!StringUtils.isEmpty(statoOperativo)){
-				jpql.append(" AND dMovgestStato.movgestStatoCode = :statoOperativo ");
-				param.put("statoOperativo", statoOperativo);
+			if(!StringUtilsFin.isEmpty(statoOperativo)){
+					jpql.append(" AND dMovgestStato.movgestStatoCode = :statoOperativo ");
+					param.put("statoOperativo", statoOperativo);
 			}
-			if(!StringUtils.isEmpty(prs.getStatiDaEscludere()) ){
+			if(!StringUtilsFin.isEmpty(prs.getStatiDaEscludere()) ){
 				String statiDaEscludere = buildElencoPerClausolaIN(prs.getStatiDaEscludere());
 				jpql.append(" AND dMovgestStato.movgestStatoCode NOT IN :statiDaEscludere");
 				param.put("statiDaEscludere", statiDaEscludere);
 			}
 			
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rMovgestTsStato"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rMovgestTsStato"));
 			
 			
 		} else {
 			//non e' valorizzato ne lo stato ne gli stati da escludere
 			jpql.append(" AND (dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestTs OR  dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestTsS ) ");
-			param.put("tipoMovGestTs", Constanti.MOVGEST_TS_TIPO_TESTATA);
-			param.put("tipoMovGestTsS", Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO);
+			param.put("tipoMovGestTs", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+			param.put("tipoMovGestTsS", CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO);
 		}		
 
+		
+		
+		//SIAC-6997 da capire in caso ror
 		if(flagDaRiaccerto.equalsIgnoreCase("Si")){
 			String jpqlRiaccertato = buildClausolaExistVersoTAttr("flagRAttr", "movgestTs", "flagDaRiaccertamento", "boolean_", "S",true,false,false);
 			jpql.append(jpqlRiaccertato);
+			
+			
+			if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
+				String jpqlAnnoRiacc = buildClausolaExistVersoTAttr("flagRAttrAnno", "movgestTs", "annoRiaccertato", "testo", "annoRiacc",false,true,false);
+				jpql.append(jpqlAnnoRiacc);
+				param.put("annoRiacc", String.valueOf(annoImpegnoRiaccertato));
+				
+				String jpqlNumRiacc = buildClausolaExistVersoTAttr("flagRAttrNumero", "movgestTs", "numeroRiaccertato", "testo", "numeroRiacc",false,true,false);
+				jpql.append(jpqlNumRiacc);
+				param.put("numeroRiacc", String.valueOf(numeroImpegnoRiaccertato));
+			}
+			
+			
 		}
 		
-		if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
-			String jpqlAnnoRiacc = buildClausolaExistVersoTAttr("flagRAttrAnno", "movgestTs", "annoRiaccertato", "testo", "annoRiacc",false,true,false);
-			jpql.append(jpqlAnnoRiacc);
-			param.put("annoRiacc", String.valueOf(annoImpegnoRiaccertato));
-			
-			String jpqlNumRiacc = buildClausolaExistVersoTAttr("flagRAttrNumero", "movgestTs", "numeroRiaccertato", "testo", "numeroRiacc",false,true,false);
-			jpql.append(jpqlNumRiacc);
-			param.put("numeroRiacc", String.valueOf(numeroImpegnoRiaccertato));
-		}
+		
 		
 		
 		//Numero e Anno Origine
@@ -599,9 +648,9 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		
 
 		// Tipo Impegno 
-		if(!StringUtils.isEmpty(tipoImpegno)){
+		if(!StringUtilsFin.isEmpty(tipoImpegno)){
 			jpql.append(" AND tClass.classifCode = :tipoImpegno ");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rMovgestClass"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rMovgestClass"));
 			param.put("tipoImpegno", tipoImpegno.toUpperCase());
 			
 		}
@@ -619,26 +668,95 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		}
 
 		
-		// CR - 1907 RM 
-		// aggiunto Impegni Correnti
-		if(competenzaCorrente){
-			jpql.append(" AND mvg.movgestAnno = :anno ");
-			param.put("anno", annoEsercizio);
+		/*SIAC-6997
+		 * In caso di reanno la condizione di competenza è per anno assunzione (anno N)
+		 * e residuo (<anno N). Se nel criterio di ricerca viene inserito l anno impegno
+		 * questa condizione (come nel caso di ricerca impegno normale) va considerata nella lista 
+		 * finale perchè si avrebbe:
+		 * AND mvg.movgestAnno = :annoImpegno
+		 * AND (mvg.movgestAnno = :annoEsercizio OR mvg.movgestAnno < :annoEsercizio)
+		 * 
+		 */
+		
+		if(prs.isRicercaResiduiRorFlag()){
+			/* Da richiesta bisognava prendere il residuo. 
+			 * Tale operazione risulta troppo dispensiosa in termini di
+			 * performance perchè i dati da filtrare sono calcolati 
+			 * Prendiamo l'importo > 0
+			 */
+//			jpql.append(" AND movgestDet.movgestTsDetImporto >0 AND movgestDetTipo.movgestTsDetTipoCode = :tipoAttuale ");
+//			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("movgestDet"));
+//			param.put("tipoAttuale", CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
+			
+			
+			//CONDIZIONE SULL ESISTENZA DELLE MODIFICHE PER IL FILTRAGGIO ROR
+			jpql.append(" AND ( ");
+			jpql.append(" ( movgestDet.movgestTsDetImporto >0 AND movgestDetTipo.movgestTsDetTipoCode = :tipoAttuale ");
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("movgestDet"));
+			jpql.append(" ) ");
+			jpql.append(" OR EXISTS ( SELECT movts from SiacTMovgestTsFin movts ");
+			jpql.append(" left join movts.siacTMovgestTsDetMods mod ");
+			jpql.append(" left join mod.siacRModificaStato modr ");
+			jpql.append(" left join modr.siacDModificaStato statomod ");
+			jpql.append(" left join modr.siacTModifica modifica ");
+			jpql.append(" left join modifica.siacDModificaTipo tipoModifica ");
+			jpql.append(" where  movts.movgestTsId = movgestTs.movgestTsId AND statomod.modStatoCode != :annullato ");
+			jpql.append(" AND modr.dataCancellazione IS NULL AND (tipoModifica.modTipoCode= :RORM OR  tipoModifica.modTipoCode= :INEROR OR tipoModifica.modTipoCode = :INSROR ");
+			jpql.append(" OR tipoModifica.modTipoCode= :REIMP)) ");
+			jpql.append(" ) ");
+			param.put("tipoAttuale", CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
+			
+			param.put("annullato", CostantiFin.D_MODIFICA_STATO_ANNULLATO);
+			param.put("REIMP", CodiciMotiviModifiche.REIMP.getCodice());
+			param.put("RORM", CodiciMotiviModifiche.RORM.getCodice());
+			param.put("INEROR", CodiciMotiviModifiche.INEROR.getCodice());
+			param.put("INSROR", CodiciMotiviModifiche.INSROR.getCodice());
+			
+			
 		}
 		
-		// CR - 1907 RM 
-		// aggiunto Impegni Passati
-		if(competenzaCompetenza){
-			jpql.append(" AND mvg.movgestAnno  < :anno ");
-			param.put("anno", annoEsercizio);
-		}
 		
-		// CR - 1907 RM 
-		// aggiunto Impegni Futuri
-		if(competenzaFuturi){
-			jpql.append(" AND mvg.movgestAnno > :anno ");
-			param.put("anno", annoEsercizio);
+		if(competenzaResiduiRor){
+			jpql.append(" AND (mvg.movgestAnno = :anno OR mvg.movgestAnno  < :anno) ");
+			param.put("anno",  annoEsercizio);
+		}else{
+			//Lascio tutto come era prima
+			/*
+			 * SIAC-6997
+			 * Se da Residui ROR bisognerebbe prendere la competenza corrente 
+			 * unita al residuo. impegno semplice considerare il filtraggio
+			 * residuo dovrebbe essere competenzaCompetenza ...con anno < del bilancio
+			 */
+			
+				// CR - 1907 RM 
+				// aggiunto Impegni Correnti
+				if(competenzaCorrente){
+					jpql.append(" AND mvg.movgestAnno = :anno ");
+					param.put("anno", annoEsercizio);
+				}
+				
+				// CR - 1907 RM 
+				// aggiunto Impegni Passati
+				if(competenzaCompetenza){
+					jpql.append(" AND mvg.movgestAnno  < :anno ");
+					param.put("anno", annoEsercizio);
+				}
+				
+				// CR - 1907 RM 
+				// aggiunto Impegni Futuri
+				if(competenzaFuturi){
+					jpql.append(" AND mvg.movgestAnno > :anno ");
+					param.put("anno", annoEsercizio);
+				}
+			
+			
+			
 		}
+			
+		
+		
+		
+
 		
 		// Capitolo	
 		// jira 1337 ricerca capitolo con 0
@@ -666,26 +784,36 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 				jpql.append(" AND tBilElem.elemCode3 = :numeroUeb ");
 				param.put("numeroUeb", String.valueOf(numeroUeb));
 			}	
-			
-			
 		}
 		
+		/*SIAC-7349
+		 * 
+		 */
+		if(prs.getComponenteBilancioUid()!= null && prs.getComponenteBilancioUid().intValue()!=0){
+			jpql.append(" AND dBilElemDetCompTipo.elemDetCompTipoId = :elemDetCompTipoId");
+			//jpql.append(" AND rBilElem.elemDetCompTipoId = :elemDetCompTipoId");
+			
+			param.put("elemDetCompTipoId", prs.getComponenteBilancioUid());
+		}
+		
+		
+		
 		//Ricerca Soggetto
-		if(!StringUtils.isEmpty(codiceCreditore)){
+		if(!StringUtilsFin.isEmpty(codiceCreditore)){
 			jpql.append(" AND sogg.soggettoCode = :codiceSoggetto ");
 			param.put("codiceSoggetto", codiceCreditore);
 		}
 		
 		// Ricerco per classe soggetto
-		if(!StringUtils.isEmpty(codiceClasseSoggetto)){
+		if(!StringUtilsFin.isEmpty(codiceClasseSoggetto)){
 			jpql.append(" AND classe.soggettoClasseCode = :codiceClasse ");				
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rClass"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rClass"));
 			param.put("codiceClasse", codiceClasseSoggetto);
 		}
 		
 		// progetto
 		//SIAC-7144
-		if(!StringUtils.isEmpty(progetto)){
+		/*if(!StringUtilsFin.isEmpty(progetto)){
 			jpql.append(" AND UPPER(tProgramma.programmaCode) LIKE UPPER(:programmaCode)");
 			String progettoLike = null;
 			if(progetto.contains("%")){
@@ -695,6 +823,23 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 			}
 			param.put("programmaCode", progettoLike);
 		}		
+		*/
+		
+		//progetto
+		//task-168
+		if(!StringUtilsFin.isEmpty(progetto)) {
+			if (programmaCodeStrict) {
+				jpql.append(" AND tProgramma.programmaCode=:programmaCode ");
+			} else {
+				if(progetto.contains("%")) {
+					jpql.append(" AND UPPER(tProgramma.programmaCode) LIKE UPPER(:programmaCode)");
+				} else {
+					jpql.append(" AND UPPER(tProgramma.programmaCode) LIKE UPPER('%'||:programmaCode||'%')");
+				}
+			}
+			
+			param.put("programmaCode", progetto);
+		}
 		
 		//cronoprogramma
 		if (prs.getUidCronoprogramma() != null && prs.getUidCronoprogramma().intValue() != 0) {
@@ -707,7 +852,7 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		if(idProvvedimento != null && idProvvedimento != 0){
 			
 			//SIAC-6018 aggiungo condizione di validita su siac_r_movgest_ts_atto_amm:
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rTsAttoAmm"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rTsAttoAmm"));
 			//
 			
 			jpql.append(" AND tAttoAmm.attoammId = :provvedimentoId ");
@@ -716,7 +861,7 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 			
 			// 	SIAC-6018 aggiungo condizione di validita su siac_r_movgest_ts_atto_amm:
 			if(annoONumeroProvv){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rTsAttoAmm"));
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rTsAttoAmm"));
 			}
 			//
 			
@@ -730,7 +875,7 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 				param.put("numeroProvvedimento", numeroProvvedimento);
 			}
 			
-			if(!StringUtils.isEmpty(codiceTipoProvvedimento)){
+			if(!StringUtilsFin.isEmpty(codiceTipoProvvedimento)){
 				jpql.append(" AND dTipoAtto.attoammTipoCode = :codiceTipoProvvedimento ");
 				param.put("codiceTipoProvvedimento", codiceTipoProvvedimento);
 			}	
@@ -744,8 +889,10 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		}
 		
 		//Cig
-		if(!StringUtils.isEmpty(cig)){
+		if(!StringUtilsFin.isEmpty(cig)){
 			jpql.append(" AND  cigAtt.attrCode = 'cig' AND UPPER(cigRAttr.testo) LIKE UPPER(:cigLike) ");
+			//SIAC-8302
+			jpql.append(DataValiditaUtil.ottieniClauseCheEscludeRecordCancellatiLogicamente("cigRAttr"));
 			String cigLike = null;
 			if(cig.contains("%")){
 				cigLike = cig;
@@ -756,8 +903,9 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		}
 		
 		//Cup
-		if(!StringUtils.isEmpty(cup)){
+		if(!StringUtilsFin.isEmpty(cup)){
 			jpql.append(" AND  cupAtt.attrCode = 'cup' AND UPPER(cupRAttr.testo) LIKE UPPER(:cupLike) ");
+			jpql.append(DataValiditaUtil.ottieniClauseCheEscludeRecordCancellatiLogicamente("cupRAttr"));
 			String cupLike = null;
 			if(cup.contains("%")){
 				cupLike = cig;
@@ -767,7 +915,110 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 			param.put("cupLike", cupLike);
 		}
 
-		jpql.append(" ORDER BY mvg.movgestAnno, mvg.movgestNumero ");
+		
+		//SIAC-6997
+		if(prs.getReanno()!= null && Boolean.TRUE.equals(prs.getReanno())){
+				jpql.append(" AND ((tabAttr.attrCode = :flagDaReanno AND relAttrs.boolean_ = 'S' ");
+				
+				if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
+					String jpqlAnnoRiacc = buildClausolaExistVersoTAttr("flagRAttrAnno", "movgestTs", "annoRiaccertato", "testo", "annoRiacc",false,true,false);
+					jpql.append(jpqlAnnoRiacc);
+					param.put("annoRiacc", String.valueOf(annoImpegnoRiaccertato));
+					String jpqlNumRiacc = buildClausolaExistVersoTAttr("flagRAttrNumero", "movgestTs", "numeroRiaccertato", "testo", "numeroRiacc",false,true,false);
+					jpql.append(jpqlNumRiacc);
+					param.put("numeroRiacc", String.valueOf(numeroImpegnoRiaccertato));
+				}
+				
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("relAttrs"));		
+				jpql.append("AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestReannoT) " + 
+								"OR " +
+								"(dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestReannoS AND  mvg.movgestId in ( "+
+								"SELECT mvg2.movgestId "+
+								"FROM SiacTMovgestFin mvg2 "+  
+								"left join mvg2.siacTMovgestTs movgestTs2 " +
+								"left join mvg2.siacDMovgestTipo dMovgestTipo2 "+
+								"left join movgestTs2.siacDMovgestTsTipo dMovgestTsTipo2 "+
+								"left join movgestTs2.siacRMovgestTsAttrs relAttrs2 "+
+								"left join relAttrs2.siacTAttr tabAttr2 "+
+								"where tabAttr2.attrCode = :flagDaReanno AND relAttrs2.boolean_ = 'S' ");
+				
+				
+				if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
+					String jpqlAnnoRiacc = buildClausolaExistVersoTAttr("flagRAttrAnno", "movgestTs2", "annoRiaccertato", "testo", "annoRiacc1",false,true,false);
+					jpql.append(jpqlAnnoRiacc);
+					param.put("annoRiacc1", String.valueOf(annoImpegnoRiaccertato));
+					String jpqlNumRiacc = buildClausolaExistVersoTAttr("flagRAttrNumero", "movgestTs2", "numeroRiaccertato", "testo", "numeroRiacc1",false,true,false);
+					jpql.append(jpqlNumRiacc);
+					param.put("numeroRiacc1", String.valueOf(numeroImpegnoRiaccertato));
+					
+				}
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("relAttrs2"));				
+				jpql.append("AND dMovgestTsTipo2.movgestTsTipoCode = :tipoMovGestReannoT) "+
+								")) ");
+				param.put("flagDaReanno", "flagDaReanno");
+				param.put("tipoMovGestReannoT", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+				param.put("tipoMovGestReannoS", CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO);
+				//param.put("anno", annoEsercizio);
+			
+		}
+		
+//		if(prs.getStrutturaSelezionataCompetente()!= null && prs.getStrutturaSelezionataCompetente().length()>0){
+//			try{
+//				Integer classificatoreId = Integer.parseInt(prs.getStrutturaSelezionataCompetente());
+//				//jpql.append(" AND tClass.classifId = :classificatoreId ");
+//				
+//				jpql.append(" AND ((tClass.classifId = :classificatoreId AND rMovgestClass.dataCancellazione IS NULL AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestStrutturaT) " + 
+//								"OR " +
+//								"(dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestStrutturaS AND  mvg.movgestId in ( "+
+//								"SELECT mvg1.movgestId "+
+//								"FROM SiacTMovgestFin mvg1 "+  
+//								"left join mvg1.siacTMovgestTs movgestTs1 " +
+//								"left join mvg1.siacDMovgestTipo dMovgestTipo1 "+
+//								"left join movgestTs1.siacDMovgestTsTipo dMovgestTsTipo1 "+
+//								"left join movgestTs1.siacRMovgestClasses rMovgestClass1 "+
+//								"left join rMovgestClass1.siacTClass tClass1 "+
+//								"where  tClass1.classifId = :classificatoreId AND rMovgestClass1.dataCancellazione IS NULL AND dMovgestTsTipo1.movgestTsTipoCode = :tipoMovGestStrutturaT) "+
+//								")) ");
+//				param.put("classificatoreId", classificatoreId);
+//				param.put("tipoMovGestStrutturaT", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+//				param.put("tipoMovGestStrutturaS", CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO);
+//				//param.put("anno", annoEsercizio);
+//			}catch(Exception e){
+//				log.error("ricercaImpegniSubImpegni", e.getMessage());
+//			}
+//		}
+		
+		
+		//SIAC-7486
+		if(prs.getListStrutturaCompetenteInt()!= null && !prs.getListStrutturaCompetenteInt().isEmpty()){
+			try{
+				
+				//jpql.append(" AND tClass.classifId = :classificatoreId ");
+				String inConditionac = buildInCondition(prs.getListStrutturaCompetenteInt());
+				jpql.append(" AND ((tClass.classifId IN " + inConditionac +" AND rMovgestClass.dataCancellazione IS NULL AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestStrutturaT) " + 
+								"OR " +
+								"(dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestStrutturaS AND  mvg.movgestId in ( "+
+								"SELECT mvg1.movgestId "+
+								"FROM SiacTMovgestFin mvg1 "+  
+								"left join mvg1.siacTMovgestTs movgestTs1 " +
+								"left join mvg1.siacDMovgestTipo dMovgestTipo1 "+
+								"left join movgestTs1.siacDMovgestTsTipo dMovgestTsTipo1 "+
+								"left join movgestTs1.siacRMovgestClasses rMovgestClass1 "+
+								"left join rMovgestClass1.siacTClass tClass1 "+
+								"where  tClass1.classifId IN " + inConditionac +" AND rMovgestClass1.dataCancellazione IS NULL AND dMovgestTsTipo1.movgestTsTipoCode = :tipoMovGestStrutturaT) "+
+								")) ");
+				
+				param.put("tipoMovGestStrutturaT", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+				param.put("tipoMovGestStrutturaS", CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO);
+				//param.put("anno", annoEsercizio);
+			}catch(Exception e){
+				log.error("ricercaImpegniSubImpegni", e.getMessage());
+			}
+		}
+		
+		
+		//jpql.append(" ORDER BY mvg.movgestAnno, mvg.movgestNumero ");
+		jpql.append(" ORDER BY mvg.movgestAnno , mvg.movgestNumero, movgestTs.movgestTsId "); //SIAC-6997
 
 		String jpqlQuery = jpql.toString();
 		//Creo la query effettiva
@@ -776,6 +1027,23 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		//Termino restituendo l'oggetto di ritorno: 
         return listaID;
 	}
+	
+	
+	
+//	private void buildAnnoNumeroReanno(Integer annoImpegnoRiaccertato, Integer numeroImpegnoRiaccertato, Map<String,Object> param, StringBuilder jpql){
+//		if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
+//			String jpqlAnnoRiacc = buildClausolaExistVersoTAttr("flagRAttrAnno", "movgestTs", "annoRiaccertato", "testo", "annoRiacc1",false,true,false);
+//			jpql.append(jpqlAnnoRiacc);
+//			param.put("annoRiacc1", String.valueOf(annoImpegnoRiaccertato));
+//			
+//			String jpqlNumRiacc = buildClausolaExistVersoTAttr("flagRAttrNumero", "movgestTs", "numeroRiaccertato", "testo", "numeroRiacc1",false,true,false);
+//			jpql.append(jpqlNumRiacc);
+//			param.put("numeroRiacc1", String.valueOf(numeroImpegnoRiaccertato));
+//		}
+//	}
+	
+	
+	
 	
 	private String buildClausolaExistVersoTAttr(String aliasRAttr,String aliasMovgestTs,
 			String attrCode,String colonnaValore,String valore, boolean upperValore, boolean valoreParametrico,boolean notExists){
@@ -809,190 +1077,14 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 			jpql.append(" = '"+valore+"' ");
 		}
 		
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery(aliasRAttr));
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery(aliasRAttr+".siacTAttr"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery(aliasRAttr));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery(aliasRAttr+".siacTAttr"));
 		jpql.append(")");
 			
 		clausola = jpql.toString();
 		return clausola;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<IdMovgestSubmovegest> ricercaImpegniSubImpegniPerVociMutuo(Integer idMutuo, Integer enteUid, RicercaImpSubParamDto prs, boolean soloImpegni) {
-		
-		
-		List<IdMovgestSubmovegest> listaID = new ArrayList<IdMovgestSubmovegest>();
-		
-		Map<String,Object> param = new HashMap<String, Object>();
-		Date nowDate = TimingUtils.getNowDate();
-		param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-		
-		// PARAMETRI DI INPUT
-		
-		// usato solo da ricerca impegni e subimpegni
-		String tipoImpegno = prs.getTipoImpegno();
-		String statoOperativo= prs.getStato();
-		
-		Integer annoImpegno = prs.getAnnoImpegno(); //Impegno.annoMovimento
-	
-		//PROVVEDIMENTO
-		Integer annoProvvedimento = prs.getAnnoProvvedimento();
-		Integer numeroProvvedimento = prs.getNumeroProvvedimento();
-		String codiceTipoProvvedimento ="";
-		if(prs.getTipoProvvedimento()!=null){
-			codiceTipoProvvedimento = prs.getTipoProvvedimento().getCodice();
-		}	
-		Integer uidStrutturaProvvedimento = prs.getUidStrutturaAmministrativoContabile();
-		//
-				
-		//Creo La query per il modulo FIN
-		StringBuilder jpql = new StringBuilder("SELECT NEW it.csi.siac.siacfinser.integration.entity.ext.IdMovgestSubmovegest"
-				+ "(mvg.movgestId, movgestTs.movgestTsIdPadre, movgestTs.movgestTsId , mvg.movgestNumero, mvg.movgestAnno) ")
-		.append("FROM SiacTMovgestFin mvg ")
-		.append("left join mvg.siacTMovgestTs movgestTs left join mvg.siacDMovgestTipo dMovgestTipo ")
-		.append("left join movgestTs.siacDMovgestTsTipo dMovgestTsTipo ")
-		.append(" left join mvg.siacTBil tBil left join tBil.siacTPeriodo tPeriodo ");
-		
-		
-		if(!StringUtils.isEmpty(tipoImpegno)){
-			jpql.append(" left join movgestTs.siacRMovgestClasses rMovgestClass left join rMovgestClass.siacTClass tClass ");
-		}
-		
-
-		//Inserisco la join del provvedimento
-		jpql.append(" left join movgestTs.siacRMovgestTsAttoAmms rTsAttoAmm left join rTsAttoAmm.siacTAttoAmm tAttoAmm ");
-
-		if(!StringUtils.isEmpty(codiceTipoProvvedimento)){
-			jpql.append(" left join tAttoAmm.siacDAttoAmmTipo dTipoAtto ");
-		}
-		
-		// struttura amministrativa
-		if(uidStrutturaProvvedimento!=null){
-			jpql.append(" left join tAttoAmm.siacRAttoAmmClasses rAttoClass left join rAttoClass.siacTClass tClassAtto ");
-		}
-
-		
-		if(!StringUtils.isEmpty(statoOperativo)){
-			jpql.append(" left join movgestTs.siacRMovgestTsStatos rMovgestTsStato left join rMovgestTsStato.siacDMovgestStato dMovgestStato");
-		}
-	
-		//WHERE 
-		jpql.append(" WHERE mvg.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ")
-						.append("AND dMovgestTipo.movgestTipoCode = :tipoMovimentoImpegno ")
-						.append("AND tPeriodo.anno = :annoBilancio ");
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("mvg"));
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("movgestTs"));
-		param.put("annoBilancio", String.valueOf(prs.getAnnoEsercizio()));
-		param.put("enteProprietarioId", enteUid);
-		param.put("tipoMovimentoImpegno", Constanti.MOVGEST_TIPO_IMPEGNO);
-		
-		
-		
-		//CONDIZIONE CHE ESCLUDE GLI IMPEGNI/SUB CHE GIA' HANNO UNA VOCE DI MUTUO VERSO IL MUTUO INDICATO:
-		String test = " AND  mvg.movgestId NOT IN ( "
-				+ " SELECT srmvmf.siacTMovgestTs.movgestTsId FROM SiacRMutuoVoceMovgestFin srmvmf  "
-				+ " WHERE "
-				+ " srmvmf.siacTMutuoVoce.siacTMutuo.mutId = :idMutuo "
-				+ " ) ";
-		jpql.append(test);
-		param.put("idMutuo", idMutuo);
-		//
-
-		
-		if(statoOperativo == null){
-			jpql.append(" AND (dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestTs OR  dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestTsS ) ");
-			param.put("tipoMovGestTs", Constanti.MOVGEST_TS_TIPO_TESTATA);
-			param.put("tipoMovGestTsS", Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO);
-		}else{
-			
-			jpql.append(" AND dMovgestStato.movgestStatoCode = :statoOperativo ");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rMovgestTsStato"));
-			param.put("statoOperativo", statoOperativo);
-		}
-
-
-		// Tipo Impegno 
-		if(!StringUtils.isEmpty(tipoImpegno)){
-			
-			jpql.append(" AND (");
-			
-			//IMP:
-			jpql.append(" ( movgestTs.movgestTsIdPadre is null ");
-			jpql.append(" AND tClass.classifCode = :tipoImpegno ");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rMovgestClass"));
-			param.put("tipoImpegno", tipoImpegno.toUpperCase());
-			jpql.append(" )");
-			//
-			
-			//SUB:
-			jpql.append(" OR ( movgestTs.movgestTsIdPadre is not null ");
-			
-			jpql.append(" AND movgestTs.movgestTsIdPadre IN (");
-			
-			jpql.append(" SELECT movgestTs2.movgestTsId FROM SiacTMovgestTsFin movgestTs2  ");
-			jpql.append(" left join movgestTs2.siacRMovgestClasses rMovgestClass2 left join rMovgestClass2.siacTClass tClass2 ");
-			jpql.append(" WHERE ");
-			
-			//FIX PER JIRA SIAC-3933:
-			jpql.append("  movgestTs2.movgestTsIdPadre is null  ");
-			//jpql.append(" AND movgestTs2.movgestTsId = movgestTs.movgestTsIdPadre ");
-			
-			jpql.append(" AND tClass2.classifCode = :tipoImpegno2 ");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rMovgestClass2"));
-			param.put("tipoImpegno2", tipoImpegno.toUpperCase());
-			
-			jpql.append(" )");//END EXISTS
-			
-			
-			jpql.append(" )");//END OR ( movgestTs.movgestTsIdPadre is not null
-			
-			
-			jpql.append(" )");
-		}
-
-		if(annoImpegno != null && annoImpegno != 0 ){
-			jpql.append(" AND mvg.movgestAnno = :annoImpegno ");
-			param.put("annoImpegno",annoImpegno);
-		}
-		
-		//Provvedimento
-		if(annoProvvedimento != null && annoProvvedimento != 0){
-			jpql.append(" AND tAttoAmm.attoammAnno = :annoProvvedimento ");
-			param.put("annoProvvedimento", String.valueOf(annoProvvedimento));
-		}
-		
-		if(numeroProvvedimento != null && numeroProvvedimento != 0){
-			jpql.append(" AND tAttoAmm.attoammNumero = :numeroProvvedimento ");
-			param.put("numeroProvvedimento", numeroProvvedimento);
-		}
-		
-		if(!StringUtils.isEmpty(codiceTipoProvvedimento)){
-			jpql.append(" AND dTipoAtto.attoammTipoCode = :codiceTipoProvvedimento ");
-			param.put("codiceTipoProvvedimento", codiceTipoProvvedimento);
-		}	
-		//aggiunto filtro per sac del provevdimento
-		if(uidStrutturaProvvedimento!=null){
-			jpql.append(" AND tClassAtto.classifId = :uidStrutturaAmmProvvedimento ");
-			param.put("uidStrutturaAmmProvvedimento", uidStrutturaProvvedimento);
-		}
-		//
-		
-
-		jpql.append(" ORDER BY mvg.movgestAnno, mvg.movgestNumero, movgestTs.movgestTsCode ");
-
-				
-		//Creo la query effettiva
-		String jpqlString = jpql.toString();
-		
-		Query query =  createQuery(jpqlString, param);			
-		listaID = query.getResultList();
-		//Termino restituendo l'oggetto di ritorno: 
-		
-		listaID = scremaDoppioni(listaID);
-		
-        return listaID;
-	}
 	
 	private List<IdMovgestSubmovegest> scremaDoppioni(List<IdMovgestSubmovegest> lista){
 		ArrayList<IdMovgestSubmovegest> listaRicostruita = new ArrayList<IdMovgestSubmovegest>();
@@ -1213,59 +1305,647 @@ public class ImpegnoDaoImpl extends AbstractDao<SiacTMovgestFin, Integer> implem
 		return result;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<CodificaImportoDto> calcolaSommaImportiVociMutuo(List<Integer> idMovGestTsList){
-		List<CodificaImportoDto> elencoCodificaImportoDto = new ArrayList<CodificaImportoDto>();
-			
-		String clausolaIn = "";
-		int i=0;
-		for(Integer idIt : idMovGestTsList){
-			if(i>0){
-				clausolaIn = clausolaIn + " , ";
-			}
-			String idParamNameIt = "movgestTsId" + i;
-			clausolaIn = clausolaIn + ":" + idParamNameIt;
-			i++;
-		}
-		
-		String condizioniDiValidita =
-				buildCondizioneValiditaSql("a", true) +
-				" and " +
-				buildCondizioneValiditaSql("b", true) +
-				" and " +
-				buildCondizioneValiditaSql("d", true);
-		
-		String sql = "select * from ( "+
-				" select c.movgest_ts_id idmovgestts, "+
-						" sum(a.mut_voce_importo_attuale) "+
-						" from siac_t_mutuo_voce a , siac_r_mutuo_voce_movgest b, siac_t_movgest_ts c, siac_t_movgest_ts_det d, "+
-						" siac_d_movgest_ts_det_tipo e "+
-						" where a.mut_voce_id=b.mut_voce_id "+
-						" and c.movgest_ts_id=b.movgest_ts_id "+
-						" and d.movgest_ts_id=c.movgest_ts_id "+
-						" and d.movgest_ts_det_tipo_id=e.movgest_ts_det_tipo_id "+
-						" and e.movgest_ts_det_tipo_code='A' "+
-						" and c.movgest_ts_id IN ("+clausolaIn+")" +
-						" and " + condizioniDiValidita +
-						" group by  "+
-						" 	c.movgest_ts_id "+
-						" 	) tb ";
-		
-		Query query = entityManager.createNativeQuery(sql);
-		
-		i=0;
-		for(Integer idIt : idMovGestTsList){
-			String idParamNameIt = "movgestTsId" + i;
-			query.setParameter(idParamNameIt, idIt.intValue());	
-			i++;
-		}
-		
-		List<Object[]> result = (List<Object[]>) query.getResultList();
-		elencoCodificaImportoDto = mapResultToElencoCodificaImportoDto(result);
-			
-		return elencoCodificaImportoDto;
-	}
 
+
+	/*
+	 * SIAC-6997
+	 * SOLO PER I ROR
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IdImpegnoSubimpegno> ricercaImpegniSubImpegniROR(Integer enteUid, RicercaImpSubParamDto prs, boolean soloImpegni) {
+		
+		
+		List<IdImpegnoSubimpegno> listaID = new ArrayList<IdImpegnoSubimpegno>();
+		
+		Map<String,Object> param = new HashMap<String, Object>();
+		Date nowDate = TimingUtils.getNowDate();
+		param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+		
+		// PARAMETRI DI INPUT
+		Integer annoEsercizio = prs.getAnnoEsercizio(); //Bilancio.anno , usato su competenza passata, attuale o futura
+		
+		// usato solo da ricerca impegni e subimpegni
+		String tipoImpegno = prs.getTipoImpegno();
+		String statoOperativo= prs.getStato();
+		
+		Integer annoImpegno = prs.getAnnoImpegno(); //Impegno.annoMovimento
+		BigDecimal numeroImpegno = ((BigDecimal)prs.getNumeroImpegno()!=null? prs.getNumeroImpegno(): null); //Impegno.numero
+		String cig = prs.getCig();
+		String cup = prs.getCup(); 
+		String progetto = prs.getProgetto(); //CodiceProgetto.codice
+	
+		String codiceCreditore = prs.getCodiceCreditore(); // Soggetto.codice
+		String codiceClasseSoggetto = prs.getCodiceClasseSoggetto();
+		
+		String codiceProgetto = prs.getCodiceProgetto();
+		
+		Integer idProvvedimento = prs.getUidProvvedimento();
+		Integer annoProvvedimento = prs.getAnnoProvvedimento();
+		Integer numeroProvvedimento = prs.getNumeroProvvedimento();
+		String codiceTipoProvvedimento ="";
+		if(prs.getTipoProvvedimento()!=null){
+			codiceTipoProvvedimento = prs.getTipoProvvedimento().getCodice();
+		}	
+		
+		Integer uidStrutturaProvvedimento = prs.getUidStrutturaAmministrativoContabile();
+		
+		Integer uidCapitolo = prs.getUidCapitolo();
+		Integer numeroCapitolo = prs.getNumeroCapitolo();
+		Integer numeroArticolo = prs.getNumeroArticolo();
+		Integer numeroUeb = prs.getNumeroUEB();
+		String flagDaRiaccerto = prs.getFlagDaRiaccertamento() != null ? prs.getFlagDaRiaccertamento() : "";
+		Integer annoImpegnoRiaccertato = prs.getAnnoImpegnoRiaccertato(); //Impegno.annoRiaccertato
+		Integer annoImpegnoOrigine = prs.getAnnoImpegnoOrigine(); //Impegno.annoOrigine
+		Integer numeroImpegnoOrigine = prs.getNumeroImpegnoOrigine();//Impegno.numeroOrigine
+		Integer numeroImpegnoRiaccertato = prs.getNumeroImpegnoRiaccertato(); //Impegno.numeroRiaccertato
+		boolean competenzaCorrente = prs.isCompetenzaCorrente(); 
+		boolean competenzaCompetenza = prs.isCompetenzaCompetenza();
+		boolean competenzaFuturi = prs.isCompetenzaFuturi();
+		boolean competenzaResiduiRor = prs.isCompetenzaResiduiRor();
+				
+		//Creo La query per il modulo FIN
+		StringBuilder jpql = new StringBuilder("SELECT NEW it.csi.siac.siacfinser.integration.entity.ext.IdImpegnoSubimpegno(mvg.movgestId, movgestTs.movgestTsIdPadre, mvg.movgestNumero, mvg.movgestAnno"
+				+ ",movgestTs.movgestTsId, movgestTs.movgestTsCode, dMovgestTsTipo.movgestTsTipoCode) ")
+		.append(" FROM SiacTMovgestFin mvg ")
+		.append(" left join mvg.siacTMovgestTs movgestTs left join mvg.siacDMovgestTipo dMovgestTipo ")
+		.append(" left join movgestTs.siacDMovgestTsTipo dMovgestTsTipo ")
+		.append(" left join mvg.siacTBil tBil left join tBil.siacTPeriodo tPeriodo ")
+		.append(" left join mvg.siacRMovgestBilElems rBilElem left join rBilElem.siacTBilElem tBilElem  ");
+		
+		//SIAC-7349
+		if(prs.getComponenteBilancioUid()!= null && prs.getComponenteBilancioUid().intValue()!=0){
+			jpql.append(" left join rBilElem.siacDBilElemDetCompTipo dBilElemDetCompTipo  ");
+		}
+		
+		//SIAC-6997
+		if(!StringUtilsFin.isEmpty(tipoImpegno) || (prs.getStrutturaSelezionataCompetente()!= null && prs.getStrutturaSelezionataCompetente().length()>0)){
+			jpql.append(" left join movgestTs.siacRMovgestClasses rMovgestClass left join rMovgestClass.siacTClass tClass ");
+		}
+		
+		//Cig
+		if(!StringUtilsFin.isEmpty(cig) ){ 
+			jpql.append(" left join movgestTs.siacRMovgestTsAttrs cigRAttr left join cigRAttr.siacTAttr cigAtt ");
+		}
+		
+		//Cup
+		if(!StringUtilsFin.isEmpty(cup)){
+			jpql.append(" left join movgestTs.siacRMovgestTsAttrs cupRAttr left join cupRAttr.siacTAttr cupAtt ");
+		}
+		
+		//SIAC-6997 .....stessa condizione di prima per reanno ...sarebbe da sistemare 
+		if((prs.getReanno()!= null && Boolean.TRUE.equals(prs.getReanno()))){ 
+			jpql.append(" left join movgestTs.siacRMovgestTsAttrs relAttrs left join relAttrs.siacTAttr tabAttr ");
+		}
+		
+		
+		
+
+		boolean annoONumeroProvv = (CommonUtil.maggioreDiZero(annoProvvedimento) || CommonUtil.maggioreDiZero(numeroProvvedimento));
+		
+		//Inserisco la join del provvedimento
+		jpql.append(" left join movgestTs.siacRMovgestTsAttoAmms rTsAttoAmm left join rTsAttoAmm.siacTAttoAmm tAttoAmm ");
+
+		if(!StringUtilsFin.isEmpty(codiceTipoProvvedimento)){
+			jpql.append(" left join tAttoAmm.siacDAttoAmmTipo dTipoAtto ");
+		}
+		
+		// struttura amministrativa
+		if(uidStrutturaProvvedimento!=null){
+			jpql.append(" left join tAttoAmm.siacRAttoAmmClasses rAttoClass left join rAttoClass.siacTClass tClassAtto ");
+		}
+		
+		//soggetto
+		if(!StringUtilsFin.isEmpty(codiceCreditore)){
+			jpql.append(" left join movgestTs.siacRMovgestTsSogs rSogg left join rSogg.siacTSoggetto sogg ");
+		}
+		
+		//progetto
+		if (!StringUtilsFin.isEmpty(codiceProgetto)) {
+			jpql.append(" left join movgestTs.siacRMovgestTsProgrammas rProgrammas left join rProgrammas.siacTProgramma tProgramma ");
+		}
+		
+		//cronoprogramma
+		if (prs.getUidCronoprogramma() != null && prs.getUidCronoprogramma().intValue() != 0) {
+			jpql.append(" left join movgestTs.siacRMovgestTsCronopElemFins rElems left join rElems.siacTCronopElem.siacTCronop tCronop ");
+		}
+		
+		// CR - 1907 RM 
+		// aggiunto classe soggetto
+		if(!StringUtilsFin.isEmpty(codiceClasseSoggetto)){
+			jpql.append(" left join movgestTs.siacRMovgestTsSogclasses rClass left join rClass.siacDSoggettoClasse classe ");
+		}
+		
+		// CR - 1907 RM 
+		// aggiuntoNumero e Anno Origine
+		if((annoImpegnoOrigine != null && annoImpegnoOrigine != 0) && (numeroImpegnoOrigine != null && numeroImpegnoOrigine != 0)){
+			jpql.append(" left join movgestTs.siacRMovgestTsAttrs annoOriRAttr left join annoOriRAttr.siacTAttr annoOriAtt ");
+			jpql.append(" left join movgestTs.siacRMovgestTsAttrs numOriRAttr left join numOriRAttr.siacTAttr numOriAtt ");
+		}
+		
+		
+		// CR - 1907 eliminato controllo su articolo !=0 (' && numeroArticolo != 0'), 
+		// perchè per regione ci potrebbero essere capitoli con articolo 0 
+		//if(uidCapitolo!=null || (numeroCapitolo != null && numeroCapitolo != 0) || (numeroArticolo != null) || (numeroUeb != null && numeroUeb != 0)){
+			// capitolo 
+		//jpql.append("left join mvg.siacRMovgestBilElems rBilElem left join rBilElem.siacTBilElem tBilElem  ");
+		//}
+		
+		if(!StringUtilsFin.isEmpty(statoOperativo) || !StringUtilsFin.isEmpty(prs.getStatiDaEscludere())){
+			jpql.append(" left join movgestTs.siacRMovgestTsStatos rMovgestTsStato left join rMovgestTsStato.siacDMovgestStato dMovgestStato");
+		}
+		
+		//SIAC-6997
+		if(prs.isRicercaResiduiRorFlag()){
+			jpql.append(" left join movgestTs.siacTMovgestTsDets movgestDet left join movgestDet.siacDMovgestTsDetTipo movgestDetTipo ");
+		}
+	
+		//WHERE 
+		jpql.append(" WHERE mvg.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ")
+						.append("AND dMovgestTipo.movgestTipoCode = :tipoMovimentoImpegno ")
+						.append("AND tPeriodo.anno = :annoBilancio ");
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("mvg"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("movgestTs"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rBilElem",null, true));
+		
+		//FIX JIRA SIAC-3386 AGGIUNTE VALIDITA SU CAMPI OPZIONALI:
+		if(!StringUtilsFin.isEmpty(codiceCreditore)){
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rSogg"));
+		}
+		if(!StringUtilsFin.isEmpty(codiceClasseSoggetto)){
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rClass"));
+		}
+		//
+		
+		//codice progetto
+		if(!StringUtilsFin.isEmpty(codiceProgetto)){
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rProgrammas"));
+		}
+		
+		
+		param.put("annoBilancio", String.valueOf(prs.getAnnoEsercizio()));
+		param.put("enteProprietarioId", enteUid);
+		param.put("tipoMovimentoImpegno", CostantiFin.MOVGEST_TIPO_IMPEGNO);
+
+		
+		if(!StringUtilsFin.isEmpty(statoOperativo) || !StringUtilsFin.isEmpty(prs.getStatiDaEscludere()) ){
+			
+			/*
+			 * SIAC-6997
+			 * Se solo impegni prendiamo la testata...
+			 * in caso di ror vengono presi anche i sub
+			 */
+			if(soloImpegni){
+				jpql.append(" AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestTs ");
+				param.put("tipoMovGestTs", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+			}
+			
+			// Rm: 19.06.2015:
+			// Se ricerco anche per stato mov. gestione non devo ricercare anche i sub ma solo gli impegni
+			if(!StringUtilsFin.isEmpty(statoOperativo)){
+				//SIAC-6997 movgestStatoCode 
+				if(soloImpegni){
+					jpql.append(" AND dMovgestStato.movgestStatoCode = :statoOperativo ");
+					param.put("statoOperativo", statoOperativo);
+				}else{
+					jpql.append(" AND ((dMovgestStato.movgestStatoCode = :statoOperativo ");
+					jpql.append("AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestReannoT ) " + 
+							"OR " +
+							"(dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestReannoS AND  mvg.movgestId in ( "+
+							"SELECT mvg2.movgestId "+
+							"FROM SiacTMovgestFin mvg2 "+  
+							"left join mvg2.siacTMovgestTs movgestTs2 " +
+							"left join mvg2.siacDMovgestTipo dMovgestTipo2 "+
+							"left join movgestTs2.siacDMovgestTsTipo dMovgestTsTipo2 "+
+							"left join movgestTs2.siacRMovgestTsStatos rMovgestTsStato2 left join rMovgestTsStato2.siacDMovgestStato dMovgestStato2 "+
+							"where dMovgestStato2.movgestStatoCode = :statoOperativo AND rMovgestTsStato2.dataCancellazione IS NULL ");
+					jpql.append("AND dMovgestTsTipo2.movgestTsTipoCode = :tipoMovGestReannoT) "+
+									")) ");
+					param.put("tipoMovGestReannoT", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+					param.put("tipoMovGestReannoS", CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO);
+					param.put("statoOperativo", statoOperativo);
+				}
+			}
+			if(!StringUtilsFin.isEmpty(prs.getStatiDaEscludere()) ){
+				String statiDaEscludere = buildElencoPerClausolaIN(prs.getStatiDaEscludere());
+				jpql.append(" AND dMovgestStato.movgestStatoCode NOT IN :statiDaEscludere");
+				param.put("statiDaEscludere", statiDaEscludere);
+			}
+			
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rMovgestTsStato"));
+			
+			
+		} else {
+			//non e' valorizzato ne lo stato ne gli stati da escludere
+			jpql.append(" AND (dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestTs OR  dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestTsS ) ");
+			param.put("tipoMovGestTs", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+			param.put("tipoMovGestTsS", CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO);
+		}		
+
+		
+		
+		//SIAC-6997 da capire in caso ror
+		if(flagDaRiaccerto.equalsIgnoreCase("Si")){
+			String jpqlRiaccertato = buildClausolaExistVersoTAttr("flagRAttr", "movgestTs", "flagDaRiaccertamento", "boolean_", "S",true,false,false);
+			jpql.append(jpqlRiaccertato);
+			
+			
+			if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
+				String jpqlAnnoRiacc = buildClausolaExistVersoTAttr("flagRAttrAnno", "movgestTs", "annoRiaccertato", "testo", "annoRiacc",false,true,false);
+				jpql.append(jpqlAnnoRiacc);
+				param.put("annoRiacc", String.valueOf(annoImpegnoRiaccertato));
+				
+				String jpqlNumRiacc = buildClausolaExistVersoTAttr("flagRAttrNumero", "movgestTs", "numeroRiaccertato", "testo", "numeroRiacc",false,true,false);
+				jpql.append(jpqlNumRiacc);
+				param.put("numeroRiacc", String.valueOf(numeroImpegnoRiaccertato));
+			}
+			
+			
+		}
+		
+		
+		
+		
+		//Numero e Anno Origine
+		if((annoImpegnoOrigine != null && annoImpegnoOrigine != 0) && (numeroImpegnoOrigine != null && numeroImpegnoOrigine != 0)){
+			jpql.append(" AND  annoOriAtt.attrCode = 'annoOriginePlur' AND annoOriRAttr.testo = :annoOrigine");
+			jpql.append(" AND  numOriAtt.attrCode = 'numeroOriginePlur' AND numOriRAttr.testo = :numeroOrigine");
+			param.put("annoOrigine", String.valueOf(annoImpegnoOrigine));
+			param.put("numeroOrigine", String.valueOf(numeroImpegnoOrigine));
+		}
+		
+
+		// Tipo Impegno 
+		if(!StringUtilsFin.isEmpty(tipoImpegno)){
+			jpql.append(" AND tClass.classifCode = :tipoImpegno ");
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rMovgestClass"));
+			param.put("tipoImpegno", tipoImpegno.toUpperCase());
+			
+		}
+
+		// numero impegno
+		if(numeroImpegno!=null){
+			jpql.append(" AND mvg.movgestNumero = :numeroImpegno ");
+			param.put("numeroImpegno", numeroImpegno);
+		}
+		
+
+		if(annoImpegno != null && annoImpegno != 0 ){
+			jpql.append(" AND mvg.movgestAnno = :annoImpegno ");
+			param.put("annoImpegno",annoImpegno);
+		}
+
+		
+		/*SIAC-6997
+		 * In caso di reanno la condizione di competenza è per anno assunzione (anno N)
+		 * e residuo (<anno N). Se nel criterio di ricerca viene inserito l anno impegno
+		 * questa condizione (come nel caso di ricerca impegno normale) va considerata nella lista 
+		 * finale perchè si avrebbe:
+		 * AND mvg.movgestAnno = :annoImpegno
+		 * AND (mvg.movgestAnno = :annoEsercizio OR mvg.movgestAnno < :annoEsercizio)
+		 * 
+		 */
+		if(prs.isRicercaResiduiRorFlag()){
+			/* Da richiesta bisognava prendere il residuo. 
+			 * Tale operazione risulta troppo dispensiosa in termini di
+			 * performance perchè i dati da filtrare sono calcolati 
+			 * Prendiamo l'importo > 0
+			 */
+			//CONDIZIONE SULL ESISTENZA DELLE MODIFICHE PER IL FILTRAGGIO ROR
+			jpql.append(" AND ( ");
+			jpql.append(" ( movgestDet.movgestTsDetImporto >0 AND movgestDetTipo.movgestTsDetTipoCode = :tipoAttuale ");
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("movgestDet"));
+			jpql.append(" ) ");
+			jpql.append(" OR EXISTS ( SELECT movts from SiacTMovgestTsFin movts ");
+			jpql.append(" left join movts.siacTMovgestTsDetMods mod ");
+			jpql.append(" left join mod.siacRModificaStato modr ");
+			jpql.append(" left join modr.siacDModificaStato statomod ");
+			jpql.append(" left join modr.siacTModifica modifica ");
+			jpql.append(" left join modifica.siacDModificaTipo tipoModifica ");
+			jpql.append(" where  movts.movgestTsId = movgestTs.movgestTsId AND statomod.modStatoCode != :annullato ");
+			jpql.append(" AND modr.dataCancellazione IS NULL AND (tipoModifica.modTipoCode= :RORM OR  tipoModifica.modTipoCode= :INEROR OR tipoModifica.modTipoCode = :INSROR ");
+			jpql.append(" OR tipoModifica.modTipoCode= :REIMP)) ");
+			jpql.append(" ) ");
+			param.put("tipoAttuale", CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
+			
+			param.put("annullato", CostantiFin.D_MODIFICA_STATO_ANNULLATO);
+			param.put("REIMP", CodiciMotiviModifiche.REIMP.getCodice());
+			param.put("RORM", CodiciMotiviModifiche.RORM.getCodice());
+			param.put("INEROR", CodiciMotiviModifiche.INEROR.getCodice());
+			param.put("INSROR", CodiciMotiviModifiche.INSROR.getCodice());
+			
+		}
+		
+		
+		
+		if(competenzaResiduiRor){
+			jpql.append(" AND (mvg.movgestAnno = :anno OR mvg.movgestAnno  < :anno) ");
+			param.put("anno",  annoEsercizio);
+			
+			
+		}else{
+			//Lascio tutto come era prima
+			/*
+			 * SIAC-6997
+			 * Se da Residui ROR bisognerebbe prendere la competenza corrente 
+			 * unita al residuo. impegno semplice considerare il filtraggio
+			 * residuo dovrebbe essere competenzaCompetenza ...con anno < del bilancio
+			 */
+			
+				// CR - 1907 RM 
+				// aggiunto Impegni Correnti
+				if(competenzaCorrente){
+					jpql.append(" AND mvg.movgestAnno = :anno ");
+					param.put("anno", annoEsercizio);
+				}
+				
+				// CR - 1907 RM 
+				// aggiunto Impegni Passati
+				if(competenzaCompetenza){
+					jpql.append(" AND mvg.movgestAnno  < :anno ");
+					param.put("anno", annoEsercizio);
+				}
+				
+				// CR - 1907 RM 
+				// aggiunto Impegni Futuri
+				if(competenzaFuturi){
+					jpql.append(" AND mvg.movgestAnno > :anno ");
+					param.put("anno", annoEsercizio);
+				}
+		}
+		
+		// Capitolo	
+		// jira 1337 ricerca capitolo con 0
+		if(uidCapitolo != null && uidCapitolo != 0){			
+			jpql.append(" AND tBilElem.elemId = :uidCapitolo");
+			
+			param.put("uidCapitolo", uidCapitolo);
+		} else {
+			
+			
+			// numero capitolo
+			if(numeroCapitolo != null && numeroCapitolo != 0){
+				jpql.append(" AND tBilElem.elemCode = :numeroCapitolo ");
+				param.put("numeroCapitolo", String.valueOf(numeroCapitolo));
+			}
+			
+			// numero articolo
+			if(numeroArticolo != null && numeroArticolo != 0){
+				jpql.append(" AND tBilElem.elemCode2 = :numeroArticolo ");
+				param.put("numeroArticolo", String.valueOf(numeroArticolo));
+			}
+			
+			// numero ueb
+			if(numeroUeb != null && numeroUeb != 0){
+				jpql.append(" AND tBilElem.elemCode3 = :numeroUeb ");
+				param.put("numeroUeb", String.valueOf(numeroUeb));
+			}	
+		}
+		
+		
+		/*SIAC-7349
+		 * 
+		 */
+		if(prs.getComponenteBilancioUid()!= null && prs.getComponenteBilancioUid().intValue()!=0){
+			jpql.append(" AND dBilElemDetCompTipo.elemDetCompTipoId = :elemDetCompTipoId");
+			//jpql.append(" AND rBilElem.elemDetCompTipoId = :elemDetCompTipoId");
+			
+			param.put("elemDetCompTipoId", prs.getComponenteBilancioUid());
+		}
+		
+		
+		
+		//Ricerca Soggetto
+		if(!StringUtilsFin.isEmpty(codiceCreditore)){
+			jpql.append(" AND sogg.soggettoCode = :codiceSoggetto ");
+			param.put("codiceSoggetto", codiceCreditore);
+		}
+		
+		// Ricerco per classe soggetto
+		if(!StringUtilsFin.isEmpty(codiceClasseSoggetto)){
+			jpql.append(" AND classe.soggettoClasseCode = :codiceClasse ");				
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rClass"));
+			param.put("codiceClasse", codiceClasseSoggetto);
+		}
+		
+		// progetto
+		//SIAC-7144
+		if(!StringUtilsFin.isEmpty(progetto)){
+			jpql.append(" AND UPPER(tProgramma.programmaCode) LIKE UPPER(:programmaCode)");
+			String progettoLike = null;
+			if(progetto.contains("%")){
+				progettoLike = progetto;
+			} else {
+				progettoLike = '%' + progetto + '%';
+			}
+			param.put("programmaCode", progettoLike);
+		}		
+		
+		//cronoprogramma
+		if (prs.getUidCronoprogramma() != null && prs.getUidCronoprogramma().intValue() != 0) {
+			jpql.append(" AND tCronop.cronopId = :cronopId");
+			param.put("cronopId", prs.getUidCronoprogramma());
+		}
+		
+
+		//Provvedimento
+		if(idProvvedimento != null && idProvvedimento != 0){
+			
+			//SIAC-6018 aggiungo condizione di validita su siac_r_movgest_ts_atto_amm:
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rTsAttoAmm"));
+			//
+			
+			jpql.append(" AND tAttoAmm.attoammId = :provvedimentoId ");
+			param.put("provvedimentoId", idProvvedimento);
+		} else {
+			
+			// 	SIAC-6018 aggiungo condizione di validita su siac_r_movgest_ts_atto_amm:
+			if(annoONumeroProvv){
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rTsAttoAmm"));
+			}
+			//
+			
+			if(annoProvvedimento != null && annoProvvedimento != 0){
+				jpql.append(" AND tAttoAmm.attoammAnno = :annoProvvedimento ");
+				param.put("annoProvvedimento", String.valueOf(annoProvvedimento));
+			}
+			
+			if(numeroProvvedimento != null && numeroProvvedimento != 0){
+				jpql.append(" AND tAttoAmm.attoammNumero = :numeroProvvedimento ");
+				param.put("numeroProvvedimento", numeroProvvedimento);
+			}
+			
+			if(!StringUtilsFin.isEmpty(codiceTipoProvvedimento)){
+				jpql.append(" AND dTipoAtto.attoammTipoCode = :codiceTipoProvvedimento ");
+				param.put("codiceTipoProvvedimento", codiceTipoProvvedimento);
+			}	
+			
+			
+			//aggiunto filtro per sac del provevdimento
+			if(uidStrutturaProvvedimento!=null){
+				jpql.append(" AND tClassAtto.classifId = :uidStrutturaAmmProvvedimento ");
+				param.put("uidStrutturaAmmProvvedimento", uidStrutturaProvvedimento);
+			}
+		}
+		
+		//Cig
+		if(!StringUtilsFin.isEmpty(cig)){
+			jpql.append(" AND  cigAtt.attrCode = 'cig' AND UPPER(cigRAttr.testo) LIKE UPPER(:cigLike) ");
+			String cigLike = null;
+			if(cig.contains("%")){
+				cigLike = cig;
+			} else {
+				cigLike = '%' + cig + '%';
+			}
+			param.put("cigLike", cigLike);
+		}
+		
+		//Cup
+		if(!StringUtilsFin.isEmpty(cup)){
+			jpql.append(" AND  cupAtt.attrCode = 'cup' AND UPPER(cupRAttr.testo) LIKE UPPER(:cupLike) ");
+			String cupLike = null;
+			if(cup.contains("%")){
+				cupLike = cig;
+			} else {
+				cupLike = '%' + cup + '%';
+			}
+			param.put("cupLike", cupLike);
+		}
+
+		
+		//SIAC-6997
+		if(prs.getReanno()!= null && Boolean.TRUE.equals(prs.getReanno())){
+				jpql.append(" AND ((tabAttr.attrCode = :flagDaReanno AND relAttrs.boolean_ = 'S' ");
+				
+				if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
+					String jpqlAnnoRiacc = buildClausolaExistVersoTAttr("flagRAttrAnno", "movgestTs", "annoRiaccertato", "testo", "annoRiacc",false,true,false);
+					jpql.append(jpqlAnnoRiacc);
+					param.put("annoRiacc", String.valueOf(annoImpegnoRiaccertato));
+					String jpqlNumRiacc = buildClausolaExistVersoTAttr("flagRAttrNumero", "movgestTs", "numeroRiaccertato", "testo", "numeroRiacc",false,true,false);
+					jpql.append(jpqlNumRiacc);
+					param.put("numeroRiacc", String.valueOf(numeroImpegnoRiaccertato));
+				}
+				
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("relAttrs"));		
+				jpql.append("AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestReannoT) " + 
+								"OR " +
+								"(dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestReannoS AND  mvg.movgestId in ( "+
+								"SELECT mvg2.movgestId "+
+								"FROM SiacTMovgestFin mvg2 "+  
+								"left join mvg2.siacTMovgestTs movgestTs2 " +
+								"left join mvg2.siacDMovgestTipo dMovgestTipo2 "+
+								"left join movgestTs2.siacDMovgestTsTipo dMovgestTsTipo2 "+
+								"left join movgestTs2.siacRMovgestTsAttrs relAttrs2 "+
+								"left join relAttrs2.siacTAttr tabAttr2 "+
+								"where tabAttr2.attrCode = :flagDaReanno AND relAttrs2.boolean_ = 'S' ");
+				
+				
+				if((annoImpegnoRiaccertato != null && annoImpegnoRiaccertato != 0) && (numeroImpegnoRiaccertato != null && numeroImpegnoRiaccertato != 0)){
+					String jpqlAnnoRiacc = buildClausolaExistVersoTAttr("flagRAttrAnno", "movgestTs2", "annoRiaccertato", "testo", "annoRiacc1",false,true,false);
+					jpql.append(jpqlAnnoRiacc);
+					param.put("annoRiacc1", String.valueOf(annoImpegnoRiaccertato));
+					String jpqlNumRiacc = buildClausolaExistVersoTAttr("flagRAttrNumero", "movgestTs2", "numeroRiaccertato", "testo", "numeroRiacc1",false,true,false);
+					jpql.append(jpqlNumRiacc);
+					param.put("numeroRiacc1", String.valueOf(numeroImpegnoRiaccertato));
+					
+				}
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("relAttrs2"));				
+				jpql.append("AND dMovgestTsTipo2.movgestTsTipoCode = :tipoMovGestReannoT) "+
+								")) ");
+				param.put("flagDaReanno", "flagDaReanno");
+				param.put("tipoMovGestReannoT", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+				param.put("tipoMovGestReannoS", CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO);
+				//param.put("anno", annoEsercizio);
+			
+		}
+		
+//		if(prs.getStrutturaSelezionataCompetente()!= null && prs.getStrutturaSelezionataCompetente().length()>0){
+//			try{
+//				Integer classificatoreId = Integer.parseInt(prs.getStrutturaSelezionataCompetente());
+//				//jpql.append(" AND tClass.classifId = :classificatoreId ");
+//				
+//				jpql.append(" AND ((tClass.classifId = :classificatoreId AND rMovgestClass.dataCancellazione IS NULL AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestStrutturaT) " + 
+//								"OR " +
+//								"(dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestStrutturaS AND  mvg.movgestId in ( "+
+//								"SELECT mvg1.movgestId "+
+//								"FROM SiacTMovgestFin mvg1 "+  
+//								"left join mvg1.siacTMovgestTs movgestTs1 " +
+//								"left join mvg1.siacDMovgestTipo dMovgestTipo1 "+
+//								"left join movgestTs1.siacDMovgestTsTipo dMovgestTsTipo1 "+
+//								"left join movgestTs1.siacRMovgestClasses rMovgestClass1 "+
+//								"left join rMovgestClass1.siacTClass tClass1 "+
+//								"where  tClass1.classifId = :classificatoreId AND rMovgestClass1.dataCancellazione IS NULL AND dMovgestTsTipo1.movgestTsTipoCode = :tipoMovGestStrutturaT) "+
+//								")) ");
+//				param.put("classificatoreId", classificatoreId);
+//				param.put("tipoMovGestStrutturaT", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+//				param.put("tipoMovGestStrutturaS", CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO);
+//				//param.put("anno", annoEsercizio);
+//			}catch(Exception e){
+//				log.error("ricercaImpegniSubImpegni", e.getMessage());
+//			}
+//		}
+		
+		//SIAC-7486
+		if(prs.getListStrutturaCompetenteInt()!= null && !prs.getListStrutturaCompetenteInt().isEmpty()){
+			try{
+				
+				//jpql.append(" AND tClass.classifId = :classificatoreId ");
+				String inConditionac = buildInCondition(prs.getListStrutturaCompetenteInt());
+				jpql.append(" AND ((tClass.classifId IN " + inConditionac +" AND rMovgestClass.dataCancellazione IS NULL AND dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestStrutturaT) " + 
+								"OR " +
+								"(dMovgestTsTipo.movgestTsTipoCode = :tipoMovGestStrutturaS AND  mvg.movgestId in ( "+
+								"SELECT mvg1.movgestId "+
+								"FROM SiacTMovgestFin mvg1 "+  
+								"left join mvg1.siacTMovgestTs movgestTs1 " +
+								"left join mvg1.siacDMovgestTipo dMovgestTipo1 "+
+								"left join movgestTs1.siacDMovgestTsTipo dMovgestTsTipo1 "+
+								"left join movgestTs1.siacRMovgestClasses rMovgestClass1 "+
+								"left join rMovgestClass1.siacTClass tClass1 "+
+								"where  tClass1.classifId IN " + inConditionac +" AND rMovgestClass1.dataCancellazione IS NULL AND dMovgestTsTipo1.movgestTsTipoCode = :tipoMovGestStrutturaT) "+
+								")) ");
+				
+				param.put("tipoMovGestStrutturaT", CostantiFin.MOVGEST_TS_TIPO_TESTATA);
+				param.put("tipoMovGestStrutturaS", CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO);
+				//param.put("anno", annoEsercizio);
+			}catch(Exception e){
+				log.error("ricercaImpegniSubImpegni", e.getMessage());
+			}
+		}
+		
+		
+		//jpql.append(" ORDER BY mvg.movgestAnno, mvg.movgestNumero ");
+		jpql.append(" ORDER BY mvg.movgestAnno , mvg.movgestNumero, movgestTs.movgestTsId "); //SIAC-6997
+
+		String jpqlQuery = jpql.toString();
+		//Creo la query effettiva
+		Query query =  createQuery(jpqlQuery, param);			
+		listaID = query.getResultList();
+		//Termino restituendo l'oggetto di ritorno: 
+        return listaID;
+	}
+	
+	
+	//SIAC-7486
+	private String buildInCondition(List<Integer> idList){
+		StringBuilder res =new StringBuilder();
+		int sizeList = idList.size();
+		if(idList!= null && !idList.isEmpty()){
+			int count =0;
+			res.append("(");
+			for(Integer id : idList){
+				
+				res.append(id.toString());
+				if(count<sizeList-1){
+					res.append(",");
+				}
+				count++;
+			}
+			res.append(")");
+		}
+		return res.toString();
+	}
+	
 	
 }
 

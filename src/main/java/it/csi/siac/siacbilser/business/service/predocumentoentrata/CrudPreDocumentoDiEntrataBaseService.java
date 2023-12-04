@@ -22,7 +22,7 @@ import it.csi.siac.siacbilser.integration.dad.BilancioDad;
 import it.csi.siac.siacbilser.integration.dad.CapitoloEntrataGestioneDad;
 import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoEntrataDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEG;
@@ -41,7 +41,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoPreDocumento
 import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.ProvvisorioService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
@@ -75,7 +75,7 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 	@Autowired
 	protected SoggettoDad soggettoDad;
 	@Autowired
-	protected ProvvedimentoDad provvedimentoDad;
+	protected AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	protected CapitoloEntrataGestioneDad capitoloEntrataGestioneDad;
 	@Autowired
@@ -264,7 +264,7 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
     	if (preDoc.getAttoAmministrativo()==null || preDoc.getAttoAmministrativo().getUid()==0){
 			return;
 		}
-    	AttoAmministrativo attoAmministrativo = provvedimentoDad.findProvvedimentoById(preDoc.getAttoAmministrativo().getUid());
+    	AttoAmministrativo attoAmministrativo = attoAmministrativoDad.findProvvedimentoById(preDoc.getAttoAmministrativo().getUid());
     	
     	if ( StatoOperativoAtti.ANNULLATO.equals(attoAmministrativo.getStatoOperativoAtti())){
     		throw new BusinessException(ErroreAtt.PROVVEDIMENTO_ANNULLATO.getErrore(), Esito.FALLIMENTO);
@@ -291,7 +291,7 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 		if(preDoc.getSubAccertamento()!= null && preDoc.getSubAccertamento().getUid()!=0 && accertamento.getElencoSubAccertamenti()!=null){
 			
 			if(accertamento.getSubAccertamenti() == null){
-				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", preDoc.getSubAccertamento().getNumero()+""), Esito.FALLIMENTO);
+				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", preDoc.getSubAccertamento().getNumeroBigDecimal()+""), Esito.FALLIMENTO);
 			}
 			
 			for(SubAccertamento subAcc: accertamento.getElencoSubAccertamenti()){
@@ -304,7 +304,7 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
     }
 
 
-	protected void checkAccertamento() {
+	protected void checkAccertamento(boolean saltaCalcoloDisponibilita) {
 		if(preDoc.getAccertamento()==null){
 			return;
 		}
@@ -325,8 +325,13 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 			throw new BusinessException(ErroreFin.MOVIMENTO_GESTIONE_PLURIENNALE_NON_AMMESSO_PER_OPERAZIONE.getErrore("accertamento",msgOperazione + " predisposizione di incasso"), Esito.FALLIMENTO);
 		}
 		
+		if(saltaCalcoloDisponibilita) {
+			return;
+		}
+		
 		//controllo congruenza tra importo predocumento e disponibilita' accertamento
 		checkDisponibilitaAccertamentoSubAccertamento(preDoc.getAccertamento());
+
 	}
 
 	private BigDecimal caricaImportoPrecedentePreDocumentoByAccertamento() {
@@ -340,9 +345,7 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 		return importoPrecedente;
 	}
 
-
-
-	protected void checkSubAccertamento() {
+	protected void checkSubAccertamento(boolean saltaCalcoloDisponibilita) {
 		
 		if(preDoc.getAccertamento()==null){
 			return;
@@ -359,7 +362,7 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 			
 		SubAccertamento subAccertamento = preDoc.getSubAccertamento();
 		if(subAccertamento==null) {
-			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento",preDoc.getSubAccertamento().getNumero()+"/"+preDoc.getSubAccertamento().getAnnoMovimento()+""), Esito.FALLIMENTO);
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Subaccertamento",preDoc.getSubAccertamento().getNumeroBigDecimal()+"/"+preDoc.getSubAccertamento().getAnnoMovimento()+""), Esito.FALLIMENTO);
 		}
 		
 		//controllo congruenza tra anno subimpegno e anno bilancio
@@ -381,8 +384,13 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 			throw new BusinessException(ErroreFin.MOVIMENTO_GESTIONE_STATO_OPERATIVO_NON_AMMESSO_PER_OPERAZIONE.getErrore("Il subaccertamento","definitivo","Non può essere imputato ad una predisposizione di incasso"), Esito.FALLIMENTO);
 		}
 		
+		if(saltaCalcoloDisponibilita) {
+			return;
+		}
+		
 		//controllo congruenza tra importo predocumento e disponibilita' subaccertamento
 		checkDisponibilitaAccertamentoSubAccertamento(subAccertamento);
+	
 	}
 
 	private BigDecimal caricaImportoPrecedentePredocumentoBySubAccertamento() {
@@ -582,9 +590,9 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 		
 		
 		
-		modificaMovimentoGestioneEntrata.setTipoMovimento(subacc!=null&&subacc.getUid()!=0?Constanti.MODIFICA_TIPO_SAC:Constanti.MODIFICA_TIPO_ACC); // ACCERTAMENTO
+		modificaMovimentoGestioneEntrata.setTipoMovimento(subacc!=null&&subacc.getUid()!=0?CostantiFin.MODIFICA_TIPO_SAC:CostantiFin.MODIFICA_TIPO_ACC); // ACCERTAMENTO
 		// SIAC-5219: portata a costante la descrizione (serve nelle ricerche)
-		modificaMovimentoGestioneEntrata.setDescrizione(Constanti.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
+		modificaMovimentoGestioneEntrata.setDescrizione(CostantiFin.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
 		modificaMovimentoGestioneEntrata.setTipoModificaMovimentoGestione("ALT"); //ALTRO
 //		modificaMovimentoGestioneEntrata.setMotivoModificaEntrata(new ClassificatoreGenerico()); //TODO che classif devo passare? e' obbligatorio?
 		
@@ -630,7 +638,7 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 		
 		RicercaAttributiMovimentoGestioneOttimizzato parametri = new RicercaAttributiMovimentoGestioneOttimizzato();
 		parametri.setEscludiSubAnnullati(true);
-		parametri.setCaricaSub(preDoc.getSubAccertamento()!=null && preDoc.getSubAccertamento().getNumero() != null);
+		parametri.setCaricaSub(preDoc.getSubAccertamento()!=null && preDoc.getSubAccertamento().getNumeroBigDecimal() != null);
 				
 		DatiOpzionaliElencoSubTuttiConSoloGliIds parametriElencoIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		parametriElencoIds.setEscludiAnnullati(true);
@@ -643,7 +651,7 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 		Accertamento accertamento = resRAPC.getAccertamento();
 		if(accertamento==null) {
 			res.addErrori(resRAPC.getErrori());
-			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", preDoc.getAccertamento().getNumero()+""+ preDoc.getAccertamento().getAnnoMovimento()+""), Esito.FALLIMENTO);
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", preDoc.getAccertamento().getNumeroBigDecimal()+""+ preDoc.getAccertamento().getAnnoMovimento()+""), Esito.FALLIMENTO);
 		}
 		return accertamento;
 	}
@@ -655,6 +663,22 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 	 * @return the stato operativo pre documento
 	 */
 	protected StatoOperativoPreDocumento aggiornaStatoOperativoPreDocumento(PreDocumentoEntrata preDocumento, boolean ricaricaDettaglioPreDocumentoSpesa) {
+		AggiornaStatoPreDocumentoDiEntrata reqAs = new AggiornaStatoPreDocumentoDiEntrata();
+		reqAs.setRichiedente(req.getRichiedente());
+		reqAs.setPreDocumentoEntrata(preDocumento);
+		reqAs.setRicaricaDettaglioPreDocumento(ricaricaDettaglioPreDocumentoSpesa);
+		AggiornaStatoPreDocumentoDiEntrataResponse resAs = executeExternalService(aggiornaStatoPreDocumentoDiEntrataService, reqAs);
+		return resAs.getPreDocumentoEntrata().getStatoOperativoPreDocumento();
+	}
+	
+	/**
+	 * Aggiorna stato operativo pre documento.
+	 *
+	 * @param preDocumento the pre documento
+	 * @param ricaricaDettaglioPreDocumentoSpesa the ricarica dettaglio pre documento spesa
+	 * @return the stato operativo pre documento
+	 */
+	protected StatoOperativoPreDocumento aggiornaStatoOperativoPreDocumentoEntrata(PreDocumentoEntrata preDocumento, boolean ricaricaDettaglioPreDocumentoSpesa, boolean fromCollegaDoc) {
 		AggiornaStatoPreDocumentoDiEntrata reqAs = new AggiornaStatoPreDocumentoDiEntrata();
 		reqAs.setRichiedente(req.getRichiedente());
 		reqAs.setPreDocumentoEntrata(preDocumento);
@@ -716,6 +740,10 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 		parametroRicercaProvvisorio.setNumero(preDoc.getProvvisorioDiCassa().getNumero());
 		parametroRicercaProvvisorio.setTipoProvvisorio(preDoc.getProvvisorioDiCassa().getTipoProvvisorioDiCassa());
 		ricercaProvvisoriDiCassa.setParametroRicercaProvvisorio(parametroRicercaProvvisorio);
+		//SIAC-7421
+		ricercaProvvisoriDiCassa.setNumPagina(1);
+		ricercaProvvisoriDiCassa.setNumRisultatiPerPagina(5);
+		
 		RicercaProvvisoriDiCassaResponse resRPC = provvisorioService.ricercaProvvisoriDiCassa(ricercaProvvisoriDiCassa);
 
 		log.logXmlTypeObject(resRPC, "Risposta ottenuta dal servizio ricercaProvvisorioDiCassa.");
@@ -747,6 +775,18 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 			throw new BusinessException(ErroreFin.PROVVISORIO_NON_REGOLARIZZABILE.getErrore("aggiornamento","predisposizione di incasso",keyProvvisorio,"annullato"));
 		}
         
+		checkRegolarizzazioneAggiornamento(provvisorioDiCassa, keyProvvisorio);
+		
+
+	}
+
+	/**
+	 * @param methodName
+	 * @param provvisorioDiCassa
+	 * @param keyProvvisorio
+	 */
+	protected void checkRegolarizzazioneAggiornamento(ProvvisorioDiCassa provvisorioDiCassa,String keyProvvisorio) {
+		final String methodName ="checkRegolarizzazioneAggiornamento";
 		if(provvisorioDiCassa.getDataRegolarizzazione() !=null){
 			log.debug(methodName, "Provvisorio di cassa regolarizzato Totalmente");
 			throw new BusinessException(ErroreFin.PROVVISORIO_NON_REGOLARIZZABILE.getErrore("aggiornamento","predisposizione di incasso",keyProvvisorio,"regolarizzato completamente"));
@@ -757,8 +797,6 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 			throw new BusinessException(ErroreFin.PROVVISORIO_NON_REGOLARIZZABILE.getErrore("aggiornamento","predisposizione di pagamento",keyProvvisorio,"L'importo della predisposizione supera	l'importo da regolarizzare del provvisorio"));
 
 		}
-		
-
 	}
 	
 	/**
@@ -772,10 +810,10 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 	private boolean isProvvisorioDiCassaRegolarizzabileForAggiornamento(BigDecimal importoPrec) {
 		boolean res= false;
 		
-		if(preDoc.getProvvisorioDiCassa().getImportoDaRegolarizzare() == null || preDoc.getProvvisorioDiCassa().getImportoDaRegolarizzare().compareTo(BigDecimal.ZERO) == 0){
+		if(preDoc.getProvvisorioDiCassa().getImportoDaRegolarizzare() == null){
 			return res;
 		}
-		BigDecimal totaleImportoDaRegolarizzareImportoPrec = importoPrec.add( preDoc.getProvvisorioDiCassa().getImportoDaRegolarizzare());
+		BigDecimal totaleImportoDaRegolarizzareImportoPrec = preDoc.getProvvisorioDiCassa().getImportoDaRegolarizzare().add(importoPrec);
 		int ris = totaleImportoDaRegolarizzareImportoPrec.compareTo(preDoc.getImporto());
 
 		return ris >=0 ;
@@ -798,7 +836,19 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 			log.debug(methodName, "Provvisorio di cassa Annullato");
 			throw new BusinessException(ErroreFin.PROVVISORIO_NON_REGOLARIZZABILE.getErrore("inserimento","predisposizione di incasso",keyProvvisorio,"annullato"));
 		}
+		
         
+		chekProvvisorioCassaRegolarizzazioneInserimento( provvisorioDiCassa, keyProvvisorio);
+
+	}
+
+	/**
+	 * @param methodName
+	 * @param provvisorioDiCassa
+	 * @param keyProvvisorio
+	 */
+	protected void chekProvvisorioCassaRegolarizzazioneInserimento(ProvvisorioDiCassa provvisorioDiCassa, String keyProvvisorio) {
+		final String methodName = "chekProvvisorioCassaRegolarizzazioneInserimento";
 		if(provvisorioDiCassa.getDataRegolarizzazione() !=null){
 			log.debug(methodName, "Provvisorio di cassa regolarizzato Totalmente");
 			throw new BusinessException(ErroreFin.PROVVISORIO_NON_REGOLARIZZABILE.getErrore("inserimento","predisposizione di incasso",keyProvvisorio,"regolarizzato completamente"));
@@ -809,7 +859,6 @@ public abstract class CrudPreDocumentoDiEntrataBaseService<REQ extends ServiceRe
 			throw new BusinessException(ErroreFin.PROVVISORIO_NON_REGOLARIZZABILE.getErrore("inserimento","predisposizione di incasso",keyProvvisorio,"L'importo della predisposizione supera	l'importo da regolarizzare del provvisorio"));
 
 		}
-
 	}
 	/**
 	 * controlla l'importo da regolarizzare del provvisorio di cassa che sia >= importo documento

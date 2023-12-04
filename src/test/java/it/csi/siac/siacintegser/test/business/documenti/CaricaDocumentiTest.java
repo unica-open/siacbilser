@@ -28,7 +28,10 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacattser.model.TipoAtto;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.business.service.bilancio.RicercaDettaglioBilancioService;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancio;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioBilancioResponse;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccommon.util.JAXBUtility;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -89,7 +92,9 @@ public class CaricaDocumentiTest extends BaseJunit4TestCase {
 	@Autowired
 	private ElaboraFileService elaboraFileService;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
+	@Autowired
+	RicercaDettaglioBilancioService ricercaDettaglioBilancioService;
 //	@Autowired
 //	private LeggiStatoElaborazioneDocumentoService leggiStatoElaborazioneDocumentiService;
 	
@@ -119,10 +124,10 @@ public class CaricaDocumentiTest extends BaseJunit4TestCase {
 	
 		
 	@Test
-	public void testProvvedimentoDad(){
-		provvedimentoDad.setEnte(getEnteTest());
+	public void testAttoAmministrativoDad(){
+		attoAmministrativoDad.setEnte(getEnteTest());
 		
-		TipoAtto tipoAttoALG = provvedimentoDad.getTipoAttoALGEvenNull(); 
+		TipoAtto tipoAttoALG = attoAmministrativoDad.getTipoAttoALGEvenNull(); 
 		log.logXmlTypeObject(tipoAttoALG, "tipoAttoALG");
 	}
 	
@@ -133,7 +138,8 @@ public class CaricaDocumentiTest extends BaseJunit4TestCase {
 		ElaboraFile req = new ElaboraFile();
 		req.setDataOra(new Date());
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
-		req.setBilancio(getBilancioByProperties("consip", "regp", "2017"));
+//		req.setBilancio(getBilancioByProperties("consip", "regp", "2017"));
+		req.setBilancio(getBilancioByProperties("consip", "regp", "2020"));
 		req.setEnte(req.getRichiedente().getAccount().getEnte());
 		req.setAccount(req.getRichiedente().getAccount());
 
@@ -159,7 +165,55 @@ public class CaricaDocumentiTest extends BaseJunit4TestCase {
 		assertNotNull(res);
 	}
 
-	
+	@Test
+	public void elaboraFileDocumentiTestSecondPart() {
+		final String methodName = "elaboraFileDocumenti";
+		ElaboraFile req = new ElaboraFile();
+		req.setDataOra(new Date());
+		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
+		RicercaDettaglioBilancio parameters = new RicercaDettaglioBilancio();
+		parameters.setAnnoBilancio(2020);
+		parameters.setDataOra(new Date());
+		parameters.setRichiedente(req.getRichiedente());
+		parameters.setChiaveBilancio(139);
+			
+		RicercaDettaglioBilancioResponse response = ricercaDettaglioBilancioService.executeService(parameters);
+		
+		assertNotNull(response);
+		assertNotNull(response.getBilancio());
+		
+		req.setBilancio(response.getBilancio());
+		req.setEnte(req.getRichiedente().getAccount().getEnte());
+		req.setAccount(req.getRichiedente().getAccount());
+
+		File file = new File();
+//		file.setUid(1804); // //per dev 759, per test 1799
+		file.setTipo(new TipoFile(ElaboraFileServicesEnum.DOCUMENTO_SPESA.getCodice()));
+				
+		byte[] contenuto;
+		try {
+//			contenuto = getTestXml("CaricaDocumentiTest_ProvaInvioDa_GAMOPERA.xml");
+//			contenuto = getTestXml("CaricaDocumentiTest_ProvaInvioDa_FP.xml");
+//			contenuto = getTestXml("mock_FP.xml");
+//			contenuto = getTestXml("mock_GAMOP.xml");
+//			contenuto = getTestXml("mock_base_10_mandate_spesa.xml");
+			contenuto = getTestXml("mock_base_10_mandate_entrata.xml");
+//			contenuto = getTestXml("mock_gamop_no_desc.xml");
+//			contenuto = getTestXml("mock_FP_subdocs.xml");
+			log.info(methodName, "Xml di partenza: "+new String(contenuto, "UTF-8"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail();
+			return;
+		} 
+		file.setContenuto(contenuto);
+		
+		req.setFile(file);
+		
+		ElaboraFileResponse res = elaboraFileService.executeService(req);
+		assertNotNull(res);
+		assertSuccesso(res);
+	}
 	
 	private static byte[] getTestXml(String nomeFile) throws IOException{
 		byte[] byteArray = getTestFileBytes("docs/test/documenti/"+nomeFile /*CaricaDocumentiTest_quoteCollegate.xml*/);
@@ -295,7 +349,7 @@ public class CaricaDocumentiTest extends BaseJunit4TestCase {
 		
 		Impegno impegno = new Impegno();
 		impegno.setAnnoMovimento(2015); //deve avere lo stesso anno del Documento!!!!
-		impegno.setNumero(new BigDecimal("29014"));
+		impegno.setNumeroBigDecimal(new BigDecimal("29014"));
 		subdocumentoSpesa.setImpegno(impegno);
 		
 		//Facoltativo
@@ -369,7 +423,7 @@ public class CaricaDocumentiTest extends BaseJunit4TestCase {
 		
 		Accertamento impegno = new Accertamento();
 		impegno.setAnnoMovimento(2015); //deve avere lo stesso anno del Documento!!!!
-		impegno.setNumero(new BigDecimal(4));
+		impegno.setNumeroBigDecimal(new BigDecimal(4));
 		subdocumentoEntrata.setAccertamento(impegno);
 		
 		//Facoltativo
@@ -671,6 +725,7 @@ public class CaricaDocumentiTest extends BaseJunit4TestCase {
 	}
 
 
+	@SuppressWarnings("unused")
 	private static void testGeneraXmlPerCaricaDocumenti() throws ParseException {
 		ElenchiDocumentiAllegato allegatiAttoModel = populateAllegatiAtto();
 		String contenutoXml = JAXBUtility.marshall(allegatiAttoModel);

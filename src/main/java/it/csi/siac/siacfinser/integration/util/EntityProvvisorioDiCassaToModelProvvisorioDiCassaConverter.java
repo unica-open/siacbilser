@@ -9,7 +9,7 @@ import java.util.List;
 
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipoClassificatore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.entity.SiacDClassTipoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoProvCassaFin;
@@ -30,7 +30,7 @@ public class EntityProvvisorioDiCassaToModelProvvisorioDiCassaConverter extends 
 				if(idIterato==idConfronto){
 					
 					// 1. Tipo Provvisorio di Cassa
-					if(Constanti.D_PROV_CASSA_TIPO_SPESA.equalsIgnoreCase(siacTProvCassa.getSiacDProvCassaTipo().getProvcTipoCode())){
+					if(CostantiFin.D_PROV_CASSA_TIPO_SPESA.equalsIgnoreCase(siacTProvCassa.getSiacDProvCassaTipo().getProvcTipoCode())){
 						pc.setTipoProvvisorioDiCassa(TipoProvvisorioDiCassa.S);
 						pc.setDescTipoProvvisorioDiCassa(TipoProvvisorioDiCassa.S.toString());
 					} else {
@@ -76,7 +76,7 @@ public class EntityProvvisorioDiCassaToModelProvvisorioDiCassaConverter extends 
 
 		if(idIterato==idConfronto){					
 			// 1. Tipo Provvisorio di Cassa
-			if(Constanti.D_PROV_CASSA_TIPO_SPESA.equalsIgnoreCase(dto.getSiacDProvCassaTipo().getProvcTipoCode())){
+			if(CostantiFin.D_PROV_CASSA_TIPO_SPESA.equalsIgnoreCase(dto.getSiacDProvCassaTipo().getProvcTipoCode())){
 				provvisorioDiCassa.setTipoProvvisorioDiCassa(TipoProvvisorioDiCassa.S);
 				provvisorioDiCassa.setDescTipoProvvisorioDiCassa(TipoProvvisorioDiCassa.S.toString());
 			} else {
@@ -105,7 +105,7 @@ public class EntityProvvisorioDiCassaToModelProvvisorioDiCassaConverter extends 
 		//Struttura amministrativa:
 		SiacRProvCassaClassFin legameValido = null;
 		if(dto.getSiacRProvCassaClasses()!=null){
-			legameValido = DatiOperazioneUtils.getValido(dto.getSiacRProvCassaClasses(), datiOperazioneDto.getTs());
+			legameValido = DatiOperazioneUtil.getValido(dto.getSiacRProvCassaClasses(), datiOperazioneDto.getTs());
 		}
 		if(legameValido!=null){
 			sac = new StrutturaAmministrativoContabile();

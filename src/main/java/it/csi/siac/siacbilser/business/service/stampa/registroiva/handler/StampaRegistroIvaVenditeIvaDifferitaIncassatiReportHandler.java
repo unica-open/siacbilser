@@ -18,6 +18,7 @@ import it.csi.siac.siacbilser.business.service.stampa.registroiva.handler.compar
 import it.csi.siac.siacbilser.business.service.stampa.registroiva.model.StampaRegistroIvaDatiIva;
 import it.csi.siac.siacfin2ser.model.Periodo;
 import it.csi.siac.siacfin2ser.model.ProgressiviIva;
+import it.csi.siac.siacfin2ser.model.StatoSubdocumentoIva;
 import it.csi.siac.siacfin2ser.model.SubdocumentoIvaEntrata;
 
 @Component
@@ -38,62 +39,19 @@ public class StampaRegistroIvaVenditeIvaDifferitaIncassatiReportHandler extends 
 			return new ArrayList<SubdocumentoIvaEntrata>();
 		}
 //		List<SubdocumentoIvaEntrata> listaSubdocumenti = new ArrayList<SubdocumentoIvaEntrata>();
-//		SubdocumentoIvaEntrata sie = new SubdocumentoIvaEntrata();
+		SubdocumentoIvaEntrata sie = new SubdocumentoIvaEntrata();
+		// SIAC-4609
 //		sie.setAnnoEsercizio(annoEsercizio);
-//		sie.setEnte(ente);
-//		sie.setRegistroIva(registroIva);
-//		sie.setStatoSubdocumentoIva(StatoSubdocumentoIva.PROVVISORIO_DEFINITIVO);
+		sie.setEnte(getEnte());
+		sie.setRegistroIva(registroIva);
+		sie.setStatoSubdocumentoIva(StatoSubdocumentoIva.PROVVISORIO_DEFINITIVO);
+		Date docDataOperazioneDa = p.getInizioPeriodo(getAnnoEsercizio());
+		Date docDataOperazioneA = p.getFinePeriodo(getAnnoEsercizio());
 		
-		Date inizioPeriodo = p.getInizioPeriodo(getAnnoEsercizio());
-		Date finePeriodo = p.getFinePeriodo(getAnnoEsercizio());
-		
-//		List<SubdocumentoIvaEntrata> temp = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrata(sie, null, null, null, null);
-//		
-//		// TODO: controllare il pasaggio di stato dall'ente
-////		boolean passaggioDiStatoIvaVenditeSuQuota = false;
-//		
-//		for(SubdocumentoIvaEntrata sieTemp : temp) {
-//			// 1. la registrazione iva è stata fatta sulla singola quota (ovvero “numOrdinativoDoc” diverso da NULL)
-//			if(sieTemp.getNumeroOrdinativoDocumento() != null) {
-//				log.debug(methodName, "SubdocumentoIvaEntrata.uid = " + sieTemp.getUid() + " con numero ordinativo " + sieTemp.getNumeroOrdinativoDocumento());
-//				Date dpd = sieTemp.getDataProtocolloDefinitivo();
-//				// In questo caso se la quota è stata incassata, vuol dire che è stato incassato tutto il Subdocumento Iva e, per quanto riguarda il Periodo,
-//				// il criterio di selezione è il seguente:
-//				// 		- “Subdocumento Iva“.”Data Protocollo Definitivo” >= “inizio_periodo” e
-//				// 		- “Subdocumento Iva“.”Data Protocollo Definitivo” <= “fine_periodo”
-//				if(dpd != null && dpd.compareTo(inizioPeriodo) >= 0 && dpd.compareTo(finePeriodo) <= 0) {
-//					log.debug(methodName, "SubdocumentoIvaEntrata.uid = " + sieTemp.getUid() + " con numero ordinativo " + sieTemp.getNumeroOrdinativoDocumento() +
-//							" selezionato");
-//					listaSubdocumentoIvaEntrataNelPeriodo.add(sieTemp);
-//				}
-//			} else {
-//				// 2. la registrazione iva è stata fatta sull’intero documento (ovvero “numOrdinativoDoc” = NULL)
-////				if (passaggioDiStatoIvaVenditeSuQuota) {
-//					// Il parametro di configurazione a livello di Ente “Passaggio di stato Iva Vendite” = SU QUOTA
-//					
-//					// I dati del Protocollo Definitivo che occorrono per la stampa del Registro Iva sono relativi sempre alla stessa entità “Subdocumento Iva”
-//					// (V. modello concettuale 3), ma che sono collegate ad un Subdocumento Iva di riferimento attraverso la relazione “quote iva differita”.
-//					for(SubdocumentoIvaEntrata qid : sieTemp.getListaQuoteIvaDifferita()) {
-//						log.debug(methodName, "QuotaIvaDifferita.uid = " + qid.getUid());
-//						Date dpd = qid.getDataProtocolloDefinitivo();
-//						if(dpd != null && dpd.compareTo(inizioPeriodo) >= 0 && dpd.compareTo(finePeriodo) <= 0 && qid.getNumeroOrdinativoDocumento() != null) {
-//							log.debug(methodName, "QuotaIvaDifferita.uid = " + qid.getUid() + " selezionata");
-//							// Converto la nota in un subdoc iva di entrata
-//							SubdocumentoIvaEntrata sieQID = subdocumentoIvaEntrataDad.findSubdocumentoIvaEntrataById(qid.getUid());
-//							
-////							DummyMapper.mapNotNullNotEmpty(qid, sieQID);
-//							// TODO: popolare dato aggiuntivi?
-//							
-//							//le quote iva differita non hanno data di protocollo provvisorio, ma sulla stampa si vuole visualizzare quella della quota padre
-//							sieQID.setDataProtocolloProvvisorioSI(sieTemp.getDataProtocolloProvvisorioSI());
-//							listaSubdocumentoIvaEntrataNelPeriodo.add(sieQID);
-//						}
-//					}
-////				}
-//			}
-//		}
-		
-		List<SubdocumentoIvaEntrata> listaSubdocumenti = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataPerDifferitaIncassati(registroIva, inizioPeriodo, finePeriodo);
+		//SIAC-7516
+		List<SubdocumentoIvaEntrata> listaSubdocumenti = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataNonQPID(sie,
+				null, null, null, null, docDataOperazioneDa, docDataOperazioneA);
+//		List<SubdocumentoIvaEntrata> listaSubdocumenti = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataPerDifferitaIncassati(registroIva, inizioPeriodo, finePeriodo);
 		return listaSubdocumenti;
 
 	}

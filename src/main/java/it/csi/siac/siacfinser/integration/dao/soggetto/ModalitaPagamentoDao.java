@@ -9,14 +9,20 @@ import it.csi.siac.siacfinser.integration.entity.SiacTModpagFin;
 
 public interface ModalitaPagamentoDao extends Dao<SiacTModpagFin, Integer>
 {
-	public Integer findModalitaPagamentoContoCorrente(Integer idSoggetto, String iban, Integer idEnte);
+	Integer findModalitaPagamentoByAccreditoTipoId(Integer idSoggetto, Integer idEnte, Integer accreditoTipoId);
 
-	public Integer insertModalitaPagamentoContoCorrente(Integer idSoggetto, String iban, Integer idEnte, String login);
+	Integer findModalitaPagamentoContoCorrente(Integer idSoggetto, String iban, Integer idEnte);
 
-	public Integer findModalitaPagamentoByAccreditoTipoId(Integer idSoggetto, Integer idEnte, Integer accreditoTipoId);
+	Integer findAccreditoTipoIdByGestioneLivello(Integer idEnte, String codiceGruppoAccredito);
 
-	public Integer findAccreditoTipoIdByGestioneLivello(Integer idEnte, String codiceGruppoAccredito);
+	Integer findModalitaPagamentoGiroFondi(Integer idSoggetto, String numeroConto, Integer idEnte,
+			Integer accreditoTipoId);
 
-	public Integer insertModalitaPagamentoContanti(Integer idSoggetto, String quietanzante,
+	Integer insertModalitaPagamentoGiroFondi(Integer idSoggetto, String numeroConto, Integer idEnte, String login);
+
+	Integer insertModalitaPagamentoContoCorrente(Integer idSoggetto, String iban, Integer idEnte, String login);
+
+	Integer insertModalitaPagamentoContanti(Integer idSoggetto, String quietanzante,
 			String codiceFiscaleQuietanzante, Integer idEnte, String login);
+
 }

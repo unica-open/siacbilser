@@ -104,6 +104,8 @@ public class InserisceCapitoloDiEntrataGestioneService
 	 */
 	@Override
 	protected void execute() {
+		//SIAC-7722: Pulisco le descrizioni da eventuali "a capo"
+		req.setCapitoloEntrataGestione(pulisciDescrizioni(req.getCapitoloEntrataGestione()));
 		
 		checkClassificazioneBilancioSeStandard(req.getCapitoloEntrataGestione());
 		

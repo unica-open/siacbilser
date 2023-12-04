@@ -64,7 +64,7 @@ public class InserisceCronoprogrammaService extends CronoprogrammaBaseService<In
 	protected void init() {
 		cronoprogrammaDad.setEnte(ente);
 		cronoprogrammaDad.setLoginOperazione(loginOperazione);
-		provvedimentoDad.setEnte(ente);
+		attoAmministrativoDad.setEnte(ente);
 	}
 	
 	/* (non-Javadoc)

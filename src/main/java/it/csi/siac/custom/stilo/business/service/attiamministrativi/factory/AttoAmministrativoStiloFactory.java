@@ -6,15 +6,27 @@ package it.csi.siac.custom.stilo.business.service.attiamministrativi.factory;
 
 import org.apache.commons.lang.StringUtils;
 
+import it.csi.siac.siacintegser.business.service.attiamministrativi.AttoAmministrativoEnteConfig;
 import it.csi.siac.siacintegser.business.service.attiamministrativi.factory.AttoAmministrativoFactory;
 import it.csi.siac.siacintegser.business.service.attiamministrativi.model.AttoAmministrativoElab;
 
 public class AttoAmministrativoStiloFactory extends AttoAmministrativoFactory {
 
-	public AttoAmministrativoElab newInstanceFromFlussoAttiAmministrativi(String line, String codiceAccount) {
+	public AttoAmministrativoElab newInstanceFromFlussoAttiAmministrativi(String line, int lineNumber, String codiceAccount) {
 		if(StringUtils.isBlank(line)) {
+			log.info("newInstanceFromFlussoAttiAmministrativi", String.format("Riga %d scartata: vuota", lineNumber));
 			return null;
 		}
+		
+//		try {
+//			log.warn("newInstanceFromFlussoAttiAmministrativi", "WAWA INIZIO SLEEP 61 s");
+//			Thread.sleep(61000);
+//			log.warn("newInstanceFromFlussoAttiAmministrativi", "WAWA FINE SLEEP 61 s");
+//		}
+//		catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+		
 		
 		AttoAmministrativoElab a = new AttoAmministrativoElab();
 
@@ -23,6 +35,7 @@ public class AttoAmministrativoStiloFactory extends AttoAmministrativoFactory {
 		// controllo se la linea sia da scartare
 		if("ENTE".equals(StringUtils.deleteWhitespace(a.getCodiceIstat()))) {
 			// Vuol dire la linea e' da scartare
+			log.info("newInstanceFromFlussoAttiAmministrativi", String.format("Riga %d scartata: Codice Istat = 'ENTE'", lineNumber));
 			return null;
 		}
 
@@ -57,8 +70,7 @@ public class AttoAmministrativoStiloFactory extends AttoAmministrativoFactory {
 		a.setBloccoRagioneria("1".equals(b) ? Boolean.TRUE : "0".equals(b) ? Boolean.FALSE : null);
 		
 		// CR-2778
-		boolean shouldIgnoreCDC = ENTI_IGNORING_CDC.contains(a.getCodiceIstat());
-		if(shouldIgnoreCDC) {
+		if(AttoAmministrativoEnteConfig.ignoreCDC(a.getCodiceIstat())) {
 			a.setSacCentroDiCostoChiave(null);
 			a.setSacCentroDiCosto(null);
 		}

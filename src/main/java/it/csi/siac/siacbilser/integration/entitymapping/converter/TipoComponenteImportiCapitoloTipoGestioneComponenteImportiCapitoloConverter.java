@@ -20,24 +20,24 @@ public class TipoComponenteImportiCapitoloTipoGestioneComponenteImportiCapitoloC
 
 	@Override
 	public TipoComponenteImportiCapitolo convertFrom(SiacDBilElemDetCompTipo src, TipoComponenteImportiCapitolo dest) {
-
-		if (src.getElemDetCompTipoGestAut() == null) {
-			return dest;
-		}
+//SIAC-7349
+//		if (src.getElemDetCompTipoGestAut() == null) {
+//			return dest;
+//		}
 		
-		dest.setTipoGestioneComponenteImportiCapitolo(TipoGestioneComponenteImportiCapitolo.valueOf(src.getElemDetCompTipoGestAut()));
+//		dest.setTipoGestioneComponenteImportiCapitolo(TipoGestioneComponenteImportiCapitolo.valueOf(src.getElemDetCompTipoGestAut()));
 		
         return dest;
 	}
 
 	@Override
 	public SiacDBilElemDetCompTipo convertTo(TipoComponenteImportiCapitolo src, SiacDBilElemDetCompTipo dest) {
+		//SIAC-7349
+//		if(src.getTipoGestioneComponenteImportiCapitolo() == null) {
+//			return dest;
+//		}
 		
-		if(src.getTipoGestioneComponenteImportiCapitolo() == null) {
-			return dest;
-		}
-		
-		dest.setElemDetCompTipoGestAut(TipoGestioneComponenteImportiCapitolo.SOLO_AUTOMATICA.equals(src.getTipoGestioneComponenteImportiCapitolo()));
+//		dest.setElemDetCompTipoGestAut(TipoGestioneComponenteImportiCapitolo.SOLO_AUTOMATICA.equals(src.getTipoGestioneComponenteImportiCapitolo()));
 
 		return dest;
 

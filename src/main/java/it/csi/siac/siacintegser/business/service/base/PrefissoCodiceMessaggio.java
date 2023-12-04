@@ -4,29 +4,29 @@
 */
 package it.csi.siac.siacintegser.business.service.base;
 
-import java.util.Map;
-
-import it.csi.siac.siacintegser.frontend.webservice.util.IntegUtils;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 public enum PrefissoCodiceMessaggio
 {
-	INTEG("0"), COR("1"), BIL("2"), FIN("3"), GEN("4"), CEC("5");
+	X("X"), INTEG("0"), COR("1"), BIL("2"), FIN("3"), GEN("4"), CEC("5");
 
 	private String codice;
-
-	private static Map<String, PrefissoCodiceMessaggio> reverseEnumMap = IntegUtils
-			.getEnumMap(PrefissoCodiceMessaggio.class);
 
 	PrefissoCodiceMessaggio(String codice)
 	{
 		this.codice = codice;
 	}
 
-	public static String codiceByLabel(String label)
+	public String getCodice() {
+		return codice;
+	}
+	
+	public static String getCodice(String name)
 	{
-		if (reverseEnumMap.containsKey(label))
-			return String.valueOf(reverseEnumMap.get(label).codice);
-		
-		return "X";
+		return EnumUtils.isValidEnum(PrefissoCodiceMessaggio.class, name) ? 
+				ObjectUtils.defaultIfNull(PrefissoCodiceMessaggio.valueOf(name), X).getCodice() :
+				X.getCodice();
 	}
 }
+

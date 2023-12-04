@@ -33,7 +33,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDDocFamTipoEnum
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDDocStatoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDProvCassaTipoEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
@@ -57,7 +57,7 @@ import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 @Transactional
 public class SubdocumentoSpesaDadCustom extends ExtendedBaseDadImpl {
 	
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	@Autowired
 	private EnumEntityFactory eef;

@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.SerializationUtils;
 
 import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
@@ -37,16 +38,19 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEn
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestioneResponse;
 import it.csi.siac.siacbilser.integration.dad.AccountDad;
+import it.csi.siac.siacbilser.integration.dao.MovimentoGestioneDao;
 import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
+import it.csi.siac.siacbilser.model.Progetto;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloEGest;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloUGest;
 import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloEGest;
 import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloUGest;
+import it.csi.siac.siaccommon.util.CoreUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -63,8 +67,8 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2ser.model.CapitoloUscitaGestioneModelDetail;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.enumeration.CodiceEventoEnum;
 import it.csi.siac.siacfinser.business.service.enumeration.CodiciControlloInnestiFinGenEnum;
 import it.csi.siac.siacfinser.business.service.util.NumericUtils;
@@ -74,6 +78,7 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.PaginazioneRequest;
 import it.csi.siac.siacfinser.integration.dad.AccertamentoOttimizzatoDad;
 import it.csi.siac.siacfinser.integration.dad.CommonDad;
 import it.csi.siac.siacfinser.integration.dad.ImpegnoOttimizzatoDad;
+import it.csi.siac.siacfinser.integration.dad.MovimentoGestioneDad;
 import it.csi.siac.siacfinser.integration.dad.SoggettoFinDad;
 import it.csi.siac.siacfinser.integration.dad.datacontainer.DisponibilitaMovimentoGestioneContainer;
 import it.csi.siac.siacfinser.integration.dao.common.dto.ChiaveLogicaCapitoloDto;
@@ -137,7 +142,11 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 
 	@Autowired
 	protected RegistrazioneGENServiceHelper registrazioneGENServiceHelper;
-
+	
+	//SIAC-7349 - GM - 13/07/2020
+	@Autowired
+	protected MovimentoGestioneDao movimentoGestioneDao;
+	
 	protected Ente ente;
 	protected String loginOperazione;
 	protected Bilancio bilancio;
@@ -172,15 +181,20 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 		DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		caricaDatiOpzionaliDto.setCaricaCig(true);
 		
-		if(Constanti.MOVGEST_TIPO_IMPEGNO.equals(tipoMovimento)){
-			esitoRicerca = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio , annoMovimento , numeroMovimento , paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, tipoMovimento, caricaDatiUlteriori );
+		if(CostantiFin.MOVGEST_TIPO_IMPEGNO.equals(tipoMovimento)){
+			esitoRicerca = impegnoOttimizzatoDad.ricercaMovimentoPk(
+					richiedente, ente, annoEsercizio, annoMovimento, numeroMovimento,
+					paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, tipoMovimento, caricaDatiUlteriori, true);
 			if(esitoRicerca!=null && esitoRicerca.getMovimentoGestione()!=null){
 				movCaricato = (MG) esitoRicerca.getMovimentoGestione();
 				movCaricato = (MG) completaDatiRicercaImpegnoPk(richiedente, (Impegno) movCaricato, annoEsercizio,null,null,null);
 				((Impegno) movCaricato).setElencoSubImpegni(esitoRicerca.getElencoSubImpegniTuttiConSoloGliIds());
 			}
 		}else {
-			esitoRicerca = accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio , annoMovimento , numeroMovimento , paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, tipoMovimento, caricaDatiUlteriori );
+			esitoRicerca = accertamentoOttimizzatoDad.ricercaMovimentoPk(
+					richiedente, ente, annoEsercizio,
+					annoMovimento , numeroMovimento , paginazioneSubMovimentiDto,
+					caricaDatiOpzionaliDto, tipoMovimento, caricaDatiUlteriori, true);
 			if(esitoRicerca!=null && esitoRicerca.getMovimentoGestione()!=null){
 				movCaricato = (MG) esitoRicerca.getMovimentoGestione();
 				movCaricato = (MG) completaDatiRicercaAccertamentoPk(richiedente, (Accertamento) movCaricato, null,null,null);
@@ -435,7 +449,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 				listaImportiCapitoloUG.add(capitoloUscitaGestione.getImportiCapitoloUG());
 			}
 			
-			if(!it.csi.siac.siacfinser.StringUtils.isEmpty(capitoloUscitaGestione.getListaImportiCapitoloUG())){
+			if(!it.csi.siac.siacfinser.StringUtilsFin.isEmpty(capitoloUscitaGestione.getListaImportiCapitoloUG())){
 				listaImportiCapitoloUG.addAll(capitoloUscitaGestione.getListaImportiCapitoloUG());
 			}
 		}
@@ -611,10 +625,13 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 					.chiaveFisicaToLogicaCapitolo(chiaveCapitolo);
 			RicercaSinteticaCapitoloEntrataGestione rceg = buildRequestPerRicercaSinteticaCapitoloEG(
 					richiedente.getAccount().getEnte(), richiedente,
-					chiaveLogica,datiOpzionaliCapitoli);
+					//SIAC-8065
+					CoreUtil.checkEntity(chiaveLogica, ChiaveLogicaCapitoloDto.class),
+					datiOpzionaliCapitoli);
 			RicercaSinteticaCapitoloEntrataGestioneResponse response = capitoloEntrataGestioneService
 					.ricercaSinteticaCapitoloEntrataGestione(rceg);
-			capitoloEntrataGestione = response.getCapitoli().get(0);
+			//SIAC-8065 si controlla la response
+			capitoloEntrataGestione = checkResponseCapitoloEntrataGestione(response);
 		} else {
 			// Dettaglio completo:
 			RicercaDettaglioCapitoloEGest ricercaDettaglioCapitoloEGest = new RicercaDettaglioCapitoloEGest();
@@ -633,6 +650,24 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 					.getCapitoloEntrataGestione();
 		}
 		return capitoloEntrataGestione;
+	}
+	
+	/**
+	 * SIAC-8065
+	 * Valutazione della response
+	 * @param <RicercaSinteticaCapitoloEntrataGestioneResponse> response
+	 * @param <ChiaveLogicaCapitoloDto> chiaveLogica
+	 * @return <CapitoloEntrataGestione> or thrown <BusinessException>
+	 */
+	private CapitoloEntrataGestione checkResponseCapitoloEntrataGestione(RicercaSinteticaCapitoloEntrataGestioneResponse response) {
+		String methodName = "checkResponseCapitoloEntrataGestione";
+		if(response != null && !CollectionUtils.isEmpty(response.getCapitoli())) {
+			return response.getCapitoli().get(0);
+		} else {
+			log.error(methodName, "No result for: CAPITOLO ENTRATA GESTIONE from service: ricercaSinteticaCapitoloEntrataGestione()");
+			throw new BusinessException(ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("capitolo entrata gestione"));
+		}
+//		return response != null && !CollectionUtils.isEmpty(response.getCapitoli()) ? response.getCapitoli().get(0) : null;
 	}
 	
 	protected CapitoloEntrataGestione caricaCapitoloEntrataGestioneOnlyKey(Richiedente richiedente, int chiaveCapitolo) {
@@ -672,16 +707,14 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 		
 		caricaDatiOpzionaliDto.setCaricaDisponibileLiquidareEDisponibilitaInModifica(true);
 		caricaDatiOpzionaliDto.setCaricaElencoModificheMovGest(true);
-		caricaDatiOpzionaliDto.setCaricaMutui(true);
-		caricaDatiOpzionaliDto.setCaricaVociMutuo(true);
-		
+
 		PaginazioneSubMovimentiDto paginazioneSubMovimentiDto = new PaginazioneSubMovimentiDto();
 		paginazioneSubMovimentiDto.setNoSub(true);
 		
 		EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente,
 				ente, String.valueOf(bilancio.getAnno()),
 				Integer.valueOf(impegno.getAnnoMovimento()),
-				impegno.getNumero(), paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, Constanti.MOVGEST_TIPO_IMPEGNO, false);
+				impegno.getNumeroBigDecimal(), paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, CostantiFin.MOVGEST_TIPO_IMPEGNO, false, false);
 		
 		if(esitoRicercaMov!=null){
 			impegnoRitorno = (Impegno) esitoRicercaMov.getMovimentoGestione();
@@ -701,8 +734,8 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 				.ricercaMovimentoPk(richiedente, ente,
 						String.valueOf(bilancio.getAnno()),
 						Integer.valueOf(accertamento.getAnnoMovimento()),
-						accertamento.getNumero(),
-						Constanti.MOVGEST_TIPO_ACCERTAMENTO, false);
+						accertamento.getNumeroBigDecimal(),
+						CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, false, false);
 
 		return accertamentoRitorno;
 
@@ -770,7 +803,18 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 				
 		}
 		
-
+		//SIAC-7349: recupero il deltaImportoVincolo di ogni MovimentoMadifica di spesa ai fini del calcolo del residuo "diCuiPending" sui vincoli
+		//           GM - 13/07/2020
+		List<ModificaMovimentoGestioneSpesa> elencoMMGSImp = impegno.getListaModificheMovimentoGestioneSpesa();
+		if (null != elencoMMGSImp && elencoMMGSImp.size() > 0) {
+			for (ModificaMovimentoGestioneSpesa modificaMovimentoGestioneSpesaImp : elencoMMGSImp) {
+				BigDecimal importoDeltaVincolo = movimentoGestioneDao.calcolaTotaleImportoDeltaByModificaId(modificaMovimentoGestioneSpesaImp.getUid());
+				if(importoDeltaVincolo != null && importoDeltaVincolo.compareTo(BigDecimal.ZERO) > 0){
+					modificaMovimentoGestioneSpesaImp.setImportoDeltaVincolo(importoDeltaVincolo);
+				}
+			}
+		}
+		
 		List<ModificaMovimentoGestioneSpesa> elencoModificheMovimentoGestioneSpesaImp = impegno.getListaModificheMovimentoGestioneSpesa();
 		if (null != elencoModificheMovimentoGestioneSpesaImp && elencoModificheMovimentoGestioneSpesaImp.size() > 0) {
 			
@@ -845,7 +889,9 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 					
 					// vincoloImpegno.getAccertamento().setCapitoloEntrataGestione(capitoloEntrataGestione);
 
-					Accertamento acc = (Accertamento) accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente,capitoloEntrataGestione.getEnte(),annoEsercizio, vincoloImpegno.getAccertamento().getAnnoMovimento(), vincoloImpegno.getAccertamento().getNumero(),Constanti.MOVGEST_TIPO_ACCERTAMENTO, false);
+					Accertamento acc = (Accertamento) accertamentoOttimizzatoDad.ricercaMovimentoPk(
+							richiedente,capitoloEntrataGestione.getEnte(),annoEsercizio, vincoloImpegno.getAccertamento().getAnnoMovimento(), 
+							vincoloImpegno.getAccertamento().getNumeroBigDecimal(),CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, false, false);
 					
 					vincoloImpegno.setAccertamento(acc);
 
@@ -865,7 +911,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 
 		DisponibilitaMovimentoGestioneContainer disponibilitaVincolare;
 
-		if (!impegno.getStatoOperativoMovimentoGestioneSpesa().equals(Constanti.MOVGEST_STATO_ANNULLATO)) {
+		if (!impegno.getStatoOperativoMovimentoGestioneSpesa().equals(CostantiFin.MOVGEST_STATO_ANNULLATO)) {
 			BigDecimal sommaVincoli = BigDecimal.ZERO;
 			if (impegno.getVincoliImpegno() != null) {
 				for (VincoloImpegno vincolo : impegno.getVincoliImpegno()) {
@@ -1208,7 +1254,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 			List<AttoAmministrativo> listaRicostruita = new ArrayList<AttoAmministrativo>();
 			
 			for(AttoAmministrativo it: lista){
-				if(it!=null && it.getStatoOperativo()!=null && !Constanti.ATTO_AMM_STATO_ANNULLATO.equals(it.getStatoOperativo())){
+				if(it!=null && it.getStatoOperativo()!=null && !CostantiFin.ATTO_AMM_STATO_ANNULLATO.equals(it.getStatoOperativo())){
 					listaRicostruita.add(it);
 				}
 			}
@@ -1343,7 +1389,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 			return listaErrori;
 		}
 		
-		if(attoRilettoDaDb.getStatoOperativo().equalsIgnoreCase(Constanti.ATTO_AMM_STATO_ANNULLATO)){
+		if(attoRilettoDaDb.getStatoOperativo().equalsIgnoreCase(CostantiFin.ATTO_AMM_STATO_ANNULLATO)){
 			listaErrori.add(ErroreFin.STATO_PROVVEDIMENTO_NON_CONSENTITO.getErrore("Modifica Movimento","Definitivo"));
 			return listaErrori;
 		}
@@ -1625,7 +1671,47 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 
 		return rceg;
 	}
+	
+	//SIAC-8894: verifico se esiste il progetto nel bilancio successivo per doppia gestione, se non esiste errore
+	protected boolean esisteProgettoAnnoSuccPerDoppiaGestione(
+				Bilancio bilancio, DatiOperazioneDto datiOperazione,
+				Impegno impegnoDaAggiornare, Accertamento accertamentoDaAggiornare) {
 
+			boolean retval = false;
+			
+			Ente ente = req.getRichiedente().getAccount().getEnte();
+			Bilancio bilancioAnnoSuccessivo = commonDad.buildBilancioAnnoSuccessivo(bilancio, datiOperazione);
+
+			Progetto progAnnoCorrente = null != impegnoDaAggiornare ?(Progetto) impegnoDaAggiornare.getProgetto():(Progetto) accertamentoDaAggiornare.getProgetto();
+			Progetto progettoAnnoSucc = impegnoOttimizzatoDad.verificaProgrammaAnnoSuccessivo(progAnnoCorrente, bilancioAnnoSuccessivo, ente);
+			if(null != progettoAnnoSucc) {
+				return true;
+			}	
+			return retval;
+	}
+
+	//task-78: verifico se esiste il cronoprogramma nel bilancio successivo per doppia gestione, se non esiste errore
+	protected boolean esisteCronoprogrammaAnnoSuccPerDoppiaGestione(
+					Bilancio bilancio, DatiOperazioneDto datiOperazione,
+					Impegno impegnoDaAggiornare, Accertamento accertamentoDaAggiornare) {
+
+			boolean retval = false;
+				
+			Ente ente = req.getRichiedente().getAccount().getEnte();
+			Bilancio bilancioAnnoSuccessivo = commonDad.buildBilancioAnnoSuccessivo(bilancio, datiOperazione);
+
+			Integer cronopAnnoCorrente = null != impegnoDaAggiornare ? impegnoDaAggiornare.getIdCronoprogramma():0;
+			Progetto progAnnoCorrente = null != impegnoDaAggiornare ?(Progetto) impegnoDaAggiornare.getProgetto():(Progetto) accertamentoDaAggiornare.getProgetto();
+			Progetto progettoAnnoSucc = impegnoOttimizzatoDad.verificaProgrammaAnnoSuccessivo(progAnnoCorrente, bilancioAnnoSuccessivo, ente);
+			
+			Integer cronopAnnoSucc = impegnoOttimizzatoDad.verificaCronoprogrammaAnnoSuccessivo(cronopAnnoCorrente, progettoAnnoSucc.getUid(), bilancioAnnoSuccessivo, ente);
+			if(null != cronopAnnoSucc) {
+				return true;
+			}	
+			return retval;
+	}
+
+	
 	protected ModificaVincoliImpegnoInfoDto caricaInfoAccVincoliPerDoppiaGest(
 			Bilancio bilancio, DatiOperazioneDto datiOperazione,
 			ImpegnoInModificaInfoDto impegnoInModificaInfoDto,
@@ -1712,7 +1798,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 									.toString(anno), accIt.getSiacTMovgest()
 									.getMovgestAnno(), accIt.getSiacTMovgest()
 									.getMovgestNumero(),
-									Constanti.MOVGEST_TIPO_ACCERTAMENTO, true);
+									CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, true, false);
 					if (accertamentoFresco != null) {
 						accertamentoFresco = completaDatiRicercaAccertamentoPk(
 								richiedente, accertamentoFresco);
@@ -1868,8 +1954,8 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 		Boolean isImpegnoInPartitoDiGiro = false;
 		EsitoAttivaRegistrazioniMovFinFINGSADto esitoDto = new EsitoAttivaRegistrazioniMovFinFINGSADto();
 		if(!isCondizioneDiAttivazioneGENSoddisfatta(isImpegnoInPartitoDiGiro, impegno, subImpegno, aggiorna )) {
-			String chiaveImp = impegno != null && impegno.getNumero() != null? ("" + impegno.getAnnoMovimento()  + impegno.getNumero().toPlainString()) : " NESSUNA_CHIAVE";
-			String chiaveSub = subImpegno != null && subImpegno.getNumero() != null? impegno.getNumero().toPlainString() : " NESSUNA_CHIAVE";
+			String chiaveImp = impegno != null && impegno.getNumeroBigDecimal() != null? ("" + impegno.getAnnoMovimento()  + impegno.getNumeroBigDecimal().toPlainString()) : " NESSUNA_CHIAVE";
+			String chiaveSub = subImpegno != null && subImpegno.getNumeroBigDecimal() != null? impegno.getNumeroBigDecimal().toPlainString() : " NESSUNA_CHIAVE";
 			log.debug(methodName, "condizione di attivazione su impegno " + chiaveImp + " " + chiaveSub + " non soddisfatta. Non viene inserita/aggiornata la RegistrazioneMovFin.");
 			esitoDto.setAvviatoServizioInserimentoPromaNota(false);
 			return esitoDto;
@@ -1900,7 +1986,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 		String methodName = "gestisciRegistrazioneGENPerSubAccertamento";
 		EsitoAttivaRegistrazioniMovFinFINGSADto esitoDto = new EsitoAttivaRegistrazioniMovFinFINGSADto();
 		
-		Boolean flagAttivaGenStatoDefinitivo = subAccertamento.getStatoOperativoMovimentoGestioneEntrata().equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO);
+		Boolean flagAttivaGenStatoDefinitivo = subAccertamento.getStatoOperativoMovimentoGestioneEntrata().equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO);
 		
 		//jira 
 		if(!flagAttivaGenStatoDefinitivo || accertamento.isFlagFattura() || accertamento.isFlagCorrispettivo()){
@@ -1942,7 +2028,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 			esitoAttivaRegistrazioniGENGSADto.setCondizioneAttivazioneRegistrazioniSoddisfatta(false);
 			return esitoAttivaRegistrazioniGENGSADto;
 		}
-		log.debug(methodName, "Condizioni per l'attivazione delle registrazioni contabili su accertamento non soddisfatte. Procedo con l'attivazione.");
+		log.debug(methodName, "Condizioni per l'attivazione delle registrazioni contabili su accertamento soddisfatte. Procedo con l'attivazione.");
 		return verificaRegistraGenInserisciPrimaNotaPerAccertamento(accertamento, tipoCollegamento, codiceEvento, accertamento.isFlagAttivaGsa(), annoBilancioRequest, saltaInserimentoPrimaNota);
 		
 	}
@@ -2093,7 +2179,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 		pdc.setDescrizione(impegno.getDescPdc());
 		
 		
-		if(Constanti.MOVGEST_STATO_DEFINITIVO.equals(impegno.getStatoOperativoMovimentoGestioneSpesa())) {
+		if(CostantiFin.MOVGEST_STATO_DEFINITIVO.equals(impegno.getStatoOperativoMovimentoGestioneSpesa())) {
 			RegistrazioneMovFin registrazioneMovFin = registrazioneGENServiceHelper.inserisciRegistrazioneMovFin(evento, impegno, pdc, Ambito.AMBITO_FIN);
 			esitoAttivaRegistrazioniMovFinFINGSADto.setRegistrazioneMovFinFINInserita(registrazioneMovFin);
 			//SIAC-5333
@@ -2161,7 +2247,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 		RegistrazioneMovFin registrazioneMovFin = registrazioneGENServiceHelper.inserisciRegistrazioneMovFin(evento, movimento, pdc, Ambito.AMBITO_FIN);
 		esitoAttivazioneRegistrazioni.setRegistrazioneMovFinFINInserita(registrazioneMovFin);
 		if( !isApplicabileSaltoInserimentoPrimaNota(saltaInserimentoPrimaNota)) {
-			log.debug(methodName, "La prima nota per la registrazione uid[ " + (registrazioneMovFin != null? registrazioneMovFin.getUid() : "null") + "] non verra' effettuata.");
+			log.debug(methodName, "La prima nota per la registrazione uid[ " + (registrazioneMovFin != null? registrazioneMovFin.getUid() : "null") + "] verra' effettuata.");
 			registrazioneGENServiceHelper.inserisciPrimaNotaAutomaticaAsync(registrazioneMovFin);
 		}
 		// jira 2659, innesto GSA, se l'impegno ha il flag 'Rilevante Co.Ge. GSA' registro e emetto prima nota in ambito GSA
@@ -2204,7 +2290,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 			
 			// jira 2659, innesto GSA, se l'impegno ha il flag 'Rilevante Co.Ge. GSA' registro e emetto prima nota in ambito GSA
 			if(flagGsa){
-				if(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(impegno.getStatoOperativoMovimentoGestioneSpesa())) {
+				if(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(impegno.getStatoOperativoMovimentoGestioneSpesa())) {
 					List<RegistrazioneMovFin> registrazioniMovFinImpegno = registrazioneGENServiceHelper.ricercaRegistrazioniMovFinAssociateAlMovimento(TipoCollegamento.IMPEGNO, impegno, Ambito.AMBITO_GSA);
 					registrazioneGENServiceHelper.annullaRegistrazioniMovFinEPrimeNote(registrazioniMovFinImpegno);
 				}
@@ -2327,7 +2413,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 						
 		
 		}else {
-			log.info(methodName, "Impossibile procedere alla registrazione dell'ordinativo con uid [" + ordinativo.getUid()+" ] , verificare il pdc finanziario del movimentoGestione con uid ["+ (movimentoGestione !=null ? (movimentoGestione.getUid() + " - numero " + movimentoGestione.getNumero()) : " movimento gestione NULL" ) +" ] ");
+			log.info(methodName, "Impossibile procedere alla registrazione dell'ordinativo con uid [" + ordinativo.getUid()+" ] , verificare il pdc finanziario del movimentoGestione con uid ["+ (movimentoGestione !=null ? (movimentoGestione.getUid() + " - numero " + movimentoGestione.getNumeroBigDecimal()) : " movimento gestione NULL" ) +" ] ");
 		}
 	}
 	
@@ -2434,9 +2520,9 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 		// SIAC-6343
 		if(testataOSub.getStatoOperativoMovimentoGestioneSpesa() != null) {
 			isImpegnoInStatoDefinitivo = 
-					Constanti.MOVGEST_STATO_DEFINITIVO.equals(testataOSub.getStatoOperativoMovimentoGestioneSpesa()); 
+					CostantiFin.MOVGEST_STATO_DEFINITIVO.equals(testataOSub.getStatoOperativoMovimentoGestioneSpesa()); 
 			isImpegnoGSADefinitivoNonLiquidabile = 
-					testataOSub.isFlagAttivaGsa() && Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(testataOSub.getStatoOperativoMovimentoGestioneSpesa());  
+					testataOSub.isFlagAttivaGsa() && CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(testataOSub.getStatoOperativoMovimentoGestioneSpesa());  
 		}
 		
 		boolean	isSoggettoOClasseValorizzato = aggiorna || (testataOSub.getSoggetto()!=null || testataOSub.getClasseSoggetto()!=null);
@@ -2481,7 +2567,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 	 * l'accertamento deve essere definitivo
 	 */
 	protected Boolean isCondizioneDiAttivazioneGENSoddisfatta(Accertamento accertamento) {
-		Boolean flagAttivaGenStatoDefinitivo = accertamento.getStatoOperativoMovimentoGestioneEntrata().equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO);
+		Boolean flagAttivaGenStatoDefinitivo = accertamento.getStatoOperativoMovimentoGestioneEntrata().equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO);
 		return flagAttivaGenStatoDefinitivo  && ! (accertamento.isFlagFattura() || accertamento.isFlagCorrispettivo());
 	}
 	
@@ -2746,7 +2832,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 			
 			for (ModificaMovimentoGestioneSpesa movimento : elencoModificheMovimento) {
 				
-				if(!movimento.getCodiceStatoOperativoModificaMovimentoGestione().equals("A") && !movimento.getAttoAmministrativo().getStatoOperativo().equals(Constanti.ATTO_AMM_STATO_PROVVISORIO)){
+				if(!movimento.getCodiceStatoOperativoModificaMovimentoGestione().equals("A") && !movimento.getAttoAmministrativo().getStatoOperativo().equals(CostantiFin.ATTO_AMM_STATO_PROVVISORIO)){
 				
 					List<RegistrazioneMovFin> registrazioniMovFinMovimento = registrazioneGENServiceHelper.ricercaRegistrazioniMovFinAssociateAlMovimento(tipoCollegamento, movimento); //se presenti ne troverà una per ogni quota, altrimenti 0.
 					
@@ -2903,6 +2989,27 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 			AttoAmministrativo attoAmministrativo, BigDecimal importoOld, BigDecimal importoNew, DatiOperazioneDto datiOperazioneDto,
 			int numeroModifica){
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
+		ModificaMovimentoGestioneEntrata movimento = popolaDatiBaseModifica(isSub, attoAmministrativo, importoOld, importoNew);
+		// movimento.setTipoMovimento(CostantiFin.MODIFICA_TIPO_ACC);
+		datiOperazioneDto.setCurrMillisec(System.currentTimeMillis());
+		
+		//COMMENTO E USO numeroModifica al posto di questo calcolo:
+		//int modifiche = accertamentoOttimizzatoDad.countModifiche(uIdAccertamento, datiOperazioneDto);
+		//modifiche = modifiche + 1;
+		//SIAC-7505
+		return accertamentoOttimizzatoDad.aggiornaModificheMovimentoGestioneEntrata(movimento, uIdAccertamento, idEnte, datiOperazioneDto);
+	}
+	
+	
+	/**
+	 * @param isSub
+	 * @param attoAmministrativo
+	 * @param importoOld
+	 * @param importoNew
+	 * @return
+	 */
+	protected ModificaMovimentoGestioneEntrata popolaDatiBaseModifica(boolean isSub,
+			AttoAmministrativo attoAmministrativo, BigDecimal importoOld, BigDecimal importoNew) {
 		ModificaMovimentoGestioneEntrata movimento = new ModificaMovimentoGestioneEntrata();
 
 		movimento.setAttoAmministrativo(attoAmministrativo);
@@ -2915,21 +3022,14 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 		movimento.setImportoOld(importoOld);
 		movimento.setImportoNew(importoNew);
 		if(isSub){
-			movimento.setTipoMovimento(Constanti.MODIFICA_TIPO_SAC);
+			movimento.setTipoMovimento(CostantiFin.MODIFICA_TIPO_SAC);
 		} else {
-			movimento.setTipoMovimento(Constanti.MODIFICA_TIPO_ACC);
+			movimento.setTipoMovimento(CostantiFin.MODIFICA_TIPO_ACC);
 		}
 		// movimento.setTipoModificaMovimentoGestione(TipoModificaMovimentoGestione.RIAC);
 		
-		movimento.setDescrizione(Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
-		// movimento.setTipoMovimento(Constanti.MODIFICA_TIPO_ACC);
-		datiOperazioneDto.setCurrMillisec(System.currentTimeMillis());
-		
-		//COMMENTO E USO numeroModifica al posto di questo calcolo:
-		//int modifiche = accertamentoOttimizzatoDad.countModifiche(uIdAccertamento, datiOperazioneDto);
-		//modifiche = modifiche + 1;
-		
-		return accertamentoOttimizzatoDad.aggiornaModificheMovimentoGestioneEntrata(movimento, uIdAccertamento, idEnte, datiOperazioneDto, numeroModifica);
+		movimento.setDescrizione(CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
+		return movimento;
 	}
 	
 	/**
@@ -3031,7 +3131,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 			
 			for (ModificaMovimentoGestioneEntrata movimento : elencoModificheMovimento) {
 				
-				if( (StringUtils.isNotEmpty(movimento.getCodiceStatoOperativoModificaMovimentoGestione()) && !movimento.getCodiceStatoOperativoModificaMovimentoGestione().equals("A")) && ( movimento.getAttoAmministrativo()!=null && !movimento.getAttoAmministrativo().getStatoOperativo().equals(Constanti.ATTO_AMM_STATO_PROVVISORIO))
+				if( (StringUtils.isNotEmpty(movimento.getCodiceStatoOperativoModificaMovimentoGestione()) && !movimento.getCodiceStatoOperativoModificaMovimentoGestione().equals("A")) && ( movimento.getAttoAmministrativo()!=null && !movimento.getAttoAmministrativo().getStatoOperativo().equals(CostantiFin.ATTO_AMM_STATO_PROVVISORIO))
 						){
 	
 					List<RegistrazioneMovFin> registrazioniMovFinMovimento = registrazioneGENServiceHelper.ricercaRegistrazioniMovFinAssociateAlMovimento(tipoCollegamento, movimento); //se presenti ne troverà una per ogni quota, altrimenti 0.
@@ -3182,7 +3282,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 	 * @return
 	 */
 	protected String riferimento(Liquidazione liquidazione){
-		return CommonUtils.riferimento(liquidazione);
+		return CommonUtil.riferimento(liquidazione);
 	}
 	
 	/**
@@ -3191,7 +3291,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 	 * @return
 	 */
 	protected String riferimento(Ordinativo ordinativo){
-		return CommonUtils.riferimento(ordinativo);
+		return CommonUtil.riferimento(ordinativo);
 	}
 	
 	/**
@@ -3200,7 +3300,7 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 	 * @return
 	 */
 	protected String riferimento(MovimentoGestione mov){
-		return CommonUtils.riferimento(mov);
+		return CommonUtil.riferimento(mov);
 	}
 
 
@@ -3233,10 +3333,10 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 	}
 	
 	protected <MG extends MovimentoGestione> MG caricaAnnoENumeroSeVuotiMaUidPresente(MG movimento){
-		if(NumericUtils.nulloOMinoreUgualeAZero(movimento.getNumero()) || NumericUtils.nulloOMinoreUgualeAZero(movimento.getAnnoMovimento())){
+		if(NumericUtils.nulloOMinoreUgualeAZero(movimento.getNumeroBigDecimal()) || NumericUtils.nulloOMinoreUgualeAZero(movimento.getAnnoMovimento())){
 			if(movimento.getUid()>0){
 				RicercaImpegnoK kMov = impegnoOttimizzatoDad.getChiaveLogicaByUid(movimento.getUid());
-				movimento.setNumero(kMov.getNumeroImpegno());
+				movimento.setNumeroBigDecimal(kMov.getNumeroImpegno());
 				movimento.setAnnoMovimento(kMov.getAnnoImpegno());
 			}
 		}
@@ -3246,29 +3346,29 @@ public abstract class AbstractBaseService<REQ extends ServiceRequest, RES extend
 	// SEMPLICI WRAPPER DI METODI DI COMMONUTILS e StringUtils per scrivere piu velocemente le
 	// chiamate ad essi:
 	protected <T extends Object> List<T> toList(T... oggetto) {
-		return CommonUtils.toList(oggetto);
+		return CommonUtil.toList(oggetto);
 	}
 
 	protected <T extends Object> List<T> toList(List<T>... liste) {
-		return CommonUtils.toList(liste);
+		return CommonUtil.toList(liste);
 	}
 
 	protected <T extends Object> List<T> addAll(List<T> listaTo,
 			List<T> listaFrom) {
-		return CommonUtils.addAll(listaTo, listaFrom);
+		return CommonUtil.addAll(listaTo, listaFrom);
 	}
 	
 	protected <T extends Object> List<T> addAllConNew(List<T> listaTo,
 			List<T> listaFrom) {
-		return CommonUtils.addAllConNew(listaTo, listaFrom);
+		return CommonUtil.addAllConNew(listaTo, listaFrom);
 	}
 	
 	protected boolean isEmpty(String s){
-		return it.csi.siac.siacfinser.StringUtils.isEmpty(s);
+		return it.csi.siac.siacfinser.StringUtilsFin.isEmpty(s);
 	}
 	
 	protected <OBJ extends Object> boolean isEmpty(List<OBJ> list){
-		return it.csi.siac.siacfinser.StringUtils.isEmpty(list);
+		return it.csi.siac.siacfinser.StringUtilsFin.isEmpty(list);
 	}
 	//
 	

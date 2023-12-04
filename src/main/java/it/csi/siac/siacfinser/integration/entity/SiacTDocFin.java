@@ -8,14 +8,17 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import it.csi.siac.siacbilser.integration.entity.SiacTRegistrounicoDoc;
 import it.csi.siac.siacfinser.integration.entity.base.SiacLoginMultiplo;
 
 
@@ -98,6 +101,15 @@ public class SiacTDocFin extends SiacLoginMultiplo {
 //	//bi-directional many-to-one association to SiacTSubdocNum
 //	@OneToMany(mappedBy="siacTDoc")
 //	private List<SiacTSubdocNum> siacTSubdocNums;
+	
+	
+	
+	//SIAC-6997
+	//bi-directional many-to-one association to SiacTRegistrounicoDoc
+	@OneToOne(mappedBy="siacTDoc")
+	private SiacTRegistrounicoDoc siacTRegistrounicoDoc;
+	
+	
 
 	public SiacTDocFin() {
 	}
@@ -390,6 +402,20 @@ public class SiacTDocFin extends SiacLoginMultiplo {
 	public void setUid(Integer uid) {
 		// TODO Auto-generated method stub
 		this.docId = uid;
+	}
+
+	/**
+	 * @return the siacTRegistrounicoDoc
+	 */
+	public SiacTRegistrounicoDoc getSiacTRegistrounicoDoc() {
+		return siacTRegistrounicoDoc;
+	}
+
+	/**
+	 * @param siacTRegistrounicoDoc the siacTRegistrounicoDoc to set
+	 */
+	public void setSiacTRegistrounicoDoc(SiacTRegistrounicoDoc siacTRegistrounicoDoc) {
+		this.siacTRegistrounicoDoc = siacTRegistrounicoDoc;
 	}
 
 }

@@ -19,6 +19,7 @@ import it.csi.siac.siacbilser.integration.dad.CapitoloUscitaPrevisioneDad;
 import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.ClassificazioneCofog;
+import it.csi.siac.siacbilser.model.RisorsaAccantonata;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUP;
@@ -192,6 +193,10 @@ public class RicercaDettaglioCapitoloUscitaPrevisioneService extends CheckedAcco
 		
 		PoliticheRegionaliUnitarie pru = capitoloUscitaPrevisioneDad.ricercaClassificatorePoliticheRegionaliUnitarie(cap.getUid());
 		cap.setPoliticheRegionaliUnitarie(pru);
+		
+
+		RisorsaAccantonata ddd= capitoloUscitaPrevisioneDad.ricercaClassificatoreRisorsaAccantonata(cap.getUid());
+		cap.setRisorsaAccantonata(ddd);
 		
 		List<ClassificatoreGenerico> listaClassificatori = capitoloUscitaPrevisioneDad.ricercaClassificatoriGenerici(cap);
 		res.setListaClassificatori(listaClassificatori);

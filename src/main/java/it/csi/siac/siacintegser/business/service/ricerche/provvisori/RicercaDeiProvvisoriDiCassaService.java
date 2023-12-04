@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisorioDiCassaP
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.ric.RicercaProvvisorioDiCassaK;
 import it.csi.siac.siacintegser.business.entitymapping.ProvvisoriDiCassaIntegToFinConverter;
-import it.csi.siac.siacintegser.business.service.ServiceHelper;
 import it.csi.siac.siacintegser.business.service.base.RicercaPaginataBaseService;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.provvisori.RicercaProvvisoriDiCassa;
@@ -35,10 +33,6 @@ import it.csi.siac.siacintegser.model.messaggio.MessaggioInteg;
 public class RicercaDeiProvvisoriDiCassaService extends
 		RicercaPaginataBaseService<RicercaProvvisoriDiCassa, RicercaProvvisoriDiCassaResponse>
 {
-
-	@Autowired 
-	ServiceHelper serviceHelper;
-	
 	@Override
 	protected RicercaProvvisoriDiCassaResponse execute(RicercaProvvisoriDiCassa ireq) 
 	{	
@@ -82,7 +76,7 @@ public class RicercaDeiProvvisoriDiCassaService extends
 		RicercaProvvisoriDiCassaResponse ires = instantiateNewIRes();
 
 		it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisoriDiCassaResponse res = appCtx.getBean(RicercaProvvisoriDiCassaService.class).executeService(req);
-		checkBusinessServiceResponse(res);
+		checkServiceResponse(res);
 		
 		if( res.getElencoProvvisoriDiCassa()==null ||  res.getElencoProvvisoriDiCassa().isEmpty() ) {
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, " nessun filtro di ricerca soddisfatto");
@@ -135,7 +129,7 @@ public class RicercaDeiProvvisoriDiCassaService extends
 		
 		RicercaProvvisorioDiCassaPerChiaveResponse resp = appCtx.getBean(RicercaProvvisorioDiCassaPerChiaveService.class).executeService(beRequest);
 
-		checkBusinessServiceResponse(resp);
+		checkServiceResponse(resp);
 				
 		RicercaProvvisoriDiCassaResponse ires = instantiateNewIRes();
 				
@@ -177,16 +171,16 @@ public class RicercaDeiProvvisoriDiCassaService extends
 		
 		TipoProvvisorioDiCassa tipoProvvisorio = ireq.getTipoProvvisorioDiCassa();		
 		
-		checkCondition(
+		checkParamCondition(
 				tipoProvvisorio != null
 				, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("TipoProvvisorio") );
 		
-		checkCondition( tipoProvvisorio != null && 
+		checkParamCondition( tipoProvvisorio != null && 
 				( TipoProvvisorioDiCassa.ENTRATA.equals(tipoProvvisorio) 
 				|| TipoProvvisorioDiCassa.SPESA.equals(tipoProvvisorio) )
 				, ErroreCore.PARAMETRO_ERRATO.getErrore("TipoProvvisorio","","ENTRATA o SPESA"));
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getAnnoBilancio() != null
 				, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("annoBilancio"));
 		
@@ -195,7 +189,7 @@ public class RicercaDeiProvvisoriDiCassaService extends
 //			checkCondition(ireq.getDataA() != null && ireq.getDataDa() != null, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("dataA o dataDa"));
 //		}
 		
-		checkCondition( false
+		checkParamCondition( false
 				|| ireq.getNumeroProvvisorio() != null
 				|| StringUtils.isNotEmpty( ireq.getDescrizioneCausale() )
 				|| ireq.getDataA() != null

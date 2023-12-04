@@ -5,15 +5,21 @@
 package it.csi.siac.siacbilser.integration.dao;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Query;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgest;
+import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTipoEnum;
+import it.csi.siac.siaccommon.util.number.NumberUtil;
 import it.csi.siac.siaccommonser.integration.dao.base.JpaDao;
 
 
@@ -102,4 +108,144 @@ public class MovimentoGestioneDaoImpl extends JpaDao<SiacTMovgest, Integer> impl
 		return importoTotaleSubordinativi;
 	}
 	
+	//SIAC-7349 GM 13/07/2020
+	@Override
+	public BigDecimal calcolaTotaleImportoDeltaByModificaId(Integer modificaId) {
+		final String methodName = "calcolaTotaleImportoDeltaByModificaId";
+		//select  COALESCE(sum(abs(rvinc.importo_delta)), 0)
+        //from siac_r_modifica_vincolo rvinc
+        //where rvinc.mod_id=68711 
+        //and   rvinc.modvinc_tipo_operazione='INSERIMENTO'
+        //and   rvinc.data_cancellazione is null
+        //and   rvinc.validita_fine is null;
+		
+		StringBuilder sql = new StringBuilder()
+			.append(" SELECT COALESCE(SUM(abs(rvinc.importo_delta)), 0) ")
+			.append(" FROM ")
+			.append("     siac_r_modifica_vincolo rvinc ")
+			.append(" WHERE rvinc.modvinc_tipo_operazione='INSERIMENTO' ")
+			.append(" AND rvinc.data_cancellazione is null ")
+			.append(" and rvinc.validita_fine is null ")
+			.append(" and rvinc.mod_id = :modificaId ");
+			
+		Query query = entityManager.createNativeQuery(sql.toString());
+		query.setParameter("modificaId", modificaId);
+		
+		BigDecimal importoDeltaVincolo = (BigDecimal) query.getSingleResult();
+		
+		log.info(methodName, "importoDeltaVincolo [" + importoDeltaVincolo + "]");
+		return importoDeltaVincolo;
+	}
+
+	@Override
+	public Page<SiacTMovgest> ricercaMovimentiGestioneMutuo(Integer enteProprietarioId, Integer mutuoId,
+			Integer movgestAnno, Integer movgestNumero, SiacDMovgestTipoEnum siacDMovgestTipoEnum, Integer annoBilancio,
+			Integer elemId, Integer attoammId, Integer attoammAnno, Integer attoammNumero, Integer attoammTipoId,
+			Integer attoammSacId, Integer soggettoId, Integer idTipoComponente, Pageable pageable) {
+		
+		final String methodName = "ricercaMovimentiGestioneMutuo";
+		
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append("FROM SiacTMovgest p WHERE ");
+
+		jpql.append(" p.siacDMovgestTipo.movgestTipoCode = :movgestTipoCode");
+		param.put("movgestTipoCode", siacDMovgestTipoEnum.getCodice());
+		
+		jpql.append(" AND CAST(p.siacTBil.siacTPeriodo.anno AS integer) = :annoBilancio");
+		param.put("annoBilancio", annoBilancio);
+		
+		jpql.append(getDateValiditaCancellazioneClauses("p")); 
+		
+		jpql.append(getEnteClause("p"));
+		param.put("enteProprietarioId", enteProprietarioId);
+		
+		if (movgestAnno != null) {
+			jpql.append(" AND p.movgestAnno = :movgestAnno");
+			param.put("movgestAnno", movgestAnno);
+		}
+		
+		if (movgestNumero != null) {
+			jpql.append(" AND p.movgestNumero = :movgestNumero");
+			param.put("movgestNumero", new BigDecimal(movgestNumero));
+		}
+		
+		if (NumberUtil.isValidAndGreaterThanZero(elemId)) {
+			jpql.append(" AND EXISTS (FROM SiacRMovgestBilElem rBilElem WHERE rBilElem.siacTMovgest.movgestId = p.movgestId AND rBilElem.siacTBilElem.elemId=:elemId ");
+			jpql.append(getDateValiditaCancellazioneClauses("rBilElem"));
+			jpql.append(" )");
+			param.put("elemId", elemId);
+		}
+		
+		if (NumberUtil.isValidAndGreaterThanZero(idTipoComponente)) {
+			jpql.append(" AND EXISTS ( FROM SiacRMovgestBilElem rBilElem ");
+			jpql.append(" WHERE rBilElem.siacTMovgest.movgestId = p.movgestId ");
+			jpql.append(" AND rBilElem.siacDBilElemDetCompTipo.elemDetCompTipoId=:idTipoComponente ");
+			jpql.append(getDateValiditaCancellazioneClauses("rBilElem"));
+			jpql.append(" )");
+			param.put("idTipoComponente", idTipoComponente);
+		}
+		
+		jpql.append(" AND EXISTS (");
+		jpql.append(" FROM p.siacTMovgestTs t JOIN t.siacRMovgestTsStatos r WHERE t.siacDMovgestTsTipo.movgestTsTipoCode = 'T' ");
+		jpql.append(" AND r.siacDMovgestStato.movgestStatoCode='D' " );
+		jpql.append(getDateValiditaCancellazioneClauses("t"));
+		jpql.append(getDateValiditaCancellazioneClauses("r"));
+
+		if (NumberUtil.isValidAndGreaterThanZero(attoammId) ||
+				NumberUtil.isValidAndGreaterThanZero(attoammAnno) ||
+				NumberUtil.isValidAndGreaterThanZero(attoammNumero) ||
+				NumberUtil.isValidAndGreaterThanZero(attoammTipoId) ||
+				NumberUtil.isValidAndGreaterThanZero(attoammSacId)) {
+			jpql.append(" AND EXISTS (FROM t.siacRMovgestTsAttoAmms rAtto WHERE 1=1 " );
+
+			if (NumberUtil.isValidAndGreaterThanZero(attoammId)) {
+				jpql.append(" AND rAtto.siacTAttoAmm.attoammId=:attoammId " );
+				param.put("attoammId", attoammId);
+			}			
+			
+			if (NumberUtil.isValidAndGreaterThanZero(attoammAnno)) {
+				jpql.append(" AND rAtto.siacTAttoAmm.attoammAnno= CAST(:attoammAnno AS string) " );
+				param.put("attoammAnno", attoammAnno);
+			}
+			
+			if (NumberUtil.isValidAndGreaterThanZero(attoammNumero)) {
+				jpql.append(" AND rAtto.siacTAttoAmm.attoammNumero=:attoammNumero " );
+				param.put("attoammNumero", attoammNumero);
+			}
+
+			if (NumberUtil.isValidAndGreaterThanZero(attoammTipoId)) {
+				jpql.append(" AND rAtto.siacTAttoAmm.siacDAttoAmmTipo.attoammTipoId=:attoammTipoId " );
+				param.put("attoammTipoId", attoammTipoId);
+			}
+
+			if (NumberUtil.isValidAndGreaterThanZero(attoammSacId)) {
+				jpql.append(" AND EXISTS (FROM rAtto.siacTAttoAmm.siacRAttoAmmClasses raac WHERE raac.siacTClass.classifId =:attoammSacId " );
+				jpql.append(getDateValiditaCancellazioneClauses("raac"));
+				jpql.append(" )");
+				param.put("attoammSacId", attoammSacId);
+			}
+			
+			jpql.append(getDateValiditaCancellazioneClauses("rAtto"));
+			jpql.append(" )");
+		}
+		
+		if (NumberUtil.isValidAndGreaterThanZero(soggettoId)) {
+			jpql.append(" AND EXISTS (FROM t.siacRMovgestTsSogs rSoggetto WHERE rSoggetto.siacTSoggetto.soggettoId=:soggettoId " );
+			jpql.append(getDateValiditaCancellazioneClauses("rSoggetto"));
+			jpql.append(" )");
+			param.put("soggettoId", soggettoId);
+		}
+		
+		jpql.append(" )");
+
+		jpql.append(" ORDER BY p.movgestAnno, p.movgestNumero "); 
+		
+		String jpqlString = jpql.toString();
+		log.debug(methodName, jpqlString);
+		
+		return getPagedList(jpqlString, param, pageable);		
+		
+	}
 }

@@ -69,6 +69,9 @@ public class SiacTSoggetto extends SiacTEnteBaseExt {
 	
 	@Column(name="codice_pa")
 	private String canalePA;	
+	
+	@Column(name = "istituto_di_credito")
+	private Boolean istitutoDiCredito;
 
 	//bi-directional many-to-one association to SiacRAttoAllegatoSog
 	@OneToMany(mappedBy="siacTSoggetto")
@@ -125,11 +128,6 @@ public class SiacTSoggetto extends SiacTEnteBaseExt {
 	/** The siac r movgest ts sog mods2. */
 	@OneToMany(mappedBy="siacTSoggetto2")
 	private List<SiacRMovgestTsSogMod> siacRMovgestTsSogMods2;
-
-	//bi-directional many-to-one association to SiacRMutuoSoggetto
-	/** The siac r mutuo soggettos. */
-	@OneToMany(mappedBy="siacTSoggetto")
-	private List<SiacRMutuoSoggetto> siacRMutuoSoggettos;
 
 	//bi-directional many-to-one association to SiacROrdinativoSoggetto
 	@OneToMany(mappedBy="siacTSoggetto")
@@ -869,49 +867,6 @@ public class SiacTSoggetto extends SiacTEnteBaseExt {
 		return siacRMovgestTsSogMods2;
 	}
 
-	/**
-	 * Gets the siac r mutuo soggettos.
-	 *
-	 * @return the siac r mutuo soggettos
-	 */
-	public List<SiacRMutuoSoggetto> getSiacRMutuoSoggettos() {
-		return this.siacRMutuoSoggettos;
-	}
-
-	/**
-	 * Sets the siac r mutuo soggettos.
-	 *
-	 * @param siacRMutuoSoggettos the new siac r mutuo soggettos
-	 */
-	public void setSiacRMutuoSoggettos(List<SiacRMutuoSoggetto> siacRMutuoSoggettos) {
-		this.siacRMutuoSoggettos = siacRMutuoSoggettos;
-	}
-
-	/**
-	 * Adds the siac r mutuo soggetto.
-	 *
-	 * @param siacRMutuoSoggetto the siac r mutuo soggetto
-	 * @return the siac r mutuo soggetto
-	 */
-	public SiacRMutuoSoggetto addSiacRMutuoSoggetto(SiacRMutuoSoggetto siacRMutuoSoggetto) {
-		getSiacRMutuoSoggettos().add(siacRMutuoSoggetto);
-		siacRMutuoSoggetto.setSiacTSoggetto(this);
-
-		return siacRMutuoSoggetto;
-	}
-
-	/**
-	 * Removes the siac r mutuo soggetto.
-	 *
-	 * @param siacRMutuoSoggetto the siac r mutuo soggetto
-	 * @return the siac r mutuo soggetto
-	 */
-	public SiacRMutuoSoggetto removeSiacRMutuoSoggetto(SiacRMutuoSoggetto siacRMutuoSoggetto) {
-		getSiacRMutuoSoggettos().remove(siacRMutuoSoggetto);
-		siacRMutuoSoggetto.setSiacTSoggetto(null);
-
-		return siacRMutuoSoggetto;
-	}
 
 	public List<SiacROrdinativoSoggetto> getSiacROrdinativoSoggettos() {
 		return this.siacROrdinativoSoggettos;
@@ -2314,6 +2269,16 @@ public class SiacTSoggetto extends SiacTEnteBaseExt {
 	 */
 	public void setLoginModificaDurc(String loginModificaDurc) {
 		this.loginModificaDurc = loginModificaDurc;
+	}
+
+
+
+	public Boolean getIstitutoDiCredito() {
+		return istitutoDiCredito;
+	}
+
+	public void setIstitutoDiCredito(Boolean istitutoDiCredito) {
+		this.istitutoDiCredito = istitutoDiCredito;
 	}
 
 }

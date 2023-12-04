@@ -162,7 +162,7 @@ public abstract class GenericImpegnoSubimpegnoBaseConverter<A, B> extends Extend
 		s.setUid(siacTMovgestT.getUid());
 		
 		try{
-			s.setNumero(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
+			s.setNumeroBigDecimal(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
 		} catch(RuntimeException re) {
 			log.error(methodName, "Impssibile ottenere un BigDecimal a partire dalla stringa: \"" + siacTMovgestT.getMovgestTsCode() + "\". Returning null!",re);
 		}
@@ -192,7 +192,7 @@ public abstract class GenericImpegnoSubimpegnoBaseConverter<A, B> extends Extend
 		SiacTMovgest siacTMovgest = siacTMovgestT.getSiacTMovgest(); //Legame con l'impegno.
 		Impegno impegno = new Impegno();
 		impegno.setUid(siacTMovgest.getUid());
-		impegno.setNumero(siacTMovgest.getMovgestNumero());
+		impegno.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 		impegno.setDescrizione(siacTMovgest.getMovgestDesc());
 //		String anno = siacTMovgest.getSiacTBil().getSiacTPeriodo().getAnno();
 		impegno.setAnnoMovimento(siacTMovgest.getMovgestAnno());

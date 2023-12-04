@@ -17,7 +17,7 @@ import it.csi.siac.siacbilser.integration.dad.CodificaDad;
 import it.csi.siac.siacbilser.integration.dad.ImpegnoBilDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeTipoDebito;
@@ -59,7 +59,7 @@ public class ModificaCigBackofficeService
 		
 		boolean checkCig = StringUtils.isNotBlank(req.getImpegno().getCig());
 		
-		if (Constanti.SIOPE_CODE_COMMERCIALE.equals(tipoDebito.getCodice())) {
+		if (CostantiFin.SIOPE_CODE_COMMERCIALE.equals(tipoDebito.getCodice())) {
 			// Debito commerciale
 			checkBusinessCondition(checkSiopeAssenzaMotivazione || checkCig,
 					ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("inserire CIG o Motivazione assenza del CIG"));

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
+
 /**
  * DAO per il Management del JPA
  * 
@@ -32,6 +34,12 @@ public class JpaManagementDaoImpl implements JpaManagementDao {
 	@Override
 	public void flush() {
 		entityManager.flush();
+	}
+
+	@Override
+	public void detach(SiacTBase siacTBase) {
+		entityManager.detach(siacTBase);
+		
 	}
 
 }

@@ -17,16 +17,21 @@ import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceAnagraficaProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceAnagraficaProgettoResponse;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
+import it.csi.siac.siacbilser.integration.dad.ClassificatoriDad;
 import it.csi.siac.siacbilser.integration.dad.ProgettoDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.model.Progetto;
 import it.csi.siac.siacbilser.model.StatoOperativo;
+import it.csi.siac.siacbilser.model.TipoAmbito;
 import it.csi.siac.siacbilser.model.TipoProgetto;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
+import it.csi.siac.siaccorser.model.FaseBilancio;
+import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
@@ -43,25 +48,20 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 public class InserisceAnagraficaProgettoService extends CheckedAccountBaseService<InserisceAnagraficaProgetto, InserisceAnagraficaProgettoResponse> {
 
 	private static final String CODICE_PROGETTO_AUTOMATICO = "CODICE_PROGETTO_AUTOMATICO";
-	
-	/** The progetto. */
+
 	private Progetto progetto;
 	private boolean codiceAutomatico;
 	
-	@Autowired
-	private BilancioDad bilancioDad;
-	/** The progetto dad. */
-	@Autowired
-	private ProgettoDad progettoDad;
-	
-	/** The provvedimento dad. */
-	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	@Autowired private BilancioDad bilancioDad;
+	@Autowired private ProgettoDad progettoDad;
+	@Autowired private AttoAmministrativoDad attoAmministrativoDad;
+	@Autowired private ClassificatoriDad classificatoriDad;
 	
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {
 		progetto = req.getProgetto();
-		codiceAutomatico = CODICE_PROGETTO_AUTOMATICO.equals(ente.getGestioneLivelli().get(TipologiaGestioneLivelli.CODICE_PROGETTO_AUTOMATICO));
+		codiceAutomatico = req.getCodiceAutomatico() != null ? req.getCodiceAutomatico().booleanValue() :
+				CODICE_PROGETTO_AUTOMATICO.equals(ente.getGestioneLivelli().get(TipologiaGestioneLivelli.CODICE_PROGETTO_AUTOMATICO));
 		
 		checkNotNull(progetto, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("progetto"));
 		checkNotNull(progetto.getStatoOperativoProgetto(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("stato operativo progetto"), false);
@@ -80,6 +80,7 @@ public class InserisceAnagraficaProgettoService extends CheckedAccountBaseServic
 		
 		//SIAC-6255
 		checkNotNull(progetto.getTipoProgetto(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("tipo progetto"));
+		
 	}
 	
 	@Override
@@ -109,20 +110,63 @@ public class InserisceAnagraficaProgettoService extends CheckedAccountBaseServic
 		// SIAC-4427 ripristino
 		checkProvvedimentoNonAnnullato();
 		
+		// SIAC-8814
+		if (req.getRetrieveAggregateData()) {
+			checkTipoAmbito(progetto);
+			checkStrutturaAmministrativoContabile(progetto);
+		}
+		
 		progettoDad.inserisciProgetto(progetto);
 		res.setProgetto(progetto);
 	}
 	
+	private void checkStrutturaAmministrativoContabile(Progetto progetto) {
+		if (progetto.getStrutturaAmministrativoContabile() == null || progetto.getStrutturaAmministrativoContabile().getUid() > 0) {
+			return;
+		}
+		
+		StrutturaAmministrativoContabile strutturaAmministrativoContabile = (StrutturaAmministrativoContabile) classificatoriDad.ricercaClassificatoreGerarchicoByCodiceAndTipoAndAnno(
+				progetto.getStrutturaAmministrativoContabile(), 
+				TipologiaClassificatore.fromCodice(progetto.getStrutturaAmministrativoContabile().getTipoClassificatore().getCodice()), 
+				Integer.valueOf(ente.getUid()), 
+				Integer.valueOf(req.getBilancio().getAnno()));
+
+		if (strutturaAmministrativoContabile == null) {
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("strutturaAmministrativoContabile", 
+					String.format("%s/%s", progetto.getStrutturaAmministrativoContabile().getCodice(), progetto.getStrutturaAmministrativoContabile().getTipoClassificatore().getCodice())));
+		}
+		
+		progetto.setStrutturaAmministrativoContabile(strutturaAmministrativoContabile); 
+	}
+
+	private void checkTipoAmbito(Progetto progetto) {
+		
+		if (progetto.getTipoAmbito() == null || progetto.getTipoAmbito().getUid() > 0) {
+			return;
+		}
+		
+		TipoAmbito tipoAmbito = progettoDad.ricercaTipoAmbito(req.getBilancio().getAnno(), progetto.getTipoAmbito().getCodice());
+
+		if (tipoAmbito.getUid() == 0) {
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("tipoAmbito", "codice " + progetto.getTipoAmbito().getCodice()));
+		}
+		
+		progetto.setTipoAmbito(tipoAmbito);
+	}
+
 	private void checkTipoProgettoCoerenteConFaseBilancio(Bilancio bilancio) {
 		FaseEStatoAttualeBilancio faseEStatoAttualeBilancio = bilancio.getFaseEStatoAttualeBilancio();
 		FaseBilancio faseBilancio = faseEStatoAttualeBilancio.getFaseBilancio();
 		boolean faseBilancioPerProgettoPrevisione = FaseBilancio.ESERCIZIO_PROVVISORIO.equals(faseBilancio) || FaseBilancio.PREVISIONE.equals(faseBilancio);
-		if((faseBilancioPerProgettoPrevisione && !TipoProgetto.PREVISIONE.equals(progetto.getTipoProgetto()) 
-				|| (FaseBilancio.GESTIONE.equals(faseBilancio) && !TipoProgetto.GESTIONE.equals(progetto.getTipoProgetto())))){
-			throw new BusinessException(ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("fase bilancio: " + faseBilancio.name() + " e progetto: " + progetto.getTipoProgetto().getDescrizione()));
+		//SIAC-8900
+		if(!req.getByPassFaseBilancioProgetto()) {
+			if((faseBilancioPerProgettoPrevisione && !TipoProgetto.PREVISIONE.equals(progetto.getTipoProgetto()) 
+					|| (FaseBilancio.GESTIONE.equals(faseBilancio) && !TipoProgetto.GESTIONE.equals(progetto.getTipoProgetto())))){
+				throw new BusinessException(ErroreCore.INCONGRUENZA_NEI_PARAMETRI.getErrore("fase bilancio: " + faseBilancio.name() + " e progetto: " + progetto.getTipoProgetto().getDescrizione()));
+			}
 		}
 	}
-
+	
 	/**
 	 * Stacca il codice del progetto se necessario
 	 * @param bilancio 
@@ -169,7 +213,7 @@ public class InserisceAnagraficaProgettoService extends CheckedAccountBaseServic
 	 * @param attoAmministrativo the atto amministrativo
 	 */
 	private void checkProvvedimentoNonAnnullato() {
-		AttoAmministrativo attoConStato = provvedimentoDad.findProvvedimentoById(progetto.getAttoAmministrativo().getUid());
+		AttoAmministrativo attoConStato = attoAmministrativoDad.findProvvedimentoById(progetto.getAttoAmministrativo().getUid());
 		if(attoConStato == null) {
 			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("atto amministrativo", "uid " + progetto.getAttoAmministrativo().getUid()));
 		}

@@ -131,7 +131,7 @@ public abstract class GenericAccertamentoSubaccertamentoBaseConverter<A, B> exte
 		s.setUid(siacTMovgestT.getUid());
 		
 		try{
-			s.setNumero(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
+			s.setNumeroBigDecimal(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
 		} catch(RuntimeException re) {
 			log.error(methodName, "Impssibile ottenere un BigDecimal a partire dalla stringa: \"" + siacTMovgestT.getMovgestTsCode() + "\". Returning null!",re);	
 			return null;
@@ -161,7 +161,7 @@ public abstract class GenericAccertamentoSubaccertamentoBaseConverter<A, B> exte
 		SiacTMovgest siacTMovgest = siacTMovgestT.getSiacTMovgest(); //Legame con l'impegno.
 		Accertamento accertamento = new Accertamento();
 		accertamento.setUid(siacTMovgest.getUid());
-		accertamento.setNumero(siacTMovgest.getMovgestNumero());
+		accertamento.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 //		String anno = siacTMovgest.getSiacTBil().getSiacTPeriodo().getAnno();
 		accertamento.setAnnoMovimento(siacTMovgest.getMovgestAnno());
 		

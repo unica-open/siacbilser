@@ -160,6 +160,7 @@ public class InviaAllegatoAttoService extends CheckedAccountBaseService<InviaAll
 		StampaAllegatoAtto reqSAA = new StampaAllegatoAtto();
 		reqSAA.setRichiedente(req.getRichiedente());
 		reqSAA.setAllegatoAtto(allegatoAtto);
+		reqSAA.setAllegatoAttoChecklist(req.getAllegatoAttoChecklist());
 		reqSAA.setEnte(ente);
 		
 		reqSAA.setBilancio(req.getBilancio());
@@ -190,7 +191,7 @@ public class InviaAllegatoAttoService extends CheckedAccountBaseService<InviaAll
 		}
 		
 		
-		log.info(methodName, "Trasmissione alla Servlet di Atti Di Liquidazione del report: "+ report.getNome());
+		log.warn(methodName, "Trasmissione alla Servlet di Atti Di Liquidazione del report: " + report.getNome());
 		attiliqStartServletInvoker.invoke(formData, report);
 	}
 

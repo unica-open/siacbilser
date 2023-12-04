@@ -52,8 +52,8 @@ SPDX-License-Identifier: EUPL-1.2
 		</field>
 
 		<field>
-			<a>stato</a>
-			<b>parametroRicercaSoggetto.statoSoggetto</b>
+			<a>stato.codice</a>
+			<b>parametroRicercaSoggetto.codiceStatoSoggetto</b>
 		</field>
 
 	</mapping>
@@ -329,7 +329,7 @@ SPDX-License-Identifier: EUPL-1.2
 			
 		<field >
 			<a>recapito.codiceIstatComune</a>
-			<b>indirizzoSoggettoPrincipale.idComune</b>
+			<b>indirizzoSoggettoPrincipale.codiceIstatComune</b>
 		</field>
 		
 		<field >
@@ -388,7 +388,7 @@ SPDX-License-Identifier: EUPL-1.2
 		
 		<field>
 			<a>codiceIstatComune</a>
-			<b>idComune</b>
+			<b>codiceIstatComune</b>
 		</field>
 		
 		<field>

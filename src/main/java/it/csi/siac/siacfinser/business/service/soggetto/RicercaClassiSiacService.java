@@ -51,7 +51,7 @@ public class RicercaClassiSiacService extends
 //		String codiceAmbito = req.getCodiceAmbito();
 //
 //		if (codiceAmbito == null)
-//			codiceAmbito = Constanti.AMBITO_FIN;
+//			codiceAmbito = CostantiFin.AMBITO_FIN;
 //
 //		// 2. Si invoca il metodo ricercaSoggetti che ci restituisce il numero
 //		// di risultati attesi dalla query composta
@@ -61,7 +61,7 @@ public class RicercaClassiSiacService extends
 //
 //		// ...solo se il numero di risultati attesi e minore del numero massimo
 //		// accettabile si procede con il caricamento di tutti i dati:
-//		if (listaRisultati.size() <= Constanti.MAX_RIGHE_ESTRAIBILI)
+//		if (listaRisultati.size() <= CostantiFin.MAX_RIGHE_ESTRAIBILI)
 //		{
 //			// 3. si invoca il metodo che carica tutti i dati rispetto alla
 //			// query composta dall'input ricevuto:

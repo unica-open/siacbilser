@@ -26,7 +26,7 @@ import it.csi.siac.siacfin2ser.model.RegistroComunicazioniPCC;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class AggiornaRegistroComunicazioniPCCService extends CheckedAccountBaseService<AggiornaRegistroComunicazioniPCC, AggiornaRegistroComunicazioniPCCResponse> {
 	
-//	private final LogUtil log = new LogUtil(getClass());
+//	private final LogSrvUtil log = new LogSrvUtil(getClass());
 	
 	@Autowired
 	private RegistroComunicazioniPCCDad registroComunicazioniPCCDad;
@@ -84,7 +84,7 @@ public class AggiornaRegistroComunicazioniPCCService extends CheckedAccountBaseS
 //		log.debug(methodName, "Old subdocumento uid " + (registroComunicazioniPCCOld.getSubdocumentoSpesa() != null ? registroComunicazioniPCCOld.getSubdocumentoSpesa().getUid() : "null") 
 //			+ " --- New subdocumento uid " + registroComunicazioniPCC.getSubdocumentoSpesa().getUid());
 //		if(registroComunicazioniPCCOld.getSubdocumentoSpesa() == null || registroComunicazioniPCCOld.getSubdocumentoSpesa().getUid() != registroComunicazioniPCC.getSubdocumentoSpesa().getUid()) {
-//			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("subdocumento", "non e' possibile cambiare il subdocumento collegato al registro"));
+//			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("subdocumento", "non e' possibile cambiare il subdocumento collegato al registro"));
 //		}
 //	}
 //	
@@ -96,7 +96,7 @@ public class AggiornaRegistroComunicazioniPCCService extends CheckedAccountBaseS
 //		log.debug(methodName, "Old Documento uid " + (registroComunicazioniPCCOld.getDocumentoSpesa() != null ? registroComunicazioniPCCOld.getDocumentoSpesa().getUid() : "null") 
 //			+ " --- New documento uid " + registroComunicazioniPCC.getDocumentoSpesa().getUid());
 //		if(registroComunicazioniPCCOld.getDocumentoSpesa() == null || registroComunicazioniPCCOld.getDocumentoSpesa().getUid() != registroComunicazioniPCC.getDocumentoSpesa().getUid()) {
-//			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("documento", "non e' possibile cambiare il documento collegato al registro"));
+//			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("documento", "non e' possibile cambiare il documento collegato al registro"));
 //		}
 //	}
 

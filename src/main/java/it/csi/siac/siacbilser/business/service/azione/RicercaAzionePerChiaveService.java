@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaAzionePerChiave;
-import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaAzionePerChiaveResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.azione.RicercaAzionePerChiave;
+import it.csi.siac.siacbilser.frontend.webservice.msg.azione.RicercaAzionePerChiaveResponse;
 import it.csi.siac.siacbilser.integration.dad.AzioneDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
@@ -41,6 +41,7 @@ public class RicercaAzionePerChiaveService extends CheckedAccountBaseService<Ric
 		azioneDad.setEnte(ente);
 	}
 	
+	@Override
 	@Transactional(readOnly= true)
 	public RicercaAzionePerChiaveResponse executeService(RicercaAzionePerChiave serviceRequest) {
 		return super.executeService(serviceRequest);

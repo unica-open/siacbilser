@@ -25,7 +25,7 @@ import it.csi.siac.siacbilser.integration.utility.function.jdbc.resultsetextract
 import it.csi.siac.siacbilser.integration.utility.function.jdbc.resultsetextractor.VoidResultSetExtractor;
 import it.csi.siac.siacbilser.integration.utility.function.jdbc.statementsetter.CallableStatementSetter;
 import it.csi.siac.siacbilser.integration.utility.function.jdbc.statementsetter.DefaultCallableStatementSetter;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * Utility per l'invocazione di una function con dei parametri.
@@ -37,7 +37,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class SimpleJDBCFunctionInvoker {
 	
 	//il log
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	//ENTITY MANAGERS
 	@PersistenceContext
@@ -174,7 +174,7 @@ public class SimpleJDBCFunctionInvoker {
 	 */
 	private static class JDBCFunctionWork<T> implements Work {
 		// il log
-		private final LogUtil log = new LogUtil(getClass());
+		private final LogSrvUtil log = new LogSrvUtil(getClass());
 		
 		//campi final
 		private final String invokeFunctionSql;

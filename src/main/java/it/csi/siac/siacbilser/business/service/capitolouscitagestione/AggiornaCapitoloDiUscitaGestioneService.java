@@ -79,6 +79,8 @@ public class AggiornaCapitoloDiUscitaGestioneService extends CrudCapitoloBaseSer
 
 	@Override
 	protected void execute() {
+		//SIAC-7722: Pulisco le descrizioni da eventuali "a capo"
+		req.setCapitoloUscitaGestione(pulisciDescrizioni(req.getCapitoloUscitaGestione()));
 
 		//SIAC-5003 Il capitolo e' modificabile solo se lo stato operativo e' di tipo valido o provvisorio
 		checkCapitoloModificabilePerAggiornamento(req.getCapitoloUscitaGestione());

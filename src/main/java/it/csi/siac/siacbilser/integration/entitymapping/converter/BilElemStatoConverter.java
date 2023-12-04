@@ -16,9 +16,10 @@ import it.csi.siac.siacbilser.integration.entity.SiacDBilElemStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTBilElem;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemStatoEnum;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -32,7 +33,7 @@ public class BilElemStatoConverter extends DozerConverter<Capitolo<?, ?>, SiacTB
 	private EnumEntityFactory eef;
 
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/**
 	 * Instantiates a new documento spesa sogg converter.
@@ -44,7 +45,8 @@ public class BilElemStatoConverter extends DozerConverter<Capitolo<?, ?>, SiacTB
 	
 	@Override
 	public Capitolo<?, ?> convertFrom(SiacTBilElem src, Capitolo<?, ?> dest) {
-		StatoOperativoElementoDiBilancio statoOperativoElementoDiBilancio = getStatoOperativoElementoDiBilancio(src);
+		StatoOperativoElementoDiBilancio statoOperativoElementoDiBilancio = getStatoOperativoElementoDiBilancio(src); 
+	
 		dest.setStatoOperativoElementoDiBilancio(statoOperativoElementoDiBilancio);
 		return dest;
 	}

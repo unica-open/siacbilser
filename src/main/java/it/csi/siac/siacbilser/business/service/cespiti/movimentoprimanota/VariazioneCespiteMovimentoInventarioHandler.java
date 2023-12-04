@@ -12,7 +12,6 @@ import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.dad.AmmortamentoAnnuoCespiteDad;
 import it.csi.siac.siacbilser.integration.dad.DettaglioAmmortamentoAnnuoCespiteDad;
 import it.csi.siac.siacbilser.integration.dad.VariazioneCespiteDad;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siaccespser.model.AmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.CategoriaCespiti;
 import it.csi.siac.siaccespser.model.CategoriaCespitiModelDetail;
@@ -23,7 +22,8 @@ import it.csi.siac.siaccespser.model.StatoVariazioneCespite;
 import it.csi.siac.siaccespser.model.TipoBeneCespiteModelDetail;
 import it.csi.siac.siaccespser.model.VariazioneCespite;
 import it.csi.siac.siaccespser.model.VariazioneCespiteModelDetail;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
@@ -37,7 +37,7 @@ import it.csi.siac.siacgenser.model.PrimaNota;
  * @version 1.0.0 - 24-10-2018
  */
 public class VariazioneCespiteMovimentoInventarioHandler extends MovimentoInventarioHandler<VariazioneCespite> {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	//DADS
 	private VariazioneCespiteDad variazioneCespiteDad;
@@ -65,7 +65,7 @@ public class VariazioneCespiteMovimentoInventarioHandler extends MovimentoInvent
 
 	@Override
 	public void caricaMovimento(PrimaNota primaNota) {
-		Utility.MDTL.addModelDetails(new ModelDetail[] {
+		Utility.MDTL.addModelDetails(new ModelDetailEnum[] {
 				CespiteModelDetail.TipoBeneCespiteModelDetail,
 				TipoBeneCespiteModelDetail.CategoriaCespitiModelDetail,
 				CategoriaCespitiModelDetail.AliquotaAnnua,

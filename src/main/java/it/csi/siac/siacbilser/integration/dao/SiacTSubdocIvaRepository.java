@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import it.csi.siac.siacbilser.integration.entity.SiacTSubdocIva;
+import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 
 /**
  * Repository per l'entity SiacTSubdocRepository.
@@ -392,5 +393,16 @@ public interface SiacTSubdocIvaRepository extends JpaRepository<SiacTSubdocIva, 
 			+ "			     WHERE s.dataCancellazione IS NULL "
 			+ "				 AND s.siacDSubdocIvaStato.subdocivaStatoCode = 'PD')" )
 	List<SiacTSubdocIva> findSubdocIvaDiffPagatoByRegistroEPeriodo(@Param("ivaregId") Integer ivaregId, @Param("inizioPeriodo")  Date inizioPeriodo, @Param("finePeriodo") Date finePeriodo);
+
+	@Query( " SELECT riva.siacTSubdocIva "
+			+ " FROM SiacRSubdocSubdocIva riva "
+			+ " WHERE riva.dataCancellazione IS NULL "
+			+ " AND riva.siacTSubdoc.dataCancellazione IS NULL "
+			+ " AND riva.siacTSubdocIva.dataCancellazione IS NULL "
+			+ " AND riva.siacTSubdoc.siacTDoc.dataCancellazione IS NULL "
+			+ " AND riva.siacTSubdoc.siacTDoc.docId = :docId "
+			+ " AND riva.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			)
+	List<SiacTSubdocIva> findSiacTSubdocIvaWithSiacTSubdocByDocId(@Param("docId") Integer docId, @Param("enteProprietarioId") Integer enteProprietarioId);
 
 }

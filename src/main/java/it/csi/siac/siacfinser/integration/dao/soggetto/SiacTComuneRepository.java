@@ -56,8 +56,17 @@ public interface SiacTComuneRepository extends JpaRepository<SiacTComuneFin, Int
 										@Param("codNazione") String codiceNazione,
 										@Param("enteProprietarioId") Integer idEnte);
 	
-	@Query("FROM SiacTComuneFin c WHERE c.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId AND c.comuneIstatCode = :code AND " + condizione)
-	public SiacTComuneFin caricaValidoByCodeIstat(@Param("enteProprietarioId") Integer enteProprietarioId, @Param("code") String code,@Param("dataInput") Timestamp  dataInput);
+	@Query("FROM SiacTComuneFin c "
+		+ " WHERE c.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+		+ " AND c.comuneIstatCode = :code "
+		+ " AND c.siacTNazione.nazioneCode = '1' " // SIAC-8252
+		+ " AND " + condizione 
+		+ " ORDER by c.dataModifica DESC ") // SIAC-8252
+	public List<SiacTComuneFin> findComuneItalianoValidoByCodiceIstat(
+			@Param("enteProprietarioId") Integer enteProprietarioId, 
+			@Param("code") String code,
+			@Param("dataInput") Timestamp  dataInput
+	);
 
 
 

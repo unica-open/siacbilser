@@ -34,7 +34,7 @@ public class AggiornaRichiestaEconomaleRimborsoSpeseService extends AggiornaRich
 		
 		for(Giustificativo giustificativo : richiestaEconomale.getGiustificativi()){
 			checkNotNull(giustificativo.getImportoGiustificativo(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("importo giustificativo"));
-			checkCondition(giustificativo.getImportoGiustificativo() == null || giustificativo.getImportoGiustificativo().signum() > 0,ErroreCore.VALORE_NON_VALIDO.getErrore("Importo",": l'importo deve essere positivo"));
+			checkCondition(giustificativo.getImportoGiustificativo() == null || giustificativo.getImportoGiustificativo().signum() > 0,ErroreCore.VALORE_NON_CONSENTITO.getErrore("Importo",": l'importo deve essere positivo"));
 			checkNotNull(giustificativo.getTipoGiustificativo(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("tipo giustificativo"));
 			checkNotNull(giustificativo.getValuta(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("valuta giustificativo"));
 			checkNotNull(giustificativo.getFlagInclusoNelPagamento(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("flag incluso nel pagamento giustificativo"));

@@ -69,7 +69,7 @@ public class RicercaProvvisoriDiCassaService extends AbstractBaseService<Ricerca
 		
 		//...solo se il numero di risultati attesi e minore del numero massimo accettabile 
 		//   si procede con il caricamento di tutti i dati:
-//		if(conteggioRecords <= Constanti.MAX_RIGHE_ESTRAIBILI.longValue()){
+//		if(conteggioRecords <= CostantiFin.MAX_RIGHE_ESTRAIBILI.longValue()){
 			//3. si invoca il metodo che carica tutti i dati rispetto alla query composta dall'input ricevuto:
 			List<ProvvisorioDiCassa> listaRisultati = provvisorioDad.caricaPaginaProvvisoriDiCassa(datiOperazione, req.getNumPagina(), req.getNumRisultatiPerPagina(),listaId);
 			//4. Viene costruita la response per esito OK		

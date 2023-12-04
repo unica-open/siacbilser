@@ -18,7 +18,7 @@ public interface SoggettoHandler<P extends Predocumento>
 
 	public void initInfoPersona(P predocumento) throws SoggettoPredocumentoException;
 
-	public Soggetto ricercaSoggetto(P predocumento) throws SoggettoPredocumentoException;
+	public Soggetto cercaSoggetto(P predocumento) throws SoggettoPredocumentoException;
 
 	public Soggetto inserisciSoggetto(P predocumento) throws SoggettoPredocumentoException;
 

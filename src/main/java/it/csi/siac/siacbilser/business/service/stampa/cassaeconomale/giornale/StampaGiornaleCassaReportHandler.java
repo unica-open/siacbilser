@@ -297,7 +297,7 @@ public class StampaGiornaleCassaReportHandler extends JAXBBaseReportHandler<Stam
 			log.debug(methodName, "F1: " + movStampa.getModalitaPagamentoPerStampa());
 			computaAnnoCapitoloImpegno(movStampa);
 			log.debug(methodName, "G1: " + movStampa.getAnnoCapitoloPerStampa()+"/" +movStampa.getNumeroCapitoloPerStampa()+"/"+movStampa.getArticoloCapitoloPerStampa());
-			log.debug(methodName, "H1: " + movStampa.getRichiestaEconomale().getImpegno().getAnnoMovimento() + "/" +movStampa.getRichiestaEconomale().getImpegno().getNumero());
+			log.debug(methodName, "H1: " + movStampa.getRichiestaEconomale().getImpegno().getAnnoMovimento() + "/" +movStampa.getRichiestaEconomale().getImpegno().getNumeroBigDecimal());
 			log.debug(methodName, "TipoCassa Movimento " + movimento.getModalitaPagamentoCassa().getTipoDiCassa());
 			if (TipoDiCassa.CONTO_CORRENTE_BANCARIO.equals(movStampa.getModalitaPagamentoCassa().getTipoDiCassa())){
 				

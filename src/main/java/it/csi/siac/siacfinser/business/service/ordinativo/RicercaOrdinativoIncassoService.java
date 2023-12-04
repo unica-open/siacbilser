@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseServiceRicercaOrdinativo;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativo;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativoResponse;
@@ -57,7 +57,7 @@ public class RicercaOrdinativoIncassoService extends AbstractBaseServiceRicercaO
 		// RM: per la jira 4556  FIN - Ordinativi e liquidazioni - Toglietre 'Ricerca tropo estesa'
 		Long conteggioRecords = ordinativoIncassoDad.calcolaNumeroOrdinativiIncassoDaEstrarre(parametroRicercaOrdinativoIncasso, idEnte);
 		//...solo se il numero di risultati attesi e minore del numero massimo accettabile si procede con il caricamento di tutti i dati:
-		//if(conteggioRecords <= Constanti.MAX_RIGHE_ESTRAIBILI.longValue()){
+		//if(conteggioRecords <= CostantiFin.MAX_RIGHE_ESTRAIBILI.longValue()){
 			
 			// si invoca il metodo che carica tutti i dati rispetto alla query composta dall'input ricevuto:
 			List<OrdinativoIncasso> listaRisultati = ordinativoIncassoDad.ricercaOrdinativiIncasso(richiedente, parametroRicercaOrdinativoIncasso, idEnte, req.getNumPagina(), req.getNumRisultatiPerPagina(),now);
@@ -72,7 +72,7 @@ public class RicercaOrdinativoIncassoService extends AbstractBaseServiceRicercaO
 			// ordinativo di pagamento
 			for (OrdinativoIncasso ordinativoIncasso : listaRisultati) {
 				
-				boolean collegatoAPagamento = ordinativoIncassoDad.isCollegatoAPagamento(ordinativoIncasso.getAnno(), ordinativoIncasso.getNumero(), ordinativoIncasso.getStatoOperativoOrdinativo(), Constanti.D_ORDINATIVO_TIPO_INCASSO, datiOperazione);
+				boolean collegatoAPagamento = ordinativoIncassoDad.isCollegatoAPagamento(ordinativoIncasso.getAnno(), ordinativoIncasso.getNumero(), ordinativoIncasso.getStatoOperativoOrdinativo(), CostantiFin.D_ORDINATIVO_TIPO_INCASSO, datiOperazione);
 				ordinativoIncasso.setCollegatoAPagamento(collegatoAPagamento);
 			}
 			

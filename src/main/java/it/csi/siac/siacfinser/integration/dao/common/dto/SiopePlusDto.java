@@ -6,7 +6,7 @@ package it.csi.siac.siacfinser.integration.dao.common.dto;
 
 import java.io.Serializable;
 
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento;
 
@@ -49,15 +49,15 @@ public class SiopePlusDto implements Serializable {
 		String codiceAssenzaConfronto = daConfrontare.getCodeMotivazioneAssenzaCig();
 		String codiceDebitoConfronto = daConfrontare.getCodeDebitoSiope();
 		
-		if(!StringUtils.sonoUguali(cigConfronto, this.cig)){
+		if(!StringUtilsFin.sonoUguali(cigConfronto, this.cig)){
 			return true;
 		}
 		
-		if(!StringUtils.sonoUguali(codiceAssenzaConfronto, this.codeMotivazioneAssenzaCig)){
+		if(!StringUtilsFin.sonoUguali(codiceAssenzaConfronto, this.codeMotivazioneAssenzaCig)){
 			return true;
 		}
 		
-		if(!StringUtils.sonoUguali(codiceDebitoConfronto, this.codeDebitoSiope)){
+		if(!StringUtilsFin.sonoUguali(codiceDebitoConfronto, this.codeDebitoSiope)){
 			return true;
 		}
 		

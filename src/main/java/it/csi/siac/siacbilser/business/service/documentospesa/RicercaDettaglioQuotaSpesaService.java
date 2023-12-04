@@ -62,7 +62,6 @@ public class RicercaDettaglioQuotaSpesaService extends CheckedAccountBaseService
 				SubdocumentoSpesaModelDetail.ElencoDocumenti,
 				SubdocumentoSpesaModelDetail.ProvvisorioDiCassa,
 				SubdocumentoSpesaModelDetail.Ordinativo,
-				SubdocumentoSpesaModelDetail.VoceMutuo,
 				SubdocumentoSpesaModelDetail.RegistroComunicazioniPCC,
 				SubdocumentoSpesaModelDetail.TipoIvaSplitReverse,
 				SubdocumentoSpesaModelDetail.SiopeTipoDebito,
@@ -70,7 +69,9 @@ public class RicercaDettaglioQuotaSpesaService extends CheckedAccountBaseService
 				SubdocumentoSpesaModelDetail.SiopeScadenzaMotivo,
 				SubdocumentoSpesaModelDetail.SospensioneSubdocumento,
 				SubdocumentoSpesaModelDetail.NoteTesoriere,
-				SubdocumentoSpesaModelDetail.ContoTesoreria
+				SubdocumentoSpesaModelDetail.ContoTesoreria,
+				//SIAC-8153
+				SubdocumentoSpesaModelDetail.StrutturaCompetenteQuota
 				);
 		
 		if(subdoc==null){

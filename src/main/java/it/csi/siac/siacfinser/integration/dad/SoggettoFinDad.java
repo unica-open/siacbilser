@@ -18,19 +18,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dad.datacontainer.DisponibilitaMovimentoGestioneContainer;
 import it.csi.siac.siacfinser.integration.dao.common.SiacDAmbitoRepository;
@@ -139,6 +142,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRModpagOrdineFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRModpagStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsSogFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsSogclasseFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoModpagFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoSoggettoFin;
@@ -182,7 +186,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacTSepaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoModFin;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.EntityToEntityConverter;
 import it.csi.siac.siacfinser.integration.util.EntityToModelConverter;
 import it.csi.siac.siacfinser.integration.util.ObjectStreamerHandler;
@@ -426,7 +430,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		{
 			salvaStatoOperativoAnagrafica(statoOperativoAnagrafica, siacTSoggetto, idEnte,
 					datiOperazioneDto);
-			siacTSoggetto = DatiOperazioneUtils.cancellaRecord(siacTSoggetto,
+			siacTSoggetto = DatiOperazioneUtil.cancellaRecord(siacTSoggetto,
 					siacTSoggettoRepository, datiOperazioneDto, siacTAccountRepository);
 			soggettoCancellato = map(siacTSoggetto, Soggetto.class, FinMapId.SiacTSoggetto_Soggetto);
 			soggettoCancellato = EntityToModelConverter.soggettoEntityToSoggettoModel(
@@ -465,7 +469,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		{
 			salvaStatoOperativoAnagrafica(statoOperativoAnagrafica, siacTSoggetto, idEnte,
 					datiOperazioneDto);
-			siacTSoggetto = DatiOperazioneUtils.cancellaRecord(siacTSoggetto,
+			siacTSoggetto = DatiOperazioneUtil.cancellaRecord(siacTSoggetto,
 					siacTSoggettoRepository, datiOperazioneDto, siacTAccountRepository);
 			soggettoCancellato = map(siacTSoggetto, Soggetto.class, FinMapId.SiacTSoggetto_Soggetto);
 			soggettoCancellato = EntityToModelConverter.soggettoEntityToSoggettoModel(
@@ -519,7 +523,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				// quando trovo quello valido
 				if (iterator.getDataFineValidita() == null)
 				{
-					iterator = DatiOperazioneUtils.cancellaRecord(iterator,
+					iterator = DatiOperazioneUtil.cancellaRecord(iterator,
 							siacTSoggettoModRepository, datiOperazioneDto, siacTAccountRepository);
 					break;
 				}
@@ -542,7 +546,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		SedeSecondariaSoggetto sedeSecondariaSoggettoTrovata = null;
 		SiacTSoggettoFin sedeSecondariaEntity = siacTSoggettoRepository
 				.ricercaSedeSecondariaPerChiave(codiceEnte, codSoggetto, idSedeSecondaria,
-						Constanti.SEDE_SECONDARIA);
+						CostantiFin.SEDE_SECONDARIA);
 
 		if (sedeSecondariaEntity != null)
 		{
@@ -628,7 +632,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacTSoggettoOriginale = siacTSoggettoRepository.findOne(idSiacTSoggettoInModifica);
 
 			// JIRA 1188-aggiornamento della data ultimo aggiornamento
-			siacTSoggettoOriginale = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTSoggettoOriginale = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTSoggettoOriginale, datiOperazioneModifica, siacTAccountRepository);
 			siacTSoggettoOriginale.setLoginCreazione(loginOperazione);
 			// salvo sul db:
@@ -642,7 +646,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			idSoggMod = siacTSoggettoMod.getSogModId();
 			siacTSoggettoOriginale = EntityToEntityConverter.siacTSoggettoModToSiacTSoggetto(
 					siacTSoggettoMod, loginOperazione);
-			siacTSoggettoOriginale = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTSoggettoOriginale = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTSoggettoOriginale, datiOperazioneModifica, siacTAccountRepository);
 			// salvo sul db:
 			siacTSoggettoOriginale = siacTSoggettoRepository.saveAndFlush(siacTSoggettoOriginale);
@@ -746,7 +750,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				for (SiacTIndirizzoSoggettoModFin siacTIndirizzoSoggettoMod : siacTIndirizzosSoggettoMod)
 				{
-					DatiOperazioneUtils.cancellaRecord(siacTIndirizzoSoggettoMod,
+					DatiOperazioneUtil.cancellaRecord(siacTIndirizzoSoggettoMod,
 							siacTIndirizzoSoggettoModRepository, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 				}
@@ -758,7 +762,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				for (SiacTRecapitoSoggettoModFin siacTRecapitoSoggettoMod : siacTRecapitosSoggettoMod)
 				{
-					DatiOperazioneUtils.cancellaRecord(siacTRecapitoSoggettoMod,
+					DatiOperazioneUtil.cancellaRecord(siacTRecapitoSoggettoMod,
 							siacTRecapitoSoggettoModRepository, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 				}
@@ -770,12 +774,12 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				for (SiacRSoggettoRelazModFin siacRSoggettoRelazMod : siacRSoggettoRelazMods)
 				{
-					DatiOperazioneUtils.cancellaRecord(siacRSoggettoRelazMod,
+					DatiOperazioneUtil.cancellaRecord(siacRSoggettoRelazMod,
 							siacRSoggettoRelazModRepository, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 				}
 			}
-			DatiOperazioneUtils.cancellaRecord(siacTSoggettoMod, siacTSoggettoModRepository,
+			DatiOperazioneUtil.cancellaRecord(siacTSoggettoMod, siacTSoggettoModRepository,
 					datiOperazioneCancellazioneLogica, siacTAccountRepository);
 
 			// Riporto a VALIDO lo stato della sede sulla tabella
@@ -795,7 +799,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		}
 		else
 		{
-			DatiOperazioneUtils.cancellaRecord(siacTSoggetto, siacTSoggettoRepository,
+			DatiOperazioneUtil.cancellaRecord(siacTSoggetto, siacTSoggettoRepository,
 					datiOperazioneCancellazioneLogica, siacTAccountRepository);
 			sedeSecondariaDaModificare = null;
 		}
@@ -864,7 +868,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// chiamata al soggetto per avere il refresh
 			siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito,
-					codiceEnte, codSoggetto, Constanti.SEDE_SECONDARIA, getNow());
+					codiceEnte, codSoggetto, CostantiFin.SEDE_SECONDARIA, getNow());
 			// chiamata per mpd def
 			mdpDef = siacTSoggettoRepository.ricercaModalitaPagamentoPerChiaveCodiceDef(codiceEnte,
 					codSoggetto, Integer.valueOf(codiceModalitaPagamento));
@@ -978,7 +982,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		if (parametroSoggettoK.getMatricola() != null)
 			return ricercaSoggetto(siacTSoggettoRepository.ricercaSoggettoNoSeSedeByMatricola(
 					codiceAmbito, codiceEnte, parametroSoggettoK.getMatricola(),
-					Constanti.SEDE_SECONDARIA, getNow()), parametroSoggettoK.isIncludeModif(),
+					CostantiFin.SEDE_SECONDARIA, getNow()), parametroSoggettoK.isIncludeModif(),
 					caricaDatiUlteriori);
 
 		return null;
@@ -995,10 +999,10 @@ public class SoggettoFinDad extends AbstractFinDad
 		boolean incMod = includeModifica;
 		boolean carDatUlt = caricaDatiUlteriori;
 		SiacTSoggettoFin soggettoInIngresso = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito,
-				codiceEnte, codiceSoggetto, Constanti.SEDE_SECONDARIA, getNow());
+				codiceEnte, codiceSoggetto, CostantiFin.SEDE_SECONDARIA, getNow());
 		
 		return ricercaSoggetto(siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito,
-				codiceEnte, codiceSoggetto, Constanti.SEDE_SECONDARIA, getNow()), includeModifica,
+				codiceEnte, codiceSoggetto, CostantiFin.SEDE_SECONDARIA, getNow()), includeModifica,
 				caricaDatiUlteriori);
 	}
 	
@@ -1024,12 +1028,14 @@ public class SoggettoFinDad extends AbstractFinDad
 				soggettoTrovato.setResidenteEstero(false);
 			else
 				soggettoTrovato.setResidenteEstero(true);
+			
+			//task-6
+			soggettoTrovato.setFlagIstitutoDiCredito(soggEntity.getIstitutoDiCredito());
 
 			// 1. STATO, CONTATTI, ONERI E CLASSIFICAZIONI:
 
 			List<SiacTSoggettoFin> dtos = new ArrayList<SiacTSoggettoFin>();
 			dtos.add(soggEntity);
-
 			List<Soggetto> soggettos = new ArrayList<Soggetto>();
 			soggettos.add(soggettoTrovato);
 
@@ -1064,10 +1070,10 @@ public class SoggettoFinDad extends AbstractFinDad
 				// soggettoTrovato.setNote(note);
 
 				// NOTE
-				soggettoTrovato.setNote(EntityToModelConverter.estraiAttrSoggetto(soggEntity,Constanti.T_ATTR_CODE_NOTE_SOGGETTO));
+				soggettoTrovato.setNote(EntityToModelConverter.estraiAttrSoggetto(soggEntity,CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO));
 
 				// MATRICOLA
-				soggettoTrovato.setMatricola(EntityToModelConverter.estraiAttrSoggetto(soggEntity,Constanti.T_ATTR_CODE_MATRICOLA));
+				soggettoTrovato.setMatricola(EntityToModelConverter.estraiAttrSoggetto(soggEntity,CostantiFin.T_ATTR_CODE_MATRICOLA));
 
 				List<Contatto> contatti = EntityToModelConverter.siacTRecapitoSoggettoToContattoList(soggEntity.getSiacTRecapitoSoggettos(), true);
 				soggettoTrovato.setContatti(contatti);
@@ -1079,7 +1085,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			//passo al soggetto l'ambito in caso di CEC
 			soggettoTrovato.setCodificaAmbito(soggEntity.getSiacDAmbito().getAmbitoCode());
 		}
-
+		
 		return soggettoTrovato;
 	}
 	
@@ -1177,14 +1183,14 @@ public class SoggettoFinDad extends AbstractFinDad
 				 * Il chiamante in alcuni casi puo' passarci gia' un elenco di soggetti caricati, 
 				 * ne approfittiamo per maggiore ottimizzazione:
 				 */
-				if(!StringUtils.isEmpty(ottimizzazioneSoggetto.getSoggettiGiaCaricati())){
-					Soggetto soggettoGiaCaricato = CommonUtils.getById(ottimizzazioneSoggetto.getSoggettiGiaCaricati(),soggEntity.getUid());
-					if(soggettoGiaCaricato!=null){
+				if(!StringUtilsFin.isEmpty(ottimizzazioneSoggetto.getSoggettiGiaCaricati())){
+					Soggetto soggettoGiaCaricato = CommonUtil.getById(ottimizzazioneSoggetto.getSoggettiGiaCaricati(),soggEntity.getUid());
+					if(soggettoGiaCaricato != null){
 						soggettoTrovato = clone(soggettoGiaCaricato);
 					}
 				}
 				
-				if(soggettoTrovato==null || soggettoTrovato.getUid()==0){
+				if(soggettoTrovato == null || soggettoTrovato.getUid() == 0){
 					//DEVO CARICARLO SUL SERIO:
 					
 					soggettoTrovato = map(soggEntity, Soggetto.class, FinMapId.SiacTSoggetto_Soggetto);
@@ -1231,21 +1237,21 @@ public class SoggettoFinDad extends AbstractFinDad
 						//NOTE:
 						//String note = EntityToModelConverter.estraiNotaValida(soggEntity);
 						//soggettoTrovato.setNote(note);
-						soggettoTrovato.setNote(EntityToModelConverter.estraiAttrSoggetto(soggEntity,Constanti.T_ATTR_CODE_NOTE_SOGGETTO));
+						soggettoTrovato.setNote(EntityToModelConverter.estraiAttrSoggetto(soggEntity,CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO));
 						
 						//CONTATTI:
 						List<Contatto> contatti = EntityToModelConverter.siacTRecapitoSoggettoToContattoList(soggEntity.getSiacTRecapitoSoggettos(), true);
 						soggettoTrovato.setContatti(contatti);
 
 						// MATRICOLA:
-						soggettoTrovato.setMatricola(EntityToModelConverter.estraiAttrSoggetto(soggEntity,Constanti.T_ATTR_CODE_MATRICOLA));
+						soggettoTrovato.setMatricola(EntityToModelConverter.estraiAttrSoggetto(soggEntity,CostantiFin.T_ATTR_CODE_MATRICOLA));
 
 					}
 					
 					
 					//ricerca modalita di pagamento
-					List<ModalitaPagamentoSoggetto> listaModPag = ricercaModalitaPagamentoOPT(Constanti.AMBITO_FIN,soggEntity.getUid(), "Soggetto", false,ottimizzazioneSoggetto, datiOperazioneDto,soggEntity);
-					if(listaModPag!=null && listaModPag.size()>0){
+					List<ModalitaPagamentoSoggetto> listaModPag = ricercaModalitaPagamentoOPT(CostantiFin.AMBITO_FIN,soggEntity.getUid(), "Soggetto", false,ottimizzazioneSoggetto, datiOperazioneDto,soggEntity);
+					if(listaModPag != null && listaModPag.size() > 0){
 						soggettoTrovato.setElencoModalitaPagamento(listaModPag);
 						soggettoTrovato.setModalitaPagamentoList(listaModPag);
 					}
@@ -1269,6 +1275,11 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Termino restituendo l'oggetto di ritorno:
 		return listaRitorno;
+	}
+	
+	//SIAC-7619
+	public List<SiacRMovgestTsSogclasseFin> findSiacRSoggettoClasseFinByMovGestTs(Integer uid) {
+		 return siacTSoggettoRepository.findSiacRSoggettoClasseBySiacTMovgestTs(uid);
 	}
 	
 	/**
@@ -1333,7 +1344,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				// se trovo uno degli indirizzi con il
 				// flag avviso a true allora
-				if (indirizzoSoggetto.getAvviso() != null && !indirizzoSoggetto.getAvviso().trim().equals("") && indirizzoSoggetto.getAvviso().equalsIgnoreCase(Constanti.STRING_TRUE))
+				if (indirizzoSoggetto.getAvviso() != null && !indirizzoSoggetto.getAvviso().trim().equals("") && indirizzoSoggetto.getAvviso().equalsIgnoreCase(CostantiFin.STRING_TRUE))
 				{
 					soggettoTrovato.setAvviso(true);
 				}
@@ -1408,7 +1419,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				dataInput = datiOperazione.getTs();
 			}
 			
-			SiacTSoggettoFin siacTSogg = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito,uidEnte, codiceSoggetto, Constanti.SEDE_SECONDARIA, dataInput);
+			SiacTSoggettoFin siacTSogg = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito,uidEnte, codiceSoggetto, CostantiFin.SEDE_SECONDARIA, dataInput);
 			
 			if(siacTSogg!=null){
 				
@@ -1457,11 +1468,11 @@ public class SoggettoFinDad extends AbstractFinDad
 			//
 			// NOTE
 			soggettoTrovato.setNote(EntityToModelConverter.estraiAttrSoggettoMod(soggEntity,
-					Constanti.T_ATTR_CODE_NOTE_SOGGETTO));
+					CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO));
 
 			// MATRICOLA
 			soggettoTrovato.setMatricola(EntityToModelConverter.estraiAttrSoggettoMod(soggEntity,
-					Constanti.T_ATTR_CODE_MATRICOLA));
+					CostantiFin.T_ATTR_CODE_MATRICOLA));
 
 			soggettoTrovato.setIndirizzi(listaIndirizziSoggetto);
 		}
@@ -1486,7 +1497,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		List<SiacTModpagFin> listaTModPags = siacTSoggettoRepository.ricercaModPag(codEnte, idSogg,now);
 
 		//MARZO 2016, NON VENIVANO ESCLUSE QUELLE NON PIU' VALIDE:
-		listaTModPags = DatiOperazioneUtils.soloValidi(listaTModPags, getNow());
+		listaTModPags = DatiOperazioneUtil.soloValidi(listaTModPags, getNow());
 		//
 		
 		SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.findOne(idSogg);
@@ -1534,7 +1545,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					modMdp.setLoginCreazione(mdpApp.getLoginCreazione());
 					modMdp.setDataCreazione(mdpApp.getDataCreazione());
 					modMdp.setLoginModifica(mdpModApp.getLoginOperazione());
-					modMdp.setDescrizioneStatoModalitaPagamento(Constanti.STATO_IN_MODIFICA_no_underscore);
+					modMdp.setDescrizioneStatoModalitaPagamento(CostantiFin.STATO_IN_MODIFICA_no_underscore);
 					modMdp.setUidOrigine(mdpApp.getUid());
 					modMdp.setAssociatoA(mdpApp.getAssociatoA());
 					modMdp.setTipoAccredito(mdpApp.getTipoAccredito());
@@ -1559,7 +1570,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				codEnte, idSogg, now);
 		
 		//MARZO 2016, NON VENIVANO ESCLUSE QUELLE NON PIU' VALIDE:
-		listaTModpagsCessioni = DatiOperazioneUtils.soloValidi(listaTModpagsCessioni, getNow());
+		listaTModpagsCessioni = DatiOperazioneUtil.soloValidi(listaTModpagsCessioni, getNow());
 		//
 		
 		List<ModalitaPagamentoSoggetto> listaModPagsCessioni = null;
@@ -1567,7 +1578,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		{
 			listaModPagsCessioni = convertiLista(listaTModpagsCessioni,
 					ModalitaPagamentoSoggetto.class, FinMapId.SiacTModPag_ModalitaPagamentoSoggetto);
-
+  
 			entityRefresh(siacTSoggetto);
 			listaModPagsCessioni = modalitaPagamentoEntityToModalitaPagamentoCessioniModel(
 					siacTSoggetto, listaTModpagsCessioni, listaModPagsCessioni, idSogg, associatoA,
@@ -1610,7 +1621,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 						modPagMod.setInModifica(true);
 						modPagMod
-								.setDescrizioneStatoModalitaPagamento(Constanti.STATO_IN_MODIFICA_no_underscore);
+								.setDescrizioneStatoModalitaPagamento(CostantiFin.STATO_IN_MODIFICA_no_underscore);
 						modPagMod.setUidOrigine(app.getUid());
 						modPagMod.setAssociatoA(app.getAssociatoA());
 						modPagMod.setTipoAccredito(app.getTipoAccredito());
@@ -1683,8 +1694,8 @@ public class SoggettoFinDad extends AbstractFinDad
 		
 		//TEST scommentare se si hanno dubbi:
 		/*List<SiacTModpagFin> listaTModPagsOld = siacTSoggettoRepository.ricercaModPag(codEnte, idSogg, now);
-		listaTModPagsOld = DatiOperazioneUtils.soloValidi(listaTModPagsOld, getNow());
-		boolean modPagsUguali = CommonUtils.sonoUgualiSiacTBaseByUid(listaTModPagsNew, listaTModPagsOld);
+		listaTModPagsOld = DatiOperazioneUtil.soloValidi(listaTModPagsOld, getNow());
+		boolean modPagsUguali = CommonUtil.sonoUgualiSiacTBaseByUid(listaTModPagsNew, listaTModPagsOld);
 		if(!modPagsUguali){
 			String ciao ="metti un breakpoint qui per intercettare errori";
 			ciao.charAt(0);
@@ -1724,7 +1735,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				
 				//TEST scommentare se si hanno dubbi:
 				/*SiacTModpagModFin mdpModOld = siacTModpagModRepository.findValidoByMdpId(idModPag);
-				boolean modpagModFinUguali = CommonUtils.sonoUgualiSiacTBaseByUid(mdpModOld, mdpModAppNew);
+				boolean modpagModFinUguali = CommonUtil.sonoUgualiSiacTBaseByUid(mdpModOld, mdpModAppNew);
 				if(!modpagModFinUguali){
 					String ciao ="metti un breakpoint qui per intercettare errori";
 					ciao.charAt(0);
@@ -1740,7 +1751,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					modMdp.setLoginCreazione(mdpApp.getLoginCreazione());
 					modMdp.setDataCreazione(mdpApp.getDataCreazione());
 					modMdp.setLoginModifica(mdpModAppNew.getLoginOperazione());
-					modMdp.setDescrizioneStatoModalitaPagamento(Constanti.STATO_IN_MODIFICA_no_underscore);
+					modMdp.setDescrizioneStatoModalitaPagamento(CostantiFin.STATO_IN_MODIFICA_no_underscore);
 					modMdp.setUidOrigine(mdpApp.getUid());
 					modMdp.setAssociatoA(mdpApp.getAssociatoA());
 					modMdp.setTipoAccredito(mdpApp.getTipoAccredito());
@@ -1763,8 +1774,8 @@ public class SoggettoFinDad extends AbstractFinDad
 		
 		//TEST scommentare se si hanno dubbi:
 		/*List<SiacTModpagFin> listaTModpagsCessioniOld = siacTSoggettoRepository.ricercaModPagCessioni(codEnte, idSogg, now);
-		listaTModpagsCessioniOld = DatiOperazioneUtils.soloValidi(listaTModpagsCessioniOld, getNow());
-		boolean modPagsCessioniUguali = CommonUtils.sonoUgualiSiacTBaseByUid(listaTModpagsCessioniNew, listaTModpagsCessioniOld);
+		listaTModpagsCessioniOld = DatiOperazioneUtil.soloValidi(listaTModpagsCessioniOld, getNow());
+		boolean modPagsCessioniUguali = CommonUtil.sonoUgualiSiacTBaseByUid(listaTModpagsCessioniNew, listaTModpagsCessioniOld);
 		if(!modPagsCessioniUguali){
 			String ciao ="metti un breakpoint qui per intercettare errori";
 			ciao.charAt(0);
@@ -1812,7 +1823,7 @@ public class SoggettoFinDad extends AbstractFinDad
 							modPagMod.setDataCreazione(app.getDataCreazione());
 
 							modPagMod.setInModifica(true);
-							modPagMod.setDescrizioneStatoModalitaPagamento(Constanti.STATO_IN_MODIFICA_no_underscore);
+							modPagMod.setDescrizioneStatoModalitaPagamento(CostantiFin.STATO_IN_MODIFICA_no_underscore);
 							modPagMod.setUidOrigine(app.getUid());
 							modPagMod.setAssociatoA(app.getAssociatoA());
 							modPagMod.setTipoAccredito(app.getTipoAccredito());
@@ -2071,7 +2082,7 @@ public class SoggettoFinDad extends AbstractFinDad
 //							{
 //								SiacRSoggrelModpagFin rSRMpIt = lisRSoggRMp.get(n);
 //								List<SiacRModpagOrdineFin> lSiacRMPO = rSRMpIt.getSiacRModpagOrdines();
-//								lSiacRMPO = DatiOperazioneUtils.soloValidi(lSiacRMPO, null);
+//								lSiacRMPO = DatiOperazioneUtil.soloValidi(lSiacRMPO, null);
 //								if (lSiacRMPO != null && lSiacRMPO.size() > 0)
 //								{
 //									for (int i = 0; i < lSiacRMPO.size() && !trovato; i++)
@@ -2241,7 +2252,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 
-		SiacTSoggettoFin siacTSoggettoDa = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, enteId, soggettoCode, Constanti.SEDE_SECONDARIA, getNow());
+		SiacTSoggettoFin siacTSoggettoDa = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, enteId, soggettoCode, CostantiFin.SEDE_SECONDARIA, getNow());
 
 		SiacRSoggettoRelazFin siacRSoggettoRelaz = siacRSoggettoRelazRepository.findValidaBySoggettiEModpag(siacTSoggettoDa.getUid(), dto.getSiacTSoggetto().getUid(), dto.getUid(), now);
 		if (siacRSoggettoRelaz != null) {
@@ -2280,7 +2291,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 
 		SiacTSoggettoFin siacTSoggettoDa = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
-				codiceAmbito, enteId, soggettoCode, Constanti.SEDE_SECONDARIA, getNow());
+				codiceAmbito, enteId, soggettoCode, CostantiFin.SEDE_SECONDARIA, getNow());
 
 		SiacRSoggettoRelazFin siacRSoggettoRelaz = siacRSoggettoRelazRepository
 				.findValidaBySoggettoEModpag(siacTSoggettoDa.getUid(), dto.getUid(), now);
@@ -2309,7 +2320,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				modPagDef.setCessioneCodSoggetto(dto.getSiacTSoggetto().getSoggettoCode());
 				modPagDef.setTipoAccredito(TipoAccredito.valueOf(siacRSoggettoRelaz
 						.getSiacDRelazTipo().getRelazTipoCode()));
-				modPagDef.setModalitaAccreditoSoggetto(Constanti
+				modPagDef.setModalitaAccreditoSoggetto(CostantiFin
 						.componiModalitaAccreditoDalTipo(modPagDef.getTipoAccredito()));
 
 				SiacRSoggettoRelazStatoFin relazStato = siacRSoggettoRelazStatoRepository
@@ -2398,7 +2409,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					modPagDef.setCessioneCodSoggetto(dto.getSiacTSoggetto().getSoggettoCode());
 					modPagDef.setTipoAccredito(TipoAccredito.valueOf(siacRSoggettoRelaz
 							.getSiacDRelazTipo().getRelazTipoCode()));
-					modPagDef.setModalitaAccreditoSoggetto(Constanti
+					modPagDef.setModalitaAccreditoSoggetto(CostantiFin
 							.componiModalitaAccreditoDalTipo(modPagDef.getTipoAccredito()));
 
 					SiacRSoggettoRelazStatoFin relazStato = siacRSoggettoRelazStatoRepository
@@ -2491,7 +2502,7 @@ public class SoggettoFinDad extends AbstractFinDad
 						modPagDef.setCessioneCodSoggetto(dto.getSiacTSoggetto().getSoggettoCode());
 						modPagDef.setTipoAccredito(TipoAccredito.valueOf(siacRSoggettoRelaz
 								.getSiacDRelazTipo().getRelazTipoCode()));
-						modPagDef.setModalitaAccreditoSoggetto(Constanti
+						modPagDef.setModalitaAccreditoSoggetto(CostantiFin
 								.componiModalitaAccreditoDalTipo(modPagDef.getTipoAccredito()));
 
 						SiacRSoggettoRelazStatoFin relazStato = siacRSoggettoRelazStatoRepository
@@ -2596,7 +2607,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			listaSediSecondarie = ottimizzazioneSoggetto.estraiSediSecondarie(idSogg);
 		} else {
 			//RAMO CLASSICO
-			listaSediSecondarie = siacTSoggettoRepository.ricercaSedi(codEnte,idSogg, Constanti.SEDE_SECONDARIA);
+			listaSediSecondarie = siacTSoggettoRepository.ricercaSedi(codEnte,idSogg, CostantiFin.SEDE_SECONDARIA);
 		}
 
 		if ((listaSediSecondarie != null) && !listaSediSecondarie.isEmpty())
@@ -2648,7 +2659,7 @@ public class SoggettoFinDad extends AbstractFinDad
 								sedeMod, null);
 						sedeIterata.setSiacRSoggettoStatos(backupStato);
 						sedeIterata.getSiacTIndirizzoSoggettos().get(0)
-								.setPrincipale(Constanti.TRUE);
+								.setPrincipale(CostantiFin.TRUE);
 
 						listaSediSecondarie.set(i, sedeIterata);
 						isMod = true;
@@ -2669,9 +2680,9 @@ public class SoggettoFinDad extends AbstractFinDad
 				// (solo da scenario ottimizzato)
 				for (SedeSecondariaSoggetto sedeIterata : listaTrovata){
 					//ricerca modalita di pagamento
-					SiacTSoggettoFin sedeEntityIt = CommonUtils.getByIdSiacTBase(listaSediSecondarie, sedeIterata.getUid());
+					SiacTSoggettoFin sedeEntityIt = CommonUtil.getByIdSiacTBase(listaSediSecondarie, sedeIterata.getUid());
 					if(sedeEntityIt!=null){
-						List<ModalitaPagamentoSoggetto> listaModPagSedeIterata = ricercaModalitaPagamentoOPT(Constanti.AMBITO_FIN,sedeIterata.getUid(), 
+						List<ModalitaPagamentoSoggetto> listaModPagSedeIterata = ricercaModalitaPagamentoOPT(CostantiFin.AMBITO_FIN,sedeIterata.getUid(), 
 								sedeIterata.getDenominazione(), false,ottimizzazioneSoggetto, datiOperazioneDto,sedeEntityIt);
 						sedeIterata.setModalitaPagamentoSoggettos(listaModPagSedeIterata);
 					}
@@ -2740,17 +2751,17 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		SiacTSoggettoFin siacTSoggetto = new SiacTSoggettoFin();
 
-		if (!StringUtils.isEmpty(soggettoInput.getPartitaIva()))
+		if (!StringUtilsFin.isEmpty(soggettoInput.getPartitaIva()))
 		{
 			String partitaIva = soggettoInput.getPartitaIva().trim().toUpperCase();
 			siacTSoggetto.setPartitaIva(partitaIva);
 		}
-		if (!StringUtils.isEmpty(soggettoInput.getCodiceFiscale()))
+		if (!StringUtilsFin.isEmpty(soggettoInput.getCodiceFiscale()))
 		{
 			String codFisc = soggettoInput.getCodiceFiscale().trim().toUpperCase();
 			siacTSoggetto.setCodiceFiscale(codFisc);
 		}
-		if (!StringUtils.isEmpty(soggettoInput.getCodiceFiscaleEstero()))
+		if (!StringUtilsFin.isEmpty(soggettoInput.getCodiceFiscaleEstero()))
 		{
 			String codFiscEst = soggettoInput.getCodiceFiscaleEstero().trim().toUpperCase();
 			siacTSoggetto.setCodiceFiscaleEstero(codFiscEst);
@@ -2770,7 +2781,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacTSoggetto.getFonteDurc() != null || 
 			org.apache.commons.lang.StringUtils.isNotBlank(siacTSoggetto.getNoteDurc())) {
 		
-			String loginOperazione = DatiOperazioneUtils.determinaUtenteLogin(datiOperazione,siacTAccountRepository);
+			String loginOperazione = DatiOperazioneUtil.determinaUtenteLogin(datiOperazione,siacTAccountRepository);
 			
 			siacTSoggetto.setLoginInserimentoDurc(loginOperazione );
 			siacTSoggetto.setLoginModificaDurc(loginOperazione);
@@ -2779,16 +2790,16 @@ public class SoggettoFinDad extends AbstractFinDad
 		
 		
 		//SIAC-6565-CR12115	
-		if (!StringUtils.isEmpty(soggettoInput.getCanalePA()))
+		if (!StringUtilsFin.isEmpty(soggettoInput.getCanalePA()))
 		{
 			siacTSoggetto.setCanalePA(soggettoInput.getCanalePA());
 		}
 		
-		if (!StringUtils.isEmpty(soggettoInput.getCodDestinatario()))
+		if (!StringUtilsFin.isEmpty(soggettoInput.getCodDestinatario()))
 		{
 			siacTSoggetto.setCodDestinatario(soggettoInput.getCodDestinatario().trim().toUpperCase());
 		}
-		if (!StringUtils.isEmpty(soggettoInput.getEmailPec()))
+		if (!StringUtilsFin.isEmpty(soggettoInput.getEmailPec()))
 		{
 
 			siacTSoggetto.setEmailPec(soggettoInput.getEmailPec().trim().toUpperCase());
@@ -2801,7 +2812,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		String codiceTipo = soggettoInput.getTipoSoggetto().getCodice();
 
 		boolean isPersonaFisica = false;
-		if (codiceTipo.trim().toUpperCase().startsWith(Constanti.PERSONA_FISICA))
+		if (codiceTipo.trim().toUpperCase().startsWith(CostantiFin.PERSONA_FISICA))
 		{
 			isPersonaFisica = true;
 		}
@@ -2829,8 +2840,12 @@ public class SoggettoFinDad extends AbstractFinDad
 		// becchiamo l'ambito:
 		SiacDAmbitoFin siacDAmbito = siacDAmbitoRepository.findOne(idAmbito);
 		siacTSoggetto.setSiacDAmbito(siacDAmbito);
+		
+		//task-6
+		siacTSoggetto.setIstitutoDiCredito(soggettoInput.isFlagIstitutoDiCredito());
+		
 		// imposta param dati operazione
-		siacTSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggetto,
+		siacTSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggetto,
 				datiOperazioneDto, siacTAccountRepository);
 		
 
@@ -2842,6 +2857,8 @@ public class SoggettoFinDad extends AbstractFinDad
 		siacTSoggetto.setFonteDurc(soggettoInput.getFonteDurcClassifId() != null ?
 				new SiacTClassFin(soggettoInput.getFonteDurcClassifId())
 				: null );
+		
+		
 		
 		// salvo sul db:
 		siacTSoggetto = siacTSoggettoRepository.saveAndFlush(siacTSoggetto);
@@ -2880,7 +2897,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		// natura giuridica:
 		NaturaGiuridicaSoggetto naturaGiuridicaSogg = soggettoInput.getNaturaGiuridicaSoggetto();
 		if (naturaGiuridicaSogg != null
-				&& !StringUtils.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
+				&& !StringUtilsFin.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
 		{
 			String codeFg = naturaGiuridicaSogg.getSoggettoTipoCode();
 			SiacTFormaGiuridicaFin siacTFormaGiuridica = siacTFormaGiuridicaRepository
@@ -2894,7 +2911,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		{
 			for (String codeClass : classificazioni)
 			{
-				if (!StringUtils.isEmpty(codeClass))
+				if (!StringUtilsFin.isEmpty(codeClass))
 				{
 					salvaSoggettoClasse(siacTSoggetto, idEnte, idAmbito, codeClass,
 							datiOperazioneDto);
@@ -2949,14 +2966,14 @@ public class SoggettoFinDad extends AbstractFinDad
 		attributoInfo.setSiacTSoggetto(siacTSoggetto);
 		attributoInfo.setTipoOggetto(OggettoDellAttributoTClass.T_SOGGETTO);
 		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, soggettoInput.getNote(),
-				Constanti.T_ATTR_CODE_NOTE_SOGGETTO);
+				CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO);
 
 		// Matricola soggetto
 		AttributoTClassInfoDto attributoInfoMatricola = new AttributoTClassInfoDto();
 		attributoInfoMatricola.setSiacTSoggetto(siacTSoggetto);
 		attributoInfoMatricola.setTipoOggetto(OggettoDellAttributoTClass.T_SOGGETTO);
 		salvaAttributoTAttr(attributoInfoMatricola, datiOperazioneDto,
-				soggettoInput.getMatricola(), Constanti.T_ATTR_CODE_MATRICOLA);
+				soggettoInput.getMatricola(), CostantiFin.T_ATTR_CODE_MATRICOLA);
 
 		// RITORNO RISULTATI:
 		Soggetto soggetto = new Soggetto();
@@ -2997,7 +3014,10 @@ public class SoggettoFinDad extends AbstractFinDad
 		SiacTSoggettoFin siacTSoggetto = new SiacTSoggettoFin();
 
 		siacTSoggetto.setSoggettoCode(soggettoDopoModifica.getSoggettoCode());
-
+		
+		//task-151
+		siacTSoggetto.setIstitutoDiCredito(ObjectUtils.defaultIfNull(soggettoDopoModifica.getIstitutoDiCredito(), Boolean.FALSE));
+		
 		String soggettoDesc = sede.getDenominazione();
 
 		siacTSoggetto.setSoggettoDesc(soggettoDesc);
@@ -3005,16 +3025,20 @@ public class SoggettoFinDad extends AbstractFinDad
 		SiacDAmbitoFin siacDAmbito = siacDAmbitoRepository.findOne(idAmbito);
 		siacTSoggetto.setSiacDAmbito(siacDAmbito);
 		// //////////////
-		siacTSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggetto,
+		siacTSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggetto,
 				datiOperazioneDto, siacTAccountRepository);
+		
+		// SIAC-7568
+		siacTSoggetto.setCodDestinatario(sede.getCodDestinatario());
+
 		// salvo sul db:
 		siacTSoggetto = siacTSoggettoRepository.saveAndFlush(siacTSoggetto);
 
 		SiacRSoggettoRelazFin siacRSoggettoRelaz = new SiacRSoggettoRelazFin();
-		siacRSoggettoRelaz = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRSoggettoRelaz,
+		siacRSoggettoRelaz = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRSoggettoRelaz,
 				datiOperazioneDto, siacTAccountRepository);
 		SiacDRelazTipoFin tipoRelaz = siacDRelazTipoRepository.findRelazione(
-				Constanti.SEDE_SECONDARIA, idEnte, datiOperazioneDto.getTs()).get(0);
+				CostantiFin.SEDE_SECONDARIA, idEnte, datiOperazioneDto.getTs()).get(0);
 		siacRSoggettoRelaz.setSiacDRelazTipo(tipoRelaz);
 		siacRSoggettoRelaz.setSiacTSoggetto1(soggettoDopoModifica);
 		siacRSoggettoRelaz.setSiacTSoggetto2(siacTSoggetto);
@@ -3039,8 +3063,8 @@ public class SoggettoFinDad extends AbstractFinDad
 		IndirizzoSoggetto indirizzo = sede.getIndirizzoSoggettoPrincipale();
 		if (indirizzo != null)
 		{
-			indirizzo.setIdTipoIndirizzo(Constanti.SEDE_LEGALE);
-			indirizzo.setPrincipale(Constanti.TRUE);
+			indirizzo.setIdTipoIndirizzo(CostantiFin.SEDE_LEGALE);
+			indirizzo.setPrincipale(CostantiFin.TRUE);
 			listaIndirizzi.add(indirizzo);
 			if (listaIndirizzi != null && listaIndirizzi.size() > 0)
 			{
@@ -3101,9 +3125,16 @@ public class SoggettoFinDad extends AbstractFinDad
 		SiacDAmbitoFin siacDAmbito = siacDAmbitoRepository.findOne(idAmbito);
 		siacTSoggetto.setSiacDAmbito(siacDAmbito);
 		// //////////////
-		siacTSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggetto,
+		siacTSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggetto,
 				datiOperazioneDto, siacTAccountRepository);
 		siacTSoggetto.setSoggettoId(sede.getUid());
+		
+		// SIAC-7568
+		siacTSoggetto.setCodDestinatario(sede.getCodDestinatario());
+		
+		//task-151
+		siacTSoggetto.setIstitutoDiCredito(false);
+				
 		// salvo sul db:
 		siacTSoggetto = siacTSoggettoRepository.saveAndFlush(siacTSoggetto);
 
@@ -3133,8 +3164,8 @@ public class SoggettoFinDad extends AbstractFinDad
 		IndirizzoSoggetto indirizzo = sede.getIndirizzoSoggettoPrincipale();
 		if (indirizzo != null)
 		{
-			indirizzo.setPrincipale(Constanti.TRUE);
-			indirizzo.setIdTipoIndirizzo(Constanti.SEDE_LEGALE);
+			indirizzo.setPrincipale(CostantiFin.TRUE);
+			indirizzo.setIdTipoIndirizzo(CostantiFin.SEDE_LEGALE);
 			listaIndirizzi.add(indirizzo);
 			aggiornamentoIndirizzi(listaIndirizzi, siacTSoggetto, datiOperazioneDto);
 		}
@@ -3161,7 +3192,7 @@ public class SoggettoFinDad extends AbstractFinDad
 	{
 		List<SiacTSoggettoModFin> siacTSoggettoModList = siacTSoggettoModRepository
 				.findValidoBySoggettoId(idSoggetto, getNow());
-		SiacTSoggettoModFin mod = CommonUtils.getFirst(siacTSoggettoModList);
+		SiacTSoggettoModFin mod = CommonUtil.getFirst(siacTSoggettoModList);
 		// Termino restituendo l'oggetto di ritorno:
 		return mod;
 	}
@@ -3200,8 +3231,12 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		siacTSoggettoMod.setSoggettoDesc(sede.getDenominazione());
 
-		siacTSoggettoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggettoMod,
+		siacTSoggettoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggettoMod,
 				datiOperazioneDto, siacTAccountRepository);
+		
+		// SIAC-7568
+		siacTSoggettoMod.setCodDestinatario(sede.getCodDestinatario());
+
 		// salvo sul db:
 		siacTSoggettoMod = siacTSoggettoModRepository.saveAndFlush(siacTSoggettoMod);
 
@@ -3210,8 +3245,8 @@ public class SoggettoFinDad extends AbstractFinDad
 		IndirizzoSoggetto indirizzo = sede.getIndirizzoSoggettoPrincipale();
 		if (indirizzo != null)
 		{
-			indirizzo.setPrincipale(Constanti.TRUE);
-			indirizzo.setIdTipoIndirizzo(Constanti.SEDE_LEGALE);
+			indirizzo.setPrincipale(CostantiFin.TRUE);
+			indirizzo.setIdTipoIndirizzo(CostantiFin.SEDE_LEGALE);
 			//
 			// Jira-627
 			// non presentava i dati corretti e aggiunta la patch del id=0
@@ -3424,7 +3459,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		if(numPagina!=null && dimPagina!=null){
 			//richiesta paginazione
 			paginaRichiesta = getPaginata(escludendoICancellati, numPagina, dimPagina);
-			int numeroDiPagine = StringUtils.calcolaNumeroDiPagine(escludendoICancellati.size(), dimPagina);
+			int numeroDiPagine = StringUtilsFin.calcolaNumeroDiPagine(escludendoICancellati.size(), dimPagina);
 			esito.setDimensionePagine(dimPagina);
 			esito.setNumeroPaginaRestituita(numPagina);
 			esito.setNumeroTotalePagine(numeroDiPagine);
@@ -3493,7 +3528,7 @@ public class SoggettoFinDad extends AbstractFinDad
 						SiacRSoggettoRelazFin relaz = ottimizzazioneSoggettoDto.findSiacRSoggettoRelazFinByID(idsLegamiSoggettiSuccessivi.get(i));
 						for (SiacDRelazTipoFin siacDRelazTipoValida : elencoLegamiValidi){
 							if (relaz.getSiacDRelazTipo().getRelazTipoCode().equalsIgnoreCase(siacDRelazTipoValida.getRelazTipoCode())){
-								Soggetto soggetto = CommonUtils.getById(soggettiDaRelazioni, relaz.getSiacTSoggetto2().getUid());
+								Soggetto soggetto = CommonUtil.getById(soggettiDaRelazioni, relaz.getSiacTSoggetto2().getUid());
 								soggetto.setTipoLegame(siacDRelazTipoValida.getRelazTipoDesc());
 								soggettosSuccessivi.add(soggetto);
 							}
@@ -3511,7 +3546,7 @@ public class SoggettoFinDad extends AbstractFinDad
 							if (relaz.getSiacDRelazTipo().getRelazTipoCode().equalsIgnoreCase(siacDRelazTipoValida.getRelazTipoCode())){
 								SiacTSoggettoFin siacTSoggetto = ottimizzazioneSoggettiRelazDto.findSiacTSoggettoFinByID(relaz.getSiacTSoggetto1().getUid());
 								if (siacTSoggetto.getDataCancellazione() == null){
-									Soggetto soggetto = CommonUtils.getById(soggettiDaRelazioni, relaz.getSiacTSoggetto1().getUid());
+									Soggetto soggetto = CommonUtil.getById(soggettiDaRelazioni, relaz.getSiacTSoggetto1().getUid());
 									soggetto.setTipoLegame(siacDRelazTipoValida.getRelazTipoDesc());
 									soggettosPrecedenti.add(soggetto);
 								}
@@ -3747,9 +3782,9 @@ public class SoggettoFinDad extends AbstractFinDad
 					SiacRSoggettoRelazStatoFin siacRSoggettoRelazStato = siacRSoggettoRelazStatoRepository
 							.findBySoggettoRelazId(modPagModToDelete.getUid());
 					SiacDRelazStatoFin siacDRelazStato = siacDRelazStatoRepository
-							.findDRelazStatoValidoByCode(idEnte, Constanti.STATO_VALIDO).get(0);
+							.findDRelazStatoValidoByCode(idEnte, CostantiFin.STATO_VALIDO).get(0);
 
-					siacRSoggettoRelazStato = DatiOperazioneUtils
+					siacRSoggettoRelazStato = DatiOperazioneUtil
 							.impostaDatiOperazioneLogin(siacRSoggettoRelazStato,
 									datiOperazioneModifica, siacTAccountRepository);
 					siacRSoggettoRelazStato.setSiacTEnteProprietario(siacTEnteProprietario);
@@ -3775,8 +3810,8 @@ public class SoggettoFinDad extends AbstractFinDad
 		{
 
 			SiacRModpagStatoFin siacRModpagStatoToReverse = siacRModpagStatoRepository
-					.findStatoValidoByMdpId(modPagModToDelete.getUid()).get(0);
-			siacRModpagStatoToReverse = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					.findStatoValidoByModpagId(modPagModToDelete.getUid());
+			siacRModpagStatoToReverse = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacRModpagStatoToReverse, datiOperazioneModifica, siacTAccountRepository);
 			siacRModpagStatoToReverse.setSiacTModpag(siacTModpagToReverse);
 
@@ -3785,7 +3820,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					.setDataCreazione(siacRModpagStatoToReverse.getDataCreazione());
 
 			SiacDModpagStatoFin siacDModpagStato = siacDModpagStatoRepository
-					.findModPagStatoDValidoByCode(idEnte, Constanti.STATO_VALIDO,
+					.findModPagStatoDValidoByCode(idEnte, CostantiFin.STATO_VALIDO,
 							datiOperazioneModifica.getTs()).get(0);
 			siacRModpagStatoToReverse.setSiacDModpagStato(siacDModpagStato);
 			// salvo sul db:
@@ -3820,7 +3855,7 @@ public class SoggettoFinDad extends AbstractFinDad
 						// Se valido
 						currMillisec = System.currentTimeMillis();
 						datiOperazioneCancellazioneLogica.setCurrMillisec(currMillisec);
-						siacTPersonaFisicaMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+						siacTPersonaFisicaMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 								siacTPersonaFisicaMod, datiOperazioneCancellazioneLogica,
 								siacTAccountRepository);
 						// salvo sul db:
@@ -3841,7 +3876,7 @@ public class SoggettoFinDad extends AbstractFinDad
 						// Se valido
 						currMillisec = System.currentTimeMillis();
 						datiOperazioneCancellazioneLogica.setCurrMillisec(currMillisec);
-						siacTPersonaGiuridicaMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+						siacTPersonaGiuridicaMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 								siacTPersonaGiuridicaMod, datiOperazioneCancellazioneLogica,
 								siacTAccountRepository);
 						// salvo sul db:
@@ -3859,7 +3894,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					currMillisec = System.currentTimeMillis();
 					datiOperazioneCancellazioneLogica.setCurrMillisec(currMillisec);
-					siacTRecapitoSoggettoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					siacTRecapitoSoggettoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 							siacTRecapitoSoggettoMod, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 					// salvo sul db:
@@ -3875,7 +3910,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					currMillisec = System.currentTimeMillis();
 					datiOperazioneCancellazioneLogica.setCurrMillisec(currMillisec);
-					siacTModpagMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTModpagMod,
+					siacTModpagMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTModpagMod,
 							datiOperazioneCancellazioneLogica, siacTAccountRepository);
 					// salvo sul db:
 					siacTModpagModRepository.saveAndFlush(siacTModpagMod);
@@ -3903,7 +3938,7 @@ public class SoggettoFinDad extends AbstractFinDad
 									&& rIndirizzoSoggettoTipoMod.getDataFineValidita() == null)
 							{
 								// Se valido
-								rIndirizzoSoggettoTipoMod = DatiOperazioneUtils
+								rIndirizzoSoggettoTipoMod = DatiOperazioneUtil
 										.impostaDatiOperazioneLogin(rIndirizzoSoggettoTipoMod,
 												datiOperazioneCancellazioneLogica,
 												siacTAccountRepository);
@@ -3914,7 +3949,7 @@ public class SoggettoFinDad extends AbstractFinDad
 						}
 					}
 
-					siacTIndirizzoSoggettoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					siacTIndirizzoSoggettoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 							siacTIndirizzoSoggettoMod, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 					// salvo sul db:
@@ -3931,7 +3966,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					currMillisec = System.currentTimeMillis();
 					datiOperazioneCancellazioneLogica.setCurrMillisec(currMillisec);
-					siacRSoggrelModpagMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					siacRSoggrelModpagMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 							siacRSoggrelModpagMod, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 					// salvo sul db:
@@ -3948,7 +3983,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					currMillisec = System.currentTimeMillis();
 					datiOperazioneCancellazioneLogica.setCurrMillisec(currMillisec);
-					siacRSoggettoRelazMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					siacRSoggettoRelazMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 							siacRSoggettoRelazMod, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 					// salvo sul db:
@@ -3965,7 +4000,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					currMillisec = System.currentTimeMillis();
 					datiOperazioneCancellazioneLogica.setCurrMillisec(currMillisec);
-					siacRSoggettoOnereMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					siacRSoggettoOnereMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 							siacRSoggettoOnereMod, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 					// salvo sul db:
@@ -3982,7 +4017,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					currMillisec = System.currentTimeMillis();
 					datiOperazioneCancellazioneLogica.setCurrMillisec(currMillisec);
-					siacRSoggettoClasseMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					siacRSoggettoClasseMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 							siacRSoggettoClasseMod, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 					// salvo sul db:
@@ -3999,7 +4034,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					currMillisec = System.currentTimeMillis();
 					datiOperazioneCancellazioneLogica.setCurrMillisec(currMillisec);
-					siacRSoggettoAttrMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					siacRSoggettoAttrMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 							siacRSoggettoAttrMod, datiOperazioneCancellazioneLogica,
 							siacTAccountRepository);
 					// salvo sul db:
@@ -4007,7 +4042,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				}
 			}
 
-			siacTSoggettoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggettoMod,
+			siacTSoggettoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggettoMod,
 					datiOperazioneCancellazioneLogica, siacTAccountRepository);
 			// salvo sul db:
 			siacTSoggettoModRepository.saveAndFlush(siacTSoggettoMod);
@@ -4114,7 +4149,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					DatiOperazioneDto datiAnnulla = new DatiOperazioneDto(currMillisec,
 							operazioneAnnulla, siacTEnteProprietario, richiedente.getAccount()
 									.getId());
-					DatiOperazioneUtils.annullaRecord(iterato, siacRSoggettoAttrRepository,
+					DatiOperazioneUtil.annullaRecord(iterato, siacRSoggettoAttrRepository,
 							datiAnnulla, siacTAccountRepository);
 					// salvo sul db:
 					iterato = siacRSoggettoAttrRepository.saveAndFlush(iterato);
@@ -4125,7 +4160,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		// TRAVASO SU SiacTSoggettoFin
 		siacTSoggettoOriginale = EntityToEntityConverter.siacTSoggettoModToSiacTSoggetto(
 				siacTSoggettoMod, loginOperazione);
-		siacTSoggettoOriginale = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacTSoggettoOriginale = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacTSoggettoOriginale, datiOperazioneModifica, siacTAccountRepository);
 		siacTSoggettoOriginale.setLoginCreazione(loginOperazione);
 		// salvo sul db:
@@ -4156,7 +4191,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				// invalido la persona giuridica:
 				SiacTPersonaGiuridicaFin personaGiuridica = soggettoTipoDto
 						.getSiactTpersonaGiuridica();
-				personaGiuridica = DatiOperazioneUtils.cancellaRecord(personaGiuridica,
+				personaGiuridica = DatiOperazioneUtil.cancellaRecord(personaGiuridica,
 						siacTPersonaGiuridicaRepository, datiOperazioneModifica,
 						siacTAccountRepository);
 				// inserisco una persona fisica:
@@ -4171,7 +4206,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				// caso era fisica e diventa giuridica
 				// invalido la persona fisica:
 				SiacTPersonaFisicaFin personaFisica = soggettoTipoDto.getSiactTpersonaFisica();
-				personaFisica = DatiOperazioneUtils.cancellaRecord(personaFisica,
+				personaFisica = DatiOperazioneUtil.cancellaRecord(personaFisica,
 						siacTPersonaFisicaRepository, datiOperazioneModifica,
 						siacTAccountRepository);
 				// inserisco una persona fisica:
@@ -4190,7 +4225,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				// PERSONA FISICA
 				// invalido la vecchia persona fisica:
 				SiacTPersonaFisicaFin personaFisicaDelete = soggettoTipoDto.getSiactTpersonaFisica();
-				personaFisicaDelete = DatiOperazioneUtils.cancellaRecord(personaFisicaDelete,
+				personaFisicaDelete = DatiOperazioneUtil.cancellaRecord(personaFisicaDelete,
 						siacTPersonaFisicaRepository, datiOperazioneModifica,
 						siacTAccountRepository);
 
@@ -4207,7 +4242,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				// invalido la vecchia persona giuridica:
 				SiacTPersonaGiuridicaFin personaGiuridicaDelete = soggettoTipoDto
 						.getSiactTpersonaGiuridica();
-				personaGiuridicaDelete = DatiOperazioneUtils.cancellaRecord(personaGiuridicaDelete,
+				personaGiuridicaDelete = DatiOperazioneUtil.cancellaRecord(personaGiuridicaDelete,
 						siacTPersonaGiuridicaRepository, datiOperazioneModifica,
 						siacTAccountRepository);
 
@@ -4292,7 +4327,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					contatto.setDescrizione(modIterato.getRecapitoDesc());
 					contatto.setContattoCodModo(modIterato.getSiacDRecapitoModo()
 							.getRecapitoModoCode());
-					contatto.setAvviso(StringUtils.checkStringBooleanForDb(modIterato.getAvviso()));
+					contatto.setAvviso(StringUtilsFin.checkStringBooleanForDb(modIterato.getAvviso()));
 					listaContatti.add(contatto);
 				}
 			}
@@ -4326,7 +4361,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			for (SiacRSoggettoOnereFin daElimin : oneriEliminati)
 			{
 				datiOperazioneModifica.setCurrMillisec(System.currentTimeMillis());
-				DatiOperazioneUtils.cancellaRecord(daElimin, siacRSoggettoOnereRepository,
+				DatiOperazioneUtil.cancellaRecord(daElimin, siacRSoggettoOnereRepository,
 						datiOperazioneModifica, siacTAccountRepository);
 			}
 		}
@@ -4365,7 +4400,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			for (SiacRSoggettoOnereModFin daElimin : oneriEliminati)
 			{
 				datiOperazioneModifica.setCurrMillisec(System.currentTimeMillis());
-				DatiOperazioneUtils.cancellaRecord(daElimin, siacRSoggettoOnereModRepository,
+				DatiOperazioneUtil.cancellaRecord(daElimin, siacRSoggettoOnereModRepository,
 						datiOperazioneModifica, siacTAccountRepository);
 			}
 		}
@@ -4405,7 +4440,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			for (SiacRSoggettoClasseFin daElimin : classDaEliminare)
 			{
 				datiOperazioneModifica.setCurrMillisec(System.currentTimeMillis());
-				DatiOperazioneUtils.cancellaRecord(daElimin, siacRSoggettoClasseRepository,
+				DatiOperazioneUtil.cancellaRecord(daElimin, siacRSoggettoClasseRepository,
 						datiOperazioneModifica, siacTAccountRepository);
 			}
 		}
@@ -4413,7 +4448,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		{
 			for (String codeClass : nuoveClasse)
 			{
-				if (!StringUtils.isEmpty(codeClass))
+				if (!StringUtilsFin.isEmpty(codeClass))
 				{
 					salvaSoggettoClasse(siacTSoggetto, idEnte, idAmbito, codeClass,
 							datiOperazioneInserisci);
@@ -4450,7 +4485,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			for (SiacRSoggettoClasseModFin daElimin : classDaEliminare)
 			{
 				datiOperazioneModifica.setCurrMillisec(System.currentTimeMillis());
-				DatiOperazioneUtils.cancellaRecord(daElimin, siacRSoggettoClasseModRepository,
+				DatiOperazioneUtil.cancellaRecord(daElimin, siacRSoggettoClasseModRepository,
 						datiOperazioneModifica, siacTAccountRepository);
 			}
 		}
@@ -4458,7 +4493,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		{
 			for (String codeClass : nuoveClasse)
 			{
-				if (!StringUtils.isEmpty(codeClass))
+				if (!StringUtilsFin.isEmpty(codeClass))
 				{
 					salvaSoggettoClasseMod(siacTSoggetto.getSiacTSoggetto(), siacTSoggetto, idEnte,
 							idAmbito, codeClass, datiOperazioneInserisci);
@@ -4513,11 +4548,11 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo bancario
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Circuito_bancario)
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_bancario)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Circuito_Banca_d_Italia)
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_Banca_d_Italia)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Circuito_Postale))
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_Postale))
 		{
 
 			siacTModPagToUpdate = siacTModpagRepository.findOne(mdpToUpdate.getUid());
@@ -4525,7 +4560,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacTModPagToUpdate.setUid(mdpToUpdate.getUid());
 
 			// imposto operazioni di base
-			siacTModPagToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTModPagToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTModPagToUpdate, datiOperazioneModifica, siacTAccountRepository);
 
 			if (mdpToUpdate.getBic() != null)
@@ -4597,13 +4632,13 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// Nel caso lo stato cambia ()
 			SiacRModpagStatoFin siacRModpagStatoToCheck = siacRModpagStatoRepository
-					.findStatoValidoByMdpId(mdpToUpdate.getUid()).get(0);
+					.findStatoValidoByModpagId(mdpToUpdate.getUid());
 			if (!siacRModpagStatoToCheck.getSiacDModpagStato().getModpagStatoDesc()
 					.equalsIgnoreCase(mdpToUpdate.getDescrizioneStatoModalitaPagamento()))
 			{
 				SiacRModpagStatoFin siacRModpagStatoToUpdate = siacRModpagStatoRepository
-						.findStatoValidoByMdpId(mdpToUpdate.getUid()).get(0);
-				siacRModpagStatoToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+						.findStatoValidoByModpagId(mdpToUpdate.getUid());
+				siacRModpagStatoToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 						siacRModpagStatoToUpdate, datiOperazione, siacTAccountRepository);
 
 				siacRModpagStatoToUpdate.setSiacTModpag(siacTModPagInserito);
@@ -4624,7 +4659,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo contante
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Contanti))
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Contanti))
 		{
 
 			siacTModPagToUpdate = siacTModpagRepository.findOne(mdpToUpdate.getUid());
@@ -4632,7 +4667,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacTModPagToUpdate.setUid(mdpToUpdate.getUid());
 
 			// imposto operazioni di base
-			siacTModPagToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTModPagToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTModPagToUpdate, datiOperazioneModifica, siacTAccountRepository);
 
 			if (mdpToUpdate.getCodiceFiscaleQuietanzante() != null)
@@ -4706,13 +4741,13 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// Nel caso lo stato cambia ()
 			SiacRModpagStatoFin siacRModpagStatoToCheck = siacRModpagStatoRepository
-					.findStatoValidoByMdpId(mdpToUpdate.getUid()).get(0);
+					.findStatoValidoByModpagId(mdpToUpdate.getUid());
 			if (!siacRModpagStatoToCheck.getSiacDModpagStato().getModpagStatoDesc()
 					.equalsIgnoreCase(mdpToUpdate.getDescrizioneStatoModalitaPagamento()))
 			{
 				SiacRModpagStatoFin siacRModpagStatoToUpdate = siacRModpagStatoRepository
-						.findStatoValidoByMdpId(mdpToUpdate.getUid()).get(0);
-				siacRModpagStatoToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+						.findStatoValidoByModpagId(mdpToUpdate.getUid());
+				siacRModpagStatoToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 						siacRModpagStatoToUpdate, datiOperazioneModifica, siacTAccountRepository);
 
 				siacRModpagStatoToUpdate.setSiacTModpag(siacTModpagInserito);
@@ -4734,7 +4769,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo contante
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Generico))
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Generico))
 		{
 
 			siacTModPagToUpdate = siacTModpagRepository.findOne(mdpToUpdate.getUid());
@@ -4742,7 +4777,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacTModPagToUpdate.setUid(mdpToUpdate.getUid());
 
 			// imposto operazioni di base
-			siacTModPagToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTModPagToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTModPagToUpdate, datiOperazioneModifica, siacTAccountRepository);
 
 			if (mdpToUpdate.getNote() != null)
@@ -4786,13 +4821,13 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// Nel caso lo stato cambia ()
 			SiacRModpagStatoFin siacRModpagStatoToCheck = siacRModpagStatoRepository
-					.findStatoValidoByMdpId(mdpToUpdate.getUid()).get(0);
+					.findStatoValidoByModpagId(mdpToUpdate.getUid());
 			if (!siacRModpagStatoToCheck.getSiacDModpagStato().getModpagStatoDesc()
 					.equalsIgnoreCase(mdpToUpdate.getDescrizioneStatoModalitaPagamento()))
 			{
 				SiacRModpagStatoFin siacRModpagStatoToUpdate = siacRModpagStatoRepository
-						.findStatoValidoByMdpId(mdpToUpdate.getUid()).get(0);
-				siacRModpagStatoToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+						.findStatoValidoByModpagId(mdpToUpdate.getUid());
+				siacRModpagStatoToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 						siacRModpagStatoToUpdate, datiOperazioneModifica, siacTAccountRepository);
 
 				siacRModpagStatoToUpdate.setSiacTModpag(siacTModpagInserito);
@@ -4814,9 +4849,9 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo cessione
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
 		{
 
 			SiacRSoggettoRelazFin soggRelazToUpdate = siacRSoggettoRelazRepository.findOne(mdpToUpdate
@@ -4858,7 +4893,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					.findValidiBySoggettoRelaz(soggRelazToUpdate.getUid());
 
 			// imposto operazioni di base
-			siacRSoggrelModpagToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacRSoggrelModpagToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacRSoggrelModpagToUpdate, datiOperazioneModifica, siacTAccountRepository);
 
 			siacRSoggrelModpagToUpdate.setSiacRSoggettoRelaz(soggRelazToUpdate);
@@ -4930,7 +4965,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				siacTEnteProprietario, richiedente.getAccount().getId());
 
 		// JIRA 1188-aggiornamento della data ultimo aggiornamento
-		siacTSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggetto,
+		siacTSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggetto,
 				datiOperazioneModifica, siacTAccountRepository);
 		siacTSoggetto.setLoginCreazione(loginOperazione);
 		// salvo sul db:
@@ -5054,13 +5089,13 @@ public class SoggettoFinDad extends AbstractFinDad
 		
 		EsitoControlliDto esitoControlli = new EsitoControlliDto();
 		
-		SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codiceSoggetto, Constanti.SEDE_SECONDARIA, getNow());
+		SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codiceSoggetto, CostantiFin.SEDE_SECONDARIA, getNow());
 		
 		
 		SiacDSoggettoStatoFin siacDSoggettoStato = getStatoSoggetto(siacTSoggetto);
 		
-		if (!Constanti.STATO_VALIDO.equals(siacDSoggettoStato.getSoggettoStatoCode())
-				&& !Constanti.STATO_IN_MODIFICA.equals(siacDSoggettoStato.getSoggettoStatoCode()))
+		if (!CostantiFin.STATO_VALIDO.equals(siacDSoggettoStato.getSoggettoStatoCode())
+				&& !CostantiFin.STATO_IN_MODIFICA.equals(siacDSoggettoStato.getSoggettoStatoCode()))
 		{
 			esitoControlli.addErrore(ErroreCore.OPERAZIONE_INCOMPATIBILE_CON_STATO_ENTITA.getErrore(
 					"soggetto " + siacTSoggetto.getSoggettoCode(), siacDSoggettoStato.getSoggettoStatoCode()));
@@ -5123,7 +5158,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			String codiceAmbito, Richiedente richiedente, Integer idEnte, DatiOperazioneDto datiOperazioneDto){
 		
 		
-		SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codiceSoggetto, Constanti.SEDE_SECONDARIA, getNow());
+		SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, codiceSoggetto, CostantiFin.SEDE_SECONDARIA, getNow());
 		
 		// select by codice dove il code e' costante
 		SiacDAmbitoFin siacDAmbitoPerCode = datiOperazioneDto.getSiacDAmbito();
@@ -5172,7 +5207,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		
 		
 		SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
-				codiceAmbito, idEnte, codiceSoggetto, Constanti.SEDE_SECONDARIA, getNow());
+				codiceAmbito, idEnte, codiceSoggetto, CostantiFin.SEDE_SECONDARIA, getNow());
 		
 		// select by codice dove il code e' costante
 		SiacDAmbitoFin siacDAmbitoPerCode = datiOperazioneDto.getSiacDAmbito();
@@ -5262,7 +5297,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		{ 
 			// LOGIN INS/MDF DURC - SIAC-6874
 			if (datiDurcModificati(siacTSoggetto, soggettoDaModificare)) {
-				String loginOperazione = DatiOperazioneUtils.determinaUtenteLogin(datiOperazione, siacTAccountRepository);
+				String loginOperazione = DatiOperazioneUtil.determinaUtenteLogin(datiOperazione, siacTAccountRepository);
 				
 				if (siacTSoggetto.getDataFineValiditaDurc() == null && 
 					siacTSoggetto.getFonteDurc() == null &&
@@ -5283,7 +5318,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			
 			siacTSoggetto.setNoteDurc(soggettoDaModificare.getNoteDurc());
 
-			if (!StringUtils.isEmpty(soggettoDaModificare.getPartitaIva()))
+			if (!StringUtilsFin.isEmpty(soggettoDaModificare.getPartitaIva()))
 			{
 				String partitaIva = soggettoDaModificare.getPartitaIva().trim().toUpperCase();
 				siacTSoggetto.setPartitaIva(partitaIva);
@@ -5292,7 +5327,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				siacTSoggetto.setPartitaIva(null);
 			}
-			if (!StringUtils.isEmpty(soggettoDaModificare.getCodiceFiscale()))
+			if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodiceFiscale()))
 			{
 				String codFisc = soggettoDaModificare.getCodiceFiscale().trim().toUpperCase();
 				siacTSoggetto.setCodiceFiscale(codFisc);
@@ -5301,7 +5336,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				siacTSoggetto.setCodiceFiscale(null);
 			}
-			if (!StringUtils.isEmpty(soggettoDaModificare.getCodiceFiscaleEstero()))
+			if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodiceFiscaleEstero()))
 			{
 				String codFiscEst = soggettoDaModificare.getCodiceFiscaleEstero().trim()
 						.toUpperCase();
@@ -5317,7 +5352,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					.getSoggettoTipoCode();
 
 			boolean isPersonaFisicaDopoModifica = false;
-			if (codiceTipo.trim().toUpperCase().startsWith(Constanti.PERSONA_FISICA))
+			if (codiceTipo.trim().toUpperCase().startsWith(CostantiFin.PERSONA_FISICA))
 			{
 				isPersonaFisicaDopoModifica = true;
 			}
@@ -5337,7 +5372,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacTSoggetto.setSoggettoDesc(soggettoDesc);
 
 			siacTSoggetto.setDataInizioValidita(dateInserimento);
-			siacTSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggetto,
+			siacTSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggetto,
 					datiOperazioneModifica, siacTAccountRepository);
 	
 			
@@ -5346,6 +5381,9 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacTSoggetto.setCanalePA(soggettoDaModificare.getCanalePA());
 			siacTSoggetto.setCodDestinatario(soggettoDaModificare.getCodDestinatario());
 			siacTSoggetto.setEmailPec(soggettoDaModificare.getEmailPec());
+			
+			//task-6
+			siacTSoggetto.setIstitutoDiCredito(soggettoDaModificare.isFlagIstitutoDiCredito());
 			
 			// salvo sul db:
 			siacTSoggetto = siacTSoggettoRepository.saveAndFlush(siacTSoggetto);
@@ -5358,7 +5396,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// invalido la persona giuridica:
 					SiacTPersonaGiuridicaFin personaGiuridica = soggettoTipoDto
 							.getSiactTpersonaGiuridica();
-					personaGiuridica = DatiOperazioneUtils.cancellaRecord(personaGiuridica,
+					personaGiuridica = DatiOperazioneUtil.cancellaRecord(personaGiuridica,
 							siacTPersonaGiuridicaRepository, datiOperazioneModifica,
 							siacTAccountRepository);
 					// inserisco una persona fisica:
@@ -5371,7 +5409,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// caso era fisica e diventa giuridica
 					// invalido la persona fisica:
 					SiacTPersonaFisicaFin personaFisica = soggettoTipoDto.getSiactTpersonaFisica();
-					personaFisica = DatiOperazioneUtils.cancellaRecord(personaFisica,
+					personaFisica = DatiOperazioneUtil.cancellaRecord(personaFisica,
 							siacTPersonaFisicaRepository, datiOperazioneModifica,
 							siacTAccountRepository);
 					// inserisco una persona giuridica:
@@ -5389,7 +5427,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// invalido la vecchia occorrenza di persona fisica:
 					SiacTPersonaFisicaFin personaFisicaDelete = soggettoTipoDto
 							.getSiactTpersonaFisica();
-					personaFisicaDelete = DatiOperazioneUtils.cancellaRecord(personaFisicaDelete,
+					personaFisicaDelete = DatiOperazioneUtil.cancellaRecord(personaFisicaDelete,
 							siacTPersonaFisicaRepository, datiOperazioneModifica,
 							siacTAccountRepository);
 
@@ -5405,7 +5443,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// invalido la vecchia occorrenza di persona giuridica
 					SiacTPersonaGiuridicaFin personaGiuridicaDelete = soggettoTipoDto
 							.getSiactTpersonaGiuridica();
-					personaGiuridicaDelete = DatiOperazioneUtils.cancellaRecord(
+					personaGiuridicaDelete = DatiOperazioneUtil.cancellaRecord(
 							personaGiuridicaDelete, siacTPersonaGiuridicaRepository,
 							datiOperazioneModifica, siacTAccountRepository);
 
@@ -5434,7 +5472,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					{
 						// e' stato cambiato, occorre aggiornare i dati
 						// invalido la relazione old:
-						siacRSoggTipoOld = DatiOperazioneUtils.cancellaRecord(siacRSoggTipoOld,
+						siacRSoggTipoOld = DatiOperazioneUtil.cancellaRecord(siacRSoggTipoOld,
 								siacRSoggettoTipoRepository, datiOperazioneModifica,
 								siacTAccountRepository);
 						// inserisco un nuovo legame:
@@ -5448,7 +5486,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			NaturaGiuridicaSoggetto naturaGiuridicaSogg = soggettoDaModificare
 					.getNaturaGiuridicaSoggetto();
 			if (null != naturaGiuridicaSogg
-					&& !StringUtils.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
+					&& !StringUtilsFin.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
 			{
 				// Per il soggetto modificato e' stata selezionata una natura
 				// giuridica
@@ -5465,12 +5503,12 @@ public class SoggettoFinDad extends AbstractFinDad
 							.getSiacTFormaGiuridica();
 					String codeOld = siacTFormaGiuridicaOld.getFormaGiuridicaIstatCodice();
 					String codeNew = naturaGiuridicaSogg.getSoggettoTipoCode();
-					if (null != codeNew && !StringUtils.isEmpty(codeNew))
+					if (null != codeNew && !StringUtilsFin.isEmpty(codeNew))
 					{
 						if (!codeOld.equals(codeNew))
 						{
 							// invalido record di relazione vecchio:
-							rFormaGiuOld = DatiOperazioneUtils.cancellaRecord(rFormaGiuOld,
+							rFormaGiuOld = DatiOperazioneUtil.cancellaRecord(rFormaGiuOld,
 									siacRFormaGiuridicaRepository, datiOperazioneModifica,
 									siacTAccountRepository);
 							// inserisco nuovo record di relazione:
@@ -5509,7 +5547,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// Il soggetto aveva una natura giuridica associata, la
 					// cancello logicamente
 					SiacRFormaGiuridicaFin rFormaGiuOld = listRFormaGiuOld.get(0);
-					rFormaGiuOld = DatiOperazioneUtils.cancellaRecord(rFormaGiuOld,
+					rFormaGiuOld = DatiOperazioneUtil.cancellaRecord(rFormaGiuOld,
 							siacRFormaGiuridicaRepository, datiOperazioneModifica,
 							siacTAccountRepository);
 				}
@@ -5641,7 +5679,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			}
 
 			salvaAttributoTAttr(attributoInfo, datiOperazioneModifica, note,
-					Constanti.T_ATTR_CODE_NOTE_SOGGETTO);
+					CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO);
 
 			// MATRICOLA
 			AttributoTClassInfoDto attributoInfoMatricola = new AttributoTClassInfoDto();
@@ -5653,7 +5691,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				matricola = matricola.toUpperCase();
 			}
 			salvaAttributoTAttr(attributoInfo, datiOperazioneModifica, matricola,
-					Constanti.T_ATTR_CODE_MATRICOLA);
+					CostantiFin.T_ATTR_CODE_MATRICOLA);
 
 		}
 		else
@@ -5806,14 +5844,14 @@ public class SoggettoFinDad extends AbstractFinDad
 			for (SiacTRecapitoSoggettoFin daInvalidare : listaDaInvalidare)
 			{
 				datiOperazioneModifica.setCurrMillisec(System.currentTimeMillis());
-				DatiOperazioneUtils.cancellaRecord(daInvalidare, siacTRecapitoSoggettoRepository,
+				DatiOperazioneUtil.cancellaRecord(daInvalidare, siacTRecapitoSoggettoRepository,
 						datiOperazioneModifica, siacTAccountRepository);
 			}
 		}
 		// 2. contatti da salvare:
 		for (Contatto contattoIterato : listaContattiDaSalvare)
 		{
-			if (!StringUtils.isEmpty(contattoIterato.getDescrizione()))
+			if (!StringUtilsFin.isEmpty(contattoIterato.getDescrizione()))
 			{
 				datiOperazioneInserisci.setCurrMillisec(System.currentTimeMillis());
 				salvaContatto(contattoIterato, siacTSoggetto, idEnte, datiOperazioneInserisci, null);
@@ -5856,7 +5894,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			for (SiacTRecapitoSoggettoModFin daInvalidare : listaDaInvalidare)
 			{
 				datiOperazioneModifica.setCurrMillisec(System.currentTimeMillis());
-				DatiOperazioneUtils.cancellaRecord(daInvalidare,
+				DatiOperazioneUtil.cancellaRecord(daInvalidare,
 						siacTRecapitoSoggettoModRepository, datiOperazioneModifica,
 						siacTAccountRepository);
 			}
@@ -5864,7 +5902,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		// 2. contatti da inserire:
 		for (Contatto contattoIterato : listaContattiDaSalvare)
 		{
-			if (!StringUtils.isEmpty(contattoIterato.getDescrizione()))
+			if (!StringUtilsFin.isEmpty(contattoIterato.getDescrizione()))
 			{
 				datiOperazioneInserisci.setCurrMillisec(System.currentTimeMillis());
 				salvaContattoMod(contattoIterato, siacTSoggettoMod.getSiacTSoggetto(),
@@ -6015,42 +6053,45 @@ public class SoggettoFinDad extends AbstractFinDad
 		siacTSoggettoMod.setNoteDurc(soggettoDaModificare.getNoteDurc());
 		
 		
-		if (!StringUtils.isEmpty(soggettoDaModificare.getPartitaIva()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getPartitaIva()))
 		{
 			String partitaIva = soggettoDaModificare.getPartitaIva().trim().toUpperCase();
 			siacTSoggettoMod.setPartitaIva(partitaIva);
 		}
-		if (!StringUtils.isEmpty(soggettoDaModificare.getCodiceFiscale()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodiceFiscale()))
 		{
 			String codFisc = soggettoDaModificare.getCodiceFiscale().trim().toUpperCase();
 			siacTSoggettoMod.setCodiceFiscale(codFisc);
 		}
-		if (!StringUtils.isEmpty(soggettoDaModificare.getCodiceFiscaleEstero()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodiceFiscaleEstero()))
 		{
 			String codFiscEst = soggettoDaModificare.getCodiceFiscaleEstero().trim().toUpperCase();
 			siacTSoggettoMod.setCodiceFiscaleEstero(codFiscEst);
 		}
 
 		// SIAC-6565-CR1215
-		if (!StringUtils.isEmpty(soggettoDaModificare.getCanalePA()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCanalePA()))
 		{
 			siacTSoggettoMod.setCanalePA(soggettoDaModificare.getCanalePA());
 		}
 		
-		if (!StringUtils.isEmpty(soggettoDaModificare.getCodDestinatario()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodDestinatario()))
 		{
 			siacTSoggettoMod.setCodDestinatario(soggettoDaModificare.getCodDestinatario());
 		}
 		
-		if (!StringUtils.isEmpty(soggettoDaModificare.getEmailPec()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getEmailPec()))
 		{
 			siacTSoggettoMod.setEmailPec(soggettoDaModificare.getEmailPec());
 		}
 		
+		//task-68
+		siacTSoggettoMod.setIstitutoDiCredito(soggettoDaModificare.isFlagIstitutoDiCredito());
+		
 		String codiceTipo = soggettoDaModificare.getTipoSoggetto().getCodice();
 
 		boolean isPersonaFisicaDopoModifica = false;
-		if (codiceTipo.trim().toUpperCase().startsWith(Constanti.PERSONA_FISICA))
+		if (codiceTipo.trim().toUpperCase().startsWith(CostantiFin.PERSONA_FISICA))
 		{
 			isPersonaFisicaDopoModifica = true;
 		}
@@ -6069,7 +6110,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		siacTSoggettoMod.setSoggettoDesc(soggettoDesc);
 
 		siacTSoggettoMod.setDataInizioValidita(dateInserimento);
-		siacTSoggettoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggettoMod,
+		siacTSoggettoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggettoMod,
 				datiOperazioneInserisci, siacTAccountRepository);
 
 		if (!soggettoModificato)
@@ -6135,7 +6176,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		NaturaGiuridicaSoggetto naturaGiuridicaSogg = soggettoDaModificare
 				.getNaturaGiuridicaSoggetto();
 		if (naturaGiuridicaSogg != null
-				&& !StringUtils.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
+				&& !StringUtilsFin.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
 		{
 			String codeFg = naturaGiuridicaSogg.getSoggettoTipoCode();
 			SiacTFormaGiuridicaFin siacTFormaGiuridica = siacTFormaGiuridicaRepository
@@ -6161,7 +6202,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		{
 			for (String codeClass : classificazioni)
 			{
-				if (!StringUtils.isEmpty(codeClass))
+				if (!StringUtilsFin.isEmpty(codeClass))
 				{
 					salvaSoggettoClasseMod(siacTSoggettoOriginale, siacTSoggettoMod, idEnte,
 							idAmbito, codeClass, datiOperazioneInserisci);
@@ -6236,7 +6277,7 @@ public class SoggettoFinDad extends AbstractFinDad
 																			// soggetto
 																			// mod)
 		boolean noteMod = isAttributoTAttrModificato(attributoInfo, datiOperazioneInserisci,
-				soggettoDaModificare.getNote(), Constanti.T_ATTR_CODE_NOTE_SOGGETTO);
+				soggettoDaModificare.getNote(), CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO);
 		if (noteMod)
 		{
 			soggettoModificato = true;
@@ -6246,11 +6287,11 @@ public class SoggettoFinDad extends AbstractFinDad
 		attributoInfoMod.setSiacTSoggettoMod(siacTSoggettoMod);
 		attributoInfoMod.setTipoOggetto(OggettoDellAttributoTClass.T_SOGGETTO_MOD);
 		salvaAttributoTAttr(attributoInfoMod, datiOperazioneInserisci,
-				soggettoDaModificare.getNote(), Constanti.T_ATTR_CODE_NOTE_SOGGETTO);
+				soggettoDaModificare.getNote(), CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO);
 
 		// MATRICOLA
 		boolean matricolaMod = isAttributoTAttrModificato(attributoInfo, datiOperazioneInserisci,
-				soggettoDaModificare.getMatricola(), Constanti.T_ATTR_CODE_MATRICOLA);
+				soggettoDaModificare.getMatricola(), CostantiFin.T_ATTR_CODE_MATRICOLA);
 		if (matricolaMod)
 		{
 			soggettoModificato = true;
@@ -6261,7 +6302,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		attributoMatricolaMod.setSiacTSoggettoMod(siacTSoggettoMod);
 		attributoMatricolaMod.setTipoOggetto(OggettoDellAttributoTClass.T_SOGGETTO_MOD);
 		salvaAttributoTAttr(attributoInfoMod, datiOperazioneInserisci,
-				soggettoDaModificare.getMatricola(), Constanti.T_ATTR_CODE_MATRICOLA);
+				soggettoDaModificare.getMatricola(), CostantiFin.T_ATTR_CODE_MATRICOLA);
 
 		// RITORNO RISULTATI:
 		Soggetto soggetto = new Soggetto();
@@ -6438,17 +6479,17 @@ public class SoggettoFinDad extends AbstractFinDad
 		siacTSoggettoMod = EntityToEntityConverter
 				.siacTSoggettoToSiacTSoggettoMod(siacTSoggettoOriginale);
 
-		if (!StringUtils.isEmpty(soggettoDaModificare.getPartitaIva()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getPartitaIva()))
 		{
 			String partitaIva = soggettoDaModificare.getPartitaIva().trim().toUpperCase();
 			siacTSoggettoMod.setPartitaIva(partitaIva);
 		}
-		if (!StringUtils.isEmpty(soggettoDaModificare.getCodiceFiscale()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodiceFiscale()))
 		{
 			String codFisc = soggettoDaModificare.getCodiceFiscale().trim().toUpperCase();
 			siacTSoggettoMod.setCodiceFiscale(codFisc);
 		}
-		if (!StringUtils.isEmpty(soggettoDaModificare.getCodiceFiscaleEstero()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodiceFiscaleEstero()))
 		{
 			String codFiscEst = soggettoDaModificare.getCodiceFiscaleEstero().trim().toUpperCase();
 			siacTSoggettoMod.setCodiceFiscaleEstero(codFiscEst);
@@ -6457,23 +6498,26 @@ public class SoggettoFinDad extends AbstractFinDad
 		String codiceTipo = soggettoDaModificare.getTipoSoggetto().getCodice();
 
 		// SIAC-6565-CR1215
-		if (!StringUtils.isEmpty(soggettoDaModificare.getCanalePA()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCanalePA()))
 		{
 			siacTSoggettoMod.setCanalePA(soggettoDaModificare.getCanalePA());
 		}
 		
-		if (!StringUtils.isEmpty(soggettoDaModificare.getCodDestinatario()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodDestinatario()))
 		{
 			siacTSoggettoMod.setCodDestinatario(soggettoDaModificare.getCodDestinatario());
 		}
 		
-		if (!StringUtils.isEmpty(soggettoDaModificare.getEmailPec()))
+		if (!StringUtilsFin.isEmpty(soggettoDaModificare.getEmailPec()))
 		{
 			siacTSoggettoMod.setEmailPec(soggettoDaModificare.getEmailPec());
 		}
 		
+		//task-68
+		siacTSoggettoMod.setIstitutoDiCredito(soggettoDaModificare.isFlagIstitutoDiCredito());
+		
 		boolean isPersonaFisicaDopoModifica = false;
-		if (codiceTipo.trim().toUpperCase().startsWith(Constanti.PERSONA_FISICA))
+		if (codiceTipo.trim().toUpperCase().startsWith(CostantiFin.PERSONA_FISICA))
 		{
 			isPersonaFisicaDopoModifica = true;
 		}
@@ -6492,7 +6536,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		siacTSoggettoMod.setSoggettoDesc(soggettoDesc);
 
 		siacTSoggettoMod.setDataInizioValidita(dateInserimento);
-		siacTSoggettoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggettoMod,
+		siacTSoggettoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggettoMod,
 				datiOperazioneInserisci, siacTAccountRepository);
 
 		soggettoModificato = isModificato(siacTSoggettoOriginale, siacTSoggettoMod);
@@ -6538,7 +6582,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		
 		// DURC
 		if (!soggettoModificato 
-				&& !Constanti.PERSONA_FISICA.equals(soggettoDaModificare.getTipoSoggetto().getSoggettoTipoCode())
+				&& !CostantiFin.PERSONA_FISICA.equals(soggettoDaModificare.getTipoSoggetto().getSoggettoTipoCode())
 				&& TipoFonteDurc.MANUALE.getCodice().equals(soggettoDaModificare.getTipoFonteDurc())) {
 			
 			soggettoModificato = datiDurcModificati(siacTSoggettoOriginale, soggettoDaModificare);
@@ -6563,7 +6607,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		NaturaGiuridicaSoggetto naturaGiuridicaSogg = soggettoDaModificare
 				.getNaturaGiuridicaSoggetto();
 		if (naturaGiuridicaSogg != null
-				&& !StringUtils.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
+				&& !StringUtilsFin.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
 		{
 			// integrazione con il codice di claudio
 			String codeFg = naturaGiuridicaSogg.getSoggettoTipoCode();
@@ -6617,14 +6661,14 @@ public class SoggettoFinDad extends AbstractFinDad
 		// NOTE:
 		List<SiacRSoggettoAttrFin> listaOld = siacRSoggettoAttrRepository
 				.findValidaByIdSoggettoAndCode(idSiacTSoggettoInModifica,
-						Constanti.T_ATTR_CODE_NOTE_SOGGETTO, timestampInserimento);
+						CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO, timestampInserimento);
 		String notaTestOld = null;
 		if (listaOld != null && listaOld.size() > 0)
 		{
 			SiacRSoggettoAttrFin notaOld = listaOld.get(0);
 			notaTestOld = notaOld.getTesto();
 		}
-		if (!StringUtils.sonoUguali(notaTestOld, soggettoDaModificare.getNote()))
+		if (!StringUtilsFin.sonoUguali(notaTestOld, soggettoDaModificare.getNote()))
 		{
 			soggettoModificato = true;
 		}
@@ -6632,14 +6676,14 @@ public class SoggettoFinDad extends AbstractFinDad
 		// MATRICOLA
 		List<SiacRSoggettoAttrFin> listaAttrMatricolaOld = siacRSoggettoAttrRepository
 				.findValidaByIdSoggettoAndCode(idSiacTSoggettoInModifica,
-						Constanti.T_ATTR_CODE_MATRICOLA, timestampInserimento);
+						CostantiFin.T_ATTR_CODE_MATRICOLA, timestampInserimento);
 		String matricolaTestOld = null;
 		if (listaAttrMatricolaOld != null && listaAttrMatricolaOld.size() > 0)
 		{
 			SiacRSoggettoAttrFin matricolaOld = listaAttrMatricolaOld.get(0);
 			matricolaTestOld = matricolaOld.getTesto();
 		}
-		if (!StringUtils.sonoUguali(matricolaTestOld, soggettoDaModificare.getMatricola()))
+		if (!StringUtilsFin.sonoUguali(matricolaTestOld, soggettoDaModificare.getMatricola()))
 		{
 			soggettoModificato = true;
 		}
@@ -6661,12 +6705,12 @@ public class SoggettoFinDad extends AbstractFinDad
 			return true;
 		}
 
-		if (siacTSoggettoOriginale.getFonteDurc() != null && !soggettoDaModificare.getFonteDurcClassifId()
-				.equals(siacTSoggettoOriginale.getFonteDurc().getClassifId())) {
+		if (siacTSoggettoOriginale.getFonteDurc() != null && soggettoDaModificare.getFonteDurcClassifId() != null && 
+				!soggettoDaModificare.getFonteDurcClassifId().equals(siacTSoggettoOriginale.getFonteDurc().getClassifId())) {
 			return true;
 		}
 
-		if (! soggettoDaModificare.getNoteDurc().equals(siacTSoggettoOriginale.getNoteDurc())) {
+		if (! org.apache.commons.lang.StringUtils.equals(soggettoDaModificare.getNoteDurc(), siacTSoggettoOriginale.getNoteDurc())) {
 			return true;
 		}
 
@@ -6728,7 +6772,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				.getFormaGiuridicaIstatCodice();
 		String confrontoNew = rFormaGiuridicaMod.getSiacTFormaGiuridica()
 				.getFormaGiuridicaIstatCodice();
-		if (!StringUtils.sonoUguali(confrontoOld, confrontoNew))
+		if (!StringUtilsFin.sonoUguali(confrontoOld, confrontoNew))
 		{
 			return true;
 		}
@@ -6752,7 +6796,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		SiacRSoggettoTipoFin siacRSoggettoTipo = lt.get(0);
 		String confrontoOld = siacRSoggettoTipo.getSiacDSoggettoTipo().getSoggettoTipoCode();
 		String confrontoNew = siacRSoggettoTipoMod.getSiacDSoggettoTipo().getSoggettoTipoCode();
-		if (!StringUtils.sonoUguali(confrontoOld, confrontoNew))
+		if (!StringUtilsFin.sonoUguali(confrontoOld, confrontoNew))
 		{
 			return true;
 		}
@@ -6777,7 +6821,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		SiacRSoggettoTipoModFin siacRSoggettoTipo = lt.get(0);
 		String confrontoOld = siacRSoggettoTipo.getSiacDSoggettoTipo().getSoggettoTipoCode();
 		String confrontoNew = siacRSoggettoTipoMod.getSiacDSoggettoTipo().getSoggettoTipoCode();
-		if (!StringUtils.sonoUguali(confrontoOld, confrontoNew))
+		if (!StringUtilsFin.sonoUguali(confrontoOld, confrontoNew))
 		{
 			return true;
 		}
@@ -6796,7 +6840,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacTPersonaGiuridicaModFin personaGiuridicaMod)
 	{
 		boolean modificato = false;
-		if (!StringUtils.sonoUguali(siactTpersonaGiuridica.getRagioneSociale(),
+		if (!StringUtilsFin.sonoUguali(siactTpersonaGiuridica.getRagioneSociale(),
 				siactTpersonaGiuridica.getRagioneSociale()))
 		{
 			return true;
@@ -6816,7 +6860,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacTPersonaGiuridicaModFin personaGiuridicaMod)
 	{
 		boolean modificato = false;
-		if (!StringUtils.sonoUguali(siactTpersonaGiuridica.getRagioneSociale(),
+		if (!StringUtilsFin.sonoUguali(siactTpersonaGiuridica.getRagioneSociale(),
 				siactTpersonaGiuridica.getRagioneSociale()))
 		{
 			return true;
@@ -6835,25 +6879,25 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacTPersonaFisicaModFin personaFisicaMod)
 	{
 		boolean modificato = false;
-		if (!StringUtils.sonoUguali(siactTpersonaFisica.getNome(), personaFisicaMod.getNome()))
+		if (!StringUtilsFin.sonoUguali(siactTpersonaFisica.getNome(), personaFisicaMod.getNome()))
 		{
 			return true;
 		}
-		if (!StringUtils
+		if (!StringUtilsFin
 				.sonoUguali(siactTpersonaFisica.getCognome(), personaFisicaMod.getCognome()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siactTpersonaFisica.getSesso(), personaFisicaMod.getSesso()))
+		if (!StringUtilsFin.sonoUguali(siactTpersonaFisica.getSesso(), personaFisicaMod.getSesso()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siactTpersonaFisica.getNascitaData(),
+		if (!StringUtilsFin.sonoUguali(siactTpersonaFisica.getNascitaData(),
 				personaFisicaMod.getNascitaData()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siactTpersonaFisica.getSiacTComune().getComuneId(),
+		if (!StringUtilsFin.sonoUguali(siactTpersonaFisica.getSiacTComune().getComuneId(),
 				personaFisicaMod.getSiacTComune().getComuneId()))
 		{
 			return true;
@@ -6872,25 +6916,25 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacTPersonaFisicaModFin personaFisicaMod)
 	{
 		boolean modificato = false;
-		if (!StringUtils.sonoUguali(siactTpersonaFisica.getNome(), personaFisicaMod.getNome()))
+		if (!StringUtilsFin.sonoUguali(siactTpersonaFisica.getNome(), personaFisicaMod.getNome()))
 		{
 			return true;
 		}
-		if (!StringUtils
+		if (!StringUtilsFin
 				.sonoUguali(siactTpersonaFisica.getCognome(), personaFisicaMod.getCognome()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siactTpersonaFisica.getSesso(), personaFisicaMod.getSesso()))
+		if (!StringUtilsFin.sonoUguali(siactTpersonaFisica.getSesso(), personaFisicaMod.getSesso()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siactTpersonaFisica.getNascitaData(),
+		if (!StringUtilsFin.sonoUguali(siactTpersonaFisica.getNascitaData(),
 				personaFisicaMod.getNascitaData()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siactTpersonaFisica.getSiacTComune().getComuneId(),
+		if (!StringUtilsFin.sonoUguali(siactTpersonaFisica.getSiacTComune().getComuneId(),
 				personaFisicaMod.getSiacTComune().getComuneId()))
 		{
 			return true;
@@ -6908,39 +6952,46 @@ public class SoggettoFinDad extends AbstractFinDad
 	public boolean isModificato(SiacTSoggettoFin siacTSoggetto, SiacTSoggettoModFin siacTSoggettoMod)
 	{
 		boolean modificato = false;
-		if (!StringUtils
+		if (!StringUtilsFin
 				.sonoUguali(siacTSoggetto.getPartitaIva(), siacTSoggettoMod.getPartitaIva()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUgualiTrimmed(siacTSoggetto.getCodiceFiscaleEstero(),
+		if (!StringUtilsFin.sonoUgualiTrimmed(siacTSoggetto.getCodiceFiscaleEstero(),
 				siacTSoggettoMod.getCodiceFiscaleEstero()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUgualiTrimmed(siacTSoggetto.getCodiceFiscale(),
+		if (!StringUtilsFin.sonoUgualiTrimmed(siacTSoggetto.getCodiceFiscale(),
 				siacTSoggettoMod.getCodiceFiscale()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siacTSoggetto.getSoggettoDesc(),
+		if (!StringUtilsFin.sonoUguali(siacTSoggetto.getSoggettoDesc(),
 				siacTSoggettoMod.getSoggettoDesc()))
 		{
 			return true;
 		}
 		
 		
-		if (!StringUtils.sonoUguali(siacTSoggetto.getCanalePA(),
+		if (!StringUtilsFin.sonoUguali(siacTSoggetto.getCanalePA(),
 				siacTSoggettoMod.getCanalePA()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siacTSoggetto.getEmailPec(),
+		if (!StringUtilsFin.sonoUguali(siacTSoggetto.getEmailPec(),
 				siacTSoggettoMod.getEmailPec()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siacTSoggetto.getCodDestinatario(),
+		
+		//task-68
+		if (!siacTSoggetto.getIstitutoDiCredito().equals(siacTSoggettoMod.getIstitutoDiCredito()))
+		{
+			return true;
+		}
+		
+		if (!StringUtilsFin.sonoUguali(siacTSoggetto.getCodDestinatario(),
 				siacTSoggettoMod.getCodDestinatario()))
 		{
 			return true;
@@ -6960,22 +7011,22 @@ public class SoggettoFinDad extends AbstractFinDad
 	public boolean isModificato(SiacTSoggettoModFin siacTSoggetto, SiacTSoggettoModFin siacTSoggettoMod)
 	{
 		boolean modificato = false;
-		if (!StringUtils
+		if (!StringUtilsFin
 				.sonoUguali(siacTSoggetto.getPartitaIva(), siacTSoggettoMod.getPartitaIva()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siacTSoggetto.getCodiceFiscaleEstero(),
+		if (!StringUtilsFin.sonoUguali(siacTSoggetto.getCodiceFiscaleEstero(),
 				siacTSoggettoMod.getCodiceFiscaleEstero()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siacTSoggetto.getCodiceFiscale(),
+		if (!StringUtilsFin.sonoUguali(siacTSoggetto.getCodiceFiscale(),
 				siacTSoggettoMod.getCodiceFiscale()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(siacTSoggetto.getSoggettoDesc(),
+		if (!StringUtilsFin.sonoUguali(siacTSoggetto.getSoggettoDesc(),
 				siacTSoggettoMod.getSoggettoDesc()))
 		{
 			return true;
@@ -7047,17 +7098,17 @@ public class SoggettoFinDad extends AbstractFinDad
 					: null);
 			siacTSoggettoMod.setNoteDurc(soggettoDaModificare.getNoteDurc());
 			
-			if (!StringUtils.isEmpty(soggettoDaModificare.getPartitaIva()))
+			if (!StringUtilsFin.isEmpty(soggettoDaModificare.getPartitaIva()))
 			{
 				String partitaIva = soggettoDaModificare.getPartitaIva().trim().toUpperCase();
 				siacTSoggettoMod.setPartitaIva(partitaIva);
 			}
-			if (!StringUtils.isEmpty(soggettoDaModificare.getCodiceFiscale()))
+			if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodiceFiscale()))
 			{
 				String codFisc = soggettoDaModificare.getCodiceFiscale().trim().toUpperCase();
 				siacTSoggettoMod.setCodiceFiscale(codFisc);
 			}
-			if (!StringUtils.isEmpty(soggettoDaModificare.getCodiceFiscaleEstero()))
+			if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodiceFiscaleEstero()))
 			{
 				String codFiscEst = soggettoDaModificare.getCodiceFiscaleEstero().trim()
 						.toUpperCase();
@@ -7065,25 +7116,28 @@ public class SoggettoFinDad extends AbstractFinDad
 			}
 
 			// SIAC-6565-CR1215
-			if (!StringUtils.isEmpty(soggettoDaModificare.getCanalePA()))
+			if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCanalePA()))
 			{
 				siacTSoggettoMod.setCanalePA(soggettoDaModificare.getCanalePA());
 			}
 			
-			if (!StringUtils.isEmpty(soggettoDaModificare.getCodDestinatario()))
+			if (!StringUtilsFin.isEmpty(soggettoDaModificare.getCodDestinatario()))
 			{
 				siacTSoggettoMod.setCodDestinatario(soggettoDaModificare.getCodDestinatario());
 			}
 			
-			if (!StringUtils.isEmpty(soggettoDaModificare.getEmailPec()))
+			if (!StringUtilsFin.isEmpty(soggettoDaModificare.getEmailPec()))
 			{
 				siacTSoggettoMod.setEmailPec(soggettoDaModificare.getEmailPec());
 			}
 			
+			//task-68
+			siacTSoggettoMod.setIstitutoDiCredito(soggettoDaModificare.isFlagIstitutoDiCredito());
+			
 			String codiceTipo = soggettoDaModificare.getTipoSoggetto().getCodice();
 
 			boolean isPersonaFisicaDopoModifica = false;
-			if (codiceTipo.trim().toUpperCase().startsWith(Constanti.PERSONA_FISICA))
+			if (codiceTipo.trim().toUpperCase().startsWith(CostantiFin.PERSONA_FISICA))
 			{
 				isPersonaFisicaDopoModifica = true;
 			}
@@ -7104,7 +7158,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			siacTSoggettoMod.setDataInizioValidita(dateInserimento);
 			// //////////////
-			siacTSoggettoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTSoggettoMod,
+			siacTSoggettoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTSoggettoMod,
 					datiOperazioneInserisci, siacTAccountRepository);
 			// salvo sul db:
 			siacTSoggettoMod = siacTSoggettoModRepository.saveAndFlush(siacTSoggettoMod);
@@ -7120,7 +7174,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// invalido la persona giuridica:
 					SiacTPersonaGiuridicaModFin personaGiuridica = soggettoTipoDto
 							.getSiactTpersonaGiuridicaMod();
-					personaGiuridica = DatiOperazioneUtils.cancellaRecord(personaGiuridica,
+					personaGiuridica = DatiOperazioneUtil.cancellaRecord(personaGiuridica,
 							siacTPersonaGiuridicaRepository, datiOperazioneModifica,
 							siacTAccountRepository);
 					// inserisco una persona fisica:
@@ -7134,7 +7188,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// invalido la persona fisica:
 					SiacTPersonaFisicaModFin personaFisica = soggettoTipoDto
 							.getSiactTpersonaFisicaMod();
-					personaFisica = DatiOperazioneUtils.cancellaRecord(personaFisica,
+					personaFisica = DatiOperazioneUtil.cancellaRecord(personaFisica,
 							siacTPersonaFisicaRepository, datiOperazioneModifica,
 							siacTAccountRepository);
 					// inserisco una persona fisica:
@@ -7153,7 +7207,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// invalido la vecchia occorrenza di persona fisica:
 					SiacTPersonaFisicaModFin personaFisicaDelete = soggettoTipoDto
 							.getSiactTpersonaFisicaMod();
-					personaFisicaDelete = DatiOperazioneUtils.cancellaRecord(personaFisicaDelete,
+					personaFisicaDelete = DatiOperazioneUtil.cancellaRecord(personaFisicaDelete,
 							siacTPersonaFisicaModRepository, datiOperazioneModifica,
 							siacTAccountRepository);
 
@@ -7174,7 +7228,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// invalido la vecchia occorrenza di persona giuridica
 					SiacTPersonaGiuridicaModFin personaGiuridicaDelete = soggettoTipoDto
 							.getSiactTpersonaGiuridicaMod();
-					personaGiuridicaDelete = DatiOperazioneUtils.cancellaRecord(
+					personaGiuridicaDelete = DatiOperazioneUtil.cancellaRecord(
 							personaGiuridicaDelete, siacTPersonaGiuridicaModRepository,
 							datiOperazioneModifica, siacTAccountRepository);
 					// inserisco una nuova occorrenza di persona giuridica
@@ -7206,7 +7260,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					// e' stato cambiato, occorre aggiornare i dati
 					// invalido la relazione old:
-					siacRSoggTipoOld = DatiOperazioneUtils.cancellaRecord(siacRSoggTipoOld,
+					siacRSoggTipoOld = DatiOperazioneUtil.cancellaRecord(siacRSoggTipoOld,
 							siacRSoggettoTipoRepository, datiOperazioneModifica,
 							siacTAccountRepository);
 					// inserisco un nuovo legame:
@@ -7224,7 +7278,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			NaturaGiuridicaSoggetto naturaGiuridicaSogg = soggettoDaModificare
 					.getNaturaGiuridicaSoggetto();
 			if (naturaGiuridicaSogg != null
-					&& !StringUtils.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
+					&& !StringUtilsFin.isEmpty(naturaGiuridicaSogg.getSoggettoTipoCode()))
 			{
 
 				// Per il soggetto modificato e' stata selezionata una natura
@@ -7249,13 +7303,13 @@ public class SoggettoFinDad extends AbstractFinDad
 					String codeOld = siacTFormaGiuridicaOld.getFormaGiuridicaIstatCodice();
 
 					String codeNew = naturaGiuridicaSogg.getSoggettoTipoCode();
-					if (null != codeNew && !StringUtils.isEmpty(codeNew))
+					if (null != codeNew && !StringUtilsFin.isEmpty(codeNew))
 					{
 						if (!codeOld.equals(codeNew))
 						{
 							soggettoModificato = true;
 							// invalido record di relazione vecchio:
-							rFormaGiuOld = DatiOperazioneUtils.cancellaRecord(rFormaGiuOld,
+							rFormaGiuOld = DatiOperazioneUtil.cancellaRecord(rFormaGiuOld,
 									siacRFormaGiuridicaModRepository, datiOperazioneModifica,
 									siacTAccountRepository);
 							// inserisco nuovo record di relazione:
@@ -7295,7 +7349,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					// Il soggetto aveva una natura giuridica associata, la
 					// cancello logicamente
 					SiacRFormaGiuridicaModFin rFormaGiuOld = listRFormaGiuOld.get(0);
-					rFormaGiuOld = DatiOperazioneUtils.cancellaRecord(rFormaGiuOld,
+					rFormaGiuOld = DatiOperazioneUtil.cancellaRecord(rFormaGiuOld,
 							siacRFormaGiuridicaRepository, datiOperazioneModifica,
 							siacTAccountRepository);
 				}
@@ -7472,14 +7526,14 @@ public class SoggettoFinDad extends AbstractFinDad
 			attributoInfo.setTipoOggetto(OggettoDellAttributoTClass.T_SOGGETTO_MOD);
 
 			boolean noteMod = isAttributoTAttrModificato(attributoInfo, datiOperazioneInserisci,
-					soggettoDaModificare.getNote(), Constanti.T_ATTR_CODE_NOTE_SOGGETTO);
+					soggettoDaModificare.getNote(), CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO);
 			if (noteMod)
 			{
 				soggettoModificato = true;
 			}
 
 			salvaAttributoTAttr(attributoInfo, datiOperazioneInserisci,
-					soggettoDaModificare.getNote(), Constanti.T_ATTR_CODE_NOTE_SOGGETTO);
+					soggettoDaModificare.getNote(), CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO);
 
 		}
 		else
@@ -7542,7 +7596,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacTSoggettoModFin siacTSoggettoMod, DatiOperazioneDto datiOperazioneDto)
 	{
 		SiacRFormaGiuridicaModFin rFormaGiuridicaMod = new SiacRFormaGiuridicaModFin();
-		rFormaGiuridicaMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(rFormaGiuridicaMod,
+		rFormaGiuridicaMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(rFormaGiuridicaMod,
 				datiOperazioneDto, siacTAccountRepository);
 		rFormaGiuridicaMod.setSiacTSoggettoMod(siacTSoggettoMod);
 		rFormaGiuridicaMod.setSiacTFormaGiuridica(siacTFormaGiuridica);
@@ -7589,13 +7643,13 @@ public class SoggettoFinDad extends AbstractFinDad
 	{
 		SiacDSoggettoTipoFin siacDSoggettoTipo = null;
 		SiacRSoggettoTipoModFin siacRSoggettoTipoMod = null;
-		if (!StringUtils.isEmpty(tipoSoggetto.getCodice()))
+		if (!StringUtilsFin.isEmpty(tipoSoggetto.getCodice()))
 		{
 			String code = tipoSoggetto.getCodice().trim().toUpperCase();
 			siacDSoggettoTipo = siacDSoggettoTipoRepository.findValidoByCode(idEnte, code,
 					datiOperazioneDto.getTs()).get(0);
 		}
-		else if (!StringUtils.isEmpty(tipoSoggetto.getSoggettoTipoCode()))
+		else if (!StringUtilsFin.isEmpty(tipoSoggetto.getSoggettoTipoCode()))
 		{
 			String code = tipoSoggetto.getSoggettoTipoCode().trim().toUpperCase();
 			siacDSoggettoTipo = siacDSoggettoTipoRepository.findValidoByCode(idEnte, code,
@@ -7605,7 +7659,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		if (siacDSoggettoTipo != null)
 		{
 			siacRSoggettoTipoMod = new SiacRSoggettoTipoModFin();
-			siacRSoggettoTipoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacRSoggettoTipoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacRSoggettoTipoMod, datiOperazioneDto, siacTAccountRepository);
 			siacRSoggettoTipoMod.setSiacTSoggettoMod(siacTSoggettoMod);
 			siacRSoggettoTipoMod.setSiacTSoggetto(siacTSoggettoMod.getSiacTSoggetto());
@@ -7673,13 +7727,13 @@ public class SoggettoFinDad extends AbstractFinDad
 								|| statoOperativoAnagrafica.equals(StatoOperativoAnagrafica.VALIDO))
 						{
 
-							DatiOperazioneUtils.annullaRecord(statoOld,
+							DatiOperazioneUtil.annullaRecord(statoOld,
 									siacRSoggettoStatoRepository, datiOperazioneDto,
 									siacTAccountRepository);
 						}
 						else
 						{
-							DatiOperazioneUtils.cancellaRecord(statoOld,
+							DatiOperazioneUtil.cancellaRecord(statoOld,
 									siacRSoggettoStatoRepository, datiOperazioneDto,
 									siacTAccountRepository);
 						}
@@ -7703,7 +7757,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				siacRSoggettoStato = new SiacRSoggettoStatoFin();
 			}
 			datiOperazioneDto.setOperazione(Operazione.INSERIMENTO);
-			siacRSoggettoStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRSoggettoStato,
+			siacRSoggettoStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRSoggettoStato,
 					datiOperazioneDto, siacTAccountRepository);
 			siacRSoggettoStato.setSiacDSoggettoStato(soggettoStato);
 			siacRSoggettoStato.setSiacTSoggetto(siacTSoggetto);
@@ -7728,7 +7782,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			DatiOperazioneDto datiOperazioneInserisci)
 	{
 		SiacRSoggettoOnereFin siacRSoggettoOnere = new SiacRSoggettoOnereFin();
-		siacRSoggettoOnere = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRSoggettoOnere,
+		siacRSoggettoOnere = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRSoggettoOnere,
 				datiOperazioneInserisci, siacTAccountRepository);
 		siacRSoggettoOnere.setSiacTSoggetto(siacTSoggetto);
 		SiacDOnereFin siacDOnere = siacDOnereRepository.findOnereValidoByCode(idEnte, codeOnere,
@@ -7751,7 +7805,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			Integer idEnte, String codeOnere, DatiOperazioneDto datiOperazioneInserisci)
 	{
 		SiacRSoggettoOnereModFin siacRSoggettoOnere = new SiacRSoggettoOnereModFin();
-		siacRSoggettoOnere = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRSoggettoOnere,
+		siacRSoggettoOnere = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRSoggettoOnere,
 				datiOperazioneInserisci, siacTAccountRepository);
 		siacRSoggettoOnere.setDataInizioValidita(getNow());
 		siacRSoggettoOnere.setSiacTSoggetto(siacTSoggetto);
@@ -7779,7 +7833,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		SiacDSoggettoClasseFin siacDSoggettoClasse = siacDSoggettoClasseRepository.findValidoByCode(
 				idEnte, idAmbito, codeClass, datiOperazioneDto.getTs()).get(0);
 		siacRSoggettoClasse.setSiacDSoggettoClasse(siacDSoggettoClasse);
-		siacRSoggettoClasse = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRSoggettoClasse,
+		siacRSoggettoClasse = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRSoggettoClasse,
 				datiOperazioneDto, siacTAccountRepository);
 		siacRSoggettoClasse.setSiacTSoggetto(siacTSoggetto);
 		// salvo sul db:
@@ -7805,7 +7859,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		SiacDSoggettoClasseFin siacDSoggettoClasse = siacDSoggettoClasseRepository.findValidoByCode(
 				idEnte, idAmbito, codeClass, datiOperazioneInserisci.getTs()).get(0);
 		siacRSoggettoClasseMod.setSiacDSoggettoClasse(siacDSoggettoClasse);
-		siacRSoggettoClasseMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacRSoggettoClasseMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacRSoggettoClasseMod, datiOperazioneInserisci, siacTAccountRepository);
 		siacRSoggettoClasseMod.setDataInizioValidita(getNow());
 		siacRSoggettoClasseMod.setSiacTSoggetto(siacTSoggetto);
@@ -7830,7 +7884,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			DatiOperazioneDto datiOperazioneInserisci, Integer idRecapitoDaAggiornare)
 	{
 		String avviso = contatto.getAvviso();
-		String descrizione = StringUtils.toUpperSafe(contatto.getDescrizione());
+		String descrizione = StringUtilsFin.toUpperSafe(contatto.getDescrizione());
 		String contattoCodModo = contatto.getContattoCodModo();
 		SiacDRecapitoModoFin siacDRecapitoModo = siacDRecapitoModoRepository.findValidoByCode(idEnte,
 				datiOperazioneInserisci.getTs(), contattoCodModo).get(0);
@@ -7839,13 +7893,13 @@ public class SoggettoFinDad extends AbstractFinDad
 		{
 			siacTRecapitoSoggetto.setRecapitoId(idRecapitoDaAggiornare);
 		}
-		siacTRecapitoSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacTRecapitoSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacTRecapitoSoggetto, datiOperazioneInserisci, siacTAccountRepository);
 		siacTRecapitoSoggetto.setSiacDRecapitoModo(siacDRecapitoModo);
 		siacTRecapitoSoggetto.setSiacTSoggetto(siacTSoggetto);
 		siacTRecapitoSoggetto.setRecapitoCode(siacDRecapitoModo.getRecapitoModoDesc());
 		siacTRecapitoSoggetto.setRecapitoDesc(descrizione);
-		siacTRecapitoSoggetto.setAvviso(StringUtils.checkStringBooleanForDb(avviso));
+		siacTRecapitoSoggetto.setAvviso(StringUtilsFin.checkStringBooleanForDb(avviso));
 		// salvo sul db:
 		siacTRecapitoSoggettoRepository.saveAndFlush(siacTRecapitoSoggetto);
 	}
@@ -7878,13 +7932,13 @@ public class SoggettoFinDad extends AbstractFinDad
 		}
 		
 		
-		siacTRecapitoSoggettoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacTRecapitoSoggettoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacTRecapitoSoggettoMod, datiOperazioneInserisci, siacTAccountRepository);
 		siacTRecapitoSoggettoMod.setSiacDRecapitoModo(siacDRecapitoModo);
 		siacTRecapitoSoggettoMod.setSiacTSoggetto(siacTSoggetto);
 		siacTRecapitoSoggettoMod.setRecapitoCode(siacDRecapitoModo.getRecapitoModoDesc());
 		siacTRecapitoSoggettoMod.setRecapitoDesc(descrizione);
-		siacTRecapitoSoggettoMod.setAvviso(StringUtils.checkStringBooleanForDb(avviso));
+		siacTRecapitoSoggettoMod.setAvviso(StringUtilsFin.checkStringBooleanForDb(avviso));
 		siacTRecapitoSoggettoMod.setSiacTSoggettoMod(siacTSoggettoMod);
 		// salvo sul db:
 		
@@ -7922,7 +7976,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		}
 
 		siacRModpagOrdine.setUid(null);
-		siacRModpagOrdine = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRModpagOrdine,
+		siacRModpagOrdine = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRModpagOrdine,
 				datiOperazioneDto, siacTAccountRepository);
 		siacRModpagOrdine.setSiacTSoggetto(siacTSoggetto);
 
@@ -7979,14 +8033,14 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo bancario
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Circuito_bancario)
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_bancario)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Circuito_Banca_d_Italia)
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_Banca_d_Italia)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Circuito_Postale))
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_Postale))
 		{
 
-			siacTModPagToInsert = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTModPagToInsert = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTModPagToInsert, datiOperazioneDto, siacTAccountRepository);
 
 			if (modPagToInsert.getBic() != null)
@@ -8065,7 +8119,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				SiacTSoggettoFin sedSec = siacTSoggettoRepository.ricercaSedeSecondariaPerChiave(
 						idEnte, siacTSoggetto.getSoggettoCode(),
-						modPagToInsert.getCodiceSoggettoAssociato(), Constanti.SEDE_SECONDARIA);
+						modPagToInsert.getCodiceSoggettoAssociato(), CostantiFin.SEDE_SECONDARIA);
 				if (sedSec != null)
 				{
 					siacTModPagToInsert.setSiacTSoggetto(sedSec);
@@ -8083,7 +8137,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			// inserisco lo stato della modalita di pagamento
 			SiacRModpagStatoFin siacRModpagStato = new SiacRModpagStatoFin();
 
-			siacRModpagStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRModpagStato,
+			siacRModpagStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRModpagStato,
 					datiOperazioneDto, siacTAccountRepository);
 			siacRModpagStato.setSiacTModpag(siacTModPagInserito);
 			siacRModpagStato.setDataCreazione(new Date());
@@ -8108,10 +8162,10 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo generico
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Generico))
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Generico))
 		{
 
-			siacTModPagToInsert = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTModPagToInsert = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTModPagToInsert, datiOperazioneDto, siacTAccountRepository);
 
 			if (modPagToInsert.getNote() != null)
@@ -8145,7 +8199,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				SiacTSoggettoFin sedSec = siacTSoggettoRepository.ricercaSedeSecondariaPerChiave(
 						idEnte, siacTSoggetto.getSoggettoCode(),
-						modPagToInsert.getCodiceSoggettoAssociato(), Constanti.SEDE_SECONDARIA);
+						modPagToInsert.getCodiceSoggettoAssociato(), CostantiFin.SEDE_SECONDARIA);
 
 				if (sedSec != null)
 				{
@@ -8166,7 +8220,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			// inserisco lo stato della modalita di pagamento
 			SiacRModpagStatoFin siacRModpagStato = new SiacRModpagStatoFin();
 
-			siacRModpagStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRModpagStato,
+			siacRModpagStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRModpagStato,
 					datiOperazioneDto, siacTAccountRepository);
 
 			siacRModpagStato.setSiacTModpag(siacTModpagInserito);
@@ -8193,10 +8247,10 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo contante
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Contanti))
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Contanti))
 		{
 
-			siacTModPagToInsert = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTModPagToInsert = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTModPagToInsert, datiOperazioneDto, siacTAccountRepository);
 
 			if (modPagToInsert.getCodiceFiscaleQuietanzante() != null)
@@ -8265,7 +8319,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				SiacTSoggettoFin sedSec = siacTSoggettoRepository.ricercaSedeSecondariaPerChiave(
 						idEnte, siacTSoggetto.getSoggettoCode(),
-						modPagToInsert.getCodiceSoggettoAssociato(), Constanti.SEDE_SECONDARIA);
+						modPagToInsert.getCodiceSoggettoAssociato(), CostantiFin.SEDE_SECONDARIA);
 
 				if (sedSec != null)
 				{
@@ -8283,7 +8337,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			// inserisco lo stato della modalita di pagamento
 			SiacRModpagStatoFin siacRModpagStato = new SiacRModpagStatoFin();
 
-			siacRModpagStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRModpagStato,
+			siacRModpagStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRModpagStato,
 					datiOperazioneDto, siacTAccountRepository);
 
 			siacRModpagStato.setSiacTModpag(siacTModpagInserito);
@@ -8310,13 +8364,13 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo cessione
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
 		{
 
 			SiacRSoggettoRelazFin soggRelaz = new SiacRSoggettoRelazFin();
-			soggRelaz = DatiOperazioneUtils.impostaDatiOperazioneLogin(soggRelaz,
+			soggRelaz = DatiOperazioneUtil.impostaDatiOperazioneLogin(soggRelaz,
 					datiOperazioneDto, siacTAccountRepository);
 			SiacDRelazTipoFin siacDRelazTipo = siacDRelazTipoRepository
 					.findRelazTipoValidoByCode(idEnte,
@@ -8335,7 +8389,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				SiacTSoggettoFin sedSec = siacTSoggettoRepository.ricercaSedeSecondariaPerChiave(
 						idEnte, siacTSoggetto.getSoggettoCode(),
-						modPagToInsert.getCodiceSoggettoAssociato(), Constanti.SEDE_SECONDARIA);
+						modPagToInsert.getCodiceSoggettoAssociato(), CostantiFin.SEDE_SECONDARIA);
 				if (sedSec != null)
 				{
 					soggRelaz.setSiacTSoggetto1(sedSec);
@@ -8348,7 +8402,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// Setto soggetto a
 			SiacTSoggettoFin soggA = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito,
-					idEnte, modPagToInsert.getCessioneCodSoggetto(), Constanti.SEDE_SECONDARIA,
+					idEnte, modPagToInsert.getCessioneCodSoggetto(), CostantiFin.SEDE_SECONDARIA,
 					getNow());
 			soggRelaz.setSiacTSoggetto2(soggA);
 
@@ -8368,7 +8422,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// SiacRSoggrel_modPag gestione
 			SiacRSoggrelModpagFin siacRSoggrelModpag = new SiacRSoggrelModpagFin();
-			siacRSoggrelModpag = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRSoggrelModpag,
+			siacRSoggrelModpag = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRSoggrelModpag,
 					datiOperazioneDto, siacTAccountRepository);
 			siacRSoggrelModpag.setSiacRSoggettoRelaz(soggRelazJustInsert);
 			siacRSoggrelModpag.setSiacTEnteProprietario(siacTEnteProprietario);
@@ -8390,13 +8444,13 @@ public class SoggettoFinDad extends AbstractFinDad
 			// Inserisco dentro la tabella siac r soggetto relaz stato
 			String relazCode = "";
 			if (modPagToInsert.getDescrizioneStatoModalitaPagamento().equalsIgnoreCase(
-					Constanti.STATO_VALIDO))
+					CostantiFin.STATO_VALIDO))
 			{
-				relazCode = Constanti.STATO_VALIDO;
+				relazCode = CostantiFin.STATO_VALIDO;
 			}
 			else
 			{
-				relazCode = Constanti.STATO_PROVVISORIO;
+				relazCode = CostantiFin.STATO_PROVVISORIO;
 			}
 
 			siacTModPagToInsert = siacTModpagRepository.findOne(Integer.valueOf(modPagToInsert
@@ -8408,7 +8462,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacDRelazStatoFin siacDRelazStato = siacDRelazStatoRepository
 					.findDRelazStatoValidoByCode(idEnte, relazCode).get(0);
 			SiacRSoggettoRelazStatoFin siacRSoggettoRelazStato = new SiacRSoggettoRelazStatoFin();
-			siacRSoggettoRelazStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacRSoggettoRelazStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacRSoggettoRelazStato, datiOperazioneDto, siacTAccountRepository);
 			siacRSoggettoRelazStato.setSiacDRelazStato(siacDRelazStato);
 			siacRSoggettoRelazStato.setSiacRSoggettoRelaz(soggRelazJustInsert);
@@ -8455,11 +8509,11 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo bancario
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Circuito_bancario)
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_bancario)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Circuito_Banca_d_Italia)
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_Banca_d_Italia)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Circuito_Postale))
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_Postale))
 		{
 
 			SiacTModpagModFin mod = siacTModpagModRepository.findOne(updateMod.getUid());
@@ -8468,27 +8522,27 @@ public class SoggettoFinDad extends AbstractFinDad
 			mod.setDataModifica(new Date());
 			mod.setSiacTEnteProprietario(siacTEnteProprietario);
 
-			if (!StringUtils.isEmpty(updateMod.getIban()))
+			if (!StringUtilsFin.isEmpty(updateMod.getIban()))
 			{
 				mod.setIban(updateMod.getIban());
 			}
 
-			if (!StringUtils.isEmpty(updateMod.getBic()))
+			if (!StringUtilsFin.isEmpty(updateMod.getBic()))
 			{
 				mod.setBic(updateMod.getBic());
 			}
 
-			if (!StringUtils.isEmpty(updateMod.getDenominazioneBanca()))
+			if (!StringUtilsFin.isEmpty(updateMod.getDenominazioneBanca()))
 			{
 				mod.setDenominazioneBanca(updateMod.getDenominazioneBanca());
 			}
 
-			if (!StringUtils.isEmpty(updateMod.getContoCorrente()))
+			if (!StringUtilsFin.isEmpty(updateMod.getContoCorrente()))
 			{
 				mod.setContocorrente(updateMod.getContoCorrente());
 			}
 
-			if (!StringUtils.isEmpty(updateMod.getNote()))
+			if (!StringUtilsFin.isEmpty(updateMod.getNote()))
 			{
 				mod.setNote(updateMod.getNote());
 			}
@@ -8496,7 +8550,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			mod.setPerStipendi(updateMod.getPerStipendi());
 
 			// nuovi campi
-			if (!StringUtils.isEmpty(updateMod.getIntestazioneConto()))
+			if (!StringUtilsFin.isEmpty(updateMod.getIntestazioneConto()))
 			{
 				mod.setContocorrenteIntestazione(updateMod.getIntestazioneConto());
 			}
@@ -8516,7 +8570,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		}
 
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Contanti))
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Contanti))
 		{
 
 			SiacTModpagModFin mod = siacTModpagModRepository.findOne(updateMod.getUid());
@@ -8525,17 +8579,17 @@ public class SoggettoFinDad extends AbstractFinDad
 			mod.setDataModifica(new Date());
 			mod.setSiacTEnteProprietario(siacTEnteProprietario);
 
-			if (!StringUtils.isEmpty(updateMod.getCodiceFiscaleQuietanzante()))
+			if (!StringUtilsFin.isEmpty(updateMod.getCodiceFiscaleQuietanzante()))
 			{
 				mod.setQuietanzianteCodiceFiscale(updateMod.getCodiceFiscaleQuietanzante());
 			}
 
-			if (!StringUtils.isEmpty(updateMod.getSoggettoQuietanzante()))
+			if (!StringUtilsFin.isEmpty(updateMod.getSoggettoQuietanzante()))
 			{
 				mod.setQuietanziante(updateMod.getSoggettoQuietanzante());
 			}
 
-			if (!StringUtils.isEmpty(updateMod.getNote()))
+			if (!StringUtilsFin.isEmpty(updateMod.getNote()))
 			{
 				mod.setNote(updateMod.getNote());
 			}
@@ -8572,9 +8626,9 @@ public class SoggettoFinDad extends AbstractFinDad
 		}
 
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
 		{
 
 			SiacRSoggrelModpagModFin mod = siacRSoggrelModpagModRepository.findOne(updateMod.getUid());
@@ -8583,7 +8637,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			mod.setDataModifica(new Date());
 			mod.setSiacTEnteProprietario(siacTEnteProprietario);
 
-			if (!StringUtils.isEmpty(updateMod.getNote()))
+			if (!StringUtilsFin.isEmpty(updateMod.getNote()))
 			{
 				mod.setNote(updateMod.getNote());
 			}
@@ -8633,13 +8687,13 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo bancario
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Circuito_bancario)
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_bancario)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Circuito_Banca_d_Italia)
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_Banca_d_Italia)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Circuito_Postale))
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Circuito_Postale))
 		{
-			siacTModPagModToInsert = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTModPagModToInsert = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTModPagModToInsert, datiOperazioneDto, siacTAccountRepository);
 
 			// if (mdpModToInsert.getBic() != null)
@@ -8719,8 +8773,8 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// Setto lo stato in_modifica sulla definitiva
 			SiacRModpagStatoFin siacRModpagStatoToUpdate = siacRModpagStatoRepository
-					.findStatoValidoByMdpId(mdpModToInsert.getUid()).get(0);
-			siacRModpagStatoToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					.findStatoValidoByModpagId(mdpModToInsert.getUid());
+			siacRModpagStatoToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacRModpagStatoToUpdate, datiOperazioneDto, siacTAccountRepository);
 
 			siacRModpagStatoToUpdate.setSiacTModpag(siacTModpagToCheck);
@@ -8729,7 +8783,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacRModpagStatoToUpdate.setDataCreazione(siacTModpagToCheck.getDataCreazione());
 
 			SiacDModpagStatoFin siacDModpagStato = siacDModpagStatoRepository
-					.findModPagStatoDValidoByCode(idEnte, Constanti.STATO_VALIDO,
+					.findModPagStatoDValidoByCode(idEnte, CostantiFin.STATO_VALIDO,
 							datiOperazioneDto.getTs()).get(0);
 			siacRModpagStatoToUpdate.setSiacDModpagStato(siacDModpagStato);
 			// salvo sul db:
@@ -8739,10 +8793,10 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// Controllo che sia di tipo contante
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Contanti))
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Contanti))
 		{
 
-			siacTModPagModToInsert = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTModPagModToInsert = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTModPagModToInsert, datiOperazioneDto, siacTAccountRepository);
 
 			// Inserisco il riferimento alla mdp esistente nella tabella
@@ -8807,7 +8861,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// se e' valido data inizio e data validita'
 			if (mdpModToInsert.getDescrizioneStatoModalitaPagamento()
-					.equals(Constanti.STATO_VALIDO))
+					.equals(CostantiFin.STATO_VALIDO))
 			{
 				siacTModPagModToInsert.setDataCreazione(new Date());
 			}
@@ -8830,8 +8884,8 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// Setto lo stato in_modifica sulla definitiva
 			SiacRModpagStatoFin siacRModpagStatoToUpdate = siacRModpagStatoRepository
-					.findStatoValidoByMdpId(mdpModToInsert.getUid()).get(0);
-			siacRModpagStatoToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					.findStatoValidoByModpagId(mdpModToInsert.getUid());
+			siacRModpagStatoToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacRModpagStatoToUpdate, datiOperazioneDto, siacTAccountRepository);
 
 			siacRModpagStatoToUpdate.setSiacTModpag(siacTModpagToCheck);
@@ -8840,7 +8894,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacRModpagStatoToUpdate.setDataCreazione(siacTModpagToCheck.getDataCreazione());
 
 			SiacDModpagStatoFin siacDModpagStato = siacDModpagStatoRepository
-					.findModPagStatoDValidoByCode(idEnte, Constanti.STATO_VALIDO,
+					.findModPagStatoDValidoByCode(idEnte, CostantiFin.STATO_VALIDO,
 							datiOperazioneDto.getTs()).get(0);
 			siacRModpagStatoToUpdate.setSiacDModpagStato(siacDModpagStato);
 			// salvo sul db:
@@ -8852,10 +8906,10 @@ public class SoggettoFinDad extends AbstractFinDad
 		
 		// Controllo che sia di tipo generico
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Generico))
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Generico))
 		{
 
-			siacTModPagModToInsert = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacTModPagModToInsert = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacTModPagModToInsert, datiOperazioneDto, siacTAccountRepository);
 
 			// Inserisco il riferimento alla mdp esistente nella tabella
@@ -8920,7 +8974,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// se e' valido data inizio e data validita'
 			if (mdpModToInsert.getDescrizioneStatoModalitaPagamento()
-					.equals(Constanti.STATO_VALIDO))
+					.equals(CostantiFin.STATO_VALIDO))
 			{
 				siacTModPagModToInsert.setDataCreazione(new Date());
 			}
@@ -8943,8 +8997,8 @@ public class SoggettoFinDad extends AbstractFinDad
 
 			// Setto lo stato in_modifica sulla definitiva
 			SiacRModpagStatoFin siacRModpagStatoToUpdate = siacRModpagStatoRepository
-					.findStatoValidoByMdpId(mdpModToInsert.getUid()).get(0);
-			siacRModpagStatoToUpdate = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+					.findStatoValidoByModpagId(mdpModToInsert.getUid());
+			siacRModpagStatoToUpdate = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacRModpagStatoToUpdate, datiOperazioneDto, siacTAccountRepository);
 
 			siacRModpagStatoToUpdate.setSiacTModpag(siacTModpagToCheck);
@@ -8953,7 +9007,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacRModpagStatoToUpdate.setDataCreazione(siacTModpagToCheck.getDataCreazione());
 
 			SiacDModpagStatoFin siacDModpagStato = siacDModpagStatoRepository
-					.findModPagStatoDValidoByCode(idEnte, Constanti.STATO_VALIDO,
+					.findModPagStatoDValidoByCode(idEnte, CostantiFin.STATO_VALIDO,
 							datiOperazioneDto.getTs()).get(0);
 			siacRModpagStatoToUpdate.setSiacDModpagStato(siacDModpagStato);
 			// salvo sul db:
@@ -8967,16 +9021,16 @@ public class SoggettoFinDad extends AbstractFinDad
 		
 		// Controllo che sia di tipo cessione
 		if (dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-				Constanti.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
+				CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
 				|| dAccreditoGruppoForCheck.getAccreditoGruppoCode().equals(
-						Constanti.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
+						CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
 		{
 
 			SiacRSoggettoRelazFin soggRelaz = siacRSoggettoRelazRepository.findOne(mdpModToInsert
 					.getUid());
 
 			SiacRSoggettoRelazModFin siacRSoggettoRelazMod = new SiacRSoggettoRelazModFin();
-			siacRSoggettoRelazMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacRSoggettoRelazMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacRSoggettoRelazMod, datiOperazioneDto, siacTAccountRepository);
 
 			SiacDRelazTipoFin siacDRelazTipo = siacDRelazTipoRepository
@@ -9015,7 +9069,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacRSoggettoRelazRepository.saveAndFlush(soggRelaz);
 
 			SiacRSoggrelModpagModFin siacRSoggrelModpagMod = new SiacRSoggrelModpagModFin();
-			siacRSoggrelModpagMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+			siacRSoggrelModpagMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 					siacRSoggrelModpagMod, datiOperazioneDto, siacTAccountRepository);
 
 			siacRSoggrelModpagMod.setSiacRSoggettoRelazMod(siacRSoggettoRelazModInsert);
@@ -9057,7 +9111,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			siacRSoggrelModpagModRepository.saveAndFlush(siacRSoggrelModpagMod);
 
 			SiacDRelazStatoFin siacDRelazStato = siacDRelazStatoRepository
-					.findDRelazStatoValidoByCode(idEnte, Constanti.STATO_VALIDO).get(0);
+					.findDRelazStatoValidoByCode(idEnte, CostantiFin.STATO_VALIDO).get(0);
 			SiacRSoggettoRelazStatoFin siacRSoggettoRelazStato = siacRSoggettoRelazStatoRepository
 					.findBySoggettoRelazId(soggRelaz.getUid());
 
@@ -9091,12 +9145,12 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					SiacRIndirizzoSoggettoTipoFin siacRIndirizzoSoggettoTipo = siacRIndirizzoSoggettoTipoList
 							.get(0);
-					DatiOperazioneUtils.cancellaRecord(siacRIndirizzoSoggettoTipo,
+					DatiOperazioneUtil.cancellaRecord(siacRIndirizzoSoggettoTipo,
 							siacRIndirizzoSoggettoTipoRepository, datiOperazione,
 							siacTAccountRepository);
 				}
 			}
-			DatiOperazioneUtils.cancellaRecord(indirizzo, siacTIndirizzoSoggettoRepository,
+			DatiOperazioneUtil.cancellaRecord(indirizzo, siacTIndirizzoSoggettoRepository,
 					datiOperazione, siacTAccountRepository);
 		}
 	}
@@ -9112,8 +9166,8 @@ public class SoggettoFinDad extends AbstractFinDad
 		Integer idModpag = mdpToDelete.getUid();
 
 		SiacTModpagFin siacTModpagToDelete = siacTModpagRepository.findOne(idModpag);
-		SiacRModpagStatoFin siacRModpagStato = siacRModpagStatoRepository.findStatoValidoByMdpId(
-				idModpag).get(0);
+		SiacRModpagStatoFin siacRModpagStato = siacRModpagStatoRepository.findStatoValidoByModpagId(
+				idModpag);
 
 		siacRModpagStato.setDataCancellazione(new Date());
 		// salvo sul db:
@@ -9196,7 +9250,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		datiOperazioneModifica.setOperazione(Operazione.MODIFICA);
 
 		String dug = indirizzo.getSedime();
-		if (!StringUtils.isEmpty(dug))
+		if (!StringUtilsFin.isEmpty(dug))
 		{
 			dug = dug.trim().toUpperCase();
 		}
@@ -9247,7 +9301,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			{
 				// sono diversi
 				// 1. invalido la vecchia relazione:
-				siacRIndirizzoSoggettoTipoOld = DatiOperazioneUtils.cancellaRecord(
+				siacRIndirizzoSoggettoTipoOld = DatiOperazioneUtil.cancellaRecord(
 						siacRIndirizzoSoggettoTipoOld, siacRIndirizzoSoggettoTipoRepository,
 						datiOperazioneModifica, siacTAccountRepository);
 				SiacDIndirizzoTipoFin siacDIndirizzoTipo2 = siacDIndirizzoTipoRepository
@@ -9256,7 +9310,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				// 2. inserisco una nuova relazione siac r indirizzo soggetto
 				// tipo:
 				SiacRIndirizzoSoggettoTipoFin siacRIndirizzoSoggettoTipo = new SiacRIndirizzoSoggettoTipoFin();
-				siacRIndirizzoSoggettoTipo = DatiOperazioneUtils
+				siacRIndirizzoSoggettoTipo = DatiOperazioneUtil
 						.impostaDatiOperazioneLogin(siacRIndirizzoSoggettoTipo,
 								datiOperazioneInserisci, siacTAccountRepository);
 				siacRIndirizzoSoggettoTipo.setSiacTIndirizzoSoggetto(siacTIndirizzoSoggetto);
@@ -9280,9 +9334,9 @@ public class SoggettoFinDad extends AbstractFinDad
 		Integer idIndirizzoSogg = indirizzo.getIndirizzoModId();
 		SiacRIndirizzoSoggettoTipoModFin siacRIndirizzoSoggettoTipoMod = siacRIndirizzoSoggettoTipoModRepository
 				.findValidoByIdIndirizzoSoggettoMod(idIndirizzoSogg, datiOperazione.getTs()).get(0);
-		DatiOperazioneUtils.cancellaRecord(siacRIndirizzoSoggettoTipoMod,
+		DatiOperazioneUtil.cancellaRecord(siacRIndirizzoSoggettoTipoMod,
 				siacRIndirizzoSoggettoTipoModRepository, datiOperazione, siacTAccountRepository);
-		DatiOperazioneUtils.cancellaRecord(indirizzo, siacTIndirizzoSoggettoModRepository,
+		DatiOperazioneUtil.cancellaRecord(indirizzo, siacTIndirizzoSoggettoModRepository,
 				datiOperazione, siacTAccountRepository);
 	}
 
@@ -9298,21 +9352,24 @@ public class SoggettoFinDad extends AbstractFinDad
 			DatiOperazioneDto datiOperazioneInserisci)
 	{
 		SiacDViaTipoFin siacDViaTipo = null;
-		// cerco sul db:
-		List<SiacDViaTipoFin> listaDviatipo = siacDViaTipoRepository.findByTipo(idEnte, dug);
-		if (listaDviatipo != null && listaDviatipo.size() > 0)
-		{
-			siacDViaTipo = listaDviatipo.get(0);
-		}
-		else
-		{
-			SiacDViaTipoFin siacDViaTipoNew = new SiacDViaTipoFin();
-			siacDViaTipoNew = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacDViaTipoNew,
-					datiOperazioneInserisci, siacTAccountRepository);
-			siacDViaTipoNew.setViaTipoDesc(dug);
-			siacDViaTipoNew.setViaTipoCode(dug);
-			// salvo sul db:
-			siacDViaTipo = siacDViaTipoRepository.saveAndFlush(siacDViaTipoNew);
+		//SIAC-8025 se ho un valore valido cerco il dato sul db
+		if(!StringUtils.isBlank(dug)) {
+			// cerco sul db:
+			List<SiacDViaTipoFin> listaDviatipo = siacDViaTipoRepository.findByTipo(idEnte, dug);
+			if (listaDviatipo != null && listaDviatipo.size() > 0)
+			{
+				siacDViaTipo = listaDviatipo.get(0);
+			}
+			else
+			{
+				SiacDViaTipoFin siacDViaTipoNew = new SiacDViaTipoFin();
+				siacDViaTipoNew = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacDViaTipoNew,
+						datiOperazioneInserisci, siacTAccountRepository);
+				siacDViaTipoNew.setViaTipoDesc(dug);
+				siacDViaTipoNew.setViaTipoCode(dug);
+				// salvo sul db:
+				siacDViaTipo = siacDViaTipoRepository.saveAndFlush(siacDViaTipoNew);
+			}
 		}
 		// Termino restituendo l'oggetto di ritorno:
 		return siacDViaTipo;
@@ -9341,7 +9398,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		boolean avviso = Boolean.valueOf(indirizzo.getAvviso());
 		boolean principale = Boolean.valueOf(indirizzo.getPrincipale());
 		if (!principale)
-			principale = Constanti.TRUE.equals(indirizzo.getPrincipale());
+			principale = CostantiFin.TRUE.equals(indirizzo.getPrincipale());
 
 		siacTIndirizzoSoggetto.setToponimo(toponimo);
 		siacTIndirizzoSoggetto.setNumeroCivico(civico);
@@ -9354,8 +9411,8 @@ public class SoggettoFinDad extends AbstractFinDad
 		else
 			siacTIndirizzoSoggetto.setSiacTComune(comuneTrovato);
 
-		siacTIndirizzoSoggetto.setAvviso(StringUtils.booleanToStringForDb(avviso));
-		siacTIndirizzoSoggetto.setPrincipale(StringUtils.booleanToStringForDb(principale));
+		siacTIndirizzoSoggetto.setAvviso(StringUtilsFin.booleanToStringForDb(avviso));
+		siacTIndirizzoSoggetto.setPrincipale(StringUtilsFin.booleanToStringForDb(principale));
 		siacTIndirizzoSoggetto.setSiacDViaTipo(siacDViaTipo);
 		siacTIndirizzoSoggetto.setSiacTSoggetto(siacTSoggetto);
 
@@ -9372,7 +9429,7 @@ public class SoggettoFinDad extends AbstractFinDad
 	private SiacTIndirizzoSoggettoFin saveSiacTIndirizzoSoggetto(
 			SiacTIndirizzoSoggettoFin siacTIndirizzoSoggetto, DatiOperazioneDto datiOperazioneDto)
 	{
-		siacTIndirizzoSoggetto = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacTIndirizzoSoggetto = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacTIndirizzoSoggetto, datiOperazioneDto, siacTAccountRepository);
 		// salvo sul db:
 		SiacTIndirizzoSoggettoFin siacTIndiriInserito = siacTIndirizzoSoggettoRepository
@@ -9406,14 +9463,14 @@ public class SoggettoFinDad extends AbstractFinDad
 		boolean avviso = Boolean.valueOf(indirizzo.getAvviso());
 		boolean principale = Boolean.valueOf(indirizzo.getPrincipale());
 
-		siacTIndirizzoSoggettoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacTIndirizzoSoggettoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacTIndirizzoSoggettoMod, datiOperazioneDto, siacTAccountRepository);
 		siacTIndirizzoSoggettoMod.setToponimo(toponimo);
 		siacTIndirizzoSoggettoMod.setNumeroCivico(civico);
 		siacTIndirizzoSoggettoMod.setZipCode(cap);
 		siacTIndirizzoSoggettoMod.setSiacTComune(comuneTrovato);
-		siacTIndirizzoSoggettoMod.setAvviso(StringUtils.booleanToStringForDb(avviso));
-		siacTIndirizzoSoggettoMod.setPrincipale(StringUtils.booleanToStringForDb(principale));
+		siacTIndirizzoSoggettoMod.setAvviso(StringUtilsFin.booleanToStringForDb(avviso));
+		siacTIndirizzoSoggettoMod.setPrincipale(StringUtilsFin.booleanToStringForDb(principale));
 		siacTIndirizzoSoggettoMod.setSiacDViaTipo(siacDViaTipo);
 		siacTIndirizzoSoggettoMod.setSiacTSoggetto(siacTSoggetto);
 		siacTIndirizzoSoggettoMod.setSiacTSoggettoMod(siacTSoggettoMod);
@@ -9453,7 +9510,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				.getSiacDIndirizzoTipo();
 
 		SiacRIndirizzoSoggettoTipoFin siacRIndirizzoSoggettoTipo = new SiacRIndirizzoSoggettoTipoFin();
-		siacRIndirizzoSoggettoTipo = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacRIndirizzoSoggettoTipo = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacRIndirizzoSoggettoTipo, datiOperazioneDto, siacTAccountRepository);
 		siacRIndirizzoSoggettoTipo.setSiacTIndirizzoSoggetto(siacTIndiriInserito);
 		siacRIndirizzoSoggettoTipo.setSiacDIndirizzoTipo(siacDIndirizzoTipo);
@@ -9481,7 +9538,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacTSoggettoFin siacTSoggetto, Integer idEnte, DatiOperazioneDto datiOperazioneDto)
 	{
 		String dug = indirizzo.getSedime();
-		if (!StringUtils.isEmpty(dug))
+		if (!StringUtilsFin.isEmpty(dug))
 		{
 			dug = dug.trim().toUpperCase();
 		}
@@ -9506,7 +9563,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// gestione siac r indirizzo soggetto tipo:
 		SiacRIndirizzoSoggettoTipoFin siacRIndirizzoSoggettoTipo = new SiacRIndirizzoSoggettoTipoFin();
-		siacRIndirizzoSoggettoTipo = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacRIndirizzoSoggettoTipo = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacRIndirizzoSoggettoTipo, datiOperazioneDto, siacTAccountRepository);
 		siacRIndirizzoSoggettoTipo.setSiacTIndirizzoSoggetto(siacTIndiriInserito);
 		siacRIndirizzoSoggettoTipo.setSiacDIndirizzoTipo(siacDIndirizzoTipo);
@@ -9532,7 +9589,8 @@ public class SoggettoFinDad extends AbstractFinDad
 			DatiOperazioneDto datiOperazioneDto)
 	{
 		String dug = indirizzo.getSedime();
-		if (!StringUtils.isEmpty(dug))
+		//SIAC-8025
+		if (!StringUtilsFin.isEmpty(dug)) 
 		{
 			dug = dug.trim().toUpperCase();
 		}
@@ -9557,7 +9615,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		// gestione siac_r_indirizzo_soggetto_tipo_mod:
 		SiacRIndirizzoSoggettoTipoModFin siacRIndirizzoSoggettoTipoMod = new SiacRIndirizzoSoggettoTipoModFin();
-		siacRIndirizzoSoggettoTipoMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacRIndirizzoSoggettoTipoMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacRIndirizzoSoggettoTipoMod, datiOperazioneDto, siacTAccountRepository);
 		siacRIndirizzoSoggettoTipoMod.setSiacTIndirizzoSoggettoMod(siacTIndiriInserito);
 		siacRIndirizzoSoggettoTipoMod.setSiacDIndirizzoTipo(siacDIndirizzoTipo);
@@ -9609,16 +9667,16 @@ public class SoggettoFinDad extends AbstractFinDad
 				for (SiacTRecapitoSoggettoFin siacTOld : recapitiOld)
 				{
 					String codOld = siacTOld.getSiacDRecapitoModo().getRecapitoModoCode();
-					if (StringUtils.sonoUgualiTrimmed(codOld, codIterato))
+					if (StringUtilsFin.sonoUgualiTrimmed(codOld, codIterato))
 					{
 						String descrizioneIterata = contattoIterato.getDescrizione().trim()
 								.toUpperCase();
 						String descrizioneOld = siacTOld.getRecapitoDesc().trim().toUpperCase();
-						String avvisoIterato = StringUtils.checkStringBooleanForDb(contattoIterato
+						String avvisoIterato = StringUtilsFin.checkStringBooleanForDb(contattoIterato
 								.getAvviso());
 						String avvisoOld = siacTOld.getAvviso().trim().toUpperCase();
-						if (StringUtils.sonoUgualiTrimmed(descrizioneIterata, descrizioneOld)
-								&& StringUtils.sonoUgualiTrimmed(avvisoIterato, avvisoOld))
+						if (StringUtilsFin.sonoUgualiTrimmed(descrizioneIterata, descrizioneOld)
+								&& StringUtilsFin.sonoUgualiTrimmed(avvisoIterato, avvisoOld))
 						{
 							// rimasto uguale
 							listaRimastiUguali.add(contattoIterato);
@@ -9628,7 +9686,7 @@ public class SoggettoFinDad extends AbstractFinDad
 							// modificato
 							listaModificati
 									.add(new ContattoModificatoDto(siacTOld, contattoIterato));
-							if (StringUtils.isEmpty(descrizioneIterata))
+							if (StringUtilsFin.isEmpty(descrizioneIterata))
 							{
 								listaDaInvalidare.add(siacTOld);
 							}
@@ -9645,7 +9703,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		for (SiacTRecapitoSoggettoFin siacTOld : recapitiOld)
 		{
 			String codOld = siacTOld.getSiacDRecapitoModo().getRecapitoModoCode();
-			if (!StringUtils.contenutoIn(codOld, codiciNuovi))
+			if (!StringUtilsFin.contenutoIn(codOld, codiciNuovi))
 			{
 				if (!listaDaInvalidare.contains(siacTOld))
 				{
@@ -9710,7 +9768,7 @@ public class SoggettoFinDad extends AbstractFinDad
 						String descrizioneIterata = contattoIterato.getDescrizione().trim()
 								.toUpperCase();
 						String descrizioneOld = siacTOld.getRecapitoDesc().trim().toUpperCase();
-						String avvisoIterato = StringUtils.checkStringBooleanForDb(contattoIterato
+						String avvisoIterato = StringUtilsFin.checkStringBooleanForDb(contattoIterato
 								.getAvviso());
 						String avvisoOld = siacTOld.getAvviso().trim().toUpperCase();
 						if (descrizioneIterata.equals(descrizioneOld)
@@ -10246,7 +10304,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				else
 				{
 					if (!modPagIterato.getDescrizioneStatoModalitaPagamento().equalsIgnoreCase(
-							Constanti.STATO_IN_MODIFICA_no_underscore))
+							CostantiFin.STATO_IN_MODIFICA_no_underscore))
 					{
 						// Altrimenti va in modifica
 						if (isInModificaModPag(modPagIterato, idSoggetto, idEnte, datiOperazioneDto))
@@ -10689,20 +10747,15 @@ public class SoggettoFinDad extends AbstractFinDad
 					}
 				}
 
-				List<SiacRModpagStatoFin> siacRModpagStatoToCheckList = siacRModpagStatoRepository
-						.findStatoValidoByMdpId(siacModpagModToCheck.getUid());
-				if (siacRModpagStatoToCheckList != null)
+				SiacRModpagStatoFin siacRModpagStatoToCheck = siacRModpagStatoRepository
+						.findStatoValidoByModpagId(siacModpagModToCheck.getUid());
+				if (siacRModpagStatoToCheck != null)
 				{
-					if (!siacRModpagStatoToCheckList.isEmpty())
+					if (!modPagToCheck.getDescrizioneStatoModalitaPagamento().equalsIgnoreCase(
+							siacRModpagStatoToCheck.getSiacDModpagStato().getModpagStatoDesc()))
 					{
-						SiacRModpagStatoFin siacRModpagStatoToCheck = siacRModpagStatoToCheckList
-								.get(0);
-						if (!modPagToCheck.getDescrizioneStatoModalitaPagamento().equalsIgnoreCase(
-								siacRModpagStatoToCheck.getSiacDModpagStato().getModpagStatoDesc()))
-						{
-							isInModifica = true;
+						isInModifica = true;
 
-						}
 					}
 				}
 
@@ -11136,8 +11189,12 @@ public class SoggettoFinDad extends AbstractFinDad
 
 					// Controllo lo stato modalita pagamento
 					// Prendo record relativo stato modalita
+					
 					SiacRModpagStatoFin siacRModpagStatoToCheck = siacRModpagStatoRepository
-							.findStatoValidoByMdpId(siacTModPagDBToCheck.getUid()).get(0);
+							.findStatoValidoByModpagId(siacTModPagDBToCheck.getUid());
+					
+					
+					
 					if (siacRModpagStatoToCheck != null)
 					{
 						if (modPagToCheck.getDescrizioneStatoModalitaPagamento() != null)
@@ -11247,9 +11304,9 @@ public class SoggettoFinDad extends AbstractFinDad
 				// Se nella tabella siac_t_modpag non esiste potrebbe essere di
 				// tipo cessione e va trattato in maniera differente
 //				if (String.valueOf(modPagToCheck.getTipoAccredito()).equals(
-//						Constanti.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
+//						CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_del_credito)
 //						|| String.valueOf(modPagToCheck.getTipoAccredito()).equals(
-//								Constanti.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
+//								CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
 //				{
 					SiacRSoggettoRelazFin siacRSoggettoRelazToCheck = siacRSoggettoRelazRepository
 							.findOne(modPagToCheck.getUid());
@@ -11348,7 +11405,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacTSoggettoFin siacTSoggetto, DatiOperazioneDto datiOperazioneDto)
 	{
 		SiacRFormaGiuridicaFin rFormaGiuridica = new SiacRFormaGiuridicaFin();
-		rFormaGiuridica = DatiOperazioneUtils.impostaDatiOperazioneLogin(rFormaGiuridica,
+		rFormaGiuridica = DatiOperazioneUtil.impostaDatiOperazioneLogin(rFormaGiuridica,
 				datiOperazioneDto, siacTAccountRepository);
 		rFormaGiuridica.setSiacTSoggetto(siacTSoggetto);
 		rFormaGiuridica.setSiacTFormaGiuridica(siacTFormaGiuridica);
@@ -11369,7 +11426,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacTSoggettoFin siacTSoggetto, DatiOperazioneDto datiOperazioneDto)
 	{
 		SiacDSoggettoTipoFin siacDSoggettoTipo = null;
-		if (!StringUtils.isEmpty(tipoSoggetto.getCodice()))
+		if (!StringUtilsFin.isEmpty(tipoSoggetto.getCodice()))
 		{
 			String code = tipoSoggetto.getCodice().trim().toUpperCase();
 			siacDSoggettoTipo = siacDSoggettoTipoRepository.findValidoByCode(idEnte, code,
@@ -11378,7 +11435,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		if (siacDSoggettoTipo != null)
 		{
 			SiacRSoggettoTipoFin siacRSoggettoTipo = new SiacRSoggettoTipoFin();
-			siacRSoggettoTipo = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRSoggettoTipo,
+			siacRSoggettoTipo = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRSoggettoTipo,
 					datiOperazioneDto, siacTAccountRepository);
 			siacRSoggettoTipo.setSiacTSoggetto(siacTSoggetto);
 			siacRSoggettoTipo.setSiacDSoggettoTipo(siacDSoggettoTipo);
@@ -11413,32 +11470,36 @@ public class SoggettoFinDad extends AbstractFinDad
 		String sesso = null;
 		if (fromInsert)
 		{
-			if (Constanti.MASCHIO.equals(soggetto.getSesso().name().toUpperCase()))
+			if (CostantiFin.MASCHIO.equals(soggetto.getSesso().name().toUpperCase()))
 			{
-				sesso = Constanti.SESSO_M;
+				sesso = CostantiFin.SESSO_M;
 			}
 			else
 			{
-				sesso = Constanti.SESSO_F;
+				sesso = CostantiFin.SESSO_F;
 			}
 		}
 		else
 		{
-			if (Constanti.MASCHIO.equals(soggetto.getSessoStringa().toUpperCase()))
+			if (CostantiFin.MASCHIO.equals(soggetto.getSessoStringa().toUpperCase()))
 			{
-				sesso = Constanti.SESSO_M;
+				sesso = CostantiFin.SESSO_M;
 			}
 			else
 			{
-				sesso = Constanti.SESSO_F;
+				sesso = CostantiFin.SESSO_F;
 			}
 		}
 		personaFisica.setSesso(sesso);
 		personaFisica.setNascitaData(new Timestamp(soggetto.getDataNascita().getTime()));
 		
-		SiacTComuneFin comuneTrovato = gestisciComuneNascita(soggetto.getComuneNascita(), datiOperazioneDto);
+		//task-211
+		if(!"".equals(soggetto.getComuneNascita().getDescrizione())) {
+			personaFisica.setSiacTComune(gestisciComuneNascita(soggetto.getComuneNascita(), datiOperazioneDto));
+		}else {
+			personaFisica.setSiacTComune(null);
+		}
 		
-		personaFisica.setSiacTComune(comuneTrovato);
 		personaFisica.setSiacTSoggetto(siacTSoggetto);
 		return savePersonaFisica(personaFisica, datiOperazioneDto);
 	}
@@ -11450,16 +11511,15 @@ public class SoggettoFinDad extends AbstractFinDad
 	 * @return
 	 */
 	private SiacTComuneFin gestisciComuneIndirizzoSoggetto(IndirizzoSoggetto indirizzo, DatiOperazioneDto datiOperazione){
-		SiacTComuneFin comuneTrovato = null;
-		if(indirizzo!=null){
-			//leggiamo le variabili da passare al metodo centralizzato:
-			String codeIstat = indirizzo.getIdComune();
-			String descrizioneComune = indirizzo.getComune();
-			String codiceNazione = indirizzo.getCodiceNazione();
-			//chiamiamo il metodo centralizzato:
-			comuneTrovato = gestisciComune(codeIstat , descrizioneComune , codiceNazione , datiOperazione);
+		if (indirizzo == null) {
+			return null;
 		}
-		return comuneTrovato;
+		
+		if (indirizzo.getComuneUid() != null) {
+			return new SiacTComuneFin(indirizzo.getComuneUid());
+		}
+		
+		return gestisciComune(indirizzo.getCodiceIstatComune(), indirizzo.getComune() , indirizzo.getCodiceNazione(), datiOperazione);
 	}
 	
 	/**
@@ -11472,7 +11532,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		SiacTComuneFin comuneTrovato = null;
 		if(comuneNascita != null){
 			//leggiamo le variabili da passare al metodo centralizzato:
-			String codeIstat = comuneNascita.getComuneIstatCode();
+			String codeIstat = comuneNascita.getCodiceIstat();
 			String descrizioneComune = comuneNascita.getDescrizione();
 			String codiceNazione = comuneNascita.getNazioneCode();
 			//chiamiamo il metodo centralizzato:
@@ -11492,9 +11552,15 @@ public class SoggettoFinDad extends AbstractFinDad
 	private SiacTComuneFin gestisciComune(String codeIstat,String descrizioneComune,String codiceNazione, DatiOperazioneDto datiOperazione) {
 		
 		return "1".equals(codiceNazione) ? //COMUNE ITALIANO ?   
-					siacTComuneRepository.caricaValidoByCodeIstat(datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId(), 
-							StringUtils.formatCodIstaForQuery(codeIstat) ,datiOperazione.getTs()) :  
+					findComuneItalianoValidoByCodiceIstat(codeIstat, datiOperazione) :  
 					gestisciComuneEstero(descrizioneComune, codiceNazione, datiOperazione);
+	}
+
+	private SiacTComuneFin findComuneItalianoValidoByCodiceIstat(String codeIstat, DatiOperazioneDto datiOperazione) {
+		List<SiacTComuneFin> siacTComuneList = siacTComuneRepository.findComuneItalianoValidoByCodiceIstat(datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId(), 
+				StringUtilsFin.formatCodIstaForQuery(codeIstat) ,datiOperazione.getTs());
+		
+		return siacTComuneList == null || siacTComuneList.isEmpty() ? null : siacTComuneList.get(0);
 	}
 
 	private SiacTComuneFin gestisciComuneEstero(String descrizioneComune, String codiceNazione,
@@ -11516,7 +11582,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			comuneTrovato.setDataCreazione(new Date());
 			comuneTrovato.setDataInizioValidita(new Date());
 			comuneTrovato.setDataModifica(new Date());
-			comuneTrovato.setLoginOperazione(DatiOperazioneUtils.determinaUtenteLogin(
+			comuneTrovato.setLoginOperazione(DatiOperazioneUtil.determinaUtenteLogin(
 					datiOperazioneDto, siacTAccountRepository));
 			comuneTrovato.setComuneDesc(descrizioneComune);
 			comuneTrovato.setSiacTNazione(siacTNazione);
@@ -11545,7 +11611,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			DatiOperazioneDto datiOperazioneDto)
 	{
 		// imposto i dati operazione:
-		personaFisica = DatiOperazioneUtils.impostaDatiOperazioneLogin(personaFisica,
+		personaFisica = DatiOperazioneUtil.impostaDatiOperazioneLogin(personaFisica,
 				datiOperazioneDto, siacTAccountRepository);
 		// salvo sul db e ritorno il risultato:
 		return siacTPersonaFisicaRepository.saveAndFlush(personaFisica);
@@ -11585,19 +11651,19 @@ public class SoggettoFinDad extends AbstractFinDad
 		personaFisicaMod.setNome(soggetto.getNome());
 		personaFisicaMod.setCognome(soggetto.getCognome());
 		String sesso = null;
-		if (Constanti.MASCHIO.equals(soggetto.getSesso().name().toUpperCase()))
+		if (CostantiFin.MASCHIO.equals(soggetto.getSesso().name().toUpperCase()))
 		{
-			sesso = Constanti.SESSO_M;
+			sesso = CostantiFin.SESSO_M;
 		}
 		else
 		{
-			sesso = Constanti.SESSO_F;
+			sesso = CostantiFin.SESSO_F;
 		}
 		personaFisicaMod.setSesso(sesso);
 		personaFisicaMod.setNascitaData(TimingUtils.convertiDataInTimeStamp(soggetto
 				.getDataNascita()));
 
-		personaFisicaMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(personaFisicaMod,
+		personaFisicaMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(personaFisicaMod,
 				datiOperazioneDto, siacTAccountRepository);
 		
 		SiacTComuneFin comuneTrovato = gestisciComuneNascita(soggetto.getComuneNascita(), datiOperazioneDto);
@@ -11638,7 +11704,7 @@ public class SoggettoFinDad extends AbstractFinDad
 	private SiacTPersonaGiuridicaFin savePersonaGiuridica(SiacTPersonaGiuridicaFin personaGiuridica,
 			DatiOperazioneDto datiOperazioneDto)
 	{
-		personaGiuridica = DatiOperazioneUtils.impostaDatiOperazioneLogin(personaGiuridica,
+		personaGiuridica = DatiOperazioneUtil.impostaDatiOperazioneLogin(personaGiuridica,
 				datiOperazioneDto, siacTAccountRepository);
 		return siacTPersonaGiuridicaRepository.save(personaGiuridica);
 	}
@@ -11677,7 +11743,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			SiacTSoggettoModFin siacTSoggettoMod, DatiOperazioneDto datiOperazioneDto)
 	{
 		personaGiuridica.setRagioneSociale(soggetto.getDenominazione());
-		personaGiuridica = DatiOperazioneUtils.impostaDatiOperazioneLogin(personaGiuridica,
+		personaGiuridica = DatiOperazioneUtil.impostaDatiOperazioneLogin(personaGiuridica,
 				datiOperazioneDto, siacTAccountRepository);
 		personaGiuridica.setSiacTSoggetto(siacTSoggetto);
 		personaGiuridica.setSiacTSoggettoMod(siacTSoggettoMod);
@@ -11703,7 +11769,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		long currMillisec = System.currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);
-		if (!StringUtils.isEmpty(codiceFiscale))
+		if (!StringUtilsFin.isEmpty(codiceFiscale))
 		{
 			soggettiTrovato = siacTSoggettoRepository.findSoggettoByCodiceFiscale(
 					codiceFiscale.toUpperCase(), ente.getUid(), timestampInserimento);
@@ -11724,7 +11790,7 @@ public class SoggettoFinDad extends AbstractFinDad
 												.getSiacDSoggettoStato().getSoggettoStatoCode()))
 								{
 									// trovato valido con stesso codice
-									if (!StringUtils.isEmpty(codiceSoggetto))
+									if (!StringUtilsFin.isEmpty(codiceSoggetto))
 									{
 										if (!codiceSoggetto.equalsIgnoreCase(currentSoggetto
 												.getSoggettoCode()))
@@ -11745,7 +11811,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				}
 			}
 		}
-		if (!StringUtils.isEmpty(partitaIva))
+		if (!StringUtilsFin.isEmpty(partitaIva))
 		{
 			soggettiTrovato = siacTSoggettoRepository.findSoggettoByPartitaIva(partitaIva,
 					ente.getUid(), timestampInserimento);
@@ -11766,7 +11832,7 @@ public class SoggettoFinDad extends AbstractFinDad
 												.getSiacDSoggettoStato().getSoggettoStatoCode()))
 								{
 									// trovato valido con stesso codice
-									if (!StringUtils.isEmpty(codiceSoggetto))
+									if (!StringUtilsFin.isEmpty(codiceSoggetto))
 									{
 										if (!codiceSoggetto.equalsIgnoreCase(currentSoggetto
 												.getSoggettoCode()))
@@ -11924,7 +11990,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		SiacTSoggettoFin soggettoInputDb = siacTSoggettoRepository.findOne(idSoggettoInput);
 		List<SiacTSoggettoFin> listaSediSecondarieDb = siacTSoggettoRepository.ricercaSedi(
-				ente.getUid(), idSoggettoInput, Constanti.SEDE_SECONDARIA);
+				ente.getUid(), idSoggettoInput, CostantiFin.SEDE_SECONDARIA);
 
 		if (listaSediSecondarieDb != null && listaSediSecondarieDb.size() > 0)
 		{
@@ -12197,13 +12263,12 @@ public class SoggettoFinDad extends AbstractFinDad
 		List<Errore> listaErrori = new ArrayList<Errore>();
 
 		// Verifico se si trata di aggiornamento o annullamento
-		List<SiacRModpagStatoFin> statoValidoByMdpId = siacRModpagStatoRepository
-				.findStatoValidoByMdpId(mdpToUpdate.getUid());
+		SiacRModpagStatoFin siacRModpagStatoToCheck = siacRModpagStatoRepository
+				.findStatoValidoByModpagId(mdpToUpdate.getUid());
 		
-		if (statoValidoByMdpId.isEmpty())
+		if (siacRModpagStatoToCheck == null)
 			return esito;
 		
-		SiacRModpagStatoFin siacRModpagStatoToCheck = statoValidoByMdpId.get(0);
 		
 		if (siacRModpagStatoToCheck.getSiacDModpagStato().getModpagStatoDesc()
 				.equalsIgnoreCase(mdpToUpdate.getDescrizioneStatoModalitaPagamento()))
@@ -12224,7 +12289,7 @@ public class SoggettoFinDad extends AbstractFinDad
 					List<SiacROrdinativoStatoFin> siacROrdinativoStatoList;
 					siacROrdinativoStatoList = siacROrdinativoModpag.getSiacTOrdinativo()
 							.getSiacROrdinativoStatos();
-					siacROrdinativoStatoList = DatiOperazioneUtils.soloValidi(
+					siacROrdinativoStatoList = DatiOperazioneUtil.soloValidi(
 							siacROrdinativoStatoList, getNow());
 
 					if (siacROrdinativoStatoList != null && siacROrdinativoStatoList.size() > 0)
@@ -12232,7 +12297,7 @@ public class SoggettoFinDad extends AbstractFinDad
 						for (SiacROrdinativoStatoFin siacROrdinativoStato : siacROrdinativoStatoList)
 						{
 							if (siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode()
-									.compareToIgnoreCase(Constanti.D_ORDINATIVO_STATO_INSERITO) == 0)
+									.compareToIgnoreCase(CostantiFin.D_ORDINATIVO_STATO_INSERITO) == 0)
 							{
 								listaErrori.add(ErroreFin.ENTITA_NON_AGGIORNABILE.getErrore(
 										"Modalita' di pagamento", "ordinativo emesso"));
@@ -12244,7 +12309,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		}
 		else if (mdpToUpdate.getDescrizioneStatoModalitaPagamento().equalsIgnoreCase(
-				Constanti.STATO_ANNULLATO))
+				CostantiFin.STATO_ANNULLATO))
 		{
 			esito.setModalitaPagamentoDaAnnullare(mdpToUpdate);
 			// Annullamento mdp
@@ -12277,14 +12342,14 @@ public class SoggettoFinDad extends AbstractFinDad
 
 					if (siacRLiquidazioneStatoList != null && siacRLiquidazioneStatoList.size() > 0)
 					{
-						siacRLiquidazioneStatoList = DatiOperazioneUtils.soloValidi(
+						siacRLiquidazioneStatoList = DatiOperazioneUtil.soloValidi(
 								siacRLiquidazioneStatoList, getNow());
 
 						for (SiacRLiquidazioneStatoFin siacRLiquidazioneStato : siacRLiquidazioneStatoList)
 						{
 							if (!siacRLiquidazioneStato.getSiacDLiquidazioneStato()
 									.getLiqStatoCode()
-									.equalsIgnoreCase(Constanti.LIQUIDAZIONE_STATO_ANNULLATO))
+									.equalsIgnoreCase(CostantiFin.LIQUIDAZIONE_STATO_ANNULLATO))
 							{
 
 								sommaImportiLiquidazioni = sommaImportiLiquidazioni
@@ -12295,7 +12360,7 @@ public class SoggettoFinDad extends AbstractFinDad
 								List<SiacRLiquidazioneOrdFin> siacRLiquidazioneOrdList;
 								siacRLiquidazioneOrdList = siacTLiquidazione
 										.getSiacRLiquidazioneOrds();
-								siacRLiquidazioneOrdList = DatiOperazioneUtils.soloValidi(
+								siacRLiquidazioneOrdList = DatiOperazioneUtil.soloValidi(
 										siacRLiquidazioneOrdList, getNow());
 
 								if (siacRLiquidazioneOrdList != null
@@ -12307,7 +12372,7 @@ public class SoggettoFinDad extends AbstractFinDad
 										List<SiacTOrdinativoTsDetFin> siacTOrdinativoTsDetList;
 										siacTOrdinativoTsDetList = siacRLiquidazioneOrd
 												.getSiacTOrdinativoT().getSiacTOrdinativoTsDets();
-										siacTOrdinativoTsDetList = DatiOperazioneUtils.soloValidi(
+										siacTOrdinativoTsDetList = DatiOperazioneUtil.soloValidi(
 												siacTOrdinativoTsDetList, getNow());
 
 										if (siacTOrdinativoTsDetList != null
@@ -12319,7 +12384,7 @@ public class SoggettoFinDad extends AbstractFinDad
 														.getSiacDOrdinativoTsDetTipo()
 														.getOrdTsDetTipoCode()
 														.equalsIgnoreCase(
-																Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE))
+																CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE))
 												{
 													sommaImportiOrdinativi = sommaImportiOrdinativi
 															.add(siacTOrdinativoTsDet
@@ -12362,7 +12427,7 @@ public class SoggettoFinDad extends AbstractFinDad
 
 					if (siacROrdinativoStatoList != null && siacROrdinativoStatoList.size() > 0)
 					{
-						siacROrdinativoStatoList = DatiOperazioneUtils.soloValidi(
+						siacROrdinativoStatoList = DatiOperazioneUtil.soloValidi(
 								siacROrdinativoStatoList, getNow());
 
 						if (siacROrdinativoStatoList != null && siacROrdinativoStatoList.size() > 0)
@@ -12373,7 +12438,7 @@ public class SoggettoFinDad extends AbstractFinDad
 										.getSiacDOrdinativoStato()
 										.getOrdStatoCode()
 										.compareToIgnoreCase(
-												Constanti.D_ORDINATIVO_STATO_QUIETANZATO) == 0)
+												CostantiFin.D_ORDINATIVO_STATO_QUIETANZATO) == 0)
 								{
 									listaErrori.add(ErroreFin.ESISTONO_MOVIMENTI_COLLEGATI
 											.getErrore("ANNULLAMENTO", "(ordinativi QUIETANZATI)"));
@@ -12455,13 +12520,13 @@ public class SoggettoFinDad extends AbstractFinDad
 
 				if (siacRLiquidazioneStatoList != null && siacRLiquidazioneStatoList.size() > 0)
 				{
-					siacRLiquidazioneStatoList = DatiOperazioneUtils.soloValidi(
+					siacRLiquidazioneStatoList = DatiOperazioneUtil.soloValidi(
 							siacRLiquidazioneStatoList, getNow());
 
 					for (SiacRLiquidazioneStatoFin siacRLiquidazioneStato : siacRLiquidazioneStatoList)
 					{
 						if (!siacRLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoCode()
-								.equalsIgnoreCase(Constanti.LIQUIDAZIONE_STATO_ANNULLATO))
+								.equalsIgnoreCase(CostantiFin.LIQUIDAZIONE_STATO_ANNULLATO))
 						{
 							return true;
 						}
@@ -12486,13 +12551,13 @@ public class SoggettoFinDad extends AbstractFinDad
 
 				if (SiacROrdinativoStatoList != null && SiacROrdinativoStatoList.size() > 0)
 				{
-					SiacROrdinativoStatoList = DatiOperazioneUtils.soloValidi(
+					SiacROrdinativoStatoList = DatiOperazioneUtil.soloValidi(
 							SiacROrdinativoStatoList, getNow());
 
 					for (SiacROrdinativoStatoFin siacROrdinativoStato : SiacROrdinativoStatoList)
 					{
 						if (!siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode()
-								.equalsIgnoreCase(Constanti.D_ORDINATIVO_STATO_ANNULLATO))
+								.equalsIgnoreCase(CostantiFin.D_ORDINATIVO_STATO_ANNULLATO))
 						{
 							return true;
 						}
@@ -12552,7 +12617,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		Date dateInserimento = new Date(currMillisec);
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);
 		List<SiacRSoggettoRelazFin> relazioni = siacRSoggettoRelazRepository.findBySoggettoETipo(
-				idSoggetto, Constanti.SEDE_SECONDARIA, timestampInserimento);
+				idSoggetto, CostantiFin.SEDE_SECONDARIA, timestampInserimento);
 		//
 		if (sedi == null)
 		{
@@ -12594,8 +12659,10 @@ public class SoggettoFinDad extends AbstractFinDad
 					if (sss.getUid() == idOld)
 					{
 						boolean sedeModificata = false;
+						
 						List<SiacTSoggettoModFin> soggmods = siacTSoggettoModRepository
 								.findValidoBySoggettoId(idOld, timestampInserimento);
+						
 						if (soggmods != null && soggmods.size() > 0)
 						{
 							// siamo nel caso in cui la sede e' in modifica
@@ -12611,6 +12678,8 @@ public class SoggettoFinDad extends AbstractFinDad
 							{
 								sedeModificata = isIndirizzoSedeModModificato(sss, sedeMod);
 							}
+							
+							sedeModificata = sedeModificata || !org.apache.commons.lang.StringUtils.equals(sedeMod.getCodDestinatario(), sss.getCodDestinatario());
 						}
 						else
 						{
@@ -12626,6 +12695,9 @@ public class SoggettoFinDad extends AbstractFinDad
 							{
 								sedeModificata = isIndirizzoSedeModificato(sss, idOld);
 							}
+
+							sedeModificata = sedeModificata || !org.apache.commons.lang.StringUtils.equals(siacTSoggettoRepository.findOne(idOld).getCodDestinatario(), sss.getCodDestinatario());
+
 						}
 						if (sedeModificata)
 						{
@@ -12673,16 +12745,16 @@ public class SoggettoFinDad extends AbstractFinDad
 				.findValidoBySoggModId(siacTSoggettoMod.getSogModId(), timestampInserimento);
 		SiacTIndirizzoSoggettoModFin indirizzoDb = indirSoggs.get(0);
 
-		if (!StringUtils.sonoUguali(sedeSecondariaSoggetto.getDenominazione(),
+		if (!StringUtilsFin.sonoUguali(sedeSecondariaSoggetto.getDenominazione(),
 				siacTSoggettoMod.getSoggettoDesc()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(indsogg.getDenominazione(), indirizzoDb.getToponimo()))
+		if (!StringUtilsFin.sonoUguali(indsogg.getDenominazione(), indirizzoDb.getToponimo()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(indsogg.getCap(), indirizzoDb.getZipCode()))
+		if (!StringUtilsFin.sonoUguali(indsogg.getCap(), indirizzoDb.getZipCode()))
 		{
 			return true;
 		}
@@ -12697,7 +12769,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			return true;
 		}
 		
-		if (!StringUtils.sonoUguali(indsogg.getNumeroCivico(), indirizzoDb.getNumeroCivico()))
+		if (!StringUtilsFin.sonoUguali(indsogg.getNumeroCivico(), indirizzoDb.getNumeroCivico()))
 		{
 			return true;
 		}
@@ -12727,16 +12799,16 @@ public class SoggettoFinDad extends AbstractFinDad
 				.findValidiByIdSoggetto(idSede, timestampInserimento);
 		SiacTIndirizzoSoggettoFin indirizzoDb = indirSoggs.get(0);
 
-		if (!StringUtils.sonoUguali(sedeSecondariaSoggetto.getDenominazione(),
+		if (!StringUtilsFin.sonoUguali(sedeSecondariaSoggetto.getDenominazione(),
 				siacTSoggetto.getSoggettoDesc()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(indsogg.getDenominazione(), indirizzoDb.getToponimo()))
+		if (!StringUtilsFin.sonoUguali(indsogg.getDenominazione(), indirizzoDb.getToponimo()))
 		{
 			return true;
 		}
-		if (!StringUtils.sonoUguali(indsogg.getCap(), indirizzoDb.getZipCode()))
+		if (!StringUtilsFin.sonoUguali(indsogg.getCap(), indirizzoDb.getZipCode()))
 		{
 			return true;
 		}
@@ -12752,21 +12824,21 @@ public class SoggettoFinDad extends AbstractFinDad
 		}
 		
 		//NUMERO CIVICO:
-		if (!StringUtils.sonoUguali(indsogg.getNumeroCivico(), indirizzoDb.getNumeroCivico()))
+		if (!StringUtilsFin.sonoUguali(indsogg.getNumeroCivico(), indirizzoDb.getNumeroCivico()))
 		{
 			return true;
 		}
 
 		if (indsogg.isCheckAvviso())
 		{
-			if (!indirizzoDb.getAvviso().equalsIgnoreCase(Constanti.TRUE))
+			if (!indirizzoDb.getAvviso().equalsIgnoreCase(CostantiFin.TRUE))
 			{
 				return true;
 			}
 		}
 		else if (!indsogg.isCheckAvviso())
 		{
-			if (indirizzoDb.getAvviso().equalsIgnoreCase(Constanti.TRUE))
+			if (indirizzoDb.getAvviso().equalsIgnoreCase(CostantiFin.TRUE))
 			{
 				return true;
 			}
@@ -12783,7 +12855,7 @@ public class SoggettoFinDad extends AbstractFinDad
 						&& statoSoggetto.getSiacDSoggettoStato().getSoggettoStatoCode() != null)
 				{
 					// trovato valido con stesso codice
-					if (!StringUtils.sonoUguali(statoSoggetto.getSiacDSoggettoStato()
+					if (!StringUtilsFin.sonoUguali(statoSoggetto.getSiacDSoggettoStato()
 							.getSoggettoStatoCode().toUpperCase(), sedeSecondariaSoggetto
 							.getDescrizioneStatoOperativoSedeSecondaria().toUpperCase()))
 					{
@@ -12811,12 +12883,12 @@ public class SoggettoFinDad extends AbstractFinDad
 		SiacTIndirizzoSoggettoFin indirizzoDb = siacTIndirizzoSoggettoRepository.findOne(indsogg.getIndirizzoId());
 
 		//TOPONIMO
-		if (!StringUtils.sonoUguali(indsogg.getDenominazione(), indirizzoDb.getToponimo())){
+		if (!StringUtilsFin.sonoUguali(indsogg.getDenominazione(), indirizzoDb.getToponimo())){
 			return true;
 		}
 		
 		//CAP
-		if (!StringUtils.sonoUguali(indsogg.getCap(), indirizzoDb.getZipCode())){
+		if (!StringUtilsFin.sonoUguali(indsogg.getCap(), indirizzoDb.getZipCode())){
 			return true;
 		}
 		
@@ -12831,17 +12903,17 @@ public class SoggettoFinDad extends AbstractFinDad
 		}
 		
 		//NUMERO CIVICO
-		if (!StringUtils.sonoUguali(indsogg.getNumeroCivico(), indirizzoDb.getNumeroCivico())){
+		if (!StringUtilsFin.sonoUguali(indsogg.getNumeroCivico(), indirizzoDb.getNumeroCivico())){
 			return true;
 		}
 		
 		//AVVISO
-		if (!StringUtils.sonoUgualiBoolDb(indsogg.getAvviso(), indirizzoDb.getAvviso())){
+		if (!StringUtilsFin.sonoUgualiBoolDb(indsogg.getAvviso(), indirizzoDb.getAvviso())){
 			return true;
 		}
 		
 		//PRINCIPALE
-		if (!StringUtils.sonoUgualiBoolDb(indsogg.getPrincipale(), indirizzoDb.getPrincipale())){
+		if (!StringUtilsFin.sonoUgualiBoolDb(indsogg.getPrincipale(), indirizzoDb.getPrincipale())){
 			return true;
 		}
 		
@@ -12863,10 +12935,10 @@ public class SoggettoFinDad extends AbstractFinDad
 			sedimeSulDb = indirizzoDb.getSiacDViaTipo().getViaTipoDesc();
 		}
 		String dug = indsogg.getSedime();
-		if (!StringUtils.isEmpty(dug)){
+		if (!StringUtilsFin.isEmpty(dug)){
 			dug = dug.trim().toUpperCase();
 		}
-		if (!StringUtils.sonoUguali(dug, sedimeSulDb)){
+		if (!StringUtilsFin.sonoUguali(dug, sedimeSulDb)){
 			return true;
 		}
 		return false;
@@ -12886,7 +12958,7 @@ public class SoggettoFinDad extends AbstractFinDad
 			// caso verificatesi per dati da migrazione
 			sedimeSulDb = indirizzoDb.getSiacDViaTipo().getViaTipoDesc();
 		}
-		if (!StringUtils.sonoUguali(indsogg.getSedime(), sedimeSulDb)){
+		if (!StringUtilsFin.sonoUguali(indsogg.getSedime(), sedimeSulDb)){
 			return true;
 		}
 		return false;
@@ -12902,7 +12974,7 @@ public class SoggettoFinDad extends AbstractFinDad
 	private boolean isComuneModificato(SiacTComuneFin comuneSulDb,IndirizzoSoggetto indsogg){
 		boolean modificato = false;
 		//COMUNE
-		if (!StringUtils.sonoUguali(StringUtils.formatCodIstaForQuery(indsogg.getIdComune()),comuneSulDb.getComuneIstatCode())){
+		if (!StringUtilsFin.sonoUguali(StringUtilsFin.formatCodIstaForQuery(indsogg.getCodiceIstatComune()),comuneSulDb.getComuneIstatCode())){
 			return true;
 		}
 		return modificato;
@@ -12926,11 +12998,11 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		if (indirizzoDb != null)
 		{
-			if (!StringUtils.sonoUguali(indsogg.getDenominazione(), indirizzoDb.getToponimo()))
+			if (!StringUtilsFin.sonoUguali(indsogg.getDenominazione(), indirizzoDb.getToponimo()))
 			{
 				return true;
 			}
-			if (!StringUtils.sonoUguali(indsogg.getCap(), indirizzoDb.getZipCode()))
+			if (!StringUtilsFin.sonoUguali(indsogg.getCap(), indirizzoDb.getZipCode()))
 			{
 				return true;
 			}
@@ -12945,15 +13017,15 @@ public class SoggettoFinDad extends AbstractFinDad
 				return true;
 			}
 			
-			if (!StringUtils.sonoUguali(indsogg.getNumeroCivico(), indirizzoDb.getNumeroCivico()))
+			if (!StringUtilsFin.sonoUguali(indsogg.getNumeroCivico(), indirizzoDb.getNumeroCivico()))
 			{
 				return true;
 			}
-			if (!StringUtils.sonoUguali(indsogg.getAvviso(), indirizzoDb.getAvviso()))
+			if (!StringUtilsFin.sonoUguali(indsogg.getAvviso(), indirizzoDb.getAvviso()))
 			{
 				return true;
 			}
-			if (!StringUtils.sonoUguali(indsogg.getPrincipale(), indirizzoDb.getPrincipale()))
+			if (!StringUtilsFin.sonoUguali(indsogg.getPrincipale(), indirizzoDb.getPrincipale()))
 			{
 				return true;
 			}
@@ -12969,7 +13041,7 @@ public class SoggettoFinDad extends AbstractFinDad
 							&& rIndirizzoSoggettoTipoMod.getDataFineValidita() == null)
 					{
 						// trovato valido
-						if (!StringUtils.sonoUguali(indsogg.getIdTipoIndirizzo(),
+						if (!StringUtilsFin.sonoUguali(indsogg.getIdTipoIndirizzo(),
 								rIndirizzoSoggettoTipoMod.getSiacDIndirizzoTipo()
 										.getIndirizzoTipoCode()))
 						{
@@ -13007,7 +13079,7 @@ public class SoggettoFinDad extends AbstractFinDad
 		// 08/05/2014 : Commento la chiamata al metodo isDecentrato(..) perche'
 		// non valutava in maniera corretta
 		// se l'utente era master o decentrato
-		String loginOperazione = DatiOperazioneUtils.determinaUtenteLogin(datiOperazioneDto,
+		String loginOperazione = DatiOperazioneUtil.determinaUtenteLogin(datiOperazioneDto,
 				siacTAccountRepository);
 
 		SediSecondarieInModificaInfoDto infoModifiche = valutaSediSecondarie(sedi,
@@ -13138,10 +13210,10 @@ public class SoggettoFinDad extends AbstractFinDad
 		String tipoLegame = tipoRelazione.name();
 		SiacTSoggettoFin siacTSoggettoCorrente = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
 				codiceAmbito, idEnte, soggettoCorrente.getCodiceSoggetto(),
-				Constanti.SEDE_SECONDARIA, getNow());
+				CostantiFin.SEDE_SECONDARIA, getNow());
 		SiacTSoggettoFin siacTSoggettoPrecedente = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
 				codiceAmbito, idEnte, soggettoPrecedente.getCodiceSoggetto(),
-				Constanti.SEDE_SECONDARIA, getNow());
+				CostantiFin.SEDE_SECONDARIA, getNow());
 		if (siacTSoggettoCorrente != null && siacTSoggettoPrecedente != null)
 		{
 			SiacRSoggettoRelazFin siacRSoggettoRelaz = siacRSoggettoRelazRepository
@@ -13182,11 +13254,11 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		SiacTSoggettoFin siacTSoggettoCorrente = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
 				codiceAmbito, idEnte, soggettoCorrente.getCodiceSoggetto(),
-				Constanti.SEDE_SECONDARIA, getNow());
+				CostantiFin.SEDE_SECONDARIA, getNow());
 
 		SiacTSoggettoFin siacTSoggettoPrecedente = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
 				codiceAmbito, idEnte, soggettoPrecedente.getCodiceSoggetto(),
-				Constanti.SEDE_SECONDARIA, getNow());
+				CostantiFin.SEDE_SECONDARIA, getNow());
 
 		if (siacTSoggettoCorrente != null && siacTSoggettoPrecedente != null)
 		{
@@ -13195,7 +13267,7 @@ public class SoggettoFinDad extends AbstractFinDad
 							siacTSoggettoCorrente.getUid(), tipoLegame, idEnte);
 			if (siacRSoggettoRelaz != null)
 			{
-				siacRSoggettoRelaz = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+				siacRSoggettoRelaz = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 						siacRSoggettoRelaz, datiOperazioneAnnullaLegame, siacTAccountRepository);
 				// salvo sul db:
 				siacRSoggettoRelazRepository.saveAndFlush(siacRSoggettoRelaz);
@@ -13237,16 +13309,16 @@ public class SoggettoFinDad extends AbstractFinDad
 
 		SiacTSoggettoFin siacTSoggettoCorrente = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
 				codiceAmbito, idEnte, soggettoCorrente.getCodiceSoggetto(),
-				Constanti.SEDE_SECONDARIA, getNow());
+				CostantiFin.SEDE_SECONDARIA, getNow());
 
 		SiacTSoggettoFin siacTSoggettoPrecedente = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
 				codiceAmbito, idEnte, soggettoPrecedente.getCodiceSoggetto(),
-				Constanti.SEDE_SECONDARIA, getNow());
+				CostantiFin.SEDE_SECONDARIA, getNow());
 
 		if (siacTSoggettoCorrente != null && siacTSoggettoPrecedente != null)
 		{
 			SiacRSoggettoRelazFin siacRSoggettoRelaz = new SiacRSoggettoRelazFin();
-			siacRSoggettoRelaz = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRSoggettoRelaz,
+			siacRSoggettoRelaz = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRSoggettoRelaz,
 					datiOperazioneAggiornaLegame, siacTAccountRepository);
 			SiacDRelazTipoFin tipoRelaz = siacDRelazTipoRepository.findRelazione(tipoLegame, idEnte,
 					datiOperazioneAggiornaLegame.getTs()).get(0);
@@ -13279,7 +13351,7 @@ public class SoggettoFinDad extends AbstractFinDad
 	{
 		Timestamp now = getNow();
 		List<SiacTSoggettoFin> sedes = siacTSoggettoRepository.caricaSoloSeSede(idEnte, idSoggetto,
-				Constanti.SEDE_SECONDARIA, now);
+				CostantiFin.SEDE_SECONDARIA, now);
 		if (sedes != null && sedes.size() > 0 && sedes.get(0) != null
 				&& sedes.get(0).getUid() != null)
 		{
@@ -13329,27 +13401,27 @@ public class SoggettoFinDad extends AbstractFinDad
 		ValidaSoggettoInfoDto info = new ValidaSoggettoInfoDto();
 		info.setIdSiacTSoggettoMod(null);
 		Integer idQuery = null;
-		if (!StringUtils.isEmpty(codiceSoggettoPadre))
+		if (!StringUtilsFin.isEmpty(codiceSoggettoPadre))
 		{
 			// Tramite il codice Soggetto Padre e il codice Soggetto ricevuti in
 			// input si recupera i relativi oggetti SiacTSoggettoFin e
 			// SiacTSoggettoModFin
 			SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
-					codiceAmbito, idEnte, codiceSoggettoPadre, Constanti.SEDE_SECONDARIA, getNow());
+					codiceAmbito, idEnte, codiceSoggettoPadre, CostantiFin.SEDE_SECONDARIA, getNow());
 			SiacTSoggettoModFin siacTSoggettoMod = siacTSoggettoModRepository.ricercaSoggetto(idEnte,
 					codiceSoggetto);
 			info.setIdSiacTSoggettoMod(siacTSoggettoMod.getSogModId());
 			idQuery = siacTSoggetto.getSoggettoId();
 		}
-		else if (!StringUtils.isEmpty(codiceSoggetto))
+		else if (!StringUtilsFin.isEmpty(codiceSoggetto))
 		{
 			// Tramite il codice Soggetto si accede a SiacTSoggettoFin e si "salva"
 			// l'id fisico nell'oggetto di ritorno
 			SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(
-					codiceAmbito, idEnte, codiceSoggetto, Constanti.SEDE_SECONDARIA, getNow());
+					codiceAmbito, idEnte, codiceSoggetto, CostantiFin.SEDE_SECONDARIA, getNow());
 			idQuery = siacTSoggetto.getSoggettoId();
 		}
-		else if (StringUtils.isEmpty(codiceSoggetto) && soggettoDaModificare.getUid() > 0)
+		else if (StringUtilsFin.isEmpty(codiceSoggetto) && soggettoDaModificare.getUid() > 0)
 		{
 			// SIAMO NEL CASO SEDE SECONDARIA CHE NON HA UN CODICE SUO E NON
 			// PUO' CHE ESSERE INDENTIFICATA TRAMITE Primary Key:
@@ -13405,10 +13477,10 @@ public class SoggettoFinDad extends AbstractFinDad
 							// disponibilita
 							if (siacTMovgestTs.getSiacTMovgest().getSiacDMovgestTipo()
 									.getMovgestTipoCode()
-									.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO))
+									.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO))
 							{
 								if (siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode()
-										.equalsIgnoreCase(Constanti.MOVGEST_TS_TIPO_TESTATA))
+										.equalsIgnoreCase(CostantiFin.MOVGEST_TS_TIPO_TESTATA))
 								{
 									// accertamento
 									disponibilita = calcolaDisponibiltaAIncassareAccertamento(siacTMovgestTs, statoValido, idEnte);
@@ -13422,7 +13494,7 @@ public class SoggettoFinDad extends AbstractFinDad
 							else
 							{
 								if (siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode()
-										.equalsIgnoreCase(Constanti.MOVGEST_TS_TIPO_TESTATA))
+										.equalsIgnoreCase(CostantiFin.MOVGEST_TS_TIPO_TESTATA))
 								{
 									// impegno
 									disponibilita = calcolaDisponibilitaAPagareImpegno(
@@ -13440,11 +13512,11 @@ public class SoggettoFinDad extends AbstractFinDad
 
 						if (siacTMovgestTs.getSiacTMovgest().getSiacDMovgestTipo()
 								.getMovgestTipoCode()
-								.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO))
+								.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO))
 						{
 							// accertamento
 							if (siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode()
-									.equalsIgnoreCase(Constanti.MOVGEST_TS_TIPO_TESTATA))
+									.equalsIgnoreCase(CostantiFin.MOVGEST_TS_TIPO_TESTATA))
 							{
 								// accertamento
 								// se sono in cancellazione non prendo in
@@ -13494,7 +13566,7 @@ public class SoggettoFinDad extends AbstractFinDad
 						{
 							// impegno
 							if (siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode()
-									.equalsIgnoreCase(Constanti.MOVGEST_TS_TIPO_TESTATA))
+									.equalsIgnoreCase(CostantiFin.MOVGEST_TS_TIPO_TESTATA))
 							{
 								// impegno
 								if (operazione.equals(Operazione.CANCELLAZIONE_LOGICA_RECORD)
@@ -13618,7 +13690,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				{
 					// trovato valido
 					if (siacROrdinativoSoggetto.getSiacTOrdinativo().getSiacDOrdinativoTipo()
-							.getOrdTipoCode().equalsIgnoreCase(Constanti.ORDINATIVO_TIPO_INCASSO))
+							.getOrdTipoCode().equalsIgnoreCase(CostantiFin.ORDINATIVO_TIPO_INCASSO))
 					{
 						// incasso
 						if (isSede == false)
@@ -13744,14 +13816,14 @@ public class SoggettoFinDad extends AbstractFinDad
 					if (siacRSoggettoRelaz
 							.getSiacDRelazTipo()
 							.getRelazTipoCode()
-							.equalsIgnoreCase(Constanti.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
+							.equalsIgnoreCase(CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_dell_incasso))
 					{
 						listaErrori.add(ErroreFin.ANNULLAMENTO_SOGGETTO_IMPOSSIBILE.getErrore("",
 								"cessioni di incasso"));
 						break;
 					}
 					else if (siacRSoggettoRelaz.getSiacDRelazTipo().getRelazTipoCode()
-							.equalsIgnoreCase(Constanti.D_ACCREDITO_TIPO_CODE_Cessione_del_credito))
+							.equalsIgnoreCase(CostantiFin.D_ACCREDITO_TIPO_CODE_Cessione_del_credito))
 					{
 						listaErrori.add(ErroreFin.ANNULLAMENTO_SOGGETTO_IMPOSSIBILE.getErrore("",
 								"cessioni di credito"));
@@ -13780,7 +13852,7 @@ public class SoggettoFinDad extends AbstractFinDad
 				if (siacRSoggettoRelaz.getDataFineValidita() == null)
 					if (siacRSoggettoRelaz.getSiacTSoggetto2().getDataCancellazione() == null)
 						if (siacRSoggettoRelaz.getSiacDRelazTipo().getRelazTipoCode()
-								.equalsIgnoreCase(Constanti.SEDE_SECONDARIA))
+								.equalsIgnoreCase(CostantiFin.SEDE_SECONDARIA))
 						{
 							listaErrori.add(ErroreFin.CANCELLAZIONE_SOGGETTO_IMPOSSIBILE.getErrore("",
 									"sedi secondarie"));
@@ -14061,11 +14133,11 @@ public class SoggettoFinDad extends AbstractFinDad
 	public List<CodificaFin> listaSoggettiDellaClasse(DatiOperazioneDto datiOperazione, String codClasse){
 		List<CodificaFin> listaSoggettiDellaClasse = new ArrayList<CodificaFin>();
 		Integer idEnte = datiOperazione.getSiacTEnteProprietario().getUid();
-		SiacDSoggettoClasseFin siacDSoggettoClasseFin = CommonUtils.getFirst(siacDSoggettoClasseRepository.findValidoByCode(idEnte, datiOperazione.getSiacDAmbito().getAmbitoId(), codClasse,getNow()));
+		SiacDSoggettoClasseFin siacDSoggettoClasseFin = CommonUtil.getFirst(siacDSoggettoClasseRepository.findValidoByCode(idEnte, datiOperazione.getSiacDAmbito().getAmbitoId(), codClasse,getNow()));
 		if(siacDSoggettoClasseFin!=null){
 			int idClasse = siacDSoggettoClasseFin.getUid();
 			List<Object[]> soggettiDellaClasse = siacRSoggettoClasseRepository.findIdCodiceSoggettiValidiByIdClasse(idClasse, getNow());
-			if(!StringUtils.isEmpty(soggettiDellaClasse)){
+			if(!StringUtilsFin.isEmpty(soggettiDellaClasse)){
 				for(Object[] it: soggettiDellaClasse){
 					if(it!=null && it.length==2){
 						CodificaFin soggIt = new CodificaFin();

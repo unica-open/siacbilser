@@ -11,7 +11,7 @@ import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.integration.dad.PrimaNotaDad;
 import it.csi.siac.siacbilser.integration.utility.ApplicationContextHelper;
 import it.csi.siac.siacbilser.model.Capitolo;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -32,7 +32,7 @@ import it.csi.siac.siacgenser.model.Risconto;
  * @author Domenico
  */
 public class RiscontoMovimentoHandler extends MovimentoHandler<Risconto> {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private PrimaNotaDad primaNotaDad;
 	private Capitolo<?, ?> capitolo;

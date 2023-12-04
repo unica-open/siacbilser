@@ -23,7 +23,7 @@ import it.csi.siac.siacbilser.business.service.base.ExtendedBaseService;
 import it.csi.siac.siacbilser.business.service.pcc.AggiornaStatoRichiestaService.AggiornaStatoRichiesta;
 import it.csi.siac.siacbilser.business.service.pcc.AggiornaStatoRichiestaService.AggiornaStatoRichiestaResponse;
 import it.csi.siac.siacbilser.integration.dad.RegistroComunicazioniPCCDad;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Errore;
@@ -45,7 +45,7 @@ import it.tesoro.fatture.ErroreTipo;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class AggiornaStatoRichiestaService extends ExtendedBaseService<AggiornaStatoRichiesta, AggiornaStatoRichiestaResponse> {
 
-	private static LogUtil log = new LogUtil(AggiornaStatoRichiestaService.class);
+	private static LogSrvUtil log = new LogSrvUtil(AggiornaStatoRichiestaService.class);
 	
 	//DADs
 	@Autowired

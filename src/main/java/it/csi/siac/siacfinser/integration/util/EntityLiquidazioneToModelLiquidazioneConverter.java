@@ -10,10 +10,10 @@ import java.util.List;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneOrdinativoPagamentoDto;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneAttoAmmFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneAttrFin;
@@ -21,18 +21,16 @@ import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneClassFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneMovgestFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestBilElemFin;
-import it.csi.siac.siacfinser.integration.entity.SiacRMutuoVoceLiquidazioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTLiquidazioneFin;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.MovimentoGestione.AttributoMovimentoGestione;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione.StatoOperativoLiquidazione;
-import it.csi.siac.siacfinser.model.mutuo.Mutuo;
 
 public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToModelConverter {
 	
-	protected transient LogUtil log = new LogUtil(this.getClass());
+	protected transient LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	public static List<Liquidazione> siacTLiquidazioneEntityToLiquidazioneModel(List<SiacTLiquidazioneFin> dtos, List<Liquidazione> listaLiquidazione) {
 		String methodName = "siacTLiquidazioneEntityToLiquidazioneModel";
@@ -48,7 +46,7 @@ public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToMode
 						for(SiacRLiquidazioneStatoFin rLiquidazioneStato : listaRLiquidazioneStato){
 							if(rLiquidazioneStato!=null && rLiquidazioneStato.getDataFineValidita()==null){
 								String code = rLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoCode();
-								StatoOperativoLiquidazione statoOpLiquidazione = Constanti.statoOperativoLiquidazioneStringToEnum(code);
+								StatoOperativoLiquidazione statoOpLiquidazione = CostantiFin.statoOperativoLiquidazioneStringToEnum(code);
 								it.setStatoOperativoLiquidazione(statoOpLiquidazione);
 								it.setCodiceStatoOperativoLiquidazione(code);
 								
@@ -60,7 +58,7 @@ public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToMode
 								classificatoreStatoOperativoLiquidazione.setDescrizione(rLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoDesc());
 								it.setClassificatoreStatoOperativoLiquidazione(classificatoreStatoOperativoLiquidazione);
 								
-								if(Constanti.D_LIQUIDAZIONE_STATO_ANNULLATO.equals(code)){
+								if(CostantiFin.D_LIQUIDAZIONE_STATO_ANNULLATO.equals(code)){
 									it.setDataAnnullamento(rLiquidazioneStato.getDataInizioValidita());
 								}
 							}
@@ -115,14 +113,14 @@ public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToMode
 								impegno.setUid(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getUid());
 								impegno.setAnnoMovimento(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestAnno());
 								impegno.setDescrizione(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestDesc());
-								impegno.setNumero(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
+								impegno.setNumeroBigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
 								impegno.setDescrizione(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestDesc());
 								
 								
 								if (idPadre!=null) {
 									// mappo anche il sub
 									SubImpegno subImpegno = new SubImpegno();
-									subImpegno.setNumero(new BigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getMovgestTsCode()));
+									subImpegno.setNumeroBigDecimal(new BigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getMovgestTsCode()));
 									subImpegno.setDescrizione(rLiquidazioneMovgest.getSiacTMovgestTs().getMovgestTsDesc());
 									subImpegno.setUid(rLiquidazioneMovgest.getSiacTMovgestTs().getMovgestTsId());
 								
@@ -136,17 +134,6 @@ public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToMode
 						}
 					}
 					// END IMPEGNO LIQUIDAZIONE
-					
-					// 5. MUTUO LIQUIDAZIONE: TO-DO (come entita)
-					for (SiacRMutuoVoceLiquidazioneFin rMutuoVoceLiquidaziones : itsiac.getSiacRMutuoVoceLiquidaziones()){
-						if(rMutuoVoceLiquidaziones.getDataFineValidita() == null){
-							Mutuo mutuo = new Mutuo();
-							mutuo.setNumeroRegistrazioneMutuo(rMutuoVoceLiquidaziones.getSiacTMutuoVoce().getSiacTMutuo().getMutNumRegistrazione());
-							mutuo.setCodiceMutuo(rMutuoVoceLiquidaziones.getSiacTMutuoVoce().getSiacTMutuo().getMutCode());													
-							
-							it.setNumeroMutuo(Integer.valueOf(mutuo.getCodiceMutuo()));
-						}					
-					}
 					
 					
 					// 6. CAPITOLO LIQUIDAZIONE: TO-DO
@@ -181,7 +168,7 @@ public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToMode
 					for(SiacRLiquidazioneAttrFin siacRLiquidazioneAttr : listaSiacRLiquidazioneAttr){
 						if(null!=siacRLiquidazioneAttr && siacRLiquidazioneAttr.getDataFineValidita()==null){
 							String codiceAttributo = siacRLiquidazioneAttr.getSiacTAttr().getAttrCode();
-							AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+							AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 							switch (attributoMovimentoGestione) {
 							case cig:
 								if(siacRLiquidazioneAttr.getTesto() != null){
@@ -219,7 +206,7 @@ public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToMode
 		String stato = null;
 		if(siacTLiquidazione!=null){
 			List<SiacRLiquidazioneStatoFin> listaRLiquidazioneStato =  siacTLiquidazione.getSiacRLiquidazioneStatos();
-			SiacRLiquidazioneStatoFin relazioneValida = DatiOperazioneUtils.getValido(listaRLiquidazioneStato, null);
+			SiacRLiquidazioneStatoFin relazioneValida = DatiOperazioneUtil.getValido(listaRLiquidazioneStato, null);
 			stato = relazioneValida.getSiacDLiquidazioneStato().getLiqStatoCode();
 		}
 		return stato;
@@ -249,7 +236,7 @@ public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToMode
 				for(SiacRLiquidazioneStatoFin rLiquidazioneStato : listaRLiquidazioneStato){
 					if(rLiquidazioneStato!=null && rLiquidazioneStato.getDataFineValidita()==null){
 						String code = rLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoCode();
-						StatoOperativoLiquidazione statoOpLiquidazione = Constanti.statoOperativoLiquidazioneStringToEnum(code);
+						StatoOperativoLiquidazione statoOpLiquidazione = CostantiFin.statoOperativoLiquidazioneStringToEnum(code);
 						liquidazioneTrovata.setStatoOperativoLiquidazione(statoOpLiquidazione);
 						liquidazioneTrovata.setIdStatoOperativoLiquidazione(rLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoId());
 						liquidazioneTrovata.setDataStatoOperativoLiquidazione(rLiquidazioneStato.getDataInizioValidita());
@@ -260,7 +247,7 @@ public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToMode
 						classificatoreStatoOperativoLiquidazione.setDescrizione(rLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoDesc());
 						liquidazioneTrovata.setClassificatoreStatoOperativoLiquidazione(classificatoreStatoOperativoLiquidazione);
 						
-						if(Constanti.D_LIQUIDAZIONE_STATO_ANNULLATO.equals(code)){
+						if(CostantiFin.D_LIQUIDAZIONE_STATO_ANNULLATO.equals(code)){
 							liquidazioneTrovata.setDataAnnullamento(rLiquidazioneStato.getDataInizioValidita());
 						}
 					}
@@ -281,7 +268,7 @@ public class EntityLiquidazioneToModelLiquidazioneConverter extends EntityToMode
 			for(SiacRLiquidazioneAttrFin siacRLiquidazioneAttr : listaSiacRLiquidazioneAttr){
 				if(null!=siacRLiquidazioneAttr && siacRLiquidazioneAttr.getDataFineValidita()==null){
 					String codiceAttributo = siacRLiquidazioneAttr.getSiacTAttr().getAttrCode();
-					AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+					AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 					switch (attributoMovimentoGestione) {
 					case cig:
 						if(siacRLiquidazioneAttr.getTesto() != null){

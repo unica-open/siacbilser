@@ -9,7 +9,7 @@ import java.util.List;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacfinser.ReintroitoUtils;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento;
 
 /**
@@ -48,7 +48,7 @@ public class OrdinativoInReintroitoInfoDto extends EsitoControlliDto implements 
 	}
 	
 	public boolean presenzaRitenute(){
-		return !StringUtils.isEmpty(this.listaRitenuteSplit);
+		return !StringUtilsFin.isEmpty(this.listaRitenuteSplit);
 	}
 
 	public List<AccertamentoModAutomaticaPerReintroitoInfoDto> getModificheAutomaticheNecessarie() {

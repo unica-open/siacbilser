@@ -34,6 +34,7 @@ public enum SirfelDModalitaPagamentoEnum {
 	SEPA_CORE("MP20", ModalitaPagamentoFEL.SEPA_CORE),
 	SEPA_B2B("MP21", ModalitaPagamentoFEL.SEPA_B2B),
 	TRATTENUTA_SOMME_RISCOSSE("MP22", ModalitaPagamentoFEL.TRATTENUTA_SOMME_RISCOSSE),
+	PAGOPA("MP23", ModalitaPagamentoFEL.PAGOPA),
 	;
 	
 	

@@ -6,12 +6,14 @@ package it.csi.siac.siacfinser.integration.dao.ordinativo;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import it.csi.siac.siacfinser.integration.entity.SiacTBilElemFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoFin;
 
 public interface SiacTOrdinativoRepository extends JpaRepository<SiacTOrdinativoFin, Integer> {
@@ -49,6 +51,16 @@ public interface SiacTOrdinativoRepository extends JpaRepository<SiacTOrdinativo
 													   @Param("annoEsercizio") String annoBil,
 				                                       @Param("ordNumero") BigDecimal ordNumero,
 				                                       @Param("codeTipoOrdinativo") String codeTipoOrdinativo);
+	
+	@Query( " SELECT rcap.siacTBilElem "
+			+ " FROM SiacROrdinativoBilElemFin rcap "  
+			+ " WHERE rcap.dataCancellazione IS NULL "
+			+ " AND rcap.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "			
+			+ " AND rcap.siacTOrdinativo.ordId = :ordId "
+			)
+	//SIAC-8589
+	public List<SiacTBilElemFin> caricaCapitoloAssociatoAdOrdinativo(@Param("ordId") Integer ordId, @Param("enteProprietarioId") Integer enteProprietarioId );
+	
 	
 	
 	@Modifying

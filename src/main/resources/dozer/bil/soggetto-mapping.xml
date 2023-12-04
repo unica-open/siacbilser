@@ -12,7 +12,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<class-a>it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto</class-a>
 		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTIndirizzoSoggetto</class-b>
 		
-		<!-- Ignorati: idComune, indirizzoId, indirizzoIdProvvisorio, idTipoIndirizzo, idTipoIndirizzoDesc, codiceNazione -->
+		<!-- Ignorati: codiceIstatComune, indirizzoId, indirizzoIdProvvisorio, idTipoIndirizzo, idTipoIndirizzoDesc, codiceNazione -->
 		<field>
 			<a>comune</a>
 			<b>siacTComune.comuneDesc</b>

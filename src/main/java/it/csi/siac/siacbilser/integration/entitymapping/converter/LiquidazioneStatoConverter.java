@@ -12,14 +12,14 @@ import it.csi.siac.siacbilser.integration.dao.SiacTLiquidazioneRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacRLiquidazioneStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTLiquidazione;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDLiquidazioneStatoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione.StatoOperativoLiquidazione;
 
 @Component
 public class LiquidazioneStatoConverter extends DozerConverter<Liquidazione, SiacTLiquidazione> {
 	
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	@Autowired
 	private SiacTLiquidazioneRepository siacTLiquidazioneRepository;

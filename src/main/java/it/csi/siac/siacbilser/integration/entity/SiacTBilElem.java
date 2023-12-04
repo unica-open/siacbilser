@@ -70,7 +70,6 @@ public class SiacTBilElem extends SiacTEnteBase {
 	private String ordine;
 
 
-
 	//bi-directional many-to-one association to SiacRBilElemAttoLegge
 	/** The siac r bil elem atto legges. */
 	@OneToMany(mappedBy="siacTBilElem")
@@ -188,9 +187,13 @@ public class SiacTBilElem extends SiacTEnteBase {
 	@OneToMany(mappedBy="siacTBilElem")
 	private List<SiacRConciliazioneCapitolo> siacRConciliazioneCapitolos;
 
+	// SIAC-7858
 	// bi-directional many-to-one association to SiacRBilElemAccFondiDubbiaEsig
 	@OneToMany(mappedBy="siacTBilElem")
 	private List<SiacRBilElemAccFondiDubbiaEsig> siacRBilElemAccFondiDubbiaEsigs;
+	// bi-directional many-to-one association to SiacRBilElemAccFondiDubbiaEsig
+	@OneToMany(mappedBy="siacTBilElem")
+	private List<SiacTAccFondiDubbiaEsig> siacTAccFondiDubbiaEsigs;
 	
 	/**
 	 * Instantiates a new siac t bil elem.
@@ -1173,6 +1176,28 @@ public class SiacTBilElem extends SiacTEnteBase {
 
 		return siacRBilElemAccFondiDubbiaEsig;
 	}
+	
+	public List<SiacTAccFondiDubbiaEsig> getSiacTAccFondiDubbiaEsigs() {
+		return this.siacTAccFondiDubbiaEsigs;
+	}
+
+	public void setSiacTAccFondiDubbiaEsigs(List<SiacTAccFondiDubbiaEsig> siacTAccFondiDubbiaEsigs) {
+		this.siacTAccFondiDubbiaEsigs = siacTAccFondiDubbiaEsigs;
+	}
+
+	public SiacTAccFondiDubbiaEsig addSiacTAccFondiDubbiaEsig(SiacTAccFondiDubbiaEsig siacTAccFondiDubbiaEsig) {
+		getSiacTAccFondiDubbiaEsigs().add(siacTAccFondiDubbiaEsig);
+		siacTAccFondiDubbiaEsig.setSiacTBilElem(this);
+
+		return siacTAccFondiDubbiaEsig;
+	}
+
+	public SiacTAccFondiDubbiaEsig removeSiacTAccFondiDubbiaEsig(SiacTAccFondiDubbiaEsig siacTAccFondiDubbiaEsig) {
+		getSiacTAccFondiDubbiaEsigs().remove(siacTAccFondiDubbiaEsig);
+		siacTAccFondiDubbiaEsig.setSiacTBilElem(null);
+
+		return siacTAccFondiDubbiaEsig;
+	}
 
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siaccommonser.integration.entity.SiacTBase#getUid()
@@ -1191,4 +1216,5 @@ public class SiacTBilElem extends SiacTEnteBase {
 		
 	}
 
+	
 }

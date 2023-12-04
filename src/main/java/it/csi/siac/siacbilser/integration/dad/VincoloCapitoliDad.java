@@ -224,10 +224,11 @@ public class VincoloCapitoliDad extends ExtendedBaseDadImpl {
 	 * @param capitolo the capitolo
 	 * @param tipiCapitolo the tipi capitolo
 	 * @param bilancio the bilancio
+	 * @param isRicercaCodiceLike the ricerca per codice in like - task-52,
 	 * @param parametriPaginazione the parametri paginazione
 	 * @return the lista paginata
 	 */
-	public ListaPaginata<VincoloCapitoli> ricercaSinteticaVincoloCapitoli(Vincolo vincolo, Capitolo<?, ?> capitolo, List<TipoCapitolo> tipiCapitolo,Bilancio bilancio, ParametriPaginazione parametriPaginazione) {
+	public ListaPaginata<VincoloCapitoli> ricercaSinteticaVincoloCapitoli(Vincolo vincolo, Capitolo<?, ?> capitolo, List<TipoCapitolo> tipiCapitolo,Bilancio bilancio, boolean isRicercaCodiceLike, ParametriPaginazione parametriPaginazione) {
 		
 		Page<SiacTVincolo> lista = vincoloCapitoliDao.ricercaSinteticaVincoloCapitoli(ente.getUid(),
 				vincolo.getCodice(),
@@ -243,7 +244,10 @@ public class VincoloCapitoliDad extends ExtendedBaseDadImpl {
 				capitolo != null ? mapToString(capitolo.getNumeroArticolo()) : null,
 				capitolo != null ? mapToString(capitolo.getNumeroUEB()) : null,
 				mapToUidIfNotZero(vincolo.getGenereVincolo()),
+				mapToUidIfNotZero(vincolo.getRisorsaVincolata()),
 				bilancio != null && bilancio.getAnno() != 0?mapToString(bilancio.getAnno()) : null,
+				//task-52 
+				isRicercaCodiceLike,
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(lista,VincoloCapitoli.class, BilMapId.SiacTVincolo_VincoloCapitoli);

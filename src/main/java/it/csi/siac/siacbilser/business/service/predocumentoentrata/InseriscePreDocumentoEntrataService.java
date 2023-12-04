@@ -6,6 +6,7 @@ package it.csi.siac.siacbilser.business.service.predocumentoentrata;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.InseriscePreDocumentoEntr
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InseriscePreDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
+import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -59,8 +61,7 @@ public class InseriscePreDocumentoEntrataService extends CrudPreDocumentoDiEntra
 		if(preDoc.getAccertamento() != null) { //impegno facoltativo
 			//checkCondition(preDoc.getAccertamento().getUid()!=0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("uid acertamento predocumento"));
 			checkCondition(preDoc.getAccertamento().getAnnoMovimento()!=0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno accertamento predocumento"));
-			checkNotNull(preDoc.getAccertamento().getNumero(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero accertamento predocumento"));
-			
+			checkNotNull(preDoc.getAccertamento().getNumeroBigDecimal(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero accertamento predocumento"));
 		}
 		
 		checkCondition(preDoc.getProvvisorioDiCassa() == null ||  
@@ -72,6 +73,7 @@ public class InseriscePreDocumentoEntrataService extends CrudPreDocumentoDiEntra
 		checkCondition(preDoc.getAttoAmministrativo() == null || (preDoc.getAttoAmministrativo()!=null && preDoc.getAttoAmministrativo().getUid()!=0), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("uid provvedimento predocumento"));
 		
 		checkNotNull(preDoc.getImporto(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("importo predocumento"));
+//		checkCondition(preDoc.getImporto().compareTo(BigDecimal.ZERO) > 0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("importo predocumento a 0"));
 		
 		this.gestisciModificaImportoAccertamento = req.isGestisciModificaImportoAccertamento();
 	}	
@@ -114,8 +116,11 @@ public class InseriscePreDocumentoEntrataService extends CrudPreDocumentoDiEntra
 		checkCongruenzaSoggettoIncasso();
 		checkProvvedimento();
 		caricaAccertamentoESubAccertemanto();
-		checkAccertamento();
-		checkSubAccertamento();	
+		
+		//SIAC-6780
+		checkAccertamento(req.isInserimentoPredocDaCollegaDocumento());
+		checkSubAccertamento(req.isInserimentoPredocDaCollegaDocumento());
+		
 		//AGGIUNTi IL 11/06/2015
 		caricaProvvisorioDiCassa();
 		checkProvvisorioDicassaInserimento();
@@ -123,14 +128,45 @@ public class InseriscePreDocumentoEntrataService extends CrudPreDocumentoDiEntra
 		gestisciElenco();
 
 		Integer numero = preDocumentoEntrataDad.staccaNumeroPreDocumento();
+		
+		//SIAC-6780
+		setDescrizioneAndStatoOperativoIfNuovoPredocFromCompletaDefinisci();
+		//
+		
 		preDoc.setNumero(numero);
+		
+		//SIAC-7680
 		
 		preDocumentoEntrataDad.inserisciAnagraficaPreDocumento(preDoc);	
 		
-		StatoOperativoPreDocumento statoOperativoPreDocumento = aggiornaStatoOperativoPreDocumento(preDoc, false);
+		StatoOperativoPreDocumento statoOperativoPreDocumento = null;
+		
+		statoOperativoPreDocumento = aggiornaStatoOperativoPreDocumento(preDoc, false);	
+		
 		preDoc.setStatoOperativoPreDocumento(statoOperativoPreDocumento);
 		
 		res.setPreDocumentoEntrata(preDoc);		
+	}
+
+	@Override
+	protected void chekProvvisorioCassaRegolarizzazioneInserimento(ProvvisorioDiCassa provvisorioDiCassa, String keyProvvisorio) {
+		if(req.isInserimentoPredocDaCollegaDocumento()) {
+			return;
+		}
+		super.chekProvvisorioCassaRegolarizzazioneInserimento(provvisorioDiCassa, keyProvvisorio);
+	}
+
+	/**
+	 * Controllo della descrizione e stato operativo per il nuovo inserimento
+	 */
+	private void setDescrizioneAndStatoOperativoIfNuovoPredocFromCompletaDefinisci() {
+		//se il predocumento viene da collega documento devo passare il numero del predocPadre nella descrizione prima che venga sostituito
+		if(req.isInserimentoPredocDaCollegaDocumento() && !StringUtils.isBlank(preDoc.getDescrizione())) {
+			preDoc.setDescrizione(preDoc.getDescrizione() + " - quota parte del predoc. N. " + preDoc.getNumero());	
+		} else if(req.isInserimentoPredocDaCollegaDocumento() && StringUtils.isBlank(preDoc.getDescrizione())) {
+			//se non ha una descrizione devo comunque metterla pur di mantenerlo tracciabile
+			preDoc.setDescrizione("quota parte del predoc. N. " + preDoc.getNumero());
+		}
 	}
 	
 	/**

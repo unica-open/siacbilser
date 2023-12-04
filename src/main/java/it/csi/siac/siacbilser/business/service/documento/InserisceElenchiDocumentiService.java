@@ -6,8 +6,10 @@ package it.csi.siac.siacbilser.business.service.documento;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,12 +31,13 @@ import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.service.documento.cache.SiopeTipoDebitoImpegnoCacheElementInitializer;
 import it.csi.siac.siacbilser.business.service.provvedimento.InserisceProvvedimentoService;
+import it.csi.siac.siacbilser.business.utility.BilUtilities;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
 import it.csi.siac.siacbilser.integration.dad.DocumentoDad;
 import it.csi.siac.siacbilser.integration.dad.DocumentoEntrataDad;
 import it.csi.siac.siacbilser.integration.dad.DocumentoSpesaDad;
 import it.csi.siac.siacbilser.integration.dad.ImpegnoBilDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.SubdocumentoDad;
 import it.csi.siac.siaccommon.util.cache.Cache;
 import it.csi.siac.siaccommon.util.cache.CacheElementInitializer;
@@ -42,23 +45,28 @@ import it.csi.siac.siaccommon.util.cache.MapCache;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.Errore;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceElenchiDocumenti;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceElenchiDocumentiResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisciOnereSpesaResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaOnereByDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaPuntualeDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaPuntualeDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteByDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteByDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.model.AliquotaSubdocumentoIva;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
+import it.csi.siac.siacfin2ser.model.DettaglioOnere;
 import it.csi.siac.siacfin2ser.model.Documento;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.ElenchiDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
+import it.csi.siac.siacfin2ser.model.RitenuteDocumento;
 import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.Subdocumento;
@@ -69,6 +77,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoIvaSpesa;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoFamigliaDocumento;
+import it.csi.siac.siacfin2ser.model.TipoOnere;
 import it.csi.siac.siacfin2ser.model.TipoRelazione;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.model.Impegno;
@@ -97,7 +106,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 	@Autowired
 	private DocumentoEntrataDad documentoEntrataDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private SubdocumentoDad subdocumentoDad;
 	@Autowired
@@ -139,7 +148,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 			
 //			if(elencoDocumentiAllegato.getAllegatoAtto()!=null){
 //				checkEntita(elencoDocumentiAllegato.getAllegatoAtto().getAttoAmministrativo(), "atto amministrativo allegato atto",false);
-			 	//L'atto amministrativo puo' essere inserito in automatico
+			 	//L'atto amministrativo puo'essere inserito in automatico
 //			}
 			
 //			checkCondition(elencoDocumentiAllegato.getSubdocumenti()!=null && !elencoDocumentiAllegato.getSubdocumenti().isEmpty(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("subdocumenti elenco documenti allegato"),false);
@@ -171,7 +180,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 					}
 					
 					checkCondition(subdocumentoSpesa.getImpegno()==null || subdocumentoSpesa.getImpegno().getUid()== 0 ||
-							(subdocumentoSpesa.getImpegno().getAnnoMovimento()!=0 && subdocumentoSpesa.getImpegno().getNumero()!=null), 
+							(subdocumentoSpesa.getImpegno().getAnnoMovimento()!=0 && subdocumentoSpesa.getImpegno().getNumeroBigDecimal()!=null), 
 							ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero impegno"));
 				}
 				
@@ -181,7 +190,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 				
 				if(documento!=null) {
 					checkNotNull(documento.getAnno(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno documento del subdocumento elenco documenti allegato"),false);
-					//checkNotBlank(documento.getNumero(), "anno documento del subdocumento elenco documenti allegato",false); //Il numero verra' staccato in automatico per alcune tipologie di documento
+					//checkNotBlank(documento.getNumero(), "anno documento del subdocumento elenco documenti allegato",false); //Il numero verra'staccato in automatico per alcune tipologie di documento
 					
 					checkEntita(documento.getTipoDocumento(), "tipo documento del subdocumento elenco documenti allegato",false);
 					if(documento.getTipoDocumento()!=null){
@@ -189,12 +198,12 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 					}
 					
 //					checkNotNull(documento.getImporto(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("importo documento del subdocumento elenco documenti allegato"),false);
-//					checkCondition(documento.getImporto() == null || documento.getImporto().signum() > 0, ErroreCore.VALORE_NON_VALIDO.getErrore("importo documento del subdocumento elenco documenti allegato", ": deve essere positivo"),false);
+//					checkCondition(documento.getImporto() == null || documento.getImporto().signum() > 0, ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo documento del subdocumento elenco documenti allegato", ": deve essere positivo"),false);
 			/*		if (documento.getArrotondamento() != null) {
-						// SIAC-2141: l'arrotondamento e' facoltativo. Ma sull'entita' e' un campo con default a zero => controllo che il segno sia al peggio 0
-						checkCondition(documento.getArrotondamento().signum() <= 0, ErroreCore.VALORE_NON_VALIDO.getErrore("Arrotondamento documento", ": deve essere negativo"), false);
+						// SIAC-2141: l'arrotondamento e'facoltativo. Ma sull'entita'e'un campo con default a zero => controllo che il segno sia al peggio 0
+						checkCondition(documento.getArrotondamento().signum() <= 0, ErroreCore.VALORE_NON_CONSENTITO.getErrore("Arrotondamento documento", ": deve essere negativo"), false);
 						checkCondition(documento.getImporto() == null || documento.getImporto().signum() < 0 || documento.getArrotondamento().signum() > 0
-								|| documento.getImporto().add(documento.getArrotondamento()).signum() > 0, ErroreCore.VALORE_NON_VALIDO.getErrore("Arrotondamento documento", ": importo sommato ad arrotondamento deve essere positivo"));
+								|| documento.getImporto().add(documento.getArrotondamento()).signum() > 0, ErroreCore.VALORE_NON_CONSENTITO.getErrore("Arrotondamento documento", ": importo sommato ad arrotondamento deve essere positivo"));
 					}
 					
 					checkEntita(documento.getSoggetto(), "soggetto documento",false);
@@ -212,7 +221,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 					checkEntita(subdocIva.getTipoRegistrazioneIva(), "tipo registrazione iva", false);
 					checkEntita(subdocIva.getRegistroIva(), "registro iva", false);
 					if(subdocIva.getRegistroIva()!=null){
-						//questo che segue e' l'unico check in più rispetto al servizio sottostante! valutare se tenerlo o far fare la ricerca di tutti i registri iva sperando che siano univoci per codice!
+						//questo che segue e'l'unico check in piu' rispetto al servizio sottostante! valutare se tenerlo o far fare la ricerca di tutti i registri iva sperando che siano univoci per codice!
 						checkNotNull(subdocIva.getRegistroIva().getTipoRegistroIva(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("tipo registro iva"), false);
 					}
 					
@@ -227,7 +236,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 						checkNotNull(aliquota.getTotale(), "Totale aliquota IVA", false);
 						checkCondition(aliquota.getImponibile() == null || aliquota.getImposta() == null || aliquota.getTotale() == null
 								|| aliquota.getImponibile().add(aliquota.getImposta()).compareTo(aliquota.getTotale()) == 0,
-								ErroreCore.VALORE_NON_VALIDO.getErrore("Totale aliquota IVA", ": deve essere pari al totale di imponibile e imposta"), false);
+								ErroreCore.VALORE_NON_CONSENTITO.getErrore("Totale aliquota IVA", ": deve essere pari al totale di imponibile e imposta"), false);
 					}
 					
 				}
@@ -246,8 +255,8 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		documentoDad.setEnte(ente);
 		documentoDad.setLoginOperazione(loginOperazione);
 		
-		provvedimentoDad.setEnte(ente);
-		provvedimentoDad.setLoginOperazione(loginOperazione);
+		attoAmministrativoDad.setEnte(ente);
+		attoAmministrativoDad.setLoginOperazione(loginOperazione);
 		
 		subdocumentoDad.setEnte(ente);
 		subdocumentoDad.setLoginOperazione(loginOperazione);
@@ -292,7 +301,8 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 				inserisceSeNecessarioDocumentoSpesaConDocumentiFigliCollegatiESubdocumentiIva(documentoSpesa);
 				
 				//subdocumentoSpesa.setAttoAmministrativo(attoAmministrativo);??
-				dscg.inserisceQuotaDocumentoSpesa(subdocumentoSpesa, false); //il false evita l'aggiornamento dello stato che verrà effettuato solo alla fine!
+				dscg.inserisceQuotaDocumentoSpesa(subdocumentoSpesa, false, false, false, true); //il false evita l'aggiornamento dello stato che verrà effettuato solo alla fine!
+				// SIAC-7840, aggiunto il true come 4° parametro per gestire le sospensioni
 				counter.incQuoteSpesa();
 				String msg = "Inserita Quota "+subdocumentoSpesa.getNumero()+" del DocumentoSpesa "+documentoSpesa.getDescAnnoNumeroTipoDoc();
 				res.addMessaggio("DOCSQ-INS", msg);
@@ -432,7 +442,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 				 * SIAC-5311
 				 * Se l'impegno ha Tipo Debito SIOPE commerciale il campo CIG o in alternativa il Motivo esclusione SIOPE sono obbligatori.
 				 * Nel caso in cui il CIG fosse obbligatorio e non venisse passato dal fruitore nella chiamata e necessario recuperarlo dall'impegno,
-				 * se fosse assente anche li' evidenziarlo in un opportune messaggio di assenza del CIG sul movimento selezionato.
+				 * se fosse assente anche li'evidenziarlo in un opportune messaggio di assenza del CIG sul movimento selezionato.
 				 */
 				checkCoerenzaSiope(ss);
 			}
@@ -491,16 +501,16 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		StringBuilder sb = new StringBuilder();
 		sb.append(i.getAnnoMovimento());
 		sb.append("/");
-		sb.append(i.getNumero().toPlainString());
+		sb.append(i.getNumeroBigDecimal().toPlainString());
 		if(si != null && si.getUid() != 0) {
 			sb.append("-");
-			sb.append(si.getNumero().toPlainString());
+			sb.append(si.getNumeroBigDecimal().toPlainString());
 		}
 		return sb.toString();
 	}
 
 	/**
-	 * Aggiungi un messaggio di riepilogo sulle entita' elaborate.
+	 * Aggiungi un messaggio di riepilogo sulle entita'elaborate.
 	 * 
 	 */
 	private void aggiungiMessaggioDiRiepilogo() {
@@ -511,7 +521,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		final String methodName = "inserisceSeNecessarioElencoDocumentiAllegato";
 		
 		if(Boolean.TRUE.equals(elencoDocumentiAllegato.getSaltaInserimentoInCaricaDocumenti())) {
-			log.debug(methodName, "inserimento dell'elenco saltato per impostazione dell'attributo 'saltaInserimento' sull'elenco.");
+			log.debug(methodName, "inserimento dell'elenco saltato per impostazione dell'attributo 'saltaInserimento'sull'elenco.");
 			return;
 		}
 		
@@ -525,25 +535,25 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		
 		AllegatoAtto allegatoAtto = elencoDocumentiAllegato.getAllegatoAtto();
 		
-		if(allegatoAtto==null) { //L'allegato atto e' facoltativo.
-			log.debug(methodName, "allegatoAtto in input non valorizzato. Non verrà inserito.");
+		if(allegatoAtto==null) { //L'allegato atto e'facoltativo.
+			log.debug(methodName, "allegatoAtto in input non valorizzato. Non verra' inserito.");
 			return;
 		}
 			
-		//Il provvedimento deve essere in stato DEFINITIVO: (tale controllo viene già fatto da 
+		//Il provvedimento deve essere in stato DEFINITIVO: (tale controllo viene gia' fatto da 
 		//InserisceAllegatoAttoService invocato successivamente. Non aggiungere qui)
 		if(allegatoAtto.getAttoAmministrativo() == null) {
 			
 			log.debug(methodName, "AttoAmministrativo in input non valorizzato. Viene valutato l'inserimento automatico.");
-			//l'atto amministrativo non e' stato passato! Lo creo in automatico.
+			//l'atto amministrativo non e'stato passato! Lo creo in automatico.
 			
 			
-			TipoAtto tipoAtto = provvedimentoDad.getTipoAttoALGEvenNull();  //In caso di assenza del tipo provvedimento 'ALG' NON inserire l'allegato atto e 
-			//segnalare nei log il seguente messaggio 'Tipo provvedimento 'ALG' non presente in archivio, provvedimento allegato atto non inserito' e proseguire nell'elaborazione.
+			TipoAtto tipoAtto = attoAmministrativoDad.getTipoAttoALGEvenNull();  //In caso di assenza del tipo provvedimento 'ALG'NON inserire l'allegato atto e 
+			//segnalare nei log il seguente messaggio 'Tipo provvedimento 'ALG'non presente in archivio, provvedimento allegato atto non inserito'e proseguire nell'elaborazione.
 			if(tipoAtto==null) {
-				log.debug(methodName, "tipoProvvedimento 'ALG' NON presente per l'ente "+ente.getUid()+". L'allagato Atto non verrà inserito.");
+				log.debug(methodName, "tipoProvvedimento 'ALG'NON presente per l'ente "+ente.getUid()+". L'allagato Atto non verra' inserito.");
 				
-				res.addMessaggio("","Tipo provvedimento 'ALG' non presente in archivio, provvedimento allegato atto non inserito per l'elenco: "+
+				res.addMessaggio("","Tipo provvedimento 'ALG'non presente in archivio, provvedimento allegato atto non inserito per l'elenco: "+
 										elencoDocumentiAllegato.getAnno() +"/"+ elencoDocumentiAllegato.getNumero());
 				
 				//elimino la reference dell'allegato atto nell'elenco.
@@ -551,7 +561,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 				return;
 			}
 			
-			log.debug(methodName, "AttoAmministrativo in input non valorizzato e tipo provvedimento 'ALG' presente. Inserisco l'AttoAmministrativo in automatico.");
+			log.debug(methodName, "AttoAmministrativo in input non valorizzato e tipo provvedimento 'ALG'presente. Inserisco l'AttoAmministrativo in automatico.");
 			
 			AttoAmministrativo attoAmministrativo = new AttoAmministrativo();
 			attoAmministrativo.setAnno(req.getBilancio().getAnno());
@@ -568,9 +578,9 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		}
 		
 		if(allegatoAtto.getAttoAmministrativo().getUid()==0) {
-			//l'atto amministrativo e' da inserire. Vedi CR SIAC-4228.
+			//l'atto amministrativo e'da inserire. Vedi CR SIAC-4228.
 			InserisceProvvedimentoResponse resIP = inserisceProvvedimento(allegatoAtto.getAttoAmministrativo());
-			counter.incAttoAmministrativiAlg(); //TODO Prevedere un counter NON ALG. Non per forza e' ALG. Ma per adesso questi automatici saranno solo di tipo ALG!
+			counter.incAttoAmministrativiAlg(); //TODO Prevedere un counter NON ALG. Non per forza e'ALG. Ma per adesso questi automatici saranno solo di tipo ALG!
 			allegatoAtto.getAttoAmministrativo().setUid(resIP.getAttoAmministrativoInserito().getUid());
 		}
 		
@@ -600,7 +610,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 
 	/**
 	 * Inserisce/aggiorna quota documento entrata.
-	 * Se la quota appartiene ad un documento già esistente viene valutata l'esistenza del provvisorio di cassa e in tal caso
+	 * Se la quota appartiene ad un documento gia' esistente viene valutata l'esistenza del provvisorio di cassa e in tal caso
 	 * viene applicato l'algoritmo descritto al punto 3 in analisi per le quote entrata.
 	 *
 	 * @param subdocumentoEntrata the subdocumento entrata
@@ -610,15 +620,15 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		final String methodName = "inserisceAggiornaQuotaDocumentoEntrata";
 		
 		DocumentoEntrata documentoEntrata = subdocumentoEntrata.getDocumento();
-		//Nota bene: documentoEntrataInArchivio ha la stessa reference a documentoEntrata se questo è stato veramente inserito, 
-		//mentre ha una reference diversa se si è nel caso in cui il documento esisteva già!
+		//Nota bene: documentoEntrataInArchivio ha la stessa reference a documentoEntrata se questo a'stato veramente inserito, 
+		//mentre ha una reference diversa se si a'nel caso in cui il documento esisteva gia'!
 		
 		
 		if(documentoEntrataInArchivio == documentoEntrata
 				|| !Boolean.TRUE.equals(documentoEntrata.getTipoDocumento().getFlagAggiornaQuoteDaElenco())) { 
-			//hanno la stessa reference, quindi il documento è nuovo ed inserisco tutte le quote.
-			// oppure sto aggiornando un documentoEntrata già esistente ma il flag aggiornamento sul tipo documento è FALSE o null.
-			dscg.inserisceQuotaDocumentoEntrata(subdocumentoEntrata, false); //il false evita l'aggiornamento dello stato che verrà effettuato solo alla fine!
+			//hanno la stessa reference, quindi il documento a'nuovo ed inserisco tutte le quote.
+			// oppure sto aggiornando un documentoEntrata gia' esistente ma il flag aggiornamento sul tipo documento a'FALSE o null.
+			dscg.inserisceQuotaDocumentoEntrata(subdocumentoEntrata, false); //il false evita l'aggiornamento dello stato che verra' effettuato solo alla fine!
 			counter.incQuoteEntrata();
 			String msg = "Inserita Quota "+subdocumentoEntrata.getNumero()+" del documento entrata "+documentoEntrata.getDescAnnoNumeroTipoDoc();
 			res.addMessaggio("DOCEQ-INS", msg);
@@ -627,13 +637,13 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 			return;
 		}
 		
-		//Sto aggiornando un documentoEntrata già esistente e il flag aggiornamento è TRUE.
+		//Sto aggiornando un documentoEntrata gia' esistente e il flag aggiornamento a'TRUE.
 		
-		//se lo stato del documento già presente in archivio è 'EM' o 'ST' si segnala il 
-		//messaggio <FIN_ERR_0268, Documento non modificabile, 'Documento già emesso o stornato'>
+		//se lo stato del documento gia' presente in archivio a''EM'o 'ST'si segnala il 
+		//messaggio <FIN_ERR_0268, Documento non modificabile, 'Documento gia' emesso o stornato'>
 		if(StatoOperativoDocumento.EMESSO.equals(documentoEntrataInArchivio.getStatoOperativoDocumento()) || 
 				StatoOperativoDocumento.STORNATO.equals(documentoEntrataInArchivio.getStatoOperativoDocumento())){
-			throw new BusinessException(ErroreFin.DOCUMENTO_NON_MODIFICABILE.getErrore("non modificabile", "Documento gia' emesso o stornato"));
+			throw new BusinessException(ErroreFin.DOCUMENTO_NON_MODIFICABILE.getErrore("non modificabile", "Documento gia'emesso o stornato"));
 		}
 		
 		//le quote passate in input senza provvisorio di cassa si inseriscono e si associano al documento 
@@ -656,14 +666,14 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		//si considerano solamente le quote passate in input con i dati del provvisorio di cassa, 
 		//e per ogni quota del documento si effettuano i seguenti controlli e le successive operazioni:
 		
-		//si ricerca tra le quote già presenti in archivio che non hanno i dati del provvisorio di cassa, 
+		//si ricerca tra le quote gia' presenti in archivio che non hanno i dati del provvisorio di cassa, 
 		//quella che ha i dati dell'accertamento (anche se nulli) uguali alla quota passata in input, inoltre 
 		//l'importo della quota passata come parametro deve essere minore o uguale a quella trovata in archivio. 
-		//Nel caso in cui si trovino più quote con queste caratteristiche si segnala il messaggio 
+		//Nel caso in cui si trovino piu' quote con queste caratteristiche si segnala il messaggio 
 		//<FIN_ERR_0268, Documento non modificabile, 'Quote incongruenti rispetto ai dati in archivio'>
 		SubdocumentoEntrata subdocEntrataInArchivioTrovato = cercaSubdocumentoEntrataConStessoAccertamentoPrivoDelProvvisorioDiCassa(subdocumentoEntrata);
 		
-		if(subdocEntrataInArchivioTrovato==null){ //non e' stata trovata nessuna quota a cui mancava il provvisorio di cassa la inserisco
+		if(subdocEntrataInArchivioTrovato==null){ //non e'stata trovata nessuna quota a cui mancava il provvisorio di cassa la inserisco
 			documentoDad.updateImportoDocumento(subdocumentoEntrata.getImporto(), null, documentoEntrataInArchivio);
 			dscg.inserisceQuotaDocumentoEntrata(subdocumentoEntrata, false);
 			counter.incQuoteEntrata();
@@ -676,7 +686,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		
 		//Aggiorno la quota trovata...
 			
-		//si aggiorna la quota già presente in archivio con i dati del provvisorio di cassa e 
+		//si aggiorna la quota gia' presente in archivio con i dati del provvisorio di cassa e 
 		//dell'eventuale provvedimento dell'allegato atto passati come parametro.
 		subdocumentoDad.aggiornaProvvisorioDiCassa(subdocEntrataInArchivioTrovato.getUid(), subdocumentoEntrata.getProvvisorioCassa());
 		documentoDad.aggiornaAttoAmministrativo(subdocEntrataInArchivioTrovato.getUid(), subdocumentoEntrata.getAttoAmministrativo());
@@ -708,7 +718,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 	 * @param subdocumentoEntrata the subdocumento entrata
 	 * @return the subdocumento entrata
 	 * 
-	 * @throws BusinessException se trova più di una quota possibile.
+	 * @throws BusinessException se trova piu' di una quota possibile.
 	 */
 	private SubdocumentoEntrata cercaSubdocumentoEntrataConStessoAccertamentoPrivoDelProvvisorioDiCassa(SubdocumentoEntrata subdocumentoEntrata) {
 		
@@ -730,7 +740,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 						&& //e
 						
 						(
-							//ha l'accertamento nulli sia in archivio che in input (ma siamo sicuri?? in analisi dice così!)
+							//ha l'accertamento nulli sia in archivio che in input (ma siamo sicuri?? in analisi dice cosi'!)
 							(subdocEntrataInArchivio.getAccertamento()==null &&  subdocumentoEntrata.getAccertamento()==null)
 							
 							|| //oppure
@@ -756,9 +766,9 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 						//non faccio break per controllare se ci sono altre quote selezionabili!
 						
 					} else {
-						//ce n'era già una!
+						//ce n'era gia' una!
 						
-						log.error(methodName, "Trovata piu' di una quota Entrata che con Accertamento: "
+						log.error(methodName, "Trovata piu'di una quota Entrata che con Accertamento: "
 												+ (subdocEntrataInArchivio.getAccertamento()!=null?subdocEntrataInArchivio.getAccertamento().getUid(): "null")
 												+ " [uids quote entrata:"+subdocEntrataInArchivioTrovato.getUid() + ", " 
 												+ subdocEntrataInArchivio.getUid()+"]");
@@ -784,7 +794,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		Set<FaseBilancio> fasi = EnumSet.of(FaseBilancio.ESERCIZIO_PROVVISORIO, FaseBilancio.GESTIONE, FaseBilancio.ASSESTAMENTO,  FaseBilancio.PREDISPOSIZIONE_CONSUNTIVO);
 		
 		if(!fasi.contains(fase)){
-			//Il Bilancio qui e' PLURIENNALE, PREVISIONE, CHIUSO
+			//Il Bilancio qui e'PLURIENNALE, PREVISIONE, CHIUSO
 			throw new BusinessException(ErroreCore.OPERAZIONE_INCOMPATIBILE_CON_STATO_ENTITA.getErrore("bilancio", fase.toString()));
 		}
 		
@@ -808,16 +818,16 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 	}
 
 	private String computeLogicalKey(AllegatoAtto allegatoAtto) {
-		//la chiave è 'latto amministrativo stesso: corrispondenza biunivoca allegatoAtto-attoAmministrativo
+		//la chiave a''latto amministrativo stesso: corrispondenza biunivoca allegatoAtto-attoAmministrativo
 		return ""+allegatoAtto.getAttoAmministrativo().getUid();
 	}
 	
 	private DocumentoSpesa inserisceSeNecessarioDocumentoSpesaConDocumentiFigliCollegatiESubdocumentiIva(/*Map<String, DocumentoSpesa> documentiSpesaInseritiMap,*/ DocumentoSpesa documentoSpesa) {
 		
-		//Se il documentono NON e' già stato inserito:
+		//Se il documentono NON e'gia' stato inserito:
 		String keyDocumentoSpesa = computeLogicalKey(documentoSpesa);
 		if(!documentiSpesaInseritiMap.containsKey(keyDocumentoSpesa /*documentoSpesa.getUid()*/)){
-			DocumentoSpesa documentoSpesaInserito = inserisceDocumentoSpesaConDocumentiFigliCollegatiESubdocumentiIva(documentoSpesa);
+			DocumentoSpesa documentoSpesaInserito = inserisceDocumentoSpesaConRitenuteDocumentiFigliCollegatiESubdocumentiIva(documentoSpesa);
 			//documentoSpesa.setUid(documentoSpesaInserito.getUid(); //questo Set agisce su tutte le istanze di allegatoAtto nel flusso.
 			documentiSpesaInseritiMap.put(keyDocumentoSpesa /*documentoSpesaInserito.getUid()*/, documentoSpesaInserito);
 			return documentoSpesaInserito;
@@ -827,7 +837,8 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		
 	}
 
-	private DocumentoSpesa inserisceDocumentoSpesaConDocumentiFigliCollegatiESubdocumentiIva(DocumentoSpesa documentoSpesa) {
+	//SIAC-7834 AGGIUNTA GESTIONE RITENUTE
+	private DocumentoSpesa inserisceDocumentoSpesaConRitenuteDocumentiFigliCollegatiESubdocumentiIva(DocumentoSpesa documentoSpesa) {
 		final String methodName = "inserisceDocumentoSpesaConDocumentiFigliCollegatiESubdocumentiIva";
 		
 		gestisciNumerazioneAutomaticaDocumento(documentoSpesa);
@@ -838,7 +849,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 			RicercaPuntualeDocumentoSpesaResponse resRPDS = ricercaDocumentoGiaPresente(documentoSpesa);
 			if(resRPDS.getDocumentoSpesa()==null){ //Il documento non esiste. Lo inserisco.
 				resIDS = dscg.inserisceDocumentoSpesa(documentoSpesa, false, false);
-			} else { //Il documento esisteva già...
+			} else { //Il documento esisteva gia'...
 				resIDS = new InserisceDocumentoSpesaResponse();
 				resIDS.setDocumentoSpesa(resRPDS.getDocumentoSpesa());
 				resIDS.addErrore(ErroreCore.ENTITA_PRESENTE.getErrore("Documento spesa", documentoSpesa.getDescAnnoNumeroTipoDoc()));
@@ -848,7 +859,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 			DocumentoSpesa docTrovato = ricercaDocumentoTestataIVAGiaPresente(documentoSpesa);
 			if(docTrovato==null){ //Il documento non esiste. Lo inserisco.
 				resIDS = dscg.inserisceTestataDocumentoSpesa(documentoSpesa, true, false);
-			} else { //Il documento esisteva già...
+			} else { //Il documento esisteva gia'...
 				resIDS = new InserisceDocumentoSpesaResponse();
 				resIDS.setDocumentoSpesa(docTrovato);
 				resIDS.addErrore(ErroreCore.ENTITA_PRESENTE.getErrore("Testata IVA spesa", documentoSpesa.getDescAnnoNumeroTipoDoc()));
@@ -866,16 +877,16 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		documentoSpesa.setUid(documentoSpesaInserito.getUid());
 		
 //		documentiInseritiMap.put(documentoSpesaInserito.getUid(), documentoSpesaInserito);
-		
-		if(resIDS.verificatoErrore(ErroreCore.ENTITA_PRESENTE)){
-			/*Se il documento è stato trovato non si effettua alcuna operazione e 
-			 * si prosegue l'elaborazione al punto successivo (non si può re-inserire ma nemmeno aggiornare in quanto potrebbe 
-			 * già essere stato modificato dagli operatori della ragioneria).*/
+		boolean documentoPresente = resIDS.verificatoErrore(ErroreCore.ENTITA_PRESENTE);
+		if(documentoPresente){
+			/*Se il documento a'stato trovato non si effettua alcuna operazione e 
+			 * si prosegue l'elaborazione al punto successivo (non si puo're-inserire ma nemmeno aggiornare in quanto potrebbe 
+			 * gia' essere stato modificato dagli operatori della ragioneria).*/
 			//return documentoSpesaInserito;
 			
-			//Si eliminano tutte le quote senza impegno già abbinate al documento presenti in archivio. (solo per DocumentoSpesa, per DocumentoEntrata non si fa nulla)
+			//Si eliminano tutte le quote senza impegno gia' abbinate al documento presenti in archivio. (solo per DocumentoSpesa, per DocumentoEntrata non si fa nulla)
 			
-			log.debug(methodName, "Il documentoSpesa "+documentoSpesa.getDescAnnoNumeroTipoDoc()+" [uid:"+ documentoSpesa.getUid() + "] è già presente in archivio. Le sue quote prive di Impegno verranno eliminate.");
+			log.debug(methodName, "Il documentoSpesa "+documentoSpesa.getDescAnnoNumeroTipoDoc()+" [uid:"+ documentoSpesa.getUid() + "] a'gia' presente in archivio. Le sue quote prive di Impegno verranno eliminate.");
 			RicercaQuoteByDocumentoSpesaResponse resRQBDS = dscg.ricercaQuoteByDocumentoSpesa(documentoSpesa);
 			for(SubdocumentoSpesa subdocSpesa: resRQBDS.getSubdocumentiSpesa()) {
 				if(subdocSpesa.getImpegnoOSubImpegno()==null) {
@@ -894,6 +905,9 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 			log.debug(methodName, "Inserito DocumentoSpesa "+documentoSpesaInserito.getDescAnnoNumeroTipoDoc()+" con uid: "+documentoSpesaInserito.getUid());
 			res.addMessaggio("DOCS-INS", "Inserito documento Spesa "+documentoSpesaInserito.getDescAnnoNumeroTipoDoc());
 		}
+		
+		//SIAC-7834
+		gestioneRitenuteDocumento(documentoSpesa, documentoPresente);
 			
 		for(DocumentoSpesa documentoCollegato : documentoSpesa.getListaDocumentiSpesaFiglio()){
 			log.debug(methodName, "tipoRelazione: " + documentoCollegato.getTipoRelazione());
@@ -944,12 +958,12 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		
 		/*
 		 * eventuale inserimento documento IVA di spesa collegato ed eventuale
-		 * NOTA CREDITO IVA (entita' SUBDOCUMENTO IVA SPESA), alla quota
+		 * NOTA CREDITO IVA (entita'SUBDOCUMENTO IVA SPESA), alla quota
 		 * documento di spesa (rilevante IVA) inserita: utilizzare per ogni
 		 * subdocumento di spesa l'operazione Inserisce subdocumento IVA spesa
 		 * del servizio BIL--SIAC-FIN-SER-203-IVAS004 Servizio Gestione Doc Iva
 		 * Spesa, collegando il subdocumento IVA di spesa di tipo NOTA CREDITO
-		 * se presente al subdocumento IVA a cui e' associato con il Tipo di
+		 * se presente al subdocumento IVA a cui e'associato con il Tipo di
 		 * associazione corretto (ad es. NCD per le note credito collegate).
 		 */
 			
@@ -959,10 +973,52 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		
 		return documentoSpesaInserito;
 	}
-	
+
+	//SIAC-7834
+	private void gestioneRitenuteDocumento(DocumentoSpesa documentoSpesa, boolean documentoPresente) {
+		RitenuteDocumento ritenuteDocumento = documentoSpesa.getRitenuteDocumento();
+		
+		if(ritenuteDocumento == null || ritenuteDocumento.getListaOnere() == null || ritenuteDocumento.getListaOnere().isEmpty()) {
+			return;
+		}
+
+		for (DettaglioOnere dettaglioOnere : ritenuteDocumento.getListaOnere()) {
+			TipoOnere tp = dettaglioOnere.getTipoOnere();
+			//lui mi deve gia'essere calcolato da elabora file
+			if( tp == null || tp.getUid() == 0) {
+				continue;
+			}
+			// l'applicativo permette di inserire oneri senza alcun vincolo, mantengo lo stesso comportamento
+			//SIAC-8225
+			dettaglioOnere.setImportoCaricoSoggetto(dettaglioOnere.getImportoCaricoSoggetto() != null? BilUtilities.arrotondaAllaSecondaCifra(dettaglioOnere.getImportoCaricoSoggetto()) : dettaglioOnere.getImportoCaricoSoggetto());
+			dettaglioOnere.setImportoCaricoEnte(dettaglioOnere.getImportoCaricoEnte() != null? BilUtilities.arrotondaAllaSecondaCifra(dettaglioOnere.getImportoCaricoEnte()) : dettaglioOnere.getImportoCaricoEnte());
+			dettaglioOnere.setImportoImponibile(dettaglioOnere.getImportoImponibile() != null?BilUtilities.arrotondaAllaSecondaCifra(dettaglioOnere.getImportoImponibile()): dettaglioOnere.getImportoImponibile());
+			
+			InserisciOnereSpesaResponse riosr = dscg.inserisciOnereSpesa(documentoSpesa, dettaglioOnere);
+			res.addMessaggio("DOCSR-INS", getMessaggioInserimentoOneri(tp, riosr));
+		}
+	}
+
+	private String getMessaggioInserimentoOneri(TipoOnere tp, InserisciOnereSpesaResponse riosr) {
+		StringBuilder sb = new StringBuilder().append("Ritenute: inserimento per elemento lista onere ")
+				.append(StringUtils.defaultString(tp.getCodice(), "null")).append(" : ");
+		if(riosr.hasErrori()) {
+			
+					sb.append(" operazione non effettuata. Errori riscontrati:");
+			List<String> descs = new ArrayList<String>();
+			for (Errore errore : riosr.getErrori()) {
+				descs.add(errore.getDescrizione());
+			}
+			return sb.append(StringUtils.join(descs, ", ")).toString();
+		}
+			
+		return sb.append(" operazione avvenuta con successo").toString();
+		
+	}
+
 	private DocumentoEntrata inserisceSeNecessarioDocumentoEntrataConDocumentiFigliCollegatiESubdocumentiIva(/*Map<String, DocumentoEntrata> documentiEntrataInseritiMap,*/ DocumentoEntrata documentoEntrata) {
 	
-		//Se il documentono NON e' già stato inserito:
+		//Se il documentono NON e'gia' stato inserito:
 		String keyDocumentoEntrata = computeLogicalKey(documentoEntrata);
 		if(!documentiEntrataInseritiMap.containsKey(keyDocumentoEntrata /*documentoEntrata.getUid()*/)){
 			DocumentoEntrata documentoEntrataInserito = inserisceDocumentoEntrataConDocumentiFigliCollegatiESubdocumentiIva(documentoEntrata);
@@ -984,7 +1040,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 			RicercaPuntualeDocumentoEntrataResponse resRPDS = ricercaDocumentoGiaPresente(documentoEntrata);
 			if(resRPDS.getDocumentoEntrata()==null){ //Il documento non esiste. Lo inserisco.
 				resIDS = dscg.inserisceDocumentoEntrata(documentoEntrata, false, false);
-			} else {//Il documento esisteva già...
+			} else {//Il documento esisteva gia'...
 				resIDS = new InserisceDocumentoEntrataResponse();
 				resIDS.setDocumentoEntrata(resRPDS.getDocumentoEntrata());
 				resIDS.addErrore(ErroreCore.ENTITA_PRESENTE.getErrore("Documento Entrata", documentoEntrata.getDescAnnoNumeroTipoDoc()));
@@ -994,7 +1050,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 			DocumentoEntrata documentoTrovato = ricercaDocumentoTestataIVAEntrataGiaPresente(documentoEntrata);
 			if(documentoTrovato==null){//Il documento non esiste. Lo inserisco.
 				resIDS = dscg.inserisceTestataDocumentoEntrata(documentoEntrata, true, false);
-			} else {//Il documento esisteva già...
+			} else {//Il documento esisteva gia'...
 				resIDS = new InserisceDocumentoEntrataResponse();
 				resIDS.setDocumentoEntrata(documentoTrovato);
 				resIDS.addErrore(ErroreCore.ENTITA_PRESENTE.getErrore("Testata IVA Entrata", documentoEntrata.getDescAnnoNumeroTipoDoc()));
@@ -1012,11 +1068,11 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		documentoEntrata.setUid(documentoEntrataInserito.getUid());
 		
 		if(resIDS.verificatoErrore(ErroreCore.ENTITA_PRESENTE)){
-			/*Se il documento è stato trovato non si effettua alcuna operazione e 
-			 * si prosegue l'elaborazione al punto successivo (non si può re-inserire ma nemmeno aggiornare in quanto potrebbe 
-			 * già essere stato modificato dagli operatori della ragioneria).*/
+			/*Se il documento e'stato trovato non si effettua alcuna operazione e 
+			 * si prosegue l'elaborazione al punto successivo (non si puo're-inserire ma nemmeno aggiornare in quanto potrebbe 
+			 * gia' essere stato modificato dagli operatori della ragioneria).*/
 			//return documentoEntrataInserito;
-			log.debug(methodName, "Il documentoEntrata "+documentoEntrata.getDescAnnoNumeroTipoDoc()+" [uid:"+ documentoEntrata.getUid() + "] è già presente in archivio.");
+			log.debug(methodName, "Il documentoEntrata "+documentoEntrata.getDescAnnoNumeroTipoDoc()+" [uid:"+ documentoEntrata.getUid() + "] a'gia' presente in archivio.");
 			
 			log.debug(methodName, "Aggiornato DocumentoEntrata "+documentoEntrataInserito.getDescAnnoNumeroTipoDoc()+" con uid: "+documentoEntrataInserito.getUid());
 			res.addMessaggio("DOCE-AGG", "Aggiornato documento Entrata "+documentoEntrataInserito.getDescAnnoNumeroTipoDoc());
@@ -1080,11 +1136,11 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 		final String methodName = "gestisciNumerazioneAutomaticaDocumento";
 		
 		if(documento.getNumero() != null){
-			log.debug(methodName, "Il documento ha già il numero: "+ documento.getDescAnnoNumeroTipoDoc() + " Esco.");
+			log.debug(methodName, "Il documento ha gia'il numero: "+ documento.getDescAnnoNumeroTipoDoc() + " Esco.");
 			return;
 		}
 		
-		//Il documento è stato passato senza il numero. Controllo se il suo TipoDocumento supporta la numerazione automatica.
+		//Il documento e'stato passato senza il numero. Controllo se il suo TipoDocumento supporta la numerazione automatica.
 		if(!Boolean.TRUE.equals(documento.getTipoDocumento().getFlagSenzaNumero())) {
 			throw new BusinessException("Il TipoDocumento con codice "
 						+ (documento.getTipoDocumento()!=null?documento.getTipoDocumento().getCodice() + " [uid: "+documento.getTipoDocumento().getUid()+"]":"null")
@@ -1102,7 +1158,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 	
 	/*private void gestioneDocumentoSpesaGiaPresente(DocumentoSpesa documentoSpesa, InserisceDocumentoSpesaResponse resIDS) {
 		if(resIDS.verificatoErrore(ErroreCore.PARAMETRO_NON_INIZIALIZZATO)){ 
-			//se non sono stati passati parametri verifico che il documento esista gia' in archivio.
+			//se non sono stati passati parametri verifico che il documento esista gia'in archivio.
 			
 			RicercaPuntualeDocumentoSpesaResponse resRP = ricercaDocumentoGiaPresente(documentoSpesa);
 			if(resRP.getDocumentoSpesa()==null) {
@@ -1149,7 +1205,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 	/*private void gestioneTestataIvaSpesaGiaPresente(DocumentoSpesa documentoSpesa, InserisceDocumentoSpesaResponse resIDS) {
 		
 		if(resIDS.verificatoErrore(ErroreCore.PARAMETRO_NON_INIZIALIZZATO)){
-			//se non sono stati passati parametri verifico che il documento esista gia' in archivio.
+			//se non sono stati passati parametri verifico che il documento esista gia'in archivio.
 			
 			DocumentoSpesa docTrovato = ricercaDocumentoTestataIVAGiaPresente(documentoSpesa);
 			
@@ -1173,7 +1229,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 	
 /*	private void gestioneDocumentoEntrataGiaPresente(DocumentoEntrata documentoEntrata, InserisceDocumentoEntrataResponse resIDS) {
 		if(resIDS.verificatoErrore(ErroreCore.PARAMETRO_NON_INIZIALIZZATO)){
-			//se non sono stati passati parametri verifico che il documento esista gia' in archivio.
+			//se non sono stati passati parametri verifico che il documento esista gia'in archivio.
 			
 			RicercaPuntualeDocumentoEntrataResponse resRP = ricercaDocumentoGiaPresente(documentoEntrata);
 			if(resRP.getDocumentoEntrata()==null) {
@@ -1207,7 +1263,7 @@ public class InserisceElenchiDocumentiService extends CheckedAccountBaseService<
 	/*private void gestioneTestataIvaEntrataGiaPresente(DocumentoEntrata documentoEntrata, InserisceDocumentoEntrataResponse resIDS) {
 		
 		if(resIDS.verificatoErrore(ErroreCore.PARAMETRO_NON_INIZIALIZZATO)){
-			//se non sono stati passati parametri verifico che il documento esista gia' in archivio.
+			//se non sono stati passati parametri verifico che il documento esista gia'in archivio.
 			
 			DocumentoEntrata docTrovato = ricercaDocumentoTestataIVAEntrataGiaPresente(documentoEntrata);
 			

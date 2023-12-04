@@ -9,7 +9,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.integration.entity.SiacRConciliazioneBeneficiario;
 import it.csi.siac.siacbilser.integration.entity.SiacTPdceConto;
@@ -17,7 +16,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTPdceConto;
 /**
  * The Interface SiacRConciliazioneBeneficiario.
  */
-@Component
+
 public interface SiacRConciliazioneBeneficiarioRepository extends JpaRepository<SiacRConciliazioneBeneficiario, Integer> {
 
 	@Query("SELECT COALESCE(COUNT(rcb), 0) "

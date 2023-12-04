@@ -8,7 +8,7 @@ package it.csi.siac.siacbilser.business.service.consultazioneentita.functionpara
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemTipoEnum;
 import it.csi.siac.siacconsultazioneentitaser.model.ParametriRicercaCapitoloEntrataConsultabile;
 import it.csi.siac.siaccorser.model.Ente;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * {@link FunctionParamsAdapter} per la ricerca dei capitoli di spesa.

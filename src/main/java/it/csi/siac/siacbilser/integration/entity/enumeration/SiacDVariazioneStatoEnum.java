@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilser.integration.entity.enumeration;
 
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacfin2ser.model.DecodificaEnum;
 
 /**
@@ -14,28 +14,31 @@ import it.csi.siac.siacfin2ser.model.DecodificaEnum;
 public enum SiacDVariazioneStatoEnum implements DecodificaEnum {
 	
 	/** The Bozza. */
-	Bozza(SiacDVariazioneStatoEnum.CODICE_BOZZA, StatoOperativoVariazioneDiBilancio.BOZZA),
+	PreBozza(SiacDVariazioneStatoEnum.CODICE_PRE_BOZZA, StatoOperativoVariazioneBilancio.PRE_BOZZA),
+	/** The Bozza. */
+	Bozza(SiacDVariazioneStatoEnum.CODICE_BOZZA, StatoOperativoVariazioneBilancio.BOZZA),
 	
 	/** The Definitiva. */
-	Definitiva(SiacDVariazioneStatoEnum.CODICE_DEFINITIVA, StatoOperativoVariazioneDiBilancio.DEFINITIVA),
+	Definitiva(SiacDVariazioneStatoEnum.CODICE_DEFINITIVA, StatoOperativoVariazioneBilancio.DEFINITIVA),
 	
 	/** The Annullata. */
-	Annullata(SiacDVariazioneStatoEnum.CODICE_ANNULLATA, StatoOperativoVariazioneDiBilancio.ANNULLATA),
+	Annullata(SiacDVariazioneStatoEnum.CODICE_ANNULLATA, StatoOperativoVariazioneBilancio.ANNULLATA),
 	
 	/** The Giunta. */
-	Giunta(SiacDVariazioneStatoEnum.CODICE_GIUNTA, StatoOperativoVariazioneDiBilancio.GIUNTA),
+	Giunta(SiacDVariazioneStatoEnum.CODICE_GIUNTA, StatoOperativoVariazioneBilancio.GIUNTA),
 	
 	/** The Consiglio. */
-	Consiglio(SiacDVariazioneStatoEnum.CODICE_CONSIGLIO, StatoOperativoVariazioneDiBilancio.CONSIGLIO),
+	Consiglio(SiacDVariazioneStatoEnum.CODICE_CONSIGLIO, StatoOperativoVariazioneBilancio.CONSIGLIO),
 	
 	/** The Pre Definitiva. */
-	PreDefinitiva(SiacDVariazioneStatoEnum.CODICE_PRE_DEFINITIVA, StatoOperativoVariazioneDiBilancio.PRE_DEFINITIVA),
+	PreDefinitiva(SiacDVariazioneStatoEnum.CODICE_PRE_DEFINITIVA, StatoOperativoVariazioneBilancio.PRE_DEFINITIVA),
 	;	
 	
 	
 	private final String codice;
-	private final StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio;
-	
+	private final StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio;
+	//SIAC-8332
+	public static final String CODICE_PRE_BOZZA = "BD";
 	public static final String CODICE_BOZZA = "B";
 	public static final String CODICE_DEFINITIVA = "D";
 	public static final String CODICE_ANNULLATA = "A";
@@ -49,9 +52,9 @@ public enum SiacDVariazioneStatoEnum implements DecodificaEnum {
 	 * @param codice the codice
 	 * @param soeb the soeb
 	 */
-	SiacDVariazioneStatoEnum(String codice, StatoOperativoVariazioneDiBilancio soeb){
+	SiacDVariazioneStatoEnum(String codice, StatoOperativoVariazioneBilancio soeb){
 		this.codice = codice;
-		this.statoOperativoVariazioneDiBilancio = soeb;
+		this.statoOperativoVariazioneBilancio = soeb;
 	}
 	
 	/**
@@ -60,7 +63,7 @@ public enum SiacDVariazioneStatoEnum implements DecodificaEnum {
 	 * @param soeb the soeb
 	 * @return the siac d variazione stato enum
 	 */
-	public static SiacDVariazioneStatoEnum byStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio soeb){
+	public static SiacDVariazioneStatoEnum byStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneBilancio soeb){
 		for(SiacDVariazioneStatoEnum e : SiacDVariazioneStatoEnum.values()){
 			if(e.getStatoOperativoVariazioneDiBilancio().equals(soeb)){
 				return e;
@@ -75,7 +78,7 @@ public enum SiacDVariazioneStatoEnum implements DecodificaEnum {
 	 * @param soeb the soeb
 	 * @return the siac d variazione stato enum
 	 */
-	public static SiacDVariazioneStatoEnum byStatoOperativoVariazioneDiBilancioEvenNull(StatoOperativoVariazioneDiBilancio soeb){
+	public static SiacDVariazioneStatoEnum byStatoOperativoVariazioneDiBilancioEvenNull(StatoOperativoVariazioneBilancio soeb){
 		if(soeb==null){
 			return null;
 		}		
@@ -108,8 +111,8 @@ public enum SiacDVariazioneStatoEnum implements DecodificaEnum {
 	 *
 	 * @return the stato operativo variazione di bilancio
 	 */
-	public StatoOperativoVariazioneDiBilancio getStatoOperativoVariazioneDiBilancio() {
-		return statoOperativoVariazioneDiBilancio;
+	public StatoOperativoVariazioneBilancio getStatoOperativoVariazioneDiBilancio() {
+		return statoOperativoVariazioneBilancio;
 	}
 	
 

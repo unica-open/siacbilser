@@ -373,7 +373,7 @@ public class CalcoloFondoPluriennaleVincolatoCronoprogrammaService extends Check
 	}
 	
 	
-	//TODO sarebbe bello metterlo nel LogUtil.java!!
+	//TODO sarebbe bello metterlo nel LogSrvUtil.java!!
 	/**
 	 * Log list.
 	 *

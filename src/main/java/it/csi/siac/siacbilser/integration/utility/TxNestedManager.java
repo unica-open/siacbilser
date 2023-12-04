@@ -13,7 +13,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * Esegue una opearzione simulando una transazione con propagation nested.
@@ -24,7 +24,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 @Component
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class TxNestedManager {
-	private static LogUtil log = new LogUtil(TxNestedManager.class);
+	private static LogSrvUtil log = new LogSrvUtil(TxNestedManager.class);
 	
 	/**
 	 * Flag a livello di thread per marcare la transazione corrente come Nested.
@@ -82,7 +82,7 @@ public class TxNestedManager {
 	@WebListener
 	public static class TxNestedManagerRequestListener implements ServletRequestListener {
 		
-		private LogUtil log = new LogUtil(TxNestedManagerRequestListener.class);
+		private LogSrvUtil log = new LogSrvUtil(TxNestedManagerRequestListener.class);
 		
 		@Override
 		public void requestInitialized(ServletRequestEvent sre) {
@@ -92,7 +92,7 @@ public class TxNestedManager {
 		@Override
 		public void requestDestroyed(ServletRequestEvent sre) {
 			final String methodName = "requestDestroyed";
-			log.debug(methodName, "remove cache for thread: "+ Thread.currentThread().getName());
+			log.trace(methodName, "remove cache for thread: "+ Thread.currentThread().getName());
 			TxNestedManager.cleanThreadLocalIsTxNested();
 		}
 
@@ -103,7 +103,7 @@ public class TxNestedManager {
 	 */
 	public static void cleanThreadLocalIsTxNested() {
 		isTxNested.remove();
-		log.debug("cleanThreadLocalIsTxNested", "isTxNested value removed for thread: "+ Thread.currentThread().getName());
+		log.trace("cleanThreadLocalIsTxNested", "isTxNested value removed for thread: "+ Thread.currentThread().getName());
 	}
 	
 

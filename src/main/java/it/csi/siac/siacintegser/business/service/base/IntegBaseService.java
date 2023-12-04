@@ -5,25 +5,27 @@
 package it.csi.siac.siacintegser.business.service.base;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import it.csi.siac.siaccommon.util.CoreUtils;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommon.util.CoreUtil;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.Reductor;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccommonser.util.dozer.DozerUtil;
-import it.csi.siac.siaccorser.frontend.webservice.CoreService;
-import it.csi.siac.siaccorser.frontend.webservice.msg.GetRichiedente;
-import it.csi.siac.siaccorser.frontend.webservice.msg.GetRichiedenteResponse;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
+import it.csi.siac.siaccorser.frontend.webservice.exception.ServiceException;
+import it.csi.siac.siaccorser.frontend.webservice.util.ServiceUtils;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacintegser.business.service.base.exception.InvokeBusinessServiceException;
+import it.csi.siac.siacintegser.business.service.helper.CoreServiceHelper;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.base.BaseRequest;
 import it.csi.siac.siacintegser.frontend.webservice.msg.base.BaseResponse;
@@ -35,16 +37,11 @@ import it.csi.siac.siacintegser.model.messaggio.MessaggioInteg;
 
 public abstract class IntegBaseService<IREQ extends BaseRequest, IRES extends BaseResponse>
 {
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 
-	@Autowired
-	protected DozerUtil dozerUtil;
-
-	@Autowired
-	protected ApplicationContext appCtx;
-
-	@Autowired
-	protected CoreService coreService;
+	@Autowired protected CoreServiceHelper coreServiceHelper;
+	@Autowired protected DozerUtil dozerUtil;
+	@Autowired protected ApplicationContext appCtx;
 
 	protected Richiedente richiedente;
 	protected Ente ente;
@@ -70,15 +67,15 @@ public abstract class IntegBaseService<IREQ extends BaseRequest, IRES extends Ba
 				ires = execute(ireq);
 			}
 		}
-		catch (ServiceParamError e)
+		catch (ServiceParamError spe)
 		{
 			log.error(methodName, "Check parametri del servizio terminato con errori.");
-			addErrore(e.getErrore());
+			addErrore(spe.getErrore());
 		}
-		catch (InvokeBusinessServiceException ibse)
+		catch (ServiceException se)
 		{
-			log.error(methodName, "Errore durante la chiamata al servizio di business.", ibse);
-			addErrori(ibse.getErrori());
+			log.error(methodName, "Errore durante la chiamata al servizio di business.", se);
+			addErrori(se.getErrori());
 		}
 		catch (RuntimeException re)
 		{
@@ -106,14 +103,7 @@ public abstract class IntegBaseService<IREQ extends BaseRequest, IRES extends Ba
 
 	protected void init(IREQ ireq)
 	{
-		GetRichiedente getRichiedente = new GetRichiedente();
-		getRichiedente.setCodiceAccount(String.format("%s-%s", ireq.getCodiceFruitore(), ireq.getCodiceEnte()));
-
-		GetRichiedenteResponse getrRichiedenteResponse = coreService.getRichiedente(getRichiedente);
-
-		checkBusinessServiceResponse(getrRichiedenteResponse);		
-		
-		richiedente = getrRichiedenteResponse.getRichiedente();
+		richiedente = coreServiceHelper.findRichiedente(ireq.getCodiceFruitore(), ireq.getCodiceEnte());
 		ente = richiedente.getAccount().getEnte();
 	}
 
@@ -128,7 +118,7 @@ public abstract class IntegBaseService<IREQ extends BaseRequest, IRES extends Ba
 
 	protected <RES extends ServiceResponse> IRES map(RES res, Class<IRES> iresClass, IntegMapId mapId)
 	{
-		checkBusinessServiceResponse(res);
+		checkServiceResponse(res);
 
 		IRES ires = dozerUtil.map(res, iresClass, mapId);
 		
@@ -140,22 +130,17 @@ public abstract class IntegBaseService<IREQ extends BaseRequest, IRES extends Ba
 
 	protected Class<IRES> getIntegResponseClass()
 	{
-		return CoreUtils.getGenericTypeClass(this.getClass(), IntegBaseService.class, 1);
+		return CoreUtil.getGenericTypeClass(this.getClass(), IntegBaseService.class, 1);
 	}
 
 	protected IRES instantiateNewIRes()
 	{
-		return CoreUtils.instantiateNewGenericType(this.getClass(), IntegBaseService.class, 1);
+		return CoreUtil.instantiateNewGenericType(this.getClass(), IntegBaseService.class, 1);
 	}
 
-	protected <RES extends ServiceResponse> void checkBusinessServiceResponse(RES res)
+	protected <RES extends ServiceResponse> void checkServiceResponse(RES res)
 	{
-		if (res == null)
-			throw new NullPointerException("La response del servizio di business è null");
-
-		if (res.isFallimento())
-			throw new InvokeBusinessServiceException(res.getErrori());
-
+		ServiceUtils.checkServiceResponse(res);
 	}
 
 	protected void logServiceRequest(IREQ ireq)
@@ -177,39 +162,39 @@ public abstract class IntegBaseService<IREQ extends BaseRequest, IRES extends Ba
 
 	protected void checkServiceBaseParameters(IREQ ireq) throws ServiceParamError
 	{
-		assertNotNull(ireq, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("request"));
-		assertNotNull(ireq.getCodiceFruitore(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice fruitore"));
-		assertNotNull(ireq.getCodiceEnte(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice ente"));
+		assertParamNotNull(ireq, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("request"));
+		assertParamNotNull(ireq.getCodiceFruitore(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice fruitore"));
+		assertParamNotNull(ireq.getCodiceEnte(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice ente"));
 	}
 
 	protected void checkServiceParameters(IREQ ireq) throws ServiceParamError
 	{
 	}
 
-	protected void checkNotNull(Object obj, it.csi.siac.siaccorser.model.Errore errore) throws ServiceParamError
+	protected void checkParamNotNull(Object obj, it.csi.siac.siaccorser.model.Errore errore) throws ServiceParamError
 	{
-		checkCondition(obj != null, errore);
+		checkParamCondition(obj != null, errore);
 	}
 
-	protected void assertNotNull(Object obj, it.csi.siac.siaccorser.model.Errore errore) throws ServiceParamError
+	protected void assertParamNotNull(Object obj, it.csi.siac.siaccorser.model.Errore errore) throws ServiceParamError
 	{
-		assertCondition(obj != null, errore);
+		assertParamCondition(obj != null, errore);
 	}
 
-	protected void assertCondition(boolean condition, it.csi.siac.siaccorser.model.Errore errore)
+	protected void assertParamCondition(boolean condition, it.csi.siac.siaccorser.model.Errore errore)
 			throws ServiceParamError
 	{
 		if (!condition)
 			throw new ServiceParamError(errore);
 	}
 
-	protected void checkCondition(boolean condition, it.csi.siac.siaccorser.model.Errore errore)
+	protected void checkParamCondition(boolean condition, it.csi.siac.siaccorser.model.Errore errore)
 			throws ServiceParamError
 	{
 		if (!condition)
 			addErrore(errore);
 	}
-
+	
 	private void addErrori(List<it.csi.siac.siaccorser.model.Errore> erroriRes)
 	{
 		for (it.csi.siac.siaccorser.model.Errore e : erroriRes)
@@ -247,25 +232,12 @@ public abstract class IntegBaseService<IREQ extends BaseRequest, IRES extends Ba
 	private String translateCodice(String codice)
 	{
 		String[] tmp = codice.split("_");
-
-		String labCod;
-		String txtCod;
-
-		if (tmp.length < 3)
-		{
-			labCod = "X";
-			txtCod = codice;
-		}
-		else
-		{
-			labCod = PrefissoCodiceMessaggio.codiceByLabel(tmp[0]);
-			txtCod = tmp[2];
-		}
-
-		return String.format("%s-%s-%s", 
-				Ambito.byLabel(StringUtils.substringBetween(this.getClass().getCanonicalName(),
-						"it.csi.siac.siacintegser.business.service.", ".")), 
-				labCod, 
-				txtCod);
+		
+		return String.format("%s-%s-%s",
+				Ambito.byLabel(StringUtils.defaultString(StringUtils.substringBetween(this.getClass().getCanonicalName(),
+						"it.csi.siac.siacintegser.business.service.", "."))),
+				tmp.length < 3 ? PrefissoCodiceMessaggio.X.getCodice() : PrefissoCodiceMessaggio.getCodice(tmp[0]), 
+				tmp.length < 3 ? codice : tmp[2]
+		);
 	}
 }

@@ -12,7 +12,7 @@ import it.csi.siac.siacbilser.integration.dad.DettaglioAmmortamentoAnnuoCespiteD
 import it.csi.siac.siaccespser.model.AmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.DettaglioAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.DettaglioAmmortamentoAnnuoCespiteModelDetail;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
@@ -25,7 +25,7 @@ import it.csi.siac.siacgenser.model.PrimaNota;
  * @author Domenico
  */
 public class DettaglioAmmortamentoAnnuoCespiteMovimentoInventarioHandler extends MovimentoInventarioHandler<AmmortamentoAnnuoCespite> {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private DettaglioAmmortamentoAnnuoCespiteDad dettaglioAmmortamentoAnnuoCespiteDad;
 	private AmmortamentoAnnuoCespiteDad ammortamentoAnnuoCespiteDad;

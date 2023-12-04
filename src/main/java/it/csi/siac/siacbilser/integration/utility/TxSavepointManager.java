@@ -14,7 +14,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * Gestisce i savepoint all'interno di una transazione.
@@ -26,7 +26,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class TxSavepointManager {
 	
-	private LogUtil log = new LogUtil(getClass());
+	private LogSrvUtil log = new LogSrvUtil(getClass());
 	
 	@PersistenceContext
 	protected EntityManager entityManager;

@@ -33,7 +33,7 @@ public class ModificaMovimentoGestioneEntrataAccertamentoConverter extends Modif
 		Accertamento a = new Accertamento();
 		a.setUid(siacTMovgest.getUid());
 		a.setAnnoMovimento(siacTMovgest.getMovgestAnno());
-		a.setNumero(siacTMovgest.getMovgestNumero());
+		a.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 		
 		// SIAC-4467
 		impostaSoggetto(siacTMovgestT, a);
@@ -47,7 +47,7 @@ public class ModificaMovimentoGestioneEntrataAccertamentoConverter extends Modif
 		SiacTMovgest siacTMovgest = siacTMovgestT.getSiacTMovgest();
 		SubAccertamento sa = new SubAccertamento();
 		sa.setUid(siacTMovgestT.getUid());
-		sa.setNumero(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
+		sa.setNumeroBigDecimal(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
 		sa.setAnnoAccertamentoPadre(siacTMovgest.getMovgestAnno());
 		sa.setNumeroAccertamentoPadre(siacTMovgest.getMovgestNumero());
 		

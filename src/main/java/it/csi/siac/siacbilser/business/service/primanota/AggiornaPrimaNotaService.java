@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
+import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AggiornaPrimaNota;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AggiornaPrimaNotaResponse;
 import it.csi.siac.siacgenser.model.StatoOperativoPrimaNota;
@@ -28,6 +29,11 @@ import it.csi.siac.siacgenser.model.errore.ErroreGEN;
 public class AggiornaPrimaNotaService extends AggiornaPrimaNotaBaseService<AggiornaPrimaNota, AggiornaPrimaNotaResponse> {
 	
 	@Override
+	protected void checkServiceParam() throws ServiceParamError {
+		super.checkServiceParam();
+	}
+	
+	@Override
 	@Transactional
 	public AggiornaPrimaNotaResponse executeService(AggiornaPrimaNota serviceRequest) {
 		return super.executeService(serviceRequest);
@@ -40,6 +46,9 @@ public class AggiornaPrimaNotaService extends AggiornaPrimaNotaBaseService<Aggio
 		popolaAmbitoAPartireDalleRegistrazioni();
 		checkStatoOperativo();
 		checkBilancio();
+		
+		//SIAC-8134
+		popolaStrutturaCompetente();
 		
 		popolaMovimentiEP();
 		primaNotaDad.aggiornaPrimaNota(primaNota);

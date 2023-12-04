@@ -32,7 +32,7 @@ public class GeneraXmlOrdinativiMifDad extends BaseDadImpl
 	private static final String INDENT_CHAR = " ";
 	private static final int INDENT_SIZE = 4;
 
-	public String createXml(Integer idEnte, Integer idElaborazione, Integer annoEsercizio, Integer limitOrdinativi,
+	public String createXml(Integer idEnte, Integer idElaborazione, Integer annoEsercizio, String codiceIstat, Integer limitOrdinativi,
 			Integer offsetOrdinativi)
 	{
 		Map<String, Object> dataMap = new HashMap<String, Object>();
@@ -41,9 +41,15 @@ public class GeneraXmlOrdinativiMifDad extends BaseDadImpl
 		dataMap.put("limitOrdinativi", limitOrdinativi);
 		dataMap.put("offsetOrdinativi", offsetOrdinativi);
 		dataMap.put("mif_ord_flusso_elab_mif_id", idElaborazione);
-		if (annoEsercizio != null)
+		
+		if (annoEsercizio != null) {
 			dataMap.put("mif_ord_anno_esercizio", annoEsercizio);
-
+		}
+		
+		if (codiceIstat != null) {
+			dataMap.put("mif_ord_codice_ente_istat", codiceIstat);
+		}
+		
 		List<Node> nodes = readXmlNodes(idElaborazione);
 
 		StringBuilder sb = new StringBuilder(XML_HEADER);

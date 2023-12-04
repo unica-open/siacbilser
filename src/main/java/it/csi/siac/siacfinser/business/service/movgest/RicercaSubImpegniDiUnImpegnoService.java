@@ -17,8 +17,8 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.common.RicercaAttributiMovimentoGestioneOttimizzatoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
@@ -84,7 +84,9 @@ public class RicercaSubImpegniDiUnImpegnoService extends RicercaAttributiMovimen
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = req.getDatiOpzionaliElencoSubTuttiConSoloGliIds();
 		
-		EsitoRicercaMovimentoPkDto esito = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoImpegno, numeroImpegno, paginazioneSubMovimentiDto,caricaDatiOpzionaliDto, Constanti.MOVGEST_TIPO_IMPEGNO, true);
+		EsitoRicercaMovimentoPkDto esito = impegnoOttimizzatoDad.ricercaMovimentoPk(
+				richiedente, ente, annoEsercizio, annoImpegno, numeroImpegno, paginazioneSubMovimentiDto,
+				caricaDatiOpzionaliDto, CostantiFin.MOVGEST_TIPO_IMPEGNO, true, req.isCaricalistaModificheCollegate());
 	
 		long endUno = System.currentTimeMillis();
 		long startDue = System.currentTimeMillis();
@@ -111,7 +113,7 @@ public class RicercaSubImpegniDiUnImpegnoService extends RicercaAttributiMovimen
 				long totUno = endUno - startUno;
 				long totDue = endDue - startDue;
 				
-				CommonUtils.println("totUno: " + totUno + " - totDue: " + totDue);
+				CommonUtil.println("totUno: " + totUno + " - totDue: " + totDue);
 				
 				//setto i dati della testata:
 				res.setImpegno(impegno);

@@ -14,7 +14,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * Utility per l'invocazione di una function con dei parametri.
@@ -27,7 +27,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class SimpleJPAFunctionInvoker {
 	
 	//log
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	//entity Managers
 	@PersistenceContext

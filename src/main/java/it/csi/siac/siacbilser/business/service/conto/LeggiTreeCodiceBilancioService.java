@@ -15,12 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.integration.dao.CodificaBilDao;
+import it.csi.siac.siacbilser.integration.dao.SiacTClassRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTPdceContoRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacDClassFam;
 import it.csi.siac.siacbilser.integration.entity.SiacDClassTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacRClassFamTree;
 import it.csi.siac.siacbilser.integration.entity.SiacTClass;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDClassFamEnum;
+import it.csi.siac.siaccommon.util.CoreUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Esito;
@@ -39,6 +41,9 @@ public class LeggiTreeCodiceBilancioService extends CheckedAccountBaseService<Le
 	
 	@Autowired
 	private SiacTPdceContoRepository siacTPdceContoRepository;
+	
+	@Autowired
+	private SiacTClassRepository siacTClassRepository;
 	
 	
 	/* (non-Javadoc)
@@ -92,7 +97,7 @@ public class LeggiTreeCodiceBilancioService extends CheckedAccountBaseService<Le
 	public  List<CodiceBilancio> convertTreeDto(List<SiacTClass> dtos, List<CodiceBilancio> list, CodiceBilancio padre) {
 
 		for (SiacTClass dto : dtos) {
-
+			
 			CodiceBilancio obj = new CodiceBilancio();
 
 			obj.setUid(dto.getUid());
@@ -112,17 +117,24 @@ public class LeggiTreeCodiceBilancioService extends CheckedAccountBaseService<Le
 			if (dto.getSiacRClassFamTreesPadre() != null && !dto.getSiacRClassFamTreesPadre().isEmpty()) {
 				padre = obj;
 				
-				List<SiacRClassFamTree> siacRClassFamTreesPadre = dto.getSiacRClassFamTreesPadre();
-				List<SiacTClass> figli = new ArrayList<SiacTClass>();
+				//SIAC-7892
+//				List<SiacRClassFamTree> siacRClassFamTreesPadre = dto.getSiacRClassFamTreesPadre();
+				List<SiacTClass> figli = siacTClassRepository.findChildByParentUid(obj.getUid(), req.getAnnoBilancio());
 				
-				for(SiacRClassFamTree srcftp : siacRClassFamTreesPadre) {
-					figli.add(srcftp.getSiacTClassFiglio());
-				}
+//				for(SiacRClassFamTree srcftp : siacRClassFamTreesPadre) {
+//					
+//					//SIAC-7892 aggiunti controlli su dataFineValidita
+//					if(!srcftp.isEntitaValidaPerAnnoBilancio(req.getAnnoBilancio())) {
+//						continue;
+//					}
+//					
+//					figli.add(srcftp.getSiacTClassFiglio());
+//				}
 
 				List<CodiceBilancio> codBilancio = new ArrayList<CodiceBilancio>();
 				//elemPdc.addAll(convertTreeDto(figli, elemPdc, padre));
-				checkIncoerenzaClassificatoreFiglioDiSeStesso(siacRClassFamTreesPadre);
-				codBilancio = convertTreeDto(figli, codBilancio, padre);
+				checkIncoerenzaClassificatoreFiglioDiSeStesso(dto.getSiacRClassFamTreesPadre());
+				codBilancio = convertTreeDto(CoreUtil.checkList(figli), codBilancio, padre);
 				padre.setFigli(codBilancio);
 				list.add(padre);
 

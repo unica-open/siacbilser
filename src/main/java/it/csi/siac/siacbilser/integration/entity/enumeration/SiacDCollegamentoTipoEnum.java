@@ -18,9 +18,9 @@ import it.csi.siac.siacbilser.integration.entity.SiacTSubdoc;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.CecMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.GenMapId;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siaccecser.model.RendicontoRichiesta;
 import it.csi.siac.siaccecser.model.RichiestaEconomale;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
 import it.csi.siac.siaccommonser.util.dozer.MapId;
 import it.csi.siac.siaccorser.model.Entita;
@@ -91,7 +91,7 @@ public enum SiacDCollegamentoTipoEnum {
 	private final String idColumnName;
 	private final MapId mapId;
 	private final MapId mapIdModelDetail;
-	private final Class<? extends ModelDetail> modelDetailClass;
+	private final Class<? extends ModelDetailEnum> modelDetailClass;
 	//private String jpql;
 	private final MovimentoJpqlEnum movimentoJpqlEnum;
 	private final Boolean associabileRateoAttivoRiscontoPassivo;
@@ -104,7 +104,7 @@ public enum SiacDCollegamentoTipoEnum {
 	 * @param mapId mapId per il mapping di Dozer
 	 */
 	private SiacDCollegamentoTipoEnum(String collegamentoTipoCode, TipoCollegamento tipoCollegamento, Class<? extends Entita> modelClass, Class<? extends SiacTBase> entityClass, String idColumnName,
-							MapId mapId, MapId mapIdModelDetail, Class<? extends ModelDetail> modelDetailClass, MovimentoJpqlEnum movimentoJpqlEnum, Boolean associabileRateoAttivoRiscontoPassivo) {
+							MapId mapId, MapId mapIdModelDetail, Class<? extends ModelDetailEnum> modelDetailClass, MovimentoJpqlEnum movimentoJpqlEnum, Boolean associabileRateoAttivoRiscontoPassivo) {
 		this.tipoCollegamento = tipoCollegamento;
 		this.collegamentoTipoCode = collegamentoTipoCode;
 		this.modelClass = modelClass;
@@ -240,7 +240,7 @@ public enum SiacDCollegamentoTipoEnum {
 	/**
 	 * @return the modelDetailClass
 	 */
-	public Class<? extends ModelDetail> getModelDetailClass() {
+	public Class<? extends ModelDetailEnum> getModelDetailClass() {
 		return modelDetailClass;
 	}
 

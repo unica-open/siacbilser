@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -22,6 +23,7 @@ import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
 import it.csi.siac.siaccommonser.business.service.base.ResponseHandler;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
+import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacintegser.business.service.attiamministrativi.factory.AttoAmministrativoFactory;
 import it.csi.siac.siacintegser.business.service.attiamministrativi.model.AttoAmministrativoElab;
@@ -62,11 +64,16 @@ public class ElaboraFileAttiAmministrativiService extends ElaboraFileBaseService
 	@Override
 	protected void initFileData() {
 		final String methodName = "initFileData";
+		
+		LineIterator it = null;
 
-		log.debug(methodName, "lunghezza del file: " + fileBytes.length);
-
-		LineIterator it;
 		try {
+			String fileHead = new String(ArrayUtils.subarray(fileBytes, 0, 60), "UTF-8");
+	
+			log.info(methodName, String.format("Elaborazione file Atti Amministrativi: file [%s...]", fileHead));
+			res.getMessaggi().add(new Messaggio("ELAB_AA", String.format("Elaborazione file Atti Amministrativi: file [%s...]", fileHead)));
+			log.debug(methodName, "lunghezza del file: " + fileBytes.length);
+	
 			it = IOUtils.lineIterator(new ByteArrayInputStream(fileBytes), "UTF-8");
 		} catch (IOException e) {
 			log.error("Impossibile leggere il file", e);
@@ -76,17 +83,16 @@ public class ElaboraFileAttiAmministrativiService extends ElaboraFileBaseService
 		attiAmministrativi = new ArrayList<AttoAmministrativoElab>();
 
 		try {
-			// Parto da 0 per renderla leggibile (considerando che la linea 0 dovrebbe essere sempre un'intestazione)
 			int lineNumber = -1;
 			while (it.hasNext()) {
 				lineNumber++;
 				log.debug(methodName, "Elaborazione linea " + lineNumber);
 				String line = it.nextLine();
 				String codiceAccount = req.getRichiedente().getAccount().getCodice();
-				AttoAmministrativoElab attoAmministrativo = getAttoAmministrativoElabInstance(line, codiceAccount); // FIXME
-				attoAmministrativo.setProvenienza(codiceAccount);
+				AttoAmministrativoElab attoAmministrativo = getAttoAmministrativoElabInstance(line, lineNumber, codiceAccount); // FIXME
 				if (attoAmministrativo != null) {
 					log.debug(methodName, "Linea " + lineNumber + " valida: " + attoAmministrativo.toString());
+					attoAmministrativo.setProvenienza(codiceAccount);
 					attiAmministrativi.add(attoAmministrativo);
 				}
 			}
@@ -99,8 +105,8 @@ public class ElaboraFileAttiAmministrativiService extends ElaboraFileBaseService
 
 	}
 
-	protected AttoAmministrativoElab getAttoAmministrativoElabInstance(String line, String codiceAccount) {
-		return attoAmministrativoFactory.newInstanceFromFlussoAttiAmministrativi(line, codiceAccount);
+	protected AttoAmministrativoElab getAttoAmministrativoElabInstance(String line, int lineNumber, String codiceAccount) {
+		return attoAmministrativoFactory.newInstanceFromFlussoAttiAmministrativi(line, lineNumber, codiceAccount);
 	}
 
 	@Override

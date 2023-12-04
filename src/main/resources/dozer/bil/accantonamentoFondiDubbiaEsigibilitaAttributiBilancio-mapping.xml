@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="SiacTAccFondiDubbiaEsigBil_AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAccFondiDubbiaEsigBil</class-b>
+		<field>
+			<a>versione</a>
+			<b>afdeBilVersione</b>
+		</field>
+		<field>
+			<a>accantonamentoGraduale</a>
+			<b>afdeBilAccantonamentoGraduale</b>
+		</field>
+		<field>
+			<a>quinquennioRiferimento</a>
+			<b>afdeBilQuinquennioRiferimento</b>
+		</field>
+		<field>
+			<a>riscossioneVirtuosa</a>
+			<b>afdeBilRiscossioneVirtuosa</b>
+		</field>
+		<field>
+			<a>creditiStralciati</a>
+			<b>afdeBilCreditiStralciati</b>
+		</field>
+		<field>
+			<a>creditiStralciatiFcde</a>
+			<b>afdeBilCreditiStralciatiFcde</b>
+		</field>
+		<field>
+			<a>accertamentiAnniSuccessivi</a>
+			<b>afdeBilAccertamentiAnniSuccessivi</b>
+		</field>
+		<field>
+			<a>accertamentiAnniSuccessiviFcde</a>
+			<b>afdeBilAccertamentiAnniSuccessiviFcde</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTAccFondiDubbiaEsigBil_AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAccFondiDubbiaEsigBil</class-b>
+		<field map-id="SiacTAccFondiDubbiaEsigBil_AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaAttributiBilancioBilancioConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaAttributiBilancioStatoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaAttributiBilancioTipoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+</mappings>

@@ -15,8 +15,8 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDVariazioneStat
 import it.csi.siac.siacbilser.model.DatiVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.DatiVariazioneImportoCapitoloAnno;
 import it.csi.siac.siacbilser.model.RiepilogoDatiVariazioneImportoCapitoloAnno;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * The Class RiepilogoDatiVariazioneImportoCapitoloAnnoConverter.
@@ -25,7 +25,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class RiepilogoDatiVariazioneImportoCapitoloAnnoCountConverter extends DozerConverter<RiepilogoDatiVariazioneImportoCapitoloAnno, List<Object[]>> {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/**
 	 * Instantiates a new vincolo stato converter.
@@ -55,7 +55,7 @@ public class RiepilogoDatiVariazioneImportoCapitoloAnnoCountConverter extends Do
 		
 		// Anno, codice stato variazione, count
 		Integer anno = Integer.valueOf((String)arr[0]);
-		StatoOperativoVariazioneDiBilancio sovdb = SiacDVariazioneStatoEnum.byCodice((String)arr[1]).getStatoOperativoVariazioneDiBilancio();
+		StatoOperativoVariazioneBilancio sovdb = SiacDVariazioneStatoEnum.byCodice((String)arr[1]).getStatoOperativoVariazioneDiBilancio();
 		Long count = (Long)arr[2];
 		
 		DatiVariazioneImportoCapitoloAnno dvica = dest.get(anno);

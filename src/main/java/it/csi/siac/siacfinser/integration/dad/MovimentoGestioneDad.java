@@ -37,9 +37,9 @@ import it.csi.siac.siaccorser.model.TipoClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.business.service.util.NumericUtils;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentiSubAccertamentiResponse;
@@ -112,7 +112,6 @@ import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestTsDetModReposi
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestTsDetRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestTsRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTProgrammaFinRepository;
-import it.csi.siac.siacfinser.integration.dao.mutuo.SiacTMutuoVoceRepository;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacDSoggettoClasseRepository;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacRSoggettoClasseRepository;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacTSoggettoFinRepository;
@@ -171,7 +170,7 @@ import it.csi.siac.siacfinser.integration.entity.ext.IdImpegnoSubimpegno;
 import it.csi.siac.siacfinser.integration.entity.ext.IdMovgestSubmovegest;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
 import it.csi.siac.siacfinser.integration.util.ChiamanteDoppiaGestImpegno;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.EntityLiquidazioneToModelLiquidazioneConverter;
 import it.csi.siac.siacfinser.integration.util.EntityToModelConverter;
 import it.csi.siac.siacfinser.integration.util.Operazione;
@@ -193,7 +192,6 @@ import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneEntrata;
 import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesa;
 import it.csi.siac.siacfinser.model.movgest.VincoloAccertamento;
 import it.csi.siac.siacfinser.model.movgest.VincoloImpegno;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaAccSubAcc;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaImpSub;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaImpegno;
@@ -295,9 +293,6 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	private SiacRModificaStatoRepository siacRModificaStatoRepository;
 	
 	@Autowired
-	private SiacTMutuoVoceRepository siacTMutuoVoceRepository;
-	
-	@Autowired
 	private SiacDAttoAmmTipoFinRepository siacDAttoAmmTipoRepository;
 	
 	@Autowired
@@ -365,7 +360,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			if(movimentoGestione instanceof Impegno){
 				if( ((Impegno)movimentoGestione).getElencoSubImpegni()!=null && ((Impegno) movimentoGestione).getElencoSubImpegni().size()>0){
 					
-					chiaveMov = new MovgestPkDto(annoBilancio, movimentoGestione.getAnnoMovimento(), movimentoGestione.getNumero(), tipoMovimento);
+					chiaveMov = new MovgestPkDto(annoBilancio, movimentoGestione.getAnnoMovimento(), movimentoGestione.getNumeroBigDecimal(), tipoMovimento);
 					
 					MovGestMainModelEntityInfoDto oggettoConSub = getListaSiactTMovgestTs(chiaveMov,((Impegno)movimentoGestione).getElencoSubImpegni(),datiOperazioneAnnullamento);
 					List<MovGestModelEntityInfoDto> subs = oggettoConSub.getListaSub();
@@ -406,7 +401,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			}else if(movimentoGestione instanceof Accertamento){
 				if( ((Accertamento)movimentoGestione).getElencoSubAccertamenti()!=null && ((Accertamento) movimentoGestione).getElencoSubAccertamenti().size()>0){
 					
-					chiaveMov = new MovgestPkDto(annoBilancio, movimentoGestione.getAnnoMovimento(), movimentoGestione.getNumero(), tipoMovimento);
+					chiaveMov = new MovgestPkDto(annoBilancio, movimentoGestione.getAnnoMovimento(), movimentoGestione.getNumeroBigDecimal(), tipoMovimento);
 					
 					MovGestMainModelEntityInfoDto oggettoConSub = getListaSiactTMovgestTsAccertamenti(chiaveMov,((Accertamento)movimentoGestione).getElencoSubAccertamenti(),datiOperazioneAnnullamento);
 					List<MovGestModelEntityInfoDto> subs = oggettoConSub.getListaSub();
@@ -512,7 +507,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			if (listaSiacTMovgestTsEliminatoResiduo!=null && listaSiacTMovgestTsEliminatoResiduo.size()>0) {
 				SiacTMovgestTsFin siacTMovgestTsEliminatoResiduo=listaSiacTMovgestTsEliminatoResiduo.get(0);
 				if (siacTMovgestTsEliminatoResiduo!=null) {
-					if (tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)) {
+					if (tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)) {
 						// caso movimenti collegati impegno
 						List<SiacTLiquidazioneFin> elencoSiacTLiquidazione=findLiquidazioniValideFromSubImpegno(siacTMovgestTsEliminatoResiduo);
 						if (elencoSiacTLiquidazione!=null && elencoSiacTLiquidazione.size()>0) {
@@ -521,8 +516,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						}
 						//Eliminare sub
 						DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
-						SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
-					}else if (tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)) {
+						SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+					}else if (tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)) {
 						// caso movimenti collegati accertamento
 						List<SiacTOrdinativoTsDetFin> elencoQuote=findQuoteValideFromAccertamentoSubAccertamento(ente.getUid(), siacTMovgestTsEliminatoResiduo);
 						if (elencoQuote!=null && elencoQuote.size()>0) {
@@ -531,7 +526,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						}
 						//Eliminare sub
 						DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
-						SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+						SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
 					}
 				}
 			}
@@ -558,7 +553,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			// Si cerca di annullare uno (o pi�) sub-accertamenti
 			// Eventuali controlli da effettuare in caso di annullamento di uno (o pi�) sub-accertamenti
 
-			MovgestPkDto chiaveMov = new MovgestPkDto(String.valueOf(bilancio.getAnno()), accertamento.getAnnoMovimento(), accertamento.getNumero(), Constanti.MOVGEST_TIPO_ACCERTAMENTO);
+			MovgestPkDto chiaveMov = new MovgestPkDto(String.valueOf(bilancio.getAnno()), accertamento.getAnnoMovimento(), accertamento.getNumeroBigDecimal(), CostantiFin.MOVGEST_TIPO_ACCERTAMENTO);
 			MovGestMainModelEntityInfoDto oggettoConSub = getListaSiactTMovgestTsAccertamenti(chiaveMov,accertamento.getElencoSubAccertamenti(), datiOperazione);
 			List<MovGestModelEntityInfoDto> subs = oggettoConSub.getListaSub();
 
@@ -593,7 +588,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				}
 			}
 			
-			if(entityDaCheckareStato == null || DatiOperazioneUtils.isInStato(entityDaCheckareStato, Constanti.D_MODIFICA_STATO_ANNULLATO)){
+			if(entityDaCheckareStato == null || DatiOperazioneUtil.isInStato(entityDaCheckareStato, CostantiFin.D_MODIFICA_STATO_ANNULLATO)){
 				//lanciare errore, modifica gia annullata
 			}
 			
@@ -626,7 +621,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					totQuoteVincoli = calcolaTotQuoteVincoliAcc(vincoli);
 					if(importoUtilizzabileNew.compareTo(totQuoteVincoli)<0){
 						//importoUtilizzabileNew e' minore della sommatoria dei vincoli: lancio errore:
-						listaErrori.add(ErroreFin.DISPONIBILITA_INSUFFICIENTE.getErrore("Modifica accertamento num:" + accertamento.getNumero(),"disponibilità ad utilizzare per vincoli"));
+						listaErrori.add(ErroreFin.DISPONIBILITA_INSUFFICIENTE.getErrore("Modifica accertamento num:" + accertamento.getNumeroBigDecimal(),"disponibilità ad utilizzare per vincoli"));
 						return listaErrori;
 					}
 				}
@@ -662,21 +657,21 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		// Controllo se ci sono legami tra l'accertamento / sub-accertamento ed eventuali quote di ordinativo
 		List<SiacROrdinativoTsMovgestTFin> elencoSiacROrdinativoTsMovgestT = siacTMovgestTs.getSiacROrdinativoTsMovgestTs();
 		//filtriamo  in base alla validita':
-		elencoSiacROrdinativoTsMovgestT = DatiOperazioneUtils.soloValidi(elencoSiacROrdinativoTsMovgestT, null);
+		elencoSiacROrdinativoTsMovgestT = DatiOperazioneUtil.soloValidi(elencoSiacROrdinativoTsMovgestT, null);
 		if(elencoSiacROrdinativoTsMovgestT!=null && elencoSiacROrdinativoTsMovgestT.size()>0){
 			for(SiacROrdinativoTsMovgestTFin siacROrdinativoTsMovgestT : elencoSiacROrdinativoTsMovgestT){
 				// ho trovato legame con quota valido
 				// controllo se la quota � valida
 				SiacTOrdinativoTFin siacTOrdinativoT = siacROrdinativoTsMovgestT.getSiacTOrdinativoT();
-				if(DatiOperazioneUtils.isValido(siacTOrdinativoT, null)){
+				if(DatiOperazioneUtil.isValido(siacTOrdinativoT, null)){
 					// la quota � valida
 					// adesso controllo che sia in stato valido anche l'ordinativo a della quota
 					SiacTOrdinativoFin siacTOrdinativo = siacTOrdinativoT.getSiacTOrdinativo();
 					List<SiacROrdinativoStatoFin> elencoSiacROrdinativoStato = siacTOrdinativo.getSiacROrdinativoStatos();
-					elencoSiacROrdinativoStato = DatiOperazioneUtils.soloValidi(elencoSiacROrdinativoStato, null);
+					elencoSiacROrdinativoStato = DatiOperazioneUtil.soloValidi(elencoSiacROrdinativoStato, null);
 					if(elencoSiacROrdinativoStato!=null && elencoSiacROrdinativoStato.size()>0){
 						for(SiacROrdinativoStatoFin siacROrdinativoStato : elencoSiacROrdinativoStato){
-							if(!siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(Constanti.D_ORDINATIVO_STATO_ANNULLATO)){
+							if(!siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(CostantiFin.D_ORDINATIVO_STATO_ANNULLATO)){
 								esistonoOrdinativiIncasso = true;
 							}
 						}
@@ -700,13 +695,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		if(lista!=null && lista.size()>0){
 			for(ImpegnoInAnnullamentoInfoDto iterato : lista){
 				
-				SiacDModificaStatoFin statoAnnullato = siacDModificaStatoRepository.findByCode(idEnte, now, Constanti.D_MODIFICA_STATO_ANNULLATO).get(0);
+				SiacDModificaStatoFin statoAnnullato = siacDModificaStatoRepository.findByCode(idEnte, now, CostantiFin.D_MODIFICA_STATO_ANNULLATO).get(0);
 				
 				//EVENTUALI MODIFCHE SUL SOG CLASSE
 				List<SiacRMovgestTsSogclasseModFin> siacRMovgestTsSogclasseModList_Da_Annullare= iterato.getSiacRMovgestTsSogclasseModListDaAnnullare();
 				if(siacRMovgestTsSogclasseModList_Da_Annullare!=null && siacRMovgestTsSogclasseModList_Da_Annullare.size()>0){
 					for(SiacRMovgestTsSogclasseModFin it : siacRMovgestTsSogclasseModList_Da_Annullare){
-						DatiOperazioneUtils.cambiaModificaStato(it, siacRMovgestTsSogClasseModRepository, datiOperazioneAnnullamento, statoAnnullato,siacRModificaStatoRepository, siacTAccountRepository);
+						DatiOperazioneUtil.cambiaModificaStato(it, siacRMovgestTsSogClasseModRepository, datiOperazioneAnnullamento, statoAnnullato,siacRModificaStatoRepository, siacTAccountRepository);
 					}
 				}
 				
@@ -714,7 +709,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				List<SiacRMovgestTsSogModFin> siacRMovgestTsSogModList_Da_Annullare= iterato.getSiacRMovgestTsSogModListDaAnnullare();
 				if(siacRMovgestTsSogModList_Da_Annullare!=null && siacRMovgestTsSogModList_Da_Annullare.size()>0){
 					for(SiacRMovgestTsSogModFin it : siacRMovgestTsSogModList_Da_Annullare){
-						DatiOperazioneUtils.cambiaModificaStato(it, siacRMovgestTsSogModRepository, datiOperazioneAnnullamento, statoAnnullato,siacRModificaStatoRepository, siacTAccountRepository);
+						DatiOperazioneUtil.cambiaModificaStato(it, siacRMovgestTsSogModRepository, datiOperazioneAnnullamento, statoAnnullato,siacRModificaStatoRepository, siacTAccountRepository);
 					}
 				}
 				
@@ -722,7 +717,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				List<SiacTMovgestTsDetModFin> siacTMovgestTsDetMod_Da_Annullare= iterato.getSiacTMovgestTsDetModDaAnnullare();
 				if(siacTMovgestTsDetMod_Da_Annullare!=null && siacTMovgestTsDetMod_Da_Annullare.size()>0){
 					for(SiacTMovgestTsDetModFin it : siacTMovgestTsDetMod_Da_Annullare){
-						DatiOperazioneUtils.cambiaModificaStato(it, siacTMovgestTsDetModRepository, datiOperazioneAnnullamento, statoAnnullato,siacRModificaStatoRepository, siacTAccountRepository);
+						DatiOperazioneUtil.cambiaModificaStato(it, siacTMovgestTsDetModRepository, datiOperazioneAnnullamento, statoAnnullato,siacRModificaStatoRepository, siacTAccountRepository);
 					}
 				}
 			    List<ImportoImpegnoInAnnullamentoInfoDto> elencoModificheImporti = iterato.getElencoModifiche();
@@ -734,7 +729,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					      BigDecimal nuovoImporto = oldImporto.subtract(totMod);
 					      DatiOperazioneDto datiUpdate = DatiOperazioneDto.buildDatiOperazione(datiOperazioneAnnullamento, Operazione.MODIFICA);
 					      
-					      SiacTMovgestTsDetFin nuovoAttuale = saveImporto(daAggiornare, nuovoImporto, datiUpdate, null, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
+					      SiacTMovgestTsDetFin nuovoAttuale = saveImporto(daAggiornare, nuovoImporto, datiUpdate, null, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
 					      
 					      
 					      SiacTMovgestTsFin siacTMovgestTs = daAggiornare.getSiacTMovgestT();
@@ -744,22 +739,22 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					      // Quando viene annullata una modifica di importo di accertamenti di competenza e futuri,
 					      // dovrebbe essere controaggiornato non solo l'importo attuale ma anche quello utilizzabile
 					      SiacTMovgestTsDetFin nuovoUtilizzabile = null;
-					      if(Constanti.MOVGEST_TIPO_ACCERTAMENTO.equals(tipoMovimento)){
-					    	  List<SiacTMovgestTsDetFin> utilizzabileL = siacTMovgestTsDetRepository.findValidoByTipo(idEnte, getNow(), Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE, siacTMovgestTs.getMovgestTsId());
+					      if(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO.equals(tipoMovimento)){
+					    	  List<SiacTMovgestTsDetFin> utilizzabileL = siacTMovgestTsDetRepository.findValidoByTipo(idEnte, getNow(), CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE, siacTMovgestTs.getMovgestTsId());
 					    	  SiacTMovgestTsDetFin daAggiornareUtilizzabile = utilizzabileL.get(0);
 					    	  BigDecimal utilizzabileOld = estraiImportoUtilizzabileByMovgestTsId(siacTMovgestTs.getMovgestTsId(), datiOperazioneAnnullamento);
 					    	  BigDecimal nuovoImportoUtilizzabile = utilizzabileOld.subtract(totMod);
-					    	  nuovoUtilizzabile = saveImporto(daAggiornareUtilizzabile, nuovoImportoUtilizzabile, datiUpdate, null, Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
-					    	  lImporti = DatiOperazioneUtils.replaceInList(lImporti, nuovoUtilizzabile);
+					    	  nuovoUtilizzabile = saveImporto(daAggiornareUtilizzabile, nuovoImportoUtilizzabile, datiUpdate, null, CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
+					    	  lImporti = DatiOperazioneUtil.replaceInList(lImporti, nuovoUtilizzabile);
 					      }
 					      //
 					      
-					      lImporti = DatiOperazioneUtils.replaceInList(lImporti, nuovoAttuale);
+					      lImporti = DatiOperazioneUtil.replaceInList(lImporti, nuovoAttuale);
 					      siacTMovgestTs.setSiacTMovgestTsDets(lImporti);
 					      
 					      //NON PENSO ABBIA SENSO METTERE L'IMPEGNPO IN STATO ANNULLATO
 					      if(annullaImpegno){
-					    	SiacRMovgestTsStatoFin siacRMovgestTsStato = saveStatoImpegno(datiOperazioneAnnullamento, Constanti.MOVGEST_STATO_ANNULLATO, siacTMovgestTs); 
+					    	SiacRMovgestTsStatoFin siacRMovgestTsStato = saveStatoImpegno(datiOperazioneAnnullamento, CostantiFin.MOVGEST_STATO_ANNULLATO, siacTMovgestTs); 
 					  		siacTMovgestTs.setSiacRMovgestTsStatos(toList(siacRMovgestTsStato));
 					      }
 					      /////////////////////
@@ -796,7 +791,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		List<SiacTMovgestTsFin> subs = new ArrayList<SiacTMovgestTsFin>();
 		for(SubImpegno it: listaSub){
-			SiacTMovgestTsFin figlioIt = findByCode(figliAlls, it.getNumero().toString());
+			SiacTMovgestTsFin figlioIt = findByCode(figliAlls, it.getNumeroBigDecimal().toString());
 			subs.add(figlioIt);
 		}
 		//
@@ -824,7 +819,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	private SiacTMovgestTsFin findByCode(List<SiacTMovgestTsFin> lista, String code){
 		SiacTMovgestTsFin finded = null;
 		for(SiacTMovgestTsFin it : lista){
-			if(StringUtils.sonoUgualiTrimmed(it.getMovgestTsCode(), code)){
+			if(StringUtilsFin.sonoUgualiTrimmed(it.getMovgestTsCode(), code)){
 				finded = it;
 				break;
 			}
@@ -842,7 +837,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	public <MVG extends MovimentoGestione> MVG findByCode(List<MVG> lista, BigDecimal code){
 		MVG finded = null;
 		for(MVG it : lista){
-			if(StringUtils.sonoUguali(it.getNumero(), code)){
+			if(StringUtilsFin.sonoUguali(it.getNumeroBigDecimal(), code)){
 				finded = it;
 				break;
 			}
@@ -874,7 +869,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<SiacTMovgestTsFin> subs = new ArrayList<SiacTMovgestTsFin>();
 		for(SubAccertamento it: listaSub){
 			
-			SiacTMovgestTsFin figlioIt = findByCode(figliAlls, it.getNumero().toString());
+			SiacTMovgestTsFin figlioIt = findByCode(figliAlls, it.getNumeroBigDecimal().toString());
 			subs.add(figlioIt);
 		}
 		
@@ -1024,7 +1019,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					AttoAmministrativo attoAmmInInput = buildAttoAmministrativo(idEnte, updApp.getAttoAmministrativoNumero(), updApp.getAttoAmministrativoTipoCode(), Integer.valueOf(updApp.getAttoAmministrativoAnno()), updApp.getIdStrutturaAmministrativa());
 					SiacTAttoAmmFin nuovoAtto = getSiacTAttoAmmFromAttoAmministrativo(attoAmmInInput, idEnte);
 					SiacTAttoAmmFin oldAtto = modificaDb.getSiacTAttoAmm();
-					if(!DatiOperazioneUtils.sonoUgualiAncheNull(oldAtto, nuovoAtto)){
+					if(!DatiOperazioneUtil.sonoUgualiAncheNull(oldAtto, nuovoAtto)){
 						//L'atto amministrativo ha subito un cambiamento:
 						isModificata = true;
 						//raccolgo le info su questi atti amministrativi (verrano validati dopo chiamando il provvedimentoService):
@@ -1133,7 +1128,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					AttoAmministrativo attoAmmInInput = buildAttoAmministrativo(idEnte, updApp.getAttoAmministrativoNumero(), updApp.getAttoAmministrativoTipoCode(), Integer.valueOf(updApp.getAttoAmministrativoAnno()), updApp.getIdStrutturaAmministrativa());
 					SiacTAttoAmmFin nuovoAtto = getSiacTAttoAmmFromAttoAmministrativo(attoAmmInInput, idEnte);
 					SiacTAttoAmmFin oldAtto = modificaDb.getSiacTAttoAmm();
-					if(!DatiOperazioneUtils.sonoUgualiAncheNull(oldAtto, nuovoAtto)){
+					if(!DatiOperazioneUtil.sonoUgualiAncheNull(oldAtto, nuovoAtto)){
 						//L'atto amministrativo ha subito un cambiamento:
 						isModificata = true;
 						//raccolgo le info su questi atti amministrativi (verrano validati dopo chiamando il provvedimentoService):
@@ -1196,9 +1191,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		Timestamp now = datiOperazioneAnnullamento.getTs();
 		List<ImportoImpegnoInAnnullamentoInfoDto> importiList = new ArrayList<ImportoImpegnoInAnnullamentoInfoDto>();
 		if(listaImportiMod!=null && listaImportiMod.size()>0){
-			SiacTMovgestTsDetModFin first = CommonUtils.getFirst(listaImportiMod);
+			SiacTMovgestTsDetModFin first = CommonUtil.getFirst(listaImportiMod);
 			Integer idMovgestTs = first.getSiacTMovgestTsDet().getSiacTMovgestT().getMovgestTsId();
-			List<SiacTMovgestTsDetFin> importoAttualeList = siacTMovgestTsDetRepository.findValidoByTipo(idEnte, now, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, idMovgestTs);
+			List<SiacTMovgestTsDetFin> importoAttualeList = siacTMovgestTsDetRepository.findValidoByTipo(idEnte, now, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, idMovgestTs);
 			//importoAttualeL dovrebbe avere un solo elemento, ovvero la riga in siac_t_movgest_ts_det corrispondente all'importo attuale:
 			SiacTMovgestTsDetFin siacTMovgestTsDet = importoAttualeList.get(0);
 			BigDecimal sommatoria = BigDecimal.ZERO;
@@ -1283,7 +1278,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		Integer idEnte = datiOperazioneAnnullamento.getSiacTEnteProprietario().getEnteProprietarioId();
 		Timestamp now = datiOperazioneAnnullamento.getTs();
 		
-		List<SiacTMovgestTsDetFin> importoAttualeList = siacTMovgestTsDetRepository.findValidoByTipo(idEnte, now, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, idMovgestTs);
+		List<SiacTMovgestTsDetFin> importoAttualeList = siacTMovgestTsDetRepository.findValidoByTipo(idEnte, now, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, idMovgestTs);
 		
 		List<SiacRMovgestTsSogclasseModFin> siacRMovgestTsSogclasseModList = siacRMovgestTsSogClasseModRepository.findValidiByMovgestTs(idEnte, now, idMovgestTs);
 		List<SiacRMovgestTsSogModFin> siacRMovgestTsSogModList = siacRMovgestTsSogModRepository.findValidiByMovgestTs(idEnte, now, idMovgestTs);
@@ -1327,7 +1322,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		Soggetto soggettoMovimento = new Soggetto();
 		List<SiacRMovgestTsSogFin> listaSiacRMovgestTsSog = siacTMovgestTs.getSiacRMovgestTsSogs();
 		if(null!=listaSiacRMovgestTsSog && listaSiacRMovgestTsSog.size() > 0){
-			listaSiacRMovgestTsSog = DatiOperazioneUtils.soloValidi(listaSiacRMovgestTsSog, getNow());
+			listaSiacRMovgestTsSog = DatiOperazioneUtil.soloValidi(listaSiacRMovgestTsSog, getNow());
 			if(null!=listaSiacRMovgestTsSog && listaSiacRMovgestTsSog.size() > 0){
 				for(SiacRMovgestTsSogFin siacRMovgestTsSog : listaSiacRMovgestTsSog){
 					if(null!=siacRMovgestTsSog &&  siacRMovgestTsSog.getDataFineValidita() == null){
@@ -1403,8 +1398,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<SiacRMovgestTsSogclasseModFin> listaSiacRMovgestTsSogClasseMod = siacTMovgestTs.getSiacRMovgestTsSogclasseMods();
 		
 		//System.out.println("Ricerco le modifiche per uid: "+siacTMovgestTs.getUid());
-		listaSiacRMovgestTsSogMod = (List<SiacRMovgestTsSogModFin>) DatiOperazioneUtils.soloValidi(listaSiacRMovgestTsSogMod, getNow());
-		listaSiacRMovgestTsSogClasseMod = (List<SiacRMovgestTsSogclasseModFin>) DatiOperazioneUtils.soloValidi(listaSiacRMovgestTsSogClasseMod, getNow());
+		listaSiacRMovgestTsSogMod = (List<SiacRMovgestTsSogModFin>) DatiOperazioneUtil.soloValidi(listaSiacRMovgestTsSogMod, getNow());
+		listaSiacRMovgestTsSogClasseMod = (List<SiacRMovgestTsSogclasseModFin>) DatiOperazioneUtil.soloValidi(listaSiacRMovgestTsSogClasseMod, getNow());
 		
 		//estrazione modifiche importi
 		if(null!=listaSiacTMovgestTsDetMod && listaSiacTMovgestTsDetMod.size() > 0){
@@ -1422,8 +1417,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			}
 		}
 		
-		int numeroSogMod = StringUtils.numeroElementi(listaSiacRMovgestTsSogMod);
-		int numeroSogClasseMod = StringUtils.numeroElementi(listaSiacRMovgestTsSogClasseMod);
+		int numeroSogMod = StringUtilsFin.numeroElementi(listaSiacRMovgestTsSogMod);
+		int numeroSogClasseMod = StringUtilsFin.numeroElementi(listaSiacRMovgestTsSogClasseMod);
 		
 		if(numeroSogMod==1 && numeroSogClasseMod==1){
 			//situzione class -> sogg OPPURE sogg -> class
@@ -1514,7 +1509,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		ClasseSoggetto classeSoggetto= null;
 		if(dSoggClasse!=null){
 			classeSoggetto = new ClasseSoggetto();
-			if(!StringUtils.isEmpty(dSoggClasse.getSoggettoClasseCode())){							
+			if(!StringUtilsFin.isEmpty(dSoggClasse.getSoggettoClasseCode())){							
 				classeSoggetto.setCodice(dSoggClasse.getSoggettoClasseCode());
 				classeSoggetto.setDescrizione(dSoggClasse.getSoggettoClasseDesc());
 			}		
@@ -1532,17 +1527,17 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	 */
 	private ModificaMovimentoGestioneEntrata initModificaMovimentoGestioneEntrata(SiacTModificaFin siacTModifica, int idEnte){
 		ModificaMovimentoGestioneEntrata modificaMovimentoGestioneEntrata = new ModificaMovimentoGestioneEntrata();
-		modificaMovimentoGestioneEntrata.setTipoMovimento(Constanti.MODIFICA_TIPO_ACC);
+		modificaMovimentoGestioneEntrata.setTipoMovimento(CostantiFin.MODIFICA_TIPO_ACC);
 		modificaMovimentoGestioneEntrata = map(siacTModifica, ModificaMovimentoGestioneEntrata.class, FinMapId.SiacTModifica_ModificaMovimentoGestioneEntrata);	
 		modificaMovimentoGestioneEntrata = EntityToModelConverter.siacTModificaEntityToModificaMovimentoGestioneEntrataModel(siacTModifica, modificaMovimentoGestioneEntrata);
-		if(null!=modificaMovimentoGestioneEntrata.getNewSoggettoCodeMovimentoGestione() && !StringUtils.isEmpty(modificaMovimentoGestioneEntrata.getNewSoggettoCodeMovimentoGestione())){
-			Soggetto soggettoNew = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, idEnte, modificaMovimentoGestioneEntrata.getNewSoggettoCodeMovimentoGestione(),true, true);
+		if(null!=modificaMovimentoGestioneEntrata.getNewSoggettoCodeMovimentoGestione() && !StringUtilsFin.isEmpty(modificaMovimentoGestioneEntrata.getNewSoggettoCodeMovimentoGestione())){
+			Soggetto soggettoNew = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, idEnte, modificaMovimentoGestioneEntrata.getNewSoggettoCodeMovimentoGestione(),true, true);
 			if(null!=soggettoNew){
 				modificaMovimentoGestioneEntrata.setSoggettoNewMovimentoGestione(soggettoNew);
 				}
 			}
-		if(null!=modificaMovimentoGestioneEntrata.getOldSoggettoCodeMovimentoGestione() && !StringUtils.isEmpty(modificaMovimentoGestioneEntrata.getOldSoggettoCodeMovimentoGestione())){
-			Soggetto soggettoOld = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, idEnte, modificaMovimentoGestioneEntrata.getOldSoggettoCodeMovimentoGestione(),true, true);
+		if(null!=modificaMovimentoGestioneEntrata.getOldSoggettoCodeMovimentoGestione() && !StringUtilsFin.isEmpty(modificaMovimentoGestioneEntrata.getOldSoggettoCodeMovimentoGestione())){
+			Soggetto soggettoOld = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, idEnte, modificaMovimentoGestioneEntrata.getOldSoggettoCodeMovimentoGestione(),true, true);
 			if(null!=soggettoOld){
 				modificaMovimentoGestioneEntrata.setSoggettoOldMovimentoGestione(soggettoOld);
 		}
@@ -1561,19 +1556,19 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	private ModificaMovimentoGestioneSpesa initModificaMovimentoGestioneSpesa(SiacTModificaFin siacTModifica, int idEnte){
 		
 		ModificaMovimentoGestioneSpesa modificaMovimentoGestioneSpesa = new ModificaMovimentoGestioneSpesa();
-		modificaMovimentoGestioneSpesa.setTipoMovimento(Constanti.MODIFICA_TIPO_IMP);
+		modificaMovimentoGestioneSpesa.setTipoMovimento(CostantiFin.MODIFICA_TIPO_IMP);
 		modificaMovimentoGestioneSpesa = map(siacTModifica, ModificaMovimentoGestioneSpesa.class, FinMapId.SiacTModifica_ModificaMovimentoGestioneSpesa);	
 		modificaMovimentoGestioneSpesa = EntityToModelConverter.siacTModificaEntityToModificaMovimentoGestioneSpesaModel(siacTModifica, modificaMovimentoGestioneSpesa);
-		if(modificaMovimentoGestioneSpesa.getNewSoggettoCodeMovimentoGestione()!=null && !StringUtils.isEmpty(modificaMovimentoGestioneSpesa.getNewSoggettoCodeMovimentoGestione())){
-			Soggetto soggettoNew = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, idEnte, modificaMovimentoGestioneSpesa.getNewSoggettoCodeMovimentoGestione(),true, true);
+		if(modificaMovimentoGestioneSpesa.getNewSoggettoCodeMovimentoGestione()!=null && !StringUtilsFin.isEmpty(modificaMovimentoGestioneSpesa.getNewSoggettoCodeMovimentoGestione())){
+			Soggetto soggettoNew = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, idEnte, modificaMovimentoGestioneSpesa.getNewSoggettoCodeMovimentoGestione(),true, true);
 			if(null!=soggettoNew){
 				modificaMovimentoGestioneSpesa.setSoggettoNewMovimentoGestione(soggettoNew);
 			}
 		}
 
-		if(modificaMovimentoGestioneSpesa.getOldSoggettoCodeMovimentoGestione()!=null && !StringUtils.isEmpty(modificaMovimentoGestioneSpesa.getOldSoggettoCodeMovimentoGestione())){
+		if(modificaMovimentoGestioneSpesa.getOldSoggettoCodeMovimentoGestione()!=null && !StringUtilsFin.isEmpty(modificaMovimentoGestioneSpesa.getOldSoggettoCodeMovimentoGestione())){
 			//JIra 1885 alla ricerca del soggetto non veniva passatp l'ambito_fin ma null 
-			Soggetto soggettoOld = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, idEnte, modificaMovimentoGestioneSpesa.getOldSoggettoCodeMovimentoGestione(),true, true);
+			Soggetto soggettoOld = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, idEnte, modificaMovimentoGestioneSpesa.getOldSoggettoCodeMovimentoGestione(),true, true);
 			if(null!=soggettoOld){
 				modificaMovimentoGestioneSpesa.setSoggettoOldMovimentoGestione(soggettoOld);
 			}
@@ -1597,8 +1592,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<SiacRMovgestTsSogModFin> listaSiacRMovgestTsSogMod = siacTMovgestTs.getSiacRMovgestTsSogMods();
 		List<SiacRMovgestTsSogclasseModFin> listaSiacRMovgestTsSogClasseMod = siacTMovgestTs.getSiacRMovgestTsSogclasseMods();
 		
-		listaSiacRMovgestTsSogMod = (List<SiacRMovgestTsSogModFin>) DatiOperazioneUtils.soloValidi(listaSiacRMovgestTsSogMod, getNow());
-		listaSiacRMovgestTsSogClasseMod = (List<SiacRMovgestTsSogclasseModFin>) DatiOperazioneUtils.soloValidi(listaSiacRMovgestTsSogClasseMod, getNow());
+		listaSiacRMovgestTsSogMod = (List<SiacRMovgestTsSogModFin>) DatiOperazioneUtil.soloValidi(listaSiacRMovgestTsSogMod, getNow());
+		listaSiacRMovgestTsSogClasseMod = (List<SiacRMovgestTsSogclasseModFin>) DatiOperazioneUtil.soloValidi(listaSiacRMovgestTsSogClasseMod, getNow());
 		
 		//estrazione modifiche importi
 		if(null!=listaSiacTMovgestTsDetMod && listaSiacTMovgestTsDetMod.size() > 0){
@@ -1616,8 +1611,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			}
 		}
 		
-		int numeroSogMod = StringUtils.numeroElementi(listaSiacRMovgestTsSogMod);
-		int numeroSogClasseMod = StringUtils.numeroElementi(listaSiacRMovgestTsSogClasseMod);
+		int numeroSogMod = StringUtilsFin.numeroElementi(listaSiacRMovgestTsSogMod);
+		int numeroSogClasseMod = StringUtilsFin.numeroElementi(listaSiacRMovgestTsSogClasseMod);
 		
 		if(numeroSogMod==1 && numeroSogClasseMod==1){
 			//situzione class -> sogg OPPURE sogg -> class
@@ -1724,7 +1719,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				info.setMovgestId(siacTMovgest.getMovgestId());
 				//subs:
 				List<SiacTMovgestTsFin> listaSiacTMovgestTsSUB = siacTMovgestTsRepository.findListaSiacTMovgestTsFigli(idEnte, now, testata.getMovgestTsId());
-				listaSiacTMovgestTsSUB = DatiOperazioneUtils.soloValidi(listaSiacTMovgestTsSUB, now);
+				listaSiacTMovgestTsSUB = DatiOperazioneUtil.soloValidi(listaSiacTMovgestTsSUB, now);
 				
 				if(listaSiacTMovgestTsSUB!=null && listaSiacTMovgestTsSUB.size() > 0){
 					//ci sono oltre alla testa dei sub
@@ -1787,7 +1782,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		oggettoInfo.setMotivazioneDisponibilitaAIncassare(disponibilitaAIncassare.getMotivazione());
 		///
 		//importo attuale sub:
-		BigDecimal importoAttualeSub = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getMovgestTsId());
+		BigDecimal importoAttualeSub = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getMovgestTsId());
 		oggettoInfo.setImportoAttuale(importoAttualeSub);
 		///
 		Soggetto soggettoMovimento = estraiSoggettoMovimento(datiOperazioneDto.getSiacDAmbito().getAmbitoCode(), idEnte, siacTMovgestTs,datiOperazioneDto);
@@ -1887,7 +1882,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						Soggetto soggetto = EntityToModelConverter.setSoggettoMovimentoGestione(siacTMovgestTs);
 						
 						if(caricaSediEModalitaPagamento && soggetto!=null && soggetto.getUid()> 0  ){
-							soggetto = estraiSediSecondarieEModalitaPagamento(richiedente,idEnte,  soggetto.getCodiceSoggetto(), Constanti.AMBITO_FIN,datiOperazioneDto);
+							soggetto = estraiSediSecondarieEModalitaPagamento(richiedente,idEnte,  soggetto.getCodiceSoggetto(), CostantiFin.AMBITO_FIN,datiOperazioneDto);
 						}
 						
 						// CLASSE SOGGETTO
@@ -1904,12 +1899,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						   elencoModificheMovimentoGestioneSpesa = estraiElencoModificheMovimentoGestioneSpesa(richiedente, siacTMovgestTs);
 						}
 										
-						// VOCI DI MUTUO 
-						List<VoceMutuo> elencoVociMutuo = caricaVociDiMutuo(richiedente, annoMovimento, numeroMovimento, tipoMovimento, idEnte, datiOperazioneDto, siacTMovgestTs);
-						
 						
 						// STO CONVERTENDO UN IMPEGNO	
-						if(Constanti.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){ 
+						if(CostantiFin.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){ 
 							
 							// STATO_OPERATIVO_MOVIMENTO_GESTIONE_SPESA								
 							EntityToModelConverter.setStatoOperativoMovimentoGestione(impegno, siacTMovgestTs);
@@ -1923,7 +1915,6 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								impegno.setClasseSoggetto(classe);
 							}
 							
-							impegno.setListaVociMutuo(elencoVociMutuo);
 							
 													
 							// ATTO AMMINISTRATIVO
@@ -1931,7 +1922,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							List<SiacRMovgestTsAttoAmmFin> listaSiacRMovgestTsAttoAmm = siacTMovgestTs.getSiacRMovgestTsAttoAmms();
 							if(null!=listaSiacRMovgestTsAttoAmm && listaSiacRMovgestTsAttoAmm.size() > 0){
 								//estraggo l'unico record valido:
-								SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtils.getValido(listaSiacRMovgestTsAttoAmm, null);
+								SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtil.getValido(listaSiacRMovgestTsAttoAmm, null);
 								if(null!= siacRMovgestTsAttoAmm){
 									EntityToModelConverter.settaAttoAmministrativoBase(siacRMovgestTsAttoAmm.getSiacTAttoAmm(), impegno);
 								}
@@ -1963,14 +1954,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							if(movimentoConSub){
 							
 								for(SiacTMovgestTsFin itSubs : listaTMovGestTs){
-									if(itSubs.getDataFineValidita()==null && Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(itSubs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
-										sommatoriaImportoAttualeSubImpegni = sommatoriaImportoAttualeSubImpegni.add(siacTMovgestTsDetRepository.findImporto(idEnte,  Constanti.MOVGEST_TS_DET_TIPO_ATTUALE,itSubs.getUid()));
+									if(itSubs.getDataFineValidita()==null && CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(itSubs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+										sommatoriaImportoAttualeSubImpegni = sommatoriaImportoAttualeSubImpegni.add(siacTMovgestTsDetRepository.findImporto(idEnte,  CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE,itSubs.getUid()));
 									}
 								}
 							}
 							
 							DisponibilitaMovimentoGestioneContainer disponibilitaSubimpegnare;
-							if(!StringUtils.isEmpty(impegno.getStatoOperativoMovimentoGestioneSpesa()) && impegno.getStatoOperativoMovimentoGestioneSpesa().equals(Constanti.MOVGEST_STATO_ANNULLATO)){
+							if(!StringUtilsFin.isEmpty(impegno.getStatoOperativoMovimentoGestioneSpesa()) && impegno.getStatoOperativoMovimentoGestioneSpesa().equals(CostantiFin.MOVGEST_STATO_ANNULLATO)){
 								disponibilitaSubimpegnare = new DisponibilitaMovimentoGestioneContainer(BigDecimal.ZERO, "Se lo stato dell'impegno e' annullato, la disponibilita' deve essere ZERO");
 							}else{
 								disponibilitaSubimpegnare = new DisponibilitaMovimentoGestioneContainer(importoAttualeImpegno.subtract(sommatoriaImportoAttualeSubImpegni),
@@ -1999,7 +1990,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							impegno.setMotivazioneDisponibilitaPagare(disponibilitaPagare.getMotivazione());
 							
 							impegno.setSommaLiquidazioniDoc(importoAttualeImpegno.subtract(disponibilitaLiquidareContainer.getDisponibilita()));
-							impegno.setTotaleSubImpegni(sommatoriaImportoAttualeSubImpegni);
+							impegno.setTotaleSubImpegniBigDecimal(sommatoriaImportoAttualeSubImpegni);
 							impegno.setDisponibilitaSubimpegnare(disponibilitaSubimpegnare.getDisponibilita());
 							//SIAC-6695
 							impegno.setMotivazioneDisponibilitaSubImpegnare(disponibilitaSubimpegnare.getMotivazione());
@@ -2014,7 +2005,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							impegno.setDisponibilitaLiquidareBase(disponibilitaLiquidareBase);
 						
 						} // STO CONVERTENDO UN SUBIMPEGNO
-						else if(Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+						else if(CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 	
 							SubImpegno sub = null;
 							
@@ -2033,7 +2024,6 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								sub.setClasseSoggetto(classe);
 							}
 							
-							sub.setListaVociMutuo(elencoVociMutuo);
 							
 							EntityToModelConverter.setImporti(sub, siacTMovgestTs); // mi serve l'importo attuale in un controllo sotto
 							
@@ -2042,7 +2032,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							List<SiacRMovgestTsAttoAmmFin> listaSiacRMovgestTsAttoAmm = siacTMovgestTs.getSiacRMovgestTsAttoAmms();
 							if(null!=listaSiacRMovgestTsAttoAmm && listaSiacRMovgestTsAttoAmm.size() > 0){
 								//estraggo l'unico record valido:
-								SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtils.getValido(listaSiacRMovgestTsAttoAmm, null);
+								SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtil.getValido(listaSiacRMovgestTsAttoAmm, null);
 								if(null!= siacRMovgestTsAttoAmm){
 									EntityToModelConverter.settaAttoAmministrativoBase(siacRMovgestTsAttoAmm.getSiacTAttoAmm(), sub);
 								}
@@ -2052,9 +2042,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								if(null!=elencoModificheMovimentoGestioneSpesa && elencoModificheMovimentoGestioneSpesa.size() > 0){
 									List<ModificaMovimentoGestioneSpesa> listaModificheDefinitiva = new ArrayList<ModificaMovimentoGestioneSpesa>();
 									for(ModificaMovimentoGestioneSpesa spesa : elencoModificheMovimentoGestioneSpesa){
-										spesa.setTipoMovimento(Constanti.MODIFICA_TIPO_SIM);
+										spesa.setTipoMovimento(CostantiFin.MODIFICA_TIPO_SIM);
 										spesa.setUidSubImpegno(sub.getUid());
-										spesa.setNumeroSubImpegno(sub.getNumero().intValue());
+										spesa.setNumeroSubImpegno(sub.getNumeroBigDecimal().intValue());
 										listaModificheDefinitiva.add(spesa);
 									}
 									sub.setListaModificheMovimentoGestioneSpesa(listaModificheDefinitiva);
@@ -2132,48 +2122,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
         return impegno;
 	}
 
-	
-	/**
-	 * legge le voci di mutuoi legate al movimento
-	 * @param richiedente
-	 * @param annoMovimento
-	 * @param numeroMovimento
-	 * @param tipoMovimento
-	 * @param methodname
-	 * @param codiceEnte
-	 * @param datiOperazioneDto
-	 * @param siacTMovgestTs
-	 * @return
-	 */
-	protected List<VoceMutuo> caricaVociDiMutuo(Richiedente richiedente,
-			Integer annoMovimento, BigDecimal numeroMovimento,
-			String tipoMovimento,  Integer idEnte,
-			DatiOperazioneDto datiOperazioneDto,
-			SiacTMovgestTsFin siacTMovgestTs) {
-		
-		String methodname = "caricaVociDiMutuo";
-		
-		// Estraggo le eventuali voci di mutuo
-		List<VoceMutuo> elencoVociMutuo = new ArrayList<VoceMutuo>();
-		if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
-			
-			elencoVociMutuo = estraiElencoVociMutuo(annoMovimento, numeroMovimento, richiedente, idEnte, siacTMovgestTs, datiOperazioneDto);
-			if(log.isDebugEnabled()){
-				if(elencoVociMutuo!=null && !elencoVociMutuo.isEmpty()){
-					for (VoceMutuo voceMutuo : elencoVociMutuo) {
-						
-						log.debug(methodname,"DescrizioneMutuo: " + voceMutuo.getDescrizioneMutuo());
-						log.debug(methodname,"DescrizioneVoceMutuo: " + voceMutuo.getDescrizioneVoceMutuo());
-						log.debug(methodname,"IdVoceMutuo: " + voceMutuo.getIdVoceMutuo());
-						log.debug(methodname,"IdVoceMutuo: " + voceMutuo.getImportoAttualeVoceMutuo());
-					}
-					
-				}
-			}
-		}
-		// Fine estrazione delle eventuali voci di mutuo
-		return elencoVociMutuo;
-	}
+
+
 
 	protected Boolean isMovimentoConSub(
 			List<SiacTMovgestTsFin> listaSiacTMovgestTs) {
@@ -2206,14 +2156,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 
 		SiacTMovgestFin siacTMovgest = siacTMovgestRepository.ricercaSiacTMovgestPk(codiceEnte, annoEsercizio, annoMovimento, numeroMovimento, tipoMovimento);	
 		
-		if(null!=siacTMovgest){
+		if(siacTMovgest != null){
 
 			// Ciclo sulla tabella SiacTMovgestTsFin per estrarre i dettagli dei movimenti gestionali
 			List<SiacTMovgestTsFin> listaSiacTMovgestTs = getTestataPiuListaSub(siacTMovgest);
 			
 			Boolean movimentoConSub = isMovimentoConSub(listaSiacTMovgestTs);
 			
-			if(null!=listaSiacTMovgestTs && listaSiacTMovgestTs.size() > 0){
+			if(listaSiacTMovgestTs != null && listaSiacTMovgestTs.size() > 0){
 
 				List<SubImpegno> elencoSubImpegni = new ArrayList<SubImpegno>();
 				List<SubAccertamento> elencoSubAccertamenti = new ArrayList<SubAccertamento>();
@@ -2244,7 +2194,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				//
 				
 				for(SiacTMovgestTsFin siacTMovgestTs : listaSiacTMovgestTs){
-					if(null!=siacTMovgestTs && siacTMovgestTs.getDataFineValidita() == null && siacTMovgestTs.getDataCancellazione() == null){
+					if(siacTMovgestTs != null && siacTMovgestTs.getDataFineValidita() == null && siacTMovgestTs.getDataCancellazione() == null){
 						//Se valido
 						
 						// Estraggo il soggetto
@@ -2253,21 +2203,21 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						// 11 FEB 2016: ottimizzazione soggetto:
 						//OLD LENTO:
 //						if(caricaDatiUlteriori){
-//							soggettoMovimento = estraiSoggettoMovimento(Constanti.AMBITO_FIN, idEnte, siacTMovgestTs);
+//							soggettoMovimento = estraiSoggettoMovimento(CostantiFin.AMBITO_FIN, idEnte, siacTMovgestTs);
 //						}
 						//NUOVO AGGIUNTO 11 FEB 2016: ottimizzazione soggetto:
 						if(caricaDatiUlteriori){
 							SiacTSoggettoFin siacTSog = ottimizzazioneDto.getSoggettoByMovGestTsId(siacTMovgestTs.getMovgestTsId());
-							if(siacTSog!=null){
+							if(siacTSog != null){
 								//puo' non averlo se ha dei sub
-								soggettoMovimento = CommonUtils.getSoggettoByCode(distintiSoggettiCoinvolti, siacTSog.getSoggettoCode());
+								soggettoMovimento = CommonUtil.getSoggettoByCode(distintiSoggettiCoinvolti, siacTSog.getSoggettoCode());
 								
-								if(soggettoMovimento!=null && soggettoMovimento.getUid()> 0  ){
-									soggettoMovimento = estraiSediSecondarieEModalitaPagamento(richiedente,idEnte,  soggettoMovimento.getCodiceSoggetto(), Constanti.AMBITO_FIN,datiOperazioneDto);
+								if(soggettoMovimento != null && soggettoMovimento.getUid()> 0  ){
+									soggettoMovimento = estraiSediSecondarieEModalitaPagamento(richiedente,idEnte,  soggettoMovimento.getCodiceSoggetto(), CostantiFin.AMBITO_FIN,datiOperazioneDto);
 								}
 							}
 						}
-						if(soggettoMovimento==null){
+						if(soggettoMovimento == null){
 							soggettoMovimento = new Soggetto();
 						}
 						//
@@ -2287,58 +2237,39 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						 */
 						if(caricaDatiUlteriori){
 						   
-							if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+							if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 								elencoModificheMovimentoGestioneSpesa = estraiElencoModificheMovimentoGestioneSpesa(richiedente, siacTMovgestTs);
-							} else if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)){
+							} else if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)){
 								elencoModificheMovimentoGestioneEntrata = estraiElencoModificheMovimentoGestioneEntrata(richiedente, siacTMovgestTs);
 							}
 						}
 						// Fine estrazione degli eventuali record di modifica
 
 				
-						
-						// Estraggo le eventuali voci di mutuo
-						List<VoceMutuo> elencoVociMutuo = new ArrayList<VoceMutuo>();
-						if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
 							
-							elencoVociMutuo = estraiElencoVociMutuo(annoMovimento, numeroMovimento, richiedente, idEnte, siacTMovgestTs, datiOperazioneDto);
-							if(log.isDebugEnabled()){
-								if(elencoVociMutuo!=null && !elencoVociMutuo.isEmpty()){
-									for (VoceMutuo voceMutuo : elencoVociMutuo) {
-										
-										log.debug(methodname,"DescrizioneMutuo: " + voceMutuo.getDescrizioneMutuo());
-										log.debug(methodname,"DescrizioneVoceMutuo: " + voceMutuo.getDescrizioneVoceMutuo());
-										log.debug(methodname,"IdVoceMutuo: " + voceMutuo.getIdVoceMutuo());
-										log.debug(methodname,"IdVoceMutuo: " + voceMutuo.getImportoAttualeVoceMutuo());
-									}
-									
-								}
-							}
-						}		
 						
-						if(Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+						if(CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 	
 							ST trovatoSubMovimento = null;
 							trovatoSubMovimento = convertiSubMovimento(siacTMovgestTs, siacTMovgest, caricaDatiUlteriori,ottimizzazioneDto);							
 
-							if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+							if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 								// Aggiungo il soggetto al sub-impegno estratto
-								if(null!=soggettoMovimento){
+								if(soggettoMovimento != null){
 									trovatoSubMovimento.setSoggetto(soggettoMovimento);
 								}
 								
-								if(null!=elencoModificheMovimentoGestioneSpesa && elencoModificheMovimentoGestioneSpesa.size() > 0){
+								if(elencoModificheMovimentoGestioneSpesa != null && elencoModificheMovimentoGestioneSpesa.size() > 0){
 									List<ModificaMovimentoGestioneSpesa> listaModificheDefinitiva = new ArrayList<ModificaMovimentoGestioneSpesa>();
 									for(ModificaMovimentoGestioneSpesa spesa : elencoModificheMovimentoGestioneSpesa){
-										spesa.setTipoMovimento(Constanti.MODIFICA_TIPO_SIM);
+										spesa.setTipoMovimento(CostantiFin.MODIFICA_TIPO_SIM);
 										spesa.setUidSubImpegno(trovatoSubMovimento.getUid());
-										spesa.setNumeroSubImpegno(trovatoSubMovimento.getNumero().intValue());
+										spesa.setNumeroSubImpegno(trovatoSubMovimento.getNumeroBigDecimal().intValue());
 										listaModificheDefinitiva.add(spesa);
 									}
 									((SubImpegno)trovatoSubMovimento).setListaModificheMovimentoGestioneSpesa(listaModificheDefinitiva);
 								}
 								
-								((SubImpegno)trovatoSubMovimento).setListaVociMutuo(elencoVociMutuo);
 																
 								BigDecimal importoAttuale =  BigDecimal.ZERO;
 								
@@ -2380,7 +2311,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								((SubImpegno)trovatoSubMovimento).setMotivazioneDisponibilitaPagare(disponibilitaPagare.getMotivazione());
 								elencoSubImpegni.add(((SubImpegno)trovatoSubMovimento));
 								
-							} else if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)){
+							} else if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)){
 								// Aggiungo il soggetto al sub-accertamento estratto
 								if(null!=soggettoMovimento){
 									trovatoSubMovimento.setSoggetto(soggettoMovimento);
@@ -2388,9 +2319,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								if(null!=elencoModificheMovimentoGestioneEntrata && elencoModificheMovimentoGestioneEntrata.size() > 0){
 									List<ModificaMovimentoGestioneEntrata> listaModificheDefinitiva = new ArrayList<ModificaMovimentoGestioneEntrata>();
 									for(ModificaMovimentoGestioneEntrata entrata : elencoModificheMovimentoGestioneEntrata){
-										entrata.setTipoMovimento(Constanti.MODIFICA_TIPO_SAC);
+										entrata.setTipoMovimento(CostantiFin.MODIFICA_TIPO_SAC);
 										entrata.setUidSubAccertamento(trovatoSubMovimento.getUid());
-										entrata.setNumeroSubAccertamento(trovatoSubMovimento.getNumero().intValue());
+										entrata.setNumeroSubAccertamento(trovatoSubMovimento.getNumeroBigDecimal().intValue());
 										listaModificheDefinitiva.add(entrata);
 									}
 									((SubAccertamento)trovatoSubMovimento).setListaModificheMovimentoGestioneEntrata(listaModificheDefinitiva);
@@ -2404,8 +2335,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								elencoSubAccertamenti.add(((SubAccertamento)trovatoSubMovimento));
 								
 							}
-						} else if(Constanti.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
-							if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+						} else if(CostantiFin.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+							if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 								// Aggiungo il soggetto all'impegno estratto
 								if(null!=soggettoMovimento){
 									trovatoMovGestione.setSoggetto(soggettoMovimento);
@@ -2415,7 +2346,6 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									 ((Impegno)trovatoMovGestione).setListaModificheMovimentoGestioneSpesa(elencoModificheMovimentoGestioneSpesa);
 								}
 								
-								((Impegno)trovatoMovGestione).setListaVociMutuo(elencoVociMutuo);
 								
 								List<SiacTMovgestTsFin> listaTMovGestTs =  siacTMovgest.getSiacTMovgestTs();
 								BigDecimal sommatoriaImportoAttualeSubImpegni = BigDecimal.ZERO;
@@ -2427,14 +2357,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								// SIAC-6695
 								((Impegno)trovatoMovGestione).setMotivazioneDisponibilitaImpegnoModifica(disponibilitaModifica.getMotivazione());
 								
-								importoAttualeImpegno = ottimizzazioneDto.estraiImporto(siacTMovgestTs.getUid(), Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
+								importoAttualeImpegno = ottimizzazioneDto.estraiImporto(siacTMovgestTs.getUid(), CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
 								
 								if(null!=listaTMovGestTs && listaTMovGestTs.size()>0){
 									for(SiacTMovgestTsFin itSubs : listaTMovGestTs){
 										if(itSubs.getDataFineValidita()==null && 
-											Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(itSubs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+											CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(itSubs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 											//Se valido e di tipo sub impegno
-											BigDecimal importoAttualeSubIt = ottimizzazioneDto.estraiImporto(itSubs.getUid(), Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
+											BigDecimal importoAttualeSubIt = ottimizzazioneDto.estraiImporto(itSubs.getUid(), CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
 											sommatoriaImportoAttualeSubImpegni = sommatoriaImportoAttualeSubImpegni.add(importoAttualeSubIt);
 										}
 									}
@@ -2442,7 +2372,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									DisponibilitaMovimentoGestioneContainer disponibilitaFinanziare = calcolaDisponibilitaAFinanziare(siacTMovgestTs.getUid(), importoAttualeImpegno, statoValido, idEnte, datiOperazioneDto);
 									DisponibilitaMovimentoGestioneContainer disponibilitaSubimpegnare;
 									
-									if(!StringUtils.isEmpty(statoValido) && statoValido.equals(Constanti.MOVGEST_STATO_ANNULLATO)){
+									if(!StringUtilsFin.isEmpty(statoValido) && statoValido.equals(CostantiFin.MOVGEST_STATO_ANNULLATO)){
 										disponibilitaSubimpegnare = new DisponibilitaMovimentoGestioneContainer(BigDecimal.ZERO, "Se lo stato e' annullato, la disponibilita' deve essere ZERO");
 									}else{
 										disponibilitaSubimpegnare = new DisponibilitaMovimentoGestioneContainer(importoAttualeImpegno.subtract(sommatoriaImportoAttualeSubImpegni),
@@ -2463,7 +2393,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									DisponibilitaMovimentoGestioneContainer disponibilitaLiquidareContainer = calcolaDisponibilitaALiquidare(siacTMovgestTs.getUid(), idEnte, datiOperazioneDto);
 									((Impegno)trovatoMovGestione).setSommaLiquidazioniDoc(importoAttualeImpegno.subtract(disponibilitaLiquidareContainer.getDisponibilita()));
 									
-									((Impegno)trovatoMovGestione).setTotaleSubImpegni(sommatoriaImportoAttualeSubImpegni);
+									((Impegno)trovatoMovGestione).setTotaleSubImpegniBigDecimal(sommatoriaImportoAttualeSubImpegni);
 									((Impegno)trovatoMovGestione).setDisponibilitaSubimpegnare(disponibilitaSubimpegnare.getDisponibilita());
 									// SIAC-6695
 									((Impegno)trovatoMovGestione).setMotivazioneDisponibilitaSubImpegnare(disponibilitaSubimpegnare.getMotivazione());
@@ -2478,7 +2408,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									((Impegno)trovatoMovGestione).setDisponibilitaLiquidareBase(disponibilitaLiquidareBase);
 								}
 								
-							} else if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)){
+							} else if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)){
 								// Aggiungo il soggetto all'impegno estratto
 								if(null!=soggettoMovimento){
 									trovatoMovGestione.setSoggetto(soggettoMovimento);
@@ -2511,7 +2441,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					}
 				}
 				
-				if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+				if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 					if(null!=elencoSubImpegni && elencoSubImpegni.size() > 0)
 						((Impegno)trovatoMovGestione).setElencoSubImpegni(elencoSubImpegni);
 					
@@ -2519,7 +2449,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					((Impegno)trovatoMovGestione).setDisponibilitaSubimpegnare(disponibilitaSubimpegnare.getDisponibilita());
 					// SIAC-6695
 					((Impegno)trovatoMovGestione).setMotivazioneDisponibilitaSubImpegnare(disponibilitaSubimpegnare.getMotivazione());
-				} else if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)){
+				} else if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)){
 					if(null!=elencoSubAccertamenti && elencoSubAccertamenti.size() > 0)
 						((Accertamento)trovatoMovGestione).setElencoSubAccertamenti(elencoSubAccertamenti);
 					
@@ -2551,7 +2481,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			if(listaRelazioniVincoli!=null && listaRelazioniVincoli.size()>0){
 				// presenza di accertamenti vincolati
 				listaVincoli = new ArrayList<VincoloImpegno>();
-				List<SiacRMovgestTsFin> siacTMovgestTsValidi = DatiOperazioneUtils.soloValidi(listaRelazioniVincoli, getNow());
+				List<SiacRMovgestTsFin> siacTMovgestTsValidi = DatiOperazioneUtil.soloValidi(listaRelazioniVincoli, getNow());
 				for (SiacRMovgestTsFin siacRMovgestTs : siacTMovgestTsValidi) {
 					
 					if(siacRMovgestTs!=null){
@@ -2567,7 +2497,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							Accertamento accertamento = new Accertamento();
 							accertamento.setUid(siacTMovgesAcc.getUid());
 							accertamento.setAnnoMovimento(siacTMovgesAcc.getMovgestAnno());
-							accertamento.setNumero(siacTMovgesAcc.getMovgestNumero());
+							accertamento.setNumeroBigDecimal(siacTMovgesAcc.getMovgestNumero());
 							if(siacTMovgesAcc.getSiacRMovgestBilElems()!=null && !siacTMovgesAcc.getSiacRMovgestBilElems().isEmpty()){
 								// prendo sempre il primo e unico
 								// id chiave univoca del capitolo, mi servira nello strato superiore per avere il capitolo completo
@@ -2603,7 +2533,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			if(listaRelazioniVincoli!=null && listaRelazioniVincoli.size()>0){
 				// presenza di accertamenti vincolati
 				listaVincoli = new ArrayList<VincoloAccertamento>();
-				List<SiacRMovgestTsFin> siacTMovgestTsValidi = DatiOperazioneUtils.soloValidi(listaRelazioniVincoli, getNow());
+				List<SiacRMovgestTsFin> siacTMovgestTsValidi = DatiOperazioneUtil.soloValidi(listaRelazioniVincoli, getNow());
 				for (SiacRMovgestTsFin siacRMovgestTs : siacTMovgestTsValidi) {
 					
 					SiacTMovgestTsFin siacTMovgestTsImp = siacRMovgestTs.getSiacTMovgestTsB();
@@ -2616,7 +2546,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						vincolo.setImporto(siacRMovgestTs.getMovgestTsImporto());
 						Impegno impegno = new Impegno();
 						impegno.setAnnoMovimento(siacTMovgesImp.getMovgestAnno());
-						impegno.setNumero(siacTMovgesImp.getMovgestNumero());
+						impegno.setNumeroBigDecimal(siacTMovgesImp.getMovgestNumero());
 						impegno.setUid(siacTMovgesImp.getUid());
 						if(siacTMovgesImp.getSiacRMovgestBilElems()!=null && !siacTMovgesImp.getSiacRMovgestBilElems().isEmpty()){
 							// prendo sempre il primo e unico
@@ -2646,10 +2576,10 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	private BigDecimal calcolaTotQuoteVincoli(SiacTMovgestTsFin siacTMovgestTs){
 		BigDecimal totQuoteVincoli = BigDecimal.ZERO;
 		if(siacTMovgestTs!=null){
-			if(Constanti.MOVGEST_TIPO_IMPEGNO.equalsIgnoreCase(siacTMovgestTs.getSiacTMovgest().getSiacDMovgestTipo().getMovgestTipoCode())){
+			if(CostantiFin.MOVGEST_TIPO_IMPEGNO.equalsIgnoreCase(siacTMovgestTs.getSiacTMovgest().getSiacDMovgestTipo().getMovgestTipoCode())){
 				List<VincoloImpegno> vincoli = getAccertamentiVincolati(siacTMovgestTs);
 				totQuoteVincoli = calcolaTotQuoteVincoliImp(vincoli);
-			} else if(Constanti.MOVGEST_TIPO_ACCERTAMENTO.equalsIgnoreCase(siacTMovgestTs.getSiacTMovgest().getSiacDMovgestTipo().getMovgestTipoCode())){
+			} else if(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO.equalsIgnoreCase(siacTMovgestTs.getSiacTMovgest().getSiacDMovgestTipo().getMovgestTipoCode())){
 				List<VincoloAccertamento> vincoli = getImpegniVincolati(siacTMovgestTs);
 				totQuoteVincoli = calcolaTotQuoteVincoliAcc(vincoli);
 			}
@@ -2724,7 +2654,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				// Ciclo sulla tabella SiacTMovgestTsFin per estrarre i dettagli dei movimenti gestionali
 				//List<SiacTMovgestTsFin> listaSiacTMovgestTs = getTestataPiuListaSub(siacTMovgest);
 				List<SiacTMovgestTsFin> listaSiacTMovgestTs =siacTMovgest.getSiacTMovgestTs();
-				listaSiacTMovgestTs = DatiOperazioneUtils.soloValidi(listaSiacTMovgestTs, getNow());
+				listaSiacTMovgestTs = DatiOperazioneUtil.soloValidi(listaSiacTMovgestTs, getNow());
 				
 				if(null!=listaSiacTMovgestTs && listaSiacTMovgestTs.size() > 0){
 					
@@ -2740,7 +2670,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							Soggetto soggettoMovimento = null; 
 							
 							if(caricaDatiUlteriori){
-								soggettoMovimento = estraiSoggettoMovimento(Constanti.AMBITO_FIN, idEnte, siacTMovgestTs,datiOperazioneDto);
+								soggettoMovimento = estraiSoggettoMovimento(CostantiFin.AMBITO_FIN, idEnte, siacTMovgestTs,datiOperazioneDto);
 							}
 							
 							String statoValido = "";
@@ -2759,28 +2689,22 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							 */
 							if(caricaDatiUlteriori){
 							   
-								if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+								if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 									elencoModificheMovimentoGestioneSpesa = estraiElencoModificheMovimentoGestioneSpesa(richiedente, siacTMovgestTs);
-								} else if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)){
+								} else if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)){
 									elencoModificheMovimentoGestioneEntrata = estraiElencoModificheMovimentoGestioneEntrata(richiedente, siacTMovgestTs);
 								}
 							}
 							// Fine estrazione degli eventuali record di modifica
 	
-							// Estraggo le eventuali voci di mutuo
-							List<VoceMutuo> elencoVociMutuo = new ArrayList<VoceMutuo>();
-							if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
-								elencoVociMutuo = estraiElencoVociMutuo(annoMovimento, numeroMovimento, richiedente, codiceEnte, siacTMovgestTs, datiOperazioneDto);
-							}
-							// Fine estrazione delle eventuali voci di mutuo
 							
-							if(Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+							if(CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 		
 								ST trovatoSubMovimento = null;
 								
 								trovatoSubMovimento = convertiSubMovimentoOPT(siacTMovgestTs, siacTMovgest,ottimizzazioneDto);
 	
-								if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+								if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 									// Aggiungo il soggetto al sub-impegno estratto
 									if(null!=soggettoMovimento){
 										trovatoSubMovimento.setSoggetto(soggettoMovimento);
@@ -2789,17 +2713,16 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									if(null!=elencoModificheMovimentoGestioneSpesa && elencoModificheMovimentoGestioneSpesa.size() > 0){
 										List<ModificaMovimentoGestioneSpesa> listaModificheDefinitiva = new ArrayList<ModificaMovimentoGestioneSpesa>();
 										for(ModificaMovimentoGestioneSpesa spesa : elencoModificheMovimentoGestioneSpesa){
-											spesa.setTipoMovimento(Constanti.MODIFICA_TIPO_SIM);
+											spesa.setTipoMovimento(CostantiFin.MODIFICA_TIPO_SIM);
 											spesa.setUidSubImpegno(trovatoSubMovimento.getUid());
-											spesa.setNumeroSubImpegno(trovatoSubMovimento.getNumero().intValue());
+											spesa.setNumeroSubImpegno(trovatoSubMovimento.getNumeroBigDecimal().intValue());
 											listaModificheDefinitiva.add(spesa);
 										}
 										((SubImpegno)trovatoSubMovimento).setListaModificheMovimentoGestioneSpesa(listaModificheDefinitiva);
 									}
 									
-									((SubImpegno)trovatoSubMovimento).setListaVociMutuo(elencoVociMutuo);
 									
-									BigDecimal importoAttuale = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getUid());
+									BigDecimal importoAttuale = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getUid());
 										
 									// liquidare
 									DisponibilitaMovimentoGestioneContainer disponibilitaLiquidareContainer = calcolaDisponibilitaALiquidare(siacTMovgestTs.getUid(), idEnte, datiOperazioneDto);
@@ -2821,7 +2744,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									((SubImpegno)trovatoSubMovimento).setMotivazioneDisponibilitaPagare(disponibilitaPagare.getMotivazione());
 									elencoSubImpegni.add(((SubImpegno)trovatoSubMovimento));
 									
-								} else if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)){
+								} else if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)){
 									// Aggiungo il soggetto al sub-accertamento estratto
 									if(null!=soggettoMovimento){
 										trovatoSubMovimento.setSoggetto(soggettoMovimento);
@@ -2829,9 +2752,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									if(null!=elencoModificheMovimentoGestioneEntrata && elencoModificheMovimentoGestioneEntrata.size() > 0){
 										List<ModificaMovimentoGestioneEntrata> listaModificheDefinitiva = new ArrayList<ModificaMovimentoGestioneEntrata>();
 										for(ModificaMovimentoGestioneEntrata entrata : elencoModificheMovimentoGestioneEntrata){
-											entrata.setTipoMovimento(Constanti.MODIFICA_TIPO_SAC);
+											entrata.setTipoMovimento(CostantiFin.MODIFICA_TIPO_SAC);
 											entrata.setUidSubAccertamento(trovatoSubMovimento.getUid());
-											entrata.setNumeroSubAccertamento(trovatoSubMovimento.getNumero().intValue());
+											entrata.setNumeroSubAccertamento(trovatoSubMovimento.getNumeroBigDecimal().intValue());
 											listaModificheDefinitiva.add(entrata);
 										}
 										((SubAccertamento)trovatoSubMovimento).setListaModificheMovimentoGestioneEntrata(listaModificheDefinitiva);
@@ -2847,9 +2770,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									
 								}
 								
-							} else if(Constanti.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+							} else if(CostantiFin.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 								
-								if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+								if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 									
 									// Aggiungo il soggetto all'impegno estratto
 									if(null!=soggettoMovimento){
@@ -2860,20 +2783,19 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 										 ((Impegno)trovatoMovGestione).setListaModificheMovimentoGestioneSpesa(elencoModificheMovimentoGestioneSpesa);
 									}
 									
-									((Impegno)trovatoMovGestione).setListaVociMutuo(elencoVociMutuo);
 									
 									List<SiacTMovgestTsFin> listaTMovGestTs =  siacTMovgest.getSiacTMovgestTs();
 									BigDecimal sommatoriaImportoAttualeSubImpegni = BigDecimal.ZERO;
 									BigDecimal importoAttualeImpegno = BigDecimal.ZERO;
 									
-									importoAttualeImpegno = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getUid());
+									importoAttualeImpegno = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getUid());
 									
 									if(null!=listaTMovGestTs && listaTMovGestTs.size()>0){
 										for(SiacTMovgestTsFin itSubs : listaTMovGestTs){
 											if(itSubs.getDataFineValidita()==null && 
-												Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(itSubs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+												CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO.equalsIgnoreCase(itSubs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 												//Se valido e di tipo subimpegno
-												sommatoriaImportoAttualeSubImpegni = sommatoriaImportoAttualeSubImpegni.add(siacTMovgestTsDetRepository.findImporto(idEnte,  Constanti.MOVGEST_TS_DET_TIPO_ATTUALE,itSubs.getUid()));
+												sommatoriaImportoAttualeSubImpegni = sommatoriaImportoAttualeSubImpegni.add(siacTMovgestTsDetRepository.findImporto(idEnte,  CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE,itSubs.getUid()));
 											}
 										}
 										
@@ -2881,25 +2803,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 										DisponibilitaMovimentoGestioneContainer disponibilitaLiquidareContainer = calcolaDisponibilitaALiquidare(siacTMovgestTs.getUid(), idEnte, datiOperazioneDto);
 										DisponibilitaMovimentoGestioneContainer disponibilitaSubimpegnare;
 										
-										if(!StringUtils.isEmpty(statoValido) && statoValido.equals(Constanti.MOVGEST_STATO_ANNULLATO)){
+										if(!StringUtilsFin.isEmpty(statoValido) && statoValido.equals(CostantiFin.MOVGEST_STATO_ANNULLATO)){
 											disponibilitaSubimpegnare = new DisponibilitaMovimentoGestioneContainer(BigDecimal.ZERO, "Se lo stato e' annullato, la disponibilita' deve essere ZERO");
 										}else{
 											disponibilitaSubimpegnare = new DisponibilitaMovimentoGestioneContainer(importoAttualeImpegno.subtract(sommatoriaImportoAttualeSubImpegni),
 												"Disponibilita calcolata come differenza tra l'importo attuale (" + importoAttualeImpegno + ") e totale dei subimpegni (" + sommatoriaImportoAttualeSubImpegni + ")"); 
 										}
 										
-										// disponibilitaFinanziare = importoattuale - totale voci
-										//
-										// 13/06/2014 : commentata la riga sottostante
-										// generava un errore nel calcolo, la disponibilit� era sempre uguale a importoAttualeImpegno 
-										// perch� veniva sottratto totVociMutuoSuImpegno che valeva sempre 0
-										// la disponibilitaFinanziare veniva comunque gi� calcolata prima con l'istruzione
-										// disponibilitaFinanziare = calcolaDisponibilitaAFinanziare(siacTMovgestTs.getUid(), importoAttualeImpegno, statoValido, idEnte, datiOperazioneDto);
-										//
-										// disponibilitaFinanziare = importoAttualeImpegno.subtract(totVociMutuoSuImpegno); <-- questa la riga commentata
-										//
-	
-										((Impegno)trovatoMovGestione).setTotaleSubImpegni(sommatoriaImportoAttualeSubImpegni);
+										((Impegno)trovatoMovGestione).setTotaleSubImpegniBigDecimal(sommatoriaImportoAttualeSubImpegni);
 										((Impegno)trovatoMovGestione).setDisponibilitaSubimpegnare(disponibilitaSubimpegnare.getDisponibilita());
 										// SIAC-6695
 										((Impegno)trovatoMovGestione).setMotivazioneDisponibilitaSubImpegnare(disponibilitaSubimpegnare.getMotivazione());
@@ -2919,7 +2830,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 										((Impegno)trovatoMovGestione).setMotivazioneDisponibilitaPagare(disponibilitaPagare.getMotivazione());
 									}
 									
-								} else if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)){
+								} else if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)){
 									
 									// Aggiungo il soggetto all'impegno estratto
 									if(null!=soggettoMovimento){
@@ -2939,7 +2850,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					}
 					
 					
-					if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+					if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 						if(null!=elencoSubImpegni && elencoSubImpegni.size() > 0)
 							((Impegno)trovatoMovGestione).setElencoSubImpegni(elencoSubImpegni);
 						
@@ -2947,7 +2858,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						((Impegno)trovatoMovGestione).setDisponibilitaSubimpegnare(disponibilitaSubimpegnare.getDisponibilita());
 						// SIAC-6695
 						((Impegno)trovatoMovGestione).setMotivazioneDisponibilitaSubImpegnare(disponibilitaSubimpegnare.getMotivazione());
-					} else if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)){
+					} else if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)){
 						if(null!=elencoSubAccertamenti && elencoSubAccertamenti.size() > 0)
 							((Accertamento)trovatoMovGestione).setElencoSubAccertamenti(elencoSubAccertamenti);
 						
@@ -2988,23 +2899,20 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		ST trovatoSubMovimento = convertiSubMovimento(siacTMovgestTs, siactMovegst, true);	
 		
-		Soggetto soggettoMovimento = estraiSoggettoMovimento(Constanti.AMBITO_FIN, idEnte, siacTMovgestTs,datiOperazioneDto);
+		Soggetto soggettoMovimento = estraiSoggettoMovimento(CostantiFin.AMBITO_FIN, idEnte, siacTMovgestTs,datiOperazioneDto);
 		
 		SiacDMovgestStatoFin statoSub = getStato(siacTMovgestTs, datiOperazioneDto);
 		String statoValido = statoSub.getMovgestStatoCode();
-		List<VoceMutuo> elencoVociMutuo = new ArrayList<VoceMutuo>();
-		if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
-			elencoVociMutuo = estraiElencoVociMutuo(annoMovimento, numeroMovimento, richiedente, idEnte, siacTMovgestTs, datiOperazioneDto);
-		}
+
+
 		if(null!=soggettoMovimento){
 			trovatoSubMovimento.setSoggetto(soggettoMovimento);
 		}
 		
-		((SubImpegno)trovatoSubMovimento).setListaVociMutuo(elencoVociMutuo);
 		
 		BigDecimal importoAttuale =  BigDecimal.ZERO;
 		
-		importoAttuale = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getUid());
+		importoAttuale = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getUid());
 			
 		// liquidare
 		DisponibilitaMovimentoGestioneContainer disponibilitaLiquidareContainer = calcolaDisponibilitaALiquidare(siacTMovgestTs.getUid(), idEnte, datiOperazioneDto);
@@ -3047,7 +2955,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		ST trovatoSubMovimento = convertiSubMovimento(siacTMovgestTs, siactMovegst, true);	
 		
-		Soggetto soggettoMovimento = estraiSoggettoMovimento(Constanti.AMBITO_FIN, idEnte, siacTMovgestTs,datiOperazioneDto);
+		Soggetto soggettoMovimento = estraiSoggettoMovimento(CostantiFin.AMBITO_FIN, idEnte, siacTMovgestTs,datiOperazioneDto);
 		
 		SiacDMovgestStatoFin statoSub = getStato(siacTMovgestTs, datiOperazioneDto);
 		String statoValido = statoSub.getMovgestStatoCode();
@@ -3094,14 +3002,6 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	 * @return
 	 */
 	protected DisponibilitaMovimentoGestioneContainer calcolaDisponibilitaAFinanziare(Integer idMovGestTs,BigDecimal importoAttuale,String statoCod,Integer idEnte,DatiOperazioneDto datiOperazioneDto){
-		//Calcolo Disponibilita' a Finanziare
-		if(!StringUtils.isEmpty(statoCod) && statoCod.equals(Constanti.MOVGEST_STATO_DEFINITIVO)){
-			BigDecimal totVociMutuo =  siacTMutuoVoceRepository.findSommaVociMutuoValideByImpegnoId(idMovGestTs,datiOperazioneDto.getTs());
-			if(null==totVociMutuo) totVociMutuo = BigDecimal.ZERO;
-			return new DisponibilitaMovimentoGestioneContainer(importoAttuale.subtract(totVociMutuo), "Disponibilita' calcolata come differenza tra l'importo attuale (" + importoAttuale
-					+ ") e il totale delle voci di mutuo valide (" + totVociMutuo + ")");
-		}
-		//Termino restituendo l'oggetto di ritorno: 
 		return new DisponibilitaMovimentoGestioneContainer(BigDecimal.ZERO, "Se lo stato non e' DEFINITIVO, la disponibilita' deve essere ZERO");
 	}
 	
@@ -3143,10 +3043,10 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 				
 			// (1)	SE impegno. stato <> DEFINITIVO  --> disponibilitaLiquidare = 0
-			SiacRMovgestTsStatoFin siacRMovgestStato =  DatiOperazioneUtils.getValido(siacTMovgestTs.getSiacRMovgestTsStatos(), getNow());
+			SiacRMovgestTsStatoFin siacRMovgestStato =  DatiOperazioneUtil.getValido(siacTMovgestTs.getSiacRMovgestTsStatos(), getNow());
 			if(siacRMovgestStato.getSiacDMovgestStato() != null 
-					&& ( siacRMovgestStato.getSiacDMovgestStato().getMovgestStatoCode().equals(Constanti.MOVGEST_STATO_PROVVISORIO) ||
-							siacRMovgestStato.getSiacDMovgestStato().getMovgestStatoCode().equals(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE))){
+					&& ( siacRMovgestStato.getSiacDMovgestStato().getMovgestStatoCode().equals(CostantiFin.MOVGEST_STATO_PROVVISORIO) ||
+							siacRMovgestStato.getSiacDMovgestStato().getMovgestStatoCode().equals(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE))){
 				return new DisponibilitaMovimentoGestioneContainer(BigDecimal.ZERO, "Se lo stato del movimento e' PROVVISORIO ovvero DEFINITIVO_NON_LIQUIDABILE la disponibilita' deve essere ZERO");
 			}
 			
@@ -3294,7 +3194,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		SiacTMovgestTsFin siacTMovgestTs = siacTMovgestTsRepository.findOne(idMovGestTs);
 		if(siacTMovgestTs!=null){
 			String statoCod = getStatoCode(siacTMovgestTs, datiOperazioneDto);
-			if(Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCod)){
+			if(CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCod)){
 				disponibilitaVincolare = BigDecimal.ZERO;
 			} else {
 				List<VincoloImpegno> vincoli = getAccertamentiVincolati(siacTMovgestTs);
@@ -3328,7 +3228,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		String statoCod = getStatoCode(siacTMovgestTs, datiOperazioneDto);
 		BigDecimal disponibilitaVincolare = calcolaDisponibilitaAVincolareImpegno(idMovGestTs, datiOperazioneDto);
 
-		if(Constanti.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoCod)){
+		if(CostantiFin.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoCod)){
 			
 			/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			//	BigDecimal dispLiquidare = calcolaDisponibilitaALiquidare(idMovGestTs, idEnte, datiOperazioneDto);
@@ -3340,7 +3240,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					+ ") e la disponibilita' a vincolare (" + disponibilitaVincolare + ")");
 
 		}
-		if(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equalsIgnoreCase(statoCod)){
+		if(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equalsIgnoreCase(statoCod)){
 			
 			BigDecimal disponibilitaSubimpegnare = calcolaDisponibilitaImpegnoASubImpegnare(siacTMovgestTs, datiOperazioneDto);
 			return new DisponibilitaMovimentoGestioneContainer(disponibilitaSubimpegnare.min(disponibilitaVincolare),
@@ -3348,7 +3248,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					+ ") e la disponibilita' a vincolare (" + disponibilitaVincolare + ")");
 			
 		}
-		if(Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) && isSub(siacTMovgestTs)){
+		if(CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) && isSub(siacTMovgestTs)){
 			//Se e' provvisorio ed e' un sub: disponibilitaModifica = calcolaDiffImportoAttualeUtilizzato (function disp liquidare)
 			BigDecimal dispLiquidare = calcolaDiffImportoAttualeUtilizzato(idMovGestTs, idEnte, datiOperazioneDto);
 			return new DisponibilitaMovimentoGestioneContainer(dispLiquidare, "Se lo stato e' PROVVISORIO, la disponibilita' e' pari alla differenza tra importo attuale e utilizzato");
@@ -3376,7 +3276,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						for(SiacRLiquidazioneStatoFin siacRLiquidazioneStato : elencoSiacRLiquidazioneStato){
 							if(siacRLiquidazioneStato.getDataFineValidita()==null){
 								//Se valido:
-								if(siacRLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoCode().equalsIgnoreCase(Constanti.LIQUIDAZIONE_STATO_VALIDO)){
+								if(siacRLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoCode().equalsIgnoreCase(CostantiFin.LIQUIDAZIONE_STATO_VALIDO)){
 									// la liquidazione � in stato valido
 								}
 							}
@@ -3401,13 +3301,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		BigDecimal disponibilitaSubimpegnare = BigDecimal.ZERO;
 		BigDecimal sommatoriaImportoAttualeSubImpegni = BigDecimal.ZERO;
 		if(null!=impegno){
-			if(!Constanti.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(impegno.getStatoOperativoMovimentoGestioneSpesa())){
-				if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(impegno.getStatoOperativoMovimentoGestioneSpesa())){
+			if(!CostantiFin.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(impegno.getStatoOperativoMovimentoGestioneSpesa())){
+				if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(impegno.getStatoOperativoMovimentoGestioneSpesa())){
 					List<SubImpegno> listaSubImpegni = new ArrayList<SubImpegno>();
 					listaSubImpegni = impegno.getElencoSubImpegni();
 					if(null!=listaSubImpegni && listaSubImpegni.size() > 0){
 						for(SubImpegno subImpegno : listaSubImpegni){
-							if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(subImpegno.getStatoOperativoMovimentoGestioneSpesa())){
+							if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(subImpegno.getStatoOperativoMovimentoGestioneSpesa())){
 								sommatoriaImportoAttualeSubImpegni = sommatoriaImportoAttualeSubImpegni.add(subImpegno.getImportoAttuale());
 							}
 						}
@@ -3415,7 +3315,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					disponibilitaSubimpegnare = impegno.getImportoAttuale().subtract(sommatoriaImportoAttualeSubImpegni); 
 				}
 			}
-			impegno.setTotaleSubImpegni(sommatoriaImportoAttualeSubImpegni);
+			impegno.setTotaleSubImpegniBigDecimal(sommatoriaImportoAttualeSubImpegni);
 		}
 		//Termino restituendo l'oggetto di ritorno: 
 		return new DisponibilitaMovimentoGestioneContainer(disponibilitaSubimpegnare,
@@ -3434,8 +3334,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		if(null!=siacTMovgestTs){
 			String statoCode = getStatoCode(siacTMovgestTs, datiOperazioneDto);
 			
-			if(!Constanti.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoCode)){
-				if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCode)){
+			if(!CostantiFin.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoCode)){
+				if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCode)){
 					SiacTMovgestFin siacTMovgest = siacTMovgestTs.getSiacTMovgest();
 					List<SiacTMovgestTsFin> listaTs = getTestataPiuListaSub(siacTMovgest);
 					
@@ -3444,7 +3344,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							SiacTMovgestTsFin subIt = listaTs.get(i);
 							
 							String statoCodeSub = getStatoCode(subIt, datiOperazioneDto);
-							if(!statoCodeSub.equals(Constanti.MOVGEST_STATO_ANNULLATO)){
+							if(!statoCodeSub.equals(CostantiFin.MOVGEST_STATO_ANNULLATO)){
 															
 								BigDecimal impAttualeSubIt = estraiImportoAttualeByMovgestTsId(subIt.getMovgestTsId(), datiOperazioneDto);
 								sommatoriaImportoAttualeSubImpegni = sommatoriaImportoAttualeSubImpegni.add(impAttualeSubIt);
@@ -3473,13 +3373,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		BigDecimal disponibilitaSubAccertare = BigDecimal.ZERO;
 		BigDecimal sommatoriaImportoAttualeSubAccertamenti = BigDecimal.ZERO;
 		if(null!=accertamento){
-			if(!Constanti.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(accertamento.getStatoOperativoMovimentoGestioneEntrata())){
-				if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(accertamento.getStatoOperativoMovimentoGestioneEntrata())){
+			if(!CostantiFin.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(accertamento.getStatoOperativoMovimentoGestioneEntrata())){
+				if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(accertamento.getStatoOperativoMovimentoGestioneEntrata())){
 					List<SubAccertamento> listaSubAccertamenti = new ArrayList<SubAccertamento>();
 					listaSubAccertamenti = accertamento.getElencoSubAccertamenti();
 					if(null!=listaSubAccertamenti && listaSubAccertamenti.size() > 0){
 						for(SubAccertamento subAccertamento : listaSubAccertamenti){
-							if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(subAccertamento.getStatoOperativoMovimentoGestioneEntrata())){
+							if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(subAccertamento.getStatoOperativoMovimentoGestioneEntrata())){
 								sommatoriaImportoAttualeSubAccertamenti = sommatoriaImportoAttualeSubAccertamenti.add(subAccertamento.getImportoAttuale());
 							}
 						}
@@ -3487,7 +3387,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					disponibilitaSubAccertare = accertamento.getImportoAttuale().subtract(sommatoriaImportoAttualeSubAccertamenti); 
 				}
 			}
-			accertamento.setTotaleSubAccertamenti(sommatoriaImportoAttualeSubAccertamenti);
+			accertamento.setTotaleSubAccertamentiBigDecimal(sommatoriaImportoAttualeSubAccertamenti);
 		}
 		//Termino restituendo l'oggetto di ritorno: 
 		return new DisponibilitaMovimentoGestioneContainer(disponibilitaSubAccertare, "Disponibilita' calcolata come differenza tra importo attuale (" + accertamento.getImportoAttuale()
@@ -3521,7 +3421,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	public BigDecimal estraiImportoAttualeByMovgestTsId(Integer movgestTsId, DatiOperazioneDto datiOperazioneDto){		
 		BigDecimal importoAttuale = BigDecimal.ZERO;
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
-		importoAttuale = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, movgestTsId);
+		importoAttuale = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, movgestTsId);
 		return importoAttuale;
 	}
 	
@@ -3534,7 +3434,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	public BigDecimal estraiImportoUtilizzabileByMovgestTsId(Integer movgestTsIdAccertamento, DatiOperazioneDto datiOperazioneDto){		
 		BigDecimal importoUtilizzabileAccertamento = BigDecimal.ZERO;
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
-		importoUtilizzabileAccertamento = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE, movgestTsIdAccertamento);
+		importoUtilizzabileAccertamento = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE, movgestTsIdAccertamento);
 		if(importoUtilizzabileAccertamento==null){
 			importoUtilizzabileAccertamento = BigDecimal.ZERO;
 		}
@@ -3570,16 +3470,16 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		String statoCod = getStatoCode(siacTMovgestTs, datiOperazioneDto);
 		
-		if(!StringUtils.isEmpty(statoCod) && !statoCod.equals(Constanti.MOVGEST_STATO_ANNULLATO)){
-			BigDecimal importoAttualeAccertamento = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getUid());
+		if(!StringUtilsFin.isEmpty(statoCod) && !statoCod.equals(CostantiFin.MOVGEST_STATO_ANNULLATO)){
+			BigDecimal importoAttualeAccertamento = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTs.getUid());
 			
 			BigDecimal totaleSubOrdinativi = BigDecimal.ZERO;
 			List<SiacTMovgestTsFin> subAccertamenti = siacTMovgestTsRepository.findListaSiacTMovgestTsFigli(idEnte, now, siacTMovgestTs.getMovgestTsId());
-			subAccertamenti = DatiOperazioneUtils.soloValidi(subAccertamenti, now);
+			subAccertamenti = DatiOperazioneUtil.soloValidi(subAccertamenti, now);
 			
 			if(subAccertamenti!=null && subAccertamenti.size()>0){
 				for(SiacTMovgestTsFin subAccIt : subAccertamenti){
-					BigDecimal importoAttualeSubAcc = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, subAccIt.getUid());
+					BigDecimal importoAttualeSubAcc = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, subAccIt.getUid());
 					totaleSubOrdinativi = totaleSubOrdinativi.add(importoAttualeSubAcc);
 				}
 			}
@@ -3613,9 +3513,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				Impegno impegnoToInsert = new Impegno();
 				impegnoToInsert =  impegnoApp;
 				//Gestione Soggetto
-				if(!StringUtils.isEmpty(impegnoApp.getSoggettoCode())){
+				if(!StringUtilsFin.isEmpty(impegnoApp.getSoggettoCode())){
 					Soggetto soggetto = new Soggetto();
-					SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, impegnoApp.getSoggettoCode(),Constanti.SEDE_SECONDARIA,getNow());
+					SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte, impegnoApp.getSoggettoCode(),CostantiFin.SEDE_SECONDARIA,getNow());
 					soggetto = map(siacTSoggetto, Soggetto.class, FinMapId.SiacTSoggetto_Soggetto);
 					impegnoToInsert.setSoggetto(soggetto);
 				}
@@ -3652,9 +3552,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				Accertamento accertamentoToInsert = new Accertamento();
 				accertamentoToInsert =  accertamentoApp;
 				//Gestione Soggetto
-				if(!StringUtils.isEmpty(accertamentoApp.getSoggettoCode())){
+				if(!StringUtilsFin.isEmpty(accertamentoApp.getSoggettoCode())){
 					Soggetto soggetto = new Soggetto();
-					SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(Constanti.AMBITO_FIN, idEnte, accertamentoApp.getSoggettoCode(),Constanti.SEDE_SECONDARIA, getNow());
+					SiacTSoggettoFin siacTSoggetto = siacTSoggettoRepository.ricercaSoggettoNoSeSede(CostantiFin.AMBITO_FIN, idEnte, accertamentoApp.getSoggettoCode(),CostantiFin.SEDE_SECONDARIA, getNow());
 					
 					soggetto = map(siacTSoggetto, Soggetto.class, FinMapId.SiacTSoggetto_Soggetto);	
 					
@@ -3678,11 +3578,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		SiacTSoggettoFin siacTSoggetto = null;
 		if(impegno!=null && impegno.getSoggetto()!=null){
 			Soggetto soggetto = impegno.getSoggetto();
-			if(soggetto!=null && !StringUtils.isEmpty(soggetto.getCodiceSoggetto())){
+			if(soggetto!=null && !StringUtilsFin.isEmpty(soggetto.getCodiceSoggetto())){
 				Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 				Integer idAmbito = datiOperazioneDto.getSiacDAmbito().getAmbitoId();
 				String codeSogg = soggetto.getCodiceSoggetto();
-				List<SiacTSoggettoFin> l = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(codeSogg, idEnte, datiOperazioneDto.getTs(), idAmbito, Constanti.SEDE_SECONDARIA);
+				List<SiacTSoggettoFin> l = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(codeSogg, idEnte, datiOperazioneDto.getTs(), idAmbito, CostantiFin.SEDE_SECONDARIA);
 				if(l!=null && l.size()>0){
 					siacTSoggetto = l.get(0);
 				}
@@ -3704,7 +3604,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		// ci possano essere dei progetti / programmi distinti per impegno / accertamento
 		
 		Progetto progetto = ((Impegno) impegno).getProgetto();
-		if(progetto!=null && !StringUtils.isEmpty(progetto.getCodice())){
+		if(progetto!=null && !StringUtilsFin.isEmpty(progetto.getCodice())){
 			
 			Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 			
@@ -3731,8 +3631,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<SiacRMovgestTsProgrammaFin> l = siacRMovgestTsProgrammaRepository.findByMovgestTs(idEnte, datiOperazioneDto.getTs(), siacTMovgestTs.getMovgestTsId());
 		if(l!=null && l.size()>0){
 			//assicuriamoci che sia valido:
-			l = DatiOperazioneUtils.soloValidi(l, getNow());
-			SiacRMovgestTsProgrammaFin legameValido = DatiOperazioneUtils.getValido(l, getNow());
+			l = DatiOperazioneUtil.soloValidi(l, getNow());
+			SiacRMovgestTsProgrammaFin legameValido = DatiOperazioneUtil.getValido(l, getNow());
 			if(legameValido!=null){
 				siacTProgramma = legameValido.getSiacTProgramma();
 			}
@@ -3749,7 +3649,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	private SiacDSoggettoClasseFin getSoggettoClasse(MovimentoGestione impegno,DatiOperazioneDto datiOperazioneDto){
 		SiacDSoggettoClasseFin siacDSoggettoClasse = null;
 		ClasseSoggetto classeSoggetto = impegno.getClasseSoggetto();
-		if(classeSoggetto!=null && !StringUtils.isEmpty(classeSoggetto.getCodice())){
+		if(classeSoggetto!=null && !StringUtilsFin.isEmpty(classeSoggetto.getCodice())){
 			Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 			Integer idAmbito = datiOperazioneDto.getSiacDAmbito().getAmbitoId();
 			String code = classeSoggetto.getCodice();
@@ -3795,7 +3695,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				String codeCapitolo =  impegno.getCapitoloUscitaGestione().getNumeroCapitolo().toString();
 				String codeUeb = impegno.getCapitoloUscitaGestione().getNumeroUEB().toString();;
 				String annoCap = impegno.getCapitoloUscitaGestione().getAnnoCapitolo().toString();
-				List<SiacTBilElemFin> siacTBilElems = siacTBilElemRepository.getValidoByCodes(idEnte, annoCap, now, codeCapitolo, codeArticolo, codeUeb, Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG);
+				List<SiacTBilElemFin> siacTBilElems = siacTBilElemRepository.getValidoByCodes(idEnte, annoCap, now, codeCapitolo, codeArticolo, codeUeb, CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG);
 				if(siacTBilElems!=null && siacTBilElems.size()>0){
 					capitoloTrovato = siacTBilElems.get(0);
 				}
@@ -3822,7 +3722,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				String codeCapitolo = accertamento.getCapitoloEntrataGestione().getNumeroCapitolo().toString();
 				String codeUeb = accertamento.getCapitoloEntrataGestione().getNumeroUEB().toString();;
 				String annoCap = accertamento.getCapitoloEntrataGestione().getAnnoCapitolo().toString();
-				List<SiacTBilElemFin> siacTBilElems = siacTBilElemRepository.getValidoByCodes(idEnte, annoCap, now, codeCapitolo, codeArticolo, codeUeb, Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG);
+				List<SiacTBilElemFin> siacTBilElems = siacTBilElemRepository.getValidoByCodes(idEnte, annoCap, now, codeCapitolo, codeArticolo, codeUeb, CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG);
 				if(siacTBilElems!=null && siacTBilElems.size()>0){
 					capitoloTrovato = siacTBilElems.get(0);
 				}
@@ -3863,7 +3763,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		Integer annoMovimento = siacTMovgestTs.getSiacTMovgest().getMovgestAnno();
 		
 		String statoCodeNew = impegno.getStato().toString();
-		statoCodeNew = Constanti.convertiStatoMovgest(statoCodeNew);
+		statoCodeNew = CostantiFin.convertiStatoMovgest(statoCodeNew);
 		if(statoCodeNew==null){
 			//in caso di stato indicato non riconosciuto impostiamo come se non ci siano cambiamenti
 			statoCodeNew = statoCod;
@@ -3886,7 +3786,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//Controllo Stato/Importo: l'importo e' modificabile solo se STATO IMPEGNO = PROVVISIORIO,
 		//in caso contrario deve essere emesso l'errore:
 		//<FIN_ERR_0030: Modifica Importo Impegno con stato impegno non provvisorio>
-		if(!Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) && importoAttualeOld.compareTo(nuovoImportoAttuale)!=0){
+		if(!CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) && importoAttualeOld.compareTo(nuovoImportoAttuale)!=0){
 			//prima di dire che e' non modificabile, occore valutare se puo' esserlo per predispozione consuntivo
 			boolean modificabilePerPredisposizioneConsuntivo = modificabilePerPredisposizioneConsuntivo(annoMovimento, datiOperazione, bilancio);
 			if(!modificabilePerPredisposizioneConsuntivo){
@@ -3912,15 +3812,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 			if(subModificati!=null && subModificati.size()>0){
 				for(SubImpegno subIt : subModificati){
-					SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtils.getById(subsSuDb, subIt.getUid());
+					SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtil.getById(subsSuDb, subIt.getUid());
 					String statoSub = getStatoCode(siacTMovgestTsSub, datiOperazione);
-					if(!Constanti.MOVGEST_STATO_PROVVISORIO.equals(statoSub) && !Constanti.MOVGEST_STATO_ANNULLATO.equals(statoSub)){
+					if(!CostantiFin.MOVGEST_STATO_PROVVISORIO.equals(statoSub) && !CostantiFin.MOVGEST_STATO_ANNULLATO.equals(statoSub)){
 						BigDecimal nuovoImpSub = subIt.getImportoAttuale();
 						BigDecimal oldImpSub = estraiImportoAttualeByMovgestTsId(subIt.getUid(), datiOperazione);
 						if(oldImpSub.compareTo(nuovoImpSub)!=0){
 							//importo modificato..
 							boolean importoModificabile = true;
-							if(Constanti.MOVGEST_STATO_ANNULLATO.equals(statoSub)){
+							if(CostantiFin.MOVGEST_STATO_ANNULLATO.equals(statoSub)){
 								importoModificabile = false;
 							} else {
 								Integer annoSubMovimento = siacTMovgestTsSub.getSiacTMovgest().getMovgestAnno();
@@ -3950,17 +3850,17 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//DISTINTI SIAC_T_MOVGEST_TS_DET_MOD_FIN:
 		List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvolti =movimentoGestioneDao.ricercaByMovGestTsMassive(toList(siacTMovgest), "SiacTMovgestTsDetModFin");
 		//
-		if(!StringUtils.isEmpty(distintiSiacTMovgestTsDetModFinCoinvolti)){
+		if(!StringUtilsFin.isEmpty(distintiSiacTMovgestTsDetModFinCoinvolti)){
 			
 			for(SiacTMovgestTsDetModFin it :distintiSiacTMovgestTsDetModFinCoinvolti){
 				
 				SiacRModificaStatoFin rStato = it.getSiacRModificaStato();
 				
-				if(CommonUtils.isValidoSiacTBase(rStato,null)){
+				if(CommonUtil.isValidoSiacTBase(rStato,null)){
 					
 					SiacDModificaStatoFin dstato = rStato.getSiacDModificaStato();
 					
-					if(Constanti.D_MODIFICA_STATO_VALIDO.equalsIgnoreCase(dstato.getModStatoCode())){
+					if(CostantiFin.D_MODIFICA_STATO_VALIDO.equalsIgnoreCase(dstato.getModStatoCode())){
 						return true;//trovato almeno una modifica valida
 					}
 					
@@ -3986,7 +3886,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		int annoBilancio = bilancio.getAnno();
 		if(annoImpegno.compareTo(bilancio.getAnno())<0){
 			String codiceFaseBilancioPrecedente = caricaCodiceBilancio(datiOperazione, annoBilancio-1);
-			if (!StringUtils.isEmpty(codiceFaseBilancioPrecedente) && Constanti.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(codiceFaseBilancioPrecedente)) {
+			if (!StringUtilsFin.isEmpty(codiceFaseBilancioPrecedente) && CostantiFin.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(codiceFaseBilancioPrecedente)) {
 				modificabilePerPredisposizioneConsuntivo = true;
 			}
 		}
@@ -4049,7 +3949,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		String statoCodeNew = accertamento.getStato().toString();
-		statoCodeNew = Constanti.convertiStatoMovgest(statoCodeNew);
+		statoCodeNew = CostantiFin.convertiStatoMovgest(statoCodeNew);
 		if(statoCodeNew==null){
 			//in caso di stato indicato non riconosciuto impostiamo come se non ci siano cambiamenti
 			statoCodeNew = statoCod;
@@ -4077,7 +3977,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			totQuoteVincoli = calcolaTotQuoteVincoliAcc(vincoli);
 			if(importoUtilizzabileNew.compareTo(totQuoteVincoli)<0){
 				//importoUtilizzabileNew e' minore della sommatoria dei vincoli: lancio errore:
-				listaErrori.add(ErroreFin.DISPONIBILITA_INSUFFICIENTE.getErrore("Modifica accertamento num:" + accertamento.getNumero(),"disponibilità ad utilizzare per vincoli"));
+				listaErrori.add(ErroreFin.DISPONIBILITA_INSUFFICIENTE.getErrore("Modifica accertamento num:" + accertamento.getNumeroBigDecimal(),"disponibilità ad utilizzare per vincoli"));
 				esito.setListaErrori(listaErrori);
 				return esito;
 			}
@@ -4090,7 +3990,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//Controllo Stato/Importo: l�importo � modificabile solo se STATO ACCERTAMENTO = PROVVISIORIO,
 		//in caso contrario deve essere emesso l�errore:
 		//<FIN_ERR_0030: Modifica Importo Accertamento con stato accertamento non provvisorio>
-		if(!Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) && importoAttualeOld.compareTo(nuovoImportoAttuale)!=0){
+		if(!CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) && importoAttualeOld.compareTo(nuovoImportoAttuale)!=0){
 			//prima di dire che e' non modificabile, occore valutare se puo' esserlo per predispozione consuntivo
 			if(!modificabilePerPredisposizioneConsuntivo){
 				listaErrori.add(ErroreFin.MODIFICA_IMPORTO_ACCERTAMENTO_CON_STATO_PROVV.getErrore());
@@ -4115,15 +4015,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 			if(subModificati!=null && subModificati.size()>0){
 				for(SubAccertamento subIt : subModificati){
-					SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtils.getById(subsSuDb, subIt.getUid());
+					SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtil.getById(subsSuDb, subIt.getUid());
 					String statoSub = getStatoCode(siacTMovgestTsSub, datiOperazione);
-					if(!Constanti.MOVGEST_STATO_PROVVISORIO.equals(statoSub)){
+					if(!CostantiFin.MOVGEST_STATO_PROVVISORIO.equals(statoSub)){
 						BigDecimal nuovoImpSub = subIt.getImportoAttuale();
 						BigDecimal oldImpSub = estraiImportoAttualeByMovgestTsId(subIt.getUid(), datiOperazione);
 						if(oldImpSub.compareTo(nuovoImpSub)!=0){
 							//importo modificato..
 							boolean importoModificabile = true;
-							if(Constanti.MOVGEST_STATO_ANNULLATO.equals(statoSub)){
+							if(CostantiFin.MOVGEST_STATO_ANNULLATO.equals(statoSub)){
 								importoModificabile = false;
 							} else {
 								Integer annoSubMovimento = siacTMovgestTsSub.getSiacTMovgest().getMovgestAnno();
@@ -4196,7 +4096,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<Integer> distintiSubCoinvoltiNelleModifiche = new ArrayList<Integer>();
 		if(daCrearePiuAggiornareSubAcc!=null && daCrearePiuAggiornareSubAcc.size()>0){
 			for(ModificaMovimentoGestioneEntrata modIt : daCrearePiuAggiornareSubAcc){
-				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtils.getById(subsSuDb, modIt.getUidSubAccertamento());
+				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtil.getById(subsSuDb, modIt.getUidSubAccertamento());
 				if(!distintiSubCoinvoltiNelleModifiche.contains(siacTMovgestTsSub.getUid())){
 					distintiSubCoinvoltiNelleModifiche.add(siacTMovgestTsSub.getUid());
 				}
@@ -4208,7 +4108,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//il servizio restituisce l�errore 
 		//<COR_ERR_0028	Operazione incompatibile con stato dell'entit� (entit�:accertamento  stato: statoOperativo)>
 		List<Errore> listaErroriVerificaStato = 
-				verificaStatoPerAggiornaModificheMovimento(statoCod, distintiSubCoinvoltiNelleModifiche, subsSuDb, datiOperazione, Constanti.MOVGEST_TIPO_ACCERTAMENTO);
+				verificaStatoPerAggiornaModificheMovimento(statoCod, distintiSubCoinvoltiNelleModifiche, subsSuDb, datiOperazione, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO);
 		if(listaErroriVerificaStato!=null && listaErroriVerificaStato.size()>0){
 			esito.setListaErrori(listaErroriVerificaStato);
 			return esito;
@@ -4274,7 +4174,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					tempUidSafe = modificaImportoSub.getUidSubAccertamento();
 				}
 				
-				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtils.getById(subsSuDb, tempUidSafe);
+				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtil.getById(subsSuDb, tempUidSafe);
 				DisponibilitaMovimentoGestioneContainer dispAIncassareAccertamento = calcolaDisponibiltaAIncassareAccertamento(siacTMovgestTsSub, statoCod, idEnte);
 				BigDecimal nuovaDispIncassareAcc = dispAIncassareAccertamento.getDisponibilita().add(valoreModificaSub);
 				if(nuovaDispIncassareAcc.compareTo(BigDecimal.ZERO)<0){
@@ -4324,8 +4224,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			CapitoloEntrataGestione capitoloEscGest = capitoliInfo.getCapitoliDaServizioEntrata().get(accertamento.getChiaveCapitoloEntrataGestione());
 			if(capitoloEscGest!=null){
 				//NuovaDispAccCap = VecchiaDispAccCap - TotaleModificheAcc
-				BigDecimal vecchiaDispAccCap = capitoloEscGest.getImportiCapitoloEG().getDisponibilitaAccertareAnno1();
-				BigDecimal nuovaDispAcc = vecchiaDispAccCap.subtract(valoreModifica);
+//				BigDecimal vecchiaDispAccCap = capitoloEscGest.getImportiCapitoloEG().getDisponibilitaAccertareAnno1();
+				//SIAC-82821 nuovo controllo su piu' anni del capitolo in base all'anno del movimento
+				BigDecimal nuovaDispAcc = calcolaNuovaDisponibilitaAccertareSuPiuAnniCapitolo(valoreModifica, capitoloEscGest, accertamento);
 				//Se NuovaDispAccCap  < 0 si restituisce il messaggio di warning relativo:
 				//<FIN_INF_0062 - Superamento della disponibilita >
 				if(nuovaDispAcc.compareTo(BigDecimal.ZERO)<0){
@@ -4352,7 +4253,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			DatiOperazioneDto datiOperazione,String tipoMovimento){
 		
 		String messaggio = null;
-		if(Constanti.MOVGEST_TIPO_IMPEGNO.equals(tipoMovimento)){
+		if(CostantiFin.MOVGEST_TIPO_IMPEGNO.equals(tipoMovimento)){
 			messaggio = "impegno";
 		} else {
 			messaggio = "accertamento";
@@ -4362,16 +4263,16 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 //		VALIDIT�: se lo stato ACCERTAMENTO/IMPEGNO o SUBACCERTAMENTO/IMPEGNO originale � ANNULLATO o PROVVISORIO 
 			//il servizio restituisce l�errore 
 			//<COR_ERR_0028	Operazione incompatibile con stato dell'entit� (entit�:accertamento  stato: statoOperativo)>
-		if(Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) || Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCod)) {
+		if(CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) || CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCod)) {
 			//Accertamento PROVVOSIORIO o ANNULLATO
 			listaErrori.add(ErroreCore.OPERAZIONE_INCOMPATIBILE_CON_STATO_ENTITA.getErrore(messaggio,statoCod));
 			return listaErrori;
 		}
 		if(distintiSubCoinvoltiNelleModifiche!=null && distintiSubCoinvoltiNelleModifiche.size()>0){
 			for(Integer subCoinvoltoInModifiche : distintiSubCoinvoltiNelleModifiche){
-				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtils.getById(subsSuDb, subCoinvoltoInModifiche);
+				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtil.getById(subsSuDb, subCoinvoltoInModifiche);
 				String statoSub = getStatoCode(siacTMovgestTsSub, datiOperazione);
-				if(Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) || Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCod)) {
+				if(CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCod) || CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCod)) {
 					//SUB Accertamento PROVVOSIORIO o ANNULLATO
 					listaErrori.add(ErroreCore.OPERAZIONE_INCOMPATIBILE_CON_STATO_ENTITA.getErrore(messaggio,statoCod));
 					return listaErrori;
@@ -4433,7 +4334,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<Integer> distintiSubCoinvoltiNelleModifiche = new ArrayList<Integer>();
 		if(daCrearePiuAggiornareSubImp!=null && daCrearePiuAggiornareSubImp.size()>0){
 			for(ModificaMovimentoGestioneSpesa modIt : daCrearePiuAggiornareSubImp){
-				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtils.getById(subsSuDb, modIt.getUidSubImpegno());
+				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtil.getById(subsSuDb, modIt.getUidSubImpegno());
 				if(!distintiSubCoinvoltiNelleModifiche.contains(siacTMovgestTsSub.getUid())){
 					distintiSubCoinvoltiNelleModifiche.add(siacTMovgestTsSub.getUid());
 				}
@@ -4445,7 +4346,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//  il servizio restituisce l'errore 
 		//  <COR_ERR_0028	Operazione incompatibile con stato dell'entità (entità:impegno  stato: statoOperativo)>
 		List<Errore> listaErroriVerificaStato = 
-				verificaStatoPerAggiornaModificheMovimento(statoCod, distintiSubCoinvoltiNelleModifiche, subsSuDb, datiOperazione, Constanti.MOVGEST_TIPO_IMPEGNO);
+				verificaStatoPerAggiornaModificheMovimento(statoCod, distintiSubCoinvoltiNelleModifiche, subsSuDb, datiOperazione, CostantiFin.MOVGEST_TIPO_IMPEGNO);
 		if(listaErroriVerificaStato!=null && listaErroriVerificaStato.size()>0){
 			esito.setListaErrori(listaErroriVerificaStato);
 			return esito;
@@ -4495,7 +4396,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			//	NuovaDispLiqSub = VecchiaDispLiqSub + TotaleModificheSub
 			//dove:
 			//	VecchiaDispLiqSub e' il campo calcolato disponibilitaLiquidare del subimpegno
-			SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtils.getById(subsSuDb, tempUidSafe);
+			SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtil.getById(subsSuDb, tempUidSafe);
 			DisponibilitaMovimentoGestioneContainer disponibilitaLiquidareContainer = calcolaDisponibilitaALiquidare(siacTMovgestTsSub.getMovgestTsId(), idEnte, datiOperazione);
 			BigDecimal nuovaDispLiqSub = disponibilitaLiquidareContainer.getDisponibilita().add(valoreModificaSub);
 			if(nuovaDispLiqSub.compareTo(BigDecimal.ZERO)<0){
@@ -4578,15 +4479,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			} else if(modificaSoggettoSub!=null){
 				soggettoNuovo = modificaSoggettoSub.getSoggettoNewMovimentoGestione();
 			}
-			if(soggettoNuovo!=null && !StringUtils.isEmpty(soggettoNuovo.getCodiceSoggetto())){
+			if(soggettoNuovo!=null && !StringUtilsFin.isEmpty(soggettoNuovo.getCodiceSoggetto())){
 				String codiceNuovoSogg = soggettoNuovo.getCodiceSoggetto();
-				SiacTSoggettoFin siacTSoggettoNew = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte,codiceNuovoSogg,Constanti.SEDE_SECONDARIA,getNow());
+				SiacTSoggettoFin siacTSoggettoNew = siacTSoggettoRepository.ricercaSoggettoNoSeSede(codiceAmbito, idEnte,codiceNuovoSogg,CostantiFin.SEDE_SECONDARIA,getNow());
 				List<SiacRLiquidazioneSoggettoFin>  rLiqSoggetto = siacTSoggettoNew.getSiacRLiquidazioneSoggettos();
-				rLiqSoggetto = DatiOperazioneUtils.soloValidi(rLiqSoggetto, null);
+				rLiqSoggetto = DatiOperazioneUtil.soloValidi(rLiqSoggetto, null);
 				if(rLiqSoggetto!=null && rLiqSoggetto.size()>0){
 					for(SiacRLiquidazioneSoggettoFin rLiq : rLiqSoggetto){
 						String codeStatoLiq = EntityLiquidazioneToModelLiquidazioneConverter.getStatoCodeLiquidazione(rLiq.getSiacTLiquidazione());
-						if(!Constanti.D_LIQUIDAZIONE_STATO_ANNULLATO.equals(codeStatoLiq)){
+						if(!CostantiFin.D_LIQUIDAZIONE_STATO_ANNULLATO.equals(codeStatoLiq)){
 							esito.addErrore(ErroreFin.MOV_LIQUIDATO.getErrore("Modifica importo impegno","a Impegnare"));
 							return esito;
 						}
@@ -4636,7 +4537,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		BigDecimal nuovoImportoAttuale = impegno.getImportoAttuale();
 		String statoCodeNew = impegno.getStato().toString();
-		statoCodeNew = Constanti.convertiStatoMovgest(statoCodeNew);
+		statoCodeNew = CostantiFin.convertiStatoMovgest(statoCodeNew);
 		if(statoCodeNew==null){
 			//in caso di stato indicato non riconosciuto impostiamo come se non ci siano cambiamenti
 			statoCodeNew = statoCod;
@@ -4652,7 +4553,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				
 				String newStatoSub = ((SubImpegno)it).getStatoOperativoMovimentoGestioneSpesa();
 				
-				if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(newStatoSub)){
+				if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(newStatoSub)){
 					resterannoDeiSub = true;
 					break;
 				}
@@ -4676,7 +4577,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//	o Annullamento : se il nuovo stato e' ANNULLATO l'impegno non deve essere associato a nessun Sub Impegno valido
 		//(la lista dei Subimpegni da Gestire deve essere vuota o contenere solo subimpegni annullatiin caso contrario viene emesso l'rrore 
 		//<FIN_ERR_004: Esistono movimenti collegati (operazione=annullamento)>
-		if(Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNew)){
+		if(CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNew)){
 			if(resterannoDeiSub){
 				listaErrori.add(ErroreFin.ESISTONO_MOVIMENTI_COLLEGATI.getErrore("annullamento"));
 				esitoControlli.setListaErrori(listaErrori);
@@ -4690,7 +4591,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//	(DISPONIBILE a IMPEGNARE SUL CAPITOLO + VECCHIO IMPORTO IMPEGNO) >= NUOVO IMPORTO IMPEGNO
 		//	In caso il risultato sia falso il servizio emette l'errore:
 		//	<BIL_ERR_0004. Disponibilita Insufficiente (operazione=Aggiornamento impegno)>
-		if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNew)){
+		if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNew)){
 			CapitoloUscitaGestione capitoloUscGest = capitoliUscita.get(impegno.getChiaveCapitoloUscitaGestione());
 			
 			Integer annoCapitolo = capitoloUscGest.getAnnoCapitolo();
@@ -4708,7 +4609,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				
 				BigDecimal sommaUno = dispImpegnareCapitolo.add(importoAttualeOld);
 				if(!(sommaUno.compareTo(nuovoImportoAttuale)>=0)){
-					listaErrori.add(ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("Aggiornamento Impegno non possibile, disponibilita' attuale "+CommonUtils.convertiBigDecimalToImporto(dispImpegnareCapitolo)));
+					listaErrori.add(ErroreBil.DISPONIBILITA_INSUFFICIENTE.getErrore("Aggiornamento Impegno non possibile, disponibilita' attuale "+CommonUtil.convertiBigDecimalToImporto(dispImpegnareCapitolo)));
 					//listaErrori.add(ErroreFin.DISPONIBILITA_INSUFFICIENTE.getErrore());
 					esitoControlli.setListaErrori(listaErrori);
 					return esitoControlli;
@@ -4726,7 +4627,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//	Controllo di disponibilità a finanziare:  se l'importo è stato aggiornato verificare che la DISPONIBILITA' A FINANZIARE risulti ancora >= 0 ovvero   (VECCHIO IMPORTO IMPEGNO -DISPONIBILE A FINANZIARE ) <= NUOVO IMPORTO IMPEGNO  
 		//	In caso il risultato sia falso il servizio emette l'errore:
 		//	<FIN_ERR_0001. Disponibilità Insufficiente (operazione=Aggiornamento Impegno)>
-		if(Constanti.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoCod)){
+		if(CostantiFin.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoCod)){
 			//Ha dei sub impegni
 			DisponibilitaMovimentoGestioneContainer dispImpegnoMod = calcolaDisponibilitaImpegnoModifica(siacTMovgestTs.getUid(), datiOperazione);
 			BigDecimal diffUno = importoAttualeOld.subtract(dispImpegnoMod.getDisponibilita());
@@ -4809,15 +4710,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","idEnte: "+idEnte);
 				log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","annoBilancio: "+Integer.toString(annoBilancio));
 				log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","annoMovimento: "+annoMovimento);
-				log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","numero accertamento: "+acc.getNumero());
-				log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","MOVGEST_TIPO_ACCERTAMENTO: "+Constanti.MOVGEST_TIPO_ACCERTAMENTO.toString());
+				log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","numero accertamento: "+acc.getNumeroBigDecimal());
+				log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","MOVGEST_TIPO_ACCERTAMENTO: "+CostantiFin.MOVGEST_TIPO_ACCERTAMENTO.toString());
 				
-				SiacTMovgestFin siacTMovgestAcc = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, Integer.toString(annoBilancio), annoMovimento, acc.getNumero(), Constanti.MOVGEST_TIPO_ACCERTAMENTO);	
+				SiacTMovgestFin siacTMovgestAcc = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, Integer.toString(annoBilancio), annoMovimento, acc.getNumeroBigDecimal(), CostantiFin.MOVGEST_TIPO_ACCERTAMENTO);	
 				SiacTMovgestTsFin siacTMovgestTsAcc = null;
 				if(null!=siacTMovgestAcc){
 					siacTMovgestTsAcc = siacTMovgestTsRepository.findMovgestTsByMovgest(idEnte, getNow(), siacTMovgestAcc.getMovgestId()).get(0);
 				}else{
-					listaErrori.add(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", acc.getNumero() + " - anno: "+ annoMovimento ));
+					listaErrori.add(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", acc.getNumeroBigDecimal() + " - anno: "+ annoMovimento ));
 					esitoControlli.setListaErrori(listaErrori);
 					return esitoControlli;
 				}
@@ -4827,7 +4728,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					//esiste
 					String statoAccertamento = getStatoCode(siacTMovgestTsAcc, datiOperazione);
 					log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","Controllo statoAccertamento: " + statoAccertamento);
-					if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoAccertamento)){
+					if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoAccertamento)){
 						//non annullato
 						accertamentoValido = true;
 					}
@@ -4844,7 +4745,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				BigDecimal oldImportoVincolo = BigDecimal.ZERO;
 				if(vIt.getUid()>0){
 					//si tratta di nuovo vincolo
-					SiacRMovgestTsFin vincoloDb = DatiOperazioneUtils.getById(vincoliOld,vIt.getUid());
+					SiacRMovgestTsFin vincoloDb = DatiOperazioneUtil.getById(vincoliOld,vIt.getUid());
 					oldImportoVincolo = vincoloDb.getMovgestTsImporto();
 				}
 				//verichiamo che: Vincolo.importo<= (accertamento.disponibilitaUtilizzare+vecchioVincolo.importo) 
@@ -4896,7 +4797,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					// anche perchè la function comunque considera solo i sub con stato <> annullato
 					// Qui lo stato arriva sempre VALIDO, quindin richiamo il metodo getStato passandogli il sub, cosi lo leggo direttamente da db!
 					log.debug(methodName," StatoOperativoMovimentoGestioneSpesa del subimpegno ("+ it.getUid() +") :" +((SubImpegno)it).getStatoOperativoMovimentoGestioneSpesa());
-					if(!((SubImpegno)it).getStatoOperativoMovimentoGestioneSpesa().equals(Constanti.MOVGEST_STATO_ANNULLATO)){
+					if(!((SubImpegno)it).getStatoOperativoMovimentoGestioneSpesa().equals(CostantiFin.MOVGEST_STATO_ANNULLATO)){
 					
 						BigDecimal disponibilitaSubimpegnoIt = BigDecimal.ZERO;
 						disponibilitaSubimpegnoIt = impegnoDao.calcolaDisponibilitaALiquidare(it.getUid());
@@ -5038,7 +4939,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		BigDecimal nuovoImportoAttuale = accertamento.getImportoAttuale();
 		String statoCodeNew = accertamento.getStato().toString();
-		statoCodeNew = Constanti.convertiStatoMovgest(statoCodeNew);
+		statoCodeNew = CostantiFin.convertiStatoMovgest(statoCodeNew);
 		if(statoCodeNew==null){
 			//in caso di stato indicato non riconosciuto impostiamo come se non ci siano cambiamenti
 			statoCodeNew = statoCod;
@@ -5053,7 +4954,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			for(MovimentoGestione it : subAccertamentiRimanentiDopoModifiche){
 //				String newStatoSub = it.getStato().toString();
 				String newStatoSub = ((SubAccertamento)it).getStatoOperativoMovimentoGestioneEntrata();
-				if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(newStatoSub)){
+				if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(newStatoSub)){
 					resterannoDeiSub = true;
 					if(it.getImportoAttuale()!=null){
 						sommatoriaNuoviImportiAttualiSub = sommatoriaNuoviImportiAttualiSub.add(it.getImportoAttuale());
@@ -5083,7 +4984,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		}
 		//Annullamento: se il nuovo stato � ANNULLATO l�accertamento non deve essere associato a nessun Sub Accertamento valido
 		//(la lista �Subaccertamenti da Gestire� deve essere vuota o contenere solo subaccertamenti annullati in caso contrario viene emesso l�errore 
-		if(Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNew)){
+		if(CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNew)){
 			if(resterannoDeiSub){
 				listaErrori.add(ErroreFin.ESISTONO_MOVIMENTI_COLLEGATI.getErrore("annullamento"));
 				return listaErrori;
@@ -5098,7 +4999,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		// (DISPONIBILE a ACCERTARE SUL CAPITOLO + VECCHIO IMPORTO ACCERTAMENTO) >= NUOVO IMPORTO ACCERTAMENTO
 		//Nel caso in cui la condizione di disponibilit� non sia rispettata il servizio restituisce di warning:
 		//<FIN_INF_0062 - Superamento della disponibilit� >
-		if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNew)){
+		if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNew)){
 			CapitoloEntrataGestione capitoloEscGest = capitoliEntrata.get(accertamento.getChiaveCapitoloEntrataGestione());
 			if(capitoloEscGest!=null){
 				BigDecimal dispAccertareCapitolo = capitoloEscGest.getImportiCapitoloEG().getDisponibilitaAccertareAnno1();
@@ -5117,7 +5018,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//<FIN_ERR_0001. Disponibilit� Insufficiente (operazione=�Aggiornamento Accertamento�)>
 //		if(infoValutati==null || infoValutati.getSubImpegniOld()==null || infoValutati.getSubImpegniOld().size()==0){
 		// ATTENZIONE :: 06/11/2014 da effettuare il controllo solo se lo stato e' DEFINITIVO !!!! (non avra' sicuramente subimpegni)
-		if(Constanti.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoCod)){
+		if(CostantiFin.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoCod)){
 			//Ha dei sub impegni
 			DisponibilitaMovimentoGestioneContainer dispIncassare = calcolaDisponibiltaAIncassareAccertamento(siacTMovgestTs, statoCod, idEnte);
 			BigDecimal diffUno = importoAttualeOld.subtract(dispIncassare.getDisponibilita());
@@ -5197,7 +5098,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	 * @return
 	 */
 	private Errore controlliSoggettoPerAggiorna(MovimentoGestione movimentoGestione,boolean resterannoDeiSub,DatiOperazioneDto datiOperazione){
-		if(movimentoGestione.getSoggetto()!=null  &&  !StringUtils.isEmpty(movimentoGestione.getSoggetto().getCodiceSoggetto()) ){
+		if(movimentoGestione.getSoggetto()!=null  &&  !StringUtilsFin.isEmpty(movimentoGestione.getSoggetto().getCodiceSoggetto()) ){
 			SiacTSoggettoFin siacTSoggetto = getSoggetto(movimentoGestione, datiOperazione);
 			if(siacTSoggetto==null){
 				//inesitente oppure non valido dato che la query si basa sulle date validita'
@@ -5207,7 +5108,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		if(resterannoDeiSub){
 			//Subaccertamenti: il soggetto pu� essere caricato solo se non sono presenti subaccertamenti tra i dati in input, in caso contrario deve essere emesso l�errore 
 			//<FIN_ERR_0057. Dato Soggetto Presente (entit�:  Soggetto   valore: codice-denominazione,) >
-			if(movimentoGestione.getSoggetto()!=null  &&  !StringUtils.isEmpty(movimentoGestione.getSoggetto().getCodiceSoggetto())){
+			if(movimentoGestione.getSoggetto()!=null  &&  !StringUtilsFin.isEmpty(movimentoGestione.getSoggetto().getCodiceSoggetto())){
 				//non deve essere valorizzato il soggetto dell'impegno principale
 				return ErroreFin.DATO_SOGGETTO_PRESENTE.getErrore("Soggetto",movimentoGestione.getSoggetto().getCodiceSoggetto());
 			}
@@ -5277,7 +5178,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		if(subDaEliminare!=null && subDaEliminare.size()>0){
 			for(SiacTMovgestTsFin it : subDaEliminare){
 				String statoOld = getStatoCode(it, datiOperazione);
-				if(!Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoOld)){
+				if(!CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoOld)){
 					if(isImpegno){
 						listaErrori.add(ErroreFin.STATO_MOVIMENTO_IMPOSSIBILE.getErrore("Impegno",statoOld,"cancellato"));	
 					} else {
@@ -5290,14 +5191,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//ArrayList<Integer> elencoIdSogg = new ArrayList<Integer>();
 		if(subDaModificare!=null && subDaModificare.size()>0){
 			for(I it :subDaModificare){
-				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtils.getById(subImpegniOld, it.getUid());
+				SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtil.getById(subImpegniOld, it.getUid());
 				BigDecimal nuovoImportoAttuale = it.getImportoAttuale();
 				//3.	Transizione Stati: il passaggio dal vecchio al nuovo stato deve rispettare le transizioni descritte a par. 2.5.5, 
 				//in caso contrario viene emesso l�errore:
 				//<FIN_ERR_0055. Stato Movimento Impossibile (movimento = �Subimpegno�, statoOld = Subimpegno.stato(su DB), statoNew=subimpegno.stato (dati input))>
 				String statoCodSub = getStatoCode(siacTMovgestTsSub, datiOperazione);
 				String statoCodeNewSub = it.getStato().toString();
-				statoCodeNewSub = Constanti.convertiStatoMovgest(statoCodeNewSub);
+				statoCodeNewSub = CostantiFin.convertiStatoMovgest(statoCodeNewSub);
 				if(statoCodeNewSub==null){
 					//in caso di stato indicato non riconosciuto impostiamo come se non ci siano cambiamenti
 					statoCodeNewSub = statoCodSub;
@@ -5327,7 +5228,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				//Stato Subimpegno/Creditore: il soggetto creditore è modificabile solo se STATO SUBIMPEGNO= PROVVISIORIO, in caso contrario viene emesso l'errore 
 				//<FIN_ERR_0152. Modifica Creditore con stato impegno non provvisorio>
 				boolean isModificatoSogg = isModificatoSoggettoCreditore(it, siacTMovgestTsSub, datiOperazione);
-				if(isModificatoSogg && !Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCodeNewSub)){
+				if(isModificatoSogg && !CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCodeNewSub)){
 					//TODO lanciare FIN_ERR_0152.Modifica Atto Autorizzativo con stato impegno non provvisorio
 					listaErrori.add(ErroreFin.DISPONIBILITA_INSUFFICIENTE.getErrore());
 					return listaErrori;
@@ -5360,7 +5261,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		
 				//IMPORTO:controllo da effettuare se stato operativo del subimpegno è diverso da ANNULLATO. 
-				if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNewSub)){
+				if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoCodeNewSub)){
 					//carico l'importo attuale:
 					BigDecimal importoAttualeOld = 
 							estraiImportoAttualeByMovgestTsId(siacTMovgestTsSub.getMovgestTsId(), datiOperazione);
@@ -5384,7 +5285,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 
 							
 							//FEBBRAIO 2016 viene aggiunta la if stato diverso da provvisorio per questo controllo:
-							if(!Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCodeNewSub)){
+							if(!CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoCodeNewSub)){
 								
 								//Controllo di disponibilita' a finanziare:  se l'importo e' stato aggiornato verificare che la DISPONIBILITA' A FINANZIARE
 								//risulti ancora >= 0 ovvero   (VECCHIO IMPORTO SUB -DISPONIBILE A SUB ) <= NUOVO IMPORTO IMPEGNO
@@ -5489,7 +5390,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 
 		if(isAttoModificato(vecchioAtto, attoNewSubCaricato)){
 			
-			if(!Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoMovimento)){
+			if(!CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoMovimento)){
 				
 				if(isImpegno){
 					//IMPEGNO o SUBIMPEGNO
@@ -5513,29 +5414,29 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	 */
 	private boolean controlloCambioStatoImpegnoAccertamento(String statoOld, String statoNew) {
 		boolean esito = true;
-		if(StringUtils.isEmpty(statoOld) || StringUtils.isEmpty(statoNew)){
+		if(StringUtilsFin.isEmpty(statoOld) || StringUtilsFin.isEmpty(statoNew)){
 			//1.	c'e' qualcosa di sbagliato nei parametri ricevuti
 			return false;
 		}
-		if(StringUtils.sonoUguali(statoOld, statoNew)){
+		if(StringUtilsFin.sonoUguali(statoOld, statoNew)){
 			//2.	se sono uguali non c'e' passaggio di stato
 			return true;
 		}
-		if(Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoOld)){
+		if(CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoOld)){
 			//3.	lo stato annullato non ha sbocchi
 			return false;
 		}
-		if(Constanti.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoOld)){
+		if(CostantiFin.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoOld)){
 			//4. da definitivo non si puo' passare a provvisorio o annullato
-			if(Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoNew) ||
-					Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoNew)){
+			if(CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoNew) ||
+					CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoNew)){
 				return false;
 			}
 		}
-		if(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equalsIgnoreCase(statoOld)){
+		if(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equalsIgnoreCase(statoOld)){
 			//5. da definitivo non liquidabile non si puo' passare a provvisorio o annullato
-			if(Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoNew) ||
-					Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoNew)){
+			if(CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoNew) ||
+					CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoNew)){
 				return false;
 			}
 		}
@@ -5551,27 +5452,27 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	 */
 	private boolean controlloCambioStatoSubMovimento(String statoOld, String statoNew) {
 		boolean esito = true;
-		if(StringUtils.isEmpty(statoOld) || StringUtils.isEmpty(statoNew)){
+		if(StringUtilsFin.isEmpty(statoOld) || StringUtilsFin.isEmpty(statoNew)){
 			//1.	c'e' qualcosa di sbagliato nei parametri ricevuti
 			return false;
 		}
-		if(StringUtils.sonoUguali(statoOld, statoNew)){
+		if(StringUtilsFin.sonoUguali(statoOld, statoNew)){
 			//2.	se sono uguali non c'e' passaggio di stato
 			return true;
 		}
-		if(Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoOld)){
+		if(CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoOld)){
 			//3.	lo stato annullato non ha sbocchi
 			return false;
 		}
-		if(Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoOld)){
+		if(CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoOld)){
 			//4. da provvisiorio non si puo' passare ad annullato
-			if(Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoNew)){
+			if(CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoNew)){
 				return false;
 			}
 		}
-		if(Constanti.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoOld)){
+		if(CostantiFin.MOVGEST_STATO_DEFINITIVO.equalsIgnoreCase(statoOld)){
 			//5. da definitivo non si puo' passare a provvisorio
-			if(Constanti.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoNew)){
+			if(CostantiFin.MOVGEST_STATO_PROVVISORIO.equalsIgnoreCase(statoNew)){
 				return false;
 			}
 		}
@@ -5587,9 +5488,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	 */
 	private boolean isAttoModificato(SiacRMovgestTsAttoAmmFin attoOld,AttoAmministrativo attoNew){
 		boolean modificato = false;
-		if(CommonUtils.entrambiNull(attoOld, attoOld)){
+		if(CommonUtil.entrambiNull(attoOld, attoOld)){
 			modificato = false;
-		} else if(CommonUtils.unoNullunoIstanziato(attoOld, attoOld)){
+		} else if(CommonUtil.unoNullunoIstanziato(attoOld, attoOld)){
 			modificato = true;
 		} else {
 			//tutti e due diversi da null
@@ -5620,7 +5521,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				if(subImpIterato!=null){
 					
 					// JIRA 1872, i sub annullati non concorrono alla sommatoriaSub (ho quinid aggiunto il controllo)
-					if(!subImpIterato.getStatoOperativoMovimentoGestioneSpesa().equals(Constanti.MOVGEST_STATO_ANNULLATO)){
+					if(!subImpIterato.getStatoOperativoMovimentoGestioneSpesa().equals(CostantiFin.MOVGEST_STATO_ANNULLATO)){
 						BigDecimal importoSubImpegno = NumericUtils.getZeroIfNull(subImpIterato.getImportoAttuale());
 						sommatoriaSub = sommatoriaSub.add(importoSubImpegno);
 					}
@@ -5701,7 +5602,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		
 		//UNIVOCITA RISPETTO AL NUMERO INSERITO MANUALMENTE:
-		Errore erroreUnivocita = controlloUnivocitaMovimento(forzaMaxCodePerDoppia, annoBilancio, annoMovimento, idEnte, Constanti.MOVGEST_TIPO_IMPEGNO);
+		Errore erroreUnivocita = controlloUnivocitaMovimento(forzaMaxCodePerDoppia, annoBilancio, annoMovimento, idEnte, CostantiFin.MOVGEST_TIPO_IMPEGNO);
 		if(erroreUnivocita!=null){
 			listaErrori.add(erroreUnivocita);
 			esitoControlli.setListaErrori(listaErrori);
@@ -5751,7 +5652,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			if(siacRAttoAmmStatol!=null && siacRAttoAmmStatol.size()>0){
 				SiacRAttoAmmStatoFin siacRAttoAmmStato = siacRAttoAmmStatol.get(0);
 				SiacDAttoAmmStatoFin siacDAttoAmmStato = siacRAttoAmmStato.getSiacDAttoAmmStato();
-				if(Constanti.ATTO_AMM_STATO_ANNULLATO.equals(siacDAttoAmmStato.getAttoammStatoCode())){
+				if(CostantiFin.ATTO_AMM_STATO_ANNULLATO.equals(siacDAttoAmmStato.getAttoammStatoCode())){
 					// nell'analisi manca il messaggio di errore da dover lanciare!!!!!!!!!!!!!!!!!!
 					listaErrori.add(ErroreFin.STATO_PROVVEDIMENTO_NON_CONSENTITO.getErrore("inserisce impegno","non annullato"));
 					esitoControlli.setListaErrori(listaErrori);
@@ -5766,7 +5667,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//in caso contrario viene emesso l'errore
 		//<FIN_ERR_0057 Dato Soggetto Presente (entita':  Creditore o Classe a seconda dell'entita' riscontrata  valore:
 		//per Creditore riportare codice-denominazione,. per Classe: codice-descrizione,) >
-		if(impegno.getSoggetto()!=null  &&  !StringUtils.isEmpty(impegno.getSoggetto().getCodiceSoggetto()) ){
+		if(impegno.getSoggetto()!=null  &&  !StringUtilsFin.isEmpty(impegno.getSoggetto().getCodiceSoggetto()) ){
 			SiacTSoggettoFin siacTSoggetto = getSoggetto(impegno, datiOperazione);
 			if(siacTSoggetto==null){
 				//inesitente oppure non valido dato che la query si basa sulle date validita'
@@ -5776,7 +5677,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			}
 		}
 		if(impegno.getElencoSubImpegni()!=null && impegno.getElencoSubImpegni().size()>0){
-			if(impegno.getSoggetto()!=null  &&  !StringUtils.isEmpty(impegno.getSoggetto().getCodiceSoggetto())){
+			if(impegno.getSoggetto()!=null  &&  !StringUtilsFin.isEmpty(impegno.getSoggetto().getCodiceSoggetto())){
 				//non deve essere valorizzato il soggetto dell'impegno principale
 				listaErrori.add(ErroreFin.DATO_SOGGETTO_PRESENTE.getErrore("Soggetto",impegno.getSoggetto().getCodiceSoggetto()));
 				esitoControlli.setListaErrori(listaErrori);
@@ -5832,9 +5733,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		String bilCode = estraeFaseDiBilancio(bilancio, idEnte,  datiOperazione);
 			
-		if(bilCode.equals(Constanti.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO) &&
+		if(bilCode.equals(CostantiFin.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO) &&
 				impegno.getAnnoMovimento()>bilancio.getAnno()){
-			listaErrori.add(ErroreCore.VALORE_NON_VALIDO.getErrore("Anno movimento", "impegno futuro non ammesso in doppia gestione"));
+			listaErrori.add(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Anno movimento", "impegno futuro non ammesso in doppia gestione"));
 			esitoControlli.setListaErrori(listaErrori);
 			return esitoControlli;
 		}
@@ -5865,26 +5766,26 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					//vediamo se l'accertamento esiste ed e' valido:
 					annoMovimento = acc.getAnnoMovimento();
 					boolean accertamentoValido = false;
-					SiacTMovgestFin siacTMovgestAcc = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, Integer.toString(annoBilancio), annoMovimento, acc.getNumero(), Constanti.MOVGEST_TIPO_ACCERTAMENTO);	
+					SiacTMovgestFin siacTMovgestAcc = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, Integer.toString(annoBilancio), annoMovimento, acc.getNumeroBigDecimal(), CostantiFin.MOVGEST_TIPO_ACCERTAMENTO);	
 					SiacTMovgestTsFin siacTMovgestTsAcc = null;
 					
 					log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","Parametri ricerca accertamento ");
 					log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","idEnte: "+idEnte);
 					log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","annoBilancio: "+Integer.toString(annoBilancio));
 					log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","annoMovimento: "+annoMovimento);
-					log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","numero accertamento: "+acc.getNumero());
-					log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","MOVGEST_TIPO_ACCERTAMENTO: "+Constanti.MOVGEST_TIPO_ACCERTAMENTO.toString());
+					log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","numero accertamento: "+acc.getNumeroBigDecimal());
+					log.debug("MovimentoGestioneDad.controlliDiMeritoAggiornamentoImpegnoOperazioneInterna","MOVGEST_TIPO_ACCERTAMENTO: "+CostantiFin.MOVGEST_TIPO_ACCERTAMENTO.toString());
 					if(null!=siacTMovgestAcc){
 						siacTMovgestTsAcc = siacTMovgestTsRepository.findMovgestTsByMovgest(idEnte, now, siacTMovgestAcc.getMovgestId()).get(0);
 					}else{
-						listaErrori.add(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", acc.getNumero() + " - anno: "+ annoMovimento ));
+						listaErrori.add(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", acc.getNumeroBigDecimal() + " - anno: "+ annoMovimento ));
 						esitoControlli.setListaErrori(listaErrori);
 						return esitoControlli;
 					}
 					if(siacTMovgestTsAcc!=null){
 						//esiste
 						String statoAccertamento = getStatoCode(siacTMovgestTsAcc, datiOperazione);
-						if(!Constanti.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoAccertamento)){
+						if(!CostantiFin.MOVGEST_STATO_ANNULLATO.equalsIgnoreCase(statoAccertamento)){
 							//non annullato
 							accertamentoValido = true;
 						}
@@ -5949,7 +5850,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			SiacTMovgestFin siacTMovgest = siacTMovgestRepository.ricercaSiacTMovgestPk(idEnte, annoBilancioString, annoMovimento, numeroImpegno, tipoMovimento);
 			if(siacTMovgest!=null && siacTMovgest.getUid()>0){
 				//ESISTE!!
-				if(Constanti.MOVGEST_TIPO_IMPEGNO.equals(tipoMovimento)){
+				if(CostantiFin.MOVGEST_TIPO_IMPEGNO.equals(tipoMovimento)){
 					return ErroreCore.ATTRIBUTO_GIA_PRESENTE.getErrore("Impegno",annoBilancio + "/" + annoMovimento + "/" + numeroImpegno);
 				} else {
 					return ErroreCore.ATTRIBUTO_GIA_PRESENTE.getErrore("Accertamento",annoBilancio + "/" + annoMovimento + "/" + numeroImpegno);
@@ -5968,15 +5869,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	private List<Errore> controlloValiditaProgetto(Impegno impegno, DatiOperazioneDto datiOperazione){
 		//PROGETTO: il progetto collegato all�impegno deve esiste e non essere annullato
 		List<Errore> listaErrori = null;
-		if(impegno.getProgetto()!=null && !StringUtils.isEmpty((impegno.getProgetto().getCodice()))){
+		if(impegno.getProgetto()!=null && !StringUtilsFin.isEmpty((impegno.getProgetto().getCodice()))){
 			
 			
 			SiacTProgrammaFin siacTProgramma = getProgetto(impegno, datiOperazione);
 			boolean programmaOK = false;
 			if(siacTProgramma!=null){
 				//check se stato annullato
-				SiacRProgrammaStatoFin relValida = DatiOperazioneUtils.getValido(siacTProgramma.getSiacRProgrammaStatos(), null);
-				if(relValida!=null && !Constanti.D_PROGRAMMA_STATO_ANNULLATO.equalsIgnoreCase(relValida.getSiacDProgrammaStato().getProgrammaStatoCode())){
+				SiacRProgrammaStatoFin relValida = DatiOperazioneUtil.getValido(siacTProgramma.getSiacRProgrammaStatos(), null);
+				if(relValida!=null && !CostantiFin.D_PROGRAMMA_STATO_ANNULLATO.equalsIgnoreCase(relValida.getSiacDProgrammaStato().getProgrammaStatoCode())){
 					//NON ANNULLATO
 					programmaOK = true;
 				}
@@ -6028,7 +5929,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		int annoBilancio = bilancio.getAnno();
 		
 		//UNIVOCITA RISPETTO AL NUMERO INSERITO MANUALMENTE:
-		Errore erroreUnivocita = controlloUnivocitaMovimento(forzaMaxCodePerDoppia, annoBilancio, annoMovimento, idEnte, Constanti.MOVGEST_TIPO_ACCERTAMENTO);
+		Errore erroreUnivocita = controlloUnivocitaMovimento(forzaMaxCodePerDoppia, annoBilancio, annoMovimento, idEnte, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO);
 		if(erroreUnivocita!=null){
 			listaErrori.add(erroreUnivocita);
 			return listaErrori;
@@ -6079,7 +5980,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			if(siacRAttoAmmStatol!=null && siacRAttoAmmStatol.size()>0){
 				SiacRAttoAmmStatoFin siacRAttoAmmStato = siacRAttoAmmStatol.get(0);
 				SiacDAttoAmmStatoFin siacDAttoAmmStato = siacRAttoAmmStato.getSiacDAttoAmmStato();
-				if(Constanti.ATTO_AMM_STATO_ANNULLATO.equals(siacDAttoAmmStato.getAttoammStatoCode())){
+				if(CostantiFin.ATTO_AMM_STATO_ANNULLATO.equals(siacDAttoAmmStato.getAttoammStatoCode())){
 					//TODO: nell'analisi manca il messaggio di errore da dover lanciare!!!!!!!!!!!!!!!!!!
 					listaErrori.add(ErroreFin.STATO_PROVVEDIMENTO_NON_CONSENTITO.getErrore("inserisce accertamento","non annullato"));
 					return listaErrori;
@@ -6093,7 +5994,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//in caso contrario viene emesso l'errore
 		//<FIN_ERR_0057 Dato Soggetto Presente (entita':  Creditore o Classe a seconda dell'entita' riscontrata  valore:
 		//per Creditore riportare codice-denominazione,. per Classe: codice-descrizione,) >
-		if(accertamento.getSoggetto()!=null  &&  !StringUtils.isEmpty(accertamento.getSoggetto().getCodiceSoggetto()) ){
+		if(accertamento.getSoggetto()!=null  &&  !StringUtilsFin.isEmpty(accertamento.getSoggetto().getCodiceSoggetto()) ){
 			SiacTSoggettoFin siacTSoggetto = getSoggetto(accertamento, datiOperazione);
 			if(siacTSoggetto==null){
 				//inesitente oppure non valido dato che la query si basa sulle date validita'
@@ -6135,8 +6036,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		String bilCode = estraeFaseDiBilancio(bilancio, idEnte, datiOperazione);
 		
-		if(bilCode.equals(Constanti.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO) && accertamento.getAnnoMovimento()>bilancio.getAnno()){
-			listaErrori.add(ErroreCore.VALORE_NON_VALIDO.getErrore("Anno movimento", "accertamento futuro non ammesso in doppia gestione"));
+		if(bilCode.equals(CostantiFin.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO) && accertamento.getAnnoMovimento()>bilancio.getAnno()){
+			listaErrori.add(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Anno movimento", "accertamento futuro non ammesso in doppia gestione"));
 		}
 		
 		//Termino restituendo l'oggetto di ritorno: 
@@ -6168,7 +6069,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			nuovoCode = getMaxCode(impegno instanceof Impegno ? ProgressivoType.IMPEGNO : ProgressivoType.ACCERTAMENTO, idEnte, idAmbito, richiedente.getAccount().getNome(), impegno.getAnnoMovimento());
 		}
 
-		if(Constanti.GESTIONE_PARERE_FINANZIARIO.equals(ente.getGestioneLivelli().get(TipologiaGestioneLivelli.GESTIONE_PARERE_FINANZIARIO))){
+		if(CostantiFin.GESTIONE_PARERE_FINANZIARIO.equals(ente.getGestioneLivelli().get(TipologiaGestioneLivelli.GESTIONE_PARERE_FINANZIARIO))){
 			impegno.setParereFinanziario(Boolean.FALSE);
 		}else impegno.setParereFinanziario(Boolean.TRUE);
 		
@@ -6409,8 +6310,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				if(!inRibaltamento){
 					codeSub = Integer.toString(numermoSubImpegno);
 				} else {
-					if(subImpegnoIterato.getNumero()!=null && subImpegnoIterato.getNumero().intValue()>0){
-						codeSub = subImpegnoIterato.getNumero().toString();
+					if(subImpegnoIterato.getNumeroBigDecimal()!=null && subImpegnoIterato.getNumeroBigDecimal().intValue()>0){
+						codeSub = subImpegnoIterato.getNumeroBigDecimal().toString();
 					} else {
 						codeSub = Integer.toString(numeroSubDaMax);
 						numeroSubDaMax++;
@@ -6430,8 +6331,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				if(!inRibaltamento){
 					codeSub = Integer.toString(numermoSubImpegno);
 				} else {
-					if(subImpegnoIterato.getNumero()!=null && subImpegnoIterato.getNumero().intValue()>0){
-						codeSub = subImpegnoIterato.getNumero().toString();
+					if(subImpegnoIterato.getNumeroBigDecimal()!=null && subImpegnoIterato.getNumeroBigDecimal().intValue()>0){
+						codeSub = subImpegnoIterato.getNumeroBigDecimal().toString();
 					} else {
 						codeSub = Integer.toString(numeroSubDaMax);
 						numeroSubDaMax++;
@@ -6577,19 +6478,19 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<SiacTBilFin> siacTBilList = siacTBilRepository.getValidoByAnno(idEnte, annoBil, datiOperazioneDto.getTs());
 		if(siacTBilList!=null && siacTBilList.size()>0 && siacTBilList.get(0)!=null){
 			siacTMovgest = new SiacTMovgestFin();
-			siacTMovgest = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTMovgest, datiOperazioneDto, siacTAccountRepository);
+			siacTMovgest = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTMovgest, datiOperazioneDto, siacTAccountRepository);
 			SiacTBilFin siacTBil =  siacTBilList.get(0);
 			siacTMovgest.setSiacTBil(siacTBil);
 			siacTMovgest.setMovgestAnno(annoGest);
 			siacTMovgest.setMovgestNumero(movgestNumero);
-			if(!StringUtils.isEmpty(impegno.getDescrizione())){
+			if(!StringUtilsFin.isEmpty(impegno.getDescrizione())){
 				siacTMovgest.setMovgestDesc(impegno.getDescrizione());
 			}
 			String costanteTipo = null;
 			if(impegno instanceof ImpegnoAbstract){
-				costanteTipo =  Constanti.MOVGEST_TIPO_IMPEGNO;
+				costanteTipo =  CostantiFin.MOVGEST_TIPO_IMPEGNO;
 			} else if(impegno instanceof AccertamentoAbstract){
-				costanteTipo =  Constanti.MOVGEST_TIPO_ACCERTAMENTO;
+				costanteTipo =  CostantiFin.MOVGEST_TIPO_ACCERTAMENTO;
 			}
 			SiacDMovgestTipoFin siacDMovgestTipo =  siacDMovgestTipoRepository.findValidoByCode(idEnte, datiOperazioneDto.getTs(), costanteTipo).get(0);
 			
@@ -6606,7 +6507,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				SiacTBilElemFin siacTBilElem = getCapitoloUscitaGestione((Impegno) impegno, idEnte);
 				if(siacTBilElem!=null){
 					SiacRMovgestBilElemFin siacRMovgestBilElem = new SiacRMovgestBilElemFin();
-					siacRMovgestBilElem = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestBilElem, datiOperazioneDto, siacTAccountRepository);
+					siacRMovgestBilElem = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestBilElem, datiOperazioneDto, siacTAccountRepository);
 					siacRMovgestBilElem.setSiacTBilElem(siacTBilElem);
 					siacRMovgestBilElem.setSiacTMovgest(siacTMovgest);
 					//salvo sul db:
@@ -6616,7 +6517,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				SiacTBilElemFin siacTBilElem = getCapitoloEntrataGestione((Accertamento) impegno, idEnte);
 				if(siacTBilElem!=null){
 					SiacRMovgestBilElemFin siacRMovgestBilElem = new SiacRMovgestBilElemFin();
-					siacRMovgestBilElem = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestBilElem, datiOperazioneDto, siacTAccountRepository);
+					siacRMovgestBilElem = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestBilElem, datiOperazioneDto, siacTAccountRepository);
 					siacRMovgestBilElem.setSiacTBilElem(siacTBilElem);
 					siacRMovgestBilElem.setSiacTMovgest(siacTMovgest);
 					//salvo sul db:
@@ -6645,11 +6546,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 		
 		SiacTMovgestTsFin siacTMovgestTs = new SiacTMovgestTsFin();
-		siacTMovgestTs = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTMovgestTs, datiOperazioneDto, siacTAccountRepository);
+		siacTMovgestTs = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTMovgestTs, datiOperazioneDto, siacTAccountRepository);
 		
 		siacTMovgestTs.setMovgestTsCode(code);//incrementale per sub ; numero calc per imp
 		
-		if(!StringUtils.isEmpty(movimentoGestione.getDescrizione())){
+		if(!StringUtilsFin.isEmpty(movimentoGestione.getDescrizione())){
 			siacTMovgestTs.setMovgestTsDesc(movimentoGestione.getDescrizione());
 		}
 		
@@ -6663,11 +6564,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		String codiceTipoTs = null;
 		
 		if(padre!=null){
-			codiceTipoTs = Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO;
+			codiceTipoTs = CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO;
 			siacTMovgestTs.setLivello(2);
 			siacTMovgestTs.setMovgestTsIdPadre(padre.getMovgestTsId());
 		}else{
-			codiceTipoTs = Constanti.MOVGEST_TS_TIPO_TESTATA;
+			codiceTipoTs = CostantiFin.MOVGEST_TS_TIPO_TESTATA;
 			siacTMovgestTs.setLivello(1);
 		}
 		SiacDMovgestTsTipoFin siacDMovgestTsTipo = siacDMovgestTsTipoRepository.findValidoByCode(idEnte, datiOperazioneDto.getTs(), codiceTipoTs).get(0);
@@ -6682,8 +6583,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		attributoInfo.setSiacTMovgestTs(siacTMovgestTs);
 		
 		//
-		SiacTMovgestTsDetFin iniziale = saveImporto(null,movimentoGestione.getImportoIniziale(), datiOperazioneDto, siacTMovgestTs, Constanti.MOVGEST_TS_DET_TIPO_INIZIALE);
-		SiacTMovgestTsDetFin attuale = saveImporto(null,movimentoGestione.getImportoAttuale(), datiOperazioneDto, siacTMovgestTs, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
+		SiacTMovgestTsDetFin iniziale = saveImporto(null,movimentoGestione.getImportoIniziale(), datiOperazioneDto, siacTMovgestTs, CostantiFin.MOVGEST_TS_DET_TIPO_INIZIALE);
+		SiacTMovgestTsDetFin attuale = saveImporto(null,movimentoGestione.getImportoAttuale(), datiOperazioneDto, siacTMovgestTs, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
 		SiacTMovgestTsDetFin utilizzabile = null;
 		if(movimentoGestione instanceof AccertamentoAbstract){
 			//SE l'accertamento è di competenza o futuro (annoMovimento >= annoBilancio): 
@@ -6704,7 +6605,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					importoUtilizzabile = ((Accertamento)movimentoGestione).getImportoUtilizzabile();
 				}
 			}
-			utilizzabile = saveImporto(null,importoUtilizzabile, datiOperazioneDto, siacTMovgestTs, Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
+			utilizzabile = saveImporto(null,importoUtilizzabile, datiOperazioneDto, siacTMovgestTs, CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
 		}
 		
 		siacTMovgestTs.setSiacTMovgestTsDets(toList(iniziale,attuale,utilizzabile));
@@ -6721,100 +6622,100 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//CIG:
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			String cig = ( (ImpegnoAbstract) movimentoGestione).getCig();
-			if(!StringUtils.isEmpty(cig)){
+			if(!StringUtilsFin.isEmpty(cig)){
 				listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoCig(attributoInfo, datiOperazioneDto, cig));
 			}
 		}
 			
 		//FLAG_DA_RIACCERTAMENTO
-		listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagDaRiaccertamento(), Constanti.T_ATTR_CODE_FLAG_DA_RIACCERTAMENTO));
+		listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagDaRiaccertamento(), CostantiFin.T_ATTR_CODE_FLAG_DA_RIACCERTAMENTO));
 		
 		//durc
-		listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagSoggettoDurc(), Constanti.T_ATTR_CODE_FLAG_SOGGETTO_DURC));
+		listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagSoggettoDurc(), CostantiFin.T_ATTR_CODE_FLAG_SOGGETTO_DURC));
 		
 		//FLAG_VALIDATO
-		listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isValidato(), Constanti.T_ATTR_CODE_FLAG_VALIDATO));
+		listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isValidato(), CostantiFin.T_ATTR_CODE_FLAG_VALIDATO));
 		
 		
 		//ACCERTAMENTO con FATTURA PREVISTA (FLAG FATTURA)
 		if (movimentoGestione instanceof AccertamentoAbstract) {
 			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto,
 					((AccertamentoAbstract) movimentoGestione).isFlagFattura(),
-					Constanti.T_ATTR_CODE_FLAG_PREVISTA_FATTURA));
+					CostantiFin.T_ATTR_CODE_FLAG_PREVISTA_FATTURA));
 			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto,
 					((AccertamentoAbstract) movimentoGestione).isFlagCorrispettivo(),
-					Constanti.T_ATTR_CODE_FLAG_PREVISTO_CORRISPETTIVO));
+					CostantiFin.T_ATTR_CODE_FLAG_PREVISTO_CORRISPETTIVO));
 		}
 		
 		//FLAG ATTIVA GSA:
-		listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagAttivaGsa(), Constanti.T_ATTR_CODE_FLAG_ATTIVA_GSA));
+		listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagAttivaGsa(), CostantiFin.T_ATTR_CODE_FLAG_ATTIVA_GSA));
 		
 		//ANNO_FINANZIAMENTO
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			int annoF = ( (ImpegnoAbstract) movimentoGestione).getAnnoFinanziamento();
-			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoF, Constanti.T_ATTR_CODE_ANNO_FINANZIAMENTO));
+			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoF, CostantiFin.T_ATTR_CODE_ANNO_FINANZIAMENTO));
 		}
 		
 		
 		//ACC_AUTO
 		if(movimentoGestione instanceof AccertamentoAbstract){
 			boolean automatico=( (AccertamentoAbstract) movimentoGestione).isAutomatico();
-			SiacRMovgestTsAttrFin accAuto = (SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, automatico, Constanti.T_ATTR_CODE_ACC_AUTO);
+			SiacRMovgestTsAttrFin accAuto = (SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, automatico, CostantiFin.T_ATTR_CODE_ACC_AUTO);
 			listaAttrInseriti.add(accAuto);
 		}
 
 		//NUMERO_ACC_FINANZIAMENTO
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			int numF = ( (ImpegnoAbstract) movimentoGestione).getNumeroAccFinanziamento();
-			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numF, Constanti.T_ATTR_CODE_NUMERO_ACC_FINANZIAMENTO));
+			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numF, CostantiFin.T_ATTR_CODE_NUMERO_ACC_FINANZIAMENTO));
 		}
 		
 		//ANNO_RIACCERTATO
 		if(movimentoGestione.getAnnoRiaccertato()!=0){
 			String annoRiaccertato = ""+movimentoGestione.getAnnoRiaccertato();
-			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoRiaccertato, Constanti.T_ATTR_CODE_ANNO_RIACCERTATO));
+			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoRiaccertato, CostantiFin.T_ATTR_CODE_ANNO_RIACCERTATO));
 		}
 		
 		//NUMERO_RIACCERTATO
 		if(null!=movimentoGestione.getNumeroRiaccertato() && !movimentoGestione.getNumeroRiaccertato().equals(BigDecimal.ZERO)){
 			String numeroRiaccertato = ""+movimentoGestione.getNumeroRiaccertato();
-			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroRiaccertato, Constanti.T_ATTR_CODE_NUMERO_RIACCERTATO));
+			listaAttrInseriti.add((SiacRMovgestTsAttrFin) salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroRiaccertato, CostantiFin.T_ATTR_CODE_NUMERO_RIACCERTATO));
 		}
 		
 		//ANNO_CAPITOLO_ORIGINE
 		if(movimentoGestione.getAnnoCapitoloOrigine()!=0){
 			String annoCapitoloOrigine = ""+movimentoGestione.getAnnoCapitoloOrigine();
-			listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoCapitoloOrigine, Constanti.T_ATTR_CODE_ANNO_CAPITOLO_ORIGINE));
+			listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoCapitoloOrigine, CostantiFin.T_ATTR_CODE_ANNO_CAPITOLO_ORIGINE));
 		}
 		
 		//NUMERO_CAPITOLO_ORIGINE
 		if(movimentoGestione.getNumeroCapitoloOrigine()!=0){
 			String numeroCapitoloOrigine = ""+movimentoGestione.getNumeroCapitoloOrigine();
-			listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroCapitoloOrigine, Constanti.T_ATTR_CODE_NUMERO_CAPITOLO_ORIGINE));
+			listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroCapitoloOrigine, CostantiFin.T_ATTR_CODE_NUMERO_CAPITOLO_ORIGINE));
 		}
 		
 		//ANNO_ORIGINE_PLUR
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			Integer annoImpOrigine = ( (ImpegnoAbstract) movimentoGestione).getAnnoImpegnoOrigine();
 			if(null!=annoImpOrigine){
-				listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoImpOrigine, Constanti.T_ATTR_CODE_ANNO_ORIGINE_PLUR));
+				listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoImpOrigine, CostantiFin.T_ATTR_CODE_ANNO_ORIGINE_PLUR));
 			}
 		}else if(movimentoGestione instanceof AccertamentoAbstract){
 			Integer annoImpOrigine = ( (AccertamentoAbstract) movimentoGestione).getAnnoAccertamentoOrigine();
 			if(null!=annoImpOrigine){
-				listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoImpOrigine, Constanti.T_ATTR_CODE_ANNO_ORIGINE_PLUR));
+				listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoImpOrigine, CostantiFin.T_ATTR_CODE_ANNO_ORIGINE_PLUR));
 			}
 		}
 		//NUMERO_ORIGINE_PLUR
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			Integer numImpOrigine = ( (ImpegnoAbstract) movimentoGestione).getNumImpegnoOrigine();
 			if(null!=numImpOrigine){
-				listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numImpOrigine, Constanti.T_ATTR_CODE_NUMERO_ORIGINE_PLUR));
+				listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numImpOrigine, CostantiFin.T_ATTR_CODE_NUMERO_ORIGINE_PLUR));
 			}
 		}else if(movimentoGestione instanceof AccertamentoAbstract){
 			Integer numImpOrigine = ( (AccertamentoAbstract) movimentoGestione).getNumAccertamentoOrigine();
 			if(null!=numImpOrigine){
-				listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numImpOrigine, Constanti.T_ATTR_CODE_NUMERO_ORIGINE_PLUR));
+				listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numImpOrigine, CostantiFin.T_ATTR_CODE_NUMERO_ORIGINE_PLUR));
 			}
 		}
 		/***************************************************************************************************************/
@@ -6822,23 +6723,23 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//NUMERO_ARTICOLO_ORIGINE
 		if(movimentoGestione.getNumeroArticoloOrigine()!=0){
 			String numeroArticoloOrigine = ""+movimentoGestione.getNumeroArticoloOrigine();
-			listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroArticoloOrigine, Constanti.T_ATTR_CODE_NUMERO_ARTICOLO_ORIGINE));
+			listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroArticoloOrigine, CostantiFin.T_ATTR_CODE_NUMERO_ARTICOLO_ORIGINE));
 		}
 		
 		//NUMERO_UEB_ORIGINE
 		if(movimentoGestione.getNumeroUEBOrigine()!=0){
 			String numeroUEBOrigine = ""+movimentoGestione.getNumeroUEBOrigine();
-			listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroUEBOrigine, Constanti.T_ATTR_CODE_NUMERO_UEB_ORIGINE));
+			listaAttrInseriti.add((SiacRMovgestTsAttrFin)salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroUEBOrigine, CostantiFin.T_ATTR_CODE_NUMERO_UEB_ORIGINE));
 		}
 		
 		//EVENTUALE SOGGETTO CREDITORE:
 		Soggetto soggetto = movimentoGestione.getSoggetto();
 		List<SiacRMovgestTsSogFin> siacRMovgestTsSogs = new ArrayList<SiacRMovgestTsSogFin>();
-		if(soggetto!=null && !StringUtils.isEmpty(soggetto.getCodiceSoggetto())){
+		if(soggetto!=null && !StringUtilsFin.isEmpty(soggetto.getCodiceSoggetto())){
 			SiacTSoggettoFin siacTSoggetto = getSoggetto(movimentoGestione, datiOperazioneDto);
 			if(siacTSoggetto!=null){
 				SiacRMovgestTsSogFin siacRMovgestTsSog = new SiacRMovgestTsSogFin();
-				siacRMovgestTsSog = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSog, datiOperazioneDto, siacTAccountRepository);
+				siacRMovgestTsSog = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSog, datiOperazioneDto, siacTAccountRepository);
 				siacRMovgestTsSog.setSiacTMovgestT(siacTMovgestTs);
 				siacRMovgestTsSog.setSiacTSoggetto(siacTSoggetto);
 				//salvo sul db:
@@ -6852,11 +6753,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//EVENTUALE CLASSE SOGGETTO:
 		List<SiacRMovgestTsSogclasseFin> siacRMovgestTsSogclasses = new ArrayList<SiacRMovgestTsSogclasseFin>();
 		ClasseSoggetto classeSoggetto = movimentoGestione.getClasseSoggetto();
-		if(classeSoggetto!=null && !StringUtils.isEmpty(classeSoggetto.getCodice())){
+		if(classeSoggetto!=null && !StringUtilsFin.isEmpty(classeSoggetto.getCodice())){
 			SiacDSoggettoClasseFin siacDSoggettoClasse = getSoggettoClasse(movimentoGestione, datiOperazioneDto);
 			if(siacDSoggettoClasse!=null){
 				SiacRMovgestTsSogclasseFin siacRMovgestTsSogclasse = new SiacRMovgestTsSogclasseFin();
-				siacRMovgestTsSogclasse = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSogclasse, datiOperazioneDto, siacTAccountRepository);
+				siacRMovgestTsSogclasse = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSogclasse, datiOperazioneDto, siacTAccountRepository);
 				siacRMovgestTsSogclasse.setSiacTMovgestT(siacTMovgestTs);
 				siacRMovgestTsSogclasse.setSiacDSoggettoClasse(siacDSoggettoClasse);
 				//salvo sul db:
@@ -6872,7 +6773,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			SiacTAttoAmmFin siacTAttoAmm = getAttoAmministrativo(movimentoGestione, idEnte);
 			if(siacTAttoAmm!=null){
 				SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm  = new SiacRMovgestTsAttoAmmFin();
-				siacRMovgestTsAttoAmm = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsAttoAmm, datiOperazioneDto, siacTAccountRepository);
+				siacRMovgestTsAttoAmm = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsAttoAmm, datiOperazioneDto, siacTAccountRepository);
 				siacRMovgestTsAttoAmm.setSiacTAttoAmm(siacTAttoAmm);
 				siacRMovgestTsAttoAmm.setSiacTMovgestT(siacTMovgestTs);
 				siacRMovgestTsAttoAmm = siacRMovgestTsAttoAmmRepository.saveAndFlush(siacRMovgestTsAttoAmm);
@@ -6896,7 +6797,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		}
 		if(siacTProgramma!=null){
 			SiacRMovgestTsProgrammaFin siacRMovgestTsProgramma  = new SiacRMovgestTsProgrammaFin();
-			siacRMovgestTsProgramma = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsProgramma, datiOperazioneDto, siacTAccountRepository);
+			siacRMovgestTsProgramma = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsProgramma, datiOperazioneDto, siacTAccountRepository);
 			siacRMovgestTsProgramma.setSiacTProgramma(siacTProgramma);
 			siacRMovgestTsProgramma.setSiacTMovgestT(siacTMovgestTs);
 			//salvo sul db:
@@ -6909,7 +6810,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<SiacRClassBaseFin> attributiTClassAggiornati = new ArrayList<SiacRClassBaseFin>();
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			String codeImp = ((ImpegnoAbstract)movimentoGestione).getTipoImpegno().getCodice();
-			SiacRClassBaseFin rClassTipo = salvaAttributoTClass(datiOperazioneDto, attributoInfo, codeImp, Constanti.D_CLASS_TIPO_TIPO_IMPEGNO);
+			SiacRClassBaseFin rClassTipo = salvaAttributoTClass(datiOperazioneDto, attributoInfo, codeImp, CostantiFin.D_CLASS_TIPO_TIPO_IMPEGNO);
 			attributiTClassAggiornati.add(rClassTipo);
 		}
 		
@@ -6944,7 +6845,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			DatiOperazioneDto datiOperazioneDto,SiacTMovgestTsFin padre,Integer idAmbito, Bilancio bilancio){
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 		
-		siacTMovgestTsDaAggiornare = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTMovgestTsDaAggiornare, datiOperazioneDto, siacTAccountRepository);
+		siacTMovgestTsDaAggiornare = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTMovgestTsDaAggiornare, datiOperazioneDto, siacTAccountRepository);
 		
 		siacTMovgestTsDaAggiornare.setMovgestTsDesc(movimentoGestione.getDescrizione());//arriva da front end (ma non e' obbligatorio verra' reso nullable)
 		
@@ -6959,11 +6860,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//DETERMININIAMO SE STIAMO INSERENDO UNA TESTATA O UN SUBIMPEGNO:
 		String codiceTipoTs = null;
 		if(padre!=null){
-			codiceTipoTs = Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO;
+			codiceTipoTs = CostantiFin.MOVGEST_TS_TIPO_SUBIMPEGNO;
 			siacTMovgestTsDaAggiornare.setLivello(2);
 			siacTMovgestTsDaAggiornare.setMovgestTsIdPadre(padre.getMovgestTsId());//TODO aspettiamo che lo modifichino in FK per cambiare l'entity
 		}else{
-			codiceTipoTs = Constanti.MOVGEST_TS_TIPO_TESTATA;
+			codiceTipoTs = CostantiFin.MOVGEST_TS_TIPO_TESTATA;
 			siacTMovgestTsDaAggiornare.setLivello(1);
 		}
 		
@@ -6983,11 +6884,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		SiacTMovgestTsDetFin siacDetIniziale = null;
 		SiacTMovgestTsDetFin siacDetUtilizzabile= null;
 		for(SiacTMovgestTsDetFin det : siacTMovgestTsDaAggiornare.getSiacTMovgestTsDets()){
-			if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(Constanti.MOVGEST_TS_DET_TIPO_INIZIALE)){
+			if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(CostantiFin.MOVGEST_TS_DET_TIPO_INIZIALE)){
 				siacDetIniziale = det;
-			} else if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(Constanti.MOVGEST_TS_DET_TIPO_ATTUALE)) {
+			} else if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE)) {
 				siacDetAttuale = det;
-			} else if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE)) {
+			} else if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE)) {
 				siacDetUtilizzabile = det;
 			}
 		}
@@ -7005,23 +6906,23 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		boolean residuoConModificheImporto = residuo && presenzaModificheImportoValide;
 		//
 		
-		if(Constanti.MOVGEST_STATO_PROVVISORIO.equals(statoPrimaDellaModifica) || modPerPredispozioneConsuntivo){
+		if(CostantiFin.MOVGEST_STATO_PROVVISORIO.equals(statoPrimaDellaModifica) || modPerPredispozioneConsuntivo){
 			//SE E' PROVVISORIO L'IMPORTO INZIALE VIENE ALIMENTATO CON LO STESSO VALORE DI QUELLO ATTUALE
 			if(!residuoConModificheImporto){
-				siacDetIniziale = saveImporto(siacDetIniziale,movimentoGestione.getImportoAttuale(), datiOperazioneDto, siacTMovgestTsDaAggiornare, Constanti.MOVGEST_TS_DET_TIPO_INIZIALE);
+				siacDetIniziale = saveImporto(siacDetIniziale,movimentoGestione.getImportoAttuale(), datiOperazioneDto, siacTMovgestTsDaAggiornare, CostantiFin.MOVGEST_TS_DET_TIPO_INIZIALE);
 			}
 		}
 		//
 		
 		if(!residuoConModificheImporto){
-			siacDetAttuale = saveImporto(siacDetAttuale,movimentoGestione.getImportoAttuale(), datiOperazioneDto, siacTMovgestTsDaAggiornare, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
+			siacDetAttuale = saveImporto(siacDetAttuale,movimentoGestione.getImportoAttuale(), datiOperazioneDto, siacTMovgestTsDaAggiornare, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
 		}
 		
 		
 		//SOLO PER acc e subacc:
 		if(movimentoGestione instanceof Accertamento){
 			
-			siacDetUtilizzabile = saveImporto(siacDetUtilizzabile,((Accertamento) movimentoGestione).getImportoUtilizzabile(), datiOperazioneDto, siacTMovgestTsDaAggiornare, Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
+			siacDetUtilizzabile = saveImporto(siacDetUtilizzabile,((Accertamento) movimentoGestione).getImportoUtilizzabile(), datiOperazioneDto, siacTMovgestTsDaAggiornare, CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
 			
 			
 			//Solo se l�accertamento � di competenza o futuro (annoMovimento >= annoBilancio)
@@ -7031,7 +6932,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 //				BigDecimal importoUtilizzabileNew = importoUtilizzabileOld.add(deltaImporto);
 //				//importo utilizzabile mantenuto uguale all'attuale
 //				siacDetUtilizzabile = saveImporto(siacDetUtilizzabile,importoUtilizzabileNew, 
-//						datiOperazioneDto, siacTMovgestTsDaAggiornare, Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
+//						datiOperazioneDto, siacTMovgestTsDaAggiornare, CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
 //			}
 		}
 		//set che genera refresh dei dati aggiornati:
@@ -7045,7 +6946,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		if(listaStati!=null && listaStati.size()>0){
 			for(SiacRMovgestTsStatoFin siacRMovgestTsStato : listaStati){
 				if(siacRMovgestTsStato.getDataFineValidita()==null && 
-				   !siacRMovgestTsStato.getSiacDMovgestStato().getMovgestStatoCode().equalsIgnoreCase(Constanti.MOVGEST_STATO_ANNULLATO)){
+				   !siacRMovgestTsStato.getSiacDMovgestStato().getMovgestStatoCode().equalsIgnoreCase(CostantiFin.MOVGEST_STATO_ANNULLATO)){
 						//Se valido e non annullato
 						String statoImpegnoCode = determinaStatoImpegno(idEnte, movimentoGestione);
 						SiacRMovgestTsStatoFin newStato = saveStatoImpegno(datiOperazioneDto, statoImpegnoCode,siacTMovgestTsDaAggiornare);
@@ -7061,85 +6962,85 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		}	
 		
 		//FLAG_DA_RIACCERTAMENTO
-		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagDaRiaccertamento(), Constanti.T_ATTR_CODE_FLAG_DA_RIACCERTAMENTO);
+		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagDaRiaccertamento(), CostantiFin.T_ATTR_CODE_FLAG_DA_RIACCERTAMENTO);
 		
 		//FLAG DURC
-		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagSoggettoDurc(), Constanti.T_ATTR_CODE_FLAG_SOGGETTO_DURC);
+		salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagSoggettoDurc(), CostantiFin.T_ATTR_CODE_FLAG_SOGGETTO_DURC);
 		
 		//ACCERTAMENTO con FATTURA PREVISTA (FLAG FATTURA)
 		if(movimentoGestione instanceof AccertamentoAbstract){
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ((AccertamentoAbstract) movimentoGestione).isFlagFattura(), Constanti.T_ATTR_CODE_FLAG_PREVISTA_FATTURA);
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ((AccertamentoAbstract) movimentoGestione).isFlagCorrispettivo(), Constanti.T_ATTR_CODE_FLAG_PREVISTO_CORRISPETTIVO);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ((AccertamentoAbstract) movimentoGestione).isFlagFattura(), CostantiFin.T_ATTR_CODE_FLAG_PREVISTA_FATTURA);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, ((AccertamentoAbstract) movimentoGestione).isFlagCorrispettivo(), CostantiFin.T_ATTR_CODE_FLAG_PREVISTO_CORRISPETTIVO);
 		}
 		
 		//Attiva GSA
-	    salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagAttivaGsa(), Constanti.T_ATTR_CODE_FLAG_ATTIVA_GSA);
+	    salvaAttributoTAttr(attributoInfo, datiOperazioneDto, movimentoGestione.isFlagAttivaGsa(), CostantiFin.T_ATTR_CODE_FLAG_ATTIVA_GSA);
 		
 		//ANNO_FINANZIAMENTO
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			int annoF = ((ImpegnoAbstract) movimentoGestione).getAnnoFinanziamento();
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, String.valueOf(annoF), Constanti.T_ATTR_CODE_ANNO_FINANZIAMENTO);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, String.valueOf(annoF), CostantiFin.T_ATTR_CODE_ANNO_FINANZIAMENTO);
 		}	
 			
 		//NUMERO_ACC_FINANZIAMENTO
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			int numF = ((ImpegnoAbstract) movimentoGestione).getNumeroAccFinanziamento();
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, String.valueOf(numF), Constanti.T_ATTR_CODE_NUMERO_ACC_FINANZIAMENTO);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, String.valueOf(numF), CostantiFin.T_ATTR_CODE_NUMERO_ACC_FINANZIAMENTO);
 		}
 		
 		//ANNO_RIACCERTATO
 			String annoRiaccertato = ""+movimentoGestione.getAnnoRiaccertato();
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoRiaccertato, Constanti.T_ATTR_CODE_ANNO_RIACCERTATO);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoRiaccertato, CostantiFin.T_ATTR_CODE_ANNO_RIACCERTATO);
 			
 		//NUMERO_RIACCERTATO
 			String numeroRiaccertato = ""+movimentoGestione.getNumeroRiaccertato();
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroRiaccertato, Constanti.T_ATTR_CODE_NUMERO_RIACCERTATO);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroRiaccertato, CostantiFin.T_ATTR_CODE_NUMERO_RIACCERTATO);
 				
 		//ANNO_CAPITOLO_ORIGINE
 		if(movimentoGestione.getAnnoCapitoloOrigine()!=0){
 			String annoCapitoloOrigine = ""+movimentoGestione.getAnnoCapitoloOrigine();
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoCapitoloOrigine, Constanti.T_ATTR_CODE_ANNO_CAPITOLO_ORIGINE);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoCapitoloOrigine, CostantiFin.T_ATTR_CODE_ANNO_CAPITOLO_ORIGINE);
 		}
 				
 		//NUMERO_CAPITOLO_ORIGINE	
 		if(movimentoGestione.getNumeroCapitoloOrigine()!=0){
 			String numeroCapitoloOrigine = ""+movimentoGestione.getNumeroCapitoloOrigine();
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroCapitoloOrigine, Constanti.T_ATTR_CODE_NUMERO_CAPITOLO_ORIGINE);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroCapitoloOrigine, CostantiFin.T_ATTR_CODE_NUMERO_CAPITOLO_ORIGINE);
 		}
 		
 		/******************************************************************************************************************************/
 		//ANNO_ORIGINE_PLUR
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			Integer annoImpOrigine = ( (ImpegnoAbstract) movimentoGestione).getAnnoImpegnoOrigine();
-				salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoImpOrigine, Constanti.T_ATTR_CODE_ANNO_ORIGINE_PLUR);
+				salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoImpOrigine, CostantiFin.T_ATTR_CODE_ANNO_ORIGINE_PLUR);
 		}else if(movimentoGestione instanceof AccertamentoAbstract){
 			Integer annoImpOrigine = ( (AccertamentoAbstract) movimentoGestione).getAnnoAccertamentoOrigine();
-				salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoImpOrigine, Constanti.T_ATTR_CODE_ANNO_ORIGINE_PLUR);
+				salvaAttributoTAttr(attributoInfo, datiOperazioneDto, annoImpOrigine, CostantiFin.T_ATTR_CODE_ANNO_ORIGINE_PLUR);
 			}
 		//NUMERO_ORIGINE_PLUR
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			Integer numImpOrigine = ( (ImpegnoAbstract) movimentoGestione).getNumImpegnoOrigine();
-				salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numImpOrigine, Constanti.T_ATTR_CODE_NUMERO_ORIGINE_PLUR);
+				salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numImpOrigine, CostantiFin.T_ATTR_CODE_NUMERO_ORIGINE_PLUR);
 		}else if(movimentoGestione instanceof AccertamentoAbstract){
 			Integer numImpOrigine = ( (AccertamentoAbstract) movimentoGestione).getNumAccertamentoOrigine();
-				salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numImpOrigine, Constanti.T_ATTR_CODE_NUMERO_ORIGINE_PLUR);
+				salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numImpOrigine, CostantiFin.T_ATTR_CODE_NUMERO_ORIGINE_PLUR);
 			}
 		
 		//NUMERO_ARTICOLO_ORIGINE	
 		if(movimentoGestione.getNumeroArticoloOrigine()!=0){
 			String numeroArticoloOrigine = ""+movimentoGestione.getNumeroArticoloOrigine();
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroArticoloOrigine, Constanti.T_ATTR_CODE_NUMERO_ARTICOLO_ORIGINE);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroArticoloOrigine, CostantiFin.T_ATTR_CODE_NUMERO_ARTICOLO_ORIGINE);
 		}
 				
 		//NUMERO_UEB_ORIGINE	
 		if(movimentoGestione.getNumeroUEBOrigine()!=0){
 			String numeroUEBOrigine = ""+movimentoGestione.getNumeroUEBOrigine();
-			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroUEBOrigine, Constanti.T_ATTR_CODE_NUMERO_UEB_ORIGINE);
+			salvaAttributoTAttr(attributoInfo, datiOperazioneDto, numeroUEBOrigine, CostantiFin.T_ATTR_CODE_NUMERO_UEB_ORIGINE);
 		}
 		
 		//EVENTUALE SOGGETTO CREDITORE:
 		Soggetto soggetto = movimentoGestione.getSoggetto();
-		if(soggetto!=null && !StringUtils.isEmpty(soggetto.getCodiceSoggetto())){
+		if(soggetto!=null && !StringUtilsFin.isEmpty(soggetto.getCodiceSoggetto())){
 			SiacTSoggettoFin siacTSoggetto = getSoggetto(movimentoGestione, datiOperazioneDto);
 			if(siacTSoggetto!=null){
 				Integer idMovGestTs = siacTMovgestTsDaAggiornare.getMovgestTsId();
@@ -7153,7 +7054,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						} else {
 							vecchioSog.setSiacTSoggetto(siacTSoggetto);
 							DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.MODIFICA);
-							vecchioSog = DatiOperazioneUtils.impostaDatiOperazioneLogin(vecchioSog, datiOperazione, siacTAccountRepository);
+							vecchioSog = DatiOperazioneUtil.impostaDatiOperazioneLogin(vecchioSog, datiOperazione, siacTAccountRepository);
 							//salvo sul db:
 							SiacRMovgestTsSogFin newSoggetto = siacRMovgestTsSogRepository.saveAndFlush(vecchioSog);
 							siacTMovgestTsDaAggiornare.setSiacRMovgestTsSogs(toList(newSoggetto));
@@ -7165,7 +7066,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					if(siacTSoggetto!=null){
 						SiacRMovgestTsSogFin siacRMovgestTsSog = new SiacRMovgestTsSogFin();
 						DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.INSERIMENTO);						
-						siacRMovgestTsSog = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSog, datiOperazione, siacTAccountRepository);
+						siacRMovgestTsSog = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSog, datiOperazione, siacTAccountRepository);
 						siacRMovgestTsSog.setSiacTMovgestT(siacTMovgestTsDaAggiornare);
 						siacRMovgestTsSog.setSiacTSoggetto(siacTSoggetto);
 						//salvo sul db:
@@ -7182,7 +7083,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				SiacRMovgestTsSogFin vecchioSog = lista.get(0);
 				if(vecchioSog!=null){
 						DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.CANCELLAZIONE_LOGICA_RECORD);
-						vecchioSog = DatiOperazioneUtils.impostaDatiOperazioneLogin(vecchioSog, datiOperazione, siacTAccountRepository);
+						vecchioSog = DatiOperazioneUtil.impostaDatiOperazioneLogin(vecchioSog, datiOperazione, siacTAccountRepository);
 						//salvo sul db:
 						siacRMovgestTsSogRepository.saveAndFlush(vecchioSog);
 				}
@@ -7194,7 +7095,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		//EVENTUALE CLASSE SOGGETTO:
 		ClasseSoggetto classeSoggetto = movimentoGestione.getClasseSoggetto();
-		if(classeSoggetto!=null && !StringUtils.isEmpty(classeSoggetto.getCodice())){
+		if(classeSoggetto!=null && !StringUtilsFin.isEmpty(classeSoggetto.getCodice())){
 			SiacDSoggettoClasseFin siacDSoggettoClasse = getSoggettoClasse(movimentoGestione, datiOperazioneDto);
 			if(siacDSoggettoClasse!=null){
 				Integer idMovGestTs = siacTMovgestTsDaAggiornare.getMovgestTsId();
@@ -7208,7 +7109,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						} else {
 							vecchioSogClasse.setSiacDSoggettoClasse(siacDSoggettoClasse);
 							DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.MODIFICA);
-							vecchioSogClasse = DatiOperazioneUtils.impostaDatiOperazioneLogin(vecchioSogClasse, datiOperazione, siacTAccountRepository);
+							vecchioSogClasse = DatiOperazioneUtil.impostaDatiOperazioneLogin(vecchioSogClasse, datiOperazione, siacTAccountRepository);
 							//salvo sul db:
 							SiacRMovgestTsSogclasseFin newSogClass = siacRMovgestTsSogClasseRepository.saveAndFlush(vecchioSogClasse);
 							siacTMovgestTsDaAggiornare.setSiacRMovgestTsSogclasses(toList(newSogClass));
@@ -7220,7 +7121,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					if(siacDSoggettoClasse!=null){
 						SiacRMovgestTsSogclasseFin siacRMovgestTsSogclasse = new SiacRMovgestTsSogclasseFin();
 						DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.INSERIMENTO);
-						siacRMovgestTsSogclasse = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSogclasse, datiOperazione, siacTAccountRepository);
+						siacRMovgestTsSogclasse = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSogclasse, datiOperazione, siacTAccountRepository);
 						siacRMovgestTsSogclasse.setSiacTMovgestT(siacTMovgestTsDaAggiornare);
 						siacRMovgestTsSogclasse.setSiacDSoggettoClasse(siacDSoggettoClasse);
 						//salvo sul db:
@@ -7238,7 +7139,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				SiacRMovgestTsSogclasseFin vecchioSogClasse = lista.get(0);
 				if(vecchioSogClasse!=null){
 						DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.CANCELLAZIONE_LOGICA_RECORD);
-						vecchioSogClasse = DatiOperazioneUtils.impostaDatiOperazioneLogin(vecchioSogClasse, datiOperazione, siacTAccountRepository);
+						vecchioSogClasse = DatiOperazioneUtil.impostaDatiOperazioneLogin(vecchioSogClasse, datiOperazione, siacTAccountRepository);
 						//salvo sul db:
 						siacRMovgestTsSogClasseRepository.saveAndFlush(vecchioSogClasse);
 				}
@@ -7302,7 +7203,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							
 							vecchioAtto.setSiacTAttoAmm(siacTAttoAmm);
 							DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.MODIFICA);
-							vecchioAtto = DatiOperazioneUtils.impostaDatiOperazioneLogin(vecchioAtto, datiOperazione, siacTAccountRepository);
+							vecchioAtto = DatiOperazioneUtil.impostaDatiOperazioneLogin(vecchioAtto, datiOperazione, siacTAccountRepository);
 							//salvo sul db:
 							
 							log.debug(""," Prima del salvataggio per ts ["+idMovGestTs +"] salvo atto [" + vecchioAtto.getSiacTAttoAmm().getUid()+"] " );
@@ -7319,7 +7220,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					if(siacTAttoAmm!=null){
 						SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm  = new SiacRMovgestTsAttoAmmFin();
 						DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.INSERIMENTO);
-						siacRMovgestTsAttoAmm = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsAttoAmm, datiOperazione, siacTAccountRepository);
+						siacRMovgestTsAttoAmm = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsAttoAmm, datiOperazione, siacTAccountRepository);
 						siacRMovgestTsAttoAmm.setSiacTAttoAmm(siacTAttoAmm);
 						siacRMovgestTsAttoAmm.setSiacTMovgestT(siacTMovgestTsDaAggiornare);
 						//salvo sul db:
@@ -7337,7 +7238,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				SiacRMovgestTsAttoAmmFin vecchioAtto = lista.get(0);
 				if(vecchioAtto!=null){
 					DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.CANCELLAZIONE_LOGICA_RECORD);
-					vecchioAtto = DatiOperazioneUtils.impostaDatiOperazioneLogin(vecchioAtto, datiOperazione, siacTAccountRepository);
+					vecchioAtto = DatiOperazioneUtil.impostaDatiOperazioneLogin(vecchioAtto, datiOperazione, siacTAccountRepository);
 					//salvo sul db:
 					siacRMovgestTsAttoAmmRepository.saveAndFlush(vecchioAtto);
 				}
@@ -7361,7 +7262,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						//sosstituisco il vecchio programma con il nuovo
 						vecchioProgramma.setSiacTProgramma(siacTProgramma);
 						DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.MODIFICA);
-						vecchioProgramma = DatiOperazioneUtils.impostaDatiOperazioneLogin(vecchioProgramma, datiOperazione, siacTAccountRepository);
+						vecchioProgramma = DatiOperazioneUtil.impostaDatiOperazioneLogin(vecchioProgramma, datiOperazione, siacTAccountRepository);
 						//salvo sul db:
 						SiacRMovgestTsProgrammaFin newProgramma = siacRMovgestTsProgrammaRepository.saveAndFlush(vecchioProgramma);			
 						siacTMovgestTsDaAggiornare.setSiacRMovgestTsProgrammas(toList(newProgramma));
@@ -7372,7 +7273,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				if(siacTProgramma!=null){
 					SiacRMovgestTsProgrammaFin siacRMovgestTsProgramma  = new SiacRMovgestTsProgrammaFin();
 					DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.INSERIMENTO);
-					siacRMovgestTsProgramma = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsProgramma, datiOperazione, siacTAccountRepository);
+					siacRMovgestTsProgramma = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsProgramma, datiOperazione, siacTAccountRepository);
 					siacRMovgestTsProgramma.setSiacTProgramma(siacTProgramma);
 					siacRMovgestTsProgramma.setSiacTMovgestT(siacTMovgestTsDaAggiornare);
 					//salvo sul db:
@@ -7383,14 +7284,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		} else {
 			//Eliminazione del programma vecchio
 			if(movimentoGestione instanceof Impegno){
-				if(((Impegno) movimentoGestione).getProgetto() == null || StringUtils.isEmpty(((Impegno) movimentoGestione).getProgetto().getCodice())){
+				if(((Impegno) movimentoGestione).getProgetto() == null || StringUtilsFin.isEmpty(((Impegno) movimentoGestione).getProgetto().getCodice())){
 					Integer idMovGestTs = siacTMovgestTsDaAggiornare.getMovgestTsId();
 					List<SiacRMovgestTsProgrammaFin> lista = siacRMovgestTsProgrammaRepository.findByMovgestTs(idEnte, datiOperazioneDto.getTs(), idMovGestTs);
 					if(lista!=null && lista.size()>0){
 						SiacRMovgestTsProgrammaFin vecchioProgramma = lista.get(0);
 						if(vecchioProgramma!=null){
 							DatiOperazioneDto datiOperazione = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.CANCELLAZIONE_LOGICA_RECORD);
-							vecchioProgramma = DatiOperazioneUtils.impostaDatiOperazioneLogin(vecchioProgramma, datiOperazione, siacTAccountRepository);
+							vecchioProgramma = DatiOperazioneUtil.impostaDatiOperazioneLogin(vecchioProgramma, datiOperazione, siacTAccountRepository);
 							//salvo sul db:
 							siacRMovgestTsProgrammaRepository.saveAndFlush(vecchioProgramma);
 						}
@@ -7405,7 +7306,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<SiacRClassBaseFin> attributiTClassAggiornati = new ArrayList<SiacRClassBaseFin>();
 		if(movimentoGestione instanceof ImpegnoAbstract){
 			String codeImp = ((ImpegnoAbstract)movimentoGestione).getTipoImpegno().getCodice();
-			SiacRClassBaseFin rClassTipo = salvaAttributoTClass(datiOperazioneDto, attributoInfo, codeImp, Constanti.D_CLASS_TIPO_TIPO_IMPEGNO);
+			SiacRClassBaseFin rClassTipo = salvaAttributoTClass(datiOperazioneDto, attributoInfo, codeImp, CostantiFin.D_CLASS_TIPO_TIPO_IMPEGNO);
 			attributiTClassAggiornati.add(rClassTipo);
 		}	
 		
@@ -7433,7 +7334,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			siacTMovgestTsDet = new SiacTMovgestTsDetFin();
 		}
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
-		siacTMovgestTsDet = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTMovgestTsDet, datiOperazioneDto, siacTAccountRepository);
+		siacTMovgestTsDet = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTMovgestTsDet, datiOperazioneDto, siacTAccountRepository);
 		if(siacTMovgestTs!=null){
 			//in update si puo' passare null
 			siacTMovgestTsDet.setSiacTMovgestT(siacTMovgestTs);
@@ -7488,21 +7389,21 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				SiacRMovgestTsStatoFin statoOld = statoOldL.get(0);
 				if(statoOld!=null){
 					String codeOld = statoOld.getSiacDMovgestStato().getMovgestStatoCode();
-					if(!StringUtils.isEmpty(statoCode) && statoCode.equals(codeOld)){
+					if(!StringUtilsFin.isEmpty(statoCode) && statoCode.equals(codeOld)){
 						//se sono uguali non c'e' nessun passaggio di stato
 						return statoOld;
 					} else {
-						DatiOperazioneUtils.cancellaRecord(statoOld, siacRMovgestTsStatoRepository, datiOperazioneDto, siacTAccountRepository);
+						DatiOperazioneUtil.cancellaRecord(statoOld, siacRMovgestTsStatoRepository, datiOperazioneDto, siacTAccountRepository);
 					}
 				}
 			}
 		}
 		//
 		SiacRMovgestTsStatoFin siacRMovgestTsStato = new SiacRMovgestTsStatoFin();
-		if(!StringUtils.isEmpty(statoCode)){
+		if(!StringUtilsFin.isEmpty(statoCode)){
 			SiacDMovgestStatoFin siacDMovgestStato = siacDMovgestStatoRepository.findValidoByCode(idEnte, statoCode, datiOperazioneDto.getTs()).get(0);
 			datiOperazioneDto.setOperazione(Operazione.INSERIMENTO);//perche' in siac_r_movgest_ts_stato INSERISCO
-			siacRMovgestTsStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsStato, datiOperazioneDto, siacTAccountRepository);
+			siacRMovgestTsStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsStato, datiOperazioneDto, siacTAccountRepository);
 			siacRMovgestTsStato.setSiacDMovgestStato(siacDMovgestStato);
 			siacRMovgestTsStato.setSiacTMovgestT(siacTMovgestTs);
 			//salvo sul db:
@@ -7529,11 +7430,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			isSub = true;
 		}
 		AttoAmministrativo attoAmm = impegno.getAttoAmministrativo();
-		String statoImpegno = Constanti.MOVGEST_STATO_PROVVISORIO;
+		String statoImpegno = CostantiFin.MOVGEST_STATO_PROVVISORIO;
 		
 		String statoProvvedimento = null;
 		
-		if(attoAmm!=null && !StringUtils.isEmpty(attoAmm.getStatoOperativo())){
+		if(attoAmm!=null && !StringUtilsFin.isEmpty(attoAmm.getStatoOperativo())){
 			 statoProvvedimento = attoAmm.getStatoOperativo();
 		}else if(impegno.getAttoAmmAnno()!=null && impegno.getAttoAmmNumero()!=null && impegno.getAttoAmmTipoAtto()!=null){
 			
@@ -7542,7 +7443,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			SiacTAttoAmmFin attoTrovato= getSiacTAttoAmmFromAttoAmministrativo(attoAmmSupport, idEnte);
 			
 			List<SiacRAttoAmmStatoFin> listaRAttoAmmStato = attoTrovato.getSiacRAttoAmmStatos();
-			SiacRAttoAmmStatoFin rAttoStato = DatiOperazioneUtils.getValido(listaRAttoAmmStato, null);
+			SiacRAttoAmmStatoFin rAttoStato = DatiOperazioneUtil.getValido(listaRAttoAmmStato, null);
 			statoProvvedimento=rAttoStato.getSiacDAttoAmmStato().getAttoammStatoCode();
 			
 			//stato da siacTAttoAmmRepository
@@ -7563,15 +7464,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		}
 
 		if(statoProvvedimento!=null){
-			if(statoProvvedimento.equals(Constanti.ATTO_AMM_STATO_PROVVISORIO)){
-				statoImpegno = Constanti.MOVGEST_STATO_PROVVISORIO;
+			if(statoProvvedimento.equals(CostantiFin.ATTO_AMM_STATO_PROVVISORIO)){
+				statoImpegno = CostantiFin.MOVGEST_STATO_PROVVISORIO;
 			} else {
-				boolean codiceSoggettoValorizzato = impegno.getSoggetto()!=null && !StringUtils.isEmpty(impegno.getSoggetto().getCodiceSoggetto());
-				boolean classeValorizzato = impegno.getClasseSoggetto()!=null && !StringUtils.isEmpty(impegno.getClasseSoggetto().getCodice());
+				boolean codiceSoggettoValorizzato = impegno.getSoggetto()!=null && !StringUtilsFin.isEmpty(impegno.getSoggetto().getCodiceSoggetto());
+				boolean classeValorizzato = impegno.getClasseSoggetto()!=null && !StringUtilsFin.isEmpty(impegno.getClasseSoggetto().getCodice());
 				if(isSub || codiceSoggettoValorizzato || classeValorizzato){
-					statoImpegno = Constanti.MOVGEST_STATO_DEFINITIVO;
+					statoImpegno = CostantiFin.MOVGEST_STATO_DEFINITIVO;
 				} else {
-					statoImpegno = Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE;
+					statoImpegno = CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE;
 				}
 			}
 		}
@@ -7625,7 +7526,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		if(listaSubImpegni!=null && listaSubImpegni.size()>0){
 			for(I subImpegnoIterato : listaSubImpegni){
 				//Se non ha un uid vuol dire che e' nuovo
-				if( (subImpegnoIterato.getNumero()==null || subImpegnoIterato.getNumero().intValue()==0) && subImpegnoIterato.getUid()==0){
+				if( (subImpegnoIterato.getNumeroBigDecimal()==null || subImpegnoIterato.getNumeroBigDecimal().intValue()==0) && subImpegnoIterato.getUid()==0){
 					subImpegniDaInserire.add(subImpegnoIterato);
 				} else {
 					listaIdRicevutiDalFe.add(subImpegnoIterato.getUid());
@@ -7675,15 +7576,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 		SiacTSoggettoFin siacTSoggettoNew = getSoggetto(subImpegno, datiOperazioneDto);
 		List<SiacRMovgestTsSogFin> listSiacRMovgestTsSog = siacRMovgestTsSogRepository.findValidoMovGestTsSogByIdMovGestAndEnte(idEnte, now, idMovgestTs);
-		SiacRMovgestTsSogFin siacRMovgestTsSogOld = CommonUtils.getFirst(listSiacRMovgestTsSog);
-		if(!CommonUtils.entrambiNullOrEntrambiIstanziati(siacRMovgestTsSogOld, siacTSoggettoNew)){
+		SiacRMovgestTsSogFin siacRMovgestTsSogOld = CommonUtil.getFirst(listSiacRMovgestTsSog);
+		if(!CommonUtil.entrambiNullOrEntrambiIstanziati(siacRMovgestTsSogOld, siacTSoggettoNew)){
 			//uno dei due e' null e l'altro non lo e' --> sono sicuramenti diversi
 			isModificato = true;
 			return isModificato;
-		} else if(CommonUtils.entrambiDiversiDaNull(siacRMovgestTsSogOld, siacTSoggettoNew)){
+		} else if(CommonUtil.entrambiDiversiDaNull(siacRMovgestTsSogOld, siacTSoggettoNew)){
 			//c'e' la possibilita' che ci sia una modifica
 			SiacTSoggettoFin siacTSoggettoOld = siacRMovgestTsSogOld.getSiacTSoggetto();
-			if(!DatiOperazioneUtils.hannoLoStessoUid(siacTSoggettoOld, siacTSoggettoNew)){
+			if(!DatiOperazioneUtil.hannoLoStessoUid(siacTSoggettoOld, siacTSoggettoNew)){
 				isModificato = true;
 				return isModificato;
 			}
@@ -7710,16 +7611,16 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		//EVENTUALE ATTO AMMINISTRATIVO:
 		List<SiacRMovgestTsAttoAmmFin> listSiacRMovgestTsAttoAmm = siacRMovgestTsAttoAmmRepository.findValidoByMovgestTs(idEnte, now, idMovgestTs);
-		SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = CommonUtils.getFirst(listSiacRMovgestTsAttoAmm);
+		SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = CommonUtil.getFirst(listSiacRMovgestTsAttoAmm);
 		SiacTAttoAmmFin siacTAttoAmmNew =  getAttoAmministrativo(subImpegno, idEnte);
-		if(!CommonUtils.entrambiNullOrEntrambiIstanziati(siacRMovgestTsAttoAmm, siacTAttoAmmNew)){
+		if(!CommonUtil.entrambiNullOrEntrambiIstanziati(siacRMovgestTsAttoAmm, siacTAttoAmmNew)){
 			//uno dei due e' null e l'altro non lo e' --> sono sicuramenti diversi
 			isModificato = true;
 			return isModificato;
-		} else if(CommonUtils.entrambiDiversiDaNull(siacRMovgestTsAttoAmm, siacTAttoAmmNew)){
+		} else if(CommonUtil.entrambiDiversiDaNull(siacRMovgestTsAttoAmm, siacTAttoAmmNew)){
 			//c'e' la possibilita' che ci sia una modifica
 			SiacTAttoAmmFin siacTAttoAmmOld = siacRMovgestTsAttoAmm.getSiacTAttoAmm();
-			if(!DatiOperazioneUtils.hannoLoStessoUid(siacTAttoAmmOld, siacTAttoAmmNew)){
+			if(!DatiOperazioneUtil.hannoLoStessoUid(siacTAttoAmmOld, siacTAttoAmmNew)){
 				isModificato = true;
 				return isModificato;
 			}
@@ -7737,17 +7638,17 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		String descrizioneNew = subImpegno.getDescrizione();
 
 		String descrizioneOld = siacTMovgestTsSubImp.getMovgestTsDesc();
-		if(!StringUtils.sonoUguali(descrizioneNew, descrizioneOld)){
+		if(!StringUtilsFin.sonoUguali(descrizioneNew, descrizioneOld)){
 			isModificato = true;
 			return isModificato;
 		}
 		
 		//IMPORTO:
-		List<SiacTMovgestTsDetFin> importoAttualeList = siacTMovgestTsDetRepository.findValidoByTipo(idEnte, now, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, idMovgestTs);
-		SiacTMovgestTsDetFin siacTMovgestTsDet = CommonUtils.getFirst(importoAttualeList);
+		List<SiacTMovgestTsDetFin> importoAttualeList = siacTMovgestTsDetRepository.findValidoByTipo(idEnte, now, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, idMovgestTs);
+		SiacTMovgestTsDetFin siacTMovgestTsDet = CommonUtil.getFirst(importoAttualeList);
 		BigDecimal importoOld = siacTMovgestTsDet.getMovgestTsDetImporto();
 		BigDecimal importoNew = subImpegno.getImportoAttuale();
-		if(!StringUtils.sonoUguali(importoOld, importoNew)){
+		if(!StringUtilsFin.sonoUguali(importoOld, importoNew)){
 			isModificato = true;
 			return isModificato;
 		}
@@ -7755,14 +7656,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//SCADENZA:
 		Timestamp dataScadenzaNew = TimingUtils.convertiDataInTimeStamp(subImpegno.getDataScadenza());
 		Timestamp dataScadenzaOld = siacTMovgestTsSubImp.getMovgestTsScadenzaData();
-		if(!StringUtils.sonoUguali(dataScadenzaNew, dataScadenzaOld)){
+		if(!StringUtilsFin.sonoUguali(dataScadenzaNew, dataScadenzaOld)){
 			isModificato = true;
 			return isModificato;
 		}
 		
 		if(subImpegno instanceof SubImpegno){
 			//CIG:
-			isModificato = isAttributoModificato(((SubImpegno)subImpegno).getCig(), Constanti.T_ATTR_CODE_CIG, datiOperazioneDto, attributoInfo);
+			isModificato = isAttributoModificato(((SubImpegno)subImpegno).getCig(), CostantiFin.T_ATTR_CODE_CIG, datiOperazioneDto, attributoInfo);
 			if(isModificato){
 				return isModificato;
 			}
@@ -7813,13 +7714,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		String tipoMovimentoTrattato = "";
 		if(impegno instanceof Impegno){
-			tipoMovimentoTrattato = Constanti.MOVGEST_TIPO_IMPEGNO;
+			tipoMovimentoTrattato = CostantiFin.MOVGEST_TIPO_IMPEGNO;
 		}else if(impegno instanceof Accertamento){
-			tipoMovimentoTrattato = Constanti.MOVGEST_TIPO_ACCERTAMENTO;
+			tipoMovimentoTrattato = CostantiFin.MOVGEST_TIPO_ACCERTAMENTO;
 		}
 		
 		Integer annoInteger = impegno.getAnnoMovimento();
-		BigDecimal numero = impegno.getNumero();
+		BigDecimal numero = impegno.getNumeroBigDecimal();
 		
 		
 				
@@ -7869,7 +7770,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//////////////////////
 		
 		//EVENTUALE RIBALTAMENTO ALL'ANNO DOPO:
-		SiacTMovgestFin siacTMovgestTsResiduo = individuaMovGestResiduo(datiOperazioneDto, impegno.getAnnoMovimento(), impegno.getNumero().intValue(),tipoMovimentoTrattato);
+		SiacTMovgestFin siacTMovgestTsResiduo = individuaMovGestResiduo(datiOperazioneDto, impegno.getAnnoMovimento(), impegno.getNumeroBigDecimal().intValue(),tipoMovimentoTrattato);
 		Integer chiaveCapitoloResiduo = null;
 		if(siacTMovgestTsResiduo!=null){
 			chiaveCapitoloResiduo = EntityToModelConverter.getChiaveCapitolo(siacTMovgestTsResiduo);
@@ -7889,10 +7790,10 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		AccertamentoDaVincolareInfoDto impegnoInModificaInfoDto = new AccertamentoDaVincolareInfoDto();
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 		
-		String tipoMovimentoTrattato = Constanti.MOVGEST_TIPO_ACCERTAMENTO;
+		String tipoMovimentoTrattato = CostantiFin.MOVGEST_TIPO_ACCERTAMENTO;
 		
 		Integer annoInteger = accertamento.getAnnoMovimento();
-		BigDecimal numero = accertamento.getNumero();
+		BigDecimal numero = accertamento.getNumeroBigDecimal();
 		
 		SiacTMovgestFin siacTMovgest = null;
 		List<SiacTMovgestFin> siacTMovgestS = siacTMovgestRepository.findByEnteAnnoNumeroBilancioValido(idEnte, annoInteger, numero, tipoMovimentoTrattato, String.valueOf(bilancio.getAnno()),getNow());
@@ -7910,7 +7811,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		//////////////////////
 		
 		//EVENTUALE RIBALTAMENTO ALL'ANNO DOPO:
-		SiacTMovgestFin siacTMovgestResiduo = individuaMovGestResiduo(datiOperazioneDto, accertamento.getAnnoMovimento(), accertamento.getNumero().intValue(),tipoMovimentoTrattato);
+		SiacTMovgestFin siacTMovgestResiduo = individuaMovGestResiduo(datiOperazioneDto, accertamento.getAnnoMovimento(), accertamento.getNumeroBigDecimal().intValue(),tipoMovimentoTrattato);
 		Integer chiaveCapitoloResiduo = null;
 		if(siacTMovgestResiduo!=null){
 			chiaveCapitoloResiduo = EntityToModelConverter.getChiaveCapitolo(siacTMovgestResiduo);
@@ -7979,15 +7880,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<SubAccertamento> elencoSubAccertamenti = null;
 		String tipoMovimentoTrattato = "";
 		if(impegno instanceof Impegno){
-			tipoMovimentoTrattato = Constanti.MOVGEST_TIPO_IMPEGNO;
+			tipoMovimentoTrattato = CostantiFin.MOVGEST_TIPO_IMPEGNO;
 			elencoSubImpegni = ((Impegno) impegno).getElencoSubImpegni();
 		}else if(impegno instanceof Accertamento){
-			tipoMovimentoTrattato = Constanti.MOVGEST_TIPO_ACCERTAMENTO;
+			tipoMovimentoTrattato = CostantiFin.MOVGEST_TIPO_ACCERTAMENTO;
 			elencoSubAccertamenti = ((Accertamento) impegno).getElencoSubAccertamenti();
 		}
 		
 		Integer annoInteger = impegno.getAnnoMovimento();
-		BigDecimal numero = impegno.getNumero();
+		BigDecimal numero = impegno.getNumeroBigDecimal();
 		
 		
 		SiacTMovgestFin siacTMovgest = null;
@@ -8074,8 +7975,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			for(Sub subImpegnoToInsert : subImpegniDaInserire){
 				String code = Integer.toString(numermoSubImpegno);
 				//Se sono in doppia gestione devo inserire un sub ribaltato con un numero specifico
-				if (impegnoInModificaInfoDto.isDoppiaGestione() && subImpegnoToInsert.getNumero()!=null) {
-					code=subImpegnoToInsert.getNumero().toString();
+				if (impegnoInModificaInfoDto.isDoppiaGestione() && subImpegnoToInsert.getNumeroBigDecimal()!=null) {
+					code=subImpegnoToInsert.getNumeroBigDecimal().toString();
 				}
 				datiOperazioneDto.setOperazione(Operazione.INSERIMENTO);
 				if(impegno instanceof ImpegnoAbstract){
@@ -8108,7 +8009,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 
 		//da eliminare:
 		for(SiacTMovgestTsFin iterato : subImpegniDaEliminare){
-			DatiOperazioneUtils.cancellaRecord(iterato, siacTMovgestTsRepository, datiOperazioneDto, siacTAccountRepository);
+			DatiOperazioneUtil.cancellaRecord(iterato, siacTMovgestTsRepository, datiOperazioneDto, siacTAccountRepository);
 			String statoImpegnoCode = null;//NON ESISTE LO STATO CANCELLATO
 			saveStatoImpegno(datiOperazioneInserimento, statoImpegnoCode,iterato);
 			eliminati.add(iterato);
@@ -8146,8 +8047,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 		 if(subImpegno.getUid()>0){
 			siacTMovgestTsSubImpegno = siacTMovgestTsRepository.findOne(subImpegno.getUid());
-		} else if(subImpegno.getNumero()!=null && subImpegno.getNumero().intValue()>0){
-			String codeIterato = subImpegno.getNumero().toString();
+		} else if(subImpegno.getNumeroBigDecimal()!=null && subImpegno.getNumeroBigDecimal().intValue()>0){
+			String codeIterato = subImpegno.getNumeroBigDecimal().toString();
 			List<SiacTMovgestTsFin> l = siacTMovgestTsRepository.findFiglioByCode(idEnte, datiOperazioneDto.getTs(), testataImpegno.getMovgestTsId(), codeIterato);
 			if(l!=null && l.size()>0){
 				siacTMovgestTsSubImpegno = l.get(0);
@@ -8176,7 +8077,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		EsitoAggiornamentoMovimentoGestioneDto esito=new EsitoAggiornamentoMovimentoGestioneDto();
 		
 		Integer annoMovimento = impegnoDaAggiornare.getAnnoMovimento();
-		BigDecimal numeroMovimento = impegnoDaAggiornare.getNumero();
+		BigDecimal numeroMovimento = impegnoDaAggiornare.getNumeroBigDecimal();
 		
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getUid();
 		
@@ -8290,7 +8191,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				
 			impegnoAggiornato.setListaModificheMovimentoGestioneSpesa(movimentiImpegno);
 			for(SiacTMovgestTsDetFin det : siacTMovgestTsAggiornato.getSiacTMovgestTsDets()){
-				if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(Constanti.MOVGEST_TS_DET_TIPO_ATTUALE)){
+				if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE)){
 					impegnoAggiornato.setImportoAttuale(det.getMovgestTsDetImporto());
 				}
 			}
@@ -8308,7 +8209,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			impegnoAggiornato = EntityToModelConverter.siacTMovgestEntityToImpegnoModel(siacTMovgestAggiornato, impegnoAggiornato, null);
 			
 			////////
-			List<ST> listaSubRicostruita = componiListaSubPerResponse((List<ST>) subImpegnoList, Constanti.MOVGEST_TIPO_IMPEGNO, richiedente, datiOperazioneDto, inseriti, aggiornati, 
+			List<ST> listaSubRicostruita = componiListaSubPerResponse((List<ST>) subImpegnoList, CostantiFin.MOVGEST_TIPO_IMPEGNO, richiedente, datiOperazioneDto, inseriti, aggiornati, 
 					invariati, annoMovimento, numeroMovimento, siacTMovgestAggiornato);
 			impegnoAggiornato.setElencoSubImpegni((List<SubImpegno>) listaSubRicostruita);
 			///////////
@@ -8321,7 +8222,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 			accertamentoAggiornato.setListaModificheMovimentoGestioneEntrata(movimentiAccertamenti);
 			for(SiacTMovgestTsDetFin det : siacTMovgestTsAggiornato.getSiacTMovgestTsDets()){
-				if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(Constanti.MOVGEST_TS_DET_TIPO_ATTUALE)){
+				if(det.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equalsIgnoreCase(CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE)){
 					accertamentoAggiornato.setImportoAttuale(det.getMovgestTsDetImporto());
 				}
 			}
@@ -8339,7 +8240,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			accertamentoAggiornato = EntityToModelConverter.siacTMovgestEntityToAccertamentoModel(siacTMovgestAggiornato, accertamentoAggiornato );
 			
 			////////
-			List<ST> listaSubRicostruita = componiListaSubPerResponse((List<ST>) subAccertamentoList, Constanti.MOVGEST_TIPO_ACCERTAMENTO, richiedente, datiOperazioneDto, inseriti, aggiornati, 
+			List<ST> listaSubRicostruita = componiListaSubPerResponse((List<ST>) subAccertamentoList, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, richiedente, datiOperazioneDto, inseriti, aggiornati, 
 					invariati, annoMovimento, numeroMovimento, siacTMovgestAggiornato);
 			accertamentoAggiornato.setElencoSubAccertamenti((List<SubAccertamento>) listaSubRicostruita);
 			///////////
@@ -8509,12 +8410,12 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		if(movimentoInAggiornamento instanceof Impegno){
 			ModificaMovimentoGestioneSpesaInfoDto valutazioneModMov = valutaModificheMovimentoSpesa(((Impegno)movimentoInAggiornamento).getListaModificheMovimentoGestioneSpesa(),datiOperazioneDto);
 			List<ModificaMovimentoGestioneSpesaInfoDto> valutazioneModMovSubs = valutaModificheMovimentoSubImp(((Impegno)movimentoInAggiornamento).getElencoSubImpegni(), idEnte, datiOperazioneDto);
-			List<ModificaMovimentoGestioneSpesaInfoDto> valutazioneModMovAll = CommonUtils.toList( CommonUtils.toList(valutazioneModMov),valutazioneModMovSubs);
+			List<ModificaMovimentoGestioneSpesaInfoDto> valutazioneModMovAll = CommonUtil.toList( CommonUtil.toList(valutazioneModMov),valutazioneModMovSubs);
 			modifichePresenti = presentiModificheSpesa(valutazioneModMovAll);
 		} else if(movimentoInAggiornamento instanceof Accertamento){
 			ModificaMovimentoGestioneEntrataInfoDto valutazioneModMov = valutaModificheMovimentoEntrata(((Accertamento)movimentoInAggiornamento).getListaModificheMovimentoGestioneEntrata(),datiOperazioneDto);
 			List<ModificaMovimentoGestioneEntrataInfoDto> valutazioneModMovSubs = valutaModificheMovimentoSubAcc(((Accertamento)movimentoInAggiornamento).getElencoSubAccertamenti(), idEnte, datiOperazioneDto);
-			List<ModificaMovimentoGestioneEntrataInfoDto> valutazioneModMovAll = CommonUtils.toList( CommonUtils.toList(valutazioneModMov),valutazioneModMovSubs);
+			List<ModificaMovimentoGestioneEntrataInfoDto> valutazioneModMovAll = CommonUtil.toList( CommonUtil.toList(valutazioneModMov),valutazioneModMovSubs);
 			modifichePresenti = presentiModificheEntrata(valutazioneModMovAll);
 		}
 		return modifichePresenti;
@@ -8597,16 +8498,16 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				if(idSubIt==0){
 					//si tratta di quelli nuovi NOTHING TO DO HERE
 				} else {
-					SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtils.getById(invariati, idSubIt);
+					SiacTMovgestTsFin siacTMovgestTsSub = DatiOperazioneUtil.getById(invariati, idSubIt);
 					if(siacTMovgestTsSub!=null){
 						//INVARIATO
 						listaSubInvariati.add(subIt);
 					} else {
-						siacTMovgestTsSub = DatiOperazioneUtils.getById(aggiornati, idSubIt);
+						siacTMovgestTsSub = DatiOperazioneUtil.getById(aggiornati, idSubIt);
 						if(siacTMovgestTsSub!=null){
 							//AGGIORNATO
 							ST ricostruito = null;
-							if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+							if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 								ricostruito =completaSubImpegnoDaAggiorna(tipoMovimento, annoMovimento, numeroMovimento, 
 										richiedente, siacTMovgestTsSub, datiOperazioneDto,siacTMovgestAggiornato);
 								((SubImpegno)ricostruito).setListaModificheMovimentoGestioneSpesa(((SubImpegno)subIt).getListaModificheMovimentoGestioneSpesa());
@@ -8625,7 +8526,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		if(subinseriti!=null && subinseriti.size()>0){
 			for(SiacTMovgestTsFin siacTMovgestTsSub : subinseriti){
 				ST subIt = null ;
-				if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+				if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 					subIt = (ST) new SubImpegno();
 					subIt = completaSubImpegnoDaAggiorna(tipoMovimento, annoMovimento, numeroMovimento, 
 							richiedente, siacTMovgestTsSub, datiOperazioneDto,siacTMovgestAggiornato);
@@ -8644,7 +8545,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			Collections.sort(listaSubRicostruita, new Comparator<ST>() {
 		        @Override
 		        public int compare(ST  sub1, ST  sub2){
-		            return  sub1.getNumero().compareTo(sub2.getNumero());
+		            return  sub1.getNumeroBigDecimal().compareTo(sub2.getNumeroBigDecimal());
 		        }
 		    });
 		}
@@ -8660,7 +8561,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	 * @return
 	 */
 	private SiacTMovgestFin individuaImpegnoResiduo(DatiOperazioneDto datiOperazione, int annoMovimento, int numeroMovimento){
-		return individuaMovGestResiduo(datiOperazione, annoMovimento, numeroMovimento, Constanti.MOVGEST_TIPO_IMPEGNO);
+		return individuaMovGestResiduo(datiOperazione, annoMovimento, numeroMovimento, CostantiFin.MOVGEST_TIPO_IMPEGNO);
 	}
 	
 	/**
@@ -8671,11 +8572,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	 * @return
 	 */
 	private SiacTMovgestFin individuaAccertamentoResiduo(DatiOperazioneDto datiOperazione, int annoMovimento, int numeroMovimento){
-		return individuaMovGestResiduo(datiOperazione, annoMovimento, numeroMovimento, Constanti.MOVGEST_TIPO_ACCERTAMENTO);
+		return individuaMovGestResiduo(datiOperazione, annoMovimento, numeroMovimento, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO);
 	}
 	
 	/**
-	 * tipoMovGest --> Constanti.MOVGEST_TIPO_IMPEGNO oppure Constanti.MOVGEST_TIPO_ACCERTAMENTO
+	 * tipoMovGest --> CostantiFin.MOVGEST_TIPO_IMPEGNO oppure CostantiFin.MOVGEST_TIPO_ACCERTAMENTO
 	 * @param datiOperazione
 	 * @param annoMovimento
 	 * @param numeroMovimento
@@ -8716,7 +8617,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<VincoloImpegno> vincoliResidui = getAccertamentiVincolati(siacTMovgestTsImpegnoResiduo);
 		
 		//1.	Si calcola il PAGATO totale dell�impegno:
-		BigDecimal importoAttuale = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTsImpegno.getUid());
+		BigDecimal importoAttuale = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgestTsImpegno.getUid());
 		String statoCod = getStatoCode(siacTMovgestTsImpegno, datiOperazioneDto);
 		DisponibilitaMovimentoGestioneContainer dipPagareImpegno = calcolaDisponibilitaAPagareImpegno(siacTMovgestTsImpegno, statoCod, idEnte);
 		BigDecimal pagato = importoAttuale.subtract(dipPagareImpegno.getDisponibilita());
@@ -8778,7 +8679,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					
 					if(o1.getAnnoMovimento()==o2.getAnnoMovimento()){
 						//anno uguale, ordiniamo per numero:
-						return o1.getNumero().compareTo(o2.getNumero());
+						return o1.getNumeroBigDecimal().compareTo(o2.getNumeroBigDecimal());
 					} else {
 						//anno diverso, ordiniamo per anno:
 						if(o1.getAnnoMovimento() > o2.getAnnoMovimento()){
@@ -8820,7 +8721,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
 
 		//ricerco residuo
-		SiacTMovgestFin siacTMovgestResiduo = movimentoGestioneDao.findByEnteAnnoNumeroBilancioValido(idEnte, impegnoDaAggiornare.getAnnoMovimento() , impegnoDaAggiornare.getNumero(), Constanti.MOVGEST_TIPO_IMPEGNO, String.valueOf(impegnoDaAggiornare.getAnnoMovimento()+1), datiOperazioneDtoMod.getTs());
+		SiacTMovgestFin siacTMovgestResiduo = movimentoGestioneDao.findByEnteAnnoNumeroBilancioValido(idEnte, impegnoDaAggiornare.getAnnoMovimento() , impegnoDaAggiornare.getNumeroBigDecimal(), CostantiFin.MOVGEST_TIPO_IMPEGNO, String.valueOf(impegnoDaAggiornare.getAnnoMovimento()+1), datiOperazioneDtoMod.getTs());
 		SiacTMovgestTsFin siacTMovgestTsResiduo = null;
 		Integer movgestIdResiduo=null;
 		Integer movgestTsIdResiduo = null;
@@ -8832,15 +8733,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 		//ricerco i sub del residuo
 		//ricavo movgest e movgestts dell'impegno aggiornato
-		SiacTMovgestFin siacTMovgestAggiornato = movimentoGestioneDao.findByEnteAnnoNumeroBilancioValido(idEnte, impegnoDaAggiornare.getAnnoMovimento() , impegnoDaAggiornare.getNumero(), Constanti.MOVGEST_TIPO_IMPEGNO, String.valueOf(impegnoDaAggiornare.getAnnoMovimento()), datiOperazioneDtoMod.getTs());
+		SiacTMovgestFin siacTMovgestAggiornato = movimentoGestioneDao.findByEnteAnnoNumeroBilancioValido(idEnte, impegnoDaAggiornare.getAnnoMovimento() , impegnoDaAggiornare.getNumeroBigDecimal(), CostantiFin.MOVGEST_TIPO_IMPEGNO, String.valueOf(impegnoDaAggiornare.getAnnoMovimento()), datiOperazioneDtoMod.getTs());
 		
-		//List<SiacTMovgestFin> siacTMovgestAggiornatoSOld = siacTMovgestRepository.findByEnteAnnoNumeroBilancioValido(idEnte, impegnoDaAggiornare.getAnnoMovimento() , impegnoDaAggiornare.getNumero(), Constanti.MOVGEST_TIPO_IMPEGNO, String.valueOf(impegnoDaAggiornare.getAnnoMovimento()), datiOperazioneDtoMod.getTs());
+		//List<SiacTMovgestFin> siacTMovgestAggiornatoSOld = siacTMovgestRepository.findByEnteAnnoNumeroBilancioValido(idEnte, impegnoDaAggiornare.getAnnoMovimento() , impegnoDaAggiornare.getNumero(), CostantiFin.MOVGEST_TIPO_IMPEGNO, String.valueOf(impegnoDaAggiornare.getAnnoMovimento()), datiOperazioneDtoMod.getTs());
 		
 		SiacTMovgestTsFin siacTMovgestTsDaAggiornare = siacTMovgestTsRepository.findMovgestTsByMovgest(idEnte, datiOperazioneDtoMod.getTs(), siacTMovgestAggiornato.getMovgestId()).get(0);			
 		//ricerco i sub dell'impegno aggiornato
 		List<SiacTMovgestTsFin> siacTMovgestTsDaAggiornareSub=siacTMovgestTsRepository.findListaSiacTMovgestTsFigli(idEnte, getNow(), siacTMovgestTsDaAggiornare.getMovgestTsId());
 
-		SiacDAmbitoFin  siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(Constanti.AMBITO_FIN, idEnte);
+		SiacDAmbitoFin  siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(CostantiFin.AMBITO_FIN, idEnte);
 
 		//Calcolo disponibile di cassa impegno
 		DisponibilitaMovimentoGestioneContainer dispCassaImpegno;
@@ -8877,7 +8778,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				//Per ogni vincolo bisogna puntare all'accertamento residuo in modo che l'op interna di ins impegno
 				//che verra' invocata piu' avanti crei il corretto vincolo residuo:
 				for(VincoloImpegno vincoloImpegno : impegnoDaAggiornare.getVincoliImpegno()){
-					if(siacTMovgestAccResiduo.getMovgestNumero().compareTo(vincoloImpegno.getAccertamento().getNumero())==0){
+					if(siacTMovgestAccResiduo.getMovgestNumero().compareTo(vincoloImpegno.getAccertamento().getNumeroBigDecimal())==0){
 						itVinc.setVincoloResiduo(vincoloImpegno);
 					}
 				}
@@ -8918,15 +8819,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						boolean esisteInListaSubDaAgg=false;
 						if (listaSubDaAgg!=null && listaSubDaAgg.size()>0) {
 							for (SubImpegno subImpegnoDaAgg : listaSubDaAgg) {
-								if (subImpegnoDaAgg.getNumero()!=null) {
-									if (subImpegnoDaAgg.getNumero().compareTo(codeBD)==0) {
+								if (subImpegnoDaAgg.getNumeroBigDecimal()!=null) {
+									if (subImpegnoDaAgg.getNumeroBigDecimal().compareTo(codeBD)==0) {
 										esisteInListaSubDaAgg=true;
 										break;
 									}
 								}else {
-									if (subImpegnoDaAgg.getStatoOperativoMovimentoGestioneSpesa().equals(Constanti.MOVGEST_STATO_DEFINITIVO) &&
+									if (subImpegnoDaAgg.getStatoOperativoMovimentoGestioneSpesa().equals(CostantiFin.MOVGEST_STATO_DEFINITIVO) &&
 											subImpegnoDaAgg.getImportoAttuale().compareTo(BigDecimal.ZERO)==1) {
-										subImpegnoDaAgg.setNumero(codeBD);
+										subImpegnoDaAgg.setNumeroBigDecimal(codeBD);
 										subImpegniDaInserire.add(subImpegnoDaAgg);
 										listaSubImpegniDaAggRes.add(subImpegnoDaAgg);
 									}
@@ -8956,9 +8857,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								for (SubImpegno subImpegnoDaAgg : listaSubDaAgg) {
 									if (subImpegnoDaAgg.getUid()!=0) {
 										SiacTMovgestTsFin siacTMovgestTsCorr=siacTMovgestTsRepository.findMovgestTsByMovgestTsId(idEnte, getNow(), subImpegnoDaAgg.getUid());
-										subImpegnoDaAgg.setNumero(new BigDecimal(siacTMovgestTsCorr.getMovgestTsCode()));
-										if (subImpegnoDaAgg.getNumero()!=null && 
-												subImpegnoDaAgg.getNumero().compareTo(new BigDecimal(siacTMovgestTsSubAggResiduo.getMovgestTsCode()))==0) {
+										subImpegnoDaAgg.setNumeroBigDecimal(new BigDecimal(siacTMovgestTsCorr.getMovgestTsCode()));
+										if (subImpegnoDaAgg.getNumeroBigDecimal()!=null && 
+												subImpegnoDaAgg.getNumeroBigDecimal().compareTo(new BigDecimal(siacTMovgestTsSubAggResiduo.getMovgestTsCode()))==0) {
 											DisponibilitaMovimentoGestioneContainer dispCassaSub = calcolaDisponibilitaAPagareSubImpegno(siacTMovgestTsAggiornato, subImpegnoDaAgg.getStatoOperativoMovimentoGestioneSpesa(), idEnte);
 											if(NumericUtils.maggioreDiZero(dispCassaSub.getDisponibilita())){
 												//Aggiorno sub residuo se esiste e 
@@ -8998,7 +8899,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 														}
 														//Eliminare sub
 														datiOperazioneCancella = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
-														SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+														SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
 													}
 												}
 
@@ -9019,12 +8920,12 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 										SiacTMovgestTsFin  subImpegnoDaAggRep=siacTMovgestTsRepository.findOne(subImpegnoDaAgg.getUid());
 										if(subImpegnoDaAggRep!=null){
 											String numeroSubDaAggRep=subImpegnoDaAggRep.getMovgestTsCode();
-											subImpegnoDaAgg.setNumero(new BigDecimal(numeroSubDaAggRep));
+											subImpegnoDaAgg.setNumeroBigDecimal(new BigDecimal(numeroSubDaAggRep));
 
-											if (subImpegnoDaAgg.getNumero()!=null && 
-													subImpegnoDaAgg.getNumero().compareTo(new BigDecimal(siacTMovgestTsAggiornato.getMovgestTsCode()))==0) {
+											if (subImpegnoDaAgg.getNumeroBigDecimal()!=null && 
+													subImpegnoDaAgg.getNumeroBigDecimal().compareTo(new BigDecimal(siacTMovgestTsAggiornato.getMovgestTsCode()))==0) {
 												if (subImpegnoDaAgg.getImportoAttuale().compareTo(BigDecimal.ZERO)==1 &&
-														subImpegnoDaAgg.getStatoOperativoMovimentoGestioneSpesa().equals(Constanti.MOVGEST_STATO_DEFINITIVO)) {
+														subImpegnoDaAgg.getStatoOperativoMovimentoGestioneSpesa().equals(CostantiFin.MOVGEST_STATO_DEFINITIVO)) {
 													//Inserisco sub residuo
 													subImpegnoDaAgg.setImportoAttuale(subImpegnoDaAgg.getImportoAttuale());
 													subImpegnoDaAgg.setImportoIniziale(subImpegnoDaAgg.getImportoAttuale());
@@ -9055,7 +8956,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									return listaErrori;
 								}
 								datiOperazioneCancella = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
-								SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+								SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
 
 							}
 						}
@@ -9104,12 +9005,12 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									SiacTMovgestTsFin  subImpegnoDaAggRep=siacTMovgestTsRepository.findOne(subImpegnoDaAgg.getUid());
 									if(subImpegnoDaAggRep!=null){
 										String numeroSubDaAggRep=subImpegnoDaAggRep.getMovgestTsCode();
-										subImpegnoDaAgg.setNumero(new BigDecimal(numeroSubDaAggRep));
+										subImpegnoDaAgg.setNumeroBigDecimal(new BigDecimal(numeroSubDaAggRep));
 
-										if (subImpegnoDaAgg.getNumero()!=null && 
-												subImpegnoDaAgg.getNumero().compareTo(new BigDecimal(siacTMovgestTsAggiornato.getMovgestTsCode()))==0) {
+										if (subImpegnoDaAgg.getNumeroBigDecimal()!=null && 
+												subImpegnoDaAgg.getNumeroBigDecimal().compareTo(new BigDecimal(siacTMovgestTsAggiornato.getMovgestTsCode()))==0) {
 											if (subImpegnoDaAgg.getImportoAttuale().compareTo(BigDecimal.ZERO)==1 &&
-													subImpegnoDaAgg.getStatoOperativoMovimentoGestioneSpesa().equals(Constanti.MOVGEST_STATO_DEFINITIVO)) {
+													subImpegnoDaAgg.getStatoOperativoMovimentoGestioneSpesa().equals(CostantiFin.MOVGEST_STATO_DEFINITIVO)) {
 												//Inserisco sub residuo
 												subImpegnoDaAgg.setImportoAttuale(subImpegnoDaAgg.getImportoAttuale());
 												subImpegnoDaAgg.setImportoIniziale(subImpegnoDaAgg.getImportoAttuale());
@@ -9131,7 +9032,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				}
 				//Inserisco l'impegno con l'operazione interna
 
-				Integer numeroImpegno=new Integer(impegnoDaAggiornare.getNumero().intValue());
+				Integer numeroImpegno=new Integer(impegnoDaAggiornare.getNumeroBigDecimal().intValue());
 				impegnoDaAggiornare.setListaModificheMovimentoGestioneSpesa(new ArrayList<ModificaMovimentoGestioneSpesa>());
 				datiOperazioneDtoIns = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.INSERIMENTO, datiOperazioneDto.getSiacTEnteProprietario(), siacDAmbitoPerCode, richiedente.getAccount().getId());
 				
@@ -9170,14 +9071,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								listaErrori.add(ErroreFin.ESISTONO_MOVIMENTI_COLLEGATI.getErrore("Cancellazione subimpegno residuo",""));
 								return listaErrori;
 							}
-							SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsSubResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+							SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsSubResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
 
 						}
 					}
 				}
 
-				SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
-				SiacTMovgestFin siacTMovgestResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestResiduo, siacTMovgestRepository, datiOperazioneCancella, siacTAccountRepository);
+				SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+				SiacTMovgestFin siacTMovgestResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestResiduo, siacTMovgestRepository, datiOperazioneCancella, siacTAccountRepository);
 
 			}
 
@@ -9216,11 +9117,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			 BigDecimal impUtilizzabileResiduo = estraiImportoUtilizzabileByMovgestTsId(siacTMovgestTsAccResiduo.getMovgestTsId(), datiOperazioneDto);
 			 //Accertamento.importoUtilizzabileRes= Accertamento.importoUtilizzabile RES + deltaVincolo 
 			 BigDecimal nuovoImpUtilizzabileRes = impUtilizzabileResiduo.add(deltaVincolo);
-			 SiacTMovgestTsDetFin siacDetUtilizzabile = saveImporto(nuovoImpUtilizzabileRes, datiOperazioneDto, siacTMovgestTsAccResiduo, Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
+			 SiacTMovgestTsDetFin siacDetUtilizzabile = saveImporto(nuovoImpUtilizzabileRes, datiOperazioneDto, siacTMovgestTsAccResiduo, CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
 		 } else {
 			 //Non esiste l'accertamento residuo
 			 Accertamento accClonePerDoppiaGest = clone((Accertamento)accCollegato);
-			 Integer numeroAccertamento=new Integer(accClonePerDoppiaGest.getNumero().intValue());
+			 Integer numeroAccertamento=new Integer(accClonePerDoppiaGest.getNumeroBigDecimal().intValue());
 			 accClonePerDoppiaGest.setImportoUtilizzabile(deltaVincolo);
 			 accClonePerDoppiaGest.setImportoIniziale(BigDecimal.ZERO);
 			 accClonePerDoppiaGest.setImportoAttuale(BigDecimal.ZERO);
@@ -9267,7 +9168,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				//VINCOLI ANNULLATI
 				for (SiacRMovgestTsFin siacRMovgestTsDaAnnullare : vincoliDaAnnullare) {
 					//calcolo delta importo:
-					SiacRMovgestTsFin vincoloDb = DatiOperazioneUtils.getById(vincoliOld,siacRMovgestTsDaAnnullare.getUid());
+					SiacRMovgestTsFin vincoloDb = DatiOperazioneUtil.getById(vincoliOld,siacRMovgestTsDaAnnullare.getUid());
 					BigDecimal oldImportoVincolo = vincoloDb.getMovgestTsImporto();
 					BigDecimal deltaVincolo = BigDecimal.ZERO.subtract(oldImportoVincolo);
 					/////////////////////
@@ -9315,7 +9216,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				//VINCOLI MODIFICATI
 				for(VincoloImpegno vincoloImpegno: vincoliDaAggiornare){
 					//calcolo delta importo:
-					SiacRMovgestTsFin vincoloDb = DatiOperazioneUtils.getById(vincoliOld,vincoloImpegno.getUid());
+					SiacRMovgestTsFin vincoloDb = DatiOperazioneUtil.getById(vincoliOld,vincoloImpegno.getUid());
 					BigDecimal importoNuovo = vincoloImpegno.getImporto();
 					BigDecimal oldImportoVincolo = vincoloDb.getMovgestTsImporto();
 					BigDecimal deltaVincolo = importoNuovo.subtract(oldImportoVincolo);
@@ -9399,7 +9300,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		SiacTMovgestFin siacTMovgestAcc = null;
 		SiacTMovgestTsFin siacTMovgestTsAcc = null;
 		if(vincoloImpegno!=null){
-			siacTMovgestAcc = movimentoGestioneDao.findAccertamento(idEnte, vincoloImpegno.getAccertamento().getAnnoMovimento(), vincoloImpegno.getAccertamento().getNumero(), bilancioString, getNow());
+			siacTMovgestAcc = movimentoGestioneDao.findAccertamento(idEnte, vincoloImpegno.getAccertamento().getAnnoMovimento(), vincoloImpegno.getAccertamento().getNumeroBigDecimal(), bilancioString, getNow());
 			siacTMovgestTsAcc= siacTMovgestTsRepository.findMovgestTsByMovgest(idEnte, datiOperazioneDto.getTs(), siacTMovgestAcc.getMovgestId()).get(0);
 		} else if(vincoloImpegnoEntity!=null){
 			if(vincoloImpegnoEntity.getSiacTMovgestTsA()!=null){
@@ -9456,21 +9357,21 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), datiOperazioneDto.getSiacDAmbito(), richiedente.getAccount().getId(), datiOperazioneDto.getAnnoBilancio());
 
 		//ricerco residuo
-		SiacTMovgestFin siacTMovgestResiduo = movimentoGestioneDao.findByEnteAnnoNumeroBilancioValido(idEnte, accertamentoDaAggiornare.getAnnoMovimento() , accertamentoDaAggiornare.getNumero(), Constanti.MOVGEST_TIPO_ACCERTAMENTO, String.valueOf(accertamentoDaAggiornare.getAnnoMovimento()+1), datiOperazioneDto.getTs());
-//		List<SiacTMovgestFin> siacTMovgestS = siacTMovgestRepository.findByEnteAnnoNumeroBilancioValido(idEnte, accertamentoDaAggiornare.getAnnoMovimento() , accertamentoDaAggiornare.getNumero(), Constanti.MOVGEST_TIPO_ACCERTAMENTO, String.valueOf(accertamentoDaAggiornare.getAnnoMovimento()+1), datiOperazioneDto.getTs());
+		SiacTMovgestFin siacTMovgestResiduo = movimentoGestioneDao.findByEnteAnnoNumeroBilancioValido(idEnte, accertamentoDaAggiornare.getAnnoMovimento() , accertamentoDaAggiornare.getNumeroBigDecimal(), CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, String.valueOf(accertamentoDaAggiornare.getAnnoMovimento()+1), datiOperazioneDto.getTs());
+//		List<SiacTMovgestFin> siacTMovgestS = siacTMovgestRepository.findByEnteAnnoNumeroBilancioValido(idEnte, accertamentoDaAggiornare.getAnnoMovimento() , accertamentoDaAggiornare.getNumero(), CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, String.valueOf(accertamentoDaAggiornare.getAnnoMovimento()+1), datiOperazioneDto.getTs());
 //		if(siacTMovgestS!=null && siacTMovgestS.size()>0){
 //			siacTMovgestResiduo = siacTMovgestS.get(0);
 //		}
 		//ricerco i sub del residuo
 		
 		//ricavo movgest e movgestts dell'impegno aggiornato
-		SiacTMovgestFin siacTMovgestAggiornato = movimentoGestioneDao.findByEnteAnnoNumeroBilancioValido(idEnte, accertamentoDaAggiornare.getAnnoMovimento() , accertamentoDaAggiornare.getNumero(), Constanti.MOVGEST_TIPO_ACCERTAMENTO, String.valueOf(accertamentoDaAggiornare.getAnnoMovimento()), datiOperazioneDto.getTs());
+		SiacTMovgestFin siacTMovgestAggiornato = movimentoGestioneDao.findByEnteAnnoNumeroBilancioValido(idEnte, accertamentoDaAggiornare.getAnnoMovimento() , accertamentoDaAggiornare.getNumeroBigDecimal(), CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, String.valueOf(accertamentoDaAggiornare.getAnnoMovimento()), datiOperazioneDto.getTs());
 		
 		SiacTMovgestTsFin siacTMovgestTsDaAggiornare = siacTMovgestTsRepository.findMovgestTsByMovgest(idEnte, datiOperazioneDtoMod.getTs(), siacTMovgestAggiornato.getMovgestId()).get(0);			
 		//ricerco i sub dell'impegno aggiornato
 		List<SiacTMovgestTsFin> siacTMovgestTsDaAggiornareSub=siacTMovgestTsRepository.findListaSiacTMovgestTsFigli(idEnte, getNow(), siacTMovgestTsDaAggiornare.getMovgestTsId());
 
-		SiacDAmbitoFin  siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(Constanti.AMBITO_FIN, idEnte);
+		SiacDAmbitoFin  siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(CostantiFin.AMBITO_FIN, idEnte);
 
 		//Calcolo disponibile di cassa impegno
 		DisponibilitaMovimentoGestioneContainer dispCassaImpegno;
@@ -9525,15 +9426,15 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						boolean esisteInListaSubDaAgg=false;
 						if (listaSubDaAgg!=null && listaSubDaAgg.size()>0) {
 							for (SubAccertamento subAccertamentoDaAgg : listaSubDaAgg) {
-								if (subAccertamentoDaAgg.getNumero()!=null) {
-									if (subAccertamentoDaAgg.getNumero().compareTo(codeBD)==0) {
+								if (subAccertamentoDaAgg.getNumeroBigDecimal()!=null) {
+									if (subAccertamentoDaAgg.getNumeroBigDecimal().compareTo(codeBD)==0) {
 										esisteInListaSubDaAgg=true;
 										break;
 									}
 								}else {
-									if (subAccertamentoDaAgg.getStatoOperativoMovimentoGestioneEntrata().equals(Constanti.MOVGEST_STATO_DEFINITIVO) &&
+									if (subAccertamentoDaAgg.getStatoOperativoMovimentoGestioneEntrata().equals(CostantiFin.MOVGEST_STATO_DEFINITIVO) &&
 											subAccertamentoDaAgg.getImportoAttuale().compareTo(BigDecimal.ZERO)==1) {
-										subAccertamentoDaAgg.setNumero(codeBD);
+										subAccertamentoDaAgg.setNumeroBigDecimal(codeBD);
 										subAccertamentiDaInserire.add(subAccertamentoDaAgg);
 										listaSubAccertamentiDaAggRes.add(subAccertamentoDaAgg);
 									}
@@ -9563,9 +9464,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 								for (SubAccertamento subAccertamentoDaAgg : listaSubDaAgg) {
 									if (subAccertamentoDaAgg.getUid()!=0) {
 										SiacTMovgestTsFin siacTMovgestTsCorr=siacTMovgestTsRepository.findMovgestTsByMovgestTsId(idEnte, getNow(), subAccertamentoDaAgg.getUid());
-										subAccertamentoDaAgg.setNumero(new BigDecimal(siacTMovgestTsCorr.getMovgestTsCode()));
-										if (subAccertamentoDaAgg.getNumero()!=null && 
-												subAccertamentoDaAgg.getNumero().compareTo(new BigDecimal(siacTMovgestTsSubAggResiduo.getMovgestTsCode()))==0) {
+										subAccertamentoDaAgg.setNumeroBigDecimal(new BigDecimal(siacTMovgestTsCorr.getMovgestTsCode()));
+										if (subAccertamentoDaAgg.getNumeroBigDecimal()!=null && 
+												subAccertamentoDaAgg.getNumeroBigDecimal().compareTo(new BigDecimal(siacTMovgestTsSubAggResiduo.getMovgestTsCode()))==0) {
 											DisponibilitaMovimentoGestioneContainer dispCassaSub = calcolaDisponibiltaAIncassareSubAccertamento(siacTMovgestTsAggiornato, subAccertamentoDaAgg.getStatoOperativoMovimentoGestioneEntrata(), idEnte);
 											if(NumericUtils.maggioreDiZero(dispCassaSub.getDisponibilita())){
 												//Aggiorno sub residuo se esiste e 
@@ -9604,7 +9505,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 														}
 														//Eliminare sub
 														datiOperazioneCancella = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
-														SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+														SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
 													}
 												}
 
@@ -9625,12 +9526,12 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 										SiacTMovgestTsFin  subAccertamentoDaAggRep=siacTMovgestTsRepository.findOne(subAccertamentoDaAgg.getUid());
 										if(subAccertamentoDaAggRep!=null){
 											String numeroSubDaAggRep=subAccertamentoDaAggRep.getMovgestTsCode();
-											subAccertamentoDaAgg.setNumero(new BigDecimal(numeroSubDaAggRep));
+											subAccertamentoDaAgg.setNumeroBigDecimal(new BigDecimal(numeroSubDaAggRep));
 
-											if (subAccertamentoDaAgg.getNumero()!=null && 
-													subAccertamentoDaAgg.getNumero().compareTo(new BigDecimal(siacTMovgestTsAggiornato.getMovgestTsCode()))==0) {
+											if (subAccertamentoDaAgg.getNumeroBigDecimal()!=null && 
+													subAccertamentoDaAgg.getNumeroBigDecimal().compareTo(new BigDecimal(siacTMovgestTsAggiornato.getMovgestTsCode()))==0) {
 												if (subAccertamentoDaAgg.getImportoAttuale().compareTo(BigDecimal.ZERO)==1 &&
-														subAccertamentoDaAgg.getStatoOperativoMovimentoGestioneEntrata().equals(Constanti.MOVGEST_STATO_DEFINITIVO)) {
+														subAccertamentoDaAgg.getStatoOperativoMovimentoGestioneEntrata().equals(CostantiFin.MOVGEST_STATO_DEFINITIVO)) {
 													//Inserisco sub residuo
 													subAccertamentoDaAgg.setImportoAttuale(subAccertamentoDaAgg.getImportoAttuale());
 													subAccertamentoDaAgg.setImportoIniziale(subAccertamentoDaAgg.getImportoAttuale());
@@ -9661,7 +9562,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									return listaErrori;
 								}
 								datiOperazioneCancella = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
-								SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+								SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsEliminatoResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
 
 							}
 						}
@@ -9682,9 +9583,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				
 				//per correggere passaggio dati del provvedimento in campi errati
 				if (accertamentoDaAggiornare.getAttoAmministrativo()==null &&
-						!StringUtils.isEmpty(accertamentoDaAggiornare.getAttoAmmAnno()) &&
+						!StringUtilsFin.isEmpty(accertamentoDaAggiornare.getAttoAmmAnno()) &&
 						accertamentoDaAggiornare.getAttoAmmNumero()!=null && accertamentoDaAggiornare.getAttoAmmNumero()!=0 &&
-						accertamentoDaAggiornare.getAttoAmmTipoAtto()!=null && !StringUtils.isEmpty(accertamentoDaAggiornare.getAttoAmmTipoAtto().getCodice())) {
+						accertamentoDaAggiornare.getAttoAmmTipoAtto()!=null && !StringUtilsFin.isEmpty(accertamentoDaAggiornare.getAttoAmmTipoAtto().getCodice())) {
 					AttoAmministrativo atto=new AttoAmministrativo();
 					atto.setAnno(Integer.valueOf(accertamentoDaAggiornare.getAttoAmmAnno()));
 					atto.setNumero(accertamentoDaAggiornare.getAttoAmmNumero());
@@ -9729,12 +9630,12 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 									SiacTMovgestTsFin  subAccertamentoDaAggRep=siacTMovgestTsRepository.findOne(subAccertamentoDaAgg.getUid());
 									if(subAccertamentoDaAggRep!=null){
 										String numeroSubDaAggRep=subAccertamentoDaAggRep.getMovgestTsCode();
-										subAccertamentoDaAgg.setNumero(new BigDecimal(numeroSubDaAggRep));
+										subAccertamentoDaAgg.setNumeroBigDecimal(new BigDecimal(numeroSubDaAggRep));
 
-										if (subAccertamentoDaAgg.getNumero()!=null && 
-												subAccertamentoDaAgg.getNumero().compareTo(new BigDecimal(siacTMovgestTsAggiornato.getMovgestTsCode()))==0) {
+										if (subAccertamentoDaAgg.getNumeroBigDecimal()!=null && 
+												subAccertamentoDaAgg.getNumeroBigDecimal().compareTo(new BigDecimal(siacTMovgestTsAggiornato.getMovgestTsCode()))==0) {
 											if (subAccertamentoDaAgg.getImportoAttuale().compareTo(BigDecimal.ZERO)==1 &&
-													subAccertamentoDaAgg.getStatoOperativoMovimentoGestioneEntrata().equals(Constanti.MOVGEST_STATO_DEFINITIVO)) {
+													subAccertamentoDaAgg.getStatoOperativoMovimentoGestioneEntrata().equals(CostantiFin.MOVGEST_STATO_DEFINITIVO)) {
 												//Inserisco sub residuo
 												subAccertamentoDaAgg.setImportoAttuale(subAccertamentoDaAgg.getImportoAttuale());
 												subAccertamentoDaAgg.setImportoIniziale(subAccertamentoDaAgg.getImportoAttuale());
@@ -9756,7 +9657,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				}
 				//Inserisco l'accertamento con l'operazione interna
 
-				Integer numeroAccertamento=new Integer(accertamentoDaAggiornare.getNumero().intValue());
+				Integer numeroAccertamento=new Integer(accertamentoDaAggiornare.getNumeroBigDecimal().intValue());
 				accertamentoDaAggiornare.setListaModificheMovimentoGestioneEntrata(new ArrayList<ModificaMovimentoGestioneEntrata>());
 				datiOperazioneDtoIns = new DatiOperazioneDto(System.currentTimeMillis(), Operazione.INSERIMENTO, datiOperazioneDto.getSiacTEnteProprietario(), siacDAmbitoPerCode, richiedente.getAccount().getId());
 				EsitoInserimentoMovimentoGestioneDto esitoOperazioneInternaCiclo = operazioneInternaInserisceAccertamento(richiedente, ente, bilancioAnnoSuccessivo, accertamentoDaAggiornare, datiOperazioneDtoIns, numeroAccertamento);
@@ -9796,14 +9697,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						for (SiacTMovgestTsFin siacTMovgestTsSubResiduo : listaSiacTMovgestTsSubResiduo) {
 							if (siacTMovgestTsSubResiduo!=null) {
 								//controllo movimenti collegati
-								SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsSubResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+								SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsSubResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
 
 							}
 						}
 					}
 
-					SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
-					SiacTMovgestFin siacTMovgestResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestResiduo, siacTMovgestRepository, datiOperazioneCancella, siacTAccountRepository);
+					SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+					SiacTMovgestFin siacTMovgestResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestResiduo, siacTMovgestRepository, datiOperazioneCancella, siacTAccountRepository);
 					
 					
 				} else if(importoUtilizzabileRibaltato.compareTo(BigDecimal.ZERO)>0){
@@ -9816,13 +9717,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						for (SiacTMovgestTsFin siacTMovgestTsSubResiduo : listaSiacTMovgestTsSubResiduo) {
 							if (siacTMovgestTsSubResiduo!=null) {
 								//controllo movimenti collegati
-								SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtils.cancellaRecord(siacTMovgestTsSubResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
+								SiacTMovgestTsFin siacTMovgestTsResiduoCanc = DatiOperazioneUtil.cancellaRecord(siacTMovgestTsSubResiduo, siacTMovgestTsRepository, datiOperazioneCancella, siacTAccountRepository);
 							}
 						}
 					}
 					//pongo a zero importo attuale e iniziale per l'accertamento residuo:
-					saveImporto(BigDecimal.ZERO, datiOperazioneDto, siacTMovgestTsResiduo, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
-					saveImporto(BigDecimal.ZERO, datiOperazioneDto, siacTMovgestTsResiduo, Constanti.MOVGEST_TS_DET_TIPO_INIZIALE);
+					saveImporto(BigDecimal.ZERO, datiOperazioneDto, siacTMovgestTsResiduo, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
+					saveImporto(BigDecimal.ZERO, datiOperazioneDto, siacTMovgestTsResiduo, CostantiFin.MOVGEST_TS_DET_TIPO_INIZIALE);
 				}
 
 			}
@@ -10118,14 +10019,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							if(spesa.getImportoNew()!=null && spesa.getImportoOld()!=null){
 								if(spesa.getImportoOld().compareTo(BigDecimal.ZERO)!=0){
 									spesa = (ModificaMovimentoGestioneSpesa)inserisciModificaMovimentoImporto(spesa, sub.getUid(), enteId , dto, numeroModifiche);
-									spesa.setNumeroSubImpegno(sub.getNumero().intValue());
+									spesa.setNumeroSubImpegno(sub.getNumeroBigDecimal().intValue());
 								}
 							}
 							//Modifica movimento gestione spesa soggetto
 							if((spesa.getSoggettoNewMovimentoGestione() != null && spesa.getSoggettoOldMovimentoGestione()!=null)
 									|| (spesa.getClasseSoggettoNewMovimentoGestione() != null || spesa.getClasseSoggettoOldMovimentoGestione()!=null)){
 								spesa = (ModificaMovimentoGestioneSpesa)inserisciModificaMovimentoSpesaSoggetto(spesa, sub.getUid(), enteId, dto, numeroModifiche);
-								spesa.setNumeroSubImpegno(sub.getNumero().intValue());
+								spesa.setNumeroSubImpegno(sub.getNumeroBigDecimal().intValue());
 								
 								//setteo il nuovo soggetto del sub
 								sub.setSoggetto(spesa.getSoggettoNewMovimentoGestione());
@@ -10171,8 +10072,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					//FIX id del subimpegno al quale si riferiscono le nuove modifiche
 					for(ModificaMovimentoGestioneEntrata it : valutato.getModificheDaCreare()){
 						it.setUidSubAccertamento(sub.getUid());
-						if(sub.getNumero()!=null){
-							it.setNumeroSubAccertamento(sub.getNumero().intValue());
+						if(sub.getNumeroBigDecimal()!=null){
+							it.setNumeroSubAccertamento(sub.getNumeroBigDecimal().intValue());
 						}
 					}
 				}
@@ -10197,8 +10098,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					//FIX id del subimpegno al quale si riferiscono le nuove modifiche
 					for(ModificaMovimentoGestioneSpesa it : valutato.getModificheDaCreare()){
 						it.setUidSubImpegno(sub.getUid());
-						if(sub.getNumero()!=null){
-							it.setNumeroSubImpegno(sub.getNumero().intValue());
+						if(sub.getNumeroBigDecimal()!=null){
+							it.setNumeroSubImpegno(sub.getNumeroBigDecimal().intValue());
 						}
 					}
 				}
@@ -10232,13 +10133,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							if(spesa.getImportoNew()!=null && spesa.getImportoOld()!=null){
 								if(spesa.getImportoOld().compareTo(BigDecimal.ZERO)!=0){
 									spesa = (ModificaMovimentoGestioneEntrata)inserisciModificaMovimentoImporto(spesa, sub.getUid(), enteId , dto, numeroModifiche);
-									spesa.setNumeroSubAccertamento(sub.getNumero().intValue());
+									spesa.setNumeroSubAccertamento(sub.getNumeroBigDecimal().intValue());
 								}
 							}
 							//Modifica movimento gestione spesa soggetto
 							if(spesa.getSoggettoNewMovimentoGestione() != null || spesa.getClasseSoggettoNewMovimentoGestione() != null){
 								spesa = (ModificaMovimentoGestioneEntrata)inserisciModificaMovimentoSpesaSoggetto(spesa, sub.getUid(), enteId, dto, numeroModifiche);
-								spesa.setNumeroSubAccertamento(sub.getNumero().intValue());
+								spesa.setNumeroSubAccertamento(sub.getNumeroBigDecimal().intValue());
 								
 								//setteo il nuovo soggetto del sub
 								sub.setSoggetto(spesa.getSoggettoNewMovimentoGestione());
@@ -10337,13 +10238,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			}
 		}
 	
-		SiacRModificaStatoFin siacRModificaStato = DatiOperazioneUtils.getValido(update.getSiacRModificaStatos(), getNow());
+		SiacRModificaStatoFin siacRModificaStato = DatiOperazioneUtil.getValido(update.getSiacRModificaStatos(), getNow());
 		if(siacRModificaStato!=null){
-			SiacRMovgestTsSogModFin siacRMovgestTsSogMod = DatiOperazioneUtils.getValido(siacRModificaStato.getSiacRMovgestTsSogMods(),getNow());
+			SiacRMovgestTsSogModFin siacRMovgestTsSogMod = DatiOperazioneUtil.getValido(siacRModificaStato.getSiacRMovgestTsSogMods(),getNow());
 			if(siacRMovgestTsSogMod!=null){
 				spesa = impostaDatiModSogg(siacRMovgestTsSogMod, spesa, enteId);
 			}	
-			SiacRMovgestTsSogclasseModFin siacRMovgestTsSogClasseMod = DatiOperazioneUtils.getValido(siacRModificaStato.getSiacRMovgestTsSogclasseMods(),getNow());
+			SiacRMovgestTsSogclasseModFin siacRMovgestTsSogClasseMod = DatiOperazioneUtil.getValido(siacRModificaStato.getSiacRMovgestTsSogclasseMods(),getNow());
 			if(siacRMovgestTsSogClasseMod!=null){
 				spesa = impostaDatiModSoggClass(siacRMovgestTsSogClasseMod, spesa, enteId);
 			}	
@@ -10365,13 +10266,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			SiacTSoggettoFin siacTSoggettoOld =  siacRMovgestTsSogMod.getSiacTSoggetto1();
 			SiacTSoggettoFin siacTSoggettoNew =  siacRMovgestTsSogMod.getSiacTSoggetto2();
 			if(siacTSoggettoNew!=null){
-				Soggetto soggettoNew = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, enteId, siacTSoggettoNew.getSoggettoCode(),true, true);
+				Soggetto soggettoNew = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, enteId, siacTSoggettoNew.getSoggettoCode(),true, true);
 				if(null!=soggettoNew){
 					spesa.setSoggettoNewMovimentoGestione(soggettoNew);
 				}
 			}
 			if(siacTSoggettoOld!=null){
-				Soggetto soggettoOld = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, enteId, siacTSoggettoOld.getSoggettoCode(),true, true);
+				Soggetto soggettoOld = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, enteId, siacTSoggettoOld.getSoggettoCode(),true, true);
 				if(null!=soggettoOld){
 					spesa.setSoggettoOldMovimentoGestione(soggettoOld);
 				}
@@ -10417,7 +10318,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		DatiOperazioneDto datiOperazioneInserimento = DatiOperazioneDto.buildDatiOperazione(datiOperazioneDto, Operazione.INSERIMENTO);
 		List<SiacTMovgestTsFin> siacTMovgestTsList;
 		if(modificaMovImporto!=null && modificaMovImporto.getTipoMovimento()!=null){
-			if(!modificaMovImporto.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_SIM) && !modificaMovImporto.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_SAC) ){
+			if(!modificaMovImporto.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_SIM) && !modificaMovImporto.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_SAC) ){
 				siacTMovgestTsList = siacTMovgestTsRepository.findMovgestTsByMovgest(enteId, datiOperazioneDto.getTs() , uIdImpegno);
 			} else {
 				siacTMovgestTsList = siacTMovgestTsRepository.findSubMovgestTsByMovgest(enteId, datiOperazioneDto.getTs() , uIdImpegno);
@@ -10432,9 +10333,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				BigDecimal deltaModifica = modificaMovImporto.getImportoOld();
 				
 				//Gestione SiacTMovgestTsDetFin
-				SiacDMovgestTsDetTipoFin siacDMovgestTsDetTipoAttuale = siacDMovgestTsDetTipoRepository.findValidoByCode(enteId, datiOperazioneDto.getTs(), Constanti.MOVGEST_TS_DET_TIPO_ATTUALE).get(0);
+				SiacDMovgestTsDetTipoFin siacDMovgestTsDetTipoAttuale = siacDMovgestTsDetTipoRepository.findValidoByCode(enteId, datiOperazioneDto.getTs(), CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE).get(0);
 				SiacTMovgestTsDetFin siacTMovgestTsDet = siacTMovgestTsDetRepository.findValidoByTipo(enteId, datiOperazioneDto.getTs(), siacDMovgestTsDetTipoAttuale.getMovgestTsDetTipoCode(), siacTMovgestTs.getUid()).get(0);
-				siacTMovgestTsDet = saveImporto(siacTMovgestTsDet, modificaMovImporto.getImportoNew(), datiOperazioneDto, siacTMovgestTs, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
+				siacTMovgestTsDet = saveImporto(siacTMovgestTsDet, modificaMovImporto.getImportoNew(), datiOperazioneDto, siacTMovgestTs, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
 				
 				SiacTMovgestTsDetFin detUtilzz = null;
 				//Biosgna gestire anche l'importo utilizzabile:
@@ -10446,13 +10347,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					if(annoMovimento>=annoBilancio){
 						BigDecimal importoUtilizzabileOld = estraiImportoUtilizzabileByMovgestTsId(siacTMovgestTs.getMovgestTsId(), datiOperazioneDto);
 						BigDecimal importoUtilizzabileNew = importoUtilizzabileOld.add(deltaModifica);
-						detUtilzz = saveImporto(importoUtilizzabileNew, datiOperazioneDto, siacTMovgestTs, Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
+						detUtilzz = saveImporto(importoUtilizzabileNew, datiOperazioneDto, siacTMovgestTs, CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE);
 					}
 				}
 				
 				//Gestione SiacTMovgestTsDetModFin
 				SiacTMovgestTsDetModFin siacTMovgestTsDetMod = new SiacTMovgestTsDetModFin();
-				siacTMovgestTsDetMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTMovgestTsDetMod, datiOperazioneInserimento, siacTAccountRepository);
+				siacTMovgestTsDetMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTMovgestTsDetMod, datiOperazioneInserimento, siacTAccountRepository);
 						
 				siacTMovgestTsDetMod.setMovgestTsDetImporto(deltaModifica);
 				siacTMovgestTsDetMod.setSiacTMovgestTsDet(siacTMovgestTsDet);
@@ -10461,14 +10362,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				siacTMovgestTsDetMod.setSiacTEnteProprietario(siacTEnteProprietario);
 				
 				//Preparo SiacDModificaStatoFin
-				SiacDModificaStatoFin siacDModificaStato = siacDModificaStatoRepository.findByCode(enteId, datiOperazioneDto.getTs(), Constanti.D_MODIFICA_STATO_VALIDO).get(0);
+				SiacDModificaStatoFin siacDModificaStato = siacDModificaStatoRepository.findByCode(enteId, datiOperazioneDto.getTs(), CostantiFin.D_MODIFICA_STATO_VALIDO).get(0);
 			
 				//Istanza SiacTModificaFin
 				SiacTModificaFin siacTModifica = new SiacTModificaFin();
-				siacTModifica = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTModifica, datiOperazioneInserimento, siacTAccountRepository);
+				siacTModifica = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTModifica, datiOperazioneInserimento, siacTAccountRepository);
 				
 				//Preparo SiacDModificaTipoFin    Impegno /Subimpegno
-				if(modificaMovImporto!=null && modificaMovImporto.getTipoModificaMovimentoGestione()!=null && modificaMovImporto.getTipoModificaMovimentoGestione().toString()!=null && !StringUtils.isEmpty(modificaMovImporto.getTipoModificaMovimentoGestione())){
+				if(modificaMovImporto!=null && modificaMovImporto.getTipoModificaMovimentoGestione()!=null && modificaMovImporto.getTipoModificaMovimentoGestione().toString()!=null && !StringUtilsFin.isEmpty(modificaMovImporto.getTipoModificaMovimentoGestione())){
 					SiacDModificaTipoFin siacDModificaTipo = siacDModificaTipoRepository.findValidoByCode(enteId, datiOperazioneDto.getTs(), modificaMovImporto.getTipoModificaMovimentoGestione().toString()).get(0);			
 					modificaMovImporto.setTipoMovimentoDesc(siacDModificaTipo.getModTipoDesc());			
 					siacTModifica.setSiacDModificaTipo(siacDModificaTipo);
@@ -10497,7 +10398,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				
 				//Gestisco SiacRModificaStatoFin
 				SiacRModificaStatoFin siacRModificaStato = new SiacRModificaStatoFin();
-				siacRModificaStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRModificaStato, datiOperazioneInserimento, siacTAccountRepository);
+				siacRModificaStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRModificaStato, datiOperazioneInserimento, siacTAccountRepository);
 				
 				siacRModificaStato.setSiacDModificaStato(siacDModificaStato);
 				siacRModificaStato.setSiacTEnteProprietario(siacTEnteProprietario);
@@ -10537,13 +10438,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				
 				modificaMovImporto.setTipoMovimento(tipoMod);
 				
-				if(modificaMovImporto.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_SIM)){
+				if(modificaMovImporto.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_SIM)){
 					((ModificaMovimentoGestioneSpesa)modificaMovImporto).setUidSubImpegno(siacTMovgestTs.getSiacTMovgest().getUid());
-				} else if(modificaMovImporto.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_IMP)){
+				} else if(modificaMovImporto.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_IMP)){
 					((ModificaMovimentoGestioneSpesa)modificaMovImporto).setUidImpegno(siacTMovgestTs.getSiacTMovgest().getUid());
-				} else if(modificaMovImporto.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_ACC)){
+				} else if(modificaMovImporto.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_ACC)){
 					((ModificaMovimentoGestioneEntrata)modificaMovImporto).setUidAccertamento(siacTMovgestTs.getSiacTMovgest().getUid());
-				} else if(modificaMovImporto.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_SAC)){
+				} else if(modificaMovImporto.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_SAC)){
 					((ModificaMovimentoGestioneEntrata)modificaMovImporto).setUidSubAccertamento(siacTMovgestTs.getSiacTMovgest().getUid());
 				}
 				
@@ -10599,7 +10500,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		List<SiacTMovgestTsFin> siacTMovgestTsList; 
 		
 		// leggo il movimento gestione ts da db
-		if(!spesa.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_SIM) && !spesa.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_SAC)){
+		if(!spesa.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_SIM) && !spesa.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_SAC)){
 			siacTMovgestTsList = siacTMovgestTsRepository.findMovgestTsByMovgest(enteId, datiOperazioneDto.getTs() , uIdImpegno);
 		} else {
 			siacTMovgestTsList = siacTMovgestTsRepository.findSubMovgestTsByMovgest(enteId, datiOperazioneDto.getTs() , uIdImpegno);
@@ -10647,7 +10548,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					log.debug(""," ------  entra qui XCHè DEVO INSERIRE IL SOGGETTO --------");
 					log.debug(""," DA INSERIRE CodiceSoggetto : " + spesa.getSoggettoNewMovimentoGestione().getCodiceSoggetto());
 					
-					siacRMovgestTsSog = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSog, datiOperazioneInserimento, siacTAccountRepository);	//1 dati login			
+					siacRMovgestTsSog = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSog, datiOperazioneInserimento, siacTAccountRepository);	//1 dati login			
 					siacRMovgestTsSog.setDataCreazione(new Date());	//2data creazione
 					siacRMovgestTsSog.setSiacTMovgestT(siacTMovgestTs); //3 id movgest
 					siacRMovgestTsSog.setDataInizioValidita(new Date()); //2 bis data inizio validita'
@@ -10655,7 +10556,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 					SiacTSoggettoFin siacTSoggetto = null;
 					codeSogg = spesa.getSoggettoNewMovimentoGestione().getCodiceSoggetto();
-					List<SiacTSoggettoFin> l = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(codeSogg, enteId, datiOperazioneDto.getTs(), idAmbito, Constanti.SEDE_SECONDARIA);
+					List<SiacTSoggettoFin> l = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(codeSogg, enteId, datiOperazioneDto.getTs(), idAmbito, CostantiFin.SEDE_SECONDARIA);
 					if(l!=null && l.size()>0){
 						siacTSoggetto = l.get(0);
 						siacRMovgestTsSog.setSiacTSoggetto(siacTSoggetto);	
@@ -10671,7 +10572,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				{
 					
 					if(siacRMovgestTsSog.getDataCreazione()!=null){
-						DatiOperazioneUtils.cancellaRecord(siacRMovgestTsSog, siacRMovgestTsSogRepository, datiOperazioneDto, siacTAccountRepository);
+						DatiOperazioneUtil.cancellaRecord(siacRMovgestTsSog, siacRMovgestTsSogRepository, datiOperazioneDto, siacTAccountRepository);
 					}	
 				}
 			}
@@ -10695,7 +10596,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				//VIENE RISCRITTO PIU' LEGGIBILE:
 				if(!isEmptyClasseNew){
 				
-					siacRMovgestTsSogClasse = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSogClasse, datiOperazioneInserimento, siacTAccountRepository);
+					siacRMovgestTsSogClasse = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSogClasse, datiOperazioneInserimento, siacTAccountRepository);
 					siacRMovgestTsSogClasse.setDataCreazione(new Date());
 					siacRMovgestTsSogClasse.setSiacTMovgestT(siacTMovgestTs); 
 					siacRMovgestTsSogClasse.setDataInizioValidita(new Date()); 
@@ -10703,7 +10604,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 					SiacDSoggettoClasseFin siacDSoggettoClasse = null;
 					
-					if(StringUtils.contieneSoloNumeri(spesa.getClasseSoggettoNewMovimentoGestione().getCodice())){
+					if(StringUtilsFin.contieneSoloNumeri(spesa.getClasseSoggettoNewMovimentoGestione().getCodice())){
 						codeSoggClass = spesa.getClasseSoggettoNewMovimentoGestione().getCodice();
 					} else {
 						List<SiacDSoggettoClasseFin> listClass = siacDSoggettoClasseRepository.findValidoByCode(enteId, datiOperazioneDto.getSiacDAmbito().getAmbitoId(), spesa.getClasseSoggettoNewMovimentoGestione().getCodice(), datiOperazioneDto.getTs());
@@ -10724,7 +10625,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				else {
 					log.debug("","Gestione Modifica: Class -> Null cancellaRecord ....");
 					if(siacRMovgestTsSogClasse.getDataCreazione()!=null){
-						DatiOperazioneUtils.cancellaRecord(siacRMovgestTsSogClasse, siacRMovgestTsSogClasseRepository, datiOperazioneDto, siacTAccountRepository); //verificare
+						DatiOperazioneUtil.cancellaRecord(siacRMovgestTsSogClasse, siacRMovgestTsSogClasseRepository, datiOperazioneDto, siacTAccountRepository); //verificare
 					}	
 				}
 			} else {
@@ -10736,7 +10637,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						siacRMovgestTsSogClasse = lista.get(0); 
 					}
 					if(siacRMovgestTsSogClasse.getDataCreazione()!=null){
-						DatiOperazioneUtils.cancellaRecord(siacRMovgestTsSogClasse, siacRMovgestTsSogClasseRepository, datiOperazioneDto, siacTAccountRepository); //verificare
+						DatiOperazioneUtil.cancellaRecord(siacRMovgestTsSogClasse, siacRMovgestTsSogClasseRepository, datiOperazioneDto, siacTAccountRepository); //verificare
 					}
 				}
 				
@@ -10748,16 +10649,16 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			// 		GESTIONE SiacRMovgestTsSogModFin
 			//
 			// ***********************************************
-			if(spesa.getSoggettoNewMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getSoggettoNewMovimentoGestione().getCodiceSoggetto())){
+			if(spesa.getSoggettoNewMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getSoggettoNewMovimentoGestione().getCodiceSoggetto())){
 			
-				siacRMovgestTsSogMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSogMod, datiOperazioneInserimento, siacTAccountRepository);			
+				siacRMovgestTsSogMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSogMod, datiOperazioneInserimento, siacTAccountRepository);			
 				siacRMovgestTsSogMod.setDataCreazione(new Date());
 				siacRMovgestTsSogMod.setSiacTMovgestT(siacTMovgestTs);
 				siacRMovgestTsSogMod.setDataInizioValidita(new Date());
 			
 				SiacTSoggettoFin siacTSoggettoNew = null;
 				
-				List<SiacTSoggettoFin> ln = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(codeSogg, enteId, datiOperazioneDto.getTs(), idAmbito, Constanti.SEDE_SECONDARIA);				
+				List<SiacTSoggettoFin> ln = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(codeSogg, enteId, datiOperazioneDto.getTs(), idAmbito, CostantiFin.SEDE_SECONDARIA);				
 					if(ln!=null && ln.size()>0){
 						siacTSoggettoNew = ln.get(0);
 						siacRMovgestTsSogMod.setSiacTSoggetto2(siacTSoggettoNew);
@@ -10765,9 +10666,9 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 				SiacTSoggettoFin siacTSoggettoOld = null;
 				//Condizione modifica sostituzione vecchio soggetto con nuovo soggetto
-				if(spesa.getSoggettoOldMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getSoggettoOldMovimentoGestione().getCodiceSoggetto())){
+				if(spesa.getSoggettoOldMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getSoggettoOldMovimentoGestione().getCodiceSoggetto())){
 				String codeSoggOld = spesa.getSoggettoOldMovimentoGestione().getCodiceSoggetto();
-					List<SiacTSoggettoFin> lo = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(codeSoggOld, enteId, datiOperazioneDto.getTs(), idAmbito, Constanti.SEDE_SECONDARIA);
+					List<SiacTSoggettoFin> lo = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(codeSoggOld, enteId, datiOperazioneDto.getTs(), idAmbito, CostantiFin.SEDE_SECONDARIA);
 				if(lo!=null && lo.size()>0){
 					siacTSoggettoOld = lo.get(0);
 					siacRMovgestTsSogMod.setSiacTSoggetto1(siacTSoggettoOld); 
@@ -10782,17 +10683,17 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				siacRMovgestTsSogMod.setSiacTEnteProprietario(siacTEnteProprietario);
 			} 
 			//Condizione modifica sostituzione vecchio soggetto con niente 
-			else if(spesa.getSoggettoOldMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getSoggettoOldMovimentoGestione().getCodiceSoggetto())){
+			else if(spesa.getSoggettoOldMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getSoggettoOldMovimentoGestione().getCodiceSoggetto())){
 				
 				//creo una nuova modifica con il solo old
-				siacRMovgestTsSogMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSogMod, datiOperazioneInserimento, siacTAccountRepository);			
+				siacRMovgestTsSogMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSogMod, datiOperazioneInserimento, siacTAccountRepository);			
 				siacRMovgestTsSogMod.setDataCreazione(new Date());
 				siacRMovgestTsSogMod.setSiacTMovgestT(siacTMovgestTs);
 				siacRMovgestTsSogMod.setDataInizioValidita(new Date());
 			
 				SiacTSoggettoFin siacTSoggettoOld = null;
 				
-				List<SiacTSoggettoFin> ln = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(spesa.getSoggettoOldMovimentoGestione().getCodiceSoggetto(), enteId, datiOperazioneDto.getTs(), idAmbito, Constanti.SEDE_SECONDARIA);				
+				List<SiacTSoggettoFin> ln = siacTSoggettoRepository.findSoggettoByCodeAndAmbitoAndEnte(spesa.getSoggettoOldMovimentoGestione().getCodiceSoggetto(), enteId, datiOperazioneDto.getTs(), idAmbito, CostantiFin.SEDE_SECONDARIA);				
 				if(ln!=null && ln.size()>0){
 					siacTSoggettoOld = ln.get(0);
 					siacRMovgestTsSogMod.setSiacTSoggetto1(siacTSoggettoOld);
@@ -10814,17 +10715,17 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			// ***********************************************
 			// 		GESTIONE SiacRMovgestTsClasseMod 
 			// ***********************************************
-			if((spesa.getClasseSoggettoNewMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getClasseSoggettoNewMovimentoGestione().getCodice()))	//correzione anomalia 544 (Nessun associazione all'impegno della classe a cui appartiene un soggetto non nullo)
-					&& (spesa.getSoggettoNewMovimentoGestione()==null || StringUtils.isEmpty(spesa.getSoggettoNewMovimentoGestione().getCodiceSoggetto()))){
+			if((spesa.getClasseSoggettoNewMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getClasseSoggettoNewMovimentoGestione().getCodice()))	//correzione anomalia 544 (Nessun associazione all'impegno della classe a cui appartiene un soggetto non nullo)
+					&& (spesa.getSoggettoNewMovimentoGestione()==null || StringUtilsFin.isEmpty(spesa.getSoggettoNewMovimentoGestione().getCodiceSoggetto()))){
 			
-				siacRMovgestTsSogClasseMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSogClasseMod, datiOperazioneInserimento, siacTAccountRepository); 			
+				siacRMovgestTsSogClasseMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSogClasseMod, datiOperazioneInserimento, siacTAccountRepository); 			
 				siacRMovgestTsSogClasseMod.setDataCreazione(new Date());	
 				siacRMovgestTsSogClasseMod.setSiacTMovgestT(siacTMovgestTs); 
 				siacRMovgestTsSogClasseMod.setDataInizioValidita(new Date());
 			
 				SiacDSoggettoClasseFin siacDSoggettoClasseNew = null;
 				
-				if(StringUtils.contieneSoloNumeri(spesa.getClasseSoggettoNewMovimentoGestione().getCodice())){
+				if(StringUtilsFin.contieneSoloNumeri(spesa.getClasseSoggettoNewMovimentoGestione().getCodice())){
 					codeSoggClass = spesa.getClasseSoggettoNewMovimentoGestione().getCodice();
 				} 
 				else 
@@ -10843,7 +10744,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				
 				SiacDSoggettoClasseFin siacDSoggettoClasseOld = null;
 				//Condizione modifica sostituzione vecchia classe con nuova classe
-				if(spesa.getClasseSoggettoOldMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getClasseSoggettoOldMovimentoGestione().getCodice())){
+				if(spesa.getClasseSoggettoOldMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getClasseSoggettoOldMovimentoGestione().getCodice())){
 					
 					String codeSoggClassOld = spesa.getClasseSoggettoOldMovimentoGestione().getCodice();
 					List<SiacDSoggettoClasseFin> lco = siacDSoggettoClasseRepository.findByCodeAndAmbitoAndEnte(codeSoggClassOld, enteId, datiOperazioneDto.getTs(), idAmbito);
@@ -10865,10 +10766,10 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				siacRMovgestTsSogClasseMod.setSiacTEnteProprietario(siacTEnteProprietario);
 			}
 			//Condizione modifica sostituzione vecchia classe con niente 
-			else if(spesa.getClasseSoggettoOldMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getClasseSoggettoOldMovimentoGestione().getCodice())){
+			else if(spesa.getClasseSoggettoOldMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getClasseSoggettoOldMovimentoGestione().getCodice())){
 
 				//creo nuova modifica solo la vecchia classe
-				siacRMovgestTsSogClasseMod = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTsSogClasseMod, datiOperazioneInserimento, siacTAccountRepository); 			
+				siacRMovgestTsSogClasseMod = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTsSogClasseMod, datiOperazioneInserimento, siacTAccountRepository); 			
 				siacRMovgestTsSogClasseMod.setDataCreazione(new Date());	
 				siacRMovgestTsSogClasseMod.setSiacTMovgestT(siacTMovgestTs); 
 				siacRMovgestTsSogClasseMod.setDataInizioValidita(new Date());
@@ -10908,10 +10809,10 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 			//Istanzo SiacTModificaFin
 			SiacTModificaFin siacTModifica = new SiacTModificaFin();
-			siacTModifica = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTModifica, datiOperazioneInserimento, siacTAccountRepository);
+			siacTModifica = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTModifica, datiOperazioneInserimento, siacTAccountRepository);
 			
 			//Preparo SiacDModificaTipoFin    Impegno /Subimpegno
-			if(spesa.getTipoModificaMovimentoGestione().toString()!=null && !StringUtils.isEmpty(spesa.getTipoModificaMovimentoGestione())){
+			if(spesa.getTipoModificaMovimentoGestione().toString()!=null && !StringUtilsFin.isEmpty(spesa.getTipoModificaMovimentoGestione())){
 			SiacDModificaTipoFin siacDModificaTipo = siacDModificaTipoRepository.findValidoByCode(enteId, datiOperazioneDto.getTs(), spesa.getTipoModificaMovimentoGestione().toString()).get(0);
 				spesa.setTipoMovimentoDesc(siacDModificaTipo.getModTipoDesc());
 				siacTModifica.setSiacDModificaTipo(siacDModificaTipo);				
@@ -10939,7 +10840,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 			//Gestisco SiacRModificaStatoFin
 			SiacRModificaStatoFin siacRModificaStato = new SiacRModificaStatoFin();
-			siacRModificaStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRModificaStato, datiOperazioneInserimento, siacTAccountRepository);
+			siacRModificaStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRModificaStato, datiOperazioneInserimento, siacTAccountRepository);
 			
 			siacRModificaStato.setSiacDModificaStato(siacDModificaStato);
 			siacRModificaStato.setSiacTEnteProprietario(siacTEnteProprietario);
@@ -10949,8 +10850,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 			
 			//Salvo SiacRMovgestTsSogModFin
-			if((spesa.getSoggettoOldMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getSoggettoOldMovimentoGestione().getCodiceSoggetto()))
-					|| spesa.getSoggettoNewMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getSoggettoNewMovimentoGestione().getCodiceSoggetto())){
+			if((spesa.getSoggettoOldMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getSoggettoOldMovimentoGestione().getCodiceSoggetto()))
+					|| spesa.getSoggettoNewMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getSoggettoNewMovimentoGestione().getCodiceSoggetto())){
 				siacRMovgestTsSogMod.setSiacRModificaStato(siacRModificaStato); 
 				// stato
 				//salvo sul db:
@@ -10958,8 +10859,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			}	
 			
 			//Salvo SiacRMovgestTsSogClasseMod	(salvataggio caso classe old -> classe new && null-> classe new)
-			if((spesa.getClasseSoggettoOldMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getClasseSoggettoOldMovimentoGestione().getCodice()))
-				||	(spesa.getClasseSoggettoNewMovimentoGestione()!=null && !StringUtils.isEmpty(spesa.getClasseSoggettoNewMovimentoGestione().getCodice()))){								
+			if((spesa.getClasseSoggettoOldMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getClasseSoggettoOldMovimentoGestione().getCodice()))
+				||	(spesa.getClasseSoggettoNewMovimentoGestione()!=null && !StringUtilsFin.isEmpty(spesa.getClasseSoggettoNewMovimentoGestione().getCodice()))){								
 				siacRMovgestTsSogClasseMod.setSiacRModificaStato(siacRModificaStato);
 				
 //				System.out.println("siacRModificaStato: " + siacRModificaStato.getModStatoRId());
@@ -11007,14 +10908,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						
 			spesa.setTipoMovimento(tipoMod);
 			
-			if(spesa.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_SIM)){
+			if(spesa.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_SIM)){
 				((ModificaMovimentoGestioneSpesa)spesa).setUidSubImpegno(siacTMovgestTs.getSiacTMovgest().getUid());
 				((ModificaMovimentoGestioneSpesa)spesa).setNumeroSubImpegno(siacTMovgestTs.getSiacTMovgest().getMovgestNumero().intValue());
-			} else if(spesa.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_IMP)){
+			} else if(spesa.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_IMP)){
 				((ModificaMovimentoGestioneSpesa)spesa).setUidImpegno(siacTMovgestTs.getSiacTMovgest().getUid());
-			} else if(spesa.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_ACC)){
+			} else if(spesa.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_ACC)){
 				((ModificaMovimentoGestioneEntrata)spesa).setUidAccertamento(siacTMovgestTs.getSiacTMovgest().getUid());
-			} else if(spesa.getTipoMovimento().equalsIgnoreCase(Constanti.MODIFICA_TIPO_SAC)){
+			} else if(spesa.getTipoMovimento().equalsIgnoreCase(CostantiFin.MODIFICA_TIPO_SAC)){
 				((ModificaMovimentoGestioneEntrata)spesa).setUidSubAccertamento(siacTMovgestTs.getSiacTMovgest().getUid());
 				((ModificaMovimentoGestioneEntrata)spesa).setNumeroSubAccertamento(siacTMovgestTs.getSiacTMovgest().getMovgestNumero().intValue());
 			}
@@ -11027,12 +10928,12 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	
 	
 	private boolean isSoggettoVuoto(Soggetto soggetto){
-		boolean isEmptySoggetto = soggetto==null || StringUtils.isEmpty(soggetto.getCodiceSoggetto());
+		boolean isEmptySoggetto = soggetto==null || StringUtilsFin.isEmpty(soggetto.getCodiceSoggetto());
 		return isEmptySoggetto;
 	}
 	
 	private boolean isClasseSoggettoVuoto(ClasseSoggetto classeSoggetto){
-		boolean isEmptyClasse = classeSoggetto==null || StringUtils.isEmpty(classeSoggetto.getCodice());
+		boolean isEmptyClasse = classeSoggetto==null || StringUtilsFin.isEmpty(classeSoggetto.getCodice());
 		return isEmptyClasse;
 	}
 
@@ -11055,22 +10956,22 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			siacTMovgestDaAggiornare.setUid(impegnoDaAggiornare.getUid());
 			
 			//imposto operazioni di base
-			siacTMovgestDaAggiornare = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTMovgestDaAggiornare, datiOperazioneDto, siacTAccountRepository);
+			siacTMovgestDaAggiornare = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTMovgestDaAggiornare, datiOperazioneDto, siacTAccountRepository);
 			
 			//sovrascrivo i campi di siacTMovgest
 			SiacTBilFin siacTBil =  siacTBilList.get(0);
 			siacTMovgestDaAggiornare.setSiacTBil(siacTBil);
 			siacTMovgestDaAggiornare.setMovgestAnno(impegnoDaAggiornare.getAnnoMovimento());
-			siacTMovgestDaAggiornare.setMovgestNumero(impegnoDaAggiornare.getNumero());
+			siacTMovgestDaAggiornare.setMovgestNumero(impegnoDaAggiornare.getNumeroBigDecimal());
 			siacTMovgestDaAggiornare.setMovgestDesc(impegnoDaAggiornare.getDescrizione());
 			
 		}		
 		
 		String costanteTipo = null;
 		if(impegnoDaAggiornare instanceof ImpegnoAbstract){
-			costanteTipo =  Constanti.MOVGEST_TIPO_IMPEGNO;
+			costanteTipo =  CostantiFin.MOVGEST_TIPO_IMPEGNO;
 		} else if(impegnoDaAggiornare instanceof AccertamentoAbstract){
-			costanteTipo =  Constanti.MOVGEST_TIPO_ACCERTAMENTO;
+			costanteTipo =  CostantiFin.MOVGEST_TIPO_ACCERTAMENTO;
 		}
 		
 		
@@ -11078,7 +10979,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		if(!siacTMovgestDaAggiornare.getParereFinanziario().equals(impegnoDaAggiornare.getParereFinanziario())){
 			siacTMovgestDaAggiornare.setParereFinanziario(impegnoDaAggiornare.getParereFinanziario());
 			siacTMovgestDaAggiornare.setParereFinanziarioDataModifica(new Date(System.currentTimeMillis()));
-			String parereFinanziarioLoginOperazione = DatiOperazioneUtils.determinaUtenteLogin(datiOperazioneDto, siacTAccountRepository);
+			String parereFinanziarioLoginOperazione = DatiOperazioneUtil.determinaUtenteLogin(datiOperazioneDto, siacTAccountRepository);
 			siacTMovgestDaAggiornare.setParereFinanziarioLoginOperazione(parereFinanziarioLoginOperazione);
 		}
 		
@@ -11100,7 +11001,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					for (SiacRMovgestBilElemFin rMovgestBilElemCorr : rMovgestBilElems) {
 						if (rMovgestBilElemCorr.getDataFineValidita()==null && rMovgestBilElemCorr.getDataCancellazione()==null) {
 							//Se valido e non cancellato
-							rMovgestBilElemCorr = DatiOperazioneUtils.impostaDatiOperazioneLogin(rMovgestBilElemCorr, datiOperazioneDto, siacTAccountRepository);
+							rMovgestBilElemCorr = DatiOperazioneUtil.impostaDatiOperazioneLogin(rMovgestBilElemCorr, datiOperazioneDto, siacTAccountRepository);
 							rMovgestBilElemCorr.setSiacTBilElem(siacTBilElem);
 							rMovgestBilElemCorr.setSiacTMovgest(siacTMovgestUpdated);
 							//salvo sul db:
@@ -11117,7 +11018,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					for (SiacRMovgestBilElemFin rMovgestBilElemCorr : rMovgestBilElems) {
 						if (rMovgestBilElemCorr.getDataFineValidita()==null && rMovgestBilElemCorr.getDataCancellazione()==null) {
 							//Se valido e non cancellato
-							rMovgestBilElemCorr = DatiOperazioneUtils.impostaDatiOperazioneLogin(rMovgestBilElemCorr, datiOperazioneDto, siacTAccountRepository);
+							rMovgestBilElemCorr = DatiOperazioneUtil.impostaDatiOperazioneLogin(rMovgestBilElemCorr, datiOperazioneDto, siacTAccountRepository);
 							rMovgestBilElemCorr.setSiacTBilElem(siacTBilElem);
 							rMovgestBilElemCorr.setSiacTMovgest(siacTMovgestUpdated);
 							//salvo sul db:
@@ -11129,7 +11030,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			}
 		}		
 		if(capitoloModificato!=null){
-			List<SiacRMovgestBilElemFin> rMovgestBilElemsAggiornata= DatiOperazioneUtils.replaceInList(rMovgestBilElems, capitoloModificato);
+			List<SiacRMovgestBilElemFin> rMovgestBilElemsAggiornata= DatiOperazioneUtil.replaceInList(rMovgestBilElems, capitoloModificato);
 			siacTMovgestUpdated.setSiacRMovgestBilElems(rMovgestBilElemsAggiornata);
 		}
 
@@ -11173,7 +11074,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			//vincoli eliminati:
 			if(vincoliDaAnnullare!=null && vincoliDaAnnullare.size()>0){
 				for (SiacRMovgestTsFin siacRMovgestTsDaAnnullare : vincoliDaAnnullare) {
-					DatiOperazioneUtils.annullaRecord(siacRMovgestTsDaAnnullare, siacRMovgestTsRepository, datiOperazioneDto,siacTAccountRepository);
+					DatiOperazioneUtil.annullaRecord(siacRMovgestTsDaAnnullare, siacRMovgestTsRepository, datiOperazioneDto,siacTAccountRepository);
 				}
 			}
 			
@@ -11219,7 +11120,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			if(siacTMovgestTsUpdated.getSiacRMovgestTsB()!=null && !siacTMovgestTsUpdated.getSiacRMovgestTsB().isEmpty()){
 								
 				
-				vincoliOld = DatiOperazioneUtils.soloValidi(siacTMovgestTsUpdated.getSiacRMovgestTsB(), getNow());
+				vincoliOld = DatiOperazioneUtil.soloValidi(siacTMovgestTsUpdated.getSiacRMovgestTsB(), getNow());
 				
 				List<Integer> listaIdsuFE = new ArrayList<Integer>();
 				List<Integer> listaIdsuDB = new ArrayList<Integer>();
@@ -11306,7 +11207,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			// che prima non esistessero, quindi devo andare ad annullarli tutti
 			if(siacTMovgestTsUpdated.getSiacRMovgestTsB()!=null && !siacTMovgestTsUpdated.getSiacRMovgestTsB().isEmpty()){
 				
-				List<SiacRMovgestTsFin> siacRMovgestTsValidiDaAnnullare = DatiOperazioneUtils.soloValidi(siacTMovgestTsUpdated.getSiacRMovgestTsB(), getNow());
+				List<SiacRMovgestTsFin> siacRMovgestTsValidiDaAnnullare = DatiOperazioneUtil.soloValidi(siacTMovgestTsUpdated.getSiacRMovgestTsB(), getNow());
 				
 				vincoliDaAnnullare.addAll(siacRMovgestTsValidiDaAnnullare);
 				
@@ -11372,7 +11273,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		// QUERY PRINCIPALE - IMPEGNI
 		// JIRA-1057
 		List<IdImpegnoSubimpegno> listaIdImpegni = new ArrayList<IdImpegnoSubimpegno>();
-		listaIdImpegni = impegnoDao.ricercaImpegniSubImpegni(ente.getUid(), paramSearch, true);
+		//task-168
+		listaIdImpegni = impegnoDao.ricercaImpegniSubImpegni(ente.getUid(), paramSearch, true, false);
 
 		List<Impegno> listaImpegni = new ArrayList<Impegno>();
 		List<IdImpegnoSubimpegno> listaPaginata = new ArrayList<IdImpegnoSubimpegno>();
@@ -11441,7 +11343,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		// QUERY : ritorna una li
 		// JIRA-1057
 		List<IdImpegnoSubimpegno> listaIdImpegni = new ArrayList<IdImpegnoSubimpegno>();
-		listaIdImpegni = impegnoDao.ricercaImpegniSubImpegni(ente.getUid(), paramSearch, true);
+		//task-168
+		listaIdImpegni = impegnoDao.ricercaImpegniSubImpegni(ente.getUid(), paramSearch, true, false);
 
 		
 		
@@ -11480,13 +11383,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 														     String.valueOf(paramRic.getAnnoEsercizio()), 
 														     siacTMovgest.getMovgestAnno() , 
 														     siacTMovgest.getMovgestNumero(), 
-														     Constanti.MOVGEST_TIPO_IMPEGNO,
+														     CostantiFin.MOVGEST_TIPO_IMPEGNO,
 														     false);
 				
 					if(impNew!=null){
 						Soggetto soggettoMovimento = new Soggetto();
 						if(mappaSog.get(impNew.getSoggettoCode())==null){		
-							soggettoMovimento = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), impNew.getSoggettoCode(), true, false);
+							soggettoMovimento = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), impNew.getSoggettoCode(), true, false);
 							mappaSog.put(impNew.getSoggettoCode(), soggettoMovimento);
 						}else{
 							
@@ -11498,7 +11401,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 							Soggetto soggettoSUBMovimento = new Soggetto();
 							for (SubImpegno subImpegno : impNew.getElencoSubImpegni()) {									
 								if(mappaSog.get(subImpegno.getSoggettoCode())==null){		
-									soggettoSUBMovimento = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), subImpegno.getSoggettoCode(), true, false);
+									soggettoSUBMovimento = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), subImpegno.getSoggettoCode(), true, false);
 									mappaSog.put(subImpegno.getSoggettoCode(), soggettoMovimento);
 								}else{										
 									soggettoSUBMovimento = mappaSog.get(subImpegno.getSoggettoCode());
@@ -11520,69 +11423,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	
 	
 	
-	/**
-	 * Metodo custom per la ricerca di impegni sub impegni per inserimento nuove voci di mutuo
-	 * @param ente
-	 * @param richiedente
-	 * @param paramRic
-	 * @param numPagina
-	 * @param numRisPerPagina
-	 * @return
-	 */
-	public List<Impegno> ricercaImpegniSubImpegniPerVociMutuo(Ente ente, Richiedente richiedente , ParametroRicercaImpSub paramRic,int numPagina, int numRisPerPagina){
-
-		// QUERY PRINCIPALE - IMPEGNI
-		List<IdMovgestSubmovegest> listaIdImpegni = ricercaImpegniSubImpegniPerVociMutuo(paramRic, ente);
-		//
-		
-		//da usare per avere tanti risultati fake quando voglio "testare la paginazione"
-//		listaIdImpegni = triplicaIds(listaIdImpegni);
-		//
-		
-		List<IdMovgestSubmovegest> listaIdImpegniPaginati = getIdMovgestSubmovegestPaginati(listaIdImpegni, numPagina, numRisPerPagina);
-		
-		String idsMovgestIdPaginati = parseArrayToListMovgestId(listaIdImpegniPaginati);
-		
-		List<SiacTMovgestFin> listaDati = movimentoGestioneDao.ricercaSiacTMovgestPerIN(idsMovgestIdPaginati);
-		
-		
-		HashMap<Integer, Impegno> cacheImpegni = new HashMap<Integer, Impegno>();
-		HashMap<String, Soggetto> cacheSoggetti = new HashMap<String, Soggetto>();
-		
-		List<Impegno> listaImpegnoNew = new ArrayList<Impegno>();
-		for(IdMovgestSubmovegest it : listaIdImpegniPaginati){
-			
-			Integer movgestId = it.getMovgestId();
-			Integer movgestTsId = it.getMovgestTsId();
-			Integer movgestTsIdPadre = it.getMovgestTsIdPadre();
-			
-			SiacTMovgestFin siacTMovgest = DatiOperazioneUtils.getById(listaDati, movgestId);
-			
-			Impegno impNew = caricaImpegnoConCache(siacTMovgest, cacheImpegni, ente, richiedente, paramRic.getAnnoEsercizio());
-			if(impNew!=null){
-				//completo i dati del soggetto:
-				Soggetto soggettoMovimento = caricaSoggettoConCache(impNew.getSoggettoCode(), cacheSoggetti, ente, richiedente);
-				//
-				
-				
-				if(movgestTsIdPadre!=null){
-					//sub impegno
-					impNew = lasciaSoloIlSubImpegno(impNew, movgestTsId);
-					//Completo i dati soggetto:
-					for (SubImpegno subImpegno : impNew.getElencoSubImpegni()) {
-						Soggetto soggettoSUBMovimento = caricaSoggettoConCache(subImpegno.getSoggettoCode(), cacheSoggetti, ente, richiedente);
-						subImpegno.setSoggetto(soggettoSUBMovimento);									
-					}	
-				}
-				impNew.setSoggetto(soggettoMovimento);
-				listaImpegnoNew.add(impNew);
-			}
-		}
-		
-		///
-		
-        return listaImpegnoNew;
-	}
+	
 	
 	private List<IdMovgestSubmovegest> triplicaIds(List<IdMovgestSubmovegest> listaIdImpegni) {
 		List<IdMovgestSubmovegest> listaImpegnoFake = new ArrayList<IdMovgestSubmovegest>();
@@ -11607,39 +11448,6 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	}
 
 
-	/**
-	 * Metodo custom per la ricerca degli imp e sub per inserimento nuove voci di mutuo
-	 * @param paramRic
-	 * @param ente
-	 * @return
-	 */
-	private List<IdMovgestSubmovegest> ricercaImpegniSubImpegniPerVociMutuo(ParametroRicercaImpSub paramRic,Ente ente){
-		List<IdMovgestSubmovegest> listaIdImpegni = new ArrayList<IdMovgestSubmovegest>();
-		
-		if(paramRic.getTipoProvvedimento()!=null && paramRic.getTipoProvvedimento().getUid()!=0){
-			Timestamp now = new Timestamp(System.currentTimeMillis());
-			List<SiacDAttoAmmTipoFin> siacDAttoAmmTipoList = siacDAttoAmmTipoRepository.findDAttoAmmTipoValidoByAttoAmmTipoIdAndEnteId(ente.getUid(), paramRic.getTipoProvvedimento().getUid(), now); 
-			if(null!=siacDAttoAmmTipoList && siacDAttoAmmTipoList.size() > 0){
-				String codiceTipoProvvedimento = siacDAttoAmmTipoList.get(0).getAttoammTipoCode();
-				paramRic.getTipoProvvedimento().setCodice(codiceTipoProvvedimento);
-			}
-		}
-		
-		RicercaImpSubParamDto paramSearch = (RicercaImpSubParamDto) map(paramRic, RicercaImpSubParamDto.class);
-
-		if(paramRic.getUidStrutturaAmministrativoContabile()!=null){
-			paramSearch.setUidStrutturaAmministrativoContabile(paramRic.getUidStrutturaAmministrativoContabile());
-		}
-		
-		
-		//ricerca principale con i filtri pii semplici:
-		listaIdImpegni = impegnoDao.ricercaImpegniSubImpegniPerVociMutuo(paramRic.getIdMutuo(), ente.getUid(), paramSearch, true);
-		//filtriamo in modo da avere solo quelli con disp a finanziare maggiore di zero:
-		listaIdImpegni = soloConDispAFinanziareMaggioreDiZero(listaIdImpegni, ente);
-		//
-		return listaIdImpegni;
-	}
-	
 	
 	private ArrayList<Integer> getDistintiMovgestId(List<IdMovgestSubmovegest> listaIdImpegni){
 		ArrayList<Integer> listaMovegestId = new ArrayList<Integer>();
@@ -11666,16 +11474,16 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				listaMovegestTsId.add(it.getMovgestTsId());
 			}
 			
-			List<SiacTMovgestTsDetFin> listaImportiAttuali = movimentoGestioneDao.findImportoMassive(ente.getUid(), listaMovegestTsId, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
-			List<CodificaImportoDto> elencoSommeVoci = impegnoDao.calcolaSommaImportiVociMutuo(listaMovegestTsId);
+			List<SiacTMovgestTsDetFin> listaImportiAttuali = movimentoGestioneDao.findImportoMassive(ente.getUid(), listaMovegestTsId, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
 			
 			
 			for(IdMovgestSubmovegest it: listaIdImpegni){
 				Integer movgestTsId = it.getMovgestTsId();
 				BigDecimal importoAttuale = findImpByMovgestTsId(listaImportiAttuali, movgestTsId);
-				BigDecimal sommaVoci = findSommaVociByMovgestTsId(elencoSommeVoci,movgestTsId);
+			//	BigDecimal sommaVoci = findSommaVociByMovgestTsId(elencoSommeVoci,movgestTsId);
 				
-				BigDecimal disponibilitaFinanziare = importoAttuale.subtract(sommaVoci);
+				BigDecimal disponibilitaFinanziare = importoAttuale;
+//				BigDecimal disponibilitaFinanziare = importoAttuale.subtract(sommaVoci);
 				
 				if(disponibilitaFinanziare.compareTo(BigDecimal.ZERO)>0){
 					conDispFinanziareMaggioreDiZero.add(it);
@@ -11748,12 +11556,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		return sommaVoci;
 	}
 	
-	/**
-	 * metodo di appoggio per ricercaImpegniSubImpegniPerVociMutuo
-	 * @param impNew
-	 * @param uidSubImpGiaAggiunti
-	 * @return
-	 */
+	
 	private Impegno lasciaSoloUnSubImpegno(Impegno impNew,ArrayList<Integer> uidSubImpGiaAggiunti){
 		ArrayList<SubImpegno> subImpegnoDiQuestoGiro = new ArrayList<SubImpegno>();
 		for (SubImpegno subImpegno : impNew.getElencoSubImpegni()) {
@@ -11768,12 +11571,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		return impNew;
 	}
 	
-	/**
-	 * metodo di appoggio per ricercaImpegniSubImpegniPerVociMutuo
-	 * @param impNew
-	 * @param movgestTsId
-	 * @return
-	 */
+	
 	private Impegno lasciaSoloIlSubImpegno(Impegno impNew, Integer movgestTsId) {
 		ArrayList<SubImpegno> subImpegnoDiQuestoGiro = new ArrayList<SubImpegno>();
 		for (SubImpegno subImpegno : impNew.getElencoSubImpegni()) {
@@ -11787,15 +11585,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		return impNew;
 	}
 	
-	/**
-	 * metodo di appoggio per ricercaImpegniSubImpegniPerVociMutuo
-	 * @param siacTMovgest
-	 * @param cacheImpegni
-	 * @param ente
-	 * @param richiedente
-	 * @param annoEsercizio
-	 * @return
-	 */
+	
 	private Impegno caricaImpegnoConCache(SiacTMovgestFin siacTMovgest,HashMap<Integer, Impegno> cacheImpegni, Ente ente, Richiedente richiedente
 			,Integer annoEsercizio){
 		Integer uidImpegno = siacTMovgest.getUid();
@@ -11809,7 +11599,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				     String.valueOf(annoEsercizio), 
 				     siacTMovgest.getMovgestAnno() , 
 				     siacTMovgest.getMovgestNumero(), 
-				     Constanti.MOVGEST_TIPO_IMPEGNO,
+				     CostantiFin.MOVGEST_TIPO_IMPEGNO,
 				     false);
 			cacheImpegni.put(uidImpegno, impFinded);
 		}
@@ -11824,7 +11614,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	private Soggetto caricaSoggettoConCache(String codiceSoggetto,HashMap<String, Soggetto> soggettoCache, Ente ente, Richiedente richiedente){
 		Soggetto soggettoMovimento = null;
 		if(soggettoCache.get(codiceSoggetto)==null){		
-			soggettoMovimento  = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), codiceSoggetto, true, false);
+			soggettoMovimento  = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), codiceSoggetto, true, false);
 			soggettoCache.put(codiceSoggetto, soggettoMovimento);
 		}else{
 			soggettoMovimento = soggettoCache.get(codiceSoggetto);
@@ -11873,12 +11663,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
         return haDeiSub;
 	  }
 	
-	/**
-	 * metodo di appoggio per ricercaImpegniSubImpegniPerVociMutuo
-	 * @param listaOggettiFinaleTEST
-	 * @param idsListTEST
-	 * @return
-	 */
+	
 	private List<SiacTMovgestFin> espandiDuplicati(List<SiacTMovgestFin> listaOggettiFinaleTEST,List<String> idsListTEST) {
 		List<SiacTMovgestFin> listaOggettiFinaleTESTConDoppioni = new ArrayList<SiacTMovgestFin>();
 		for(SiacTMovgestFin it : listaOggettiFinaleTEST){
@@ -11952,7 +11737,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		// QUERY PRINCIPALE - IMPEGNI
 		// JIRA-1057
 		List<IdImpegnoSubimpegno> listaIdImpegni = new ArrayList<IdImpegnoSubimpegno>();
-		listaIdImpegni = impegnoDao.ricercaImpegniSubImpegni(ente.getUid(), paramSearch, true);
+		//task-168
+		listaIdImpegni = impegnoDao.ricercaImpegniSubImpegni(ente.getUid(), paramSearch, true, false);
 		
 //		log.debug("getCountRicercaImpegniSubImpegni", " impegni trovati: " + listaIdImpegni !=null ? listaIdImpegni.size() : " [nessun id impegno trovato]");
 //		for (IdImpegnoSubimpegno idImpegnoSubimpegno : listaIdImpegni) {
@@ -11971,38 +11757,6 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 	}
 	
 	
-	/**
-	 * Metodo che si occupa di calcolare solo il numero di impegni trovati
-	 * @param ente
-	 * @param richiedente
-	 * @param paramRic
-	 * @param numPagina
-	 * @param numRisPerPagina
-	 * @return
-	 */
-	public Integer getCountRicercaImpegniSubImpegniPerVociMutuo(Ente ente, Richiedente richiedente , ParametroRicercaImpSub paramRic){
-		
-		Integer countResult = 0;
-
-		// QUERY PRINCIPALE - IMPEGNI
-		List<IdMovgestSubmovegest> listaIdImpegni = ricercaImpegniSubImpegniPerVociMutuo(paramRic, ente);
-		
-//		log.debug("getCountRicercaImpegniSubImpegniPerVociMutuo", " impegni trovati: " + listaIdImpegni !=null ? listaIdImpegni.size() : " [nessun id impegno trovato]");
-//		for (IdMovgestSubmovegest idImpegnoSubimpegno : listaIdImpegni) {
-//			log.debug("getCountRicercaImpegniSubImpegniPerVociMutuo", " ID impegno: " + idImpegnoSubimpegno.getMovgestId());
-//		}
-		
-		if(listaIdImpegni!=null && listaIdImpegni.size() > 0){
-			countResult = listaIdImpegni.size();
-		}else countResult = 0;
-		
-		//da usare per avere tanti risultati fake quando voglio "testare la paginazione"
-		//countResult  = countResult * 3;
-		//
-
-		return countResult;
-	}
-
 
 
 	/**
@@ -12192,13 +11946,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 													 annoEsercizio, 
 												     siacTMovgest.getMovgestAnno() , 
 												     siacTMovgest.getMovgestNumero(), 
-												     Constanti.MOVGEST_TIPO_ACCERTAMENTO,
+												     CostantiFin.MOVGEST_TIPO_ACCERTAMENTO,
 												     false);
 	
 			if(accertamento!=null){
 				Soggetto soggettoMovimento = new Soggetto();
 				if(mappaSog.get(accertamento.getSoggettoCode())==null){		
-					soggettoMovimento = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), accertamento.getSoggettoCode(), true, false);
+					soggettoMovimento = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), accertamento.getSoggettoCode(), true, false);
 					mappaSog.put(accertamento.getSoggettoCode(), soggettoMovimento);
 				}else{
 					
@@ -12210,7 +11964,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					Soggetto soggettoSUBMovimento = new Soggetto();
 					for (SubAccertamento sub : accertamento.getElencoSubAccertamenti()) {									
 						if(mappaSog.get(sub.getSoggettoCode())==null){		
-							soggettoSUBMovimento = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), sub.getSoggettoCode(), true, false);
+							soggettoSUBMovimento = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), sub.getSoggettoCode(), true, false);
 							mappaSog.put(sub.getSoggettoCode(), soggettoMovimento);
 						}else{										
 							soggettoSUBMovimento = mappaSog.get(sub.getSoggettoCode());
@@ -12237,7 +11991,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			List<SiacTMovgestTsFin> listaSiacTMovgestTs =siacTMovgest.getSiacTMovgestTs();
 			
 			
-			listaSiacTMovgestTs = DatiOperazioneUtils.soloValidi(listaSiacTMovgestTs, getNow());
+			listaSiacTMovgestTs = DatiOperazioneUtil.soloValidi(listaSiacTMovgestTs, getNow());
 			listaSiacTMovgestTsCoinvolti.addAll(listaSiacTMovgestTs);
 		}
 		
@@ -12285,7 +12039,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			
 			for (SiacTMovgestFin siacTMovgest : listaOggettiFinale) {
 				
-				Accertamento accNew = CommonUtils.getById(accNewList, siacTMovgest.getUid());
+				Accertamento accNew = CommonUtil.getById(accNewList, siacTMovgest.getUid());
 				
 				SiacTMovgestTsFin testata = estraiTestata(siacTMovgest);
 				
@@ -12296,7 +12050,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					SiacTSoggettoFin siacTSog = ottimizzazioneDto.getSoggettoByMovGestTsId(testata.getMovgestTsId());
 					if(siacTSog!=null){
 						//puo' non averlo se ha dei sub
-						soggettoMovimento = CommonUtils.getSoggettoByCode(distintiSoggettiCoinvolti, siacTSog.getSoggettoCode());
+						soggettoMovimento = CommonUtil.getSoggettoByCode(distintiSoggettiCoinvolti, siacTSog.getSoggettoCode());
 						
 					}
 
@@ -12309,7 +12063,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						for (SubAccertamento subAccertamento : accNew.getElencoSubAccertamenti()) {
 							
 							siacTSog = ottimizzazioneDto.getSoggettoByMovGestTsId(subAccertamento.getUid());
-							soggettoSUBMovimento = CommonUtils.getSoggettoByCode(distintiSoggettiCoinvolti, siacTSog.getSoggettoCode());
+							soggettoSUBMovimento = CommonUtil.getSoggettoByCode(distintiSoggettiCoinvolti, siacTSog.getSoggettoCode());
 							
 							subAccertamento.setSoggetto(soggettoSUBMovimento);
 									
@@ -12455,7 +12209,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					siacTMovgestTsAcc = siacTMovgestAcc.getSiacTMovgestTs().get(0);
 				}
 				datiOperazione.setOperazione(Operazione.INSERIMENTO);
-				siacRMovgestTs = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestTs, datiOperazione, siacTAccountRepository);
+				siacRMovgestTs = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestTs, datiOperazione, siacTAccountRepository);
 				siacRMovgestTs.setMovgestTsImporto(vincoloImpegno.getImporto());
 				siacRMovgestTs.setSiacTMovgestTsB(siacTMovgestTs);
 				siacRMovgestTs.setSiacTMovgestTsA(siacTMovgestTsAcc);
@@ -12483,7 +12237,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		
 			// Qui inizia il mapping con le entità che si relazionano al movimento gestione dalla siacTmovgestTs
 			if(siacTMovgestTs.getMovgestTsIdPadre()==null && siacTMovgestTs.getDataFineValidita()==null 
-					&& Constanti.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+					&& CostantiFin.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 		
 					// START ATTRIBUTI ESTRATTI DALLE TABELLE siac_t_movgest_ts + siac_t_movgest_ts_det
 					// MAPPO IL SOGGETTO ASSOCIATO
@@ -12524,14 +12278,14 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					if(listaSiacTMovgestTsDet!=null && listaSiacTMovgestTsDet.size()>0){
 						
 						//prendo solo i validi
-						listaSiacTMovgestTsDet = DatiOperazioneUtils.soloValidi(listaSiacTMovgestTsDet, null);
+						listaSiacTMovgestTsDet = DatiOperazioneUtil.soloValidi(listaSiacTMovgestTsDet, null);
 						
 						for (SiacTMovgestTsDetFin siacTMovgestTsDet : listaSiacTMovgestTsDet) {
 								
 							//controllo x sicurezza di nuovo la validita del dato
-							if(siacTMovgestTsDet!=null && DatiOperazioneUtils.isValido(siacTMovgestTsDet, null)){
+							if(siacTMovgestTsDet!=null && DatiOperazioneUtil.isValido(siacTMovgestTsDet, null)){
 								
-								if(Constanti.MOVGEST_TS_DET_TIPO_ATTUALE.equalsIgnoreCase(siacTMovgestTsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode())){
+								if(CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE.equalsIgnoreCase(siacTMovgestTsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode())){
 									movGest.setImportoAttuale(siacTMovgestTsDet.getMovgestTsDetImporto());											
 								} 
 						
@@ -12563,7 +12317,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					List<SiacRMovgestTsAttoAmmFin> listaSiacRMovgestTsAttoAmm = siacTMovgestTs.getSiacRMovgestTsAttoAmms();
 					if(null!=listaSiacRMovgestTsAttoAmm && listaSiacRMovgestTsAttoAmm.size() > 0){
 						//estraggo l'unico record valido:
-						SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtils.getValido(listaSiacRMovgestTsAttoAmm, null);
+						SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtil.getValido(listaSiacRMovgestTsAttoAmm, null);
 						if(null!= siacRMovgestTsAttoAmm){
 							EntityToModelConverter.settaAttoAmministrativoBase(siacRMovgestTsAttoAmm.getSiacTAttoAmm(), movGest);
 						}
@@ -12579,7 +12333,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 			List<SiacRMovgestBilElemFin> listaSiacRMovgestBilElem = siacTMovgest.getSiacRMovgestBilElems();
 			
 			if(null!=listaSiacRMovgestBilElem && listaSiacRMovgestBilElem.size() > 0){
-				SiacRMovgestBilElemFin relazioneValida = DatiOperazioneUtils.getValido(listaSiacRMovgestBilElem, null);
+				SiacRMovgestBilElemFin relazioneValida = DatiOperazioneUtil.getValido(listaSiacRMovgestBilElem, null);
 				SiacTBilElemFin siacTBilElem = relazioneValida.getSiacTBilElem();
 				
 				if(movGest instanceof Impegno){
@@ -12664,7 +12418,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 				
 				if(siacTMovgestTs.getDataFineValidita()==null &&
 						siacTMovgest.getDataCancellazione() == null && 
-								Constanti.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode()))
+								CostantiFin.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode()))
 				{
 				  
 					// *******************************************************
@@ -12715,11 +12469,11 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 		for(SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr){
 			if(null!=siacRMovgestTsAttr && siacRMovgestTsAttr.getDataFineValidita()==null){
 				String codiceAttributo = siacRMovgestTsAttr.getSiacTAttr().getAttrCode();
-				AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+				AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 				switch (attributoMovimentoGestione) {
 					case annoCapitoloOrigine:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								movgest.setAnnoCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 							}
 						}
@@ -12727,7 +12481,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						
 					case annoOriginePlur:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								movgest.setAnnoOriginePlur(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 							}
 						
@@ -12735,8 +12489,8 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						break;
 						
 					case annoRiaccertato:
-						if(siacRMovgestTsAttr.getTesto() != null && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+						if(siacRMovgestTsAttr.getTesto() != null && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								movgest.setAnnoRiaccertato(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 							}
 							
@@ -12745,7 +12499,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						
 					case numeroArticoloOrigine:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								movgest.setNumeroArticoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 							}
 							
@@ -12755,7 +12509,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					case flagDaRiaccertamento:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
 							// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-							if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+							if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 								movgest.setFlagDaRiaccertamento(true);
 							}else {
 								movgest.setFlagDaRiaccertamento(false);
@@ -12766,13 +12520,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						
 					case flagSoggettoDurc:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
-							movgest.setFlagSoggettoDurc(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+							movgest.setFlagSoggettoDurc(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 						}												
 						break;
 						
 					case FlagCollegamentoAccertamentoFattura:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
-							if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+							if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 								((AccertamentoAbstract) movgest).setFlagFattura(true);
 							}else {
 								((AccertamentoAbstract) movgest).setFlagFattura(false);
@@ -12782,13 +12536,13 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						
 					case FlagCollegamentoAccertamentoCorrispettivo:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
-							((AccertamentoAbstract) movgest).setFlagCorrispettivo(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+							((AccertamentoAbstract) movgest).setFlagCorrispettivo(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 						}												
 						break;
 						
 					case FlagAttivaGsa:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
-							if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+							if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 								movgest.setFlagAttivaGsa(true);
 							}else {
 								movgest.setFlagAttivaGsa(false);
@@ -12798,7 +12552,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						
 					case numeroCapitoloOrigine:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								movgest.setNumeroCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 							}
 						}						
@@ -12806,7 +12560,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						
 					case numeroOriginePlur:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								movgest.setNumeroOriginePlur(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 							}
 							
@@ -12815,7 +12569,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						
 					case numeroRiaccertato:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								movgest.setNumeroRiaccertato(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 							}
 						}
@@ -12823,7 +12577,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 						
 					case numeroUEBOrigine:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								movgest.setNumeroUEBOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 							}
 						
@@ -12833,7 +12587,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					case annoFinanziamento:
 						if(movgest instanceof Impegno){
 							if(siacRMovgestTsAttr.getTesto() != null){
-								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 									((ImpegnoAbstract) movgest).setAnnoFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 								}
 							}
@@ -12843,7 +12597,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					case cig:
 						if(movgest instanceof Impegno){
 							if(siacRMovgestTsAttr.getTesto() != null){
-								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 									((ImpegnoAbstract) movgest).setCig(siacRMovgestTsAttr.getTesto());
 								}
 							}
@@ -12853,7 +12607,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					case numeroAccFinanziamento:
 						if(movgest instanceof Impegno){
 							if(siacRMovgestTsAttr.getTesto() != null){
-								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 									((ImpegnoAbstract) movgest).setNumeroAccFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 								}
 							}
@@ -12863,7 +12617,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 					case validato:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
 							// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-							if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+							if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 								movgest.setValidato(true);
 							}else {
 								movgest.setValidato(false);
@@ -12980,7 +12734,7 @@ public abstract class MovimentoGestioneDad<T extends MovimentoGestione, ST exten
 
 			if(annoMovimento <= annoEsercizio){
 
-				if(accertamento.getStato().equals(Constanti.MOVGEST_STATO_DEFINITIVO)){
+				if(accertamento.getStato().equals(CostantiFin.MOVGEST_STATO_DEFINITIVO)){
 
 					// se non presente sub allora cerco in accertamenti
 					if(accertamento.getIdAccertamentoPadre() == null){

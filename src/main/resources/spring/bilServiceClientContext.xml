@@ -41,7 +41,7 @@ SPDX-License-Identifier: EUPL-1.2
     
     <!-- ################ Servizi di Core ################# -->
     
-    <bean id="coreService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+    <bean id="coreService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
         <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.CoreService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/CoreService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -50,7 +50,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="lookupServiceOnStartup" value="false" />
     </bean>
     
-    <bean id="classificatoreService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+    <bean id="classificatoreService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
         <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/ClassificatoreService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -59,7 +59,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="lookupServiceOnStartup" value="false" />
     </bean> 
     
-    <bean id="operazioneAsincronaService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+    <bean id="operazioneAsincronaService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
         <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/OperazioneAsincronaService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -68,7 +68,7 @@ SPDX-License-Identifier: EUPL-1.2
         <property name="lookupServiceOnStartup" value="false" />
     </bean>
     
-    <bean id="fileService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+    <bean id="fileService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.FileService" />
 		<property name="wsdlDocumentUrl" value="${endpoint.url.service.core}/FileService?wsdl" />
 		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -80,7 +80,7 @@ SPDX-License-Identifier: EUPL-1.2
         
     <!-- ################ Servizio generazione Report ########### -->
     
-    <bean id="reportService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+    <bean id="reportService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
         <property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ReportService" />
         <property name="wsdlDocumentUrl" value="${endpoint.url.service.rep}/ReportService?wsdl" />
         <property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -94,7 +94,7 @@ SPDX-License-Identifier: EUPL-1.2
      
      <bean name="movimentoGestioneService" class="it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneServiceImpl" />
      
-<!--     <bean id="movimentoGestioneService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean" lazy-init="true"> -->
+<!--     <bean id="movimentoGestioneService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean" lazy-init="true"> -->
 <!--         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService" /> -->
 <!--         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/MovimentoGestioneService?wsdl" /> -->
 <!--         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" /> -->
@@ -105,7 +105,7 @@ SPDX-License-Identifier: EUPL-1.2
     
     <bean name="soggettoService" class="it.csi.siac.siacfinser.frontend.webservice.SoggettoServiceImpl" />
     
-<!--     <bean id="soggettoService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean"  lazy-init="true"> -->
+<!--     <bean id="soggettoService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean"  lazy-init="true"> -->
 <!--         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.SoggettoService" /> -->
 <!--         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/SoggettoService?wsdl" /> -->
 <!--         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" /> -->
@@ -117,7 +117,7 @@ SPDX-License-Identifier: EUPL-1.2
  
     <bean name="liquidazioneService" class="it.csi.siac.siacfinser.frontend.webservice.LiquidazioneServiceImpl" />
 
-<!--      <bean id="liquidazioneService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean"> -->
+<!--      <bean id="liquidazioneService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean"> -->
 <!--         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService" /> -->
 <!--         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/LiquidazioneService?wsdl" /> -->
 <!--         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" /> -->
@@ -130,7 +130,7 @@ SPDX-License-Identifier: EUPL-1.2
    
 	<bean name="provvisorioService" class="it.csi.siac.siacfinser.frontend.webservice.ProvvisorioServiceImpl" />
 	
-<!--     <bean id="provvisorioService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean"> -->
+<!--     <bean id="provvisorioService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean"> -->
 <!--         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.ProvvisorioService" /> -->
 <!--         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/ProvvisorioService?wsdl" /> -->
 <!--         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" /> -->
@@ -143,7 +143,7 @@ SPDX-License-Identifier: EUPL-1.2
     
 	<bean name="ordinativoService" class="it.csi.siac.siacfinser.frontend.webservice.OrdinativoServiceImpl" />
 	
-<!--     <bean id="ordinativoService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean"> -->
+<!--     <bean id="ordinativoService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean"> -->
 <!--         <property name="serviceInterface" value="it.csi.siac.siacfinser.frontend.webservice.OrdinativoService" /> -->
 <!--         <property name="wsdlDocumentUrl" value="${endpoint.url.service.fin}/OrdinativoService?wsdl" /> -->
 <!--         <property name="namespaceUri" value="http://siac.csi.it/fin/svc/1.0" /> -->
@@ -161,7 +161,7 @@ SPDX-License-Identifier: EUPL-1.2
   
   <!-- ################ Servizi di MARC per integrazione PCC ################# -->
   
-  <bean id="marcWS" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+  <bean id="marcWS" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
       <property name="serviceInterface" value="it.csi.siac.pcc.marc.services.webservices_1_0.MarcWSPortType" />
       <property name="wsdlDocumentUrl" value="${MARC.wsdlDocumentUrl}" />
       <property name="namespaceUri" value="http://www.csi.it/marc/services/webservices-1.0" />
@@ -172,7 +172,7 @@ SPDX-License-Identifier: EUPL-1.2
   
     <!-- ################ Servizi di APPJ  ################# -->
   
-   <bean id="appjWS" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+   <bean id="appjWS" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
       <property name="serviceInterface" value="it.csi.appjwebsrv.business.WSInterface" />
       <property name="wsdlDocumentUrl" value="${APPJ.wsdlDocumentUrl}" />
       <property name="namespaceUri" value="http://business.appjwebsrv.csi.it/" />
@@ -188,16 +188,52 @@ SPDX-License-Identifier: EUPL-1.2
 	    </property>
   </bean>
   
+  
+   <bean id="cpassWS" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
+      <property name="serviceInterface" value="it.csi.appjwebsrv.business.WSInterface" />
+      <property name="wsdlDocumentUrl" value="${CPASS.wsdlDocumentUrl}" />
+      <property name="namespaceUri" value="http://business.appjwebsrv.csi.it/" />
+      <property name="serviceName" value="WsImplService" />
+      <property name="endpointAddress" value="${CPASS.endpointAddress}" /> <!-- http://tst-wsbe.csi.it/appjwebsrv/wservices -->
+      <property name="lookupServiceOnStartup" value="false" />
+      <property name="handlerResolver">
+			<bean id="appjWSHandlerResolver" class="it.csi.siac.siacbilser.business.utility.WSO2HandlerResolver">
+			    <property name="tokenRenewalUrl" value="${CPASS.tokenRenewalUrl}" />
+			    <property name="consumerKey" value="${CPASS.consumerKey}" />
+			    <property name="consumerSecret" value="${CPASS.consumerSecret}" />
+			</bean>
+	    </property>
+  </bean>
+  
   <!-- ################ Servizio di invio Fattura a FEL ################# -->
   
-  <bean id="felWS" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+<!--   <bean id="felWS" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean"> -->
+<!--       <property name="serviceInterface" value="it.csi.fel.eis.bilanciotofel.BilancioToFel" /> -->
+<!--       <property name="wsdlDocumentUrl" value="${FEL.wsdlDocumentUrl}" /> -->
+<!--       <property name="namespaceUri" value="http://www.csi.it/fel/eis/bilancioToFel" /> -->
+<!--       <property name="serviceName" value="BilancioToFel" /> -->
+<!--       <property name="endpointAddress" value="${FEL.endpointAddress}" /> -->
+<!--       <property name="lookupServiceOnStartup" value="false" /> -->
+<!--   </bean> -->
+
+  <bean id="felWS" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
       <property name="serviceInterface" value="it.csi.fel.eis.bilanciotofel.BilancioToFel" />
       <property name="wsdlDocumentUrl" value="${FEL.wsdlDocumentUrl}" />
       <property name="namespaceUri" value="http://www.csi.it/fel/eis/bilancioToFel" />
       <property name="serviceName" value="BilancioToFel" />
       <property name="endpointAddress" value="${FEL.endpointAddress}" />
       <property name="lookupServiceOnStartup" value="false" />
-  </bean>
+      <property name="handlerResolver">
+	     <bean id="felWSHandlerResolver" class="it.csi.siac.siacbilser.business.utility.WSO2HandlerResolver">
+		    <property name="tokenRenewalUrl" value="${FEL.tokenRenewalUrl}" />
+		    <property name="consumerKey" value="${FEL.consumerKey}" />
+		    <property name="consumerSecret" value="${FEL.consumerSecret}" />
+		 </bean>
+    </property>
+</bean>
+	  
+	
+
 
   
 </beans>

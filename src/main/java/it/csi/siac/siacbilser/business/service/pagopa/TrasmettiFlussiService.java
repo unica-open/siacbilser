@@ -23,7 +23,7 @@ import it.csi.siac.siacbilser.integration.dad.PagoPADad;
 import it.csi.siac.siacbilser.integration.entity.SiacTFilePagopa;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDFilePagopaStatoEnum;
 import it.csi.siac.siaccommon.util.XmlUtils;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -32,7 +32,7 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class TrasmettiFlussiService extends ExtendedBaseService<TrasmettiFlussi, TrasmettiFlussiResponse> {
 
-	private static LogUtil log = new LogUtil(TrasmettiFlussiService.class);
+	private static LogSrvUtil log = new LogSrvUtil(TrasmettiFlussiService.class);
 	
 	@Autowired
 	private PagoPADad pagoPADad;
@@ -78,7 +78,7 @@ public class TrasmettiFlussiService extends ExtendedBaseService<TrasmettiFlussi,
 		ResultType resultType = null; 
 
 		try {
-			checkXmlPresente(ppareq.getTestataTrasmissioneFlussi().getIdMessaggio());
+			checkXmlPresente(ppareq.getTestataTrasmissioneFlussi().getIdentificativoFlusso());
 			
 			siacTFilePagopa = pagoPADad.inserisciFlusso(ppareq.getTestataTrasmissioneFlussi(), flussoRiconciliato);
 
@@ -110,11 +110,11 @@ public class TrasmettiFlussiService extends ExtendedBaseService<TrasmettiFlussi,
 		}
 	}
 
-	private void checkXmlPresente(String idMessaggio) throws XmlPresenteException {
-		SiacTFilePagopa siacTFilePagopa = pagoPADad.findSiacTFilePagopaByIdMessaggio(idMessaggio);
+	private void checkXmlPresente(String idFlusso) throws XmlPresenteException {
+		SiacTFilePagopa siacTFilePagopa = pagoPADad.findSiacTFilePagopaByIdFlusso(idFlusso);
 		
 		if (siacTFilePagopa != null) {
-			throw new XmlPresenteException(String.format("XML IdMessaggio = %s gia' presente in archivio (id = %d)", idMessaggio, siacTFilePagopa.getUid()));
+			throw new XmlPresenteException(String.format("XML IdentificativoFlusso = %s gia' presente in archivio (id = %d)", idFlusso, siacTFilePagopa.getUid()));
 		}
 	}
 

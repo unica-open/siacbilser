@@ -13,7 +13,7 @@ import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamErr
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
 import it.csi.siac.siacfinser.integration.dad.SoggettoFinDad;
@@ -56,7 +56,7 @@ public class RicercaSoggettoSiacPerChiaveService extends AbstractSoggettoService
 		DatiOperazioneDto datiOperazioneDto = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.RICERCA, codiceAmbito, null);
 
 		if (org.apache.commons.lang.StringUtils.isEmpty(codiceAmbito)){
-			codiceAmbito = Constanti.AMBITO_FIN;
+			codiceAmbito = CostantiFin.AMBITO_FIN;
 		}
 
 		// 2. Richiamo il metodo che va a caricare il soggetto richiesto:

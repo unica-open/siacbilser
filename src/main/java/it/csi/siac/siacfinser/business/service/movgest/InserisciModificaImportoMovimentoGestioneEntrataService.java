@@ -23,8 +23,8 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisciModificaImportoMovimentoGestioneEntrata;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisciModificaImportoMovimentoGestioneEntrataResponse;
@@ -151,7 +151,7 @@ public class InserisciModificaImportoMovimentoGestioneEntrataService extends Abs
 				
 		String codiceFaseBilancio= accertamentoOttimizzatoDad.caricaCodiceBilancio(datiOperazione, bilancio.getAnno());
 		
-		if (!StringUtils.isEmpty(codiceFaseBilancio) && Constanti.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(codiceFaseBilancio)) {
+		if (!StringUtilsFin.isEmpty(codiceFaseBilancio) && CostantiFin.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(codiceFaseBilancio)) {
 			registraPerPredisposizioneConsuntivo = true;
 		}
 
@@ -195,7 +195,7 @@ public class InserisciModificaImportoMovimentoGestioneEntrataService extends Abs
 		fromUpdate.setMotivazioneDisponibilitaIncassare(accertamentoDisp.getMotivazioneDisponibilitaIncassare());
 		fromUpdate.setDisponibilitaSubAccertare(accertamentoDisp.getDisponibilitaSubAccertare());
 		fromUpdate.setMotivazioneDisponibilitaSubAccertare(accertamento.getMotivazioneDisponibilitaSubAccertare());
-		fromUpdate.setTotaleSubAccertamenti(accertamentoDisp.getTotaleSubAccertamenti());
+		fromUpdate.setTotaleSubAccertamentiBigDecimal(accertamentoDisp.getTotaleSubAccertamentiBigDecimal());
 		// setto i dati per le disponibilita per i vari SUBACCERTAMENTI associati
 		if(fromUpdate.getElencoSubAccertamenti()!=null && fromUpdate.getElencoSubAccertamenti().size()>0){
 			Iterator it = fromUpdate.getElencoSubAccertamenti().iterator();

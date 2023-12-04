@@ -16,8 +16,8 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilser.business.service.allegatoatto.RicercaElencoDaEmettereService;
 import it.csi.siac.siacbilser.business.service.ordinativi.EmetteOrdinativiDiIncassoDaElencoService;
 import it.csi.siac.siacbilser.business.service.ordinativi.EmetteOrdinativiDiPagamentoDaElencoService;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiIncassoDaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiIncassoDaElencoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiPagamentoDaElenco;
@@ -116,7 +116,7 @@ public class EmettitoreTest extends BaseJunit4TestCase {
 		aa.setUid(44118);
 		req.setAttoAmministrativo(aa);
 		req.setStatiOperativiElencoDocumenti(Arrays.asList(StatoOperativoElencoDocumenti.COMPLETATO));
-		req.setModelDetails(new ModelDetail[] {
+		req.setModelDetails(new ModelDetailEnum[] {
 				ElencoDocumentiAllegatoModelDetail.Stato,
 				ElencoDocumentiAllegatoModelDetail.TotaleDaPagareIncassare,
 				ElencoDocumentiAllegatoModelDetail.TotaleQuoteSpesaEntrata,

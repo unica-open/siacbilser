@@ -41,7 +41,7 @@ public class RicercaSinteticaVariazioneCespiteService extends CheckedAccountBase
 		
 //		checkCondition(req.getNumeroInventarioDa() == null || req.getNumeroInventarioA() == null
 //				|| req.getNumeroInventarioDa().compareTo(req.getNumeroInventarioA()) <= 0,
-//				ErroreCore.VALORE_NON_VALIDO.getErrore("numero inventario da/a", "il numero da non puo' essere superiore al numero a"));
+//				ErroreCore.VALORE_NON_CONSENTITO.getErrore("numero inventario da/a", "il numero da non puo' essere superiore al numero a"));
 	}
 	
 	@Override

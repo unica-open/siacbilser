@@ -17,8 +17,10 @@ import it.csi.siac.siacbilser.business.service.tipocomponenteimpcap.AnnullaTipoC
 import it.csi.siac.siacbilser.business.service.tipocomponenteimpcap.InserisceTipoComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.business.service.tipocomponenteimpcap.RicercaDettaglioTipoComponenteImportiCapitoloService;
 import it.csi.siac.siacbilser.business.service.tipocomponenteimpcap.RicercaSinteticaTipoComponenteImportiCapitoloService;
+import it.csi.siac.siacbilser.business.service.tipocomponenteimpcap.RicercaTipoComponenteImportiCapitoloImpegnabiliService;
 import it.csi.siac.siacbilser.business.service.tipocomponenteimpcap.RicercaTipoComponenteImportiCapitoloPerCapitoloService;
 import it.csi.siac.siacbilser.business.service.tipocomponenteimpcap.RicercaTipoComponenteImportiCapitoloService;
+import it.csi.siac.siacbilser.business.service.tipocomponenteimpcap.RicercaTipoComponenteImportiCapitoloTotaliService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaTipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaTipoComponenteImportiCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AnnullaTipoComponenteImportiCapitolo;
@@ -85,5 +87,18 @@ public class TipoComponenteImportiCapitoloServiceImpl implements TipoComponenteI
 	public AnnullaTipoComponenteImportiCapitoloResponse annullaTipoComponenteImportiCapitolo(AnnullaTipoComponenteImportiCapitolo request) {
 		return BaseServiceExecutor.execute(appCtx, AnnullaTipoComponenteImportiCapitoloService.class, request);
 	}
+	//SIAC-7349
+	@Override
+	public RicercaTipoComponenteImportiCapitoloResponse ricercaTipoComponenteImportiCapitoloTotali(RicercaTipoComponenteImportiCapitolo request) {
+		return BaseServiceExecutor.execute(appCtx, RicercaTipoComponenteImportiCapitoloTotaliService.class, request);
+	}
+	
+	
+	//SIAC-7349
+	@Override
+	public RicercaTipoComponenteImportiCapitoloResponse ricercaTipoComponenteImportiCapitoloImpegnabili(RicercaTipoComponenteImportiCapitolo request) {
+		return BaseServiceExecutor.execute(appCtx, RicercaTipoComponenteImportiCapitoloImpegnabiliService.class, request);
+	}
+	
 
 }

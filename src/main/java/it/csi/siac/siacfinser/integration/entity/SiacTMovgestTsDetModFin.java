@@ -5,6 +5,7 @@
 package it.csi.siac.siacfinser.integration.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -56,6 +58,71 @@ public class SiacTMovgestTsDetModFin extends SiacConModificaStato {
 	@ManyToOne
 	@JoinColumn(name="movgest_ts_det_id")
 	private SiacTMovgestTsDetFin siacTMovgestTsDet;
+	
+	
+	 //SIAC-7349 Inizio  SR180 FL 02/04/2020
+	//bi-directional many-to-one association to SiacRMovgestTsDetModFin
+	@OneToMany(mappedBy="siacTMovgestTsDetModSpesa")
+	private List<SiacRMovgestTsDetModFin> siacTMovgestTsDetModsSpesa;
+
+	//bi-directional many-to-one association to SiacRMovgestTsDetModFin
+	@OneToMany(mappedBy="siacTMovgestTsDetModEntrata")
+	private List<SiacRMovgestTsDetModFin> siacTMovgestTsDetModsEntrata;
+	
+	//SIAC-7349 Fine  SR180 FL 02/04/2020
+	
+	//SIAC-6865
+	@Column(name="mtdm_aggiudicazione_flag")
+	private Boolean mtdmAggiudicazioneFlag;
+	
+	
+//	@Column(name="mtdm_aggiudicazione_motivo")
+//	private String mtdmAggiudicazioneMotivo;
+	
+	@ManyToOne
+	@JoinColumn(name="mtdm_aggiudicazione_soggetto_id")
+	private SiacTSoggettoFin siacTSoggettoAggiudicazione;
+	
+	@ManyToOne
+	@JoinColumn(name="mtdm_aggiudicazione_classe_id")
+	private SiacDSoggettoClasseFin siacDSoggettoClasseAggiudicazione;
+	
+	//SIAC-7838
+	@Column(name="mtdm_aggiudicazione_senza_sog")
+	private Boolean mtdmAggiudicazioneSenzaSog;
+
+
+	
+	
+	
+	
+	/**
+	 * @return the siacTMovgestTsDetModsSpesa
+	 */
+	public List<SiacRMovgestTsDetModFin> getSiacTMovgestTsDetModsSpesa() {
+		return siacTMovgestTsDetModsSpesa;
+	}
+
+	/**
+	 * @param siacTMovgestTsDetModsSpesa the siacTMovgestTsDetModsSpesa to set
+	 */
+	public void setSiacTMovgestTsDetModsSpesa(List<SiacRMovgestTsDetModFin> siacTMovgestTsDetModsSpesa) {
+		this.siacTMovgestTsDetModsSpesa = siacTMovgestTsDetModsSpesa;
+	}
+
+	/**
+	 * @return the siacTMovgestTsDetModsEntrata
+	 */
+	public List<SiacRMovgestTsDetModFin> getSiacTMovgestTsDetModsEntrata() {
+		return siacTMovgestTsDetModsEntrata;
+	}
+
+	/**
+	 * @param siacTMovgestTsDetModsEntrata the siacTMovgestTsDetModsEntrata to set
+	 */
+	public void setSiacTMovgestTsDetModsEntrata(List<SiacRMovgestTsDetModFin> siacTMovgestTsDetModsEntrata) {
+		this.siacTMovgestTsDetModsEntrata = siacTMovgestTsDetModsEntrata;
+	}
 
 	public SiacTMovgestTsDetModFin() {
 	}
@@ -114,6 +181,72 @@ public class SiacTMovgestTsDetModFin extends SiacConModificaStato {
 
 	public void setMtdmReimputazioneFlag(Boolean mtdmReimputazioneFlag) {
 		this.mtdmReimputazioneFlag = mtdmReimputazioneFlag;
+	}
+
+	/**
+	 * @return the mtdmAggiudicazioneFlag
+	 */
+	public Boolean getMtdmAggiudicazioneFlag() {
+		return mtdmAggiudicazioneFlag;
+	}
+
+	/**
+	 * @param mtdmAggiudicazioneFlag the mtdmAggiudicazioneFlag to set
+	 */
+	public void setMtdmAggiudicazioneFlag(Boolean mtdmAggiudicazioneFlag) {
+		this.mtdmAggiudicazioneFlag = mtdmAggiudicazioneFlag;
+	}
+
+//	/**
+//	 * @return the mtdmAggiudicazioneMotivo
+//	 */
+//	public String getMtdmAggiudicazioneMotivo() {
+//		return mtdmAggiudicazioneMotivo;
+//	}
+//
+//	/**
+//	 * @param mtdmAggiudicazioneMotivo the mtdmAggiudicazioneMotivo to set
+//	 */
+//	public void setMtdmAggiudicazioneMotivo(String mtdmAggiudicazioneMotivo) {
+//		this.mtdmAggiudicazioneMotivo = mtdmAggiudicazioneMotivo;
+//	}
+
+	/**
+	 * @return the siacTSoggettoAggiudicazione
+	 */
+	public SiacTSoggettoFin getSiacTSoggettoAggiudicazione() {
+		return siacTSoggettoAggiudicazione;
+	}
+
+	/**
+	 * @param siacTSoggettoAggiudicazione the siacTSoggettoAggiudicazione to set
+	 */
+	public void setSiacTSoggettoAggiudicazione(SiacTSoggettoFin siacTSoggettoAggiudicazione) {
+		this.siacTSoggettoAggiudicazione = siacTSoggettoAggiudicazione;
+	}
+
+	/**
+	 * @return the siacDSoggettoClasseAggiudicazione
+	 */
+	public SiacDSoggettoClasseFin getSiacDSoggettoClasseAggiudicazione() {
+		return siacDSoggettoClasseAggiudicazione;
+	}
+
+	/**
+	 * @param siacDSoggettoClasseAggiudicazione the siacDSoggettoClasseAggiudicazione to set
+	 */
+	public void setSiacDSoggettoClasseAggiudicazione(SiacDSoggettoClasseFin siacDSoggettoClasseAggiudicazione) {
+		this.siacDSoggettoClasseAggiudicazione = siacDSoggettoClasseAggiudicazione;
+	}
+	
+	
+
+	public Boolean getMtdmAggiudicazioneSenzaSog() {
+		return mtdmAggiudicazioneSenzaSog;
+	}
+
+	public void setMtdmAggiudicazioneSenzaSog(Boolean mtdmAggiudicazioneSenzaSog) {
+		this.mtdmAggiudicazioneSenzaSog = mtdmAggiudicazioneSenzaSog;
 	}
 
 	@Override

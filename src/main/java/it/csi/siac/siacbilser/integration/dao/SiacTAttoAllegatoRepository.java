@@ -264,5 +264,30 @@ public interface SiacTAttoAllegatoRepository extends JpaRepository<SiacTAttoAlle
 			+ " AND rma.boolean_ = :booleanValue "
 			)
 	List<Integer> getUidsSubdocWithImpegniWithBooleanAttrCodeAndValueByAttoalId(@Param("attoalId") Integer attoalId, @Param("attrCode") String attrCode, @Param("booleanValue") String booleanValue);
-	
+
+	//task-30
+	@Query( " SELECT rsmt.siacTSubdoc.subdocId "
+			+ " FROM SiacRAttoAllegatoElencoDoc raaed, SiacRElencoDocSubdoc reds , SiacRSubdocMovgestT rsmt, SiacRMovgestTsAttr rma "
+			+ " WHERE reds.dataCancellazione IS NULL "
+			+ " AND raaed.dataCancellazione IS NULL "
+			+ " AND rsmt.dataCancellazione IS NULL "
+			+ " AND rma.dataCancellazione IS NULL "
+			+ " AND raaed.siacTAttoAllegato.attoalId = :attoalId "
+			+ " AND raaed.siacTElencoDoc.eldocId in (:elenchiDocIds) "
+			+ " AND raaed.siacTAttoAllegato.dataCancellazione IS NULL "
+			+ " AND raaed.siacTElencoDoc = reds.siacTElencoDoc "
+			+ " AND reds.siacTElencoDoc.dataCancellazione IS NULL  "
+			+ " AND rsmt.siacTSubdoc = reds.siacTSubdoc "
+			+ " AND rma.siacTMovgestT = rsmt.siacTMovgestT "
+			+ " AND rsmt.siacTSubdoc.dataCancellazione IS NULL  "
+			+ " AND rma.siacTAttr.attrCode = :attrCode  "
+			+ " AND rma.boolean_ = :booleanValue "
+			+ " AND NOT EXISTS ("//task-139
+			+ "   FROM rsmt.siacTSubdoc.siacRSubdocOrdinativoTs "
+			+ " ) "
+			)
+	List<Integer> getUidsSubdocWithImpegniWithBooleanAttrCodeAndValueByAttoalIdAndElenchiDocId(@Param("attoalId") Integer attoalId, @Param("elenchiDocIds") List<Integer> elenchiDocIds, @Param("attrCode") String attrCode, @Param("booleanValue") String booleanValue);
+	//task-139 per verificare lo stato non esiste una colonna nella tabella siacTSubdoc, 
+	//quindi dobbiamo passare dalla relazione con l'ordinativo siacRSubdocOrdinativoTs, se esiste uid del subdoc in siacRSubdocOrdinativoTs
+	//vuol dire che le quote sono state emesse altriementi non sono state emesse.
 }

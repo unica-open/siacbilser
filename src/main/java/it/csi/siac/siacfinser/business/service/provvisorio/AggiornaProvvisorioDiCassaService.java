@@ -18,6 +18,7 @@ import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaProvvisorioDiCassa;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaProvvisorioDiCassaResponse;
@@ -68,6 +69,10 @@ public class AggiornaProvvisorioDiCassaService extends AbstractBaseService<Aggio
 			res.setEsito(Esito.FALLIMENTO);
 			return;
 		}
+		//salvo lo storico solo quando il provvisorio risulta essere rifiutato
+		if(Boolean.FALSE.equals(provvisorioDaAggiornare.getAccettato()) && isAzioneDecentrataConsentita()) {
+			provvisorioDad.salvaStoricoProvvisorioDiCassa(provvisorioDaAggiornare, datiOperazione);
+		}
 		
 		//4. Si invoca il metodo core di inserimento:
 		ProvvisorioDiCassa provvisorioCreato = provvisorioDad.aggiornaProvvisorioDiCassa(provvisorioDaAggiornare, bilancio, datiOperazione);
@@ -77,6 +82,10 @@ public class AggiornaProvvisorioDiCassaService extends AbstractBaseService<Aggio
 		res.setProvvisorioDiCassa(provvisorioCreato);
 
 		
+	}
+
+	protected boolean isAzioneDecentrataConsentita() {
+		return provvisorioDad.isAzioneConsentita(req.getRichiedente().getAccount(), AzioneConsentitaEnum.OP_OIL_AGG_DEC_PROVV_CASSA);
 	}
 	
 	@Override

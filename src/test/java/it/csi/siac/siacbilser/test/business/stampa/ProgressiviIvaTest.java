@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilser.integration.dad.ProgressiviIvaDad;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siacfin2ser.model.AliquotaIva;
 import it.csi.siac.siacfin2ser.model.Periodo;
@@ -27,7 +27,7 @@ public class ProgressiviIvaTest extends BaseJunit4TestCase {
 	@Autowired
 	private ProgressiviIvaDad progressiviIvaDad;
 	
-	private LogUtil l = new LogUtil(getClass());
+	private LogSrvUtil l = new LogSrvUtil(getClass());
 	
 	@Test
 	public void getProgressiviIvaByUid() {

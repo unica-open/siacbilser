@@ -4,8 +4,11 @@
 */
 package it.csi.siac.siacbilser.test.business.stampa;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,6 +32,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.StampaRiepilogoAnnualeIva
 import it.csi.siac.siacfin2ser.model.GruppoAttivitaIva;
 import it.csi.siac.siacfin2ser.model.Periodo;
 import it.csi.siac.siacfin2ser.model.RegistroIva;
+import it.csi.siac.siacfin2ser.model.StatoSubdocumentoIva;
+import it.csi.siac.siacfin2ser.model.SubdocumentoIvaEntrata;
 import it.csi.siac.siacfin2ser.model.TipoChiusura;
 import it.csi.siac.siacfin2ser.model.TipoStampa;
 
@@ -267,6 +272,31 @@ public class StampeIvaTest extends BaseJunit4TestCase {
 		@Autowired
 		protected SubdocumentoIvaEntrataDad subdocumentoIvaEntrataDad;
 		
+		@Test
+		public void testCaricamentodati() {
+			SubdocumentoIvaEntrata sie = new SubdocumentoIvaEntrata();
+			// SIAC-4609
+//			sie.setAnnoEsercizio(annoEsercizio);
+			sie.setEnte(getRichiedenteByProperties("consip", "regp").getAccount().getEnte());
+			sie.setRegistroIva(create(RegistroIva.class, 38));
+			sie.setStatoSubdocumentoIva(StatoSubdocumentoIva.PROVVISORIO);
+			Periodo p = Periodo.FEBBRAIO;
+			Integer annoBilancio= Integer.valueOf(2020);
+			//inizio periodo
+			Date inizioPeriodo = p.getInizioPeriodo(annoBilancio); 
+			//fine periodo
+			Date finePeriodo = p.getFinePeriodo(annoBilancio); 
+			
+			List<String> uids = new ArrayList<String>();
+			List<SubdocumentoIvaEntrata> listaSubdocumentoIvaEntrataNelPeriodo = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataNonQPID(sie, null, null,  null, null, inizioPeriodo, finePeriodo);
+			if(listaSubdocumentoIvaEntrataNelPeriodo != null) {
+				for (SubdocumentoIvaEntrata subdocumentoIvaEntrata : listaSubdocumentoIvaEntrataNelPeriodo) {
+					uids.add(Integer.valueOf(subdocumentoIvaEntrata.getUid()).toString());
+					log.logXmlTypeObject(subdocumentoIvaEntrata, "SS");
+				}
+			}
+			System.out.println("uids trovati " + StringUtils.join(uids, ", "));
+		}
 		
 		@Test
 		public void stampaRegistroIvaTest(){

@@ -20,16 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dao.common.AbstractDao;
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaEstesaLiquidazioniDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaLiquidazioneParamDto;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneMovgestFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTLiquidazioneFin;
-import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
+import it.csi.siac.siacfinser.integration.util.DataValiditaUtil;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 
 
@@ -73,7 +73,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 			RicercaLiquidazioneParamDto prl, boolean soloCount) {
 		Map<String,Object> param = new HashMap<String, Object>();
 		Date nowDate = TimingUtils.getNowDate();
-		param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
+		param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
 		Query query = null;
 		// Parametri di input ricevuti dal servizio :
 		BigDecimal numeroLiquidazione = prl.getNumeroLiquidazione();
@@ -91,10 +91,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 
 		StringBuilder jpql = new StringBuilder(str);
 		
-		//FROM mutuo
-		if(prl.getNumeroMutuo()!=null && prl.getNumeroMutuo().intValue()!=0){
-			jpql.append(", SiacRMutuoVoceLiquidazioneFin siacRMutuoVoceLiquidazione");
-		}
+	
 		
 		//FROM impegno-capitolo
 		if (prl.getNumeroCapitolo()!=null ||
@@ -113,7 +110,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 		}
 
 		//FROM soggetto
-		if(!StringUtils.isEmpty(codiceSoggettoLiquidazione)){
+		if(!StringUtilsFin.isEmpty(codiceSoggettoLiquidazione)){
 			jpql.append(", SiacRLiquidazioneSoggettoFin rLiquidazioneSoggetto");
 		}
 
@@ -130,14 +127,14 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 		}
 		
 		//FILTRI SUGLI STATI:
-		if(!StringUtils.isEmpty(prl.getStatiDaEscludere())){
+		if(!StringUtilsFin.isEmpty(prl.getStatiDaEscludere())){
 			jpql.append(" left join liquidazione.siacRLiquidazioneStatos rLiquidazioneStato left join rLiquidazioneStato.siacDLiquidazioneStato dLiquidazioneStato");
 		}
 		
 		//INIZIO WHERE:
 		jpql.append(" WHERE liquidazione.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId");
 		
-		jpql.append(" AND  ").append(DataValiditaUtils.validitaForQuery("liquidazione"));
+		jpql.append(" AND  ").append(DataValiditaUtil.validitaForQuery("liquidazione"));
 		param.put("enteProprietarioId", enteUid);
 				
 		jpql.append(" AND liquidazione.siacTBil.siacTPeriodo.anno = :annoEsercizio");
@@ -155,7 +152,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 
 		
 		// Se la ricerca arriva da inserisci ordinativo non devo prendere le liquidazioni con documenti
-		if(prl.getTipoRicerca().equals(Constanti.TIPO_RICERCA_DA_ORDINATIVO)){
+		if(prl.getTipoRicerca().equals(CostantiFin.TIPO_RICERCA_DA_ORDINATIVO)){
 			// jpql.append(", SiacRSubdocLiquidazioneFin siacRSubdocLiquidazione");
 			// valutaSubDocLiquidazione=" and siacRSubdocLiquidazione.siacTLiquidazione is null";
 			jpql.append(" AND NOT EXISTS ( FROM liquidazione.siacRSubdocLiquidaziones rsubdoc, SiacTSubdocFin subdoc " +
@@ -223,28 +220,22 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 		}
 		
 		//STATO:
-		if(!StringUtils.isEmpty(prl.getStatiDaEscludere()) ){
+		if(!StringUtilsFin.isEmpty(prl.getStatiDaEscludere()) ){
 			
 			String statiDaEscludere = buildElencoPerClausolaIN(prl.getStatiDaEscludere());
 			jpql.append(" AND dLiquidazioneStato.liqStatoCode NOT IN :statiDaEscludere");
 			param.put("statiDaEscludere", statiDaEscludere);
 			
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rLiquidazioneStato"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rLiquidazioneStato"));
 		}
 		
-		//WHERE mutuo
-		if(prl.getNumeroMutuo()!=null && prl.getNumeroMutuo().intValue()!=0){
-			jpql.append(" AND siacRMutuoVoceLiquidazione.siacTLiquidazione.liqId = liquidazione.liqId");
-			jpql.append(" AND siacRMutuoVoceLiquidazione.siacTMutuoVoce.siacTMutuo.mutCode = :numeroMutuo");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("siacRMutuoVoceLiquidazione"));
-			param.put("numeroMutuo", prl.getNumeroMutuo().intValue()+"");
-		}
+	
 		
 		//WHERE soggetto
-		if(!StringUtils.isEmpty(codiceSoggettoLiquidazione)){
+		if(!StringUtilsFin.isEmpty(codiceSoggettoLiquidazione)){
 			jpql.append(" AND rLiquidazioneSoggetto.siacTLiquidazione.liqId = liquidazione.liqId");
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rLiquidazioneSoggetto"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rLiquidazioneSoggetto"));
 			jpql.append(" AND rLiquidazioneSoggetto.siacTSoggetto.soggettoCode = :codiceSoggettoLiquidazione");
 			param.put("codiceSoggettoLiquidazione", codiceSoggettoLiquidazione);
 		} 
@@ -261,10 +252,10 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 			if((null!=prl.getAnnoProvvedimento() && prl.getAnnoProvvedimento().intValue()!=0  
 					&& null!=prl.getNumeroProvvedimento() && prl.getNumeroProvvedimento().intValue()!=0) || 
 					(null!=prl.getAnnoProvvedimento() && prl.getAnnoProvvedimento().intValue()!=0  
-					&& null!=prl.getTipoProvvedimento() && !StringUtils.isEmpty(prl.getTipoProvvedimento()))){
+					&& null!=prl.getTipoProvvedimento() && !StringUtilsFin.isEmpty(prl.getTipoProvvedimento()))){
 				
 				jpql.append(" AND rLiquidazioneAttoAmm.siacTLiquidazione.liqId = liquidazione.liqId");
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rLiquidazioneAttoAmm"));
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rLiquidazioneAttoAmm"));
 				
 				if(null!=prl.getAnnoProvvedimento()){
 					jpql.append(" AND rLiquidazioneAttoAmm.siacTAttoAmm.attoammAnno = :annoProvvedimento");
@@ -339,7 +330,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 	public List<SiacTLiquidazioneFin> ricercaDistiniteLiquidazioniByRLiquidazioneMovgest(List<SiacRLiquidazioneMovgestFin> listaInput) {
 		List<SiacTLiquidazioneFin> listaRitorno = new ArrayList<SiacTLiquidazioneFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRLiquidazioneMovgestFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRLiquidazioneMovgestFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRLiquidazioneMovgestFin> listaIt : esploso){
 					List<SiacTLiquidazioneFin> risultatoParziale = ricercaDistiniteLiquidazioniByRLiquidazioneMovgestCORE(listaIt);
@@ -348,7 +339,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -376,8 +367,8 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 			jpql.append(" ) ");
 			
 			//SOLO VALIDI
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("liq"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("liq"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -391,7 +382,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 	public <ST extends SiacTBase>  List<ST> ricercaByLiquidazioneMassive(List<SiacTLiquidazioneFin> listaInput, String nomeEntity) {
 		List<ST> listaRitorno = new ArrayList<ST>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTLiquidazioneFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTLiquidazioneFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTLiquidazioneFin> listaIt : esploso){
 					List<ST> risultatoParziale = ricercaByLiquidazioneMassiveCORE(listaIt, nomeEntity);
@@ -400,7 +391,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -415,7 +406,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 	public <ST extends it.csi.siac.siaccommonser.integration.entity.SiacTBase>  List<ST> ricercaByLiquidazioneBilMassive(List<SiacTLiquidazioneFin> listaInput, String nomeEntity) {
 		List<ST> listaRitorno = new ArrayList<ST>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTLiquidazioneFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTLiquidazioneFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTLiquidazioneFin> listaIt : esploso){
 					List<ST> risultatoParziale = ricercaByLiquidazioneBilMassiveCORE(listaIt, nomeEntity);
@@ -424,7 +415,7 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiBilByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiBilByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -459,8 +450,8 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -496,8 +487,8 @@ public class LiquidazioneFinDaoImpl extends AbstractDao<SiacTLiquidazioneFin, In
 			}
 			jpql.append(" ) ");
 			
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);

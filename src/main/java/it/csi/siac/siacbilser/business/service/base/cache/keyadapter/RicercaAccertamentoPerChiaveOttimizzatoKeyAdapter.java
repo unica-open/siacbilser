@@ -47,8 +47,6 @@ public class RicercaAccertamentoPerChiaveOttimizzatoKeyAdapter extends BaseKeyAd
 			append(dop.isCaricaDisponibileFinanziare());
 			append(dop.isCaricaDisponibilePagare());
 			append(dop.isCaricaElencoModificheMovGest());
-			append(dop.isCaricaMutui());
-			append(dop.isCaricaVociMutuo());
 			append(dop.isEscludiAnnullati());
 			append(dop.isCaricaElencoModificheMovGest());
 		} else {

@@ -51,7 +51,7 @@ import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoProgetto;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * Dad per Cronoprogramma.
@@ -318,6 +318,16 @@ public class CronoprogrammaDad extends ExtendedBaseDadImpl {
 	}
 	
 	/**
+	 * Elimina solo la relazione con l'uid del capitolo esistente su dettaglio entrata di un cronoprogramma.
+	 *
+	 * @param dett the dett
+	 */
+	//SIAC-8791
+	public void cancellaRelazioneDettaglioEntrataCronoprogramma(DettaglioEntrataCronoprogramma dett) {
+		cancellaRelazioneDettaglioCronoprogramma(dett.getUid());		
+	}
+	
+	/**
 	 * Elimina il dettaglio uscita di un cronoprogramma.
 	 *
 	 * @param dett the dett
@@ -327,6 +337,16 @@ public class CronoprogrammaDad extends ExtendedBaseDadImpl {
 		
 	}
 
+	/**
+	 * Elimina solo la relazione con l'uid del capitolo esistente su dettaglio spesa di un cronoprogramma.
+	 *
+	 * @param dett the dett
+	 */
+	//SIAC-8791
+	public void cancellaRelazioneDettaglioUscitaCronoprogramma(DettaglioUscitaCronoprogramma dett) {
+		cancellaRelazioneDettaglioCronoprogramma(dett.getUid());		
+	}
+	
 	/**
 	 * Cancella dettaglio cronoprogramma.
 	 *
@@ -342,7 +362,21 @@ public class CronoprogrammaDad extends ExtendedBaseDadImpl {
 		dettaglioCronoprogrammaDao.delete(siacTCronopElem);
 	}
 	
-	
+	//SIAC-8791
+	/**
+	 * Cancella solo la relazione con il capitolo esistente nel dettaglio cronoprogramma.
+	 *
+	 * @param uidDettaglioCronoprogramma the uid dettaglio cronoprogramma
+	 */
+	private void cancellaRelazioneDettaglioCronoprogramma(Integer uidDettaglioCronoprogramma) {
+		SiacTCronopElem siacTCronopElem = siacTCronopElemRepository.findOne(uidDettaglioCronoprogramma);
+		
+		if(siacTCronopElem == null) {
+			throw new IllegalArgumentException("Impossibile trovare il dettaglio cronoprogramma con uid: "+ uidDettaglioCronoprogramma);
+		}
+		
+		dettaglioCronoprogrammaDao.deleteRelation(siacTCronopElem);
+	}
 	
 	/**
 	 * Builds the siac t cronop elem entrata.

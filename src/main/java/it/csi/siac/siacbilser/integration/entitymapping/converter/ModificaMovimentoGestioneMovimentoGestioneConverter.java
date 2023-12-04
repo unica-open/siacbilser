@@ -56,31 +56,17 @@ public abstract class ModificaMovimentoGestioneMovimentoGestioneConverter<MG ext
 			SMG smg = convertiSubMovimentoGestione(siacTMovgestT);
 			setSubMovimentoGestione(dest, smg);
 		}
-		
-		
-		
 		//SIAC-6929-II
-		if(siacTMovgestT!= null  ){
-			if  (siacTMovgestT.getSiacDSiopeAssenzaMotivazione()!= null ) {
-				if (dest.getSiopeAssenzaMotivazione() == null) {
-					dest.setSiopeAssenzaMotivazione(new SiopeAssenzaMotivazione());
-				}
-				dest.getSiopeAssenzaMotivazione().setDescrizioneBancaItalia(siacTMovgestT.getSiacDSiopeAssenzaMotivazione().getSiopeAssenzaMotivazioneDesc());
-		    }
-			if  (siacTMovgestT.getSiacRMovgestTsSogclasses() != null 
-					&& !siacTMovgestT.getSiacRMovgestTsSogclasses().isEmpty()) {
-				dest.setClasseSoggetto(new ClasseSoggetto());
-				dest.getClasseSoggetto().setDescrizione(siacTMovgestT.getSiacRMovgestTsSogclasses().get(0).getSiacDSoggettoClasse().getSoggettoClasseDesc());
-			}
-			
-			if  (siacTMovgestT.getSiacRMovgestTsSogs() != null 
-					&& !siacTMovgestT.getSiacRMovgestTsSogs().isEmpty()) {
-				dest.setSoggetto(new Soggetto());
-				dest.getSoggetto().setCodiceSoggetto(siacTMovgestT.getSiacRMovgestTsSogs().get(0).getSiacTSoggetto().getSoggettoCode());
-			}
-		}
+		aggiungiDatiFinanziari(dest, siacTMovgestT);
 		
 		return dest;
+	}
+	/**
+	 * @param dest
+	 * @param siacTMovgestT
+	 */
+	protected void aggiungiDatiFinanziari(MMG dest, SiacTMovgestT siacTMovgestT) {
+		//implementazione vuota di default!!!!
 	}
 
 	private SiacTMovgestT estraiSiacTMovgestT(SiacTModifica src) {
@@ -152,6 +138,8 @@ public abstract class ModificaMovimentoGestioneMovimentoGestioneConverter<MG ext
 				if(rmts.getDataCancellazione() == null && rmts.getDataFineValidita() == null) {
 					SiacTSoggetto ts = rmts.getSiacTSoggetto();
 					Soggetto soggetto = new Soggetto();
+					//SIAC-7505
+					soggetto.setUid(ts.getSoggettoId());
 					soggetto.setCodiceSoggetto(ts.getSoggettoCode());
 					soggetto.setDenominazione(ts.getSoggettoDesc());
 					impegno.setSoggetto(soggetto);

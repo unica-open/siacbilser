@@ -51,7 +51,7 @@ public class RicercaQuoteDaEmettereEntrataService extends CheckedAccountBaseServ
 		checkCondition((req.getAnnoElenco()!= null && numeroElencoValorizzato) || (req.getAnnoElenco() == null && !numeroElencoValorizzato),ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno elenco e numero elenco"));
 		
 		if(req.getNumeroElencoDa()!=null && req.getNumeroElencoA()!=null){
-			checkCondition(req.getNumeroElencoDa().compareTo(req.getNumeroElencoA())<=0, ErroreCore.VALORE_NON_VALIDO.getErrore("anno elenco e numero elenco"));
+			checkCondition(req.getNumeroElencoDa().compareTo(req.getNumeroElencoA())<=0, ErroreCore.VALORE_NON_CONSENTITO.getErrore("anno elenco e numero elenco"));
 		}
 		
 		checkParametriPaginazione(req.getParametriPaginazione());

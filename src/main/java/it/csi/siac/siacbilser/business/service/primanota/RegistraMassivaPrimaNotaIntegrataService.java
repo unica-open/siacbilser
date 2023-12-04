@@ -21,7 +21,7 @@ import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.integration.dad.RegistrazioneMovFinDad;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.ResponseHandler;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Entita;
@@ -158,7 +158,7 @@ public class RegistraMassivaPrimaNotaIntegrataService extends CheckedAccountBase
 	}
 
 	private static class InseriscePrimaNotaAutomaticaResponseHandler extends ResponseHandler<InseriscePrimaNotaAutomaticaResponse> {
-		private final LogUtil log = new LogUtil(getClass());
+		private final LogSrvUtil log = new LogSrvUtil(getClass());
 		
 		private final List<RegistrazioneMovFin> registrazioniMovFin;
 		private final RegistraMassivaPrimaNotaIntegrataResponse res;

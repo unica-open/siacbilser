@@ -7,7 +7,7 @@ package it.csi.siac.siacfinser.integration.dao.common.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin;
 
 public class AttributoTClassInfoMassiveDto implements Serializable {
@@ -43,7 +43,7 @@ public class AttributoTClassInfoMassiveDto implements Serializable {
 	public List<Integer> getIdOggetti(){
 		 List<Integer> id = null;
 		if(OggettoDellAttributoTClass.T_MOVGEST_TS.equals(tipoOggetto)){
-			id = CommonUtils.getIdListSiacTBase(siacTMovgestTs);
+			id = CommonUtil.getIdListSiacTBase(siacTMovgestTs);
 		} else if(OggettoDellAttributoTClass.T_LIQUIDAZIONE.equals(tipoOggetto)){
 			//non implementato per il momento
 		} else if(OggettoDellAttributoTClass.T_ORDINATIVO.equals(tipoOggetto)){

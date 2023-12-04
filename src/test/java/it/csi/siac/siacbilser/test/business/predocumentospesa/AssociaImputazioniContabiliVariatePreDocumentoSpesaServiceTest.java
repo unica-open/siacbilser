@@ -27,7 +27,7 @@ public class AssociaImputazioniContabiliVariatePreDocumentoSpesaServiceTest exte
 		req.setRichiedente(getRichiedenteByProperties("consip","regp"));
 		Impegno impegno = new Impegno();
 		impegno.setUid(95620);
-		impegno.setNumero(new BigDecimal(30003));
+		impegno.setNumeroBigDecimal(new BigDecimal(30003));
 		impegno.setAnnoMovimento(2015);
 		//impegno.setNumero(numero);
 		req.setImpegno(impegno);

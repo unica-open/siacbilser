@@ -88,13 +88,14 @@ public class RicercaSinteticaModulareDocumentoSpesaService extends CheckedAccoun
 				req.getLiquidazione(), 
 				req.getBilancioLiquidazione(), 
 				req.getCollegatoCEC(), 
-				req.getContabilizzaGenPcc(), 
+				req.getContabilizzaGenPcc(),
+				req.getPredocumentoSpesa(),
 				req.getParametriPaginazione(),
 				req.getDocumentoSpesaModelDetails());
 		res.setDocumenti(listaDocumentoSpesa);
 		
 		//Calcolo del totale importo dei documenti filtrati per gli stessi parametri della ricerca.
-		BigDecimal importoTotale = documentoSpesaDad.ricercaSinteticaDocumentoSpesaImportoTotale(doc, req.getAttoAmministrativo(), req.getImpegno(), req.getRilevanteIva(), req.getElencoDocumenti(), req.getLiquidazione(), req.getBilancioLiquidazione(), req.getCollegatoCEC(), req.getContabilizzaGenPcc(), req.getParametriPaginazione());
+		BigDecimal importoTotale = documentoSpesaDad.ricercaSinteticaDocumentoSpesaImportoTotale(doc, req.getAttoAmministrativo(), req.getImpegno(), req.getRilevanteIva(), req.getElencoDocumenti(), req.getLiquidazione(), req.getBilancioLiquidazione(), req.getCollegatoCEC(), req.getContabilizzaGenPcc(),req.getPredocumentoSpesa(), req.getParametriPaginazione());
 		res.setImportoTotale(importoTotale);		
 		
 		

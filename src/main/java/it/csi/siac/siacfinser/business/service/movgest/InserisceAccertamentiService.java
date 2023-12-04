@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -34,6 +34,8 @@ import it.csi.siac.siacfinser.integration.dad.CommonDad;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoAttivaRegistrazioniMovFinFINGSADto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoInserimentoMovimentoGestioneDto;
+import it.csi.siac.siacfinser.integration.dao.common.dto.ModificaVincoliImpegnoInfoDto;
+import it.csi.siac.siacfinser.integration.dao.common.dto.MovimentoInInserimentoInfoDto;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
@@ -47,7 +49,7 @@ public class InserisceAccertamentiService extends AbstractBaseService<InserisceA
 	CommonDad commonDad;
 	
 	@Autowired
-	ProvvedimentoDad provvedimentoDad;
+	AttoAmministrativoDad attoAmministrativoDad;
 	
 	@Override
 	protected void init() {
@@ -105,18 +107,33 @@ public class InserisceAccertamentiService extends AbstractBaseService<InserisceA
 			}
 		}	
 		
+		//SIAC-8894:aggiungo controllo esistenza progetto su anno successivo
+		boolean inserireDoppiaGestione = impegnoOttimizzatoDad.inserireDoppiaGestione(bilancio, primoAccertamentoDaInserire, datiOperazione);
+		if(inserireDoppiaGestione){
+			
+			if (primoAccertamentoDaInserire.getProgetto() != null && !isEmpty(primoAccertamentoDaInserire.getProgetto().getCodice())) {										
+				//SIAC-8894: se non ho trovato il progetto anno successivo allora errore
+				if(!esisteProgettoAnnoSuccPerDoppiaGestione(bilancio,datiOperazione,null,primoAccertamentoDaInserire)) {
+					res.setErrori(Arrays.asList(ErroreFin.PROGETTO_NONTROVATO_DOPPIAGESTIONE.getErrore(primoAccertamentoDaInserire.getProgetto().getCodice())));
+					res.setEsito(Esito.FALLIMENTO);
+					return;
+				}
+			}
+		}
+				
+		
 		//3. Si invoca il metodo che esegue l'operazione interna di inserimento di impegni o accertamenti:
 		Integer numeroAccertamento = null;
-		if(primoAccertamentoDaInserire.getNumero()!=null && primoAccertamentoDaInserire.getNumero().intValue()>0){
-			numeroAccertamento = primoAccertamentoDaInserire.getNumero().intValue();
+		if(primoAccertamentoDaInserire.getNumeroBigDecimal()!=null && primoAccertamentoDaInserire.getNumeroBigDecimal().intValue()>0){
+			numeroAccertamento = primoAccertamentoDaInserire.getNumeroBigDecimal().intValue();
 		}
 		
 		if(primoAccertamentoDaInserire.getAttoAmministrativo() != null && primoAccertamentoDaInserire.getAttoAmministrativo().getUid() > 0){
 			RicercaAtti ricercaAtti = new RicercaAtti();
 			ricercaAtti.setUid(primoAccertamentoDaInserire.getAttoAmministrativo().getUid());
-			provvedimentoDad.setLoginOperazione(loginOperazione);
-			provvedimentoDad.setEnte(req.getEnte());
-			List<AttoAmministrativo> listaAtti = provvedimentoDad.ricerca(ricercaAtti);
+			attoAmministrativoDad.setLoginOperazione(loginOperazione);
+			attoAmministrativoDad.setEnte(req.getEnte());
+			List<AttoAmministrativo> listaAtti = attoAmministrativoDad.ricerca(ricercaAtti);
 			if(listaAtti != null && !listaAtti.isEmpty()){
 				AttoAmministrativo attoAmm = listaAtti.get(0);
 				if(attoAmm.getBloccoRagioneria() != null && attoAmm.getBloccoRagioneria().booleanValue()){

@@ -6,19 +6,14 @@ package it.csi.siac.siacbilser.integration.dao;
 
 import java.util.List;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entity.SiacTFilePagopa;
 
-@Component
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public interface SiacTFilePagopaRepository extends JpaRepository<SiacTFilePagopa, Integer> {
 	
 	@Query("FROM SiacTFilePagopa fp "
@@ -48,6 +43,17 @@ public interface SiacTFilePagopaRepository extends JpaRepository<SiacTFilePagopa
 	public SiacTFilePagopa findByCode(
 			@Param("siacTEnteProprietario") SiacTEnteProprietario siacTEnteProprietario, 
 			@Param("filePagopaCode") String filePagopaCode
+	);
+	
+	
+	@Query("FROM SiacTFilePagopa fp "
+			+ " WHERE fp.siacTEnteProprietario=:siacTEnteProprietario "
+			+ " AND fp.filePagopaIdFlusso=:filePagopaIdFlusso "
+			+ " AND fp.siacDFilePagopaStato.filePagopaStatoCode NOT IN ('ANNULLATO', 'RIFIUTATO') "
+			+ " AND fp.dataCancellazione IS NULL ")
+	public SiacTFilePagopa findByIdFlusso(
+			@Param("siacTEnteProprietario") SiacTEnteProprietario siacTEnteProprietario, 
+			@Param("filePagopaIdFlusso") String filePagopaIdFlusso
 	);
 	
 	

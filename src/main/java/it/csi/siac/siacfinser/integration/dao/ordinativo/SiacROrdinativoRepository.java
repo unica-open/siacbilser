@@ -19,14 +19,23 @@ public interface SiacROrdinativoRepository extends JpaRepository<SiacROrdinativo
 	
 	String condizione = " ( (rord.dataInizioValidita < :dataInput)  AND (rord.dataFineValidita IS NULL OR :dataInput < rord.dataFineValidita) AND rord.dataCancellazione IS NULL ) ";
 	
+	//ORD 1 - ord_id_da
 	String findValideByIdOrdUnoQuery = "FROM SiacROrdinativoFin rord WHERE (rord.siacTOrdinativo1.ordId = :ordinativoId) AND " + condizione; 
-	
+
 	@Query(findValideByIdOrdUnoQuery)
 	public List<SiacROrdinativoFin> findValideByIdOrdUno(@Param("ordinativoId") Integer ordinativoId, @Param("dataInput") Timestamp dataInput);
 	
-	
 	@Query(findValideByIdOrdUnoQuery)
 	public List<SiacROrdinativoFin> findValideByIdOrdUno(@Param("ordinativoId") Integer ordinativoId, @Param("dataInput") Timestamp dataInput, Pageable page);
+
+	//SIAC-8237 ORD 2 - ord_id_a
+	String findValideByIdOrdDueQuery = "FROM SiacROrdinativoFin rord WHERE (rord.siacTOrdinativo2.ordId = :ordinativoId) AND " + condizione; 
+
+	@Query(findValideByIdOrdDueQuery)
+	public List<SiacROrdinativoFin> findValideByIdOrdDue(@Param("ordinativoId") Integer ordinativoId, @Param("dataInput") Timestamp dataInput);
+	
+	@Query(findValideByIdOrdDueQuery)
+	public List<SiacROrdinativoFin> findValideByIdOrdDue(@Param("ordinativoId") Integer ordinativoId, @Param("dataInput") Timestamp dataInput, Pageable page);
 
 
 	@Query("SELECT COUNT(*) " + findValideByIdOrdUnoQuery)

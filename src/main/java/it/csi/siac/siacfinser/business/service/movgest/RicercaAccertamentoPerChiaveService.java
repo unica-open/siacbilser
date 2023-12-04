@@ -17,7 +17,7 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.common.RicercaAttributiMovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveResponse;
@@ -60,7 +60,7 @@ public class RicercaAccertamentoPerChiaveService extends RicercaAttributiMovimen
 		Ente ente = req.getEnte();
 
 		//2. Si richiama il metodo interno di ricerca per chiave per impegni o accertamenti:
-		Accertamento accertamento = (Accertamento) accertamentoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoAccertamento, numeroAccertamento, Constanti.MOVGEST_TIPO_ACCERTAMENTO, true);
+		Accertamento accertamento = (Accertamento) accertamentoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoAccertamento, numeroAccertamento, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, true);
 		
 		if(null!=accertamento){
 			//si invoca il metodo completaDatiRicercaAccertamentoPk che si occupa di vestire i dati ottenuti:

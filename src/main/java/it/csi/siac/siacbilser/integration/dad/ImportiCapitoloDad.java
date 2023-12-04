@@ -35,6 +35,10 @@ import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
 import it.csi.siac.siacbilser.model.ImportoDerivatoFunctionEnum;
 import it.csi.siac.siacbilser.model.utils.DettaglioImportoCapitolo;
+import it.csi.siac.siacbilser.model.utils.TipoImportoCapitolo;
+import it.csi.siac.siacbilser.model.wrapper.ImportiImpegnatoPerComponente;
+import it.csi.siac.siacbilser.model.wrapper.ImportiImpegnatoPerComponenteAnniSuccNoStanz;
+import it.csi.siac.siacbilser.model.wrapper.ImportiImpegnatoPerComponenteTriennioNoStanz;
 
 /**
  * The Class ImportiCapitoloDad.
@@ -56,6 +60,7 @@ public class ImportiCapitoloDad extends ExtendedBaseDadImpl {
 	@Autowired private CapitoloDao capitoloDao;
 	/** The importi capitolo dao */
 	@Autowired private ImportiCapitoloDao importiCapitoloDao;
+
 
 	
 	/**
@@ -266,6 +271,35 @@ public class ImportiCapitoloDad extends ExtendedBaseDadImpl {
 		return capitoloDao.findImportoDerivato(uid, importoDerivatoFunction.getFunctionName());
 	}
 	
+	//SIAC-7349  - START - SR90 - 02/04/2020 Calcolo della disponibilita impegnare per capitolo UG
+	public BigDecimal findDisponibilitaImpegnareComponente(Integer uid, Integer uidComp,  String importoDispCompFunction) {
+		return capitoloDao.findDisponibilitaImpegnareComponente(uid, uidComp, importoDispCompFunction);
+	}
+	//SIAC-7349 - FINE
+	
+	//SIAC-7349  - START - SR90 - 07/05/2020 Calcolo impegnato anni succ no stanziamento per capitolo UP
+	public List<ImportiImpegnatoPerComponenteAnniSuccNoStanz> findImpegnatoAnniSuccNoStanz(Integer uid, List<Integer> uidComp,  String fncImportoImpAnniSuccNoStanz) {
+		return capitoloDao.findImpegnatoAnniSuccNoStanz(uid, uidComp, fncImportoImpAnniSuccNoStanz);
+	}
+	//SIAC-7349 - FINE
+
+	// SIAC-7349 GS 17/07/2020
+	public List<ImportiImpegnatoPerComponenteTriennioNoStanz> findImpegnatoTriennioNoStanz(Integer uid, List<Integer> uidComp,  String fncImportoImpTriennioNoStanz) {
+		return capitoloDao.findImpegnatoTriennioNoStanz(uid, uidComp, fncImportoImpTriennioNoStanz);
+	}
+
+	
+	//SIAC-7349  - START - SR210 - 16/04/2020 Calcolo della disponibilita impegnare per capitolo UG
+	public BigDecimal findDisponibilitaVariareComponente(Integer uid, Integer uidComp,  String importoDispVarCompFunction) {
+		return capitoloDao.findDisponibilitaVariareComponente(uid, uidComp, importoDispVarCompFunction);
+	}
+	//SIAC-7349 - FINE
+	//SIAC-7349  - START - SR200 - 09/04/2020 Calcolo dell impegnato per capitolo UP
+	public List<ImportiImpegnatoPerComponente> findImpegnatoComponente(Integer uid, Integer uidComp,  String importoImpegnatoFunction) {
+		return capitoloDao.findImpegnatoComponente(uid, uidComp, importoImpegnatoFunction);
+	}
+	//SIAC-7349 - FINE
+	
 	// SIAC-6881: dettagli importo
 	public DettaglioImportoCapitolo findDettaglioImportoCapitoloById(Integer uid) {
 		SiacTBilElemDet siacTBilElemDet = siacTBilElemDetRepository.findOne(uid);
@@ -273,8 +307,8 @@ public class ImportiCapitoloDad extends ExtendedBaseDadImpl {
 	}
 	
 	public DettaglioImportoCapitolo findDettaglioImportoCapitoloByCapitoloTipoAnno(Integer uidCapitolo, String tipo, Integer anno) {
-		SiacTBilElemDet siacTBilElemDet = siacTBilElemDetRepository.findBilElemDetsByBilElemIdAndAnnoAndTipo(uidCapitolo, anno.toString(), tipo);
-		return mapNotNull(siacTBilElemDet, DettaglioImportoCapitolo.class, BilMapId.SiacTBilElemDet_DettaglioImportoCapitolo);
+		List<SiacTBilElemDet> siacTBilElemDet = siacTBilElemDetRepository.findBilElemDetsByBilElemIdAndAnnoAndTipo(uidCapitolo, anno.toString(), tipo);
+		return mapNotNull(siacTBilElemDet != null && !siacTBilElemDet.isEmpty() ? siacTBilElemDet.get(0) : null, DettaglioImportoCapitolo.class, BilMapId.SiacTBilElemDet_DettaglioImportoCapitolo);
 	}
 	
 	public DettaglioImportoCapitolo aggiornaDettaglioImportoCapitolo(DettaglioImportoCapitolo dettaglioImportoCapitolo) {
@@ -305,5 +339,20 @@ public class ImportiCapitoloDad extends ExtendedBaseDadImpl {
 		map(dettaglioImportoCapitolo, siacTBilElemDet, BilMapId.SiacTBilElemDet_DettaglioImportoCapitolo);
 		return siacTBilElemDet;
 	}
+	
+	public BigDecimal caricaSingoloImportoCapitolo(Integer uidCapitolo, Integer annoImporto, String elemDetTipoCode){
+		return siacTBilElemDetRepository.findElemDetImportoByBilElemIdAndAnno(uidCapitolo, ""+annoImporto, elemDetTipoCode);
+	}
+	
+	public BigDecimal caricaSingoloImportoCapitolo(Integer uidCapitolo, Integer annoImporto, SiacDBilElemDetTipoEnum enumTipo){
+		if(enumTipo == null) {
+			return null;
+		}
+		return caricaSingoloImportoCapitolo(uidCapitolo, annoImporto, enumTipo.getCodice());
+	}
+	
+	
+	
+	
 	
 }

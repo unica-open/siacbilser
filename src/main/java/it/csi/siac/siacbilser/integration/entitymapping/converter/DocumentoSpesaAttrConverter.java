@@ -27,7 +27,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTAttr;
 import it.csi.siac.siacbilser.integration.entity.SiacTDoc;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 
 
@@ -39,7 +39,7 @@ import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 public class DocumentoSpesaAttrConverter extends DozerConverter<DocumentoSpesa, SiacTDoc > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

@@ -8,20 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
-import it.csi.siac.siaccorser.frontend.webservice.FileService;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
-import it.csi.siac.siaccorser.frontend.webservice.msg.RicercaBilancio;
-import it.csi.siac.siaccorser.frontend.webservice.msg.RicercaBilancioResponse;
-import it.csi.siac.siaccorser.frontend.webservice.msg.file.RicercaTipoFile;
-import it.csi.siac.siaccorser.frontend.webservice.msg.file.RicercaTipoFileResponse;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
-import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siaccorser.model.file.TipoFile;
 import it.csi.siac.siacintegser.business.service.base.ElaboraFileAsyncService;
 import it.csi.siac.siacintegser.business.service.base.ElaboraFileService;
 import it.csi.siac.siacintegser.business.service.base.IntegBaseService;
+import it.csi.siac.siacintegser.business.service.helper.BilancioServiceHelper;
+import it.csi.siac.siacintegser.business.service.helper.FileServiceHelper;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFile;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFileResponse;
@@ -34,26 +29,26 @@ public abstract class BaseElaboraDocumentoService<EDREQ extends BaseRequest & El
 															 EDRES extends BaseResponse & ElaboraDocumentoResponseInterface> 
 															 extends IntegBaseService<EDREQ, EDRES> {
 	
-	@Autowired
-	protected FileService fileService;
-
+	@Autowired private BilancioServiceHelper bilancioServiceHelper;
+	@Autowired private FileServiceHelper fileServiceHelper;
+	
 	@Override
 	protected void checkServiceBaseParameters(EDREQ edReq) throws ServiceParamError {
 
 		super.checkServiceBaseParameters(edReq);
 		
-		assertNotNull(edReq.getAnnoBilancio(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno bilancio"));
-		assertNotNull(edReq.getContenutoDocumento(),
+		assertParamNotNull(edReq.getAnnoBilancio(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno bilancio"));
+		assertParamNotNull(edReq.getContenutoDocumento(),
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("contenuto documento"));
 	}
 
 	protected ElaboraFile buildElaboraFileRequest(EDREQ edReq) {
 		ElaboraFile req = map(edReq, ElaboraFile.class, getRequestMapId());
 
-		req.setBilancio(getBilancio(edReq.getAnnoBilancio()));
+		req.setBilancio(bilancioServiceHelper.findBilancioByAnno(ente, richiedente, edReq.getAnnoBilancio()));
 		
 		String codiceTipoDocumento = getCodiceTipoDocumento(edReq);
-		req.getFile().setTipo(ricercaTipoFile(codiceTipoDocumento));
+		req.getFile().setTipo(fileServiceHelper.findTipoFileByCodice(ente, richiedente, codiceTipoDocumento));
 
 		req.setEnte(ente);
 
@@ -108,31 +103,4 @@ public abstract class BaseElaboraDocumentoService<EDREQ extends BaseRequest & El
 	protected abstract IntegMapId getRequestMapId();
 	protected abstract IntegMapId getResponseMapId();
 	
-	private Bilancio getBilancio(Integer annoBilancio) {
-		RicercaBilancio ricercaBilancio = new RicercaBilancio();
-
-		ricercaBilancio.setAnno(annoBilancio);
-		ricercaBilancio.setEnte(ente);
-		ricercaBilancio.setRichiedente(richiedente);
-
-		RicercaBilancioResponse ricercaBilancioResponse = coreService.ricercaBilancio(ricercaBilancio);
-
-		checkBusinessServiceResponse(ricercaBilancioResponse);
-
-		return ricercaBilancioResponse.getBilancio();
-	}
-
-	private TipoFile ricercaTipoFile(String codice) {
-		RicercaTipoFile ricercaTipoFile = new RicercaTipoFile();
-
-		ricercaTipoFile.setEnte(ente);
-		ricercaTipoFile.setRichiedente(richiedente);
-		ricercaTipoFile.setCodice(codice);
-
-		RicercaTipoFileResponse ricercaTipoFileResponse = fileService.ricercaTipoFile(ricercaTipoFile);
-
-		checkBusinessServiceResponse(ricercaTipoFileResponse);
-
-		return ricercaTipoFileResponse.getTipoFile();
-	}
 }

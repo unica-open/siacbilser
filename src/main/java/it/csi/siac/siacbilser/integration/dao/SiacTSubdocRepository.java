@@ -16,7 +16,6 @@ import org.springframework.data.repository.query.Param;
 import it.csi.siac.siacbilser.integration.entity.SiacRSubdocAttr;
 import it.csi.siac.siacbilser.integration.entity.SiacTCartacont;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgestT;
-import it.csi.siac.siacbilser.integration.entity.SiacTMutuoVoce;
 import it.csi.siac.siacbilser.integration.entity.SiacTSoggetto;
 import it.csi.siac.siacbilser.integration.entity.SiacTSubdoc;
 import it.csi.siac.siacbilser.integration.entity.SiacTSubdocIva;
@@ -386,14 +385,7 @@ public interface SiacTSubdocRepository extends JpaRepository<SiacTSubdoc, Intege
 			)
 	List<SiacTSubdoc> findSiacTSubdocSospesiByAttoalIdAndDocFamTipoCodeIn(@Param("attoalId") Integer attoalId, @Param("docFamTipoCodes") List<String> docFamTipoCodes);
 	
-	@Query("SELECT r.siacTMutuoVoce "
-			+ " FROM SiacRMutuoVoceSubdoc r "
-			+ " WHERE r.dataCancellazione IS NULL "
-			+ " AND r.siacTSubdoc.dataCancellazione IS NULL "
-			+ " AND r.siacTSubdoc.subdocId = :subdocId "
-			
-			)
-	SiacTMutuoVoce findIdVoceMutuoBySubdoc(@Param("subdocId") Integer uid);
+
 
 	@Query(" SELECT COUNT(s) "
 			+ " FROM SiacTSubdoc s "
@@ -884,4 +876,14 @@ public interface SiacTSubdocRepository extends JpaRepository<SiacTSubdoc, Intege
 			+ "	order by data_durc",
 			nativeQuery = true)
 	List<Object[]> getDataFineValiditaDurcAndSoggettoCodeBySubdocIds(@Param("subodcIds")List<Integer> subodcIds);
+
+	@Query( "SELECT rsogg.siacTSoggetto.codDestinatario "
+			+ " FROM SiacRSubdocSog rsogg "
+			+ " WHERE rsogg.dataCancellazione IS NULL "
+			+ " AND rsogg.siacTSubdoc.dataCancellazione IS NULL "
+			+ " AND rsogg.siacTSoggetto.dataCancellazione IS NULL "
+			+ " AND rsogg.siacTSubdoc.siacTDoc.docId = :docId "
+			)
+	List<String> getCodiciIPASediSecondarieQuoteDocumento(@Param("docId")Integer docId );
+	
 }

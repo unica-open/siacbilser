@@ -103,7 +103,7 @@ public class InvioFatturaPATest extends BaseJunit4TestCase {
 		byte[] contenuto;
 		try {
 //			contenuto = getTestFileBytes("docs/test/fatture/SIAC-4397_IT01234567890_FPA01.xml");
-			contenuto = getTestFileBytes("docs/test/fatture/SIAC-5163_IT01234567890_FPA04.xml");
+			contenuto = getTestFileBytes("docs/test/fatture/Elaborated_IT01578251009_B2084.xml");
 //			contenuto = getTestFileBytes("docs/test/fatture/SIAC-4397_IT01234567890_FPA03.xml");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -119,14 +119,14 @@ public class InvioFatturaPATest extends BaseJunit4TestCase {
 	public static void main(String[] args) throws Exception {
 		String head = new String(getTestFileBytes("docs/test/fatture/fattura_csi_head.snip"));
 		String tail = new String(getTestFileBytes("docs/test/fatture/fattura_csi_tail.snip"));
-		String[] files = new String[] {"IT01234567890_FPA01.xml", "IT01234567890_FPA02.xml", "IT01234567890_FPA03.xml"};
+		String[] files = new String[] {"IT01578251009_B2084.xml"}; //, "IT01234567890_FPA02.xml", "IT01234567890_FPA03.xml"};
 		Charset charset = Charset.forName("UTF-8");
 		
 		for(String file : files) {
 			byte[] contenuto = getTestFileBytes("docs/test/fatture/" + file);
 			String base64 = DatatypeConverter.printBase64Binary(contenuto);
 			String full = head + base64 + tail;
-			printTestFileBytes("docs/test/fatture/SIAC-4397_" + file, full.getBytes(charset));
+			printTestFileBytes("docs/test/fatture/Elaborated_" + file, full.getBytes(charset));
 			
 			String xml = new String(contenuto);
 			System.out.println(xml);

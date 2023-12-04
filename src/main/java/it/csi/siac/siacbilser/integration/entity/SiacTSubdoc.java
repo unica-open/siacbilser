@@ -135,9 +135,6 @@ public class SiacTSubdoc extends SiacTEnteBaseExt {
 	@OneToMany(mappedBy="siacTSubdoc", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
 	private List<SiacRSubdocSog> siacRSubdocSogs;
 	
-	@OneToMany(mappedBy="siacTSubdoc", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
-	private List<SiacRMutuoVoceSubdoc> siacRMutuoVoceSubdocs;
-
 	//bi-directional many-to-one association to SiacRSubdocSubdocIva
 	/** The siac r subdoc subdoc ivas. */
 	@OneToMany(mappedBy="siacTSubdoc")
@@ -692,13 +689,15 @@ public class SiacTSubdoc extends SiacTEnteBaseExt {
 
 		return siacRSubdocOrdinativoT;
 	}
+	
+
 
 	/**
  * Gets the siac r subdoc sogs.
  *
  * @return the siac r subdoc sogs
  */
-public List<SiacRSubdocSog> getSiacRSubdocSogs() {
+	public List<SiacRSubdocSog> getSiacRSubdocSogs() {
 		return this.siacRSubdocSogs;
 	}
 
@@ -737,49 +736,6 @@ public List<SiacRSubdocSog> getSiacRSubdocSogs() {
 		return siacRSubdocSog;
 	}
 	
-	/**
-	 * Gets the siac r mutuo voce subdocs.
-	 *
-	 * @return the siac r mutuo voce subdocs
-	 */
-	public List<SiacRMutuoVoceSubdoc> getSiacRMutuoVoceSubdocs() {
-		return this.siacRMutuoVoceSubdocs;
-	}
-
-	/**
-	 * Sets the siac r mutuo voce predocs.
-	 *
-	 * @param siacRMutuoVoceSubdocs the new siac r mutuo voce subdocs
-	 */
-	public void setSiacRMutuoVoceSubdocs(List<SiacRMutuoVoceSubdoc> siacRMutuoVoceSubdocs) {
-		this.siacRMutuoVoceSubdocs = siacRMutuoVoceSubdocs;
-	}
-
-	/**
-	 * Adds the siac r mutuo voce subdoc.
-	 *
-	 * @param SiacRMutuoVoceSubdoc the siac r mutuo voce subdoc
-	 * @return the siac r mutuo voce subdoc
-	 */
-	public SiacRMutuoVoceSubdoc addSiacRMutuoVoceSubdoc(SiacRMutuoVoceSubdoc siacRMutuoVoceSubdoc) {
-		getSiacRMutuoVoceSubdocs().add(siacRMutuoVoceSubdoc);
-		siacRMutuoVoceSubdoc.setSiacTSubdoc(this);
-
-		return siacRMutuoVoceSubdoc;
-	}
-
-	/**
-	 * Removes the siac r mutuo voce subdoc.
-	 *
-	 * @param siacRMutuoVoceSubdoc the siac r mutuo voce subdoc
-	 * @return the siac r mutuo voce subdoc
-	 */
-	public SiacRMutuoVoceSubdoc removeSiacRMutuoVoceSubdoc(SiacRMutuoVoceSubdoc siacRMutuoVoceSubdoc) {
-		getSiacRMutuoVoceSubdocs().remove(siacRMutuoVoceSubdoc);
-		siacRMutuoVoceSubdoc.setSiacTSubdoc(null);
-
-		return siacRMutuoVoceSubdoc;
-	}
 
 	/**
 	 * Gets the siac d subdoc tipo.

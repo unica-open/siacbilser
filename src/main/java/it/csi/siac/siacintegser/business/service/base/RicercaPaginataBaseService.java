@@ -16,15 +16,15 @@ public abstract class RicercaPaginataBaseService<RPREQ extends RicercaPaginataRe
 	@Override
 	protected void checkServiceBaseParameters(RPREQ rpreq) throws ServiceParamError
 	{
-		assertNotNull(rpreq.getNumeroPagina(),
+		assertParamNotNull(rpreq.getNumeroPagina(),
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero pagina"));
 		
-		assertNotNull(rpreq.getNumeroElementiPerPagina(),
+		assertParamNotNull(rpreq.getNumeroElementiPerPagina(),
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero elementi per pagina"));
 		
-		assertCondition(
+		assertParamCondition(
 				rpreq.getNumeroElementiPerPagina() <= 5,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("numero elementi per pagina",
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("numero elementi per pagina",
 						rpreq.getNumeroElementiPerPagina()));
 
 		super.checkServiceBaseParameters(rpreq);

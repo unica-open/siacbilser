@@ -7,7 +7,6 @@ package it.csi.siac.siacbilser.integration.dad;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.csi.siac.siacbilser.integration.dao.SiacTBilElemRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemStato;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemStato;
@@ -57,15 +55,6 @@ import it.csi.siac.siacfin2ser.model.CapitoloUscitaGestioneModelDetail;
 @Transactional
 public class CapitoloUscitaGestioneDad extends CapitoloDad {
 	
-	/** The classificatori dad. */
-	@Autowired
-	private ClassificatoriDad classificatoriDad;	
-	
-	/** The siac t bil elem repository. */
-	@Autowired
-	private SiacTBilElemRepository siacTBilElemRepository;	
-	
-
 	/**
 	 * Creates the.
 	 *
@@ -188,6 +177,8 @@ public class CapitoloUscitaGestioneDad extends CapitoloDad {
 		mapNotNull(cap.getSiopeSpesa(), bilElem, BilMapId.SiacTBilElem_ClassificatoreGerarchico);
 		mapNotNull(cap.getTransazioneUnioneEuropeaSpesa(), bilElem, BilMapId.SiacTBilElem_ClassificatoreGenerico);
 		mapNotNull(cap.getPoliticheRegionaliUnitarie(), bilElem, BilMapId.SiacTBilElem_ClassificatoreGenerico);
+		//SIAC-7192
+		mapNotNull(cap.getRisorsaAccantonata(), bilElem, BilMapId.SiacTBilElem_ClassificatoreGenerico);
 		
 		mapNotNull(cap.getClassificatoriGenerici(), bilElem, BilMapId.SiacTBilElem_ClassificatoriGenerici);		
 		
@@ -359,6 +350,8 @@ public class CapitoloUscitaGestioneDad extends CapitoloDad {
 				criteriRicerca.getCodicePianoDeiConti(),
 				criteriRicerca.getCodiceCofog(),criteriRicerca.getCodiceTipoCofog(),
 				criteriRicerca.getCodiceStrutturaAmmCont(), criteriRicerca.getCodiceTipoStrutturaAmmCont(),
+				//task-90
+				mapToString(criteriRicerca.getIdStrutturaAmmCont(), null),
 				
 				null,null,//criteriRicerca.getCodiceSiopeEntrata(), criteriRicerca.getCodiceTipoSiopeEntrata(),
 				criteriRicerca.getCodiceSiopeSpesa(), criteriRicerca.getCodiceTipoSiopeSpesa(),
@@ -374,12 +367,17 @@ public class CapitoloUscitaGestioneDad extends CapitoloDad {
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
 				null,
-				
+				criteriRicerca.getCodiceRisorsaAccantonata(),
+				null,
+				null,
+				null,
+				criteriRicerca.getCapitoliIndicatiPerPrevisioneImpegnato(),
 				toPageable(parametriPaginazione));
 		
 				
 		return toListaPaginata(listaCapitoloUscitaGestione,CapitoloUscitaGestione.class, BilMapId.SiacTBilElem_CapitoloUscitaGestione);
 	}
+	
 	
 	public ImportiCapitoloUG importiRicercaSintetica(RicercaSinteticaCapitoloUGest criteriRicerca) {
 		
@@ -493,6 +491,8 @@ public class CapitoloUscitaGestioneDad extends CapitoloDad {
 				criteriRicerca.getCommaAttoDilegge(),
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
+				null,
+				criteriRicerca.getCodiceRisorsaAccantonata(),
 				null);
 		
 		if(objs == null) {
@@ -612,6 +612,7 @@ public class CapitoloUscitaGestioneDad extends CapitoloDad {
 				criteriRicerca.getCommaAttoDilegge(),
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
+				null,
 				null
 				
 				);

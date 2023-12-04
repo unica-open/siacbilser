@@ -6,7 +6,7 @@ package it.csi.siac.siacbilser.integration.entitymapping.converter;
 
 import org.dozer.DozerConverter;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * The Class BaseIsCollegataAMovimentoResiduoConverter.
@@ -15,7 +15,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
  */
 public abstract class BaseIsCollegataAMovimentoResiduoConverter<A, B> extends DozerConverter<A, B> {
 
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	public BaseIsCollegataAMovimentoResiduoConverter(Class<A> prototypeA, Class<B> prototypeB) {
 		super(prototypeA, prototypeB);

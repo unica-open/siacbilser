@@ -71,8 +71,9 @@ public class GestioneCapitoloUscitaGestioneImplTest extends BaseJunit4TestCase
 	 */
 	protected CapitoloUscitaGestione getcapitoloUscitaGestione() {
 		CapitoloUscitaGestione capitoloUscitaGestione = new CapitoloUscitaGestione();
-		capitoloUscitaGestione.setAnnoCapitolo(2013);
-		capitoloUscitaGestione.setNumeroCapitolo(1);
+		capitoloUscitaGestione.setAnnoCapitolo(2021);
+		capitoloUscitaGestione.setNumeroCapitolo(100010);
+		capitoloUscitaGestione.setNumeroArticolo(0);
 		return capitoloUscitaGestione;
 	}
 
@@ -158,10 +159,13 @@ public class GestioneCapitoloUscitaGestioneImplTest extends BaseJunit4TestCase
 				TipologiaClassificatore.PDC_IV, TipologiaClassificatore.PDC_III, TipologiaClassificatore.PDC_II, TipologiaClassificatore.PDC_I));
 		
 		RicercaSinteticaCapitoloUGest rs = new RicercaSinteticaCapitoloUGest();
-		rs.setAnnoEsercizio(Integer.valueOf(2018));
+		rs.setAnnoEsercizio(Integer.valueOf(2021));
 //		rs.setCodiceMissione("19");
-		rs.setCodiceRicorrenteSpesa("4");
+//		rs.setCodiceRicorrenteSpesa("4");
 		req.setRicercaSinteticaCapitoloUGest(rs);
+		rs.setNumeroArticolo(0);
+		rs.setNumeroCapitolo(100011);
+		rs.setCapitoliIndicatiPerPrevisioneImpegnato(Boolean.TRUE);
 	
 		RicercaSinteticaCapitoloUscitaGestioneResponse res = ricercaSinteticaCapitoloUscitaGestioneService.executeService(req);
 		assertNotNull(res);

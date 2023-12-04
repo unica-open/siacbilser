@@ -34,8 +34,8 @@ import it.csi.siac.siacbilser.business.service.primanota.ValidazioneMassivaPrima
 import it.csi.siac.siacbilser.business.service.rateirisconti.OttieniEntitaCollegatePrimaNotaService;
 import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.Azione;
@@ -592,18 +592,18 @@ public class PrimaNotaTest extends BaseJunit4TestCase {
 		assertNotNull(res);
 	}
 	
-	private ModelDetail[] ottieniModelDetailPerTipoCollegamento(TipoCollegamento tipoCollegamento) {
-		Map<TipoCollegamento, ModelDetail[]> details = new HashMap<TipoCollegamento, ModelDetail[]>();
-		details.put(TipoCollegamento.IMPEGNO, new ModelDetail[] {ImpegnoModelDetail.Soggetto, ImpegnoModelDetail.PianoDeiConti});
-		details.put(TipoCollegamento.SUBIMPEGNO, new ModelDetail[] {SubImpegnoModelDetail.Soggetto, SubImpegnoModelDetail.PianoDeiConti});
+	private ModelDetailEnum[] ottieniModelDetailPerTipoCollegamento(TipoCollegamento tipoCollegamento) {
+		Map<TipoCollegamento, ModelDetailEnum[]> details = new HashMap<TipoCollegamento, ModelDetailEnum[]>();
+		details.put(TipoCollegamento.IMPEGNO, new ModelDetailEnum[] {ImpegnoModelDetail.Soggetto, ImpegnoModelDetail.PianoDeiConti});
+		details.put(TipoCollegamento.SUBIMPEGNO, new ModelDetailEnum[] {SubImpegnoModelDetail.Soggetto, SubImpegnoModelDetail.PianoDeiConti});
 		
-		details.put(TipoCollegamento.ACCERTAMENTO, new ModelDetail[] {AccertamentoModelDetail.Soggetto, AccertamentoModelDetail.PianoDeiConti});
-		details.put(TipoCollegamento.SUBACCERTAMENTO, new ModelDetail[] {SubAccertamentoModelDetail.Soggetto, SubAccertamentoModelDetail.PianoDeiConti});
+		details.put(TipoCollegamento.ACCERTAMENTO, new ModelDetailEnum[] {AccertamentoModelDetail.Soggetto, AccertamentoModelDetail.PianoDeiConti});
+		details.put(TipoCollegamento.SUBACCERTAMENTO, new ModelDetailEnum[] {SubAccertamentoModelDetail.Soggetto, SubAccertamentoModelDetail.PianoDeiConti});
 		
-		details.put(TipoCollegamento.LIQUIDAZIONE, new ModelDetail[] {LiquidazioneModelDetail.Impegno, LiquidazioneModelDetail.Soggetto, LiquidazioneModelDetail.PianoDeiConti});
+		details.put(TipoCollegamento.LIQUIDAZIONE, new ModelDetailEnum[] {LiquidazioneModelDetail.Impegno, LiquidazioneModelDetail.Soggetto, LiquidazioneModelDetail.PianoDeiConti});
 		
-		details.put(TipoCollegamento.SUBDOCUMENTO_SPESA, new ModelDetail[] {SubdocumentoSpesaModelDetail.TestataDocumento, SubdocumentoSpesaModelDetail.ImpegnoSubimpegnoPdc, SubdocumentoSpesaModelDetail.Liquidazione, SubdocumentoSpesaModelDetail.Ordinativo});
-		details.put(TipoCollegamento.SUBDOCUMENTO_ENTRATA, new ModelDetail[] {SubdocumentoEntrataModelDetail.TestataDocumento,SubdocumentoEntrataModelDetail.AccertamentoSubaccertamentoPdc, SubdocumentoEntrataModelDetail.Ordinativo});
+		details.put(TipoCollegamento.SUBDOCUMENTO_SPESA, new ModelDetailEnum[] {SubdocumentoSpesaModelDetail.TestataDocumento, SubdocumentoSpesaModelDetail.ImpegnoSubimpegnoPdc, SubdocumentoSpesaModelDetail.Liquidazione, SubdocumentoSpesaModelDetail.Ordinativo});
+		details.put(TipoCollegamento.SUBDOCUMENTO_ENTRATA, new ModelDetailEnum[] {SubdocumentoEntrataModelDetail.TestataDocumento,SubdocumentoEntrataModelDetail.AccertamentoSubaccertamentoPdc, SubdocumentoEntrataModelDetail.Ordinativo});
 		
 		return details.get(tipoCollegamento);
 	}

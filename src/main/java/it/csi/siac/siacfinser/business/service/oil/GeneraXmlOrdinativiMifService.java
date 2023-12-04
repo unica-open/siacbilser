@@ -45,7 +45,7 @@ public class GeneraXmlOrdinativiMifService
 	@Override
 	protected void execute()
 	{
-		String xml = generaXmlOrdinativiMifDad.createXml(req.getIdEnte(), req.getIdElaborazione(), req.getAnnoEsercizio(), 
+		String xml = generaXmlOrdinativiMifDad.createXml(req.getIdEnte(), req.getIdElaborazione(), req.getAnnoEsercizio(), req.getCodiceIstat(),
 				req.getLimitOrdinativi(), req.getOffsetOrdinativi());
 
 		res.setXml(xml);

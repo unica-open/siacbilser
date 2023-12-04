@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbilser.business.service.allegatoatto.CompletaAllegatoAttoAsyncService;
 import it.csi.siac.siacbilser.business.service.documentospesa.AggiornaStatoDocumentoDiSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RegistrazioneGENServiceHelper;
-import it.csi.siac.siacbilser.business.service.fondidubbiaesigibilita.PopolaFondiDubbiaEsigibilitaDaAnnoPrecedenteAsyncService;
 import it.csi.siac.siacbilser.business.service.ordinativi.EmetteOrdinativiDiPagamentoDaElencoAsyncService;
 import it.csi.siac.siacbilser.business.service.stampa.registroiva.StampaRegistroIvaService;
 import it.csi.siac.siacbilser.business.service.variazionibilancio.AggiornaAnagraficaVariazioneBilancioAsyncService;
@@ -70,25 +69,9 @@ public class ElaborazioniAttiveTest extends BaseJunit4TestCase {
 		Map<String,String> mappaSRI = ekfSRI.creaChiaviPerBloccoElaborazioniAttive(ElabKeys.STAMPA_REGISTRO_IVA);
 		loggaParametri(mappaSRI, ElabKeys.STAMPA_REGISTRO_IVA);
 		controllaElaborazioneAttiva(mappaSRI);
-		
-		ElaborazioniAttiveKeyHandler ekfFondi = new ElaborazioniAttiveKeyHandler(16, PopolaFondiDubbiaEsigibilitaDaAnnoPrecedenteAsyncService.class);
-		Map<String,String> mappaFondi = ekfFondi.creaChiaviPerBloccoElaborazioniAttive(ElabKeys.POPOLA_FONDI_DUBBIA_ESIGIBILITA);
-		loggaParametri(mappaFondi, ElabKeys.POPOLA_FONDI_DUBBIA_ESIGIBILITA);
-		controllaElaborazioneAttiva(mappaFondi);
-		
-		ElaborazioniAttiveKeyHandler ekfFondiR = new ElaborazioniAttiveKeyHandler(16, PopolaFondiDubbiaEsigibilitaDaAnnoPrecedenteAsyncService.class);
-		Map<String,String> mappaFondiR = ekfFondiR.creaChiaviPerBloccoElaborazioniAttive(ElabKeys.POPOLA_FONDI_DUBBIA_ESIGIBILITA_RENDICONTO);
-		loggaParametri(mappaFondiR, ElabKeys.POPOLA_FONDI_DUBBIA_ESIGIBILITA_RENDICONTO);
-		controllaElaborazioneAttiva(mappaFondiR);
-	
-}
+	}
 
 	
-	@Test
-	public void test() {
-		
-		
-	}
 	private void controllaElaborazioneAttiva(Map<String, String> mappaReg) {
 //		try {
 //			elaborazioniDad.startElaborazione(mappaReg.get(ElabKeys.ELAB_SERVICE_IDENTIFIER)

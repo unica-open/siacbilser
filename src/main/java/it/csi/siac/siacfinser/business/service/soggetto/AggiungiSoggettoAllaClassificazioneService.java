@@ -14,8 +14,8 @@ import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamErr
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiungiSoggettoAllaClassificazione;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiungiSoggettoAllaClassificazioneResponse;
 import it.csi.siac.siacfinser.integration.dad.SoggettoFinDad;
@@ -55,7 +55,7 @@ public class AggiungiSoggettoAllaClassificazioneService extends AbstractSoggetto
 		String codiceAmbito = req.getCodificaAmbito();
 
 		if (org.apache.commons.lang.StringUtils.isEmpty(codiceAmbito))
-			codiceAmbito = Constanti.AMBITO_FIN;
+			codiceAmbito = CostantiFin.AMBITO_FIN;
 		
 		//1. Inizializzo dati operazione:
 		DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.MODIFICA, null);
@@ -63,7 +63,7 @@ public class AggiungiSoggettoAllaClassificazioneService extends AbstractSoggetto
 		
 		EsitoControlliDto esitoControlli = soggettoDad.controlliPerAggiungiSoggettoAllaClassificazione(codiceSoggetto, codiceClassificazione, codiceAmbito, richiedente, idEnte, datiOperazione);
 	
-		if(!StringUtils.isEmpty(esitoControlli.getListaErrori())){
+		if(!StringUtilsFin.isEmpty(esitoControlli.getListaErrori())){
 			res.setErrori(esitoControlli.getListaErrori());
 			res.setEsito(Esito.FALLIMENTO);
 		} else {

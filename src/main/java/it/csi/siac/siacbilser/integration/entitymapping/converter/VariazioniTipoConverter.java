@@ -14,7 +14,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTVariazione;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDVariazioneTipoEnum;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.VariazioneDiBilancio;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * Converte da TipoVariazione a SiacDVariazioneTipo e viceversa.
@@ -26,7 +26,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class VariazioniTipoConverter extends DozerConverter<VariazioneDiBilancio, SiacTVariazione> {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

@@ -82,8 +82,10 @@ public class AggiornaCapitoloDiUscitaPrevisioneService extends CrudCapitoloBaseS
 
 	@Override
 	protected void execute() {
-		//SIAC-5003 Il capitolo e' modificabile solo se lo stato operativo e' di tipo valido o provvisorio
+		//SIAC-7722 Pulisco le descrizioni da eventuali "a capo"
+		req.setCapitoloUscitaPrevisione(pulisciDescrizioni(req.getCapitoloUscitaPrevisione()));
 		
+		//SIAC-5003 Il capitolo e' modificabile solo se lo stato operativo e' di tipo valido o provvisorio
 		checkCapitoloModificabilePerAggiornamento(req.getCapitoloUscitaPrevisione());
 		
 		//SIAC-5007

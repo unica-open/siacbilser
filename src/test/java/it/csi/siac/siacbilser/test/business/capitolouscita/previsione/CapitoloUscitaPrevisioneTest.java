@@ -44,6 +44,8 @@ public class CapitoloUscitaPrevisioneTest extends BaseJunit4TestCase {
 		req.getCapitoloUscitaPrevisione().setDescrizione("Test variazione importi su aggiornamento capitolo previsione\r\nVerifica per traslazione controlli su componenti capitolo");
 		req.getCapitoloUscitaPrevisione().setDescrizioneArticolo("");
 		req.getCapitoloUscitaPrevisione().setFlagImpegnabile(Boolean.TRUE);
+		//task-55
+		req.getCapitoloUscitaPrevisione().setFlagNonInserireAllegatoA1(Boolean.FALSE);
 		req.getCapitoloUscitaPrevisione().setFlagPerMemoria(Boolean.FALSE);
 		req.getCapitoloUscitaPrevisione().setFlagRilevanteIva(Boolean.FALSE);
 		req.getCapitoloUscitaPrevisione().setFunzDelegateRegione(Boolean.FALSE);

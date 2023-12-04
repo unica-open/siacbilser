@@ -18,7 +18,22 @@ public enum SirfelDTipoDocumentoEnum {
 	Acconto_Parcella("TD03", TipoDocumentoFEL.ACCONTO_PARCELLA),
 	Nota_Di_Credito("TD04", TipoDocumentoFEL.NOTA_DI_CREDITO),
 	Nota_Di_Debito("TD05", TipoDocumentoFEL.NOTA_DI_DEBITO),
-	Parcella("TD06", TipoDocumentoFEL.PARCELLA);
+	Parcella("TD06", TipoDocumentoFEL.PARCELLA),
+	//SIAC-7557 INIZIO
+	integrazione_fattura_reverse_charge_interno("TD16", TipoDocumentoFEL.INTEGRAZIONE_FATTURA_REVERSE_CHARGE_INTERNO),
+	integrazione_autofattura_acquisto_servizi_estero("TD17", TipoDocumentoFEL.INTEGRAZIONE_AUTOFATTURA_ACQUISTO_SERVIZI_ESTERO),
+	integrazione_acquisto_beni_intracomunitari("TD18", TipoDocumentoFEL.INTEGRAZIONE_ACQUISTO_BENI_INTRACOMUNITARI),
+	integrazione_autofattura_acquisto_beni_ex_art_1("TD19", TipoDocumentoFEL.INTEGRAZIONE_AUTOFATTURA_ACQUISTO_BENI_EX_ART_1),
+	autofattura_per_splafonamento("TD21", TipoDocumentoFEL.AUTOFATTURA_SPLAFONAMNTO),
+	estrazioni_beni_deposito_iva("TD22", TipoDocumentoFEL.ESTRAZIONE_BENI_DEPOSITO_IVA),
+	estrazioni_beni_deposito_iva_con_versamento("TD23", TipoDocumentoFEL.ESTRAZIONE_BENI_DEPOSITO_IVA_CON_VERSAMENTO),
+	fattura_differita_art_1("TD24", TipoDocumentoFEL.FATTURA_DIFFERITA_ART_1),
+	fattura_differita_art_2("TD25", TipoDocumentoFEL.FATTURA_DIFFERITA_ART_2),
+	cessione_beni_ammortizzabili("TD26", TipoDocumentoFEL.CESSIONE_BENI_AMMORTIZZABILI),
+	fattura_autoconsumo_cessioni_gratuite("TD27", TipoDocumentoFEL.FATTURA_AUTOCONSUMO_CESSIONI_GRATUITE)
+	//SIAC-7557 FINE
+	;
+ 
 	
 	private final String codice;
 	private final TipoDocumentoFEL tipoDocumentoFEL;

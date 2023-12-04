@@ -6,8 +6,11 @@ package it.csi.siac.siacfinser.business.service.ordinativo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -22,9 +25,11 @@ import it.csi.siac.siacattser.model.errore.ErroreAtt;
 import it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloEntrataGestioneResponse;
+import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloEGest;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -32,11 +37,12 @@ import it.csi.siac.siaccorser.model.Entita.StatoEntita;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
+import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceOrdinativoIncasso;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceOrdinativoIncassoResponse;
 import it.csi.siac.siacfinser.integration.dad.CommonDad;
@@ -49,8 +55,11 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.OrdinativoInInserimento
 import it.csi.siac.siacfinser.integration.dao.common.dto.SubOrdinativoInModificaInfoDto;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.model.Accertamento;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.model.messaggio.MessaggioFin;
 import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneEntrata;
+import it.csi.siac.siacfinser.model.ordinativo.Ordinativo.TipoAssociazioneEmissione;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoIncasso;
 import it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoIncasso;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
@@ -116,6 +125,10 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 			return;
 		}
 		
+		//SIAC-8017-CMTO
+		//prima dell'inserimento delle modifiche perche' se l'opeazione viene bloccata non voglio modifche "appese"
+		impostaDatiPerContoVincolato(ordinativoDiIncasso, datiOperazione);
+		
 		
 		//5. Gestione (eventuali) modifiche movimento di entrata:
 		
@@ -134,7 +147,8 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 			uidsTestateConInserimentoModifica.addAll(uidsAccertamenti);
 		}
 		
-		
+		//SIAC-8017-CMTO
+		impostaDatiPerContoVincolato(ordinativoDiIncasso, datiOperazione);
 		
 		//6. inserimento ordinativo di incasso (si invoca il metodo "core" rispetto all'operazione di inserimento di un nuovo ordinativo):
 		OrdinativoIncasso ordinativoIncassoInsert = (OrdinativoIncasso) ordinativoIncassoDad.inserisciOrdinativoIncasso(ordinativoDiIncasso, datiInserimento, datiOperazione);
@@ -146,7 +160,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 			//	 solo i subordinativi "da inserire", dato che siamo nel servizio di inserisce ordinativo saranno tutti "da inserire"
 			//   infoSub e' quindi un dto di comodo per la doppia gestione
 			SubOrdinativoInModificaInfoDto infoSub = ordinativoIncassoDad.valutaSubOrdinativi(ordinativoDiIncasso.getElencoSubOrdinativiDiIncasso(), null, datiOperazione,
-					bilancio,richiedente,Constanti.ORDINATIVO_TIPO_INCASSO,ente);
+					bilancio,richiedente,CostantiFin.ORDINATIVO_TIPO_INCASSO,ente);
 			
 			//2. Routine di doppia gestione (dentro viene eseguita solo se siamo in doppia gestione):
 			EsitoControlliDto resDg = operazioniPerDoppiaGestione(ordinativoDiIncasso, bilancio, richiedente, ente, datiOperazione,infoSub,Operazione.INSERIMENTO, uidsTestateConInserimentoModifica);
@@ -182,6 +196,99 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 			return;
 		}
 	}
+
+	private void impostaDatiPerContoVincolato(OrdinativoIncasso ordinativoDiIncasso,DatiOperazioneDto datiOperazione) {
+		final String methodName = "checkCapienzaContoVincolato";
+		ContoTesoreria contoTesoreriaOrdinativo = ordinativoDiIncasso.getContoTesoreria();
+		CapitoloEntrataGestione capitoloEntrataGestione = ordinativoDiIncasso.getCapitoloEntrataGestione();
+		
+		if(!isCondizioniGestioneContoVincolatoSoddisfatte(contoTesoreriaOrdinativo, capitoloEntrataGestione)) {
+			return;
+		}
+		
+		BigDecimal disponibilitaIncassareSottoConto = ordinativoIncassoDad.getDisponibilitaIncassareSottoContoVincolato(contoTesoreriaOrdinativo, capitoloEntrataGestione, ente, datiOperazione);
+		if(disponibilitaIncassareSottoConto == null) {
+			throw new BusinessException(ErroreCore.ERRORE_DI_SISTEMA.getErrore("impossibile caricare la disponibilita' sul conto vincolato."));
+		}
+		
+		
+		if(disponibilitaIncassareSottoConto.signum()>= 0) {
+			log.info(methodName, "disponibilita' a incassare sul sottoconto sufficiente a procedere.");
+			return;
+		}
+		
+		BigDecimal  dispIncassareSottocontoAbs = disponibilitaIncassareSottoConto.abs();
+		BigDecimal importoOrdinativo = extractImportoOrdinativo(ordinativoDiIncasso);
+		log.info(methodName, "La disponibilita a incassare del conto " + contoTesoreriaOrdinativo.getCodice() + " sul capitolo  " + capitoloEntrataGestione.getNumeroCapitolo() + " e' di " + disponibilitaIncassareSottoConto  + ", mentre l'importo ordinativo di " + importoOrdinativo);
+		
+		ordinativoDiIncasso.setContoTesoreriaSenzaCapienza(contoTesoreriaOrdinativo);
+		ContoTesoreria contoRipianamento = ordinativoIncassoDad.caricaContoTesoreriaPerRipianamento(ente);
+		ordinativoDiIncasso.setContoTesoreria(contoRipianamento);
+		log.info(methodName, "disponibilita' ad incassaee sul sottoconto insufficiente. Utilizzo il conto per ripianamento invece che quello indicato e valuto se modificare l'imporot dell'ordinativo.");
+		
+		
+		
+		String disp = CommonUtil.convertiBigDecimalToImporto(disponibilitaIncassareSottoConto);
+		String dispAbs = CommonUtil.convertiBigDecimalToImporto(dispIncassareSottocontoAbs);
+		String impord = CommonUtil.convertiBigDecimalToImporto(importoOrdinativo);
+		//SIAC-8784
+		String differenza = CommonUtil.convertiBigDecimalToImporto(importoOrdinativo.subtract(dispIncassareSottocontoAbs));
+		
+		//SIAC-8888
+		BigDecimal daRegolarizzare = dispIncassareSottocontoAbs;
+		
+		log.info(methodName, "La disponibilita a incassare del conto " + contoTesoreriaOrdinativo.getCodice() + " sul capitolo  " + capitoloEntrataGestione.getNumeroCapitolo() + " e' di " + disponibilitaIncassareSottoConto  + ", mentre l'importo ordinativo di " + importoOrdinativo);
+		
+		if(importoOrdinativo != null && importoOrdinativo.compareTo(dispIncassareSottocontoAbs) <= 0) {
+			log.info(methodName, "valore assoluto della disponibilita ad incassare maggiore o uguale all'importo ortdinativo. Mantengo l'importo ordinativo.");
+			res.addMessaggio(MessaggioFin.SOSTITUITO_CONTO_PER_MANCATA_CAPIENZA.getMessaggio(contoTesoreriaOrdinativo.getCodice(), disp, impord, contoRipianamento.getCodice()));
+			return;
+		}
+		
+		List<SubOrdinativoIncasso> elencoSubOrdinativiDiIncasso = ordinativoDiIncasso.getElencoSubOrdinativiDiIncasso();
+		if(elencoSubOrdinativiDiIncasso!= null && elencoSubOrdinativiDiIncasso.size() >1) {
+			Collections.sort(elencoSubOrdinativiDiIncasso, new SortByImportoSubdordinativoDesc());
+		}
+		boolean esistonoQuoteOrdinativoForzateAdImportoZero = false;
+		for (SubOrdinativoIncasso sub : elencoSubOrdinativiDiIncasso) {
+			
+			checkModificheImportoContoVincolatoPossibili(contoTesoreriaOrdinativo, disp, dispAbs, impord, sub, ordinativoDiIncasso.getTipoAssociazioneEmissione());
+			
+			BigDecimal importoAttuale = sub.getImportoAttuale();
+			if(importoAttuale.compareTo(dispIncassareSottocontoAbs) < 0) {
+				//importo dell'ordinativo e' minore della disponibilita', lascio l'importo cos' come e'
+				//ma adeguo la disponibilita' che sto considerando in quanto se ne rimane un po' la devo sottrarre alle altre quote
+				dispIncassareSottocontoAbs = dispIncassareSottocontoAbs.subtract(importoAttuale);
+				continue;
+			}
+			sub.setImportoIniziale(dispIncassareSottocontoAbs);
+			sub.setImportoAttuale(dispIncassareSottocontoAbs);
+			dispIncassareSottocontoAbs = dispIncassareSottocontoAbs.subtract(importoAttuale).signum() > 0? dispIncassareSottocontoAbs.subtract(importoAttuale) : BigDecimal.ZERO;
+			if(!esistonoQuoteOrdinativoForzateAdImportoZero && sub.getImportoAttuale().compareTo(BigDecimal.ZERO) == 0) {
+				res.addMessaggio(MessaggioFin.MESSAGGIO_GENERICO.getMessaggio("Alcune quote dell'ordinativo presentano importo pari a zero a causa del ripianamento effettuato."));
+				esistonoQuoteOrdinativoForzateAdImportoZero= true;
+			}
+			
+		}
+		//SIAC-8784 
+		//SIAC-8856
+		res.addMessaggio(MessaggioFin.SOSTITUITO_CONTO_PER_MANCATA_CAPIENZA_CON_RIPIANAMENTO_MANUALE.getMessaggio(contoTesoreriaOrdinativo.getCodice(), disp, impord, contoRipianamento.getCodice(), dispAbs, String.valueOf(differenza), contoTesoreriaOrdinativo.getCodice()));
+		//SIAC-8888
+		ordinativoDiIncasso.setImportoRegolarizzato(daRegolarizzare);			
+	}
+
+	protected void checkModificheImportoContoVincolatoPossibili(ContoTesoreria contoTesoreriaOrdinativo, String disp,	String dispAbs, String impord, SubOrdinativoIncasso sub, TipoAssociazioneEmissione tipoAssociazioneEmissione) {
+		if(sub.getSubDocumentoEntrata() == null  || sub.getSubDocumentoEntrata().getUid() == 0) {
+			return;
+		}
+		//ritenute
+		if(tipoAssociazioneEmissione != null &&  TipoAssociazioneEmissione.RIT_ORD.equals(tipoAssociazioneEmissione)) {
+			throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("ripianamento per sottoconto incapiente per ritenute documento."));
+		}
+		throw new BusinessException(ErroreFin.RIPIANAMENTO_MANUALE_NECESSARIO_PER_PRESENZA_SUBDOCUMENTI.getErrore(contoTesoreriaOrdinativo.getCodice(), disp, impord, dispAbs));
+		
+	}
+
 
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {
@@ -256,7 +363,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 //					elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + "NOTE_TESORIERE";
 //			}
 
-			if(ordinativoDiIncasso.getCodiceBollo()==null || (ordinativoDiIncasso.getCodiceBollo()!=null && StringUtils.isEmpty(ordinativoDiIncasso.getCodiceBollo().getCodice()))){
+			if(ordinativoDiIncasso.getCodiceBollo()==null || (ordinativoDiIncasso.getCodiceBollo()!=null && StringUtilsFin.isEmpty(ordinativoDiIncasso.getCodiceBollo().getCodice()))){
 				if(elencoParamentriNonInizializzati.length() > 0){
 					elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", BOLLO";
 				}else{
@@ -266,7 +373,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 
 			
 			// CR - 3746 il siope diventa obbligatorio
-			if(StringUtils.isEmpty(ordinativoDiIncasso.getCodSiope())){
+			if(StringUtilsFin.isEmpty(ordinativoDiIncasso.getCodSiope())){
 				
 				if(elencoParamentriNonInizializzati.length() > 0){
 					elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", SIOPE";
@@ -346,7 +453,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 			}
 		}
 
-		if(!StringUtils.isEmpty(elencoParamentriNonInizializzati)){
+		if(!StringUtilsFin.isEmpty(elencoParamentriNonInizializzati)){
 			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(elencoParamentriNonInizializzati));
 		}	
 	}
@@ -521,7 +628,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 	 * @return
 	 */
 	private boolean controlliSoggetto(Soggetto soggetto,Ente ente, Richiedente richiedente, DatiOperazioneDto datiOperazione){
-		Soggetto soggettoCheck = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), soggetto.getCodiceSoggetto(), false, true);
+		Soggetto soggettoCheck = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), soggetto.getCodiceSoggetto(), false, true);
 		if(null==soggettoCheck){
 			addErroreFin(ErroreFin.SOGGETTO_NON_VALIDO);
 			return false;
@@ -620,7 +727,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 	 * @return
 	 */
 	private boolean controlloDistinta(OrdinativoIncasso ordinativo,Ente ente, DatiOperazioneDto datiOperazione){
-		if(ordinativo.getDistinta()!=null && !StringUtils.isEmpty(ordinativo.getDistinta().getCodice())){
+		if(ordinativo.getDistinta()!=null && !StringUtilsFin.isEmpty(ordinativo.getDistinta().getCodice())){
 			//La distinta e' facoltativa, ma se viene indicata bisogna verificare che esista sul db:
 			boolean esisteDistinta = ordinativoIncassoDad.esisteDistinta(ordinativo, datiOperazione);
 			if(!esisteDistinta){
@@ -639,7 +746,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 	 * @return
 	 */
 	private boolean controlloContoTesoreria(OrdinativoIncasso ordinativo,Ente ente, DatiOperazioneDto datiOperazione){
-		if(ordinativo.getContoTesoreria()!=null && !StringUtils.isEmpty(ordinativo.getContoTesoreria().getCodice())){
+		if(ordinativo.getContoTesoreria()!=null && !StringUtilsFin.isEmpty(ordinativo.getContoTesoreria().getCodice())){
 			//Il conto tesoreria e' facoltativo, ma se viene indicata bisogna verificare che esista sul db:
 			boolean esisteContoTes = ordinativoIncassoDad.esisteContoTesoreria(ordinativo, datiOperazione);
 			if(!esisteContoTes){
@@ -734,7 +841,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 						
 						if(disponibilitaAIncassare.compareTo(sommaImporti)<0){
 							boolean importoOK = false;
-							ModificaMovimentoGestioneEntrata modGest = CommonUtils.getFirst(accIt.getListaModificheMovimentoGestioneEntrata());
+							ModificaMovimentoGestioneEntrata modGest = CommonUtil.getFirst(accIt.getListaModificheMovimentoGestioneEntrata());
 							if(modGest!=null){
 								//abbiamo riveuto da front end l'indicazione di inserire una modifica movimento gestione
 								BigDecimal importoNew = modGest.getImportoNew();
@@ -774,7 +881,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 						
 						if(disponibilitaAIncassare.compareTo(sommaImporti)<0){
 							boolean importoOK = false;
-							ModificaMovimentoGestioneEntrata modGest = CommonUtils.getFirst(subAccIt.getListaModificheMovimentoGestioneEntrata());
+							ModificaMovimentoGestioneEntrata modGest = CommonUtil.getFirst(subAccIt.getListaModificheMovimentoGestioneEntrata());
 							if(modGest!=null){
 								//abbiamo riveuto da front end l'indicazione di inserire una modifica movimento gestione
 								BigDecimal importoNew = modGest.getImportoNew();
@@ -834,7 +941,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 					Soggetto soggettoMovimento = accIt.getSoggettoMovimento();
 					String codSoggMovimento = soggettoMovimento.getCodiceSoggetto();
 					/////////////////////////////////////////////////////////////////////////
-					if(!StringUtils.isEmpty(codSoggMovimento) && !StringUtils.sonoUguali(codSoggOrdIncasso, codSoggMovimento)){
+					if(!StringUtilsFin.isEmpty(codSoggMovimento) && !StringUtilsFin.sonoUguali(codSoggOrdIncasso, codSoggMovimento)){
 						addErroreFin(ErroreFin.SOGGETTO_MOVIMENTO_GESTIONE_NON_VALIDO_PER_ORDINATIVO, codSoggMovimento, " accertamento ", " il debitore deve essere lo stesso dell'ordinativo ");
 						return false;
 					}
@@ -849,7 +956,7 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 					Soggetto soggettoMovimento = subAccIt.getSoggettoMovimento();
 					String codSoggMovimento = soggettoMovimento.getCodiceSoggetto();
 					/////////////////////////////////////////////////////////////////////////
-					if(!StringUtils.isEmpty(codSoggMovimento) && !StringUtils.sonoUguali(codSoggOrdIncasso, codSoggMovimento)){
+					if(!StringUtilsFin.isEmpty(codSoggMovimento) && !StringUtilsFin.sonoUguali(codSoggOrdIncasso, codSoggMovimento)){
 						addErroreFin(ErroreFin.SOGGETTO_MOVIMENTO_GESTIONE_NON_VALIDO_PER_ORDINATIVO, codSoggMovimento, " sub-accertamento ", " il debitore deve essere lo stesso dell'ordinativo ");
 						return false;
 					}
@@ -891,3 +998,34 @@ public class InserisceOrdinativoIncassoService extends AbstractInserisceAggiorna
 	
 	
 }
+//SIAC-7349 Inizio  SR180 FL 08/04/2020
+class SortByImportoSubdordinativoDesc implements Comparator<SubOrdinativoIncasso> { 
+
+	@Override
+	public int compare(SubOrdinativoIncasso o1, SubOrdinativoIncasso o2) {
+		if(o1 == null && o2 == null) {
+			return 0;
+		}
+		if(o1 == null) {
+			return -1;
+		}
+		if(o2 == null) {
+			return 1;
+		}
+		if(o1.equals(o2)) {
+			return 0;
+		}
+		// TipoOnere
+		if(o1.getImportoAttuale() == null && o2.getImportoAttuale() == null) {
+			return 0;
+		}
+		if(o1.getImportoAttuale() == null) {
+			return -1;
+		}
+		if(o2.getImportoAttuale() == null) {
+			return 1;
+		}
+		return o2.getImportoAttuale().compareTo(o1.getImportoAttuale());
+	} 
+} 
+

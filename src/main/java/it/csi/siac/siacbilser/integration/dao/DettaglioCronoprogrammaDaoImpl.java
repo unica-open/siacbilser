@@ -143,6 +143,38 @@ public class DettaglioCronoprogrammaDaoImpl extends JpaDao<SiacTCronopElem, Inte
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see it.csi.siac.siaccommonser.integration.dao.base.JpaDao#delete(java.lang.Object)
+	 */
+	//SIAC-8791
+	public void deleteRelation(SiacTCronopElem c) {
+		
+		
+		SiacTCronopElem cAttuale = this.findById(c.getUid());
+		Date now = new Date();
+		cAttuale.setDataCancellazioneIfNotSet(now);		
+		
+		//cancellazione elementi collegati
+		if(cAttuale.getSiacRCronopElemClasses()!=null){
+			for(SiacRCronopElemClass classif : cAttuale.getSiacRCronopElemClasses()){
+				classif.setDataCancellazioneIfNotSet(now);
+			}
+		}
+
+		if(cAttuale.getSiacRCronopElemBilElems()!=null && cAttuale.getSiacRCronopElemBilElems().size() > 0){
+			for(SiacRCronopElemBilElem rbilelem : cAttuale.getSiacRCronopElemBilElems()){
+				rbilelem.setDataCancellazioneIfNotSet(now);
+			}
+		}
+		
+		if(cAttuale.getSiacTCronopElemDets()!=null){
+			for(SiacTCronopElemDet elemDet : cAttuale.getSiacTCronopElemDets()){
+				elemDet.setDataCancellazioneIfNotSet(now);
+			}
+		}
+		super.update(cAttuale);
+	}
+	
 
 
 }

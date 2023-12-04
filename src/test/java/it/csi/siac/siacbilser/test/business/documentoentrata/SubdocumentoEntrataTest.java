@@ -6,8 +6,10 @@ package it.csi.siac.siacbilser.test.business.documentoentrata;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,12 +22,14 @@ import it.csi.siac.siacbilser.business.service.documentoentrata.RicercaQuotaEntr
 import it.csi.siac.siacbilser.business.service.documentoentrata.RicercaQuoteByDocumentoEntrataService;
 import it.csi.siac.siacbilser.business.service.documentoentrata.RicercaQuoteDaEmettereEntrataService;
 import it.csi.siac.siacbilser.business.service.documentoentrata.RicercaQuotePerProvvisorioEntrataService;
+import it.csi.siac.siacbilser.integration.dao.SubdocumentoDao;
+import it.csi.siac.siacbilser.integration.entity.SiacTSubdoc;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaQuotaDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaQuotaDocumentoEntrataResponse;
@@ -82,6 +86,9 @@ public class SubdocumentoEntrataTest extends BaseJunit4TestCase {
 	
 	@Autowired
 	private AssociaProvvisorioQuoteEntrataService asssociaProvvisorioQuoteEntrataService;
+
+	@Autowired
+	private SubdocumentoDao subdocumentoDao;
 	
 	@Test
 	public void asssociaProvvisorioQuoteEntrata(){
@@ -231,7 +238,7 @@ public class SubdocumentoEntrataTest extends BaseJunit4TestCase {
 		
 		Accertamento accertamento = new Accertamento();
 		accertamento.setAnnoMovimento(2019);
-		accertamento.setNumero(new BigDecimal("192"));
+		accertamento.setNumeroBigDecimal(new BigDecimal("192"));
 		accertamento.setUid(120127);
 		se.setAccertamento(accertamento);
 		
@@ -309,7 +316,26 @@ public class SubdocumentoEntrataTest extends BaseJunit4TestCase {
 		assertNotNull(res);
 	}
 	
-	
+	@Test
+	public void cercaSubdocsConModificheRORM() {
+		List<Integer> subdocUids = new ArrayList<Integer>(Arrays.asList(205061,205062,205063,205064,205066,205067,205068,205069,205070,205071,205072,205073,205074,205075,205076,205077,205078,205079,205080,205081,205082,205083,205084,205085,205086,205087,205088,205089,205090,205091,205092,205093,205094,205095,205096,205097,205098,205099,205100,205101,205102,205103,205104,205105,205106,205107,205108,205109,205110,205111,205112,205113,205114,205115,205116,205117,205118,205119,205120,205121,205122,205123,205124,205125,205126,205127,205128,205129,205130,205131));
+		
+		List<SiacTSubdoc> subdoc = subdocumentoDao.cercaSubdocsConModificheRORM(subdocUids, 2020);
+		
+		assertTrue(CollectionUtils.isNotEmpty(subdoc));
+	}
+
+	@Test
+	public void cercaSubdocConModificheRORM() {
+		List<Integer> subdocUids = new ArrayList<Integer>(Arrays.asList(205061,205062,205063,205064,205066,205067,205068,205069,205070,205071,205072,205073,205074,205075,205076,205077,205078,205079,205080,205081,205082,205083,205084,205085,205086,205087,205088,205089,205090,205091,205092,205093,205094,205095,205096,205097,205098,205099,205100,205101,205102,205103,205104,205105,205106,205107,205108,205109,205110,205111,205112,205113,205114,205115,205116,205117,205118,205119,205120,205121,205122,205123,205124,205125,205126,205127,205128,205129,205130,205131));
+		
+		for (Integer integer : subdocUids) {
+			List<SiacTSubdoc> subdoc = subdocumentoDao.cercaSubdocConModificheRORM(integer, 2020);
+			
+			assertTrue(CollectionUtils.isNotEmpty(subdoc));
+		}
+		
+	}
 
 	
 	@Test
@@ -407,4 +433,5 @@ public class SubdocumentoEntrataTest extends BaseJunit4TestCase {
 		//23
 		return String.format("%36s", res);
 	}
+	
 }

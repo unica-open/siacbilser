@@ -28,7 +28,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiS
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaRegistrazioneIvaPagati;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaRegistrazioneIvaPagatiResponse;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaOrdinativoPagamento;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaOrdinativoPagamentoResponse;
 import it.csi.siac.siacfinser.integration.dad.CommonDad;
@@ -84,7 +84,7 @@ public class AnnullaOrdinativoPagamentoService extends AbstractInserisceAggiorna
 	 */
 	private boolean daReintroito(){
 		OrdinativoPagamento ordinativo = req.getOrdinativoPagamentoDaAnnullare();
-		return ordinativoPagamentoDad.presenteRelezioneReintroito(ordinativo.getAnno(), ordinativo.getNumero(), Constanti.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneAnnulla);
+		return ordinativoPagamentoDad.presenteRelezioneReintroito(ordinativo.getAnno(), ordinativo.getNumero(), CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneAnnulla);
 	}
 		
 	@Override
@@ -123,7 +123,7 @@ public class AnnullaOrdinativoPagamentoService extends AbstractInserisceAggiorna
 		List<SubOrdinativoPagamento> elencoSubOrdinativiDiPagamento = new ArrayList<SubOrdinativoPagamento>();
 		ordinativoPagamento.setElencoSubOrdinativiDiPagamento(elencoSubOrdinativiDiPagamento);
 		SubOrdinativoInModificaInfoDto subOrdinativoInModificaInfoDto = ordinativoPagamentoDad.valutaSubOrdinativi(elencoSubOrdinativiDiPagamento, (Integer) ordinativoPagamento.getIdOrdinativo().intValue(), datiOperazioneAnnulla,
-				bilancio, richiedente,Constanti.ORDINATIVO_TIPO_PAGAMENTO, ente);
+				bilancio, richiedente,CostantiFin.ORDINATIVO_TIPO_PAGAMENTO, ente);
 		
 		//5. annullmento ordinativo (si invoca il metodo "core" rispetto all'operazione di annullamento di un ordinativo):
 		AnnullaOrdinativoPagamentoInfoDto annullaInfo = ordinativoPagamentoDad.annullaOrdinativoPagamento(bilancio.getAnno(), annoOrdinativoPagamento , numeroOrdinativoPagamento, datiOperazioneAnnulla, richiedente);
@@ -225,12 +225,12 @@ public class AnnullaOrdinativoPagamentoService extends AbstractInserisceAggiorna
 	{
 		// VERIFICA PRESENZA ORDINATIVI COLLEGATI:
 		return checkOrdinativiCollegatiPerAnnulla(datiOperazioneAnnulla,
-				req.getOrdinativoPagamentoDaAnnullare(), Constanti.D_ORDINATIVO_TIPO_PAGAMENTO);
+				req.getOrdinativoPagamentoDaAnnullare(), CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO);
 	}
 
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {		
-		final String methodName = "AnnullaMutuoService : checkServiceParam()";
+		final String methodName = " : checkServiceParam()";
 		log.debug(methodName, "- Begin");
 
 		StringBuffer elencoParamentriNonInizializzati = new StringBuffer();
@@ -275,7 +275,7 @@ public class AnnullaOrdinativoPagamentoService extends AbstractInserisceAggiorna
 		if(!daReintroito()){
 			//QUITANZATO NON VA CONTROLLATO SE SONO IN REINTROITO
 			
-			boolean isQuietanziato=ordinativoPagamentoDad.checkTipoOrdinativo(req.getOrdinativoPagamentoDaAnnullare().getAnno(), req.getOrdinativoPagamentoDaAnnullare().getNumero(), StatoOperativoOrdinativo.QUIETANZATO, Constanti.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneAnnulla);
+			boolean isQuietanziato=ordinativoPagamentoDad.checkTipoOrdinativo(req.getOrdinativoPagamentoDaAnnullare().getAnno(), req.getOrdinativoPagamentoDaAnnullare().getNumero(), StatoOperativoOrdinativo.QUIETANZATO, CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneAnnulla);
 			
 			if (isQuietanziato) {
 				checkCondition(false, ErroreFin.STATO_MOVIMENTO_IMPOSSIBILE.getErrore("QUIETANZATO","ANNULLATO","Ordinativo Pagamento"));
@@ -283,7 +283,7 @@ public class AnnullaOrdinativoPagamentoService extends AbstractInserisceAggiorna
 			
 		}
 		
-		boolean isAnnullato=ordinativoPagamentoDad.checkTipoOrdinativo(req.getOrdinativoPagamentoDaAnnullare().getAnno(), req.getOrdinativoPagamentoDaAnnullare().getNumero(), StatoOperativoOrdinativo.ANNULLATO, Constanti.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneAnnulla);
+		boolean isAnnullato=ordinativoPagamentoDad.checkTipoOrdinativo(req.getOrdinativoPagamentoDaAnnullare().getAnno(), req.getOrdinativoPagamentoDaAnnullare().getNumero(), StatoOperativoOrdinativo.ANNULLATO, CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneAnnulla);
 		
 		if (isAnnullato) {
 			checkCondition(false, ErroreFin.STATO_MOVIMENTO_IMPOSSIBILE.getErrore("ANNULLATO","ANNULLATO","Ordinativo Pagamento"));

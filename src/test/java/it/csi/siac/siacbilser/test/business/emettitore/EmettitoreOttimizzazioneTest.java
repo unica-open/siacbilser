@@ -1025,7 +1025,7 @@ public class EmettitoreOttimizzazioneTest extends BaseJunit4TestCase {
 	 * @param contoTesoreria il conto di cui calcolare la chiave
 	 * @return la chiave del conto
 	 */
-	protected String computeKeyContoTesoreria(it.csi.siac.siacfinser.model.ContoTesoreria contoTesoreria) {
+	protected String computeKeyContoTesoreria(it.csi.siac.siacfin2ser.model.ContoTesoreria contoTesoreria) {
 		final StringBuilder sb = new StringBuilder();
 		// Conto di Tesoreria => se impostato il corrispondente parametro dell'operazione non e' significativo 
 		sb.append("contoTes")

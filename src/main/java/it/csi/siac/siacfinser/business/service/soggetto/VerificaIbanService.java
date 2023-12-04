@@ -45,7 +45,7 @@ public class VerificaIbanService extends AbstractBaseService<VerificaIban, Verif
 
 			if (req.getIban().length() != lunghezzaIbanValida)
 			{
-				res.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("IBAN", String.format(
+				res.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("IBAN", String.format(
 						"(la lunghezza deve essere di %s caratteri)", String.valueOf(lunghezzaIbanValida))));
 
 				res.setEsito(Esito.FALLIMENTO);

@@ -14,8 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaVariazioneCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaVariazioneCodificheResponse;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
+import it.csi.siac.siacbilser.processi.GestoreProcessiVariazioneBilancio;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.frontend.webservice.msg.ExecAzioneRichiesta;
@@ -46,23 +47,6 @@ public class AggiornaVariazioneCodificheService extends VariazioneCodificheBaseS
 
 		variazione = req.getVariazioneCodificaCapitolo();
 		checkParamVariazione();
-
-
-		if(Boolean.TRUE.equals(req.getAnnullaVariazione())){
-			variazione.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.ANNULLATA);
-			req.setEvolviProcesso(Boolean.TRUE);
-		}
-
-		if(Boolean.TRUE.equals(req.getEvolviProcesso())){
-			checkNotNull(req.getIdAttivita(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("id attivita"));
-			checkNotNull(req.getAnnullaVariazione(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("annulla variazione"));
-			checkNotNull(req.getInvioOrganoAmministrativo(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("invio organo amministrativo"));
-			checkNotNull(req.getInvioOrganoLegislativo(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("invio organo legislativo"));
-
-
-		}
-
-
 	}
 
 	/* (non-Javadoc)
@@ -94,10 +78,8 @@ public class AggiornaVariazioneCodificheService extends VariazioneCodificheBaseS
 
 		checkProvvedimento();
 
-		if(Boolean.TRUE.equals(req.getEvolviProcesso())) { //Evolve il processo solo se richiesto!
-			ExecAzioneRichiestaResponse execAzioneRichiestaResponse = aggiornaProcessoVariazioneDiBilancio();
-			impostaStatoOperativoVariazioneDiBilancio(execAzioneRichiestaResponse);
-			checkProcessoEvolutoAlTaskSuccessivo(execAzioneRichiestaResponse);
+		if(Boolean.TRUE.equals(req.getEvolviProcesso()) || Boolean.TRUE.equals(req.getAnnullaVariazione())) { //Evolve il processo solo se richiesto!
+			evolviProcessoVariazione();
 		}
 
 
@@ -112,6 +94,7 @@ public class AggiornaVariazioneCodificheService extends VariazioneCodificheBaseS
 	 *
 	 * @return the exec azione richiesta response
 	 */
+	@Deprecated
 	private ExecAzioneRichiestaResponse aggiornaProcessoVariazioneDiBilancio() {
 		ExecAzioneRichiesta execAzioneRichiesta = new ExecAzioneRichiesta();
 		execAzioneRichiesta.setRichiedente(req.getRichiedente());
@@ -145,7 +128,7 @@ public class AggiornaVariazioneCodificheService extends VariazioneCodificheBaseS
 		// CR-2304
 		setVariabileProcesso(azioneRichiesta, "quadraturaVariazioneDiBilancio", res.getIsProvvedimentoPresente()); //Boolean
 
-		setVariabileProcesso(azioneRichiesta, "statoVariazioneDiBilancio", StatoOperativoVariazioneDiBilancio.BOZZA.toString());
+		setVariabileProcesso(azioneRichiesta, "statoVariazioneDiBilancio", StatoOperativoVariazioneBilancio.BOZZA.toString());
 
 		execAzioneRichiesta.setAzioneRichiesta(azioneRichiesta);
 		ExecAzioneRichiestaResponse execAzioneRichiestaResponse = coreService.execAzioneRichiesta(execAzioneRichiesta);
@@ -169,10 +152,10 @@ public class AggiornaVariazioneCodificheService extends VariazioneCodificheBaseS
 
 		try{
 			String statoVariazioneDiBilancio = (String) variabileProcesso.getValore();
-			StatoOperativoVariazioneDiBilancio statoOperativoVariazioneDiBilancio = StatoOperativoVariazioneDiBilancio.byVariableName(statoVariazioneDiBilancio);
+			StatoOperativoVariazioneBilancio statoOperativoVariazioneBilancio = StatoOperativoVariazioneBilancio.byVariableName(statoVariazioneDiBilancio);
 			
-			log.info(methodName, "Nuovo stato della variazione di Bilancio: "+statoOperativoVariazioneDiBilancio);
-			variazione.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneDiBilancio);
+			log.debug(methodName, "Nuovo stato della variazione di Bilancio: "+statoOperativoVariazioneBilancio);
+			variazione.setStatoOperativoVariazioneDiBilancio(statoOperativoVariazioneBilancio);
 		} catch(RuntimeException re){
 			String msg = "Variabile di processo statoVariazioneDiBilancio non valida: "+ToStringBuilder.reflectionToString(variabileProcesso);
 			log.error(methodName, msg, re);
@@ -223,6 +206,36 @@ public class AggiornaVariazioneCodificheService extends VariazioneCodificheBaseS
 		boolean isProvvedimentoPresente = isProvvedimentoPresente();
 
 		res.setIsProvvedimentoPresente(isProvvedimentoPresente);
+	}
+	
+	/*
+	 * Evolvi processo variazione.
+	 */
+	protected void evolviProcessoVariazione() {
+		// TODO: SIAC-6883 - valutare se spostare la chiamata a Bonita al termine, ed effettuare un aggiornamento puntuale dello stato
+		//Evolve il processo solo se richiesto!
+		//SIAC - 6884
+		if(!Boolean.TRUE.equals(req.getEvolviProcesso())) {
+			return;
+		}
+		StatoOperativoVariazioneBilancio statoPrecedente = variazione.getStatoOperativoVariazioneDiBilancio();
+		
+		StatoOperativoVariazioneBilancio statoSuccessivo = 
+				GestoreProcessiVariazioneBilancio.getStatoSuccessivoVariazioneDiCodifiche(statoPrecedente, res.getIsProvvedimentoPresente(), variazione.getFlagGiunta(), variazione.getFlagConsiglio(), req.getAnnullaVariazione());
+		if(statoSuccessivo == null) {
+			eseguiOperazioniPerFallimentoPassaggioDiStato();
+			return;
+		}
+		variazione.setStatoOperativoVariazioneDiBilancio(statoSuccessivo);
+	}
+
+	
+	protected void eseguiOperazioniPerFallimentoPassaggioDiStato() {
+		res.setEsito(Esito.FALLIMENTO);
+		if(!Boolean.TRUE.equals(res.getIsProvvedimentoPresente())) {
+			res.addErrore(ErroreBil.PROVVEDIMENTO_VARIAZIONE_NON_PRESENTE.getErrore());
+		}
+		throw new BusinessException(ErroreCore.TRANSAZIONE_DI_STATO_NON_POSSIBILE.getErrore());
 	}
 
 }

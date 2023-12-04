@@ -132,8 +132,8 @@ public class GestioneClassificatoreBilImpl2Test
 		try
 		{
 			LeggiClassificatoriByTipoElementoBil params = new LeggiClassificatoriByTipoElementoBil();
-			params.setAnno(2015);
-			params.setIdEnteProprietario(1);
+			params.setAnno(2020);
+			params.setIdEnteProprietario(2);
 			params.setTipoElementoBilancio("CAP-UG");
 			
 			params.setRichiedente(getRichiedenteByProperties("consip","regp"));

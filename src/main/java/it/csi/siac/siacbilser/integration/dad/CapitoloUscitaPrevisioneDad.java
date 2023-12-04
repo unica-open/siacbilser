@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.csi.siac.siacbilser.integration.dao.SiacTBilElemRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemStato;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemStato;
@@ -49,7 +47,6 @@ import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2ser.model.CapitoloUscitaPrevisioneModelDetail;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CapitoloUscitaPrevisioneDad.
  */
@@ -57,12 +54,6 @@ import it.csi.siac.siacfin2ser.model.CapitoloUscitaPrevisioneModelDetail;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Transactional
 public class CapitoloUscitaPrevisioneDad extends CapitoloDad {
-	
-	/** The siac t bil elem repository. */
-	@Autowired
-	private SiacTBilElemRepository siacTBilElemRepository;
-	
-	
 
 	/**
 	 * Creates the.
@@ -142,6 +133,8 @@ public class CapitoloUscitaPrevisioneDad extends CapitoloDad {
 		mapNotNull(cap.getSiopeSpesa(), bilElem, BilMapId.SiacTBilElem_ClassificatoreGerarchico);
 		mapNotNull(cap.getTransazioneUnioneEuropeaSpesa(), bilElem, BilMapId.SiacTBilElem_ClassificatoreGenerico);
 		mapNotNull(cap.getPoliticheRegionaliUnitarie(), bilElem, BilMapId.SiacTBilElem_ClassificatoreGenerico);
+		//SIAC-7192
+		mapNotNull(cap.getRisorsaAccantonata(), bilElem, BilMapId.SiacTBilElem_ClassificatoreGenerico);
 		
 		mapNotNull(cap.getClassificatoriGenerici(), bilElem, BilMapId.SiacTBilElem_ClassificatoriGenerici);		
 		
@@ -491,7 +484,8 @@ public class CapitoloUscitaPrevisioneDad extends CapitoloDad {
 				criteriRicerca.getCodicePianoDeiConti(),
 				criteriRicerca.getCodiceCofog(),criteriRicerca.getCodiceTipoCofog(),
 				criteriRicerca.getCodiceStrutturaAmmCont(), criteriRicerca.getCodiceTipoStrutturaAmmCont(),
-				
+				//task-90
+				mapToString(criteriRicerca.getIdStrutturaAmmCont(),null),
 				null,null,//criteriRicerca.getCodiceSiopeEntrata(), criteriRicerca.getCodiceTipoSiopeEntrata(),
 				criteriRicerca.getCodiceSiopeSpesa(), criteriRicerca.getCodiceTipoSiopeSpesa(),
 				
@@ -506,8 +500,12 @@ public class CapitoloUscitaPrevisioneDad extends CapitoloDad {
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
 				null,
-				
+				criteriRicerca.getCodiceRisorsaAccantonata(),
+				null,
+				null,
+				null,
 								
+				null,				
 				toPageable(parametriPaginazione));
 		
 				
@@ -626,6 +624,8 @@ public class CapitoloUscitaPrevisioneDad extends CapitoloDad {
 				criteriRicerca.getCommaAttoDilegge(),
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
+				null,
+				criteriRicerca.getCodiceRisorsaAccantonata(),
 				null);
 		
 		if(objs == null) {
@@ -743,6 +743,7 @@ public class CapitoloUscitaPrevisioneDad extends CapitoloDad {
 				criteriRicerca.getCommaAttoDilegge(),
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
+				null,
 				null
 				
 				);

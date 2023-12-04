@@ -476,7 +476,7 @@ public class Stipendio extends Entita{
 	 */
 	public boolean isAccertamentoValorizzato() {
 
-		return accertamento !=null && accertamento.getNumero()!=null && accertamento.getAnnoMovimento() !=0 && !BigDecimal.ZERO.equals(accertamento.getNumero());
+		return accertamento !=null && accertamento.getNumeroBigDecimal()!=null && accertamento.getAnnoMovimento() !=0 && !BigDecimal.ZERO.equals(accertamento.getNumeroBigDecimal());
 	}
 
 	/**
@@ -484,7 +484,7 @@ public class Stipendio extends Entita{
 	 * @return
 	 */
 	public boolean isImpegnoValorizzato() {
-		return impegno !=null && impegno.getNumero()!=null && impegno.getAnnoMovimento() !=0 && !BigDecimal.ZERO.equals(impegno.getNumero());
+		return impegno !=null && impegno.getNumeroBigDecimal()!=null && impegno.getAnnoMovimento() !=0 && !BigDecimal.ZERO.equals(impegno.getNumeroBigDecimal());
 	}
 
 	/**

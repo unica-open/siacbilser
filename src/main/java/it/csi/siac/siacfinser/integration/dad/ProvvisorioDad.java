@@ -19,11 +19,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
+import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Richiedente;
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacRProvCassaClassFinRepository;
@@ -32,15 +36,17 @@ import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoProvCass
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacTProvCassaRepository;
 import it.csi.siac.siacfinser.integration.dao.provvisorioDiCassa.ProvvisorioDiCassaDao;
 import it.csi.siac.siacfinser.integration.dao.provvisorioDiCassa.SiacDProvCassaTipoRepository;
+import it.csi.siac.siacfinser.integration.dao.provvisorioDiCassa.SiacSProvCassaFinRepository;
 import it.csi.siac.siacfinser.integration.dao.provvisorioDiCassa.SiacTRicercaCausaliPagopaFinRepository;
 import it.csi.siac.siacfinser.integration.entity.SiacDProvCassaTipoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRProvCassaClassFin;
+import it.csi.siac.siacfinser.integration.entity.SiacSProvCassaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTClassFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTEnteProprietarioFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTProvCassaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTRicercaCausaliPagopaFin;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.EntityProvvisorioDiCassaToModelProvvisorioDiCassaConverter;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
@@ -63,6 +69,10 @@ public class ProvvisorioDad extends AbstractFinDad
 	@Autowired
 	private SiacTProvCassaRepository siacTProvCassaRepository;
 
+	//SIAC-8140
+	@Autowired
+	private SiacSProvCassaFinRepository siacSProvCassaRepository;
+	
 	@Autowired
 	private SiacTRicercaCausaliPagopaFinRepository siacTRicercaCausaliPagopaRepository;
 
@@ -115,7 +125,7 @@ public class ProvvisorioDad extends AbstractFinDad
 
 	private ProvvisorioDiCassa convertiToModel(SiacTProvCassaFin siacTProvCassaFin, DatiOperazioneDto datiOperazione)
 	{
-		return CommonUtils.getFirst(convertiListaToModel(CommonUtils.toList(siacTProvCassaFin), datiOperazione));
+		return CommonUtil.getFirst(convertiListaToModel(CommonUtil.toList(siacTProvCassaFin), datiOperazione));
 	}
 
 	private List<ProvvisorioDiCassa> convertiListaToModel(List<SiacTProvCassaFin> elencoSiacTProvCassa,
@@ -227,15 +237,15 @@ public class ProvvisorioDad extends AbstractFinDad
 			List<SiacRProvCassaClassFin> all = siacRProvCassaClassFinRepository
 					.findAllByProvvCassa(siacTProvCassa.getUid());
 
-			List<SiacRProvCassaClassFin> siacRProvCassaClasses = CommonUtils.soloValidiSiacTBase(all,
+			List<SiacRProvCassaClassFin> siacRProvCassaClasses = CommonUtil.soloValidiSiacTBase(all,
 					datiOperazione.getTs());
 
 			// SiacRProvCassaClassFin validoTestUno =
-			// CommonUtils.getValidoSiacTBase(all, datiOperazione.getTs());
+			// CommonUtil.getValidoSiacTBase(all, datiOperazione.getTs());
 			// SiacRProvCassaClassFin validoTestDue =
-			// CommonUtils.getValidoSiacTBase(all, null);
+			// CommonUtil.getValidoSiacTBase(all, null);
 			// SiacRProvCassaClassFin validoZero =
-			// CommonUtils.getFirst(siacRProvCassaClasses);
+			// CommonUtil.getFirst(siacRProvCassaClasses);
 
 			siacTProvCassa.setSiacRProvCassaClasses(siacRProvCassaClasses);
 
@@ -391,7 +401,73 @@ public class ProvvisorioDad extends AbstractFinDad
 
 		return provvisorioDiCassa;
 	}
+	
+	public void salvaStoricoProvvisorioDiCassa(ProvvisorioDiCassa provvisorioDaStoricizzare, DatiOperazioneDto datiOperazioneDto) {
+		
+		Integer uidProv = Integer.valueOf(provvisorioDaStoricizzare.getIdProvvisorioDiCassa().intValue());
+		SiacTProvCassaFin siacTProvCassaDb = siacTProvCassaRepository.findOne(uidProv);
+		Date provcDataInvioServizio = siacTProvCassaDb.getProvcDataInvioServizio();
+		Boolean accettatoSuDb = siacTProvCassaDb.getAccettato();
+		
+		if(accettatoSuDb != null && accettatoSuDb.equals(provvisorioDaStoricizzare.getAccettato())) {
+			return;
+		}
+		
+		List<SiacTClassFin> siacTClasses = siacTProvCassaRepository.findSiacTClassValido(uidProv, datiOperazioneDto.getSiacTEnteProprietario().getUid(),datiOperazioneDto.getTs());
+		if(siacTClasses != null && siacTClasses.size() >1) {
+			throw new BusinessException(ErroreCore.ERRORE_DI_SISTEMA.getErrore("sono presenti piu' classificatori validi per il provvisorio"));
+		}
+		SiacTClassFin siacTClass = siacTClasses != null && !siacTClasses.isEmpty()? siacTClasses.get(0) : null;
+		
+		SiacSProvCassaFin siacStorico = popolaSiacSProvCassaFin(datiOperazioneDto, uidProv, provcDataInvioServizio,
+				siacTClass);
+		
+		siacSProvCassaRepository.saveAndFlush(siacStorico);
+		
+		cancellaRecordObsoleti(datiOperazioneDto, uidProv);
+	}
 
+	protected SiacSProvCassaFin popolaSiacSProvCassaFin(DatiOperazioneDto datiOperazioneDto, Integer uidProv,
+			Date provcDataInvioServizio, SiacTClassFin siacTClass) {
+		//legame con la SAC
+		datiOperazioneDto.setOperazione(Operazione.INSERIMENTO);
+		
+		SiacSProvCassaFin siacStorico = new SiacSProvCassaFin();		
+		siacStorico =DatiOperazioneUtil.impostaDatiOperazioneLogin(siacStorico, datiOperazioneDto,
+				siacTAccountRepository);
+		
+		//legame con il provvisorio
+		SiacTProvCassaFin siacTProvCassa =  new SiacTProvCassaFin();		
+		siacTProvCassa.setUid(uidProv);
+		siacStorico.setSiacTProvCassaFin(siacTProvCassa);
+		
+		if(siacTClass != null) {
+			siacStorico.setSiacTClassSAC(siacTClass);
+			siacStorico.setSacCode(siacTClass.getClassifCode());
+			siacStorico.setSacDesc(siacTClass.getClassifDesc());
+			siacStorico.setSacTipoCode(siacTClass.getSiacDClassTipo().getClassifTipoCode());
+			siacStorico.setSacTipoDesc(siacTClass.getSiacDClassTipo().getClassifTipoDesc());
+		}
+				
+		siacStorico.setProvcDataInvioServizio(provcDataInvioServizio);
+		return siacStorico;
+	}
+
+	protected void cancellaRecordObsoleti(DatiOperazioneDto datiOperazioneDto, Integer uidProv) {
+		List<SiacSProvCassaFin> founds = siacSProvCassaRepository.findByprovcIdOrderedByDate(uidProv, datiOperazioneDto.getSiacTEnteProprietario().getUid());
+		
+		if(founds != null && !founds.isEmpty() && founds.size() >5) {
+			datiOperazioneDto.setOperazione(Operazione.CANCELLAZIONE_LOGICA_RECORD);
+			List<SiacSProvCassaFin> subList = founds.subList(5, founds.size());
+			
+			for (SiacSProvCassaFin siacSProvCassaFin : subList) {
+				DatiOperazioneUtil.impostaDatiOperazioneLogin(siacSProvCassaFin,datiOperazioneDto,
+						siacTAccountRepository);
+			}
+			siacSProvCassaRepository.save(subList);
+		}
+	}
+	
 	/**
 	 * Si occupa di inserire o aggiornare un record di provv cassa
 	 * 
@@ -415,7 +491,7 @@ public class ProvvisorioDad extends AbstractFinDad
 			List<SiacDProvCassaTipoFin> tipologie = siacDProvCassaTipoRepository.findByTipoAndEnte(tipoProvv.toString(),
 					enteProprietarioId, datiOperazioneDto.getTs());
 			// deve contenerne uno e uno solo:
-			SiacDProvCassaTipoFin tipo = CommonUtils.getFirst(tipologie);
+			SiacDProvCassaTipoFin tipo = CommonUtil.getFirst(tipologie);
 			siacTProvCassa.setSiacDProvCassaTipo(tipo);
 		}
 		else
@@ -431,7 +507,7 @@ public class ProvvisorioDad extends AbstractFinDad
 		}
 
 		// DATI LOGIN:
-		siacTProvCassa = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacTProvCassa, datiOperazioneDto,
+		siacTProvCassa = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacTProvCassa, datiOperazioneDto,
 				siacTAccountRepository);
 
 		// numero
@@ -507,7 +583,7 @@ public class ProvvisorioDad extends AbstractFinDad
 			SiacRProvCassaClassFin legameValido = null;
 			if (siacTProvCassa.getSiacRProvCassaClasses() != null)
 			{
-				legameValido = DatiOperazioneUtils.getValido(siacTProvCassa.getSiacRProvCassaClasses(),
+				legameValido = DatiOperazioneUtil.getValido(siacTProvCassa.getSiacRProvCassaClasses(),
 						datiOperazione.getTs());
 			}
 
@@ -564,7 +640,7 @@ public class ProvvisorioDad extends AbstractFinDad
 			List<SiacRProvCassaClassFin> legamiValidi = null;
 			if (siacTProvCassa.getSiacRProvCassaClasses() != null)
 			{
-				legamiValidi = DatiOperazioneUtils.soloValidi(siacTProvCassa.getSiacRProvCassaClasses(),
+				legamiValidi = DatiOperazioneUtil.soloValidi(siacTProvCassa.getSiacRProvCassaClasses(),
 						datiOperazioneDto.getTs());
 			}
 
@@ -579,7 +655,7 @@ public class ProvvisorioDad extends AbstractFinDad
 				{
 					if (legameValido != null)
 					{
-						DatiOperazioneUtils.cancellaRecord(legameValido, siacRProvCassaClassFinRepository,
+						DatiOperazioneUtil.cancellaRecord(legameValido, siacRProvCassaClassFinRepository,
 								datiOperazioneDto, siacTAccountRepository);
 					}
 				}
@@ -595,7 +671,7 @@ public class ProvvisorioDad extends AbstractFinDad
 
 				// DATI LOGIN:
 				datiOperazioneDto.setOperazione(Operazione.INSERIMENTO);
-				nuovoLegameStruttura = DatiOperazioneUtils.impostaDatiOperazioneLogin(nuovoLegameStruttura,
+				nuovoLegameStruttura = DatiOperazioneUtil.impostaDatiOperazioneLogin(nuovoLegameStruttura,
 						datiOperazioneDto, siacTAccountRepository);
 
 				strutturaValida = siacRProvCassaClassFinRepository.saveAndFlush(nuovoLegameStruttura);
@@ -634,19 +710,25 @@ public class ProvvisorioDad extends AbstractFinDad
 		eliminaSiacRProvCassaClass(provvisorioDiCassa);
 
 		if (provvisorioDiCassa.getStrutturaAmministrativoContabile().getUid() > 0) {
+			
 			inserisciSiacRProvCassaClass(provvisorioDiCassa);
-			aggiornaDateFlagAccettato(provvisorioDiCassa, DateUtils.truncate(new Date(getCurrentMilliseconds()), Calendar.DAY_OF_MONTH), null, null);
+
+			Date current_day = DateUtils.truncate(new Date(getCurrentMilliseconds()), Calendar.DAY_OF_MONTH);
+			
+			aggiornaDateFlagAccettato(provvisorioDiCassa, current_day, current_day, null, Boolean.TRUE);
+			
 			return;
 		} 
 		
-		aggiornaDateFlagAccettato(provvisorioDiCassa, null, null, null);
+		aggiornaDateFlagAccettato(provvisorioDiCassa, null, null, null, null);
 	}
 
-	private void aggiornaDateFlagAccettato(ProvvisorioDiCassa provvisorioDiCassa, 
-			Date dataInvioServizio, Date dataPresaInCaricoServizio, Date dataRifiutoErrataAttribuzione) {
+	private void aggiornaDateFlagAccettato(
+			ProvvisorioDiCassa provvisorioDiCassa, Date dataInvioServizio, Date dataPresaInCaricoServizio, Date dataRifiutoErrataAttribuzione, Boolean accettato) {
+		
 		SiacTProvCassaFin siacTProvCassaFin = siacTProvCassaRepository.findOne(provvisorioDiCassa.getUid());
 		
-		siacTProvCassaFin.setAccettato(null);
+		siacTProvCassaFin.setAccettato(accettato);
 		siacTProvCassaFin.setProvcDataInvioServizio(dataInvioServizio);
 		siacTProvCassaFin.setProvcDataPresaInCaricoServizio(dataPresaInCaricoServizio);
 		siacTProvCassaFin.setProvcDataRifiutoErrataAttribuzione(dataRifiutoErrataAttribuzione);

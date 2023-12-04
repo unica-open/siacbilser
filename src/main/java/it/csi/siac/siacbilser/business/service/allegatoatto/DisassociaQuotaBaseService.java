@@ -112,7 +112,7 @@ public abstract class DisassociaQuotaBaseService<REQ extends ServiceRequest,RES 
 	protected void checkQuotaNonConvalidata() {
 		Boolean flagConvalidaManuale = subdocumentoDad.findFlagConvalidaManuale(subdocumento);
 		if(flagConvalidaManuale != null) {
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("tipo convalida", "non deve essere valorizzato"));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("tipo convalida", "non deve essere valorizzato"));
 		}
 	}
 	

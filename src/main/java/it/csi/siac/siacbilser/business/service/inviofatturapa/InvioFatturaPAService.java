@@ -43,7 +43,7 @@ import it.csi.siac.siacbilser.business.service.inviofatturapa.factory.InvioFattu
 import it.csi.siac.siacbilser.integration.dad.EnteDad;
 import it.csi.siac.siacbilser.integration.dad.FatturaFELDad;
 import it.csi.siac.siacbilser.model.exception.UnmappedEnteException;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Ente;
@@ -60,6 +60,7 @@ import it.csi.siac.sirfelser.frontend.webservice.msg.inviofatturapa.services.mod
 import it.csi.siac.sirfelser.frontend.webservice.msg.inviofatturapa.services.model.DatiGeneraliType;
 import it.csi.siac.sirfelser.frontend.webservice.msg.inviofatturapa.services.model.DatiPagamentoType;
 import it.csi.siac.sirfelser.frontend.webservice.msg.inviofatturapa.services.model.DatiRiepilogoType;
+import it.csi.siac.sirfelser.frontend.webservice.msg.inviofatturapa.services.model.DatiRitenutaType;
 import it.csi.siac.sirfelser.frontend.webservice.msg.inviofatturapa.services.model.DatiTrasmissioneType;
 import it.csi.siac.sirfelser.frontend.webservice.msg.inviofatturapa.services.model.DettaglioLineeType;
 import it.csi.siac.sirfelser.frontend.webservice.msg.inviofatturapa.services.model.DettaglioPagamentoType;
@@ -85,6 +86,7 @@ import it.csi.siac.sirfelser.model.PortaleFattureFEL;
 import it.csi.siac.sirfelser.model.PrestatoreFEL;
 import it.csi.siac.sirfelser.model.ProtocolloFEL;
 import it.csi.siac.sirfelser.model.RiepilogoBeniFEL;
+import it.csi.siac.sirfelser.model.RitenutaFEL;
 
 /**
  * Gestione dell'invio della fattura Elettronica
@@ -98,7 +100,7 @@ import it.csi.siac.sirfelser.model.RiepilogoBeniFEL;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InvioFatturaPAService {
 	
-	private LogUtil log = new LogUtil(getClass());
+	private LogSrvUtil log = new LogSrvUtil(getClass());
 	private InvioFatturaPA req;
 	private InvioFatturaPAResponse res;
 	private Ente ente;
@@ -255,7 +257,7 @@ public class InvioFatturaPAService {
 			|| "ACCETTATA".equals(req.getDatiPortaleFatture().getEstremiEsito().getStatoFattura())
 			|| "DECORRENZA_TERMINI".equals(req.getDatiPortaleFatture().getEstremiEsito().getStatoFattura())
 			|| "RIFIUTATA".equals(req.getDatiPortaleFatture().getEstremiEsito().getStatoFattura()),
-			ErroreCore.VALORE_NON_VALIDO.getErrore("stato fattura estremi esito dati portale fatture",
+			ErroreCore.VALORE_NON_CONSENTITO.getErrore("stato fattura estremi esito dati portale fatture",
 				"puo' assumere i valori ACCETTATA, DECORRENZA_TERMINI o RIFIUTATA (valore fornito: " + req.getDatiPortaleFatture().getEstremiEsito().getStatoFattura() + ")"));
 	}
 	
@@ -371,6 +373,12 @@ public class InvioFatturaPAService {
 		gestisciOrdineAcquisto(fatturaPA.getDatiGenerali().getDatiOrdineAcquisto(), fatturaFEL);
 //		fatturaFELDad.clean();
 		
+		//SIAC-7557
+		log.debug(methodName, "18.gestisciDatiRitenuta");
+		gestisciDatiRitenuta(datiGenerali.getDatiGeneraliDocumento().getDatiRitenuta(), fatturaFEL);
+		
+		
+		
 		//risposta
 		String codiceRisposta = calcolaCodiceRisposta();
 		impostaRisposta(codiceRisposta, "OK");
@@ -440,7 +448,7 @@ public class InvioFatturaPAService {
 	}
 	private void controllaComponenteValido(boolean condition, String nomeComponente) {
 		if(!condition) {
-			throw new BusinessException(ErroreCore.FORMATO_NON_VALIDO.getErrore(nomeComponente, "non puo' essere vuoto (vedasi xds)"));
+			throw new BusinessException(ErroreCore.FORMATO_NON_VALIDO.getErrore(nomeComponente, "non puo' essere vuoto (vedere xsd)"));
 		}
 	}
 	
@@ -569,6 +577,35 @@ public class InvioFatturaPAService {
 			
 		}
 	}
+	
+	
+	/*
+	 * SIAC-7557
+	 */
+	private void gestisciDatiRitenuta(List<DatiRitenutaType> datiRitenutaTypes, FatturaFEL fatturaFEL){
+		final String methodName = "gestisciDatiRitenuta";
+		
+		if(datiRitenutaTypes != null && !datiRitenutaTypes.isEmpty()) {
+			for (DatiRitenutaType datiRitenuta : datiRitenutaTypes) {
+				
+				RitenutaFEL ritenutaFEL = InvioFatturaPACassaPrevidenzialeFELFactory.init(fatturaFEL, datiRitenuta, ente);
+				
+				fatturaFELDad.inserisciDatiRitenutaFEL(ritenutaFEL);
+				
+				log.debug(methodName, "Inserita ritenuta con id " + ritenutaFEL.getUid() + " per fattura " + ritenutaFEL.getFattura().getIdFattura()
+						+ " per ente " + ritenutaFEL.getEnte().getUid());
+				
+			}
+			
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
 	
 	/**
 	 * Gestione delle fattureFEL collegate.

@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilser.integration.entity.enumeration;
 
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.StatoBilancio;
+import it.csi.siac.siaccorser.model.StatoBilancio;
 
 // TODO: Auto-generated Javadoc
 /**

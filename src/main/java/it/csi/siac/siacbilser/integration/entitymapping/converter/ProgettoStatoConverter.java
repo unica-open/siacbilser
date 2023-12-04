@@ -17,7 +17,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacRProgrammaStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTProgramma;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDProgrammaStatoEnum;
 import it.csi.siac.siacbilser.model.StatoOperativoProgetto;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -31,7 +31,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class ProgettoStatoConverter extends DozerConverter<StatoOperativoProgetto, SiacTProgramma> {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

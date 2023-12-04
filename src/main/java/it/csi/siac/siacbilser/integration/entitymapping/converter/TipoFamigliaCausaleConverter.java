@@ -21,7 +21,7 @@ import it.csi.siac.siacfin2ser.model.TipoFamigliaCausale;
  */
 @Component
 public class TipoFamigliaCausaleConverter extends DozerConverter<TipoFamigliaCausale, SiacDCausaleTipo > {
-	//private LogUtil log = new LogUtil(this.getClass());
+	//private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

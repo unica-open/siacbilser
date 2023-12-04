@@ -16,7 +16,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacDAttoAllegatoStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRAttoAllegatoStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTAttoAllegato;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDAttoAllegatoStatoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
 
 // TODO: Auto-generated Javadoc
@@ -29,7 +29,7 @@ import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
 public class AllegatoAttoStatoConverter extends DozerConverter<StatoOperativoAllegatoAtto, SiacTAttoAllegato> {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

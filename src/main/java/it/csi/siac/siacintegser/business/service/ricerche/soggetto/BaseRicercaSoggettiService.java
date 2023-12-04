@@ -24,7 +24,7 @@ public abstract class BaseRicercaSoggettiService<RS extends BaseRicercaSoggetti,
 		RicercaSoggettiResponse res = appCtx.getBean(RicercaSoggettiService.class).executeService(
 				req);
 
-		checkBusinessServiceResponse(res);
+		checkServiceResponse(res);
 
 		return res;
 	}

@@ -15,7 +15,7 @@ import it.csi.siac.siacbilser.business.service.documento.DocumentoServiceCallGro
 import it.csi.siac.siacbilser.business.service.primanota.InseriscePrimaNotaAutomaticaService.MovimentoDettaglioConContoTipoOperazione;
 import it.csi.siac.siacbilser.business.utility.BilUtilities;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDEventoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Entita;
@@ -36,7 +36,7 @@ import it.csi.siac.siacgenser.model.RegistrazioneMovFin;
  */
 public abstract class SubdocumentoMovimentoHandler<D extends Documento<S, SI>, S extends Subdocumento<D, SI>, SI extends SubdocumentoIva<D, S, SI>> extends MovimentoHandler<S> {
 //<SD extends Subdocumento<?,?>> extends MovimentoHandler<SD> {
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	protected DocumentoServiceCallGroup documentoServiceCallGroup;
 	

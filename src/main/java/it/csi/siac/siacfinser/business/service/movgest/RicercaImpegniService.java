@@ -16,7 +16,7 @@ import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegniGlobal;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegniGlobalResponse;
@@ -52,7 +52,7 @@ public class RicercaImpegniService extends AbstractBaseService<RicercaImpegniGlo
 
 		//2. Si invoca il metodo ricercaImpegni che ci restituisce il numero di risultati attesi dalla query composta
 		//secondo i parametri di ricerca
-		List<Impegno> impegniList = impegnoOttimizzatoDad.ricercaImpegni(req.getRichiedente() , Constanti.AMBITO_FIN, idEnte, parametroRicercaImpegno);
+		List<Impegno> impegniList = impegnoOttimizzatoDad.ricercaImpegni(req.getRichiedente() , CostantiFin.AMBITO_FIN, idEnte, parametroRicercaImpegno);
 
 		// 3. Si invoca il metodo che carica tutti i dati rispetto alla query composta dall'input ricevuto:
 		// CR 1907, ricercare anche x sub ed eliminare il max righe estraibili

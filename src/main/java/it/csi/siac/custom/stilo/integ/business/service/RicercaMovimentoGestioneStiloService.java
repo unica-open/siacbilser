@@ -19,8 +19,9 @@ import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacintegser.business.service.ServiceHelper;
 import it.csi.siac.siacintegser.business.service.base.IntegBaseService;
+import it.csi.siac.siacintegser.business.service.helper.ProvvedimentoServiceHelper;
+import it.csi.siac.siacintegser.business.service.helper.StrutturaAmministrativoContabileServiceHelper;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.custom.stilo.RicercaMovimentoGestioneStilo;
 import it.csi.siac.siacintegser.frontend.webservice.msg.custom.stilo.RicercaMovimentoGestioneStiloResponse;
@@ -32,34 +33,38 @@ import it.csi.siac.siacintegser.model.messaggio.MessaggioInteg;
 public class RicercaMovimentoGestioneStiloService extends
 		IntegBaseService<RicercaMovimentoGestioneStilo, RicercaMovimentoGestioneStiloResponse> {
 
-	@Autowired
-	private ServiceHelper serviceHelper;
+	@Autowired private ProvvedimentoServiceHelper provvedimentoServiceHelper;
+	@Autowired private StrutturaAmministrativoContabileServiceHelper strutturaAmministrativoContabileServiceHelper;
 
 	@Override
 	protected void checkServiceParameters(RicercaMovimentoGestioneStilo ireq) throws ServiceParamError {
 		
 		
 		// controllo parametri in input
-		checkCondition(
+		checkParamCondition(
+				ireq.getAnnoBilancio() != null &&  ireq.getAnnoBilancio() !=0 ,
+				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno bilancio"));
+		
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || (ireq.getAnnoProvvedimento() != null && ireq.getAnnoProvvedimento() !=0) ||
 				ireq.getCodiceTipoProvvedimento() == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno provvedimento"));
 
-		checkCondition(
+		checkParamCondition(
 				(ireq.getNumeroProvvedimento() != null && ireq.getNumeroProvvedimento() !=0) || ireq.getAnnoProvvedimento() == null || 
 				ireq.getCodiceTipoProvvedimento()  == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || ireq.getAnnoProvvedimento() == null || 
 				(ireq.getCodiceTipoProvvedimento()  != null && ireq.getCodiceTipoProvvedimento().length()>0),
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				(ireq.getCodiceStruttura() == null || ireq.getCodiceStruttura().length()==0) || (ireq.getCodiceTipoStruttura() != null && ireq.getCodiceTipoStruttura().length()>0),
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo struttura"));	
 		
-		checkCondition(
+		checkParamCondition(
 				(ireq.getCodiceStruttura() != null && ireq.getCodiceStruttura().length()>0) || (ireq.getCodiceTipoStruttura() == null || ireq.getCodiceTipoStruttura().length()==0),
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice struttura"));	
 	
@@ -73,7 +78,7 @@ public class RicercaMovimentoGestioneStiloService extends
 		req.setEnteProprietarioId(ente.getUid());
 		req.setRichiedente(richiedente);
 		RicercaMovimentoGestioneStiloResponse ires = instantiateNewIRes();
-		StrutturaAmministrativoContabile sac = serviceHelper.ricercaStrutturaByCodice(ente,richiedente,ireq.getCodiceStruttura(), ireq.getCodiceTipoStruttura());
+		StrutturaAmministrativoContabile sac = strutturaAmministrativoContabileServiceHelper.findStrutturaAmministrativoContabileByCodice(ente,richiedente,ireq.getCodiceStruttura(), ireq.getCodiceTipoStruttura());
 		if(!StringUtils.isEmpty(ireq.getCodiceStruttura()) && !StringUtils.isEmpty(ireq.getCodiceTipoStruttura())){
 			if(sac ==null){
 				addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "il codice e il tipo della struttura non esistono");
@@ -82,11 +87,14 @@ public class RicercaMovimentoGestioneStiloService extends
 			
 		}
 		
-		TipoAtto tipoAtto = serviceHelper.ricercaTipoProvvedimentoByCodice(ente, richiedente, ireq.getCodiceTipoProvvedimento());
+		TipoAtto tipoAtto = provvedimentoServiceHelper.findTipoAttoByCodice(ente, richiedente, ireq.getCodiceTipoProvvedimento());
 		if(tipoAtto ==null || tipoAtto.getUid()==0){
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "il codice del provvedimento non esiste");
 			return ires;
 		}
+		
+		
+		req.setAnnoBilancio(ireq.getAnnoBilancio());
 		
 		//PROVVEDIMENTO
 		req.setAnnoProvvedimento(ireq.getAnnoProvvedimento().toString());

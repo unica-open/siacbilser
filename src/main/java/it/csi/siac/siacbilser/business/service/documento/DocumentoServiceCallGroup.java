@@ -30,6 +30,7 @@ import it.csi.siac.siacbilser.business.service.documentoiva.RicercaValutaService
 import it.csi.siac.siacbilser.business.service.documentoivaentrata.InserisceSubdocumentoIvaEntrataService;
 import it.csi.siac.siacbilser.business.service.documentoivaspesa.InserisceSubdocumentoIvaSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.AggiornaDocumentoDiSpesaService;
+import it.csi.siac.siacbilser.business.service.documentospesa.AggiornaOnereSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.AggiornaQuotaDocumentoSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.AggiornaStatoDocumentoDiSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.EliminaQuotaDocumentoSpesaService;
@@ -37,8 +38,10 @@ import it.csi.siac.siacbilser.business.service.documentospesa.InserisceDocumento
 import it.csi.siac.siacbilser.business.service.documentospesa.InserisceNotaCreditoSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.InserisceQuotaDocumentoSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.InserisceTestataDocumentoSpesaService;
+import it.csi.siac.siacbilser.business.service.documentospesa.InserisciOnereSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RicercaDettaglioDocumentoSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RicercaDettaglioQuotaSpesaService;
+import it.csi.siac.siacbilser.business.service.documentospesa.RicercaOnereByDocumentoSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RicercaPuntualeDocumentoSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RicercaQuoteByDocumentoSpesaService;
 import it.csi.siac.siacbilser.business.service.predocumentospesa.LeggiContiTesoreriaService;
@@ -51,6 +54,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDocumentoDiEntrat
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDocumentoDiEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDocumentoDiSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDocumentoDiSpesaResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaOnereSpesa;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaOnereSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaQuotaDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaQuotaDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaQuotaDocumentoSpesa;
@@ -83,6 +88,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceSubdocumentoIvaE
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceSubdocumentoIvaEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceSubdocumentoIvaSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceSubdocumentoIvaSpesaResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisciOnereSpesa;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisciOnereSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreria;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiTesoreriaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaAliquotaIva;
@@ -107,6 +114,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNaturaOnere;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNaturaOnereResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNoteTesoriere;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNoteTesoriereResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaOnereByDocumentoSpesa;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaOnereByDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaPuntualeDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaPuntualeDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaPuntualeDocumentoSpesa;
@@ -131,6 +140,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaValuta;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaValutaResponse;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
 import it.csi.siac.siacfin2ser.model.AttivitaIva;
+import it.csi.siac.siacfin2ser.model.DettaglioOnere;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
@@ -225,18 +235,22 @@ public class DocumentoServiceCallGroup extends ServiceCallGroup {
 	}
 
 	public SubdocumentoSpesa inserisceQuotaSpesa(SubdocumentoSpesa subdocumentoSpesa) {
-		return inserisceQuotaDocumentoSpesa(subdocumentoSpesa, true, false, false);
+		return inserisceQuotaDocumentoSpesa(subdocumentoSpesa, true, false, false, false);
 	}
 
 	public SubdocumentoSpesa inserisceQuotaDocumentoSpesa(SubdocumentoSpesa subdocumentoSpesa, boolean aggiornaStatoDocumento){
-		return inserisceQuotaDocumentoSpesa(subdocumentoSpesa, aggiornaStatoDocumento, false, false);
+		return inserisceQuotaDocumentoSpesa(subdocumentoSpesa, aggiornaStatoDocumento, false, false, false);
 	}
 	
 	public SubdocumentoSpesa inserisceQuotaDocumentoSpesa(SubdocumentoSpesa subdocumentoSpesa, boolean aggiornaStatoDocumento, boolean quotaContestuale) {
-		return inserisceQuotaDocumentoSpesa(subdocumentoSpesa, aggiornaStatoDocumento, quotaContestuale, false);
+		return inserisceQuotaDocumentoSpesa(subdocumentoSpesa, aggiornaStatoDocumento, quotaContestuale, false, false);
 	}
 	
 	public SubdocumentoSpesa inserisceQuotaDocumentoSpesa(SubdocumentoSpesa subdocumentoSpesa, boolean aggiornaStatoDocumento, boolean quotaContestuale, boolean senzaModalitaPagamento) {
+		return inserisceQuotaDocumentoSpesa(subdocumentoSpesa, aggiornaStatoDocumento, quotaContestuale, senzaModalitaPagamento, false);
+	}
+	
+	public SubdocumentoSpesa inserisceQuotaDocumentoSpesa(SubdocumentoSpesa subdocumentoSpesa, boolean aggiornaStatoDocumento, boolean quotaContestuale, boolean senzaModalitaPagamento, boolean gestisciSospensioni) {
 		InserisceQuotaDocumentoSpesa reqIQ = new InserisceQuotaDocumentoSpesa();
 		reqIQ.setRichiedente(richiedente);
 		reqIQ.setBilancio(bilancio);
@@ -246,6 +260,7 @@ public class DocumentoServiceCallGroup extends ServiceCallGroup {
 		reqIQ.setAggiornaStatoDocumento(aggiornaStatoDocumento);
 		reqIQ.setQuotaContestuale(quotaContestuale);
 		reqIQ.setSenzaModalitaPagamento(senzaModalitaPagamento);
+		reqIQ.setGestisciSospensioni(gestisciSospensioni);
 
 		InserisceQuotaDocumentoSpesaResponse resIQ = se.executeServiceSuccess(InserisceQuotaDocumentoSpesaService.class, reqIQ);
 		return resIQ.getSubdocumentoSpesa();
@@ -1029,6 +1044,17 @@ public class DocumentoServiceCallGroup extends ServiceCallGroup {
 		return se.executeServiceSuccess(RicercaDettaglioQuotaEntrataService.class,reqRDQE, codiciErroreDaEscludere);
 	}
 
+	//SIAC-7834
+	public InserisciOnereSpesaResponse inserisciOnereSpesa(DocumentoSpesa documentoSpesa, DettaglioOnere dettaglioOnere, String... codiciErroreDaEscludere) {
+		InserisciOnereSpesa req = new InserisciOnereSpesa();
+		req.setRichiedente(richiedente);
+		dettaglioOnere.setDocumentoSpesa(new DocumentoSpesa());
+		dettaglioOnere.getDocumentoSpesa().setUid(documentoSpesa.getUid());
+		req.setDettaglioOnere(dettaglioOnere);
+		
+		return se.executeServiceSuccess(InserisciOnereSpesaService.class,req, codiciErroreDaEscludere);
+	}
+	
 	/**
 	 * @return the ente
 	 */

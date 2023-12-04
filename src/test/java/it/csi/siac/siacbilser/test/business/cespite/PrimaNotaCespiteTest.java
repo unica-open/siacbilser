@@ -30,7 +30,6 @@ import it.csi.siac.siacbilser.business.service.primanota.OttieniDatiPrimeNoteFat
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.Inventario;
 import it.csi.siac.siacbilser.integration.dad.PrimaNotaInvDad;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siacbilser.model.exception.DadException;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccespser.frontend.webservice.msg.AggiornaImportoCespiteRegistroACespite;
@@ -57,12 +56,14 @@ import it.csi.siac.siaccespser.frontend.webservice.msg.ValidaPrimaNotaCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.ValidaPrimaNotaCespiteResponse;
 import it.csi.siac.siaccespser.model.Cespite;
 import it.csi.siac.siaccespser.model.ImportiRegistroA;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.Azione;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siacfin2ser.model.SubdocumentoSpesaModelDetail;
 import it.csi.siac.siacgenser.frontend.webservice.msg.OttieniDatiPrimeNoteFatturaConNotaCredito;
 import it.csi.siac.siacgenser.frontend.webservice.msg.OttieniDatiPrimeNoteFatturaConNotaCreditoResponse;
 import it.csi.siac.siacgenser.model.CausaleEPModelDetail;
@@ -163,7 +164,7 @@ public class PrimaNotaCespiteTest extends BaseJunit4TestCase {
 		req.setAnnoBilancio(Integer.valueOf(2017));
 		req.setPrimaNota(create(PrimaNota.class,677));
 		req.setParametriPaginazione(getParametriPaginazioneTest());
-		req.setModelDetails(new ModelDetail[] {MovimentoEPModelDetail.RegistrazioneMovFinModelDetail, MovimentoEPModelDetail.PrimaNotaModelDetail, MovimentoEPModelDetail.MovimentoDettaglioModelDetail,
+		req.setModelDetails(new ModelDetailEnum[] {MovimentoEPModelDetail.RegistrazioneMovFinModelDetail, MovimentoEPModelDetail.PrimaNotaModelDetail, MovimentoEPModelDetail.MovimentoDettaglioModelDetail,
 				MovimentoEPModelDetail.CausaleEPModelDetail, CausaleEPModelDetail.Conto,
 				MovimentoDettaglioModelDetail.Cespiti, MovimentoDettaglioModelDetail.ContoModelDetail,
 				RegistrazioneMovFinModelDetail.EventoMovimento,
@@ -177,15 +178,17 @@ public class PrimaNotaCespiteTest extends BaseJunit4TestCase {
 	@Test
 	public void testRicercaMovimentoDettaglio() {
 		RicercaSinteticaMovimentoDettaglioRegistroACespite req = new RicercaSinteticaMovimentoDettaglioRegistroACespite();
-		req.setAnnoBilancio(Integer.valueOf(2017));
-		req.setPrimaNota(create(PrimaNota.class,24721));
+		req.setAnnoBilancio(Integer.valueOf(2021));
+		req.setPrimaNota(create(PrimaNota.class,444617));
 		req.setParametriPaginazione(getParametriPaginazioneTest());
-		req.setModelDetails(new ModelDetail[] {MovimentoEPModelDetail.RegistrazioneMovFinModelDetail, MovimentoEPModelDetail.PrimaNotaModelDetail,
+		req.setModelDetails(new ModelDetailEnum[] {MovimentoEPModelDetail.RegistrazioneMovFinModelDetail, MovimentoEPModelDetail.PrimaNotaModelDetail,
 				MovimentoEPModelDetail.CausaleEPModelDetail, CausaleEPModelDetail.Conto,
 				MovimentoDettaglioModelDetail.MovimentoEPModelDetail,
 				MovimentoDettaglioModelDetail.Cespiti, MovimentoDettaglioModelDetail.ContoModelDetail,
 				MovimentoDettaglioModelDetail.ImportoInventariato,
-				RegistrazioneMovFinModelDetail.EventoMovimento,
+				RegistrazioneMovFinModelDetail.EventoMovimentoModelDetail,
+				SubdocumentoSpesaModelDetail.AttoAmm,
+				SubdocumentoSpesaModelDetail.TestataDocumento,
 				PrimaNotaModelDetail.TipoCausale,
 				ContoModelDetail.TipoConto});
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));

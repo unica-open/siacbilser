@@ -112,10 +112,6 @@ SPDX-License-Identifier: EUPL-1.2
  			<b>this</b> 
 		</field>
 		
-		<field custom-converter-id="preDocumentoSpesaVoceMutuoConverter">
-			<a>this</a> 
- 			<b>this</b> 
-		</field>
 		
 		<field custom-converter="it.csi.siac.siacbilser.integration.entitymapping.converter.PreDocumentoProvvisorioDiCassaConverter">
 			<a>this</a> 

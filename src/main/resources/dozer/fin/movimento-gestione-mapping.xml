@@ -17,7 +17,7 @@ SPDX-License-Identifier: EUPL-1.2
 		</field>
 
 		<field>
-			<a>numero</a>
+			<a>numeroBigDecimal</a>
 			<b>movgestNumero</b>
 		</field>
 		
@@ -37,7 +37,93 @@ SPDX-License-Identifier: EUPL-1.2
 		</field>		
 				
   	</mapping>
-  	
+
+	<mapping map-id="SiacTMovgest_Impegno_Bilancio" >
+		<class-a>it.csi.siac.siacfinser.model.Impegno</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin</class-b>
+
+		<field>
+			<a>annoMovimento</a>
+			<b>movgestAnno</b>
+		</field>
+
+		<field>
+			<a>numeroBigDecimal</a>
+			<b>movgestNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movgestDesc</b>
+		</field>
+		
+		<field>
+			<a>tipoMovimento</a>
+			<b>siacDMovgestTipo.movgestTipoCode</b>
+		</field>
+		
+		<field>
+			<a>tipoMovimentoDesc</a>
+			<b>siacDMovgestTipo.movgestTipoDesc</b>
+		</field>		
+		
+		<field>
+			<a>bilancio.uid</a>
+			<b>siacTBil.bilId</b>
+		</field>
+		
+		<field>
+			<a>bilancio.anno</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+				
+  	</mapping>
+
+	<mapping map-id="SiacTMovgest_Impegno_Capitolo_Bilancio" >
+		<class-a>it.csi.siac.siacfinser.model.Impegno</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin</class-b>
+
+		<field>
+			<a>annoMovimento</a>
+			<b>movgestAnno</b>
+		</field>
+
+		<field>
+			<a>numeroBigDecimal</a>
+			<b>movgestNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movgestDesc</b>
+		</field>
+		
+		<field>
+			<a>tipoMovimento</a>
+			<b>siacDMovgestTipo.movgestTipoCode</b>
+		</field>
+		
+		<field>
+			<a>tipoMovimentoDesc</a>
+			<b>siacDMovgestTipo.movgestTipoDesc</b>
+		</field>		
+		
+		<field>
+			<a>bilancio.uid</a>
+			<b>siacTBil.bilId</b>
+		</field>
+		
+		<field>
+			<a>bilancio.anno</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+				
+		<field map-id="SiacTBilElemFin_CapitoloUscitaGestione_ModelDetail">
+			<a>capitoloUscitaGestione</a>
+			<b>siacRMovgestBilElems[0].siacTBilElem</b>
+		</field>
+		
+  	</mapping>
    	
 	<mapping map-id="SiacTMovgest_Accertamento">
 		<class-a>it.csi.siac.siacfinser.model.Accertamento</class-a>
@@ -49,7 +135,7 @@ SPDX-License-Identifier: EUPL-1.2
 		</field>
 		
 		<field>
-			<a>numero</a>
+			<a>numeroBigDecimal</a>
 			<b>movgestNumero</b>
 		</field>
 		
@@ -70,13 +156,100 @@ SPDX-License-Identifier: EUPL-1.2
 				
   	</mapping>  	  	
 
+	<mapping map-id="SiacTMovgest_Accertamento_Bilancio">
+		<class-a>it.csi.siac.siacfinser.model.Accertamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin</class-b>
+
+		<field>
+			<a>annoMovimento</a>
+			<b>movgestAnno</b>
+		</field>
+		
+		<field>
+			<a>numeroBigDecimal</a>
+			<b>movgestNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movgestDesc</b>
+		</field>
+
+		<field>
+			<a>tipoMovimento</a>
+			<b>siacDMovgestTipo.movgestTipoCode</b>
+		</field>
+		
+		<field>
+			<a>tipoMovimentoDesc</a>
+			<b>siacDMovgestTipo.movgestTipoDesc</b>
+		</field>		
+		
+		<field>
+			<a>bilancio.uid</a>
+			<b>siacTBil.bilId</b>
+		</field>
+		
+		<field>
+			<a>bilancio.anno</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+				
+  	</mapping>  	  	
+
+	<mapping map-id="SiacTMovgest_Accertamento_Capitolo_Bilancio">
+		<class-a>it.csi.siac.siacfinser.model.Accertamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin</class-b>
+
+		<field>
+			<a>annoMovimento</a>
+			<b>movgestAnno</b>
+		</field>
+		
+		<field>
+			<a>numeroBigDecimal</a>
+			<b>movgestNumero</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>movgestDesc</b>
+		</field>
+
+		<field>
+			<a>tipoMovimento</a>
+			<b>siacDMovgestTipo.movgestTipoCode</b>
+		</field>
+		
+		<field>
+			<a>tipoMovimentoDesc</a>
+			<b>siacDMovgestTipo.movgestTipoDesc</b>
+		</field>		
+		
+		<field>
+			<a>bilancio.uid</a>
+			<b>siacTBil.bilId</b>
+		</field>
+		
+		<field>
+			<a>bilancio.anno</a>
+			<b>siacTBil.siacTPeriodo.anno</b>
+		</field>
+		
+		<field map-id="SiacTBilElemFin_CapitoloEntrataGestione_ModelDetail">
+			<a>capitoloEntrataGestione</a>
+			<b>siacRMovgestBilElems[0].siacTBilElem</b>
+		</field>
+				
+  	</mapping>  	  	
+
 
     <mapping map-id="SiacTMovgestTs_SubAccertamento">
 		<class-a>it.csi.siac.siacfinser.model.SubAccertamento</class-a>
 		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin</class-b>
 
 		<field>
-			<a>numero</a>
+			<a>numeroBigDecimal</a>
 			<b>movgestTsCode</b>
 		</field>
 
@@ -96,7 +269,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin</class-b>
 
 		<field>
-			<a>numero</a>
+			<a>numeroBigDecimal</a>
 			<b>movgestTsCode</b>
 		</field>
 
@@ -159,6 +332,11 @@ SPDX-License-Identifier: EUPL-1.2
 			<a>dataAnnullamento</a>
 			<b>dataCancellazione</b>
 		</field>
+		
+		<field>
+			<a>elaboraRorReanno</a>
+			<b>elabRorReanno</b>
+		</field>
 
 		<field>
 			<a>attoAmministrativoAnno</a>
@@ -210,6 +388,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<a>utenteModifica</a>
 			<b>loginOperazione</b>
 		</field>
+		
 
 		<field>
 			<a>utenteCancellazione</a>
@@ -219,6 +398,11 @@ SPDX-License-Identifier: EUPL-1.2
 		<field>
 			<a>dataAnnullamento</a>
 			<b>dataCancellazione</b>
+		</field>
+		
+		<field>
+			<a>elaboraRorReanno</a>
+			<b>elabRorReanno</b>
 		</field>
 
 		<field>
@@ -238,6 +422,37 @@ SPDX-License-Identifier: EUPL-1.2
 		
   	</mapping>
   	
+  	<!-- SIAC-7779 -->
+  	<mapping map-id="SiacRMovgestTsFin_VincoloImpegno">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.VincoloImpegno</class-a>
+  		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin</class-b>
+  		<field>
+  			<a>avanzoVincolo</a>
+  			<b>siacTAvanzovincoloFin</b>
+  		</field>
+  		<field>
+  			<a>accertamento</a>
+  			<b>siacTMovgestTsA.siacTMovgest</b>
+  		</field>
+  		<field>
+  			<a>importo</a>
+  			<b>movgestTsImporto</b>
+  		</field>
+  	</mapping>
+
+  	<mapping map-id="SiacRMovgestTsFin_VincoloAccertamento">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.VincoloAccertamento</class-a>
+  		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin</class-b>
+  		<field>
+  			<a>impegno</a>
+  			<b>siacTMovgestTsB.siacTMovgest</b>
+  		</field>
+  		<field>
+  			<a>importo</a>
+  			<b>movgestTsImporto</b>
+  		</field>
+  	</mapping>
+  	<!-- SIAC-7779 -->
   	
   	<mapping map-id="SiacTAvanzovincoloFin_Avanzovincolo">
 		<class-a>it.csi.siac.siacfinser.model.Avanzovincolo</class-a>
@@ -260,10 +475,5 @@ SPDX-License-Identifier: EUPL-1.2
 <!-- 		</field> -->
 		
   	</mapping>
-  	
-  	
-  	
-  	
-  	
-  	
+
 </mappings>

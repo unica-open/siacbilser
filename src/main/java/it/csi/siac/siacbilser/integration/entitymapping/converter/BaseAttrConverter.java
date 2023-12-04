@@ -25,8 +25,8 @@ import it.csi.siac.siacbilser.integration.entity.SiacTAttr;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.handler.SiacTAttrHandler;
-import it.csi.siac.siaccommon.util.CoreUtils;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommon.util.CoreUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
 
 /**
@@ -36,7 +36,7 @@ public abstract class BaseAttrConverter<A, B extends SiacTBase, R extends SiacRA
 	
 	@Autowired
 	private EnumEntityFactory eef;
-	protected final LogUtil log = new LogUtil(this.getClass());
+	protected final LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private static final ThreadLocal<DateFormat> TL_DATE_FORMAT = new ThreadLocal<DateFormat>() {
 		@Override
@@ -184,7 +184,7 @@ public abstract class BaseAttrConverter<A, B extends SiacTBase, R extends SiacRA
 		final String methodName = "setAttrFiledValue";
 		
 		if (tipoAttrEnum.getSiacTAttrHandlerType() != null) {
-			SiacTAttrHandler siacTAttrHandler = CoreUtils.instantiateNewClass(tipoAttrEnum.getSiacTAttrHandlerType());
+			SiacTAttrHandler siacTAttrHandler = CoreUtil.instantiateNewClass(tipoAttrEnum.getSiacTAttrHandlerType());
 			
 			fieldValue = siacTAttrHandler.handleAttrValue(fieldValue);
 		}

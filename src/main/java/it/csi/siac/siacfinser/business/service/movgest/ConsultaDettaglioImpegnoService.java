@@ -22,7 +22,7 @@ import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.ConsultaDettaglioImpegno;
 import it.csi.siac.siacfinser.frontend.webservice.msg.ConsultaDettaglioImpegnoResponse;
 import it.csi.siac.siacfinser.integration.dad.CommonDad;
-import it.csi.siac.siacfinser.model.ImpegnoDettaglioImporti;
+import it.csi.siac.siacfinser.model.DettaglioImportiImpegno;
 
 @Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -60,7 +60,7 @@ public class ConsultaDettaglioImpegnoService extends AbstractBaseService<Consult
 		
 		//DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, richiedente, Operazione.RICERCA, annoBilancio);
 			
-		 ImpegnoDettaglioImporti datiConsulta = impegnoOttimizzatoDad.consultaDettaglioImpegno(richiedente, ente, annoBilancioString, annoMovimento, numeroMovimento,numSub);
+		 DettaglioImportiImpegno datiConsulta = impegnoOttimizzatoDad.consultaDettaglioImpegno(richiedente, ente, annoBilancioString, annoMovimento, numeroMovimento,numSub);
 		
 		res.setImpegnoDettaglioImporti(datiConsulta);
 		res.setEsito(Esito.SUCCESSO);

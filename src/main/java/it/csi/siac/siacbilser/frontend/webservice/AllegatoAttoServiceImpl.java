@@ -35,6 +35,7 @@ import it.csi.siac.siacbilser.business.service.allegatoatto.InserisceElencoConDo
 import it.csi.siac.siacbilser.business.service.allegatoatto.InserisceElencoService;
 import it.csi.siac.siacbilser.business.service.allegatoatto.InviaAllegatoAttoAsyncService;
 import it.csi.siac.siacbilser.business.service.allegatoatto.InviaAllegatoAttoService;
+import it.csi.siac.siacbilser.business.service.allegatoatto.LeggiAllegatoAttoChecklistService;
 import it.csi.siac.siacbilser.business.service.allegatoatto.RiCompletaAllegatoAttoPerElenchiAsyncService;
 import it.csi.siac.siacbilser.business.service.allegatoatto.RiCompletaAllegatoAttoPerElenchiService;
 import it.csi.siac.siacbilser.business.service.allegatoatto.RicercaAllegatoAttoService;
@@ -93,6 +94,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceAllegatoAtto;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceAllegatoAttoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.InserisceElencoResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiAllegatoAttoChecklist;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiAllegatoAttoChecklistResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RiCompletaAllegatoAttoPerElenchi;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RiCompletaAllegatoAttoPerElenchiResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaAllegatoAtto;
@@ -339,5 +342,11 @@ public class AllegatoAttoServiceImpl implements AllegatoAttoService {
 	@Override
 	public ControlloImportiImpegniVincolatiResponse controlloImportiImpegniVincolati(ControlloImportiImpegniVincolati parameters) {
 		return BaseServiceExecutor.execute(appCtx, ControlloImportiImpegniVincolatiService.class, parameters);
+	}
+	
+	// SIAC-8804
+	@Override
+	public LeggiAllegatoAttoChecklistResponse leggiAllegatoAttoChecklist(LeggiAllegatoAttoChecklist parameters) {
+		return BaseServiceExecutor.execute(appCtx, LeggiAllegatoAttoChecklistService.class, parameters);
 	}
 }

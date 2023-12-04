@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.sirfelser.frontend.webservice.msg.inviofatturapa.services.sirfelservice.InformazioneType;
 import it.csi.siac.sirfelser.model.FatturaFEL;
@@ -20,7 +20,7 @@ import it.csi.siac.sirfelser.model.ProtocolloFEL;
 
 public final class InvioFatturaPAProtocolloFELFactory {
 	
-	private static final LogUtil LOG = new LogUtil(InvioFatturaPAProtocolloFELFactory.class);
+	private static final LogSrvUtil LOG = new LogSrvUtil(InvioFatturaPAProtocolloFELFactory.class);
 	
 	/** Costruttore vuoto privato per non permettere l'instanziazione */
 	private InvioFatturaPAProtocolloFELFactory() {

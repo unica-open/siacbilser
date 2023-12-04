@@ -17,12 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.integration.dao.componenteimporticapitolo.ComponenteImportiCapitoloDao;
 import it.csi.siac.siacbilser.integration.dao.componenteimporticapitolo.SiacTBilElemDetCompRepository;
+import it.csi.siac.siacbilser.integration.dao.componenteimporticapitolo.SiacTBilElemDetVarCompRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemDetCompTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacTBilElemDetComp;
+import it.csi.siac.siacbilser.integration.entity.SiacTBilElemDetVarComp;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
+import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitoloModelDetail;
+import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitolo;
+import it.csi.siac.siacbilser.model.TipoComponenteImportiCapitolo;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
+import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 /**
  * The Class ComponenteImportiCapitoloDad.
@@ -32,8 +39,13 @@ import it.csi.siac.siacbilser.model.ComponenteImportiCapitoloModelDetail;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ComponenteImportiCapitoloDad extends ExtendedBaseDadImpl {
 
+	private static final Integer NUM_ELEM_DET_COMP_DEF_STESSO_TIPO_ASSOCIABILI_A_CAPITOLO = Integer.valueOf(3);
+	
 	@Autowired private ComponenteImportiCapitoloDao componenteImportiCapitoloDao;
 	@Autowired private SiacTBilElemDetCompRepository siacTBilElemDetCompRepository;
+	@Autowired private SiacTBilElemDetVarCompRepository siacTBilElemDetVarCompRepository;
+	
+	
 	
 	/**
 	 * Inserimento della componente importi capitolo
@@ -58,7 +70,7 @@ public class ComponenteImportiCapitoloDad extends ExtendedBaseDadImpl {
 	 * @return la componente importi capitolo
 	 */
 	public ComponenteImportiCapitolo findComponenteImportiCapitoloByUid(Integer uid, ComponenteImportiCapitoloModelDetail... modelDetails) {
-		SiacTBilElemDetComp siacTBilElemDetComp = componenteImportiCapitoloDao.findById(uid);
+		SiacTBilElemDetComp siacTBilElemDetComp = siacTBilElemDetCompRepository.findComponenteLogicamenteValidaById(uid);
 		return mapNotNull(siacTBilElemDetComp, ComponenteImportiCapitolo.class, BilMapId.SiacTBilElemDetComp_ComponenteImportiCapitolo_ModelDetail, Converters.byModelDetails(modelDetails));
 	}
 	/**
@@ -197,6 +209,59 @@ public class ComponenteImportiCapitoloDad extends ExtendedBaseDadImpl {
 		for(SiacTBilElemDetComp stbedc : siacTBilElemDetComps) {
 			stbedc.setDataCancellazioneIfNotSet(now);
 		}
+	}
+	
+	/**
+	 * Carica componente associata.
+	 *
+	 * @param capitolo the capitolo
+	 * @param componente the componente
+	 * @return the componente importi capitolo
+	 */ 
+	public ComponenteImportiCapitolo caricaComponenteConStessoTipoCollegataAlCapitoloEAVariazioneDefONoVariazione(Capitolo<?, ?> capitolo, ComponenteImportiCapitolo componente) {
+		List<SiacTBilElemDetComp> siacComps = siacTBilElemDetCompRepository.findComponenteOnElemIdWithSameTipo(capitolo.getUid(), componente.getUid());
+		if(siacComps == null || siacComps.isEmpty() || siacComps.get(0) == null) {
+			return null;
+		}
+		
+		if(siacComps.size() > 1 ) {
+			throw new BusinessException(ErroreCore.ERRORE_DI_SISTEMA.getErrore("Sono presenti piu' record definitivi per la componente " + componente.getUid() +" del capitolo " + capitolo.getUid( ) + "su base dati."));
+		}
+		return mapNotNull(siacComps.get(0), ComponenteImportiCapitolo.class, BilMapId.SiacTBilElemDetComp_ComponenteImportiCapitolo);
+	}
+	
+	/**
+	 * Checks for more than one componente associata.
+	 *
+	 * @param cp the cp
+	 * @param tc the tc
+	 * @return true, if successful
+	 */
+	public boolean hasComponentiDefinitiveEProvvisorieAssociate(Capitolo<?, ?> cp, TipoComponenteImportiCapitolo tc) {
+		Long count = siacTBilElemDetCompRepository.countSiacTBilElemDetCompByElemIdAndDetCompTipoId(cp.getUid(), tc.getUid());
+		return count != null && count.intValue() > NUM_ELEM_DET_COMP_DEF_STESSO_TIPO_ASSOCIABILI_A_CAPITOLO.intValue();
+		
+	}
+	
+	/**
+	 * Sposta il dettaglio di una variazione della compoente dalla componente ad esso associata ad una nuova componente
+	 *
+	 * @param dettaglio the dettaglio
+	 * @param componenteNuova the componente
+	 */
+	//SIAC-7688
+	public void spostaDettaglioVariazioneSuComponente(DettaglioVariazioneComponenteImportoCapitolo dettaglio, ComponenteImportiCapitolo componenteNuova) {
+		SiacTBilElemDetVarComp siacTBilElemDetVarComp =  siacTBilElemDetVarCompRepository.findOne(dettaglio.getUid());
+		SiacTBilElemDetComp siacTBilElemDetComp = buildSiacTBilElemDetComp(componenteNuova);
+		
+		siacTBilElemDetVarComp.setSiacTBilElemDetComp(siacTBilElemDetComp);
+		siacTBilElemDetVarCompRepository.saveAndFlush(siacTBilElemDetVarComp);
+		
+		SiacTBilElemDetComp siacTBilElemDetCompOld = siacTBilElemDetCompRepository.findOne(dettaglio.getComponenteImportiCapitolo().getUid());
+		siacTBilElemDetCompOld.setDataCancellazioneIfNotSet(new Date());
+		siacTBilElemDetCompOld.setLoginOperazione(loginOperazione);
+		
+		dettaglio.setComponenteImportiCapitolo(componenteNuova);
 	}
 	
 }

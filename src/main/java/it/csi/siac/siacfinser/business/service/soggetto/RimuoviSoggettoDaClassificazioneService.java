@@ -14,7 +14,7 @@ import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamErr
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RimuoviSoggettoDaClassificazione;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RimuoviSoggettoDaClassificazioneResponse;
 import it.csi.siac.siacfinser.integration.dad.SoggettoFinDad;
@@ -53,7 +53,7 @@ public class RimuoviSoggettoDaClassificazioneService extends AbstractSoggettoSer
 		String codiceAmbito = req.getCodificaAmbito();
 
 		if (org.apache.commons.lang.StringUtils.isEmpty(codiceAmbito))
-			codiceAmbito = Constanti.AMBITO_FIN;
+			codiceAmbito = CostantiFin.AMBITO_FIN;
 		
 		//1. Inizializzo dati operazione:
 		DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.MODIFICA, null);

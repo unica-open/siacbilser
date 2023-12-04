@@ -19,8 +19,9 @@ import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.business.service.liquidazione.RicercaEstesaLiquidazioniFinService;
 import it.csi.siac.siacfinser.model.liquidazione.LiquidazioneAtti;
-import it.csi.siac.siacintegser.business.service.ServiceHelper;
 import it.csi.siac.siacintegser.business.service.base.IntegBaseService;
+import it.csi.siac.siacintegser.business.service.helper.ProvvedimentoServiceHelper;
+import it.csi.siac.siacintegser.business.service.helper.StrutturaAmministrativoContabileServiceHelper;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.liquidazione.RicercaEstesaLiquidazioni;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.liquidazione.RicercaEstesaLiquidazioniResponse;
@@ -32,8 +33,8 @@ public class RicercaEstesaLiquidazioniService extends
 		IntegBaseService<RicercaEstesaLiquidazioni, RicercaEstesaLiquidazioniResponse>
 {
 
-	@Autowired
-	ServiceHelper serviceHelper;
+	@Autowired private ProvvedimentoServiceHelper provvedimentoServiceHelper;
+	@Autowired private StrutturaAmministrativoContabileServiceHelper strutturaAmministrativoContabileServiceHelper;
 	
 	
 	@Override
@@ -49,7 +50,7 @@ public class RicercaEstesaLiquidazioniService extends
 		AttoAmministrativo provvedimento = new AttoAmministrativo();
 		// Preparo il provvedimento da passare poi alla request del siac che si ricaverà l'uid
 		if(!StringUtils.isEmpty(ireq.getCodiceStruttura()) && !StringUtils.isEmpty(ireq.getCodiceTipoStruttura())){
-			StrutturaAmministrativoContabile sac = serviceHelper.ricercaStrutturaByCodice(ente,richiedente,ireq.getCodiceStruttura(), ireq.getCodiceTipoStruttura());
+			StrutturaAmministrativoContabile sac = strutturaAmministrativoContabileServiceHelper.findStrutturaAmministrativoContabileByCodice(ente,richiedente,ireq.getCodiceStruttura(), ireq.getCodiceTipoStruttura());
 			if(sac ==null){
 				addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "il codice e il tipo della struttura non esistono");
 				return ires;
@@ -57,7 +58,7 @@ public class RicercaEstesaLiquidazioniService extends
 			
 		}
 		
-		TipoAtto tipoAtto = serviceHelper.ricercaTipoProvvedimentoByCodice(ente, richiedente, ireq.getCodiceTipoProvvedimento());
+		TipoAtto tipoAtto = provvedimentoServiceHelper.findTipoAttoByCodice(ente, richiedente, ireq.getCodiceTipoProvvedimento());
 		if(tipoAtto ==null){
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "il codice del provvedimento non esiste");
 			return ires;
@@ -66,7 +67,7 @@ public class RicercaEstesaLiquidazioniService extends
 		
 		it.csi.siac.siacfinser.frontend.webservice.msg.RicercaEstesaLiquidazioniResponse res = appCtx.getBean(RicercaEstesaLiquidazioniFinService.class).executeService(req);
 		
-		checkBusinessServiceResponse(res);
+		checkServiceResponse(res);
 		
 		if(res.getElencoLiquidazioni()==null || res.getElencoLiquidazioni().isEmpty()){
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, " nessun filtro di ricerca soddisfatto");
@@ -88,26 +89,26 @@ public class RicercaEstesaLiquidazioniService extends
 	protected void checkServiceParameters(RicercaEstesaLiquidazioni ireq) throws ServiceParamError {		
 		
 		// controllo parametri in input
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || ireq.getAnnoProvvedimento() != null ||
 				ireq.getCodiceTipoProvvedimento() == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno provvedimento"));
 
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() != null || ireq.getAnnoProvvedimento() == null || 
 				ireq.getCodiceTipoProvvedimento()  == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || ireq.getAnnoProvvedimento() == null || 
 				ireq.getCodiceTipoProvvedimento()  != null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getCodiceStruttura() == null || ireq.getCodiceTipoStruttura() != null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo struttura"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getCodiceStruttura() != null || ireq.getCodiceTipoStruttura() == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice struttura"));	
 	}

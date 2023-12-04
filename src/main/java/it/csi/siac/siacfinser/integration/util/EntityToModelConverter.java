@@ -19,13 +19,13 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.Progetto;
 import it.csi.siac.siacbilser.model.TipoProgetto;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dad.datacontainer.DisponibilitaMovimentoGestioneContainer;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneModificheMovimentoGestioneDto;
@@ -133,7 +133,7 @@ import it.csi.siac.siacfinser.model.soggetto.sedesecondaria.SedeSecondariaSogget
 
 public class EntityToModelConverter {
 	
-	protected static transient LogUtil log = new LogUtil(EntityToModelConverter.class);
+	protected static transient LogSrvUtil log = new LogSrvUtil(EntityToModelConverter.class);
 	
 	public static Soggetto soggettoEntityToSoggettoModel(SiacTSoggettoFin dto, Soggetto soggetto) {
 		List<SiacTSoggettoFin> dtos = new ArrayList<SiacTSoggettoFin>();
@@ -167,7 +167,7 @@ public class EntityToModelConverter {
 					
 					
 					// soggetto CF ESTERO
-					if(!StringUtils.isEmpty(siacTSoggettoMod.getCodiceFiscaleEstero())){
+					if(!StringUtilsFin.isEmpty(siacTSoggettoMod.getCodiceFiscaleEstero())){
 						soggetto.setResidenteEstero(true);
 					}
 					
@@ -213,7 +213,7 @@ public class EntityToModelConverter {
 								soggetto.setCognome(siacTPersonaFisicaMod.getCognome());
 								soggetto.setNome(siacTPersonaFisicaMod.getNome());
 								
-								if(Constanti.SESSO_M.equalsIgnoreCase(siacTPersonaFisicaMod.getSesso())){
+								if(CostantiFin.SESSO_M.equalsIgnoreCase(siacTPersonaFisicaMod.getSesso())){
 									soggetto.setSesso(Sesso.MASCHIO);
 									soggetto.setSessoStringa(Sesso.MASCHIO.toString());
 								}else{
@@ -310,7 +310,7 @@ public class EntityToModelConverter {
 							}
 							if(trovatoValido!=null){
 								String code = trovatoValido.getSiacDSoggettoStato().getSoggettoStatoCode();
-								StatoOperativoAnagrafica statoOpAnag = Constanti.statoOperativoAnagraficaStringToEnum(code);
+								StatoOperativoAnagrafica statoOpAnag = CostantiFin.statoOperativoAnagraficaStringToEnum(code);
 								soggettoIt.setStatoOperativo(statoOpAnag);
 								soggettoIt.setIdStatoOperativoAnagrafica(trovatoValido.getSiacDSoggettoStato().getSoggettoStatoId());
 								soggettoIt.setNotaStatoOperativo(trovatoValido.getNotaOperazione());
@@ -319,7 +319,7 @@ public class EntityToModelConverter {
 						}
 						if(trovatoValido!=null){
 							String code = trovatoValido.getSiacDSoggettoStato().getSoggettoStatoCode();
-							StatoOperativoAnagrafica statoOpAnag = Constanti.statoOperativoAnagraficaStringToEnum(code);
+							StatoOperativoAnagrafica statoOpAnag = CostantiFin.statoOperativoAnagraficaStringToEnum(code);
 							soggettoIt.setStatoOperativo(statoOpAnag);
 							soggettoIt.setIdStatoOperativoAnagrafica(trovatoValido.getSiacDSoggettoStato().getSoggettoStatoId());
 							soggettoIt.setNotaStatoOperativo(trovatoValido.getNotaOperazione());
@@ -413,8 +413,8 @@ public class EntityToModelConverter {
 						
 						for(SiacRSoggettoRelazFin itRelazDa : listaRelazioniDa){
 							if(itRelazDa != null && 
-							   itRelazDa.getDataFineValidita() == null && 
-							   isLegameSoggetto(itRelazDa.getSiacDRelazTipo().getRelazTipoCode())){
+							   itRelazDa.getDataFineValidita() == null && itRelazDa.getDataCancellazione() == null
+							   && isLegameSoggetto(itRelazDa.getSiacDRelazTipo().getRelazTipoCode())){
 								
 								soggettosIdDa.add(itRelazDa.getSiacTSoggetto2().getUid());
 								legamisIdDa.add(itRelazDa.getSoggettoRelazId());
@@ -441,8 +441,8 @@ public class EntityToModelConverter {
 						
 						for(SiacRSoggettoRelazFin itRelazA : listaRelazioniA){
 							if(itRelazA != null && 
-							   itRelazA.getDataFineValidita() == null &&
-							   isLegameSoggetto(itRelazA.getSiacDRelazTipo().getRelazTipoCode())){
+							   itRelazA.getDataFineValidita() == null && itRelazA.getDataCancellazione() == null
+							   && isLegameSoggetto(itRelazA.getSiacDRelazTipo().getRelazTipoCode())){
 
 								soggettosIdA.add(itRelazA.getSiacTSoggetto1().getUid());
 								legamisIdA.add(itRelazA.getSoggettoRelazId());
@@ -469,7 +469,7 @@ public class EntityToModelConverter {
 								soggettoIt.setCognome(siacTPersonaFisica.getCognome());
 								soggettoIt.setNome(siacTPersonaFisica.getNome());
 								
-								if(Constanti.SESSO_M.equalsIgnoreCase(siacTPersonaFisica.getSesso())){
+								if(CostantiFin.SESSO_M.equalsIgnoreCase(siacTPersonaFisica.getSesso())){
 									soggettoIt.setSesso(Sesso.MASCHIO);
 									soggettoIt.setSessoStringa(Sesso.MASCHIO.toString());
 								}else{
@@ -539,7 +539,7 @@ public class EntityToModelConverter {
 		
 		for (SiacRSoggettoStatoFin rss : listaRSogStato) {
 			if (StatoOperativoAnagrafica.SOSPESO.equals(
-					Constanti.statoOperativoAnagraficaStringToEnum(rss.getSiacDSoggettoStato().getSoggettoStatoCode()))
+					CostantiFin.statoOperativoAnagraficaStringToEnum(rss.getSiacDSoggettoStato().getSoggettoStatoCode()))
 					&& rss.getUid() > uid && org.apache.commons.lang.StringUtils.isNotBlank(rss.getNotaOperazione())) {
 				nota = rss.getNotaOperazione();
 				uid = rss.getUid();
@@ -557,7 +557,7 @@ public class EntityToModelConverter {
 		
 		for (SiacRSoggettoStatoFin rss : listaRSogStato) {
 			if (StatoOperativoAnagrafica.BLOCCATO.equals(
-					Constanti.statoOperativoAnagraficaStringToEnum(rss.getSiacDSoggettoStato().getSoggettoStatoCode()))
+					CostantiFin.statoOperativoAnagraficaStringToEnum(rss.getSiacDSoggettoStato().getSoggettoStatoCode()))
 					&& rss.getUid() > uid && org.apache.commons.lang.StringUtils.isNotBlank(rss.getNotaOperazione())) {
 				nota = rss.getNotaOperazione();
 				uid = rss.getUid();
@@ -580,9 +580,9 @@ public class EntityToModelConverter {
 			if (rsa.isEntitaValida()) {
 				SiacTAttrFin attr = rsa.getSiacTAttr();
 				if (attr != null)
-					if (Constanti.T_ATTR_CODE_MATRICOLA.equals(attr.getAttrCode()))
+					if (CostantiFin.T_ATTR_CODE_MATRICOLA.equals(attr.getAttrCode()))
 						it.setMatricola(rsa.getTesto());
-					else if (Constanti.T_ATTR_CODE_NOTE_SOGGETTO.equals(attr.getAttrCode()))
+					else if (CostantiFin.T_ATTR_CODE_NOTE_SOGGETTO.equals(attr.getAttrCode()))
 						it.setNote(rsa.getTesto());
 			}
 	}
@@ -611,7 +611,7 @@ public class EntityToModelConverter {
 							}
 							if(trovatoValido!=null){
 								String code = trovatoValido.getSiacDSoggettoStato().getSoggettoStatoCode();
-								StatoOperativoAnagrafica statoOpAnag = Constanti.statoOperativoAnagraficaStringToEnum(code);
+								StatoOperativoAnagrafica statoOpAnag = CostantiFin.statoOperativoAnagraficaStringToEnum(code);
 								it.setStatoOperativo(statoOpAnag);
 								it.setIdStatoOperativoAnagrafica(trovatoValido.getSiacDSoggettoStato().getSoggettoStatoId());
 								it.setDataStato(trovatoValido.getDataInizioValidita());
@@ -619,7 +619,7 @@ public class EntityToModelConverter {
 						}
 						if(trovatoValido!=null){
 							String code = trovatoValido.getSiacDSoggettoStato().getSoggettoStatoCode();
-							StatoOperativoAnagrafica statoOpAnag = Constanti.statoOperativoAnagraficaStringToEnum(code);
+							StatoOperativoAnagrafica statoOpAnag = CostantiFin.statoOperativoAnagraficaStringToEnum(code);
 							it.setStatoOperativo(statoOpAnag);
 							it.setIdStatoOperativoAnagrafica(trovatoValido.getSiacDSoggettoStato().getSoggettoStatoId());
 							it.setDataStato(trovatoValido.getDataInizioValidita());
@@ -764,7 +764,7 @@ public class EntityToModelConverter {
 								it.setCognome(siacTPersonaFisica.getCognome());
 								it.setNome(siacTPersonaFisica.getNome());
 								
-								if(Constanti.SESSO_M.equalsIgnoreCase(siacTPersonaFisica.getSesso())){
+								if(CostantiFin.SESSO_M.equalsIgnoreCase(siacTPersonaFisica.getSesso())){
 									it.setSesso(Sesso.MASCHIO);
 									it.setSessoStringa(Sesso.MASCHIO.toString());
 								}else{
@@ -825,7 +825,6 @@ public class EntityToModelConverter {
 			comuneNascita.setDescrizione(siactcomune.getComuneDesc());
 			comuneNascita.setCodiceBelfiore(siactcomune.getComuneDesc());
 			comuneNascita.setCodiceIstat(siactcomune.getComuneIstatCode());
-			comuneNascita.setComuneIstatCode(siactcomune.getComuneIstatCode());
 			comuneNascita.setUid(siactcomune.getUid());
 			SiacRComuneProvinciaFin provincia = findValido(siactcomune.getSiacRComuneProvincias());
 			if(provincia!=null && provincia.getSiacTProvincia()!=null){
@@ -1300,11 +1299,11 @@ public class EntityToModelConverter {
 				if(idIterato==idConfronto){
 					
 					//1. PRINCIPALE
-					it.setPrincipale(Boolean.toString(itsiac.getPrincipale()!=null && itsiac.getPrincipale().equalsIgnoreCase(Constanti.TRUE)));
+					it.setPrincipale(Boolean.toString(itsiac.getPrincipale()!=null && itsiac.getPrincipale().equalsIgnoreCase(CostantiFin.TRUE)));
 					// END PRINCIPALE
 					
 					//2. AVVISO
-					it.setAvviso(Boolean.toString(itsiac.getAvviso()!=null && itsiac.getAvviso().equalsIgnoreCase(Constanti.TRUE))); 
+					it.setAvviso(Boolean.toString(itsiac.getAvviso()!=null && itsiac.getAvviso().equalsIgnoreCase(CostantiFin.TRUE))); 
 					// END AVVISO
 					
 					//3. TIPO INDIRIZZO
@@ -1344,21 +1343,9 @@ public class EntityToModelConverter {
 		//codice comune
 		if(siacTComune!=null){
 			
-			/*
+
 			
-			// --- PATH PER SIAC-5153: introduco controllo su comune istat
-			// code diverso da null per i comuni stranieri
-			if(siacTComune.getComuneIstatCode()!=null){
-				//cambio idComune con il codice perche' il front-end deve lavorare per codice:
-				it.setIdComune(siacTComune.getComuneIstatCode());
-			} else {
-				//straniero non ha codice istat
-				it.setIdComune(siacTComune.getComuneId().toString());
-			}
-			
-			*/
-			
-			it.setIdComune(siacTComune.getComuneIstatCode());
+			it.setCodiceIstatComune(siacTComune.getComuneIstatCode());
 			
 		}
 	}
@@ -1372,11 +1359,11 @@ public class EntityToModelConverter {
 				if(idIterato==idConfronto){
 					
 					//1. PRINCIPALE
-					it.setPrincipale(Boolean.toString(itsiac.getPrincipale()!=null && itsiac.getPrincipale().equalsIgnoreCase(Constanti.TRUE)));
+					it.setPrincipale(Boolean.toString(itsiac.getPrincipale()!=null && itsiac.getPrincipale().equalsIgnoreCase(CostantiFin.TRUE)));
 					// END PRINCIPALE
 					
 					//2. AVVISO
-					it.setAvviso(Boolean.toString(itsiac.getAvviso()!=null && itsiac.getAvviso().equalsIgnoreCase(Constanti.TRUE))); 
+					it.setAvviso(Boolean.toString(itsiac.getAvviso()!=null && itsiac.getAvviso().equalsIgnoreCase(CostantiFin.TRUE))); 
 					// END AVVISO
 					
 					//3. TIPO INDIRIZZO
@@ -1772,20 +1759,20 @@ public class EntityToModelConverter {
 			SedeSecondariaSoggetto sedeSecondariaSoggetto,OttimizzazioneSoggettoDto ottimizzazioneSoggetto) {
 		List<SiacTSoggettoFin> dtos = new ArrayList<SiacTSoggettoFin>();
 		dtos.add(dto);
-		List<SedeSecondariaSoggetto> soggettos = new ArrayList<SedeSecondariaSoggetto>();
-		soggettos.add(sedeSecondariaSoggetto);
+		List<SedeSecondariaSoggetto> sediSecondarie = new ArrayList<SedeSecondariaSoggetto>();
+		sediSecondarie.add(sedeSecondariaSoggetto);
 		Map<Integer, Boolean> mappaPerModifica = new HashMap<Integer, Boolean>();
 		mappaPerModifica.put(sedeSecondariaSoggetto.getUid(), false);
-		soggettos = soggettoEntityToSedeSecondariaSoggettoModel(dtos, soggettos, mappaPerModifica, false,ottimizzazioneSoggetto);
-		return soggettos.get(0);
+		sediSecondarie = soggettoEntityToSedeSecondariaSoggettoModel(dtos, sediSecondarie, mappaPerModifica, false,ottimizzazioneSoggetto);
+		return sediSecondarie.get(0);
 	}
 	
 	public static List<SedeSecondariaSoggetto> soggettoEntityToSedeSecondariaSoggettoModel(List<SiacTSoggettoFin> listaSoggetti, List<SedeSecondariaSoggetto> listaSedi,
 			Map<Integer, Boolean> mappaSediModificate, boolean isIncludeModif,OttimizzazioneSoggettoDto ottimizzazioneSoggetto) {
-		for(SedeSecondariaSoggetto it : listaSedi) {
-			int idIterato = it.getUid();
-			for(SiacTSoggettoFin itsiac : listaSoggetti) {
-				int idConfronto = itsiac.getSoggettoId();
+		for(SedeSecondariaSoggetto sedeSecondariaSoggetto : listaSedi) {
+			int idIterato = sedeSecondariaSoggetto.getUid();
+			for(SiacTSoggettoFin siacTSoggettoFin : listaSoggetti) {
+				int idConfronto = siacTSoggettoFin.getSoggettoId();
 				if(idIterato == idConfronto){
 					// 1. INDIRIZZO
 					List<SiacTIndirizzoSoggettoFin> listaIndirizzi = null;
@@ -1795,7 +1782,7 @@ public class EntityToModelConverter {
 						listaIndirizzi = ottimizzazioneSoggetto.filtraSiacTIndirizzoSoggettoBySoggettoId(idIterato);
 					} else {
 						//RAMO CLASSICO
-						listaIndirizzi =  itsiac.getSiacTIndirizzoSoggettos();
+						listaIndirizzi =  siacTSoggettoFin.getSiacTIndirizzoSoggettos();
 					}
 					
 					
@@ -1847,7 +1834,7 @@ public class EntityToModelConverter {
 							//
 								
 							
-							it.setIndirizzoSoggettoPrincipale(supportIndirizzo);
+							sedeSecondariaSoggetto.setIndirizzoSoggettoPrincipale(supportIndirizzo);
 						}
 					}
 					// END INDIRIZZO
@@ -1859,7 +1846,7 @@ public class EntityToModelConverter {
 						listaRSogStato = ottimizzazioneSoggetto.filtraSiacRSoggettoStatoBySoggettoId(idIterato);
 					} else {
 						//RAMO CLASSICO
-						listaRSogStato =  itsiac.getSiacRSoggettoStatos();
+						listaRSogStato =  siacTSoggettoFin.getSiacRSoggettoStatos();
 					}
 					
 					if(listaRSogStato!=null && listaRSogStato.size()>0){
@@ -1872,10 +1859,10 @@ public class EntityToModelConverter {
 						}
 						if(trovatoValido!=null){
 							String code = trovatoValido.getSiacDSoggettoStato().getSoggettoStatoCode();
-							StatoOperativoSedeSecondaria statoOpSedeSecondaria = Constanti.statoOperativoSediSecondarieStringToEnum(code);
-							it.setStatoOperativoSedeSecondaria(statoOpSedeSecondaria);
-							it.setIdStatoOperativoSedeSecondaria(trovatoValido.getSiacDSoggettoStato().getSoggettoStatoId());
-							it.setDescrizioneStatoOperativoSedeSecondaria(trovatoValido.getSiacDSoggettoStato().getSoggettoStatoDesc());
+							StatoOperativoSedeSecondaria statoOpSedeSecondaria = CostantiFin.statoOperativoSediSecondarieStringToEnum(code);
+							sedeSecondariaSoggetto.setStatoOperativoSedeSecondaria(statoOpSedeSecondaria);
+							sedeSecondariaSoggetto.setIdStatoOperativoSedeSecondaria(trovatoValido.getSiacDSoggettoStato().getSoggettoStatoId());
+							sedeSecondariaSoggetto.setDescrizioneStatoOperativoSedeSecondaria(trovatoValido.getSiacDSoggettoStato().getSoggettoStatoDesc());
 						}
 					}
 					
@@ -1890,18 +1877,18 @@ public class EntityToModelConverter {
                     //					              oppure il chiamante esterno ha bisogno di gestire anche lo stato IN_MODIFICA
 					//
 					if(isIncludeModif == true){
-						if(null!=itsiac.getSiacTSoggettoMods() && itsiac.getSiacTSoggettoMods().size()>0){
-							for(SiacTSoggettoModFin siacTSoggettoMod : itsiac.getSiacTSoggettoMods()){
+						if(null!=siacTSoggettoFin.getSiacTSoggettoMods() && siacTSoggettoFin.getSiacTSoggettoMods().size()>0){
+							for(SiacTSoggettoModFin siacTSoggettoMod : siacTSoggettoFin.getSiacTSoggettoMods()){
 								if(siacTSoggettoMod.getDataFineValidita()==null){
-									it.setStatoOperativoSedeSecondaria(StatoOperativoSedeSecondaria.IN_MODIFICA);
-									it.setDescrizioneStatoOperativoSedeSecondaria(StatoOperativoSedeSecondaria.IN_MODIFICA.name());
-									it.setUtenteModifica(itsiac.getLoginOperazione());
+									sedeSecondariaSoggetto.setStatoOperativoSedeSecondaria(StatoOperativoSedeSecondaria.IN_MODIFICA);
+									sedeSecondariaSoggetto.setDescrizioneStatoOperativoSedeSecondaria(StatoOperativoSedeSecondaria.IN_MODIFICA.name());
+									sedeSecondariaSoggetto.setUtenteModifica(siacTSoggettoFin.getLoginOperazione());
 								}
 							}
 						}else if(mappaSediModificate != null && mappaSediModificate.get(idConfronto) ){
-							it.setStatoOperativoSedeSecondaria(StatoOperativoSedeSecondaria.IN_MODIFICA);
-							it.setDescrizioneStatoOperativoSedeSecondaria(StatoOperativoSedeSecondaria.IN_MODIFICA.name());
-							it.setUtenteModifica(itsiac.getLoginOperazione());
+							sedeSecondariaSoggetto.setStatoOperativoSedeSecondaria(StatoOperativoSedeSecondaria.IN_MODIFICA);
+							sedeSecondariaSoggetto.setDescrizioneStatoOperativoSedeSecondaria(StatoOperativoSedeSecondaria.IN_MODIFICA.name());
+							sedeSecondariaSoggetto.setUtenteModifica(siacTSoggettoFin.getLoginOperazione());
 						}
 					}
 					// END TEST PER GESTIONE DINAMICA STATO SEDE SECONDARIA
@@ -1915,11 +1902,11 @@ public class EntityToModelConverter {
 						listaTRSog= ottimizzazioneSoggetto.filtraSiacTRecapitoSoggettoBySoggettoId(idIterato);
 					} else {
 						//RAMO CLASSICO
-						listaTRSog = itsiac.getSiacTRecapitoSoggettos();
+						listaTRSog = siacTSoggettoFin.getSiacTRecapitoSoggettos();
 					}
 					
 					if (listaTRSog != null && listaTRSog.size() > 0) {
-						it.setContatti(siacTRecapitoSoggettoToContattoList(listaTRSog, true));
+						sedeSecondariaSoggetto.setContatti(siacTRecapitoSoggettoToContattoList(listaTRSog, true));
 					}
 					
 					//END
@@ -2096,7 +2083,7 @@ public class EntityToModelConverter {
 					// END ANNO_MOVIMENTO
 					
 					//NUMERO
-					it.setNumero(itsiac.getMovgestNumero());
+					it.setNumeroBigDecimal(itsiac.getMovgestNumero());
 					
 					// 2. ATTRIBUTI ESTRATTI DALLE TABELLE siac_t_movgest_ts + siac_t_movgest_ts_det
 					List<SiacTMovgestTsFin> listaSiacTMovgestTs = itsiac.getSiacTMovgestTs();
@@ -2104,7 +2091,7 @@ public class EntityToModelConverter {
 						for(SiacTMovgestTsFin siacTMovgestTs : listaSiacTMovgestTs){
 							if(null!=siacTMovgestTs &&
 							   siacTMovgestTs.getDataFineValidita()==null &&
-							   Constanti.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+							   CostantiFin.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 		
 								//2.0.1 UID SOGGETTO ASSOCIATO
 								if(siacTMovgestTs.getSiacRMovgestTsSogs() != null && !siacTMovgestTs.getSiacRMovgestTsSogs().isEmpty()){	
@@ -2229,7 +2216,7 @@ public class EntityToModelConverter {
 					// END ANNO_MOVIMENTO
 					
 					//NUMERO
-					it.setNumero(itsiac.getMovgestNumero());
+					it.setNumeroBigDecimal(itsiac.getMovgestNumero());
 					
 					// 2. ATTRIBUTI ESTRATTI DALLE TABELLE siac_t_movgest_ts + siac_t_movgest_ts_det
 					List<SiacTMovgestTsFin> listaSiacTMovgestTs = itsiac.getSiacTMovgestTs();
@@ -2237,7 +2224,7 @@ public class EntityToModelConverter {
 						for(SiacTMovgestTsFin siacTMovgestTs : listaSiacTMovgestTs){
 							if(null!=siacTMovgestTs &&
 							   siacTMovgestTs.getDataFineValidita()==null &&
-							   Constanti.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+							   CostantiFin.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 		
 								//2.0.1 UID SOGGETTO ASSOCIATO
 								if(siacTMovgestTs.getSiacRMovgestTsSogs() != null && !siacTMovgestTs.getSiacRMovgestTsSogs().isEmpty()){	log.debug(""," - entro nel metodo aggiorna!!?? FFF");
@@ -2358,7 +2345,7 @@ public class EntityToModelConverter {
 			for (SiacTMovgestTsDetFin tsDet : siacTMovgestTs.getSiacTMovgestTsDets()) {
 				if(tsDet.getDataCancellazione()==null &&
 					tsDet.getDataFineValidita()==null &&	
-					tsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equals(Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE)){
+					tsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode().equals(CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE)){
 					
 					// calcolo utilizzabile
 					utilizzabile = utilizzabile.add(tsDet.getMovgestTsDetImporto());
@@ -2415,11 +2402,11 @@ public class EntityToModelConverter {
 		for(SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr){
 			if(null!=siacRMovgestTsAttr && siacRMovgestTsAttr.getDataFineValidita()==null){
 				String codiceAttributo = siacRMovgestTsAttr.getSiacTAttr().getAttrCode();
-				AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+				AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 				switch (attributoMovimentoGestione) {
 					case annoCapitoloOrigine:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								it.setAnnoCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 							}
 						}
@@ -2427,7 +2414,7 @@ public class EntityToModelConverter {
 						
 					case annoOriginePlur:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								it.setAnnoOriginePlur(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 							}
 						
@@ -2435,8 +2422,8 @@ public class EntityToModelConverter {
 						break;
 						
 					case annoRiaccertato:
-						if(siacRMovgestTsAttr.getTesto() != null && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+						if(siacRMovgestTsAttr.getTesto() != null && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								it.setAnnoRiaccertato(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 							}
 							
@@ -2445,7 +2432,7 @@ public class EntityToModelConverter {
 						
 					case numeroArticoloOrigine:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								it.setNumeroArticoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 							}
 							
@@ -2455,7 +2442,7 @@ public class EntityToModelConverter {
 					case flagDaRiaccertamento:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
 							// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-							if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+							if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 								it.setFlagDaRiaccertamento(true);
 							}else {
 								it.setFlagDaRiaccertamento(false);
@@ -2463,27 +2450,39 @@ public class EntityToModelConverter {
 						}												
 						break;
 						
+					//SIAC-6997
+					case flagDaReanno:
+						if(null!=siacRMovgestTsAttr.getBoolean_()){
+							// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+							if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+								it.setFlagDaReanno(true);
+							}else {
+								it.setFlagDaReanno(false);
+							}
+						}												
+						break;
+						
 					case flagSoggettoDurc:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
-							it.setFlagSoggettoDurc(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+							it.setFlagSoggettoDurc(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 						}												
 						break;
 						
 					case FlagCollegamentoAccertamentoFattura:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
-							((AccertamentoAbstract) it).setFlagFattura(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+							((AccertamentoAbstract) it).setFlagFattura(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 						}												
 						break;
 						
 					case FlagCollegamentoAccertamentoCorrispettivo:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
-							((AccertamentoAbstract) it).setFlagCorrispettivo(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+							((AccertamentoAbstract) it).setFlagCorrispettivo(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 						}												
 						break;
 						
 					case FlagAttivaGsa:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
-							if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+							if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 								it.setFlagAttivaGsa(true);
 							}else {
 								it.setFlagAttivaGsa(false);
@@ -2493,7 +2492,7 @@ public class EntityToModelConverter {
 						
 					case numeroCapitoloOrigine:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								it.setNumeroCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 							}
 						}						
@@ -2501,7 +2500,7 @@ public class EntityToModelConverter {
 						
 					case numeroOriginePlur:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								it.setNumeroOriginePlur(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 							}
 							
@@ -2510,7 +2509,7 @@ public class EntityToModelConverter {
 						
 					case numeroRiaccertato:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								it.setNumeroRiaccertato(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 							}
 						}
@@ -2518,7 +2517,7 @@ public class EntityToModelConverter {
 						
 					case numeroUEBOrigine:
 						if(siacRMovgestTsAttr.getTesto() != null){
-							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+							if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 								it.setNumeroUEBOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 							}
 						
@@ -2528,7 +2527,7 @@ public class EntityToModelConverter {
 					case annoFinanziamento:
 						if(it instanceof Impegno){
 							if(siacRMovgestTsAttr.getTesto() != null){
-								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 									((ImpegnoAbstract) it).setAnnoFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 								}
 							}
@@ -2538,7 +2537,7 @@ public class EntityToModelConverter {
 					case cig:
 						if(it instanceof Impegno){
 							if(siacRMovgestTsAttr.getTesto() != null){
-								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 									((ImpegnoAbstract) it).setCig(siacRMovgestTsAttr.getTesto());
 								}
 							}
@@ -2548,7 +2547,7 @@ public class EntityToModelConverter {
 					case numeroAccFinanziamento:
 						if(it instanceof Impegno){
 							if(siacRMovgestTsAttr.getTesto() != null){
-								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+								if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 									((ImpegnoAbstract) it).setNumeroAccFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 								}
 							}
@@ -2558,7 +2557,7 @@ public class EntityToModelConverter {
 					case validato:
 						if(null!=siacRMovgestTsAttr.getBoolean_()){
 							// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-							if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+							if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 								it.setValidato(true);
 							}else {
 								it.setValidato(false);
@@ -2602,7 +2601,7 @@ public class EntityToModelConverter {
 		List<SiacRMovgestClassFin> listaSiacRMovgestClass = siacTMovgestTs.getSiacRMovgestClasses();
 		for(SiacRMovgestClassFin siacRMovgestClass : listaSiacRMovgestClass){
 			if(null!=siacRMovgestClass && siacRMovgestClass.getDataFineValidita()==null){
-				if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(Constanti.D_CLASS_TIPO_TIPO_IMPEGNO)){
+				if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(CostantiFin.D_CLASS_TIPO_TIPO_IMPEGNO)){
 					// TIPO
 					if(it instanceof Impegno){
 						ClassificatoreGenerico tipoImpegno = new ClassificatoreGenerico();
@@ -2653,7 +2652,7 @@ public class EntityToModelConverter {
 			List<MovimentoGestione> movimentos, OttimizzazioneMovGestDto ottimizzazioneDto, boolean ottimizzatoCompletamenteDaChiamante) {
 		
 		//per non ripetere sempre il controllo di null pointer sull'oggetto ottimizzazioneDto intero ma solo sui sui contenuti:
-		if(ottimizzazioneDto==null){
+		if(ottimizzazioneDto == null){
 			ottimizzazioneDto = new OttimizzazioneMovGestDto();
 		}
 		//
@@ -2662,7 +2661,7 @@ public class EntityToModelConverter {
 			int idIterato = movimentoGestione.getUid();
 			for(SiacTMovgestFin siacTMovgest : dtos){
 				int idConfronto = siacTMovgest.getMovgestId();
-				if(idIterato==idConfronto){					
+				if(idIterato == idConfronto){					
 					// 1. ANNO_MOVIMENTO 
 					// it.setAnnoMovimento(Integer.parseInt(itsiac.getMovgestAnno()));
 					movimentoGestione.setAnnoMovimento(siacTMovgest.getMovgestAnno());
@@ -2674,17 +2673,31 @@ public class EntityToModelConverter {
 					
 					// 2. ATTRIBUTI ESTRATTI DALLE TABELLE siac_t_movgest_ts + siac_t_movgest_ts_det
 					List<SiacTMovgestTsFin> listaSiacTMovgestTs = siacTMovgest.getSiacTMovgestTs();
-					if(null!=listaSiacTMovgestTs && listaSiacTMovgestTs.size()>0){	
+					if(listaSiacTMovgestTs != null && listaSiacTMovgestTs.size()>0){	
 						for(SiacTMovgestTsFin siacTMovgestTs : listaSiacTMovgestTs){
-							if(null!=siacTMovgestTs &&
-							   siacTMovgestTs.getDataFineValidita()==null &&
-							   Constanti.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+							if(siacTMovgestTs != null &&
+							   siacTMovgestTs.getDataFineValidita() == null &&
+							   CostantiFin.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 								
 								Integer movgestTsId = siacTMovgestTs.getMovgestTsId();
 								
 								//2.0.1 UID SOGGETTO ASSOCIATO
 								settaDatiMinimiSoggettoAssociato(siacTMovgestTs, movimentoGestione, ottimizzazioneDto, ottimizzatoCompletamenteDaChiamante);
 		
+								// classe soggetto se presente
+								if(siacTMovgestTs.getSiacRMovgestTsSogclasses() != null && !siacTMovgestTs.getSiacRMovgestTsSogclasses().isEmpty()){
+									// sempre unico record
+									if(siacTMovgestTs.getSiacRMovgestTsSogclasses().get(0).getSiacDSoggettoClasse() != null 
+											//SIAC-7619 controllo che la classe sia valida
+											&& siacTMovgestTs.getSiacRMovgestTsSogclasses().get(0).isEntitaValida()
+											&& siacTMovgestTs.getSiacRMovgestTsSogclasses().get(0).getSiacDSoggettoClasse().isEntitaValida()){
+										ClasseSoggetto classeSogg = new ClasseSoggetto();
+										classeSogg.setCodice(siacTMovgestTs.getSiacRMovgestTsSogclasses().get(0).getSiacDSoggettoClasse().getSoggettoClasseCode());
+										classeSogg.setDescrizione(siacTMovgestTs.getSiacRMovgestTsSogclasses().get(0).getSiacDSoggettoClasse().getSoggettoClasseDesc());
+										movimentoGestione.setClasseSoggetto(classeSogg);
+									}
+								}
+								
 								// 2.1 UTENTE_CREAZIONE + DATA_EMISSIONE
 								movimentoGestione.setUtenteCreazione(siacTMovgestTs.getLoginCreazione());
 								movimentoGestione.setDataEmissione(siacTMovgestTs.getDataCreazione());
@@ -2707,9 +2720,10 @@ public class EntityToModelConverter {
 								// END DATA_SCADENZA
 
 								
+								
 								// 2.5 IMPORTO_INIZIALE e IMPORTO_ATTUALE e UTILIZZABILE
 								List<SiacTMovgestTsDetFin> listaSiacTMovgestTsDet = ottimizzazioneDto.filtraSiacTMovgestTsDetByMovgestTs(movgestTsId);
-								if(listaSiacTMovgestTsDet!=null && listaSiacTMovgestTsDet.size()>0){
+								if(listaSiacTMovgestTsDet != null && listaSiacTMovgestTsDet.size()>0){
 									//caricamento ottimizzato
 									setImporti(movimentoGestione, listaSiacTMovgestTsDet);
 								} else {
@@ -2723,13 +2737,15 @@ public class EntityToModelConverter {
 								movimentoGestione.setDescrizione(siacTMovgestTs.getMovgestTsDesc());
 								// END DESCRIZONE
 								
+								
 								// 2.7. STATO_OPERATIVO_MOVIMENTO_GESTIONE_SPESA	
 								setStatoOperativoMovimentoGestione(siacTMovgestTs, movimentoGestione, ottimizzazioneDto, ottimizzatoCompletamenteDaChiamante);
 								// END STATO_OPERATIVO_MOVIMENTO_GESTIONE_SPESA
 								
+ 
 								// 2.8 ATTRIBUTI ESTRATTI DALLE TABELLE siac_r_movgest_ts_attr + siac_t_attr
 								List<SiacRMovgestTsAttrFin> listaSiacRMovgestTsAttr  = ottimizzazioneDto.filtraSiacRMovgestTsAttrByMovgestTs(movgestTsId);
-								if(StringUtils.isEmpty(listaSiacRMovgestTsAttr) && !ottimizzatoCompletamenteDaChiamante){
+								if(StringUtilsFin.isEmpty(listaSiacRMovgestTsAttr) && !ottimizzatoCompletamenteDaChiamante){
 									//CARICAMENTO CLASSICO
 									listaSiacRMovgestTsAttr = siacTMovgestTs.getSiacRMovgestTsAttrs();
 								}
@@ -2739,12 +2755,12 @@ public class EntityToModelConverter {
 								for(SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr){
 									if(null!=siacRMovgestTsAttr && siacRMovgestTsAttr.getDataFineValidita()==null){
 										String codiceAttributo = siacRMovgestTsAttr.getSiacTAttr().getAttrCode();
-										AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+										AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 										switch (attributoMovimentoGestione) {
 										
 											case annoScritturaEconomicoPatrimoniale:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setAnnoScritturaEconomicoPatrimoniale(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 													}
 												}
@@ -2752,7 +2768,7 @@ public class EntityToModelConverter {
 										
 											case annoCapitoloOrigine:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setAnnoCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 													}
 												}
@@ -2760,7 +2776,7 @@ public class EntityToModelConverter {
 												
 											case annoOriginePlur:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setAnnoOriginePlur(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 													}
 												
@@ -2768,8 +2784,8 @@ public class EntityToModelConverter {
 												break;
 												
 											case annoRiaccertato:
-												if(siacRMovgestTsAttr.getTesto() != null && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+												if(siacRMovgestTsAttr.getTesto() != null && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setAnnoRiaccertato(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 													}
 													
@@ -2778,7 +2794,7 @@ public class EntityToModelConverter {
 												
 											case numeroArticoloOrigine:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroArticoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 													}
 													
@@ -2788,7 +2804,7 @@ public class EntityToModelConverter {
 											case flagDaRiaccertamento:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
 													// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														movimentoGestione.setFlagDaRiaccertamento(true);
 													}else {
 														movimentoGestione.setFlagDaRiaccertamento(false);
@@ -2796,27 +2812,39 @@ public class EntityToModelConverter {
 												}												
 												break;
 												
+											//SIAC-6997
+											case flagDaReanno:
+												if(null!=siacRMovgestTsAttr.getBoolean_()){
+													// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+														movimentoGestione.setFlagDaReanno(true);
+													}else {
+														movimentoGestione.setFlagDaReanno(false);
+													}
+												}												
+												break;
+												
 											case flagSoggettoDurc:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													movimentoGestione.setFlagSoggettoDurc(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+													movimentoGestione.setFlagSoggettoDurc(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 												}												
 												break;
 												
 											case FlagCollegamentoAccertamentoFattura:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													((AccertamentoAbstract) movimentoGestione).setFlagFattura(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+													((AccertamentoAbstract) movimentoGestione).setFlagFattura(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 												}												
 												break;
 												
 											case FlagCollegamentoAccertamentoCorrispettivo:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													((AccertamentoAbstract) movimentoGestione).setFlagCorrispettivo(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+													((AccertamentoAbstract) movimentoGestione).setFlagCorrispettivo(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 												}												
 												break;
 												
 											case FlagAttivaGsa:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														movimentoGestione.setFlagAttivaGsa(true);
 													}else {
 														movimentoGestione.setFlagAttivaGsa(false);
@@ -2826,7 +2854,7 @@ public class EntityToModelConverter {
 												
 											case numeroCapitoloOrigine:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 													}
 												}						
@@ -2834,7 +2862,7 @@ public class EntityToModelConverter {
 												
 											case numeroOriginePlur:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroOriginePlur(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 													}
 													
@@ -2843,7 +2871,7 @@ public class EntityToModelConverter {
 												
 											case numeroRiaccertato:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroRiaccertato(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 													}
 												}
@@ -2851,7 +2879,7 @@ public class EntityToModelConverter {
 												
 											case numeroUEBOrigine:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroUEBOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 													}
 												
@@ -2861,7 +2889,7 @@ public class EntityToModelConverter {
 											case annoFinanziamento:
 												if(movimentoGestione instanceof Impegno){
 													if(siacRMovgestTsAttr.getTesto() != null){
-														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 															((ImpegnoAbstract) movimentoGestione).setAnnoFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 														}
 													}
@@ -2871,7 +2899,7 @@ public class EntityToModelConverter {
 											case cig:
 												if(movimentoGestione instanceof Impegno){
 													if(siacRMovgestTsAttr.getTesto() != null){
-														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 															((ImpegnoAbstract) movimentoGestione).setCig(siacRMovgestTsAttr.getTesto());
 														}
 													}
@@ -2881,7 +2909,7 @@ public class EntityToModelConverter {
 											case numeroAccFinanziamento:
 												if(movimentoGestione instanceof Impegno){
 													if(siacRMovgestTsAttr.getTesto() != null){
-														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 															((ImpegnoAbstract) movimentoGestione).setNumeroAccFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 														}
 													}
@@ -2891,7 +2919,7 @@ public class EntityToModelConverter {
 											case validato:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
 													// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														movimentoGestione.setValidato(true);
 													}else {
 														movimentoGestione.setValidato(false);
@@ -2901,7 +2929,7 @@ public class EntityToModelConverter {
 												
 											case flagPrenotazione:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														((ImpegnoAbstract) movimentoGestione).setFlagPrenotazione(true);
 													}else {
 														((ImpegnoAbstract) movimentoGestione).setFlagPrenotazione(false);
@@ -2911,7 +2939,7 @@ public class EntityToModelConverter {
 												
 											case flagPrenotazioneLiquidabile:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														((ImpegnoAbstract) movimentoGestione).setFlagPrenotazioneLiquidabile(true);
 													}else {
 														((ImpegnoAbstract) movimentoGestione).setFlagPrenotazioneLiquidabile(false);
@@ -2922,7 +2950,7 @@ public class EntityToModelConverter {
 											case flagFrazionabile:
 												frazionabileValorizzato = true;
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														((ImpegnoAbstract) movimentoGestione).setFlagFrazionabile(true);
 													}else {
 														((ImpegnoAbstract) movimentoGestione).setFlagFrazionabile(false);
@@ -2932,7 +2960,7 @@ public class EntityToModelConverter {
 												
 											case flagCassaEconomale:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														((ImpegnoAbstract) movimentoGestione).setFlagCassaEconomale(true);
 													}else {
 														((ImpegnoAbstract) movimentoGestione).setFlagCassaEconomale(false);
@@ -2940,15 +2968,31 @@ public class EntityToModelConverter {
 												}												
 												break;		
 												
+											case annoPrenotazioneOrigine:
+												if(siacRMovgestTsAttr.getTesto() != null && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
+														((Impegno)movimentoGestione).setAnnoPrenotazioneOrigine(siacRMovgestTsAttr.getTesto());
+													}
+													
+												}											
+												break;
+											
 											case flagSDF:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														((ImpegnoAbstract) movimentoGestione).setFlagSDF(true);
 													}else {
 														((ImpegnoAbstract) movimentoGestione).setFlagSDF(false);
 													}
 												}												
-												break;	
+												break;
+
+											case codVerbaleAccertamento:
+												if(siacRMovgestTsAttr.getTesto() != null && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto()) && !siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null")){
+														((AccertamentoAbstract)movimentoGestione).setCodiceVerbale(siacRMovgestTsAttr.getTesto());
+													
+												}											
+												break;
 
 											default:
 												break;
@@ -2971,14 +3015,14 @@ public class EntityToModelConverter {
 
 								// 4 tipoImpegno
 								List<SiacRMovgestClassFin> listaSiacRMovgestClass = ottimizzazioneDto.filtraSiacRMovgestClassByMovgestTs(movgestTsId);
-								if(StringUtils.isEmpty(listaSiacRMovgestClass) && !ottimizzatoCompletamenteDaChiamante){
+								if(StringUtilsFin.isEmpty(listaSiacRMovgestClass) && !ottimizzatoCompletamenteDaChiamante){
 									//CARICAMENTO CLASSICO
 									listaSiacRMovgestClass = siacTMovgestTs.getSiacRMovgestClasses();
 								}
 								
 								for(SiacRMovgestClassFin siacRMovgestClass : listaSiacRMovgestClass){
 									if(null!=siacRMovgestClass && siacRMovgestClass.getDataFineValidita()==null){
-										if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(Constanti.D_CLASS_TIPO_TIPO_IMPEGNO)){
+										if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(CostantiFin.D_CLASS_TIPO_TIPO_IMPEGNO)){
 											// TIPO
 											if(movimentoGestione instanceof Impegno){
 												ClassificatoreGenerico tipoImpegno = new ClassificatoreGenerico();
@@ -2999,14 +3043,14 @@ public class EntityToModelConverter {
 								
 								// 5 PROGETTO
 								List<SiacRMovgestTsProgrammaFin> listaSiacRMovgestTsProgramma = ottimizzazioneDto.filtraSiacRMovgestTsProgrammaByMovgestTs(movgestTsId);
-								if(StringUtils.isEmpty(listaSiacRMovgestTsProgramma) && !ottimizzatoCompletamenteDaChiamante){
+								if(StringUtilsFin.isEmpty(listaSiacRMovgestTsProgramma) && !ottimizzatoCompletamenteDaChiamante){
 									//CARICAMENTO CLASSICO
 									//System.out.println("progetto! passo dal ramo classico, non cerco nei dati precaricati da picco ") ;
 									listaSiacRMovgestTsProgramma = siacTMovgestTs.getSiacRMovgestTsProgrammas();
 								}
 								
 								for(SiacRMovgestTsProgrammaFin siacRMovgestTsProgramma : listaSiacRMovgestTsProgramma){
-									if(null!=siacRMovgestTsProgramma && siacRMovgestTsProgramma.getDataFineValidita()==null){
+									if(siacRMovgestTsProgramma != null && siacRMovgestTsProgramma.getDataFineValidita() == null && siacRMovgestTsProgramma.getDataCancellazione() == null){
 										
 										Progetto progetto = new Progetto();
 										progetto.setUid(siacRMovgestTsProgramma.getSiacTProgramma().getProgrammaId());
@@ -3020,7 +3064,6 @@ public class EntityToModelConverter {
 									}									
 								}
 								// END PROGETTO
-								
 								// 6. ATTO AMMINISTRATIVO
 								settaDatiAttoAmministrativo(siacTMovgestTs, movimentoGestione, ottimizzazioneDto, ottimizzatoCompletamenteDaChiamante);
 								// END ATTO AMMINISTRATIVO
@@ -3074,17 +3117,18 @@ public class EntityToModelConverter {
 		
 		//Dato che la classe puo' essere vuota occorre valutare anche ottimizzatoCompletamenteDaChiamante
 		//e non basta controllare che SiacRMovgestTsSogclasseFin estratto da ottimizzazioneDto sia vuoto
-		if(ottimizzazioneDto!=null){
+		if(ottimizzazioneDto != null){
 			listaSiacRMovgestTsSogclasse = ottimizzazioneDto.filtraSiacRMovgestTsSogclasseFinByMovGestTsId(movgestTsId);
 		}
 		
-		if(StringUtils.isEmpty(listaSiacRMovgestTsSogclasse) && !ottimizzatoCompletamenteDaChiamante){
+		if(StringUtilsFin.isEmpty(listaSiacRMovgestTsSogclasse) && !ottimizzatoCompletamenteDaChiamante){
 			//CARICAMENTO CLASSICO
 			listaSiacRMovgestTsSogclasse = siacTMovgestTs.getSiacRMovgestTsSogclasses();
 		}
 		
 		for(SiacRMovgestTsSogclasseFin siacRMovgestTsSogclasse : listaSiacRMovgestTsSogclasse){
-			if(null!=siacRMovgestTsSogclasse && siacRMovgestTsSogclasse.getDataFineValidita()==null){
+			//SIAC-7619 controllo anche la dataCanellazione come null
+			if(siacRMovgestTsSogclasse != null && siacRMovgestTsSogclasse.getDataFineValidita() == null && siacRMovgestTsSogclasse.getDataCancellazione() == null){
 				
 				classeSoggetto.setCodice(siacRMovgestTsSogclasse.getSiacDSoggettoClasse().getSoggettoClasseCode());
 				classeSoggetto.setDescrizione(siacRMovgestTsSogclasse.getSiacDSoggettoClasse().getSoggettoClasseDesc());
@@ -3108,18 +3152,18 @@ public class EntityToModelConverter {
 		//e non basta controllare che siacRMovgestTsSogs estratto da ottimizzazioneDto sia vuoto
 		
 		List<SiacRMovgestTsSogFin> siacRMovgestTsSogs = null;
-		if(ottimizzazioneDto!=null){
+		if(ottimizzazioneDto != null){
 			siacRMovgestTsSogs = ottimizzazioneDto.filtraSiacRMovgestTsSogFinByMovGestTsId(movgestTsId);
 		}
 		
-		if(StringUtils.isEmpty(siacRMovgestTsSogs) && !ottimizzatoCompletamenteDaChiamante){
+		if(StringUtilsFin.isEmpty(siacRMovgestTsSogs) && !ottimizzatoCompletamenteDaChiamante){
 			//CARICAMENTO CLASSICO
 			siacRMovgestTsSogs = siacTMovgestTs.getSiacRMovgestTsSogs();
 		}
 		
 		if(siacRMovgestTsSogs != null && !siacRMovgestTsSogs.isEmpty()){
 			for(SiacRMovgestTsSogFin rMovGestTsSog : siacRMovgestTsSogs){
-				if(rMovGestTsSog.getDataFineValidita()==null){
+				if(rMovGestTsSog.getDataFineValidita() == null && rMovGestTsSog.getDataCancellazione() == null){
 					it.setSoggettoCode(rMovGestTsSog.getSiacTSoggetto().getSoggettoCode());
 					Soggetto soggetto = new Soggetto();
 					soggetto.setUid(rMovGestTsSog.getSiacTSoggetto().getUid());
@@ -3152,7 +3196,7 @@ public class EntityToModelConverter {
 		if(ottimizzazioneDto!=null){
 			listaSiacRMovgestTsStato = ottimizzazioneDto.filtraSiacRMovgestTsStatoByMovgestTs(movgestTsId);
 		}
-		if(StringUtils.isEmpty(listaSiacRMovgestTsStato) && !ottimizzatoCompletamenteDaChiamante){
+		if(StringUtilsFin.isEmpty(listaSiacRMovgestTsStato) && !ottimizzatoCompletamenteDaChiamante){
 			//CARICAMENTO CLASSICO
 			listaSiacRMovgestTsStato = siacTMovgestTs.getSiacRMovgestTsStatos();
 		}
@@ -3170,13 +3214,13 @@ public class EntityToModelConverter {
 			listaSiacRMovgestTsAttoAmm = ottimizzazioneDto.filtraSiacRMovgestTsAttoAmmByMovgestTs(movgestTsId);
 		}
 		
-		if(StringUtils.isEmpty(listaSiacRMovgestTsAttoAmm) && !ottimizzatoCompletamenteDaChiamante){
+		if(StringUtilsFin.isEmpty(listaSiacRMovgestTsAttoAmm) && !ottimizzatoCompletamenteDaChiamante){
 			//CARICAMENTO CLASSICO
 			listaSiacRMovgestTsAttoAmm = siacTMovgestTs.getSiacRMovgestTsAttoAmms();
 		}
 		if(null!=listaSiacRMovgestTsAttoAmm && listaSiacRMovgestTsAttoAmm.size() > 0){
 			//estraggo l'unico record valido:
-			SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtils.getValido(listaSiacRMovgestTsAttoAmm, null);
+			SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtil.getValido(listaSiacRMovgestTsAttoAmm, null);
 			if(null!= siacRMovgestTsAttoAmm){
 				EntityToModelConverter.settaAttoAmministrativoBase(siacRMovgestTsAttoAmm.getSiacTAttoAmm(), it);
 			}
@@ -3192,7 +3236,7 @@ public class EntityToModelConverter {
 			listaSiacRMovgestTsAttoAmm = ottimizzazioneDto.filtraSiacRMovgestTsAttoAmmByMovgestTs(movgestTsId);
 		}
 		
-		if(StringUtils.isEmpty(listaSiacRMovgestTsAttoAmm) && !ottimizzatoCompletamenteDaChiamante){
+		if(StringUtilsFin.isEmpty(listaSiacRMovgestTsAttoAmm) && !ottimizzatoCompletamenteDaChiamante){
 			//CARICAMENTO CLASSICO
 			listaSiacRMovgestTsAttoAmm = siacTMovgestTs.getSiacRMovgestTsAttoAmms();
 		}
@@ -3236,7 +3280,7 @@ public class EntityToModelConverter {
 		if(siacTMovgestTs!=null){
 			List<SiacTMovgestTsDetFin> listaSiacTMovgestTsDet = siacTMovgestTs.getSiacTMovgestTsDets();
 			if(listaSiacTMovgestTsDet!=null && listaSiacTMovgestTsDet.size()>0){
-				listaSiacTMovgestTsDet = DatiOperazioneUtils.soloValidi(listaSiacTMovgestTsDet, null);
+				listaSiacTMovgestTsDet = DatiOperazioneUtil.soloValidi(listaSiacTMovgestTsDet, null);
 				it = setImporti(it, listaSiacTMovgestTsDet);
 			}
 		}
@@ -3267,12 +3311,12 @@ public class EntityToModelConverter {
 	 * @return
 	 */
 	private static <MG extends MovimentoGestione> MG setImporto(MG it, SiacTMovgestTsDetFin siacTMovgestTsDet){
-		if(siacTMovgestTsDet!=null && DatiOperazioneUtils.isValido(siacTMovgestTsDet, null)){
-			if(Constanti.MOVGEST_TS_DET_TIPO_INIZIALE.equalsIgnoreCase(siacTMovgestTsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode())){
+		if(siacTMovgestTsDet!=null && DatiOperazioneUtil.isValido(siacTMovgestTsDet, null)){
+			if(CostantiFin.MOVGEST_TS_DET_TIPO_INIZIALE.equalsIgnoreCase(siacTMovgestTsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode())){
 				it.setImportoIniziale(siacTMovgestTsDet.getMovgestTsDetImporto());											
-			} else if(Constanti.MOVGEST_TS_DET_TIPO_ATTUALE.equalsIgnoreCase(siacTMovgestTsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode())){
+			} else if(CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE.equalsIgnoreCase(siacTMovgestTsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode())){
 				it.setImportoAttuale(siacTMovgestTsDet.getMovgestTsDetImporto());											
-			} else if(Constanti.MOVGEST_TS_DET_TIPO_UTILIZZABILE.equalsIgnoreCase(siacTMovgestTsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode())
+			} else if(CostantiFin.MOVGEST_TS_DET_TIPO_UTILIZZABILE.equalsIgnoreCase(siacTMovgestTsDet.getSiacDMovgestTsDetTipo().getMovgestTsDetTipoCode())
 					&& it instanceof Accertamento){
 				((AccertamentoAbstract) it).setImportoUtilizzabile(siacTMovgestTsDet.getMovgestTsDetImporto());
 			}
@@ -3302,7 +3346,7 @@ public class EntityToModelConverter {
 							Integer movgestTsId = siacTMovgestTs.getMovgestTsId();
 							if(null!=siacTMovgestTs &&
 							   siacTMovgestTs.getDataFineValidita()==null &&
-							   Constanti.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
+							   CostantiFin.MOVGEST_TS_TIPO_TESTATA.equalsIgnoreCase(siacTMovgestTs.getSiacDMovgestTsTipo().getMovgestTsTipoCode())){
 								
 								// 2.1 UTENTE_CREAZIONE + DATA_EMISSIONE
 								movimentoGestione.setUtenteCreazione(siacTMovgestTs.getLoginCreazione());
@@ -3350,11 +3394,11 @@ public class EntityToModelConverter {
 								for(SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr){
 									if(null!=siacRMovgestTsAttr && siacRMovgestTsAttr.getDataFineValidita()==null){
 										String codiceAttributo = siacRMovgestTsAttr.getSiacTAttr().getAttrCode();
-										AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+										AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 										switch (attributoMovimentoGestione) {
 											case annoCapitoloOrigine:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setAnnoCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 													}
 												}
@@ -3362,7 +3406,7 @@ public class EntityToModelConverter {
 												
 											case annoOriginePlur:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setAnnoOriginePlur(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 													}
 												
@@ -3370,8 +3414,8 @@ public class EntityToModelConverter {
 												break;
 												
 											case annoRiaccertato:
-												if(siacRMovgestTsAttr.getTesto() != null && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+												if(siacRMovgestTsAttr.getTesto() != null && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setAnnoRiaccertato(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 													}
 													
@@ -3380,7 +3424,7 @@ public class EntityToModelConverter {
 												
 											case numeroArticoloOrigine:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroArticoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 													}
 													
@@ -3390,23 +3434,35 @@ public class EntityToModelConverter {
 											case flagDaRiaccertamento:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
 													// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														movimentoGestione.setFlagDaRiaccertamento(true);
 													}else {
 														movimentoGestione.setFlagDaRiaccertamento(false);
 													}
 												}												
 												break;
+
+											//SIAC-6997
+											case flagDaReanno:
+												if(null!=siacRMovgestTsAttr.getBoolean_()){
+													// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+														movimentoGestione.setFlagDaReanno(true);
+													}else {
+														movimentoGestione.setFlagDaReanno(false);
+													}
+												}												
+												break;
 												
 											case flagSoggettoDurc:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
-													movimentoGestione.setFlagSoggettoDurc(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+													movimentoGestione.setFlagSoggettoDurc(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 												}												
 												break;
 												
 											case numeroCapitoloOrigine:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 													}
 												}						
@@ -3414,7 +3470,7 @@ public class EntityToModelConverter {
 												
 											case numeroOriginePlur:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroOriginePlur(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 													}
 													
@@ -3423,7 +3479,7 @@ public class EntityToModelConverter {
 												
 											case numeroRiaccertato:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroRiaccertato(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 													}
 												}
@@ -3431,7 +3487,7 @@ public class EntityToModelConverter {
 												
 											case numeroUEBOrigine:
 												if(siacRMovgestTsAttr.getTesto() != null){
-													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+													if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 														movimentoGestione.setNumeroUEBOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 													}
 												
@@ -3441,7 +3497,7 @@ public class EntityToModelConverter {
 											case annoFinanziamento:
 												if(movimentoGestione instanceof Impegno){
 													if(siacRMovgestTsAttr.getTesto() != null){
-														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 															((ImpegnoAbstract) movimentoGestione).setAnnoFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 														}
 													}
@@ -3451,7 +3507,7 @@ public class EntityToModelConverter {
 											case cig:
 												if(movimentoGestione instanceof Impegno){
 													if(siacRMovgestTsAttr.getTesto() != null){
-														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 															((ImpegnoAbstract) movimentoGestione).setCig(siacRMovgestTsAttr.getTesto());
 														}
 													}
@@ -3461,7 +3517,7 @@ public class EntityToModelConverter {
 											case numeroAccFinanziamento:
 												if(movimentoGestione instanceof Impegno){
 													if(siacRMovgestTsAttr.getTesto() != null){
-														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+														if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 															((ImpegnoAbstract) movimentoGestione).setNumeroAccFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 														}
 													}
@@ -3471,7 +3527,7 @@ public class EntityToModelConverter {
 											case validato:
 												if(null!=siacRMovgestTsAttr.getBoolean_()){
 													// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-													if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+													if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 														movimentoGestione.setValidato(true);
 													}else {
 														movimentoGestione.setValidato(false);
@@ -3507,7 +3563,7 @@ public class EntityToModelConverter {
 								
 								for(SiacRMovgestClassFin siacRMovgestClass : listaSiacRMovgestClass){
 									if(null!=siacRMovgestClass && siacRMovgestClass.getDataFineValidita()==null){
-										if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(Constanti.D_CLASS_TIPO_TIPO_IMPEGNO)){
+										if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(CostantiFin.D_CLASS_TIPO_TIPO_IMPEGNO)){
 											// TIPO
 											if(movimentoGestione instanceof Impegno){
 												ClassificatoreGenerico tipoImpegno = new ClassificatoreGenerico();
@@ -3558,7 +3614,7 @@ public class EntityToModelConverter {
 					
 					// 3. CAPITOLO DI ENTRATA / USCITA
 					List<SiacRMovgestBilElemFin> siacRMovgestBilElemCoinvolti = ottimizzazioneDto.filtraSiacRMovgestBilElemByMovgest(siacTMovgest.getMovgestId());
-					movimentoGestione = setChiaveCapitoloOPT(movimentoGestione,CommonUtils.getFirst(siacRMovgestBilElemCoinvolti));
+					movimentoGestione = setChiaveCapitoloOPT(movimentoGestione,CommonUtil.getFirst(siacRMovgestBilElemCoinvolti));
 					// END CAPITOLO DI ENTRATA / USCITA	
 
 					// 4. ALTRI POSSIBILI CAMPI
@@ -3580,7 +3636,7 @@ public class EntityToModelConverter {
 	private static MovimentoGestione settaDatiAttoAmministrativo(List<SiacRMovgestTsAttoAmmFin> listaSiacRMovgestTsAttoAmm,MovimentoGestione it){
 		if(null!=listaSiacRMovgestTsAttoAmm && listaSiacRMovgestTsAttoAmm.size() > 0){
 			//estraggo l'unico record valido:
-			SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtils.getValido(listaSiacRMovgestTsAttoAmm, null);
+			SiacRMovgestTsAttoAmmFin siacRMovgestTsAttoAmm = DatiOperazioneUtil.getValido(listaSiacRMovgestTsAttoAmm, null);
 			if(null!= siacRMovgestTsAttoAmm){
 				it = settaDatiAttoAmministrativo(siacRMovgestTsAttoAmm.getSiacTAttoAmm(), it);
 			}
@@ -3753,10 +3809,11 @@ public class EntityToModelConverter {
 		if(null!=listaSiacRMovgestBilElem && listaSiacRMovgestBilElem.size() > 0){
 			for(SiacRMovgestBilElemFin siacRMovgestBilElem : listaSiacRMovgestBilElem){
 				if(null!= siacRMovgestBilElem && siacRMovgestBilElem.getDataFineValidita() == null){
-					Integer chiave = getChiaveCapitolo(itsiac);
-					if(Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG.equalsIgnoreCase(siacRMovgestBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())){
+					//SIAC-8065
+					Integer chiave = getChiaveCapitolo(itsiac) != null ? getChiaveCapitolo(itsiac) : 0;
+					if(CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG.equalsIgnoreCase(siacRMovgestBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())){
 						((ImpegnoAbstract) it).setChiaveCapitoloUscitaGestione(chiave);
-					} else if(Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG.equalsIgnoreCase(siacRMovgestBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())){
+					} else if(CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG.equalsIgnoreCase(siacRMovgestBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())){
 						((AccertamentoAbstract) it).setChiaveCapitoloEntrataGestione(chiave);
 					}
 				}
@@ -3772,14 +3829,14 @@ public class EntityToModelConverter {
 			for(SiacRMovgestBilElemFin siacRMovgestBilElem : listaSiacRMovgestBilElem){
 				if(null!= siacRMovgestBilElem && siacRMovgestBilElem.getDataFineValidita() == null){
 					
-					SiacRMovgestBilElemFin relazioneValida = DatiOperazioneUtils.getValido(listaSiacRMovgestBilElem, null);
+					SiacRMovgestBilElemFin relazioneValida = DatiOperazioneUtil.getValido(listaSiacRMovgestBilElem, null);
 					Integer uidCapitolo = relazioneValida.getSiacTBilElem().getElemId();
 					String annoCapitolo = relazioneValida.getSiacTBilElem().getSiacTBil().getSiacTPeriodo().getAnno();
 					String numeroCapitolo = relazioneValida.getSiacTBilElem().getElemCode();
 					String numeroArticolo = relazioneValida.getSiacTBilElem().getElemCode2();
 					String numeroUeb = relazioneValida.getSiacTBilElem().getElemCode3();
 					
-					if(Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG.equalsIgnoreCase(siacRMovgestBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())){
+					if(CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG.equalsIgnoreCase(siacRMovgestBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())){
 						CapitoloUscitaGestione capug = new CapitoloUscitaGestione();
 						capug.setUid(uidCapitolo);
 						capug.setAnnoCapitolo(Integer.parseInt(annoCapitolo));
@@ -3789,7 +3846,7 @@ public class EntityToModelConverter {
 						
 						((Impegno) it).setCapitoloUscitaGestione(capug);
 						
-					} else if(Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG.equalsIgnoreCase(siacRMovgestBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())){
+					} else if(CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG.equalsIgnoreCase(siacRMovgestBilElem.getSiacTBilElem().getSiacDBilElemTipo().getElemTipoCode())){
 						
 						CapitoloEntrataGestione capeg = new CapitoloEntrataGestione();
 						capeg.setUid(uidCapitolo);
@@ -3811,9 +3868,9 @@ public class EntityToModelConverter {
 		if(null!=siacRMovgestBilElem){
 			SiacTBilElemFin siacTBilElem = siacRMovgestBilElem.getSiacTBilElem();
 			Integer chiave = siacTBilElem.getElemId();
-			if(Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG.equalsIgnoreCase(siacTBilElem.getSiacDBilElemTipo().getElemTipoCode())){
+			if(CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_UG.equalsIgnoreCase(siacTBilElem.getSiacDBilElemTipo().getElemTipoCode())){
 				((ImpegnoAbstract) it).setChiaveCapitoloUscitaGestione(chiave);
-			} else if(Constanti.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG.equalsIgnoreCase(siacTBilElem.getSiacDBilElemTipo().getElemTipoCode())){
+			} else if(CostantiFin.D_BIL_ELEM_TIPO_ELEM_TIPO_CODE_CAP_EG.equalsIgnoreCase(siacTBilElem.getSiacDBilElemTipo().getElemTipoCode())){
 				((AccertamentoAbstract) it).setChiaveCapitoloEntrataGestione(chiave);
 			}
 		}
@@ -3824,8 +3881,10 @@ public class EntityToModelConverter {
 		List<SiacRMovgestBilElemFin> listaSiacRMovgestBilElem = itsiac.getSiacRMovgestBilElems();
 		Integer chiave = null;
 		if(null!=listaSiacRMovgestBilElem && listaSiacRMovgestBilElem.size() > 0){
-			SiacRMovgestBilElemFin relazioneValida = DatiOperazioneUtils.getValido(listaSiacRMovgestBilElem, null);
-			chiave = relazioneValida.getSiacTBilElem().getElemId();
+			SiacRMovgestBilElemFin relazioneValida = DatiOperazioneUtil.getValido(listaSiacRMovgestBilElem, null);
+			//SIAC-8065
+			chiave = relazioneValida != null && relazioneValida.getSiacTBilElem() != null && relazioneValida.getSiacTBilElem().getElemId() != null
+					? relazioneValida.getSiacTBilElem().getElemId() : null;
 		}
 		return chiave;
 	}
@@ -3940,12 +3999,12 @@ public class EntityToModelConverter {
 					for(SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr){
 						if(null!=siacRMovgestTsAttr && siacRMovgestTsAttr.getDataFineValidita()==null){
 							String codiceAttributo = siacRMovgestTsAttr.getSiacTAttr().getAttrCode();
-							AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+							AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 							switch (attributoMovimentoGestione) {
 							
 								case annoCapitoloOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setAnnoCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									}
@@ -3953,7 +4012,7 @@ public class EntityToModelConverter {
 
 								case annoOriginePlur:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setAnnoOriginePlur(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									
@@ -3962,7 +4021,7 @@ public class EntityToModelConverter {
 
 								case annoRiaccertato:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setAnnoRiaccertato(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 										
@@ -3971,7 +4030,7 @@ public class EntityToModelConverter {
 
 								case numeroArticoloOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroArticoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 										}
 										
@@ -3981,23 +4040,34 @@ public class EntityToModelConverter {
 								case flagDaRiaccertamento:
 									if(null!=siacRMovgestTsAttr.getBoolean_()){
 										// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-										if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 											it.setFlagDaRiaccertamento(true);
 										}else {
 											it.setFlagDaRiaccertamento(false);
 										}
 									}												
 									break;
+									
+								case flagDaReanno:
+									if(null!=siacRMovgestTsAttr.getBoolean_()){
+										// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+											it.setFlagDaReanno(true);
+										}else {
+											it.setFlagDaReanno(false);
+										}
+									}												
+									break;	
 
 								case flagSoggettoDurc:
 									if(null!=siacRMovgestTsAttr.getBoolean_()){
-										it.setFlagSoggettoDurc(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
+										it.setFlagSoggettoDurc(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()));
 									}												
 									break;
 
 								case numeroCapitoloOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 										}
 									}						
@@ -4005,7 +4075,7 @@ public class EntityToModelConverter {
 
 								case numeroOriginePlur:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroOriginePlur(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 										}
 										
@@ -4014,7 +4084,7 @@ public class EntityToModelConverter {
 
 								case numeroRiaccertato:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroRiaccertato(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 										}
 									}
@@ -4022,7 +4092,7 @@ public class EntityToModelConverter {
 
 								case numeroUEBOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroUEBOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									
@@ -4031,7 +4101,7 @@ public class EntityToModelConverter {
 
 								case annoFinanziamento:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setAnnoFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									}
@@ -4047,7 +4117,7 @@ public class EntityToModelConverter {
 
 								case numeroAccFinanziamento:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroAccFinanziamento(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									}									
@@ -4056,7 +4126,7 @@ public class EntityToModelConverter {
 								case validato:
 									if(null!=siacRMovgestTsAttr.getBoolean_()){
 										// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-										if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 											it.setValidato(true);
 										}else {
 											it.setValidato(false);
@@ -4129,7 +4199,7 @@ public class EntityToModelConverter {
 					if(caricaDatiUlteriori){
 						for(SiacRMovgestClassFin siacRMovgestClass : listaSiacRMovgestClass){
 							if(null!=siacRMovgestClass && siacRMovgestClass.getDataFineValidita()==null){
-								if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(Constanti.D_CLASS_TIPO_TIPO_IMPEGNO)){
+								if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(CostantiFin.D_CLASS_TIPO_TIPO_IMPEGNO)){
 									// TIPO
 									ClassificatoreGenerico tipoImpegno = new ClassificatoreGenerico();
 									tipoImpegno.setUid(siacRMovgestClass.getSiacTClass().getClassifId());
@@ -4192,7 +4262,7 @@ public class EntityToModelConverter {
 		//EVENTUALE STRUTTURA AMMINISTRATIVA:
 		Integer uidStruttura = null;
 		if(siacTAttoAmm!=null && siacTAttoAmm.getSiacRAttoAmmClasses()!=null){
-			SiacRAttoAmmClassFin legameValido = DatiOperazioneUtils.getValido(siacTAttoAmm.getSiacRAttoAmmClasses(), null);
+			SiacRAttoAmmClassFin legameValido = DatiOperazioneUtil.getValido(siacTAttoAmm.getSiacRAttoAmmClasses(), null);
 			if(legameValido!=null && legameValido.getSiacTClass()!=null){
 				uidStruttura =  legameValido.getSiacTClass().getUid();
 			}
@@ -4205,7 +4275,7 @@ public class EntityToModelConverter {
 		//EVENTUALE STRUTTURA AMMINISTRATIVA:
 		StrutturaAmministrativoContabile struttura = new StrutturaAmministrativoContabile();
 		if(siacTAttoAmm!=null && siacTAttoAmm.getSiacRAttoAmmClasses()!=null){
-			SiacRAttoAmmClassFin legameValido = DatiOperazioneUtils.getValido(siacTAttoAmm.getSiacRAttoAmmClasses(), null);
+			SiacRAttoAmmClassFin legameValido = DatiOperazioneUtil.getValido(siacTAttoAmm.getSiacRAttoAmmClasses(), null);
 			if(legameValido!=null && legameValido.getSiacTClass()!=null){
 				struttura.setUid(legameValido.getSiacTClass().getUid());
 				struttura.setCodice(legameValido.getSiacTClass().getClassifCode());
@@ -4296,12 +4366,12 @@ public class EntityToModelConverter {
 					for(SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr){
 						if(null!=siacRMovgestTsAttr && siacRMovgestTsAttr.getDataFineValidita()==null){
 							String codiceAttributo = siacRMovgestTsAttr.getSiacTAttr().getAttrCode();
-							AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+							AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 							switch (attributoMovimentoGestione) {
 							
 								case annoCapitoloOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											subAccertamento.setAnnoCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									}
@@ -4309,7 +4379,7 @@ public class EntityToModelConverter {
 
 								case annoOriginePlur:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											subAccertamento.setAnnoOriginePlur(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									
@@ -4318,7 +4388,7 @@ public class EntityToModelConverter {
 
 								case annoRiaccertato:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											subAccertamento.setAnnoRiaccertato(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 										
@@ -4327,7 +4397,7 @@ public class EntityToModelConverter {
 
 								case numeroArticoloOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											subAccertamento.setNumeroArticoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 										}
 										
@@ -4337,7 +4407,7 @@ public class EntityToModelConverter {
 								case flagDaRiaccertamento:
 									if(null!=siacRMovgestTsAttr.getBoolean_()){
 										// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-										if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 											subAccertamento.setFlagDaRiaccertamento(true);
 										}else {
 											subAccertamento.setFlagDaRiaccertamento(false);
@@ -4346,9 +4416,22 @@ public class EntityToModelConverter {
 									break;
 									
 									
+								//SIAC-6997
+								case flagDaReanno:
+									if(null!=siacRMovgestTsAttr.getBoolean_()){
+										// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+											subAccertamento.setFlagDaReanno(true);
+										}else {
+											subAccertamento.setFlagDaReanno(false);
+										}
+									}												
+									break;
+									
+									
 								case FlagAttivaGsa:
 									if(null!=siacRMovgestTsAttr.getBoolean_()){
-										if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 											subAccertamento.setFlagAttivaGsa(true);
 										}else {
 											subAccertamento.setFlagAttivaGsa(false);
@@ -4358,7 +4441,7 @@ public class EntityToModelConverter {
 
 								case numeroCapitoloOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											subAccertamento.setNumeroCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 										}
 									}						
@@ -4366,7 +4449,7 @@ public class EntityToModelConverter {
 
 								case numeroOriginePlur:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											subAccertamento.setNumeroOriginePlur(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 										}
 										
@@ -4375,7 +4458,7 @@ public class EntityToModelConverter {
 
 								case numeroRiaccertato:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											subAccertamento.setNumeroRiaccertato(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 										}
 									}
@@ -4383,7 +4466,7 @@ public class EntityToModelConverter {
 
 								case numeroUEBOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											subAccertamento.setNumeroUEBOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									
@@ -4393,7 +4476,7 @@ public class EntityToModelConverter {
 								case validato:
 									if(null!=siacRMovgestTsAttr.getBoolean_()){
 										// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-										if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 											subAccertamento.setValidato(true);
 										}else {
 											subAccertamento.setValidato(false);
@@ -4453,7 +4536,7 @@ public class EntityToModelConverter {
 					List<SiacRMovgestClassFin> listaSiacRMovgestClass = siacTMovgestTs.getSiacRMovgestClasses();
 					for(SiacRMovgestClassFin siacRMovgestClass : listaSiacRMovgestClass){
 						if(null!=siacRMovgestClass && siacRMovgestClass.getDataFineValidita()==null){
-							if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(Constanti.D_CLASS_TIPO_TIPO_IMPEGNO)){
+							if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(CostantiFin.D_CLASS_TIPO_TIPO_IMPEGNO)){
 								// TIPO
 								ClassificatoreGenerico tipoImpegno = new ClassificatoreGenerico();
 								tipoImpegno.setUid(siacRMovgestClass.getSiacTClass().getClassifId());
@@ -4543,12 +4626,12 @@ public class EntityToModelConverter {
 					for(SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr){
 						if(null!=siacRMovgestTsAttr && siacRMovgestTsAttr.getDataFineValidita()==null){
 							String codiceAttributo = siacRMovgestTsAttr.getSiacTAttr().getAttrCode();
-							AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+							AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 							switch (attributoMovimentoGestione) {
 							
 								case annoCapitoloOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setAnnoCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									}
@@ -4556,7 +4639,7 @@ public class EntityToModelConverter {
 
 								case annoOriginePlur:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setAnnoOriginePlur(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									
@@ -4565,7 +4648,7 @@ public class EntityToModelConverter {
 
 								case annoRiaccertato:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setAnnoRiaccertato(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 										
@@ -4574,7 +4657,7 @@ public class EntityToModelConverter {
 
 								case numeroArticoloOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroArticoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 										}
 										
@@ -4584,17 +4667,28 @@ public class EntityToModelConverter {
 								case flagDaRiaccertamento:
 									if(null!=siacRMovgestTsAttr.getBoolean_()){
 										// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-										if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 											it.setFlagDaRiaccertamento(true);
 										}else {
 											it.setFlagDaRiaccertamento(false);
 										}
 									}												
 									break;
+								
+								//SIAC-6997	
+								case flagDaReanno:
+									if(null!=siacRMovgestTsAttr.getBoolean_()){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+											it.setFlagDaReanno(true);
+										}else {
+											it.setFlagDaReanno(false);
+										}
+									}												
+									break;	
 
 								case numeroCapitoloOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroCapitoloOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));	
 										}
 									}						
@@ -4602,7 +4696,7 @@ public class EntityToModelConverter {
 
 								case numeroOriginePlur:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroOriginePlur(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 										}
 										
@@ -4611,7 +4705,7 @@ public class EntityToModelConverter {
 
 								case numeroRiaccertato:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroRiaccertato(new BigDecimal(Integer.parseInt(siacRMovgestTsAttr.getTesto())));
 										}
 									}
@@ -4619,7 +4713,7 @@ public class EntityToModelConverter {
 
 								case numeroUEBOrigine:
 									if(siacRMovgestTsAttr.getTesto() != null){
-										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+										if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 											it.setNumeroUEBOrigine(Integer.parseInt(siacRMovgestTsAttr.getTesto()));
 										}
 									
@@ -4629,7 +4723,7 @@ public class EntityToModelConverter {
 								case validato:
 									if(null!=siacRMovgestTsAttr.getBoolean_()){
 										// if("S".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_()) || "s".equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
-										if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+										if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 											it.setValidato(true);
 										}else {
 											it.setValidato(false);
@@ -4678,7 +4772,7 @@ public class EntityToModelConverter {
 					List<SiacRMovgestClassFin> listaSiacRMovgestClass = ottimizzazioneDto.filtraSiacRMovgestClassByMovgestTs(movgestTsId);
 					for(SiacRMovgestClassFin siacRMovgestClass : listaSiacRMovgestClass){
 						if(null!=siacRMovgestClass && siacRMovgestClass.getDataFineValidita()==null){
-							if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(Constanti.D_CLASS_TIPO_TIPO_IMPEGNO)){
+							if(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode().equalsIgnoreCase(CostantiFin.D_CLASS_TIPO_TIPO_IMPEGNO)){
 								// TIPO
 								ClassificatoreGenerico tipoImpegno = new ClassificatoreGenerico();
 								tipoImpegno.setUid(siacRMovgestClass.getSiacTClass().getClassifId());
@@ -4763,11 +4857,14 @@ public class EntityToModelConverter {
 					if(elencoSiacRModificaStato!=null && elencoSiacRModificaStato.size()>0){
 						for(SiacRModificaStatoFin siacRModificaStato : elencoSiacRModificaStato){
 							if(null!=siacRModificaStato && siacRModificaStato.getDataFineValidita() == null){
-								StatoOperativoModificaMovimentoGestione statoOperativoModificaMovimentoGestione = Constanti.statoOperativoModificaMovimentoGestioneStringToEnum(siacRModificaStato.getSiacDModificaStato().getModStatoCode());
+								StatoOperativoModificaMovimentoGestione statoOperativoModificaMovimentoGestione = CostantiFin.statoOperativoModificaMovimentoGestioneStringToEnum(siacRModificaStato.getSiacDModificaStato().getModStatoCode());
 								it.setStatoOperativoModificaMovimentoGestione(statoOperativoModificaMovimentoGestione);
 								//risoluzione anomalia descrizione stato al posto del codice
 								it.setCodiceStatoOperativoModificaMovimentoGestione(siacRModificaStato.getSiacDModificaStato().getModStatoCode());
 
+								//SIAC-8118 passo la data della modifica dello stato opertivo 
+								it.setDataFromStatoOperativo(siacRModificaStato.getDataModifica());
+								
 								List<SiacTMovgestTsDetModFin> listaSiacTMovgestTsDetMod = null;
 								if(ottimizzazioneModDto!=null){
 									//Ramo ottimizzato
@@ -4786,9 +4883,29 @@ public class EntityToModelConverter {
 											it.setImportoOld(siacTMovgestTsDetMod.getMovgestTsDetImporto());
 											it.setReimputazione(siacTMovgestTsDetMod.getMtdmReimputazioneFlag());
 											it.setAnnoReimputazione(siacTMovgestTsDetMod.getMtdmReimputazioneAnno());
+											
+											//SIAC-6865
+											it.setFlagAggiudicazione(siacTMovgestTsDetMod.getMtdmAggiudicazioneFlag());
+											//SIAC-7838
+											it.setFlagAggiudicazioneSenzaSoggetto(siacTMovgestTsDetMod.getMtdmAggiudicazioneSenzaSog());
+
+											if(siacTMovgestTsDetMod.getSiacTSoggettoAggiudicazione() != null) {
+												it.setSoggettoAggiudicazione(new Soggetto());
+												it.getSoggettoAggiudicazione().setUid(siacTMovgestTsDetMod.getSiacTSoggettoAggiudicazione().getSoggettoId());
+												it.getSoggettoAggiudicazione().setCodiceSoggetto(siacTMovgestTsDetMod.getSiacTSoggettoAggiudicazione().getSoggettoCode());
+												it.getSoggettoAggiudicazione().setDenominazione(siacTMovgestTsDetMod.getSiacTSoggettoAggiudicazione().getSoggettoDesc());
+											}
+											if(siacTMovgestTsDetMod.getSiacDSoggettoClasseAggiudicazione() != null) {
+												it.setClasseSoggettoAggiudicazione(new ClasseSoggetto());
+												it.getClasseSoggettoAggiudicazione().setUid(siacTMovgestTsDetMod.getSiacDSoggettoClasseAggiudicazione().getUid());
+												it.getClasseSoggettoAggiudicazione().setCodice(siacTMovgestTsDetMod.getSiacDSoggettoClasseAggiudicazione().getSoggettoClasseCode());
+												it.getClasseSoggettoAggiudicazione().setDescrizione(siacTMovgestTsDetMod.getSiacDSoggettoClasseAggiudicazione().getSoggettoClasseDesc());
+											}
+
 										}
 									}
 								}
+								
 
 								List<SiacRMovgestTsSogModFin> listaSiacRMovgestTsSogMod = null;
 								if(ottimizzazioneModDto!=null){
@@ -4801,8 +4918,9 @@ public class EntityToModelConverter {
 								
 								if(null!=listaSiacRMovgestTsSogMod && listaSiacRMovgestTsSogMod.size() > 0){
 									for(SiacRMovgestTsSogModFin siacRMovgestTsSogMod : listaSiacRMovgestTsSogMod){
-										if(null!=siacRMovgestTsSogMod && siacRMovgestTsSogMod.getDataFineValidita() == null && siacRMovgestTsSogMod.getDataCreazione()!=null){										
-											if(siacRMovgestTsSogMod.getSiacTSoggetto2()!=null && !StringUtils.isEmpty(siacRMovgestTsSogMod.getSiacTSoggetto2().getSoggettoCode())){
+										if(siacRMovgestTsSogMod != null && siacRMovgestTsSogMod.getDataFineValidita() == null 
+												&& siacRMovgestTsSogMod.getDataCancellazione() == null && siacRMovgestTsSogMod.getDataCreazione()!=null){										
+											if(siacRMovgestTsSogMod.getSiacTSoggetto2() != null && !StringUtilsFin.isEmpty(siacRMovgestTsSogMod.getSiacTSoggetto2().getSoggettoCode())){
 												it.setNewSoggettoCodeMovimentoGestione(siacRMovgestTsSogMod.getSiacTSoggetto2().getSoggettoCode());
 											}
 											it.setOldSoggettoCodeMovimentoGestione(siacRMovgestTsSogMod.getSiacTSoggetto1().getSoggettoCode());
@@ -4812,7 +4930,7 @@ public class EntityToModelConverter {
 								
 								
 								List<SiacRMovgestTsSogclasseModFin> listaSiacRMovgestTsSogclasseMod = null;
-								if(ottimizzazioneModDto!=null){
+								if(ottimizzazioneModDto != null){
 									//Ramo ottimizzato
 									listaSiacRMovgestTsSogclasseMod = ottimizzazioneModDto.filtraSiacRMovgestTsSogclasseModFinBySiacRModificaStato(siacRModificaStato);
 								} else {
@@ -4820,12 +4938,12 @@ public class EntityToModelConverter {
 									listaSiacRMovgestTsSogclasseMod = siacRModificaStato.getSiacRMovgestTsSogclasseMods();
 								}
 								
-								if(null!=listaSiacRMovgestTsSogclasseMod && listaSiacRMovgestTsSogclasseMod.size() > 0){
+								if(listaSiacRMovgestTsSogclasseMod != null && listaSiacRMovgestTsSogclasseMod.size() > 0){
 									for(SiacRMovgestTsSogclasseModFin siacRMovgestTsSogclasseMod : listaSiacRMovgestTsSogclasseMod){
-										if(null!=siacRMovgestTsSogclasseMod && siacRMovgestTsSogclasseMod.getDataFineValidita() == null &&
-												siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse1()!=null){
+										if(siacRMovgestTsSogclasseMod != null && siacRMovgestTsSogclasseMod.getDataFineValidita() == null 
+												&& siacRMovgestTsSogclasseMod.getDataCancellazione() == null && siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse1() != null){
 											it.setIdClasseSoggettoOldMovimentoGestione(siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse1().getSoggettoClasseId());
-											if(siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse2()!=null && siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse2().getSoggettoClasseId()!=0){
+											if(siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse2() != null && siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse2().getSoggettoClasseId()!=0){
 												it.setIdClasseSoggettoNewMovimentoGestione(siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse2().getSoggettoClasseId());
 											}	
 										}
@@ -4839,7 +4957,7 @@ public class EntityToModelConverter {
 					// 5. TIPO_MODIFICA
 					SiacDModificaTipoFin siacDModificaTipo = itsiac.getSiacDModificaTipo();
 					if(null!=siacDModificaTipo && siacDModificaTipo.getDataFineValidita() == null){
-//						TipoModificaMovimentoGestione tipoModificaMovimentoGestione = Constanti.tipoModificaMovimentoGestioneStringToEnum(siacDModificaTipo.getModTipoCode());
+//						TipoModificaMovimentoGestione tipoModificaMovimentoGestione = CostantiFin.tipoModificaMovimentoGestioneStringToEnum(siacDModificaTipo.getModTipoCode());
 //						it.setTipoModificaMovimentoGestione(tipoModificaMovimentoGestione);
 						it.setTipoModificaMovimentoGestione(siacDModificaTipo.getModTipoCode());
 						it.setTipoMovimentoDesc(siacDModificaTipo.getModTipoDesc());
@@ -4848,6 +4966,8 @@ public class EntityToModelConverter {
 					
 					// 6. ALTRI POSSIBILI CAMPI
 					it.setNumeroModificaMovimentoGestione(itsiac.getModNum());
+					//SIAC-6997
+					it.setElaboraRorReanno(itsiac.getElabRorReanno() != null ? itsiac.getElabRorReanno() : false);
 					// END ALTRI POSSIBILI CAMPI	
 
 					break;
@@ -4907,9 +5027,12 @@ public class EntityToModelConverter {
 						if(null!=siacRModificaStato && siacRModificaStato.getDataFineValidita() == null){
 							//risoluzione anomalia descrizione stato al posto del codice
 							it.setCodiceStatoOperativoModificaMovimentoGestione(siacRModificaStato.getSiacDModificaStato().getModStatoCode());
-							StatoOperativoModificaMovimentoGestione statoOperativoModificaMovimentoGestione = Constanti.statoOperativoModificaMovimentoGestioneStringToEnum(siacRModificaStato.getSiacDModificaStato().getModStatoCode());
+							StatoOperativoModificaMovimentoGestione statoOperativoModificaMovimentoGestione = CostantiFin.statoOperativoModificaMovimentoGestioneStringToEnum(siacRModificaStato.getSiacDModificaStato().getModStatoCode());
 							
 							it.setStatoOperativoModificaMovimentoGestione(statoOperativoModificaMovimentoGestione);
+							
+							//SIAC-8118 passo la data della modifica dello stato opertivo 
+							it.setDataFromStatoOperativo(siacRModificaStato.getDataModifica());
 							
 							List<SiacTMovgestTsDetModFin> listaSiacTMovgestTsDetMod = null;
 							if(ottimizzazioneModDto!=null){
@@ -4944,8 +5067,9 @@ public class EntityToModelConverter {
 							
 							if(null!=listaSiacRMovgestTsSogMod && listaSiacRMovgestTsSogMod.size() > 0){
 								for(SiacRMovgestTsSogModFin siacRMovgestTsSogMod : listaSiacRMovgestTsSogMod){
-									if(null!=siacRMovgestTsSogMod && siacRMovgestTsSogMod.getDataFineValidita() == null && siacRMovgestTsSogMod.getDataCreazione()!=null){
-										if(siacRMovgestTsSogMod.getSiacTSoggetto2()!=null && !StringUtils.isEmpty(siacRMovgestTsSogMod.getSiacTSoggetto2().getSoggettoCode())){
+									if(siacRMovgestTsSogMod != null && siacRMovgestTsSogMod.getDataFineValidita() == null 
+											&& siacRMovgestTsSogMod.getDataCancellazione() == null && siacRMovgestTsSogMod.getDataCreazione()!=null){
+										if(siacRMovgestTsSogMod.getSiacTSoggetto2() != null && !StringUtilsFin.isEmpty(siacRMovgestTsSogMod.getSiacTSoggetto2().getSoggettoCode())){
 											it.setNewSoggettoCodeMovimentoGestione(siacRMovgestTsSogMod.getSiacTSoggetto2().getSoggettoCode());
 										}
 										it.setOldSoggettoCodeMovimentoGestione(siacRMovgestTsSogMod.getSiacTSoggetto1().getSoggettoCode());
@@ -4962,9 +5086,10 @@ public class EntityToModelConverter {
 								listaSiacRMovgestTsSogclasseMod = siacRModificaStato.getSiacRMovgestTsSogclasseMods();
 							}
 							
-							if(null!=listaSiacRMovgestTsSogclasseMod && listaSiacRMovgestTsSogclasseMod.size() > 0){
+							if(listaSiacRMovgestTsSogclasseMod != null && listaSiacRMovgestTsSogclasseMod.size() > 0){
 								for(SiacRMovgestTsSogclasseModFin siacRMovgestTsSogclasseMod : listaSiacRMovgestTsSogclasseMod){
-									if(null!=siacRMovgestTsSogclasseMod && siacRMovgestTsSogclasseMod.getDataFineValidita() == null && siacRMovgestTsSogclasseMod.getDataCreazione()!=null){
+									if(siacRMovgestTsSogclasseMod != null && siacRMovgestTsSogclasseMod.getDataFineValidita() == null 
+											&& siacRMovgestTsSogclasseMod.getDataCancellazione() == null && siacRMovgestTsSogclasseMod.getDataCreazione()!=null){
 										it.setIdClasseSoggettoOldMovimentoGestione(siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse1().getSoggettoClasseId());
 										if(siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse2()!=null && siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse2().getSoggettoClasseId()!=0){
 											it.setIdClasseSoggettoNewMovimentoGestione(siacRMovgestTsSogclasseMod.getSiacDSoggettoClasse2().getSoggettoClasseId());
@@ -4979,7 +5104,7 @@ public class EntityToModelConverter {
 					// 5. TIPO_MODIFICA
 					SiacDModificaTipoFin siacDModificaTipo = itsiac.getSiacDModificaTipo();
 					if(null!=siacDModificaTipo && siacDModificaTipo.getDataFineValidita() == null){
-						//TipoModificaMovimentoGestione tipoModificaMovimentoGestione = Constanti.tipoModificaMovimentoGestioneStringToEnum(siacDModificaTipo.getModTipoCode());						
+						//TipoModificaMovimentoGestione tipoModificaMovimentoGestione = CostantiFin.tipoModificaMovimentoGestioneStringToEnum(siacDModificaTipo.getModTipoCode());						
 						//it.setTipoModificaMovimentoGestione(tipoModificaMovimentoGestione);
 						it.setTipoModificaMovimentoGestione(siacDModificaTipo.getModTipoCode());
 						it.setTipoMovimentoDesc(siacDModificaTipo.getModTipoDesc());
@@ -4988,6 +5113,8 @@ public class EntityToModelConverter {
 					
 					// 6. ALTRI POSSIBILI CAMPI
 					it.setNumeroModificaMovimentoGestione(itsiac.getModNum());
+					//SIAC-6997
+					it.setElaboraRorReanno(itsiac.getElabRorReanno() != null ? itsiac.getElabRorReanno() : false);
 					// END ALTRI POSSIBILI CAMPI	
 
 					break;
@@ -5019,7 +5146,7 @@ public class EntityToModelConverter {
 					
 					String tipoCode = siacRClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode();
 					
-					if(tipoCode.equalsIgnoreCase(tipoCodifica) || StringUtils.contenutoIn(tipoCode, Constanti.getCodiciPianoDeiConti())){
+					if(tipoCode.equalsIgnoreCase(tipoCodifica) || StringUtilsFin.contenutoIn(tipoCode, CostantiFin.getCodiciPianoDeiConti())){
 						// PIANO DEI CONTI:
 						codifica.setCodice(codice); 
 						codifica.setDescrizione(desc);
@@ -5040,7 +5167,7 @@ public class EntityToModelConverter {
 			for(SiacTAvanzovincoloFin it: dtos){
 				if(it!=null && it.getUid()!=null){
 					Integer idIterato = it.getUid();
-					Avanzovincolo mappato = CommonUtils.getById(listaAvanzi, idIterato);
+					Avanzovincolo mappato = CommonUtil.getById(listaAvanzi, idIterato);
 					if(mappato==null){
 						mappato = new Avanzovincolo();
 					}

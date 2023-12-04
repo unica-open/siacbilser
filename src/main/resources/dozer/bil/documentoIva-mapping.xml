@@ -31,6 +31,12 @@ SPDX-License-Identifier: EUPL-1.2
 			<b>ivaaliquotaSplit</b>
 		</field>
 				
+		<!-- SIAC-7557 -->		
+		<field custom-converter-id="tipoNaturaConverter">
+			<a>tipoNatura</a>
+			<b>sirfelDNatura</b>
+		</field>
+				
 		<field map-id="SiacTEnteProprietario_Ente_Base">
 			<a>ente</a>
 			<b>siacTEnteProprietario</b>

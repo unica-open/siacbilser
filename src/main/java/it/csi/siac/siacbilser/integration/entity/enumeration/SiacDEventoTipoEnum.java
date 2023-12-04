@@ -7,7 +7,7 @@ package it.csi.siac.siacbilser.integration.entity.enumeration;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 
 /**
@@ -48,7 +48,7 @@ public enum SiacDEventoTipoEnum {
 
 	;
 	
-	private static LogUtil log = new LogUtil(SiacDEventoTipoEnum.class);
+	private static LogSrvUtil log = new LogSrvUtil(SiacDEventoTipoEnum.class);
 	private final String eventoTipoCode;
 	private final SiacDEventoFamTipoEnum siacDEventoFamTipoEnum;
 	

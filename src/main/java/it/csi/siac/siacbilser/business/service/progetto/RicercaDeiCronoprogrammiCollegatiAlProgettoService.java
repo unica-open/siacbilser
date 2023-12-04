@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacbilser.business.service.progetto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -66,7 +67,8 @@ public class RicercaDeiCronoprogrammiCollegatiAlProgettoService extends CheckedA
 	 */
 	@Override
 	protected void execute() {
-		List<Cronoprogramma> listaCronoprogrammi = cronoprogrammaDad.findCronoprogrammiByProgetto(req.getProgetto(), req.getAnnoBilancioCronoprogrammi());		
+		List <Cronoprogramma> listaCronoprogrammi= new ArrayList<Cronoprogramma>(); 
+		/*List<Cronoprogramma> */listaCronoprogrammi = cronoprogrammaDad.findCronoprogrammiByProgetto(req.getProgetto(), req.getAnnoBilancioCronoprogrammi());		
 		
 		TipoProgetto tipoProgettoAssociato = caricaTipoProgetto();
 		

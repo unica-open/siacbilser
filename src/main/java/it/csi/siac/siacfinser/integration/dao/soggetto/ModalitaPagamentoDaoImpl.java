@@ -48,7 +48,7 @@ public class ModalitaPagamentoDaoImpl extends JpaDao<SiacTModpagFin, Integer> im
 
 		if (l.isEmpty())
 			throw new IllegalStateException(String.format("Gestione livello %s non definito per l'ente %d",
-					TipologiaGestioneLivelli.ACCREDITO_CONTO_BANCA.getCodice(), idEnte));
+					codiceGestioneLivello, idEnte));
 		
 		return l.get(0);
 	}
@@ -67,6 +67,29 @@ public class ModalitaPagamentoDaoImpl extends JpaDao<SiacTModpagFin, Integer> im
 
 		q.setParameter("soggetto_id", idSoggetto);
 		q.setParameter("iban", iban);
+		q.setParameter("ente_proprietario_id", idEnte);
+
+		List<Integer> l = q.getResultList();
+
+		return l.isEmpty() ? null : l.get(0);
+	}
+	
+	@Override
+	public Integer findModalitaPagamentoGiroFondi(Integer idSoggetto, String numeroConto, Integer idEnte, Integer accreditoTipoId)
+	{
+		Query q = entityManager.createNativeQuery(
+				"SELECT modpag_id FROM siac_t_modpag "
+				+ " WHERE soggetto_id=:soggetto_id "
+				+ " AND accredito_tipo_id=:accredito_tipo_id "
+				+ " AND contocorrente=:numeroConto"
+				+ " AND ente_proprietario_id=:ente_proprietario_id "
+				+ " AND data_cancellazione IS NULL "
+				+ " AND validita_inizio <= now() "
+				+ " AND (validita_fine IS NULL OR validita_fine > now())");
+
+		q.setParameter("soggetto_id", idSoggetto);
+		q.setParameter("accredito_tipo_id", accreditoTipoId);
+		q.setParameter("numeroConto", numeroConto);
 		q.setParameter("ente_proprietario_id", idEnte);
 
 		List<Integer> l = q.getResultList();
@@ -99,11 +122,22 @@ public class ModalitaPagamentoDaoImpl extends JpaDao<SiacTModpagFin, Integer> im
 	public Integer insertModalitaPagamentoContoCorrente(Integer idSoggetto, String iban, Integer idEnte, String login)
 	{
 		Integer idTipoAccredito = findAccreditoTipoIdByGestioneLivello(idEnte, TipologiaGestioneLivelli.ACCREDITO_CONTO_BANCA.getCodice());
-		inserisciModpag(idSoggetto, idTipoAccredito, iban, null, null, idEnte, login);
+		inserisciModpag(idSoggetto, idTipoAccredito, iban, null, null, null, idEnte, login);
 		inserisciModpagOrdine(idSoggetto, idEnte, login);
 		inserisciModpagStato(idEnte, login);
 		
-		return ((Number) entityManager.createNativeQuery("SELECT CURRVAL('siac_t_modpag_modpag_id_seq')").getSingleResult()).intValue();
+		return getLastInsertIdModalitaPagamento();
+	}
+
+	@Override
+	public Integer insertModalitaPagamentoGiroFondi(Integer idSoggetto, String numeroConto, Integer idEnte, String login)
+	{
+		Integer idTipoAccredito = findAccreditoTipoIdByGestioneLivello(idEnte, TipologiaGestioneLivelli.ACCREDITO_GIRO_FONDI.getCodice());
+		inserisciModpag(idSoggetto, idTipoAccredito, null, numeroConto, null, null, idEnte, login);
+		inserisciModpagOrdine(idSoggetto, idEnte, login);
+		inserisciModpagStato(idEnte, login);
+		
+		return getLastInsertIdModalitaPagamento();
 	}
 
 	@Override
@@ -111,10 +145,14 @@ public class ModalitaPagamentoDaoImpl extends JpaDao<SiacTModpagFin, Integer> im
 			String codiceFiscaleQuietanzante, Integer idEnte, String login)
 	{
 		Integer idTipoAccredito = findAccreditoTipoIdByGestioneLivello(idEnte, TipologiaGestioneLivelli.ACCREDITO_CONTANTI.getCodice());
-		inserisciModpag(idSoggetto, idTipoAccredito, null, quietanzante, codiceFiscaleQuietanzante, idEnte, login);
+		inserisciModpag(idSoggetto, idTipoAccredito, null, null, quietanzante, codiceFiscaleQuietanzante, idEnte, login);
 		inserisciModpagOrdine(idSoggetto, idEnte, login);
 		inserisciModpagStato(idEnte, login);
 		
+		return getLastInsertIdModalitaPagamento();
+	}
+
+	private int getLastInsertIdModalitaPagamento() {
 		return ((Number) entityManager.createNativeQuery("SELECT CURRVAL('siac_t_modpag_modpag_id_seq')").getSingleResult()).intValue();
 	}
 
@@ -186,8 +224,8 @@ public class ModalitaPagamentoDaoImpl extends JpaDao<SiacTModpagFin, Integer> im
 		q.executeUpdate();
 	}
 
-	private void inserisciModpag(Integer idSoggetto, Integer idTipoAccredito, String iban, String quietanzante,
-			String codiceFiscaleQuietanzante, Integer idEnte, String login)
+	private void inserisciModpag(Integer idSoggetto, Integer idTipoAccredito, String iban, String contoCorrente,
+			String quietanzante, String codiceFiscaleQuietanzante, Integer idEnte, String login)
 	{
 		Query q = entityManager.createNativeQuery(
 				"INSERT INTO siac_t_modpag "
@@ -195,6 +233,7 @@ public class ModalitaPagamentoDaoImpl extends JpaDao<SiacTModpagFin, Integer> im
 				+ "    soggetto_id, "
 				+ "    accredito_tipo_id, "
 				+ "    iban, "
+				+ "    contocorrente, "
 				+ "    quietanziante, "
 				+ "    quietanziante_codice_fiscale, "
 				+ "    validita_inizio, "
@@ -207,6 +246,7 @@ public class ModalitaPagamentoDaoImpl extends JpaDao<SiacTModpagFin, Integer> im
 				+ "    :soggetto_id, "
 				+ "    :accredito_tipo_id, "
 				+ "    :iban, "
+				+ "    :conto_corrente, "
 				+ "    :quietanziante, "
 				+ "    :quietanziante_codice_fiscale, "
 				+ "    now(), "
@@ -219,6 +259,7 @@ public class ModalitaPagamentoDaoImpl extends JpaDao<SiacTModpagFin, Integer> im
 		q.setParameter("soggetto_id", idSoggetto);
 		q.setParameter("accredito_tipo_id", idTipoAccredito);
 		q.setParameter("iban", iban);
+		q.setParameter("conto_corrente", contoCorrente);
 		q.setParameter("quietanziante", quietanzante);
 		q.setParameter("quietanziante_codice_fiscale", codiceFiscaleQuietanzante);
 		q.setParameter("ente_proprietario_id", idEnte);

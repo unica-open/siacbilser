@@ -16,7 +16,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacDSubdocIvaStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRSubdocIvaStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTSubdocIva;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDSubdocIvaStatoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.StatoSubdocumentoIva;
 
 // TODO: Auto-generated Javadoc
@@ -27,7 +27,7 @@ import it.csi.siac.siacfin2ser.model.StatoSubdocumentoIva;
 public class SubdocumentoIvaStatoConverter extends DozerConverter<StatoSubdocumentoIva, SiacTSubdocIva > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

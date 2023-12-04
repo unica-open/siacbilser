@@ -12,7 +12,7 @@ import org.dozer.DozerConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacfinser.integration.dao.EnumEntityFinFactory;
 import it.csi.siac.siacfinser.integration.entity.SiacRBilFaseOperativaFin;
 import it.csi.siac.siacfinser.integration.entity.enumeration.SiacDFaseOperativaFinEnum;

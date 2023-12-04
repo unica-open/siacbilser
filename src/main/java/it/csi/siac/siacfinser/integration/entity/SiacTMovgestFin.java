@@ -74,7 +74,6 @@ public class SiacTMovgestFin extends SiacTEnteBase {
 	@Column(name = "parere_finanziario")
 	private Boolean parereFinanziario;
 	
-	
 	@Basic
 	@Column(name = "parere_finanziario_data_modifica")
 	private Date parereFinanziarioDataModifica;
@@ -82,7 +81,8 @@ public class SiacTMovgestFin extends SiacTEnteBase {
 	@Basic
 	@Column(name = "parere_finanziario_login_operazione")
 	private String parereFinanziarioLoginOperazione;
-
+	
+	
 	public SiacTMovgestFin() {
 	}
 

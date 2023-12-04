@@ -16,7 +16,7 @@ import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamErr
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazioni;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazioniResponse;
@@ -63,7 +63,7 @@ public class RicercaLiquidazioniService extends AbstractBaseService<RicercaLiqui
 
 		if(parametroRicercaLiquidazione.getTipoRicerca()==null){
 			//imposto un default che è LIQUIDAZIONE
-			parametroRicercaLiquidazione.setTipoRicerca(Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE);
+			parametroRicercaLiquidazione.setTipoRicerca(CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE);
 		}
 		
 		
@@ -72,9 +72,9 @@ public class RicercaLiquidazioniService extends AbstractBaseService<RicercaLiqui
 
 		// Verifica che il numero stia nel range massimo di ricerca
 		// RM: per la jira 4556  FIN - Ordinativi e liquidazioni - Toglietre 'Ricerca tropo estesa'
-		//if(conteggioRecords <= Constanti.MAX_RIGHE_ESTRAIBILI.longValue()){
+		//if(conteggioRecords <= CostantiFin.MAX_RIGHE_ESTRAIBILI.longValue()){
 			//Estrazione delle liquidazioni ricercate 
-			List<Liquidazione> listaRisultati = liquidazioneDad.ricercaLiquidazioni(parametroRicercaLiquidazione,Constanti.AMBITO_FIN, idEnte, req.getNumPagina(), req.getNumRisultatiPerPagina(),datiOperazione);
+			List<Liquidazione> listaRisultati = liquidazioneDad.ricercaLiquidazioni(parametroRicercaLiquidazione,CostantiFin.AMBITO_FIN, idEnte, req.getNumPagina(), req.getNumRisultatiPerPagina(),datiOperazione);
 			res.setEsito(Esito.SUCCESSO);
 			res.setElencoLiquidazioni(listaRisultati);
 			res.setNumRisultati(conteggioRecords.intValue());

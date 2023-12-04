@@ -5,7 +5,9 @@
 package it.csi.siac.siacbilser.business.service.capitoloentratagestione;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +84,9 @@ public class AggiornaCapitoloDiEntrataGestioneService extends CrudCapitoloBaseSe
 	
 	@Override
 	protected void execute() {
+		//SIAC-7722: Pulisco le descrizioni da eventuali "a capo"
+		req.setCapitoloEntrataGestione(pulisciDescrizioni(req.getCapitoloEntrataGestione()));
+		
 		checkClassificazioneBilancioSeStandard(req.getCapitoloEntrataGestione());		
 		CapitoloEntrataGestione cegAttuale = cercaCapitoloEntrataGestioneAttuale();		
 		
@@ -96,15 +101,40 @@ public class AggiornaCapitoloDiEntrataGestioneService extends CrudCapitoloBaseSe
 			CapitoloEntrataGestione exCap = ricercaExCapitoloEntrataGestione();
 			req.getCapitoloEntrataGestione().setUidExCapitolo(exCap.getUid());
 		}
+		//SIAC-7507
+		caricaImportiCapitolo(cegAttuale);
 		
 		CapitoloEntrataGestione ceg = capitoloEntrataGestioneDad.update(req.getCapitoloEntrataGestione());
 		res.setCapitoloEntrataGestione(ceg);
 	}
 	
 	
-  
-
 	
+	/**
+	 * Carica importi capitolo. Gli importi del capitolo non sono modificabili, quindi li ricarico dalla base dati.
+	 *
+	 * @param cegAttuale the ceg attuale
+	 */
+	private void caricaImportiCapitolo(CapitoloEntrataGestione cegAttuale) {
+		
+		List<ImportiCapitoloEG> listaImporti = new ArrayList<ImportiCapitoloEG>();
+		
+		//anno di bilancio
+		listaImporti.add(cegAttuale.getImportiCapitoloEG());
+
+		//anno di bilancio +1
+		ImportiCapitoloEG importiAnno1 = importiCapitoloDad.findImportiCapitolo(cegAttuale, bilancio.getAnno() + 1, ImportiCapitoloEG.class, EnumSet.noneOf(ImportiCapitoloEnum.class));
+		listaImporti.add(importiAnno1);
+		
+		
+		//anno di bilancio +2
+		ImportiCapitoloEG importiAnno2 = importiCapitoloDad.findImportiCapitolo(cegAttuale, bilancio.getAnno() + 2, ImportiCapitoloEG.class, EnumSet.noneOf(ImportiCapitoloEnum.class));
+		listaImporti.add(importiAnno2);
+		
+		req.getCapitoloEntrataGestione().setListaImportiCapitoloEG(listaImporti);
+		
+	}
+
 	/**
 	 * Cerca capitolo entrata gestione attuale.
 	 *

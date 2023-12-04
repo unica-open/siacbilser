@@ -18,9 +18,9 @@ import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazionePerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaLiquidazionePerChiaveResponse;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
@@ -52,7 +52,7 @@ public class RicercaLiquidazionePerChiaveService extends AbstractLiquidazioneSer
 		
 		long startUno = System.currentTimeMillis();
 		
-		log.debug("[RicercaLiquidazionePerChiaveService:: execute] ", " Tempo di partenza:  " + CommonUtils.convertiMillisecondiInData(startUno));
+		log.debug("[RicercaLiquidazionePerChiaveService:: execute] ", " Tempo di partenza:  " + CommonUtil.convertiMillisecondiInData(startUno));
 		
 		//Lettura variabili di input
 		Ente ente = req.getEnte();
@@ -64,19 +64,19 @@ public class RicercaLiquidazionePerChiaveService extends AbstractLiquidazioneSer
 
 		if(plk.getTipoRicerca()==null){
 			//imposto un default che è LIQUIDAZIONE
-			plk.setTipoRicerca(Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE);
+			plk.setTipoRicerca(CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE);
 		}
 		
 		DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.RICERCA, null);
 		
 		// Ricerca della liquidazione per chiave
-		Liquidazione liquidazione = liquidazioneDad.ricercaLiquidazionePerChiave(plk.getLiquidazione(),plk.getTipoRicerca(), richiedente, annoEsercizio, Constanti.AMBITO_FIN,ente,datiOperazione);
+		Liquidazione liquidazione = liquidazioneDad.ricercaLiquidazionePerChiave(plk.getLiquidazione(),plk.getTipoRicerca(), richiedente, annoEsercizio, CostantiFin.AMBITO_FIN,ente,datiOperazione);
 		//
 		
 		//Completo i dati ulteriori:
 		List<Errore> erroriCompletamentoDati = completaDatiLiquidazione(liquidazione, richiedente, annoEsercizio, plk.getTipoRicerca());
 		
-		if(!StringUtils.isEmpty(erroriCompletamentoDati)){
+		if(!StringUtilsFin.isEmpty(erroriCompletamentoDati)){
 			//Ci sono errori nel completamento dati 
 			res.setErrori(erroriCompletamentoDati);
 			res.setEsito(Esito.FALLIMENTO);
@@ -117,7 +117,7 @@ public class RicercaLiquidazionePerChiaveService extends AbstractLiquidazioneSer
 			// 11/11/2014 patch per mancanza di analisi precedente: 
 			// Se esiste un subdocumento legato lo leggo ma ...leggi sotto
 			// RM 28/03/2017 : lo carico solo se NON sono richiamata dall'emettitore			
-			if(liquidazione.getSubdocumentoSpesa()!=null && !plk.getTipoRicerca().equalsIgnoreCase(Constanti.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO)){
+			if(liquidazione.getSubdocumentoSpesa()!=null && !plk.getTipoRicerca().equalsIgnoreCase(CostantiFin.TIPO_RICERCA_DA_EMISSIONE_ORDINATIVO)){
 				// mi metto da parte il Documento ricavato nella ricerca per chiave della liquidazione
 				// cosi da non perderlo nel setSubdocumentoSpesa dopo la ricerca del dettaglio quote
 				DocumentoSpesa docSpesa = liquidazione.getSubdocumentoSpesa().getDocumento(); 

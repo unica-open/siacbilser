@@ -16,15 +16,16 @@ import it.csi.siac.siacbilser.integration.dad.PagoPADad;
 import it.csi.siac.siacbilser.integration.entity.SiacTFilePagopa;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDFilePagopaStatoEnum;
 import it.csi.siac.siaccommon.util.JAXBUtility;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
+import it.csi.siac.siaccommonser.util.misc.TimeoutValue;
 import it.csi.siac.siaccorser.model.Ente;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PagoPAFlussoHelper {
 
-	private static LogUtil log = new LogUtil(PagoPAFlussoHelper.class);
+	private static LogSrvUtil log = new LogSrvUtil(PagoPAFlussoHelper.class);
 	
 	@Autowired
 	private PagoPADad pagoPADad;
@@ -34,27 +35,25 @@ public class PagoPAFlussoHelper {
 		pagoPADad.setLoginOperazione(loginOperazione);
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.REQUIRES_NEW, timeout = TimeoutValue.INTERVAL_8_HOUR)
 	public void elaboraFlusso(SiacTFilePagopa siacTFilePagopa) throws Exception {
 		try {
 			log.info("elaboraFlussiAcquisiti", String.format("flusso siacTFilePagopa.uid=%d", siacTFilePagopa.getUid()));
 
-			pagoPADad.aggiornaStato(siacTFilePagopa.getUid(), SiacDFilePagopaStatoEnum.IN_ACQUISIZIONE);
+			pagoPADad.aggiornaStato(siacTFilePagopa, SiacDFilePagopaStatoEnum.IN_ACQUISIZIONE);
 
 			FlussoRiconciliazioneType flussoRiconciliazione = 
 					JAXBUtility.unmarshall(new String(siacTFilePagopa.getFilePagopa()), FlussoRiconciliazioneType.class);
 			
 			check(); // TODO
 
-			pagoPADad.salvaFlusso(flussoRiconciliazione, siacTFilePagopa);
+			pagoPADad.salvaFlusso(flussoRiconciliazione, siacTFilePagopa); 
 			
-			pagoPADad.aggiornaStato(siacTFilePagopa.getUid(), SiacDFilePagopaStatoEnum.ACQUISITO);
 		} catch (BusinessException be) {
-			pagoPADad.aggiornaStato(siacTFilePagopa.getUid(), SiacDFilePagopaStatoEnum.RIFIUTATO);
+			pagoPADad.aggiornaStato(siacTFilePagopa, SiacDFilePagopaStatoEnum.RIFIUTATO);
 			
 			throw be;
 		} catch (Exception e) {
-			// pagoPADad.aggiornaStato(siacTFilePagopa.getUid(), SiacDFilePagopaStatoEnum.ElaboratoConErrori);
 			log.error("", String.format("errore flusso siacTFilePagopa.uid=%d", siacTFilePagopa.getUid()), e);
 			
 			throw e;

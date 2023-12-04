@@ -11,10 +11,17 @@ SPDX-License-Identifier: EUPL-1.2
 	<mapping map-id="SiacTIndirizzo_IndirizzoSoggetto">
 		<class-a>it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto</class-a>
 		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTIndirizzoSoggettoFin</class-b>
+
+
 		
 		<field>
-			<a>idComune</a>
+			<a>comuneUid</a>
 			<b>siacTComune.comuneId</b>
+		</field>
+		
+		<field>
+			<a>codiceIstatComune</a>
+			<b>siacTComune.comuneIstatCode</b>
 		</field>
 		
 		<field>
@@ -78,8 +85,13 @@ SPDX-License-Identifier: EUPL-1.2
 		</field>
 		
 		<field>
-			<a>idComune</a>
+			<a>comuneUid</a>
 			<b>siacTComune.comuneId</b>
+		</field>
+		
+		<field>
+			<a>codiceIstatComune</a>
+			<b>siacTComune.comuneIstatCode</b>
 		</field>
 		
 		<field>

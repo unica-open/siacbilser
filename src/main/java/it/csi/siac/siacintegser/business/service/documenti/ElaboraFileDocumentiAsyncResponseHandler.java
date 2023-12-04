@@ -12,17 +12,17 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import it.csi.siac.siacbilser.business.service.base.BilAsyncResponseHandler;
 import it.csi.siac.siacbilser.business.service.documento.InserisceElenchiDocumentiService;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Messaggio;
+import it.csi.siac.siacintegser.business.service.base.ElaboraFileAsyncBaseResponseHandler;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFileResponse;
 
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ElaboraFileDocumentiAsyncResponseHandler extends BilAsyncResponseHandler<ElaboraFileResponse> {
+public class ElaboraFileDocumentiAsyncResponseHandler extends ElaboraFileAsyncBaseResponseHandler{
 
 	@Override
 	public void handleResponse(ElaboraFileResponse response) {

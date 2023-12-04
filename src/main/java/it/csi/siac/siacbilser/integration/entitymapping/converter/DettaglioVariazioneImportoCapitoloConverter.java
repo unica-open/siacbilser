@@ -20,8 +20,10 @@ import it.csi.siac.siacbilser.integration.entity.SiacTVariazione;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemDetTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTBilElemDetVarElemDetFlagEnum;
+import it.csi.siac.siacbilser.integration.entity.helper.SiacTBilElemHelper;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.model.Capitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitolo;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
@@ -38,6 +40,8 @@ public class DettaglioVariazioneImportoCapitoloConverter extends ExtendedDozerCo
 	/** The importi capitolo converter. */
 	@Autowired
 	private ImportiCapitoloUPConverter importiCapitoloConverter;
+	
+	@Autowired private SiacTBilElemHelper siacTBilElemHelper;
 
 	/**
 	 * Instantiates a new variazione importi capitolo converter.
@@ -104,6 +108,10 @@ public class DettaglioVariazioneImportoCapitoloConverter extends ExtendedDozerCo
 		capitolo.setNumeroUEB(Integer.valueOf(siacTBilElem.getElemCode3()));
 		capitolo.setDescrizione(siacTBilElem.getElemDesc());
 		capitolo.setDescrizioneArticolo(siacTBilElem.getElemDesc2());
+		
+		capitolo.setCategoriaCapitolo(mapNotNull(siacTBilElemHelper.getSiacDBilElemCategoria(siacTBilElem), 
+				CategoriaCapitolo.class, BilMapId.SiacDBilElemCategoria_CategoriaCapitolo));	
+		
 		
 		ImportiCapitolo importiCapitolo = importiCapitoloConverter.toImportiCapitolo(siacTBilElem.getSiacTBilElemDets(),
 				tipoCapitolo.newImportiCapitoloInstance(),

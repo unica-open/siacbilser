@@ -16,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import it.csi.siac.siacbilser.integration.entity.SiacTPredoc;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDDocFamTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTPredocOrderByEnum;
+import it.csi.siac.siacbilser.model.ContoCorrentePredocumentoEntrata;
 import it.csi.siac.siaccommonser.integration.dao.base.Dao;
+import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 
 /**
  * The Interface PreDocumentoDao.
@@ -84,6 +86,7 @@ public interface PreDocumentoDao extends Dao<SiacTPredoc, Integer> {
 	 * @param eldocId id dell'elenco documenti
 	 * @param eldocAnno anno dell'elenco documenti
 	 * @param eldocNumero numero dell'elenco documenti
+	 * @param listUidDaFiltrare 
 	 * @param siacTPredocOrderByEnums gli elementi per cui effettuare l'order by
 	 * @param pageable the pageable
 	 * 
@@ -132,10 +135,58 @@ public interface PreDocumentoDao extends Dao<SiacTPredoc, Integer> {
 			Integer eldocId,
 			Integer eldocAnno,
 			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare, 
 			Collection<SiacTPredocOrderByEnum> siacTPredocOrderByEnums,
 			Pageable pageable
 			);
+
 	
+	List<Integer> ricercaSinteticaPredocumentoUid(int enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId,
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			// SIAC-5001
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare
+			);
+
 
 	BigDecimal ricercaSinteticaPreDocumentoImportoTotale(int enteProprietarioId, 
 			SiacDDocFamTipoEnum docFamTipoEnum,
@@ -177,7 +228,8 @@ public interface PreDocumentoDao extends Dao<SiacTPredoc, Integer> {
 			// SIAC-5001
 			Integer eldocId,
 			Integer eldocAnno,
-			Integer eldocNumero
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare
 			);
 
 	List<SiacTPredoc> findBySubdocId(Integer subdocId);
@@ -188,30 +240,235 @@ public interface PreDocumentoDao extends Dao<SiacTPredoc, Integer> {
 
 	void associaMovgestByEldocIdAndPredocStato(SiacTPredoc template, Integer eldocId, Integer movgestId, Integer movgestTsId, Collection<String> predocStatoCodes);
 	
-	List<SiacTPredoc> associaMovgestSoggettoAttoAmmByDataCompetenzaCausIdAndPredocStato(
-			SiacTPredoc template,
-			Integer enteProprietarioId,
-			Integer causId,
-			Date dataCompetenzaDa,
-			Date dataCompetenzaA,
-			Collection<String> predocStatoCodes);
+	List<SiacTPredoc> associaMovgestSoggettoAttoAmmByIds(SiacTPredoc template, Integer uid, List<Integer> uidPredocDaFiltrare,
+			List<String> predocStatoCodes);
 	
 	List<SiacTPredoc> findByEnteCausIdDataCompetenzaDaAPredocStato(Integer enteProprietarioId, String docFamTipoCode,
-			Integer causId, Date dataCompetenzaDa, Date dataCompetenzaA, Collection<String> predocStatoCodes);
+			Integer causId, Date dataCompetenzaDa, Date dataCompetenzaA, Integer uidContoCorrente, List<Integer> uidPredocDaFiltrare,Collection<String> predocStatoCodes);
 
-	Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStato(
-			Integer enteProprietarioId,
-			String docFamTipoCode,
+	//SIAC-6780
+	Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoRiepilogo(Integer enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
 			Date predocDataCompetenzaDa,
 			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
 			Integer causId,
-			List<String> predocStatoCodes);
-
-	Map<String, Long> countByPredocDataCompetenzaDaAAndCausaleEpAndPredocStato(
-			Integer enteProprietarioId,
-			String docFamTipoCode,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes);
+	
+	Map<String, Long> countByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoRiepilogo(Integer enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
 			Date predocDataCompetenzaDa,
 			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
 			Integer causId,
-			List<String> predocStatoCodes);
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes);
+	
+	Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoNoCassa(Integer enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes);
+	
+	Map<String, Long> countByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoNoCassa(Integer enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes);
+	//
+
+	Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStato(Integer enteProprietarioId,
+			SiacDDocFamTipoEnum docFamTipoEnum, String predocNumero, String predocanRagioneSociale,
+			String predocanCognome, String predocanNome, String predocanCodiceFiscale, String predocanPartitaIva,
+			String predocPeriodoCompetenza, BigDecimal predocImporto, Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA, Date predocDataTrasmissioneDa, Date predocDataTrasmissioneA, Integer struttId,
+			Integer causId, Integer causTipoId, Boolean causaleMancante, Integer contotesId,
+			Boolean contoTesoreriaMancante, String predocStatoCode, Integer elemId, Integer movgestId,
+			Integer movgestTsId, Integer soggettoId, Boolean soggettoMancante, Integer provCassaId, Integer attoammId,
+			Boolean attoAmmMancante, Integer docAnno, String docNumero, Integer docTipoId, Integer contoCorrenteId,
+			Boolean contoCorrenteMancante, Boolean nonAnnullati, Integer ordAnno, BigDecimal ordNumero, Integer eldocId,
+			Integer eldocAnno, Integer eldocNumero, List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes);
+
+	Map<String, Long> countByPredocDataCompetenzaDaAAndCausaleEpAndPredocStato(Integer enteProprietarioId,
+			SiacDDocFamTipoEnum docFamTipoEnum, String predocNumero, String predocanRagioneSociale,
+			String predocanCognome, String predocanNome, String predocanCodiceFiscale, String predocanPartitaIva,
+			String predocPeriodoCompetenza, BigDecimal predocImporto, Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA, Date predocDataTrasmissioneDa, Date predocDataTrasmissioneA, Integer struttId,
+			Integer causId, Integer causTipoId, Boolean causaleMancante, Integer contotesId,
+			Boolean contoTesoreriaMancante, String predocStatoCode, Integer elemId, Integer movgestId,
+			Integer movgestTsId, Integer soggettoId, Boolean soggettoMancante, Integer provCassaId, Integer attoammId,
+			Boolean attoAmmMancante, Integer docAnno, String docNumero, Integer docTipoId, Integer contoCorrenteId,
+			Boolean contoCorrenteMancante, Boolean nonAnnullati, Integer ordAnno, BigDecimal ordNumero, Integer eldocId,
+			Integer eldocAnno, Integer eldocNumero, List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes);
+
+	Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoRiepilogo(
+			Integer enteProprietarioId, String docFamTipoCode, SiacDDocFamTipoEnum docFamTipoEnum, String predocNumero,
+			String predocanRagioneSociale, String predocanCognome, String predocanNome, String predocanCodiceFiscale,
+			String predocanPartitaIva, String predocPeriodoCompetenza, BigDecimal predocImporto,
+			Date predocDataCompetenzaDa, Date predocDataCompetenzaA, Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA, Integer struttId, Integer causId, Integer causTipoId, Boolean causaleMancante,
+			Integer contotesId, Boolean contoTesoreriaMancante, String predocStatoCode, Integer elemId,
+			Integer movgestId, Integer movgestTsId, Integer soggettoId, Boolean soggettoMancante, Integer provCassaId,
+			Integer attoammId, Boolean attoAmmMancante, Integer docAnno, String docNumero, Integer docTipoId,
+			Integer contoCorrenteId, Boolean contoCorrenteMancante, Boolean nonAnnullati, Integer ordAnno,
+			BigDecimal ordNumero, Integer eldocId, Integer eldocAnno, Integer eldocNumero,
+			List<Integer> listUidDaFiltrare, boolean filtraPerProvCassa, Collection<String> predocStatoCodes);
+
 }

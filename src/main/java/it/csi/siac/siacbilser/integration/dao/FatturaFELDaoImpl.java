@@ -38,7 +38,9 @@ public class FatturaFELDaoImpl extends JpaDao<SirfelTFattura, SirfelTFatturaPK> 
 	@Override
 	public Page<SirfelTFattura> ricercaSinteticaFatturaFEL(
 			int enteProprietarioId,
-			SirfelDTipoDocumentoEnum sirfelDTipoDocumentoEnum,
+			//SIAC-7557
+			//SirfelDTipoDocumentoEnum sirfelDTipoDocumentoEnum,
+			String codiceTipoDocFEL,
 			String codicePrestatore, 
 			String numero, 
 			String codiceDestinatario,
@@ -51,8 +53,11 @@ public class FatturaFELDaoImpl extends JpaDao<SirfelTFattura, SirfelTFatturaPK> 
 		
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> param = new HashMap<String, Object>();
+		//SIAC-7557
+//		componiQueryRicercaSinteticaFatturaFEL( jpql, param, enteProprietarioId, sirfelDTipoDocumentoEnum, codicePrestatore, 
+//				 numero, codiceDestinatario, dataDa, dataA, statoFattura);
 		
-		componiQueryRicercaSinteticaFatturaFEL( jpql, param, enteProprietarioId, sirfelDTipoDocumentoEnum, codicePrestatore, 
+		componiQueryRicercaSinteticaFatturaFEL( jpql, param, enteProprietarioId, codiceTipoDocFEL, codicePrestatore, 
 				 numero, codiceDestinatario, dataDa, dataA, statoFattura);
 		
 		jpql.append(" ORDER BY f.numero ");
@@ -65,7 +70,9 @@ public class FatturaFELDaoImpl extends JpaDao<SirfelTFattura, SirfelTFatturaPK> 
 
 	private void componiQueryRicercaSinteticaFatturaFEL(StringBuilder jpql,
 			Map<String, Object> param, int enteProprietarioId,
-			SirfelDTipoDocumentoEnum sirfelDTipoDocumentoEnum,
+			//SIAC-7557
+			//SirfelDTipoDocumentoEnum sirfelDTipoDocumentoEnum,
+			String codiceTipoDocFEL,
 			String codicePrestatore, String numero, String codiceDestinatario,
 			Date dataDa, Date dataA, String statoFattura) {
 		
@@ -74,10 +81,16 @@ public class FatturaFELDaoImpl extends JpaDao<SirfelTFattura, SirfelTFatturaPK> 
 		jpql.append(" f.id.enteProprietarioId = :enteProprietarioId ");
 		param.put("enteProprietarioId", enteProprietarioId);
 		
-		if(sirfelDTipoDocumentoEnum != null && sirfelDTipoDocumentoEnum.getCodice()!=null) {
+		//SIAC-7557 inziio
+//		if(sirfelDTipoDocumentoEnum != null && sirfelDTipoDocumentoEnum.getCodice()!=null) {
+//			jpql.append(" AND f.sirfelDTipoDocumento.id.codice = :codice ");
+//			param.put("codice", sirfelDTipoDocumentoEnum.getCodice());
+//		}
+		if(!StringUtils.isEmpty(codiceTipoDocFEL)){
 			jpql.append(" AND f.sirfelDTipoDocumento.id.codice = :codice ");
-			param.put("codice", sirfelDTipoDocumentoEnum.getCodice());
+			param.put("codice", codiceTipoDocFEL);
 		}
+		//SIAC-7557 fine
 		
 		if(!StringUtils.isEmpty(codicePrestatore)){
 			jpql.append(" AND f.sirfelTPrestatore.codicePrestatore = :codicePrestatore ");

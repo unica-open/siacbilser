@@ -20,9 +20,9 @@ import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceLiquidazione;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceLiquidazioneResponse;
@@ -68,8 +68,8 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 	private boolean isCompilatoNumeroSubImpegno(){
 		Liquidazione liquidazione = req.getLiquidazione();
 		boolean compilato = false;
-		if(liquidazione.getSubImpegno()!=null && liquidazione.getSubImpegno().getNumero()!=null
-				&& liquidazione.getSubImpegno().getNumero().intValue()>0){
+		if(liquidazione.getSubImpegno()!=null && liquidazione.getSubImpegno().getNumeroBigDecimal()!=null
+				&& liquidazione.getSubImpegno().getNumeroBigDecimal().intValue()>0){
 			compilato = true;
 		}
 		return compilato;
@@ -100,7 +100,7 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 			//Selezionato un SUB 
 			indicatoSub = true;
 			paginazioneSubMovimentiDto.setNoSub(false);
-			paginazioneSubMovimentiDto.setNumeroSubMovimentoRichiesto(liquidazione.getSubImpegno().getNumero());
+			paginazioneSubMovimentiDto.setNumeroSubMovimentoRichiesto(liquidazione.getSubImpegno().getNumeroBigDecimal());
 		} else {
 			//Non selezionato un SUB
 			indicatoSub = false;
@@ -111,7 +111,7 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 		
 		// se l'impegno è definito con sub annullati devo impostare i flag per non caricare i sub
 		DatiOpzionaliElencoSubTuttiConSoloGliIds datiOpzionaliRicercaImpegno = new  DatiOpzionaliElencoSubTuttiConSoloGliIds();
-		if(impegnoRicevuto.getStatoOperativoMovimentoGestioneSpesa().equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO)){
+		if(impegnoRicevuto.getStatoOperativoMovimentoGestioneSpesa().equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO)){
 			
 			paginazioneSubMovimentiDto.setEscludiSubAnnullati(true);
 			datiOpzionaliRicercaImpegno.setEscludiAnnullati(true);
@@ -119,7 +119,10 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 		}
 		
 		
-		EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, impegnoRicevuto.getAnnoMovimento(), impegnoRicevuto.getNumero(),paginazioneSubMovimentiDto, datiOpzionaliRicercaImpegno, Constanti.MOVGEST_TIPO_IMPEGNO, true);
+		EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(
+				richiedente, ente, annoEsercizio, impegnoRicevuto.getAnnoMovimento(), 
+				impegnoRicevuto.getNumeroBigDecimal(),paginazioneSubMovimentiDto, datiOpzionaliRicercaImpegno,
+				CostantiFin.MOVGEST_TIPO_IMPEGNO, true, true);
 
 		Impegno impegnoReload = null;
 	    if(esitoRicercaMov!=null){
@@ -127,7 +130,7 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 	    }
 
 		if(impegnoReload==null){
-			addErroreFin(ErroreFin.MOVIMENTO_NON_TROVATO, impegnoRicevuto.getNumero().toString());
+			addErroreFin(ErroreFin.MOVIMENTO_NON_TROVATO, impegnoRicevuto.getNumeroBigDecimal().toString());
 			return;
 			//Significa che non e' stato indicato un impegno esistente
 		} else {
@@ -156,7 +159,7 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 				}
 			}
 			
-			if(liquidazione.getSubImpegno()!=null && liquidazione.getSubImpegno().getNumero()!=null){
+			if(liquidazione.getSubImpegno()!=null && liquidazione.getSubImpegno().getNumeroBigDecimal()!=null){
 				subRicevuto = liquidazione.getSubImpegno();
 			} else if(impegnoRicevuto.getElencoSubImpegni()!=null && impegnoRicevuto.getElencoSubImpegni().size()>0){
 				subRicevuto = impegnoRicevuto.getElencoSubImpegni().get(0);
@@ -166,9 +169,9 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 		
 		//come per l'impegno dobbiamo fare per il subimpegno:
 		SubImpegno subImpegnoReload = null;
-		if(subRicevuto!=null && subRicevuto.getNumero()!=null){
+		if(subRicevuto!=null && subRicevuto.getNumeroBigDecimal()!=null){
 
-			subImpegnoReload =  impegnoOttimizzatoDad.findByCode(impegnoReload.getElencoSubImpegni(), subRicevuto.getNumero());
+			subImpegnoReload =  impegnoOttimizzatoDad.findByCode(impegnoReload.getElencoSubImpegni(), subRicevuto.getNumeroBigDecimal());
 			if(subImpegnoReload==null){
 				//il sub impegno non e' stato trovao:
 				addErroreFin(ErroreFin.MOVIMENTO_NON_TROVATO, liquidazione.getSubImpegno().toString());
@@ -176,10 +179,10 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 			} else {
 				//sub impegno trovato:
 				liquidazione.setSubImpegno(null);
-				liquidazione.getImpegno().setElencoSubImpegni(CommonUtils.toList(subImpegnoReload));
+				liquidazione.getImpegno().setElencoSubImpegni(CommonUtil.toList(subImpegnoReload));
 			}
 			
-		} else if(subRicevuto!=null && subRicevuto.getNumero()==null){
+		} else if(subRicevuto!=null && subRicevuto.getNumeroBigDecimal()==null){
 			//se non ricevo il numero e' come non averlo ricevuto:
 			liquidazione.setSubImpegno(null);
 			liquidazione.getImpegno().setElencoSubImpegni(null);
@@ -218,7 +221,7 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 		Liquidazione liquidazioneReload = null;
 		if(req.isCaricaDatiLiquidazione()){
 			
-			String tipoRicerca = Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE;
+			String tipoRicerca = CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE;
 			Integer annoEsercizioInt = new Integer(annoEsercizio);
 			
 			// Ricerca della liquidazione per chiave
@@ -227,11 +230,11 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 			liqK.setAnnoLiquidazione(liquidazioneInserita.getAnnoLiquidazione());
 			liqK.setNumeroLiquidazione(liquidazioneInserita.getNumeroLiquidazione());
 			
-			liquidazioneReload = liquidazioneDad.ricercaLiquidazionePerChiave(liqK,tipoRicerca, richiedente, annoEsercizioInt, Constanti.AMBITO_FIN,ente,datiOperazione);
+			liquidazioneReload = liquidazioneDad.ricercaLiquidazionePerChiave(liqK,tipoRicerca, richiedente, annoEsercizioInt, CostantiFin.AMBITO_FIN,ente,datiOperazione);
 			
 			List<Errore> erroriCompletamentoDati = completaDatiLiquidazione(liquidazioneReload, richiedente, annoEsercizioInt, tipoRicerca);
 			
-			if(!StringUtils.isEmpty(erroriCompletamentoDati)){
+			if(!StringUtilsFin.isEmpty(erroriCompletamentoDati)){
 				//Ci sono errori nel completamento dati 
 				res.setErrori(erroriCompletamentoDati);
 				res.setEsito(Esito.FALLIMENTO);
@@ -303,7 +306,7 @@ public class InserisceLiquidazioneService extends AbstractLiquidazioneService<In
 		
 		
 		boolean impegnoNonInizializzato = (liq.getImpegno() == null || (liq.getImpegno()!=null &&
-				liq.getImpegno().getNumero()==null && liq.getImpegno().getAnnoMovimento()<=0));
+				liq.getImpegno().getNumeroBigDecimal()==null && liq.getImpegno().getAnnoMovimento()<=0));
 		
 		log.debug(methodName, " impegno valorizzato: " +impegnoNonInizializzato);
 		

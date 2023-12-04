@@ -44,7 +44,6 @@ public class SiacDDocStato extends SiacTEnteBase {
 	/** The doc stato desc. */
 	@Column(name="doc_stato_desc")
 	private String docStatoDesc;
-	
 
 	//bi-directional many-to-one association to SiacRDocStato
 	/** The siac r doc statos. */

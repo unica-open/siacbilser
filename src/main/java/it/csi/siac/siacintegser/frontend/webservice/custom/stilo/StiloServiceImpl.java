@@ -49,7 +49,6 @@ public class StiloServiceImpl implements StiloService {
 		return appCtx.getBean(RicercaMovimentoGestioneStiloService.class).executeService(request);
 	}
 	
-	
 	@Override
 	@WebMethod
 	public @WebResult

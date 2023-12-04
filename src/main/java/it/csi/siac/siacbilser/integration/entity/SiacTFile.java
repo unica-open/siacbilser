@@ -69,6 +69,11 @@ public class SiacTFile extends SiacTEnteBase {
 	public SiacTFile() {
 	}
 
+	public SiacTFile(Integer fileId) {
+		this();
+		setFileId(fileId);
+	}
+
 	public Integer getFileId() {
 		return this.fileId;
 	}

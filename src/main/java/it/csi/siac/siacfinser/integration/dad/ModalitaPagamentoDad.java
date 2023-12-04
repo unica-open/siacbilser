@@ -33,10 +33,10 @@ public class ModalitaPagamentoDad extends BaseDadImpl
 		return modalitaPagamentoDao.insertModalitaPagamentoContoCorrente(idSoggetto, iban, idEnte, login);
 	}
 
-	public Integer trovaModalitaPagamentoContanti(Integer idSoggetto, Integer idEnte)
+	public Integer trovaModalitaPagamentoContanti(Integer idSoggetto, TipologiaGestioneLivelli tipologiaGestioneLivelli, Integer idEnte)
 	{
 		Integer accreditoTipoId = modalitaPagamentoDao.findAccreditoTipoIdByGestioneLivello(idEnte,
-				TipologiaGestioneLivelli.ACCREDITO_CONTANTI.getCodice());
+				tipologiaGestioneLivelli.getCodice());
 		
 		return modalitaPagamentoDao.findModalitaPagamentoByAccreditoTipoId(idSoggetto, idEnte, accreditoTipoId);
 	}
@@ -47,4 +47,16 @@ public class ModalitaPagamentoDad extends BaseDadImpl
 				soggetto.getCodiceFiscale(), idEnte, login);
 	}
 
+	public Integer trovaModalitaPagamentoGiroFondi(Integer idSoggetto, String numeroConto, Integer idEnte)
+	{
+		Integer accreditoTipoId = modalitaPagamentoDao.findAccreditoTipoIdByGestioneLivello(idEnte,
+				TipologiaGestioneLivelli.ACCREDITO_GIRO_FONDI.getCodice());
+		
+		return modalitaPagamentoDao.findModalitaPagamentoGiroFondi(idSoggetto, numeroConto, idEnte, accreditoTipoId);
+	}
+	
+	public Integer inserisciModalitaPagamentoGiroFondi(Integer idSoggetto, String numeroConto, Integer idEnte, String login)
+	{
+		return modalitaPagamentoDao.insertModalitaPagamentoGiroFondi(idSoggetto, numeroConto, idEnte, login);
+	}
 }

@@ -286,6 +286,7 @@ public class SubdocumentoIvaSpesaDad extends SubdocumentoIvaDad {
 		
 		List<SiacTSubdocIva> lista = ottieniListaNonQPIDByDataProtocolloAndStatoAndDocFamTipo(subdocIva,
 				protocolloProvvisorioDa, protocolloProvvisorioA, protocolloDefinitivoDa, protocolloDefinitivoA,
+				null, null,
 				sdsise, Arrays.asList(SiacDDocFamTipoEnum.Spesa, SiacDDocFamTipoEnum.IvaSpesa));
 		
 		return convertiLista(lista, SubdocumentoIvaSpesa.class, BilMapId.SiacTSubdocIva_SubdocumentoIvaSpesa);

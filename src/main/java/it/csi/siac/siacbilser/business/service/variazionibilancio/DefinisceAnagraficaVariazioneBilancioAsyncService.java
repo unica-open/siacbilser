@@ -6,29 +6,28 @@ package it.csi.siac.siacbilser.business.service.variazionibilancio;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
-import it.csi.siac.siacbilser.business.service.documentospesa.AggiornaStatoDocumentoDiSpesaService;
 import it.csi.siac.siacbilser.business.utility.ElaborazioniAttiveKeyHandler;
 import it.csi.siac.siacbilser.frontend.webservice.msg.DefinisceAnagraficaVariazioneBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.DefinisceAnagraficaVariazioneBilancioResponse;
 import it.csi.siac.siacbilser.integration.dad.VariazioniDad;
 import it.csi.siac.siacbilser.integration.exception.ElaborazioneAttivaException;
 import it.csi.siac.siacbilser.integration.utility.ElaborazioniManager;
-import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siacbilser.model.ElabKeys;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
-import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
+import it.csi.siac.siaccorser.frontend.webservice.msg.InserisciOperazioneAsinc;
+import it.csi.siac.siaccorser.model.Esito;
+import it.csi.siac.siaccorser.model.StatoOperazioneAsincronaEnum;
 
 /**
  * Wrapper async di {@link DefinisceAnagraficaVariazioneBilancioService}.
@@ -68,9 +67,6 @@ public class DefinisceAnagraficaVariazioneBilancioAsyncService extends AsyncBase
 	
 	@Override
 	protected void preStartService() {
-		//SIAC-7271
-		
-		checkEsistonoDefinizioniDeiCapitoliAssociatiAllaVariazione();
 	}
 	
 	@Override
@@ -85,11 +81,24 @@ public class DefinisceAnagraficaVariazioneBilancioAsyncService extends AsyncBase
 		try {								 	 
 			elaborazioniManager.startElaborazione(eakh.creaElabServiceFromPattern(definisciVariazioneKeySelector), eakh.creaElabKeyFromPattern(definisciVariazioneKeySelector));
 		} catch (ElaborazioneAttivaException eae){
-			String msg = "L'elaborazione per la Variazione e' gia' in corso. Attendere il termine dell'elaborazione. [uid: "+ originalRequest.getVariazioneImportoCapitolo().getUid()+"]";
+			String msg = "L'elaborazione per la variazione " + getDescVariazioneFromOriginalReq() + " e' gia' in corso. Attendere il termine dell'elaborazione. [uid: "+ originalRequest.getVariazioneImportoCapitolo().getUid()+"]";
 			log.error(methodName, msg, eae);
+			//SIAC-8726
+			inserisciDettaglioOperazioneAsinc("ELABORAZIONE_CONCORRENTE", msg, Esito.FALLIMENTO);
+			aggiornaOperazioneAsinc(StatoOperazioneAsincronaEnum.STATO_OPASINC_ERRORE);
 			throw new BusinessException(ErroreBil.ELABORAZIONE_ATTIVA.getErrore(msg));
 		}
+		//SIAC-8263
+		//sono sicura di avere i dati perche' sono controllati dal checkServiceParam
+		inserisciDettaglioOperazioneAsinc("DATI_VARIAZIONE", "Variazione " + getDescVariazioneFromOriginalReq(), Esito.SUCCESSO);
 		super.startService();
+	}
+	
+	private String getDescVariazioneFromOriginalReq() {
+		if(originalRequest == null || originalRequest.getVariazioneImportoCapitolo() == null) {
+			return "N.D.";
+		}
+		return originalRequest.getVariazioneImportoCapitolo().getNumero() + " - " + StringUtils.defaultString(originalRequest.getVariazioneImportoCapitolo().getDescrizione());
 	}
 
 	/**
@@ -132,59 +141,13 @@ public class DefinisceAnagraficaVariazioneBilancioAsyncService extends AsyncBase
 
 	@Override
 	protected void postStartService() {
-		// Nothing to do
-	}
 
-	
-	private void checkEsistonoDefinizioniDeiCapitoliAssociatiAllaVariazione() {
-		ElaborazioniAttiveKeyHandler eakh = new ElaborazioniAttiveKeyHandler(originalRequest.getVariazioneImportoCapitolo().getUid(), this.getClass());
-//		elaborazioniManager.findElabService
 	}
 	
-	public static void main(String[] args) {
-//		ElaborazioniAttiveKeyHandler eakh = new ElaborazioniAttiveKeyHandler(Integer.valueOf(16), AggiornaAnagraficaVariazioneBilancioAsyncService.class);
-//		ElabKeys e = ElabKeys.AGGIORNA_VARIAZIONE;
-		ElaborazioniAttiveKeyHandler eakh = new ElaborazioniAttiveKeyHandler(Integer.valueOf(16),AggiornaStatoDocumentoDiSpesaService.class,DocumentoEntrata.class, Ambito.AMBITO_FIN.name());
-		ElabKeys e = ElabKeys.PRIMA_NOTA;
-		String elabKeyRegex = eakh.creaElabServiceFromPattern(e);
-////		String elabKeyRegex = eakh.creaElabKeyFromPattern(e);
-		Pattern elabPattern = Pattern.compile("%UID%"); // e.getElabServicePattern()
-		String baseString = e.getElabServiceBaseString(); 
-//		
-//
-//		System.out.println(elabKeyRegex);
-//		System.out.println(e.getElabServiceBaseString());
-		
-		Matcher matcher = elabPattern.matcher(e.getElabServiceBaseString());
-		System.out.println(elabKeyRegex + " size: " + elabKeyRegex.length());
-		System.out.println(baseString + " size: " + baseString.length());
-		    // Check all occurrences
-//	    while (matcher.find()) {
-//	        System.out.print("Start index: " + matcher.start());
-//	        System.out.print(" \nEnd index of pattern: " + matcher.end());
-//	        System.out.println(" Found: " + matcher.group());
-//	        int stop = baseString.length() - matcher.end();
-//	        System.out.println(" \n stop: " + stop);
-//	        String uu = StringUtils.substring(elabKeyRegex, matcher.start());
-//	        System.out.println("substring: " + uu + " size: " + uu.length());
-//	        String uu2 = StringUtils.substring(uu, -stop);
-//	        System.out.println("substring2: " + uu2);
-//	    }
-	    
-	    
-	    Matcher matcherInverse = Pattern.compile("variazione.uid:(+\\d)").matcher(elabKeyRegex); 
-	    while (matcherInverse.find()) {
-//	        System.out.print("Start index: " + matcher.start());
-//	        System.out.print(" \nEnd index of pattern: " + matcher.end());
-	        System.out.println(" Found: " + matcher.group());
-//	        int stop = baseString.length() - matcher.end();
-//	        System.out.println(" \n stop: " + stop);
-//	        String uu = StringUtils.substring(elabKeyRegex, matcher.start());
-//	        System.out.println("substring: " + uu + " size: " + uu.length());
-//	        String uu2 = StringUtils.substring(uu, -stop);
-//	        System.out.println("substring2: " + uu2);
-	    }
-		
+	@Override
+	protected InserisciOperazioneAsinc popolaRequestOperazioneAsincrona() {
+		InserisciOperazioneAsinc req = super.popolaRequestOperazioneAsincrona();
+		req.setUidVariazioneImportoCapitolo(originalRequest.getVariazioneImportoCapitolo().getUid());
+		return req;
 	}
-
 }

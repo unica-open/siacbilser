@@ -10,8 +10,10 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -27,12 +29,17 @@ import it.csi.siac.siacbilser.integration.dad.ImpegnoBilDad;
 import it.csi.siac.siacbilser.integration.dad.LiquidazioneBilDad;
 import it.csi.siac.siacbilser.integration.dad.OrdineDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
-import it.csi.siac.siaccommon.util.log.LogUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
+import it.csi.siac.siaccorser.frontend.webservice.CoreService;
+import it.csi.siac.siaccorser.frontend.webservice.msg.GetParametroConfigurazioneEnte;
+import it.csi.siac.siaccorser.frontend.webservice.msg.GetParametroConfigurazioneEnteResponse;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
+import it.csi.siac.siaccorser.model.ParametroConfigurazioneEnteEnum;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.Ordine;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
@@ -48,7 +55,6 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaModalitaPagamentoPe
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaModalitaPagamentoPerChiaveResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettoPerChiaveResponse;
-import it.csi.siac.siacfinser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
@@ -72,12 +78,31 @@ import it.csi.siac.siacfinser.model.soggetto.sedesecondaria.SedeSecondariaSogget
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LiquidazioneServiceHelper extends ServiceHelper {
 	
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	//Services
 	//APPJ
-	@Autowired
-	private WSInterface wWSInterface;
+	private WSInterface wsInterface;
+		
+	//SIAC-8215
+	@Autowired @Qualifier("appjWS") private WSInterface wsInterface_APPJ;
+	@Autowired @Qualifier("cpassWS") private WSInterface wsInterface_CPASS;
+	@Autowired private CoreService coreService;
+
+	public boolean useCpassEndpoint() {
+		GetParametroConfigurazioneEnte getParametroConfigurazioneEnte = new GetParametroConfigurazioneEnte();
+		getParametroConfigurazioneEnte.setNomeParametro(ParametroConfigurazioneEnteEnum.TMP_VERIFICA_EVASIONI_SWITCH_TO_CPASS_ENDPOINT.getNomeParametro());
+		getParametroConfigurazioneEnte.setRichiedente(richiedente);
+		
+		GetParametroConfigurazioneEnteResponse getParametroConfigurazioneEnteResponse = 
+				coreService.getParametroConfigurazioneEnte(getParametroConfigurazioneEnte);
+		
+		serviceExecutor.checkServiceResponseFallimento(getParametroConfigurazioneEnteResponse);
+		
+		return BooleanUtils.toBoolean(getParametroConfigurazioneEnteResponse.getValoreParametro());
+	}
+	
+	
 	@Autowired
 	private SoggettoService soggettoService;
 	@Autowired
@@ -117,6 +142,9 @@ public class LiquidazioneServiceHelper extends ServiceHelper {
 		soggettoDad.setEnte(ente);
 		
 		this.isFromAllegatoAtto = isFromAllegatoAtto;
+		
+		//SIAC-8215
+		wsInterface = useCpassEndpoint() ? wsInterface_CPASS : wsInterface_APPJ;
 	}
 
 	
@@ -146,7 +174,7 @@ public class LiquidazioneServiceHelper extends ServiceHelper {
 		evasioni.getOrdini().addAll(ordini);
 		
 		long currentTimeMillis = System.currentTimeMillis();
-		EsitoServizio esitoServizio = wWSInterface.verificaEvasione(evasioni);
+		EsitoServizio esitoServizio = wsInterface.verificaEvasione(evasioni);
 		long elapsed = System.currentTimeMillis()-currentTimeMillis;
 		log.info(methodName, "Servizio verificaEvasioni: elapsed time: "+elapsed +" ms.");
 		
@@ -157,8 +185,8 @@ public class LiquidazioneServiceHelper extends ServiceHelper {
 		it.csi.appjwebsrv.business.Impegno imp = new it.csi.appjwebsrv.business.Impegno();
 		imp.setAnnoImpegno(String.valueOf(subdoc.getImpegno().getAnnoMovimento()));
 		imp.setImportoQuota(subdoc.getImportoDaPagare());
-		imp.setNumeroImpegno(Integer.valueOf(subdoc.getImpegno().getNumero().intValue()));
-		imp.setNumeroPrenotazione(subdoc.getSubImpegno() != null ? Integer.valueOf(subdoc.getSubImpegno().getNumero().intValue()) : Integer.valueOf(0));
+		imp.setNumeroImpegno(Integer.valueOf(subdoc.getImpegno().getNumeroBigDecimal().intValue()));
+		imp.setNumeroPrenotazione(subdoc.getSubImpegno() != null ? Integer.valueOf(subdoc.getSubImpegno().getNumeroBigDecimal().intValue()) : Integer.valueOf(0));
 		return imp;
 	}
 	
@@ -241,10 +269,6 @@ public class LiquidazioneServiceHelper extends ServiceHelper {
 		liquidazione.setCup(subdoc.getCup());
 		liquidazione.setCig(subdoc.getCig());
 		
-		// Il numero del mutuo e' il numero della voceMutuo
-		if(subdoc.getVoceMutuo() != null  && StringUtils.isNotBlank(subdoc.getVoceMutuo().getNumeroMutuo())) {
-			liquidazione.setNumeroMutuo(integerize(subdoc.getVoceMutuo().getNumeroMutuo()));
-		}
 		
 		if(subdoc.getContoTesoreria() != null){
 			// Ricerco i dati: il servizio delle liquidazioni richiede il codice per l'inserimento

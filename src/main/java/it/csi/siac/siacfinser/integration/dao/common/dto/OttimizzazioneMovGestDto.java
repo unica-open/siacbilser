@@ -12,9 +12,9 @@ import java.util.List;
 
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneMovgestFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneOrdFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneStatoFin;
@@ -60,8 +60,6 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	
 	
 	private OttimizzazioneModificheMovimentoGestioneDto ottimizzazioneModDto;
-	
-	private OttimizzazioneMutuoDto ottimizzazioneMutuoDto;
 	
 	private List<SiacTMovgestTsFin> distintiSiacTMovgestTsFinCoinvolti;
 	private List<SiacTMovgestFin> distintiSiacTMovgestFinCoinvolti;
@@ -117,15 +115,16 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	public SiacTSoggettoFin getSoggettoByMovGestTsId(Integer movgestTsId){
 		SiacTSoggettoFin soggetto = null;
 		SiacRMovgestTsSogFin trovato = null;
-		if(movgestTsId!=null && distintiSiacRSoggettiCoinvolti!=null && distintiSiacRSoggettiCoinvolti.size()>0){
+		if(movgestTsId != null && distintiSiacRSoggettiCoinvolti != null && distintiSiacRSoggettiCoinvolti.size() > 0){
 			for(SiacRMovgestTsSogFin it : distintiSiacRSoggettiCoinvolti){
-				if(it.getSiacTMovgestT().getMovgestTsId().intValue()==movgestTsId.intValue()){
+				//SIAC-7619
+				if(it.getSiacTMovgestT().getMovgestTsId().intValue() == movgestTsId.intValue() && it.isEntitaValida()){
 					trovato = it;
 					break;
 				}
 			}
 		}
-		if(trovato!=null){
+		if(trovato != null){
 			soggetto = trovato.getSiacTSoggetto();
 		}
 		return soggetto;
@@ -133,9 +132,10 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	
 	public List<SiacRMovgestTsSogFin> filtraSiacRMovgestTsSogFinByMovGestTsId(Integer movgestTsId){
 		List<SiacRMovgestTsSogFin> filtrati = new ArrayList<SiacRMovgestTsSogFin>();
-		if(movgestTsId!=null && distintiSiacRSoggettiCoinvolti!=null && distintiSiacRSoggettiCoinvolti.size()>0){
+		if(movgestTsId != null && distintiSiacRSoggettiCoinvolti != null && distintiSiacRSoggettiCoinvolti.size() > 0){
 			for(SiacRMovgestTsSogFin it : distintiSiacRSoggettiCoinvolti){
-				if(it.getSiacTMovgestT().getMovgestTsId().intValue()==movgestTsId.intValue()){
+				//SIAC-7619
+				if(it.getSiacTMovgestT().getMovgestTsId().intValue() == movgestTsId.intValue()&& it.isEntitaValida()){
 					filtrati.add(it);
 				}
 			}
@@ -145,9 +145,10 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	
 	public List<SiacRMovgestTsSogclasseFin> filtraSiacRMovgestTsSogclasseFinByMovGestTsId(Integer movgestTsId){
 		List<SiacRMovgestTsSogclasseFin> filtrati = new ArrayList<SiacRMovgestTsSogclasseFin>();
-		if(movgestTsId!=null && distintiSiacRMovgestTsSogclasseCoinvolti!=null && distintiSiacRMovgestTsSogclasseCoinvolti.size()>0){
+		if(movgestTsId != null && distintiSiacRMovgestTsSogclasseCoinvolti != null && distintiSiacRMovgestTsSogclasseCoinvolti.size()>0){
 			for(SiacRMovgestTsSogclasseFin it : distintiSiacRMovgestTsSogclasseCoinvolti){
-				if(it.getSiacTMovgestT().getMovgestTsId().intValue()==movgestTsId.intValue()){
+				//SIAC-7619
+				if(it.getSiacTMovgestT().getMovgestTsId().intValue() == movgestTsId.intValue() && it.isEntitaValida()){
 					filtrati.add(it);
 				}
 			}
@@ -157,7 +158,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	
 	public List<SiacRMovgestBilElemFin> filtraSiacRMovgestBilElemFinBySiacTMovgest(SiacTMovgestFin siacTMovgestFin){
 		List<SiacRMovgestBilElemFin> filtrati = new ArrayList<SiacRMovgestBilElemFin>();
-		if(siacTMovgestFin!=null){
+		if(siacTMovgestFin != null){
 			Integer id = siacTMovgestFin.getMovgestId();
 			if(id!=null && distintiSiacRMovgestBilElemCoinvolti!=null && distintiSiacRMovgestBilElemCoinvolti.size()>0){
 				for(SiacRMovgestBilElemFin it : distintiSiacRMovgestBilElemCoinvolti){
@@ -173,11 +174,11 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	
 	public List<SiacRProgrammaAttrFin> filtraSiacRProgrammaAttrFinBySiacTProgrammaFin(SiacTProgrammaFin siacTProgrammaFin){
 		List<SiacRProgrammaAttrFin> filtrati = new ArrayList<SiacRProgrammaAttrFin>();
-		if(siacTProgrammaFin!=null){
+		if(siacTProgrammaFin != null){
 			Integer id = siacTProgrammaFin.getProgrammaId();
-			if(id!=null && distintiSiacRProgrammaAttrFinCoinvolti!=null && distintiSiacRProgrammaAttrFinCoinvolti.size()>0){
+			if(id != null && distintiSiacRProgrammaAttrFinCoinvolti != null && distintiSiacRProgrammaAttrFinCoinvolti.size() > 0){
 				for(SiacRProgrammaAttrFin it : distintiSiacRProgrammaAttrFinCoinvolti){
-					if(it.getSiacTProgramma().getProgrammaId().intValue()==id.intValue()){
+					if(it.getSiacTProgramma().getProgrammaId().intValue() == id.intValue() && it.isEntitaValida()){
 						filtrati.add(it);
 					}
 				}
@@ -236,8 +237,8 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	
 	public SiacRMovgestTsStatoFin getStatoValido(Integer movgestTsId){
 		List<SiacRMovgestTsStatoFin> l = filtraSiacRMovgestTsStatoByMovgestTs(movgestTsId);
-		List<SiacRMovgestTsStatoFin> sv = CommonUtils.soloValidiSiacTBase(l, null);
-		return CommonUtils.getFirst(sv);
+		List<SiacRMovgestTsStatoFin> sv = CommonUtil.soloValidiSiacTBase(l, null);
+		return CommonUtil.getFirst(sv);
 	}
 	
 	public List<SiacRMovgestTsStatoFin> filtraSiacRMovgestTsStatoByMovgestTs(Integer movgestTsId){
@@ -254,9 +255,9 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	
 	public SiacTBilElemFin getSiacTBilElemFinValido(Integer movgestId){
 		List<SiacRMovgestBilElemFin> l = filtraSiacRMovgestBilElemByMovgestTs(movgestId);
-		List<SiacRMovgestBilElemFin> sv = CommonUtils.soloValidiSiacTBase(l, null);
+		List<SiacRMovgestBilElemFin> sv = CommonUtil.soloValidiSiacTBase(l, null);
 		if(sv!=null && sv.size()>0){
-			return CommonUtils.getFirst(sv).getSiacTBilElem();
+			return CommonUtil.getFirst(sv).getSiacTBilElem();
 		}
 		return null;
 	}
@@ -278,7 +279,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 		List<SiacRVincoloAttrFin> rVincoli = getRVincoloAttrValidiByCode(elemId, SiacTAttrEnum.FlagTrasferimentiVincolati.getCodice());
 		if(rVincoli!=null && rVincoli.size()>0){
 			for(SiacRVincoloAttrFin it: rVincoli){
-				if(it.getBoolean_()!=null && it.getBoolean_().equals(Constanti.TRUE)){
+				if(it.getBoolean_()!=null && it.getBoolean_().equals(CostantiFin.TRUE)){
 					presenteFlagTrasferimentiVincolati = true;
 					break;
 				}
@@ -291,12 +292,12 @@ public class OttimizzazioneMovGestDto implements Serializable {
 		List<SiacRVincoloAttrFin> validi = null;
 		if(elemId!=null && code!=null){
 			List<SiacRVincoloBilElemFin> rVincoloBilElems = filtraSiacRVincoloBilElemFinByBilElem(elemId);
-			List<SiacRVincoloBilElemFin> rVincoloBilElemsValidi = CommonUtils.soloValidiSiacTBase(rVincoloBilElems, null);
+			List<SiacRVincoloBilElemFin> rVincoloBilElemsValidi = CommonUtil.soloValidiSiacTBase(rVincoloBilElems, null);
 			if(rVincoloBilElemsValidi!=null && rVincoloBilElemsValidi.size()>0){
 				List<SiacTVincoloFin> listaSiacTVincolo = estraiSiacTVincoloFinBySiacRVincoloBilElemFinCoinvolti(rVincoloBilElemsValidi);
-				List<SiacTVincoloFin> listaSiacTVincoloValidi = CommonUtils.soloValidiSiacTBase(listaSiacTVincolo, null);
+				List<SiacTVincoloFin> listaSiacTVincoloValidi = CommonUtil.soloValidiSiacTBase(listaSiacTVincolo, null);
 				List<SiacRVincoloAttrFin> siacRVincoloAttrFinByCode = filtraSiacRVincoloAttrFinByCodeAndVincoli(code,listaSiacTVincoloValidi);
-				validi = CommonUtils.soloValidiSiacTBase(siacRVincoloAttrFinByCode, null);
+				validi = CommonUtil.soloValidiSiacTBase(siacRVincoloAttrFinByCode, null);
 			}
 		}
 		return validi;
@@ -321,7 +322,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -495,7 +496,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	}
 	
 	public SiacTMovgestTsFin getSiacTMovgestTsFinById(Integer movgestTsId){
-		return CommonUtils.getByIdSiacTBase(distintiSiacTMovgestTsFinCoinvolti, movgestTsId);
+		return CommonUtil.getByIdSiacTBase(distintiSiacTMovgestTsFinCoinvolti, movgestTsId);
 	}
 	
 	public SiacTMovgestTsFin getTestataByMovgestId(Integer movgestId){
@@ -525,7 +526,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		trovati = CommonUtils.ritornaSoloDistintiByUid(trovati);
+		trovati = CommonUtil.ritornaSoloDistintiByUid(trovati);
 		return trovati;
 	}
 	
@@ -544,7 +545,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 			listaSiacTMovgestTs.add(testata);
 			listaSiacTMovgestTs.addAll(subs);
 			
-			listaSiacTMovgestTs = CommonUtils.ritornaSoloDistintiByUid(listaSiacTMovgestTs);
+			listaSiacTMovgestTs = CommonUtil.ritornaSoloDistintiByUid(listaSiacTMovgestTs);
 			
 		}
 		
@@ -619,7 +620,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 		List<SiacRMovgestClassFin> lista = filtraSiacRMovgestClassByMovgestTs(movgestTsId);
 		for(SiacRMovgestClassFin siacRMovgestClass : lista){
 			if(null!=siacRMovgestClass && siacRMovgestClass.getDataFineValidita()==null){
-				if(StringUtils.contenutoIn(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode(), classTipoCodeMultiplo)){	
+				if(StringUtilsFin.contenutoIn(siacRMovgestClass.getSiacTClass().getSiacDClassTipo().getClassifTipoCode(), classTipoCodeMultiplo)){	
 					ClassificatoreGenerico trovato = new ClassificatoreGenerico();
 					trovato.setUid(siacRMovgestClass.getSiacTClass().getClassifId());
 					trovato.setCodice(siacRMovgestClass.getSiacTClass().getClassifCode());
@@ -633,7 +634,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 	}
 	
 	/**
-	 * tipoImporto va valorizzato con Constanti.MOVGEST_TS_DET_TIPO_INIZIALE / Constanti.MOVGEST_TS_DET_TIPO_ATTUALE
+	 * tipoImporto va valorizzato con CostantiFin.MOVGEST_TS_DET_TIPO_INIZIALE / CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE
 	 * @param movgestTsId
 	 * @param tipoImporto
 	 * @return
@@ -730,12 +731,12 @@ public class OttimizzazioneMovGestDto implements Serializable {
 		for(SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr){
 			if(null!=siacRMovgestTsAttr && siacRMovgestTsAttr.getDataFineValidita()==null){
 				String codiceAttributo = siacRMovgestTsAttr.getSiacTAttr().getAttrCode();
-				AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+				AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 				
 				boolean trovato = false;
 				if(richiesto.equals(attributoMovimentoGestione)){
 					if(siacRMovgestTsAttr.getTesto() != null){
-						if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtils.isEmpty(siacRMovgestTsAttr.getTesto())){
+						if(!siacRMovgestTsAttr.getTesto().equalsIgnoreCase("null") && !StringUtilsFin.isEmpty(siacRMovgestTsAttr.getTesto())){
 							testo = siacRMovgestTsAttr.getTesto();
 							trovato = true;
 						}
@@ -756,12 +757,12 @@ public class OttimizzazioneMovGestDto implements Serializable {
 		for(SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr){
 			if(null!=siacRMovgestTsAttr && siacRMovgestTsAttr.getDataFineValidita()==null){
 				String codiceAttributo = siacRMovgestTsAttr.getSiacTAttr().getAttrCode();
-				AttributoMovimentoGestione attributoMovimentoGestione = Constanti.attributoMovimentoGestioneStringToEnum(codiceAttributo);
+				AttributoMovimentoGestione attributoMovimentoGestione = CostantiFin.attributoMovimentoGestioneStringToEnum(codiceAttributo);
 				
 				boolean trovato = false;
 				if(richiesto.equals(attributoMovimentoGestione)){
 					if(siacRMovgestTsAttr.getBoolean_() != null){
-						if(Constanti.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
+						if(CostantiFin.TRUE.equalsIgnoreCase(siacRMovgestTsAttr.getBoolean_())){
 							valoreBooleano = true;
 						}else {
 							valoreBooleano = false;
@@ -788,7 +789,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -802,7 +803,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -820,7 +821,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -837,7 +838,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -855,7 +856,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -872,7 +873,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -888,7 +889,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -902,7 +903,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -915,7 +916,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -928,7 +929,7 @@ public class OttimizzazioneMovGestDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -1163,16 +1164,6 @@ public class OttimizzazioneMovGestDto implements Serializable {
 		this.distintiSiacRMovgestTsFinCoinvolti = distintiSiacRMovgestTsFinCoinvolti;
 	}
 
-
-	public OttimizzazioneMutuoDto getOttimizzazioneMutuoDto() {
-		return ottimizzazioneMutuoDto;
-	}
-
-
-	public void setOttimizzazioneMutuoDto(
-			OttimizzazioneMutuoDto ottimizzazioneMutuoDto) {
-		this.ottimizzazioneMutuoDto = ottimizzazioneMutuoDto;
-	}
 
 
 	public List<SiacTMovgestFin> getDistintiSiacTMovgestFinCoinvolti() {

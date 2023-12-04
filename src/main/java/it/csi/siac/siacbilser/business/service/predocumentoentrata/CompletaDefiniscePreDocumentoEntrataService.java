@@ -5,6 +5,7 @@
 package it.csi.siac.siacbilser.business.service.predocumentoentrata;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,21 +27,32 @@ import it.csi.siac.siacbilser.business.service.predocumentoentrata.helper.Comple
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.dad.AccertamentoBilDad;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoEntrataDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
+import it.csi.siac.siacbilser.model.errore.ErroreBil;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
+import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.CompletaDefiniscePreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.CompletaDefiniscePreDocumentoEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaPreDocumentoEntrata;
+import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
+import it.csi.siac.siacfinser.frontend.webservice.ProvvisorioService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAccertamentoPerChiaveOttimizzatoResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaAttributiMovimentoGestioneOttimizzato;
+import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisoriDiCassa;
+import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaProvvisoriDiCassaResponse;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.SubAccertamento;
 import it.csi.siac.siacfinser.model.codifiche.ClasseSoggetto;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
+import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa.TipoProvvisorioDiCassa;
+import it.csi.siac.siacfinser.model.ric.ParametroRicercaProvvisorio;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
 
@@ -54,7 +66,7 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 	@Autowired
 	private AccertamentoBilDad accertamentoBilDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private PreDocumentoEntrataDad preDocumentoEntrataDad;
 	@Autowired
@@ -70,20 +82,23 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 	private AttoAmministrativo attoAmministrativo;
 	private Soggetto soggetto;
 	private BigDecimal disponibilitaIncassare;
+	
+	private List<Integer> uidPredocumentiDaCompletareeDefinire = new ArrayList<Integer>();
+	
+	//SIAC-6780
+	private ProvvisorioDiCassa provvisorioCassa;
+	
+	@Autowired
+	protected ProvvisorioService provvisorioService;
 
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {
 		checkEntita(req.getBilancio(), "bilancio");
 		checkEntita(req.getAccertamento(), "accertamento");
 		checkEntita(req.getSoggetto(), "soggetto");
+		boolean hasCriteri = (req.getUidPredocumentiDaFiltrare() != null && !req.getUidPredocumentiDaFiltrare().isEmpty()) || req.getRicercaSinteticaPredocumentoEntrata() != null;
+		checkCondition(hasCriteri, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("criteri per caricare i predocumenti da completare e definire"));
 		
-		// Per la ricerca, almeno uno tra la data di competenza e la causale
-		checkCondition(req.getDataCompetenzaDa() != null || req.getDataCompetenzaA() != null || entitaConUid(req.getCausaleEntrata()),
-			ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("almeno uno tra data di competenza e causale deve essere presente"));
-		
-		checkCondition(req.getDataCompetenzaDa() == null || req.getDataCompetenzaA() == null
-				|| !req.getDataCompetenzaA().before(req.getDataCompetenzaDa()),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Data competenza", "la data di competenza da non deve essere inferiore la data di competenza a"));
 	}
 	
 	@Override
@@ -109,6 +124,12 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 	@Override
 	protected void execute() {
 		final String methodName = "execute";
+		
+		caricaUidsDaCompletareEDefinire();
+		
+		checkUidsDaCompletareEDefinire();
+		
+		
 		// 1. operazioni preliminari
 		checkAccertamento();
 		checkSubAccertamento();
@@ -116,6 +137,11 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 		checkAttoAmministrativo();
 		checkSoggetto();
 		checkCoerenzaSoggettoAccertamento();
+		
+		//SIAC-6780
+		//controllo che sia presente un provvisorio e che il totale dei predocumenti
+		//da completare sia corrispondente al valore del provvisorio
+		caricaProvvisorioDiCassa();
 		
 		preparaLogOperazioniPreliminari();
 		log.debug(methodName, "Operazioni preliminari terminate");
@@ -129,6 +155,38 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 		log.debug(methodName, "Definizione terminata");
 	}
 	
+	private void checkUidsDaCompletareEDefinire() {
+		final String methodName= "checkUidsDaCompletareEDefinire";
+		if(this.uidPredocumentiDaCompletareeDefinire == null || this.uidPredocumentiDaCompletareeDefinire.isEmpty()) {
+			throw new BusinessException(ErroreBil.OPERAZIONE_NON_POSSIBILE.getErrore(" impossibile reperire su base dati dei predocumenti da completare o definire"));
+		}
+		List<String> ss = new ArrayList<String>();
+		for (Integer ui : this.uidPredocumentiDaCompletareeDefinire) {
+			ss.add(Integer.toString(ui));
+		}
+		log.debug(methodName, "Trovati uid:" + StringUtils.join(ss, ","));
+		
+	}
+
+	private void caricaUidsDaCompletareEDefinire() {
+		
+		if((req.getUidPredocumentiDaFiltrare() != null && !req.getUidPredocumentiDaFiltrare().isEmpty())) {
+			this.uidPredocumentiDaCompletareeDefinire = req.getUidPredocumentiDaFiltrare();
+			return;
+		}
+		
+		RicercaSinteticaPreDocumentoEntrata reqRic = req.getRicercaSinteticaPredocumentoEntrata();
+		
+		PreDocumentoEntrata preDoc = reqRic.getPreDocumentoEntrata();
+		preDoc.setEnte(ente);
+		
+		this.uidPredocumentiDaCompletareeDefinire = preDocumentoEntrataDad.ricercaSinteticaPreDocumentoUids(preDoc, reqRic.getTipoCausale(),
+				reqRic.getDataCompetenzaDa(), reqRic.getDataCompetenzaA(), reqRic.getDataTrasmissioneDa(), reqRic.getDataTrasmissioneA(),
+				reqRic.getCausaleEntrataMancante(),  reqRic.getSoggettoMancante(), reqRic.getProvvedimentoMancante(), reqRic.getContoCorrenteMancante(), reqRic.getNonAnnullati(),
+				reqRic.getOrdinativoIncasso(), req.getUidPredocumentiDaFiltrare(), reqRic.getParametriPaginazione());
+		
+	}
+
 	/**
 	 * Viene controllata l'esistenza e lo stato dell'accertamento che deve essere <strong>DEFINITIVO</strong>: se l'accertamento indicato non esiste
 	 * l'elaborazione non viene eseguita e viene esposto l'errore <code>&lt;FIN_ERR_0002. Accertamento Inesistente&gt;</code>
@@ -146,6 +204,52 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 //		disponibilitaIncassare = accertamento.getDisponibilitaIncassare();
 		log.debug(methodName, "Trovato accertamento con uid " + accertamento.getUid());
 	}
+	
+	
+	/**
+	 * carica il provvisorio di cassa 
+	 */
+	protected void caricaProvvisorioDiCassa() {
+		final String methodName = "caricaProvvisorioDiCassa";
+		if(req.getProvvisorioCassa() == null || req.getProvvisorioCassa().getNumero()== null || req.getProvvisorioCassa().getAnno() == null){
+			return;
+		}
+		ProvvisorioDiCassa provvisorioDiCassa = ricercaProvvisorioDiCassa();
+		if(provvisorioDiCassa == null){
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("provvisorio di cassa", req.getProvvisorioCassa().getAnno() 
+					 +  "/" + req.getProvvisorioCassa().getNumero()), Esito.FALLIMENTO);
+		}
+		
+		log.debug(methodName, "trovato provvisorio con uid: " + provvisorioDiCassa.getUid() + " e numero " + provvisorioDiCassa.getNumero());
+		
+		this.provvisorioCassa = provvisorioDiCassa;
+	}
+	
+
+	private ProvvisorioDiCassa ricercaProvvisorioDiCassa() {
+		RicercaProvvisoriDiCassa ricercaProvvisoriDiCassa = new RicercaProvvisoriDiCassa();
+		ricercaProvvisoriDiCassa.setEnte(ente);
+		ricercaProvvisoriDiCassa.setRichiedente(req.getRichiedente());
+		
+		ParametroRicercaProvvisorio parametroRicercaProvvisorio = new ParametroRicercaProvvisorio();
+		parametroRicercaProvvisorio.setAnno(req.getProvvisorioCassa().getAnno());
+		parametroRicercaProvvisorio.setNumero(req.getProvvisorioCassa().getNumero());
+		parametroRicercaProvvisorio.setTipoProvvisorio(TipoProvvisorioDiCassa.E);
+		ricercaProvvisoriDiCassa.setParametroRicercaProvvisorio(parametroRicercaProvvisorio);
+		//SIAC-7421
+		ricercaProvvisoriDiCassa.setNumPagina(1);
+		ricercaProvvisoriDiCassa.setNumRisultatiPerPagina(5);
+		
+		RicercaProvvisoriDiCassaResponse resRPC = provvisorioService.ricercaProvvisoriDiCassa(ricercaProvvisoriDiCassa);
+
+		log.logXmlTypeObject(resRPC, "Risposta ottenuta dal servizio ricercaProvvisorioDiCassa.");
+		checkServiceResponseFallimento(resRPC);
+
+		return resRPC == null || resRPC.getElencoProvvisoriDiCassa().isEmpty()
+			? null
+				: resRPC.getElencoProvvisoriDiCassa().get(0);
+	}
+
 	
 	/**
 	 * Analogamente l'accertamento
@@ -172,7 +276,7 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 		
 		RicercaAttributiMovimentoGestioneOttimizzato parametri = new RicercaAttributiMovimentoGestioneOttimizzato();
 		parametri.setEscludiSubAnnullati(true);
-		parametri.setCaricaSub(subAccertamento != null && subAccertamento.getNumero() != null);
+		parametri.setCaricaSub(subAccertamento != null && subAccertamento.getNumeroBigDecimal() != null);
 		
 		DatiOpzionaliElencoSubTuttiConSoloGliIds parametriElencoIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		parametriElencoIds.setEscludiAnnullati(true);
@@ -184,14 +288,14 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 		res.addErrori(resRAPC.getErrori());
 		
 		Accertamento acc = resRAPC.getAccertamento();
-		checkBusinessCondition(acc != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumero().toPlainString()));
+		checkBusinessCondition(acc != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal().toPlainString()));
 		accertamento = acc;
 		disponibilitaIncassare = accertamento.getDisponibilitaIncassare();
 
 		if(subAccertamento != null) {
 			checkBusinessCondition(accertamento.getElencoSubAccertamenti() != null && !accertamento.getElencoSubAccertamenti().isEmpty(),
 				ErroreCore.ENTITA_NON_TROVATA.getErrore("SubAccertamento",
-					accertamento.getAnnoMovimento() + "/" + accertamento.getNumero().toPlainString() + "-" + subAccertamento.getNumero().toPlainString()));
+					accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal().toPlainString() + "-" + subAccertamento.getNumeroBigDecimal().toPlainString()));
 			SubAccertamento tmp = null;
 			for(Iterator<SubAccertamento> it = accertamento.getElencoSubAccertamenti().iterator(); it.hasNext() && tmp == null;) {
 				SubAccertamento sa = it.next();
@@ -200,7 +304,7 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 				}
 			}
 			checkBusinessCondition(tmp != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("SubAccertamento",
-					accertamento.getAnnoMovimento() + "/" + accertamento.getNumero().toPlainString() + "-" + subAccertamento.getNumero().toPlainString()));
+					accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal().toPlainString() + "-" + subAccertamento.getNumeroBigDecimal().toPlainString()));
 			subAccertamento = tmp;
 		}
 	
@@ -217,7 +321,7 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 			log.debug(methodName, "Nessun atto amministrativo collegato");
 			return;
 		}
-		attoAmministrativo = provvedimentoDad.findProvvedimentoByIdModelDetail(req.getAttoAmministrativo().getUid());
+		attoAmministrativo = attoAmministrativoDad.findProvvedimentoByIdModelDetail(req.getAttoAmministrativo().getUid());
 		// Controllo sull'atto
 		checkBusinessCondition(attoAmministrativo != null, ErroreFin.MOV_NON_ESISTENTE.getErrore("Provvedimento"));
 		log.debug(methodName, "Trovato attoAmministrativo con uid " + attoAmministrativo.getUid());
@@ -314,10 +418,10 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 				.append(" Accertamento ")
 				.append(accertamento.getAnnoMovimento())
 				.append("/")
-				.append(accertamento.getNumero().toPlainString());
+				.append(accertamento.getNumeroBigDecimal().toPlainString());
 		if(subAccertamento != null) {
 			sb.append("-")
-				.append(subAccertamento.getNumero().toPlainString());
+				.append(subAccertamento.getNumeroBigDecimal().toPlainString());
 		}
 		sb.append(" Soggetto ")
 			.append(soggetto.getCodiceSoggetto());
@@ -334,6 +438,13 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 				sb.append("/")
 					.append(attoAmministrativo.getStrutturaAmmContabile().getCodice());
 			}
+		}
+		
+		if(provvisorioCassa != null && provvisorioCassa.getUid() != 0) {
+			sb.append(" Provvisorio di Cassa")
+				.append(provvisorioCassa.getAnno())
+				.append("/")
+				.append(provvisorioCassa.getNumero());
 		}
 		
 		sb.append(" Disponibile a incassare ")
@@ -355,20 +466,19 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 				req.getCausaleEntrata(),
 				req.getDataCompetenzaDa(),
 				req.getDataCompetenzaA(),
-				
+				req.getContoCorrente(),
+				this.uidPredocumentiDaCompletareeDefinire,
 				// Dati per aggiornamento
 				accertamento,
 				subAccertamento,
 				attoAmministrativo,
 				soggetto,
-				disponibilitaIncassare);
+				disponibilitaIncassare,
+				provvisorioCassa);
 		helperExecutor.executeHelperTxRequiresNew(helper);
-		List<Messaggio> messaggiHelper = helper.getMessaggi();
-		for(Messaggio messaggio : messaggiHelper) {
-			res.addMessaggio(messaggio.getCodice(), messaggio.getDescrizione());
-		}
+		addMessaggi(helper.getMessaggi());
 	}
-	
+
 	/**
 	 * Definizione dei predocumenti di spesa
 	 */
@@ -381,9 +491,14 @@ public class CompletaDefiniscePreDocumentoEntrataService extends CheckedAccountB
 				req.getBilancio(),
 				req.getCausaleEntrata(),
 				req.getDataCompetenzaDa(),
-				req.getDataCompetenzaA());
+				req.getDataCompetenzaA(),
+				req.getContoCorrente(),
+				this.uidPredocumentiDaCompletareeDefinire);
 		helperExecutor.executeHelperTxRequiresNew(helper);
-		List<Messaggio> messaggiHelper = helper.getMessaggi();
+		addMessaggi(helper.getMessaggi());
+	}
+
+	private void addMessaggi(List<Messaggio> messaggiHelper) {
 		for(Messaggio messaggio : messaggiHelper) {
 			res.addMessaggio(messaggio.getCodice(), messaggio.getDescrizione());
 		}

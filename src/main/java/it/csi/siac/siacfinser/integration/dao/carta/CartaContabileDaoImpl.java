@@ -17,13 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dao.common.AbstractDao;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaCartaContabileParamDto;
 import it.csi.siac.siacfinser.integration.entity.SiacTCartacontFin;
-import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
+import it.csi.siac.siacfinser.integration.util.DataValiditaUtil;
 import it.csi.siac.siacfinser.model.ric.RicercaCartaContabileK;
 
 @Component
@@ -44,7 +44,7 @@ public class CartaContabileDaoImpl extends AbstractDao<SiacTCartacontFin, Intege
 		
 		Map<String,Object> param = new HashMap<String, Object>();
 		Date nowDate = TimingUtils.getNowDate();
-		param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, nowDate);
+		param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, nowDate);
 		
 		Query query = null;
 		// Parametri di input ricevuti dal servizio :
@@ -123,18 +123,18 @@ public class CartaContabileDaoImpl extends AbstractDao<SiacTCartacontFin, Intege
 		param.put("enteProprietarioId", idEnte);
 
 		// clausola di validita' per la tabella siac_t_cartacont_det : inizio
-		//jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("cartaContDet"));
+		//jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("cartaContDet"));
 		// clausola di validita' per la tabella siac_t_cartacont_det : fine
 		
 		// clausole di validita' per le tabelle di relazione : inizio
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rAttoClass"));
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rCartaContStatos"));
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rDetSoggetto"));
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rDetMovgestTs"));
-		jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rBilElem"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rAttoClass"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rCartaContStatos"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rDetSoggetto"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rDetMovgestTs"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rBilElem"));
 		
 		if(subDocumentoSpesaId!=null)
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rDetSubDocs"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rDetSubDocs"));
 		// clausole di validita' per le tabelle di relazione : fine
 		
 		// annoEsercizio
@@ -166,7 +166,7 @@ public class CartaContabileDaoImpl extends AbstractDao<SiacTCartacontFin, Intege
 		// data scadenza carta contabile : fine			
 		
 		// oggetto
-		if(!StringUtils.isEmpty(oggetto)){
+		if(!StringUtilsFin.isEmpty(oggetto)){
 			jpql.append(" AND UPPER(cartaCont.cartacOggetto) LIKE UPPER(:oggettoLike)");
 			String oggettoLike = null;
 			if(oggetto.contains("%")){
@@ -178,7 +178,7 @@ public class CartaContabileDaoImpl extends AbstractDao<SiacTCartacontFin, Intege
 		}
 		
 		// stato operativo
-		if(statoOperativo!=null && !StringUtils.isEmpty(statoOperativo)){
+		if(statoOperativo!=null && !StringUtilsFin.isEmpty(statoOperativo)){
 			jpql.append(" AND dCartaContStato.cartacStatoCode = :statoOperativo");
 			param.put("statoOperativo", statoOperativo);
 		}
@@ -197,20 +197,20 @@ public class CartaContabileDaoImpl extends AbstractDao<SiacTCartacontFin, Intege
 		}
 
 		// tipo provvedimento
-		if(tipoProvvedimento!=null && !StringUtils.isEmpty(tipoProvvedimento)){
+		if(tipoProvvedimento!=null && !StringUtilsFin.isEmpty(tipoProvvedimento)){
 			jpql.append(" AND dAttoAmmTipo.attoammTipoCode = :tipoProvvedimento");
 			param.put("tipoProvvedimento", tipoProvvedimento);
 		}
 
 		// struttura amministrativa del provvedimento
-		if(strutturaAmministrativaProvvedimento!=null && !StringUtils.isEmpty(strutturaAmministrativaProvvedimento)){
+		if(strutturaAmministrativaProvvedimento!=null && !StringUtilsFin.isEmpty(strutturaAmministrativaProvvedimento)){
 			jpql.append(" AND  tClassAtto.classifCode = :codeStruttura ");
 			param.put("codeStruttura", strutturaAmministrativaProvvedimento);
 		}
 		// provvedimento : fine
 		
 		// codice creditore
-		if(codiceCreditore!=null && !StringUtils.isEmpty(codiceCreditore)){
+		if(codiceCreditore!=null && !StringUtilsFin.isEmpty(codiceCreditore)){
 			jpql.append(" AND  tSoggetto.soggettoCode = :codiceCreditore ");
 			param.put("codiceCreditore", codiceCreditore);
 		}

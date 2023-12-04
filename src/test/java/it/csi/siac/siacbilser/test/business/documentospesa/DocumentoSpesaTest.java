@@ -32,6 +32,7 @@ import it.csi.siac.siacbilser.business.service.documentospesa.RicercaModulareDoc
 import it.csi.siac.siacbilser.business.service.documentospesa.RicercaQuoteByDocumentoSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RicercaQuoteDaEmettereSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RicercaSinteticaDocumentoSpesaService;
+import it.csi.siac.siacbilser.business.service.documentospesa.RicercaSinteticaModulareDocumentoSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RicercaSinteticaModulareQuoteByDocumentoSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.RicercaSinteticaModulareQuoteSpesaService;
 import it.csi.siac.siacbilser.business.service.documentospesa.SpezzaQuotaSpesaService;
@@ -76,6 +77,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereSpe
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaDocumentoSpesaResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareDocumentoSpesa;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteByDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaModulareQuoteSpesa;
@@ -88,6 +91,7 @@ import it.csi.siac.siacfin2ser.model.CodiceUfficioDestinatarioPCC;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesaModelDetail;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
+import it.csi.siac.siacfin2ser.model.PreDocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.RitenuteDocumento;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
@@ -587,7 +591,6 @@ public class DocumentoSpesaTest extends BaseJunit4TestCase {
 		Map<TipologiaAttributo, Object> attributi = new EnumMap<TipologiaAttributo, Object>(TipologiaAttributo.class);
 		attributi.put(TipologiaAttributo.CIG, "");
 		attributi.put(TipologiaAttributo.CUP, "A01A01234567890");
-		attributi.put(TipologiaAttributo.NUMERO_MUTUO, "");
 		req.setAttributi(attributi);
 		
 		req.setSiopeAssenzaMotivazione(create(SiopeAssenzaMotivazione.class, 277));
@@ -706,7 +709,7 @@ public class DocumentoSpesaTest extends BaseJunit4TestCase {
 		Impegno impegno = new Impegno();
 		impegno.setUid(41028);
 		impegno.setAnnoMovimento(2015);
-		impegno.setNumero(new BigDecimal("496"));
+		impegno.setNumeroBigDecimal(new BigDecimal("496"));
 		subdocumentoSpesa.setImpegno(impegno);
 		
 		AggiornaQuotaDocumentoSpesa reqAQDS = new AggiornaQuotaDocumentoSpesa();
@@ -896,16 +899,35 @@ public class DocumentoSpesaTest extends BaseJunit4TestCase {
 		
 		req.setDataOra(new Date());
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
-		req.setAnnoBilancio(Integer.valueOf(2018));
+		req.setAnnoBilancio(Integer.valueOf(2019));
 		req.setParametriPaginazione(getParametriPaginazioneTest());
 		
 		req.setModelDetails(SubdocumentoSpesaModelDetail.DocPadreModelDetail, DocumentoSpesaModelDetail.Soggetto);
-		req.setSubdocumentoSpesa(create(SubdocumentoSpesa.class, 0));
-		req.getSubdocumentoSpesa().setProvvisorioCassa(create(ProvvisorioDiCassa.class, 0));
-		req.getSubdocumentoSpesa().getProvvisorioCassa().setAnno(Integer.valueOf(2017));
-		req.getSubdocumentoSpesa().getProvvisorioCassa().setNumero(Integer.valueOf(25602));
+//		req.setSubdocumentoSpesa(create(SubdocumentoSpesa.class, 0));
+//		req.getSubdocumentoSpesa().setProvvisorioCassa(create(ProvvisorioDiCassa.class, 0));
+//		req.getSubdocumentoSpesa().getProvvisorioCassa().setAnno(Integer.valueOf(2017));
+//		req.getSubdocumentoSpesa().getProvvisorioCassa().setNumero(Integer.valueOf(25602));
 		
 		RicercaSinteticaModulareQuoteSpesaResponse res = ricercaSinteticaModulareQuoteSpesaService.executeService(req);
 		assertNotNull(res);
 	}
+	
+	@Autowired
+	private RicercaSinteticaModulareDocumentoSpesaService ricercaSinteticaModulareDocumentoSpesaService;
+	
+	@Test
+	public void ricercaSinteticaDocSpesa() {
+		RicercaSinteticaModulareDocumentoSpesa req = new RicercaSinteticaModulareDocumentoSpesa();
+		req.setDataOra(new Date());
+		req.setAnnoBilancio(2019);
+		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
+	
+		req.setParametriPaginazione(getParametriPaginazioneTest());
+		req.setDocumentoSpesa(new DocumentoSpesa());
+		req.getDocumentoSpesa().setEnte(req.getRichiedente().getAccount().getEnte());
+		req.setPredocumentoSpesa(new PreDocumentoSpesa());
+		req.getPredocumentoSpesa().setNumero("47861");
+		RicercaSinteticaModulareDocumentoSpesaResponse res = ricercaSinteticaModulareDocumentoSpesaService.executeService(req);
+	}
+	
 }

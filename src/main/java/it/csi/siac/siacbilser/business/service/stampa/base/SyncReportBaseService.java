@@ -4,8 +4,8 @@
 */
 package it.csi.siac.siacbilser.business.service.stampa.base;
 
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.ReportServiceRequest;
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.ReportServiceResponse;
+import it.csi.siac.siaccorser.frontend.webservice.msg.report.ReportServiceRequest;
+import it.csi.siac.siaccorser.frontend.webservice.msg.report.ReportServiceResponse;
 
 
 
@@ -21,12 +21,10 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.ReportServiceResponse;
  * @param <RES> the ReportServiceResponse generic type
  * @param <RH> the BaseReportHandler generic type
  */
-public abstract class SyncReportBaseService<REQ extends ReportServiceRequest,RES extends ReportServiceResponse,RH extends BaseReportHandler> extends ReportBaseService<REQ, RES, RH> {
+public abstract class 
+	SyncReportBaseService<REQ extends ReportServiceRequest,RES extends ReportServiceResponse,RH extends BaseReportHandler> 
+	extends ReportBaseService<REQ, RES, RH> {
 	
-	
-	/**
-	 * Invoca l'elaborazione del reportHandler in modo sincrono.
-	 */	
 	protected final void startElaboration() {
 		String methodName = "startElaboration";
 		try{
@@ -47,14 +45,12 @@ public abstract class SyncReportBaseService<REQ extends ReportServiceRequest,RES
 		throw e;
 	}
 	
-	/**
-	 * Viene invocato se l'elaborazione è terminata con successo.
-	 */
 	protected abstract void postElaborationSuccess();
 	
-	/**
-	 * Viene invocato se l'elaborazione è terminata con errori.
-	 */
-	protected abstract void postElaborationError(ReportElaborationException e);
+	protected void postElaborationError(ReportElaborationException e) {
+		final String methodName = "postElaborationError";
+		log.info(methodName, "post start elaborazione avvenuta con errori: " + e.getMessage());
+		throw e;
+	}
 	
 }

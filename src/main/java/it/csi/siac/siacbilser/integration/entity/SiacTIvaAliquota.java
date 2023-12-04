@@ -13,7 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -26,7 +28,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="siac_t_iva_aliquota")
 @NamedQuery(name="SiacTIvaAliquota.findAll", query="SELECT s FROM SiacTIvaAliquota s")
-public class SiacTIvaAliquota extends SiacTEnteBase {
+public class SiacTIvaAliquota extends SiacTEnteBase { 
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -58,6 +60,17 @@ public class SiacTIvaAliquota extends SiacTEnteBase {
 	@Column(name="ivaaliquota_split")
 	private Boolean ivaaliquotaSplit;
 	
+	//SIAC-7557 inizio FL
+	//bi-directional many-to-one association to SirfelTFattura
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name="ente_proprietario_id", referencedColumnName="ente_proprietario_id", insertable=false, updatable=false),
+		@JoinColumn(name="codice", referencedColumnName="codice", insertable=false, updatable=false)
+		})
+	@MapsId("id")
+	private SirfelDNatura sirfelDNatura;
+	//SIAC-7557 fine  FL
+	
 	//bi-directional many-to-one association to SiacDIvaOperazioneTipo
 	/** The siac d iva operazione tipo. */
 	@ManyToOne
@@ -79,6 +92,25 @@ public class SiacTIvaAliquota extends SiacTEnteBase {
 	@JoinColumn(name="ivaaliquota_tipo_id")
 	private SiacDIvaAliquotaTipo siacDIvaAliquotaTipo;
 	
+
+	
+	
+	
+	/**
+	 * @return the sirfelDNatura
+	 */
+	public SirfelDNatura getSirfelDNatura()
+	{
+		return sirfelDNatura;
+	}
+
+	/**
+	 * @param sirfelDNatura the sirfelDNatura to set
+	 */
+	public void setSirfelDNatura(SirfelDNatura sirfelDNatura)
+	{
+		this.sirfelDNatura = sirfelDNatura;
+	}
 
 	/**
 	 * Instantiates a new siac t iva aliquota.

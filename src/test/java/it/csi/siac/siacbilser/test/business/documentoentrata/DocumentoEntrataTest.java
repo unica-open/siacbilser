@@ -26,7 +26,7 @@ import it.csi.siac.siacbilser.business.service.documentoentrata.SpezzaQuotaEntra
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaNotaCreditoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaNotaCreditoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaDocumentoEntrata;

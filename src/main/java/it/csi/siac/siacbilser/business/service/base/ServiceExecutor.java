@@ -33,11 +33,11 @@ import it.csi.siac.siacbilser.business.service.base.responsehandler.NotErroreRes
 import it.csi.siac.siacbilser.business.service.base.responsehandler.NotNullResponseHandler;
 import it.csi.siac.siacbilser.business.service.base.responsehandler.RicercaSuccessResponseHandler;
 import it.csi.siac.siacbilser.business.service.base.responsehandler.SuccessResponseHandler;
-import it.csi.siac.siaccommon.util.log.LogUtil;
 import it.csi.siac.siaccommonser.business.service.base.BaseService;
 import it.csi.siac.siaccommonser.business.service.base.ResponseHandler;
 import it.csi.siac.siaccommonser.business.service.base.cache.KeyAdapter;
 import it.csi.siac.siaccommonser.business.service.base.cache.ServiceResponseCache;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 
@@ -55,7 +55,7 @@ public class ServiceExecutor {
 	protected ApplicationContext appCtx;
 	
 	protected String serviceName;
-	private static final LogUtil log = new LogUtil(ServiceExecutor.class);
+	private static final LogSrvUtil log = new LogSrvUtil(ServiceExecutor.class);
 
 	/**
 	 * Chache delle response dei servizi relativa ad un singolo thread, ovvero ad una singola invocazione di un servizio.
@@ -117,11 +117,11 @@ public class ServiceExecutor {
 	@WebListener
 	public static class RequestListener implements ServletRequestListener {
 		
-		private LogUtil log = new LogUtil(getClass());
+		private LogSrvUtil log = new LogSrvUtil(getClass());
 		
 		@Override
-		public void requestInitialized(ServletRequestEvent sre) {
-			// Nessuna elaborazione
+		public void requestInitialized(ServletRequestEvent sre) { 
+			System.out.println();
 		}
 
 		@Override
@@ -216,6 +216,7 @@ public class ServiceExecutor {
 		ERES externalServiceResponse = null;
 		
 		try {
+			initLogUserSessionInfo(req);   
 			externalServiceResponse = service.invokeService(req);
 		} catch(RuntimeException re){
 			log.error(methodName, "Errore di runtime nell'esecuzione del servizio.", re);
@@ -239,7 +240,7 @@ public class ServiceExecutor {
 		}
 		return externalServiceResponse;
 	}
-	
+
 	/**
 	 * Esegue un servizio esterno all'interno di questo servizio.
 	 * Nel caso in cui il servizio richiamato risponda con almeno uno dei codici di errore passato come parametro 
@@ -584,6 +585,7 @@ public class ServiceExecutor {
 	 * @param req
 	 */
 	public <EREQ extends ServiceRequest, ERES extends ServiceResponse> void executeServiceAsync(AsyncServiceInvoker<EREQ,ERES> service, EREQ req) {
+		initLogUserSessionInfo(req);
 		service.invokeService(req);
 	}
 	
@@ -598,6 +600,7 @@ public class ServiceExecutor {
 	 */
 	@Async
 	public <EREQ extends ServiceRequest, ERES extends ServiceResponse> void executeServiceTxRequiresNewAsync(ServiceInvoker<EREQ,ERES> service, EREQ req, ResponseHandler<ERES> asyncResponseHandler){
+		initLogUserSessionInfo(req);
 		ERES externalServiceResponse = service.invokeService(req);
 		asyncResponseHandler.handleResponseBase(externalServiceResponse);
 	}
@@ -962,4 +965,21 @@ public class ServiceExecutor {
 		AsyncServiceInvoker<EREQ,ERES> asyncServiceInvoker = new LongExecutionTimePoolAsyncServiceInvoker<EREQ, ERES>(beanClassServiceInvoker, null, appCtx);
 		executeServiceAsync(asyncServiceInvoker, req);
 	}
+
+	
+	private <EREQ extends ServiceRequest> void initLogUserSessionInfo(EREQ req) {
+		
+		if (req.getUserSessionInfo() == null) {
+			System.out.println("UserSessionInfo null - service name = " + serviceName);
+			System.out.println("trying with log thread local UserSessionInfo = " + log.getUserSessionInfo());
+
+			req.setUserSessionInfo(log.getUserSessionInfo());	
+		
+			return;
+		}
+		
+		log.initializeUserSessionInfo(req.getUserSessionInfo());
+	}
+	
+
 }

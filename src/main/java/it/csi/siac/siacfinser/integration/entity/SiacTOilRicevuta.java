@@ -128,7 +128,7 @@ public class SiacTOilRicevuta extends SiacTEnteBase {
 
 	//bi-directional many-to-one association to SiacROrdinativoQuietanza
 	@OneToMany(mappedBy="siacTOilRicevuta")
-	private List<SiacROrdinativoQuietanza> siacROrdinativoQuietanzas;
+	private List<SiacROrdinativoQuietanzaFin> siacROrdinativoQuietanzas;
 
 	//bi-directional many-to-one association to SiacROrdinativoStorno
 //	@OneToMany(mappedBy="siacTOilRicevuta")
@@ -384,11 +384,11 @@ public class SiacTOilRicevuta extends SiacTEnteBase {
 		this.siacROrdinativoFirmas = siacROrdinativoFirmas;
 	}
 
-	public List<SiacROrdinativoQuietanza> getSiacROrdinativoQuietanzas() {
+	public List<SiacROrdinativoQuietanzaFin> getSiacROrdinativoQuietanzas() {
 		return this.siacROrdinativoQuietanzas;
 	}
 
-	public void setSiacROrdinativoQuietanzas(List<SiacROrdinativoQuietanza> siacROrdinativoQuietanzas) {
+	public void setSiacROrdinativoQuietanzas(List<SiacROrdinativoQuietanzaFin> siacROrdinativoQuietanzas) {
 		this.siacROrdinativoQuietanzas = siacROrdinativoQuietanzas;
 	}
 

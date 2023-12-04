@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.csi.siac.siacbilser.integration.dad.mapper.soggetto.SiacTSoggettoSoggettoMapper;
 import it.csi.siac.siacbilser.integration.dao.SiacTModpagRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTSoggettoRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacDAccreditoTipo;
@@ -59,6 +60,9 @@ public class SoggettoDad extends ExtendedBaseDadImpl {
 
 	@PersistenceContext
 	protected EntityManager entityManager;
+	
+	@Autowired
+	private SiacTSoggettoSoggettoMapper siacTSoggettoSoggettoMapper;
 
 
 	/**
@@ -350,5 +354,19 @@ public class SoggettoDad extends ExtendedBaseDadImpl {
 		return soggettos != null && soggettos.size() == 1;
 	}
 	
+	/**
+	 * Restituisce il soggetto Valido a partire dalla sua chiave fisica o logica
+	 * 
+	 * @param soggetto
+	 * @return
+	 */
+	public Soggetto findSoggetoByKey(Soggetto soggetto) {
+		
+		if (soggetto.getUid()!=0) {
+			return siacTSoggettoSoggettoMapper.map(siacTSoggettoRepository.findOne(soggetto.getUid()));
+		}
+		
+		return siacTSoggettoSoggettoMapper.map(siacTSoggettoRepository.findValidSoggettoByLogicKey(soggetto.getCodiceSoggetto(), ente.getUid()));
+	}
 
 }

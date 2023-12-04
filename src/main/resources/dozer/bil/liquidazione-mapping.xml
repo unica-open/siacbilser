@@ -120,7 +120,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<a>distinta</a>
 			<b>siacDDistinta</b>
 		</field>
-		<field map-id="SiacDContotesoreria_ContoTesoreria">
+		<field map-id="SiacDContotesoreria_ContoTesoreria_Fin2">
 			<a>contoTesoreria</a>
 			<b>siacDContotesoreria</b>
 		</field>
@@ -130,19 +130,19 @@ SPDX-License-Identifier: EUPL-1.2
 		</field>
 	</mapping>
 	
-	<mapping map-id="SiacDContotesoreria_ContoTesoreria" wildcard="true">
-		<class-a>it.csi.siac.siacfinser.model.ContoTesoreria</class-a>
-		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDContotesoreria</class-b>
+<!-- 	<mapping map-id="SiacDContotesoreria_ContoTesoreria" wildcard="true"> -->
+<!-- 		<class-a>it.csi.siac.siacfin2ser.model.ContoTesoreria</class-a> -->
+<!-- 		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDContotesoreria</class-b> -->
 		
-		<field>
-			<a>codice</a>
-			<b>contotesCode</b>
-		</field>
-		<field>
-			<a>descrizione</a>
-			<b>contotesDesc</b>
-		</field>
-	</mapping>
+<!-- 		<field> -->
+<!-- 			<a>codice</a> -->
+<!-- 			<b>contotesCode</b> -->
+<!-- 		</field> -->
+<!-- 		<field> -->
+<!-- 			<a>descrizione</a> -->
+<!-- 			<b>contotesDesc</b> -->
+<!-- 		</field> -->
+<!-- 	</mapping> -->
 	
 	<mapping map-id="SiacDContotesoreria_ContoTesoreria_Fin2" wildcard="true">
 		<class-a>it.csi.siac.siacfin2ser.model.ContoTesoreria</class-a>

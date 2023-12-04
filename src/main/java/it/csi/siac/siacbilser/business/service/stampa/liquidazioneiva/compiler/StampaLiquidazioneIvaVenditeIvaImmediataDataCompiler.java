@@ -60,7 +60,7 @@ public class StampaLiquidazioneIvaVenditeIvaImmediataDataCompiler extends Stampa
 			//fine periodo
 			Date protocolloDefinitivoA = handler.getPeriodo().getFinePeriodo(handler.getAnnoEsercizio());
 			
-			List<SubdocumentoIvaEntrata> list = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataNonQPID(sie, null, null, protocolloDefinitivoDa, protocolloDefinitivoA);
+			List<SubdocumentoIvaEntrata> list = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataNonQPID(sie, null, null, protocolloDefinitivoDa, protocolloDefinitivoA, null, null);
 			log.debug(methodName, "RegistroIva.uid = " + registroIva.getUid() + ", subdocumentiIva.size= " + list.size());
 			listaSubdocumentoIva.addAll(list);
 		}

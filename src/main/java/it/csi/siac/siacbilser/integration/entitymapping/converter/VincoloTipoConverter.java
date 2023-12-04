@@ -12,7 +12,7 @@ import it.csi.siac.siacbilser.integration.dao.EnumEntityFactory;
 import it.csi.siac.siacbilser.integration.entity.SiacDVincoloTipo;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDVincoloTipoEnum;
 import it.csi.siac.siacbilser.model.TipoVincoloCapitoli;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -25,7 +25,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class VincoloTipoConverter extends DozerConverter<TipoVincoloCapitoli, SiacDVincoloTipo> {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired
@@ -96,11 +96,11 @@ public class VincoloTipoConverter extends DozerConverter<TipoVincoloCapitoli, Si
 	
 //
 //	public VariazioniTipoConverter() {
-//		super(StatoOperativoVariazioneDiBilancio.class, SiacTVariazione.class);
+//		super(StatoOperativoVariazioneBilancio.class, SiacTVariazione.class);
 //	}
 //
 //	@Override
-//	public StatoOperativoVariazioneDiBilancio convertFrom(SiacTVariazione src, StatoOperativoVariazioneDiBilancio dest) {
+//	public StatoOperativoVariazioneBilancio convertFrom(SiacTVariazione src, StatoOperativoVariazioneBilancio dest) {
 //		for (SiacRVariazioneStato siacRVariazioneStato : src.getSiacRVariazioneStatos()) {
 //			if(siacRVariazioneStato.getDataCancellazione()==null){
 //				return new VariazioneStatoConverter().convertFrom(siacRVariazioneStato.getSiacDVariazioneStato(),null);
@@ -111,7 +111,7 @@ public class VincoloTipoConverter extends DozerConverter<TipoVincoloCapitoli, Si
 //	}
 //
 //	@Override
-//	public SiacTVariazione convertTo(StatoOperativoVariazioneDiBilancio src, SiacTVariazione dest) {
+//	public SiacTVariazione convertTo(StatoOperativoVariazioneBilancio src, SiacTVariazione dest) {
 //		final String methodName = "convertTo";
 //		
 //		if(dest== null) {

@@ -201,7 +201,7 @@ STAMPA REGISTRO IVA - VENDITE IVA IMMEDIATA
 		(Ciclare su '/stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita')
 		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroProtocolloDefinitivo
 		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/dataProtocolloDefinitivo
-		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataEmissione
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataOperazione
 		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/numero
 		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/tipoDocumento (/codice, /descrizione)
 		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/codiceSoggetto
@@ -241,7 +241,7 @@ STAMPA REGISTRO IVA - VENDITE IVA DIFFERITA (NON INCASSATI)
 		(Ciclare su '/stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita')
 		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroProtocolloProvvisorio
 		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/dataProtocolloProvvisorio
-		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataEmissione
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataOperazione
 		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/numero
 		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/tipoDocumento (/codice, /descrizione)
 		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/codiceSoggetto
@@ -283,7 +283,7 @@ STAMPA REGISTRO IVA - VENDITE IVA ESIGIBILITA' DIFFERITA (INCASSATI)
 		- A1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroProtocolloDefinitivo
 		- B1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/dataProtocolloDefinitivo
 		- Q1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/subdocumentoIva/numeroOrdinativoDocumento
-		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataEmissione
+		- C1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/dataOperazione
 		- D1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/numero
 		- E1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/tipoDocumento (/codice, /descrizione)
 		- F1: /stampaRegistroIvaReportModel/datiIva/acquistiVendite/vendita/documento/soggetto/codiceSoggetto

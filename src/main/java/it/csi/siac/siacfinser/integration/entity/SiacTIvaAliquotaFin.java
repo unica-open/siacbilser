@@ -11,10 +11,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import it.csi.siac.siacbilser.integration.entity.SirfelDNatura;
 import it.csi.siac.siacfinser.integration.entity.base.SiacTEnteBase;
 
 
@@ -51,6 +54,35 @@ public class SiacTIvaAliquotaFin extends SiacTEnteBase {
 	//bi-directional many-to-one association to SiacTIvamovFin
 	@OneToMany(mappedBy="siacTIvaAliquota")
 	private List<SiacTIvamovFin> siacTIvamovs;
+	
+	
+	//SIAC-7557 inizio FL
+	//bi-directional many-to-one association to SirfelDNatura
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name="ente_proprietario_id", referencedColumnName="ente_proprietario_id", insertable=false, updatable=false),
+		@JoinColumn(name="codice", referencedColumnName="codice", insertable=false, updatable=false)
+		})
+	@MapsId("id")
+	private SirfelDNatura sirfelDNatura;
+	//SIAC-7557 fine  FL
+
+	
+	/**
+	 * @return the sirfelDNatura
+	 */
+	public SirfelDNatura getSirfelDNatura()
+	{
+		return sirfelDNatura;
+	}
+
+	/**
+	 * @param sirfelDNatura the sirfelDNatura to set
+	 */
+	public void setSirfelDNatura(SirfelDNatura sirfelDNatura)
+	{
+		this.sirfelDNatura = sirfelDNatura;
+	}
 
 	public SiacTIvaAliquotaFin() {
 	}

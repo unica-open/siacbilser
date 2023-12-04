@@ -60,7 +60,7 @@ public class AggiornaImportoDaDedurreQuoteDocumentoEntrataService extends CrudDo
 			checkNotNull(subdoc.getImporto(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("importo subdocumento"));
 			//checkNotNull(subdoc.getImportoDaPagare(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("importo da pagare subdocumento"));
 			
-			checkCondition(subdoc.getImportoDaDedurre().compareTo(subdoc.getImporto())<=0, ErroreCore.VALORE_NON_VALIDO.getErrore("importo da dedurre", "Deve essere minore uguale all'importo"));
+			checkCondition(subdoc.getImportoDaDedurre().compareTo(subdoc.getImporto())<=0, ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo da dedurre", "Deve essere minore uguale all'importo"));
 			
 		}
 		

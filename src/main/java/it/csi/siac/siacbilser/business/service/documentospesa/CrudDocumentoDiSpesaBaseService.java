@@ -18,12 +18,15 @@ import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacattser.model.errore.ErroreAtt;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.service.documento.MovimentoGestioneServiceCallGroup;
+import it.csi.siac.siacbilser.frontend.webservice.ClassificatoreBilService;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeClassificatore;
+import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeClassificatoreResponse;
 import it.csi.siac.siacbilser.integration.dad.AllegatoAttoDad;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
 import it.csi.siac.siacbilser.integration.dad.CodificaDad;
 import it.csi.siac.siacbilser.integration.dad.DocumentoSpesaDad;
 import it.csi.siac.siacbilser.integration.dad.ImpegnoBilDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.ProvvisorioBilDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.integration.dad.SubdocumentoSpesaDad;
@@ -34,9 +37,11 @@ import it.csi.siac.siaccommonser.business.service.base.exception.BusinessExcepti
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Esito;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
+import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiSpesa;
@@ -66,7 +71,6 @@ import it.csi.siac.siacfinser.integration.dad.datacontainer.DisponibilitaMovimen
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa.TipoProvvisorioDiCassa;
 import it.csi.siac.siacfinser.model.ric.RicercaProvvisorioDiCassaK;
@@ -97,7 +101,7 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 	@Autowired
 	private SoggettoDad soggettoDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private ProvvisorioBilDad provvisorioBilDad;
 	@Autowired
@@ -110,6 +114,8 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 	//Servizi interni.
 	@Autowired
 	private AggiornaStatoDocumentoDiSpesaService aggiornaStatoDocumentoDiSpesaService;
+	@Autowired
+	private ClassificatoreBilService classificatoreBilService;
 	
 	//Servizi esterni.
 	@Autowired
@@ -258,7 +264,7 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		if (subdoc.getAttoAmministrativo()==null || subdoc.getAttoAmministrativo().getUid()==0){
 			return;
 		}
-		AttoAmministrativo attoAmministrativo = provvedimentoDad.findProvvedimentoById(subdoc.getAttoAmministrativo().getUid());
+		AttoAmministrativo attoAmministrativo = attoAmministrativoDad.findProvvedimentoById(subdoc.getAttoAmministrativo().getUid());
 		
 		if (attoAmministrativo==null){
 			throw new BusinessException(ErroreAtt.PROVVEDIMENTO_INESISTENTE.getErrore(), Esito.FALLIMENTO);
@@ -290,7 +296,7 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		}
 		
 		// controllo sul tipo eliminato in seguito alla CR del 11/03/2015
-//		String codiceTipoDeterminaDiLiquidazione = provvedimentoDad.getCodiceTipoDeterminaDiLiquidazione();
+//		String codiceTipoDeterminaDiLiquidazione = attoAmministrativoDad.getCodiceTipoDeterminaDiLiquidazione();
 //		
 //		if (!codiceTipoDeterminaDiLiquidazione.equals(subdoc.getAttoAmministrativo().getTipoAtto().getCodice())){
 //			throw new BusinessException(ErroreFin.TIPO_PROVVEDIMENTO_INCONGRUENTE.getErrore(""), Esito.FALLIMENTO);
@@ -387,13 +393,6 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		Impegno impegno = subdoc.getImpegno();
 		SubImpegno subImpegno = subdoc.getSubImpegno();
 		
-		boolean voceMutuoValorizzato = subdoc.getVoceMutuo() !=null && subdoc.getVoceMutuo().getNumeroMutuo() !=null && StringUtils.isNotBlank(subdoc.getVoceMutuo().getNumeroMutuo());
-		if(voceMutuoValorizzato) {
-			// I check li faccio solo qua
-			caricaVoceMutuo();
-			controllaDisponibilitaVoceMutuo();
-			return;
-		}
 		
 		if(subImpegno != null && subImpegno.getUid() != 0){
 			Integer uidSubImpegnoPrecedente = caricaUidSubimpegnoPrecedente();
@@ -508,7 +507,7 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		SiopeAssenzaMotivazione siopeAssenza = codificaDad.ricercaCodifica(SiopeAssenzaMotivazione.class, subdoc.getSiopeAssenzaMotivazione().getUid());
 		
 		if(siopeAssenza != null && ("CL".equals(siopeAssenza.getCodice()) || ("ID".equals(siopeAssenza.getCodice())))) {
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("motivo assenza cig","selezionare una motivazione valida"), Esito.FALLIMENTO);
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("motivo assenza cig","selezionare una motivazione valida"), Esito.FALLIMENTO);
 		}
 	}
 
@@ -526,43 +525,43 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(impegno.getAnnoMovimento());
-		if(impegno.getNumero() != null) {
+		if(impegno.getNumeroBigDecimal() != null) {
 			sb.append("/");
-			sb.append(impegno.getNumero().toPlainString());
+			sb.append(impegno.getNumeroBigDecimal().toPlainString());
 		}
 		
-		if(subImpegno != null && subImpegno.getNumero() != null) {
+		if(subImpegno != null && subImpegno.getNumeroBigDecimal() != null) {
 			sb.append("-");
-			sb.append(subImpegno.getNumero().toPlainString());
+			sb.append(subImpegno.getNumeroBigDecimal().toPlainString());
 		}
 		return sb.toString();
 	}
 
 	protected void caricaImpegnoESubimpegno() {
-		if(subdoc.getImpegno()==null || subdoc.getImpegno().getNumero() == null || subdoc.getImpegno().getAnnoMovimento() == 0){
+		if(subdoc.getImpegno()==null || subdoc.getImpegno().getNumeroBigDecimal() == null || subdoc.getImpegno().getAnnoMovimento() == 0){
 			return;
 		}
 		
 		Impegno impegno = ricercaImpegnoPerChiaveOttimizzato();
 		//importante che se la lista elenco subimpegni e' null (ho cercato un sub che non esiste) venga sostituita con lista vuota
 		impegno.setElencoSubImpegni(filtraSubImpegniDefinitivi(impegno.getElencoSubImpegni()));
-		log.debug("caricaImpegnoESubimpegno", "trovato impegno con uid: " + impegno.getUid() + " e numero: " + impegno.getNumero());
+		log.debug("caricaImpegnoESubimpegno", "trovato impegno con uid: " + impegno.getUid() + " e numero: " + impegno.getNumeroBigDecimal());
 		subdoc.setImpegno(impegno);
 
 		if(subdoc.getSubImpegno()!= null && subdoc.getSubImpegno().getUid()!=0){
 			if(impegno.getElencoSubImpegni() == null){
-				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", subdoc.getSubImpegno().getNumero()+""), Esito.FALLIMENTO);
+				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", subdoc.getSubImpegno().getNumeroBigDecimal()+""), Esito.FALLIMENTO);
 			}
 			
 			SubImpegno subImpegno = null;
 			for(SubImpegno subImp: impegno.getElencoSubImpegni()){
 				if(subImp.getUid()==subdoc.getSubImpegno().getUid()){
 					subImpegno = subImp;
-					log.debug("caricaImpegnoESubimpegno", "trovato subimpegno con uid: " + subImpegno.getUid() + " e numero: " + subImpegno.getNumero());
+					log.debug("caricaImpegnoESubimpegno", "trovato subimpegno con uid: " + subImpegno.getUid() + " e numero: " + subImpegno.getNumeroBigDecimal());
 				}
 			}
 			if(subImpegno == null){
-				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", subdoc.getSubImpegno().getNumero()+""), Esito.FALLIMENTO);
+				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subimpegno", subdoc.getSubImpegno().getNumeroBigDecimal()+""), Esito.FALLIMENTO);
 			}
 			
 			subdoc.setSubImpegno(subImpegno);
@@ -621,7 +620,7 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 	
 		RicercaAttributiMovimentoGestioneOttimizzato parametri = new RicercaAttributiMovimentoGestioneOttimizzato();
 		parametri.setEscludiSubAnnullati(true);
-		parametri.setCaricaSub(subdoc.getSubImpegno()!=null && subdoc.getSubImpegno().getNumero() != null);
+		parametri.setCaricaSub(subdoc.getSubImpegno()!=null && subdoc.getSubImpegno().getNumeroBigDecimal() != null);
 	
 		DatiOpzionaliElencoSubTuttiConSoloGliIds parametriElencoIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		parametriElencoIds.setEscludiAnnullati(true);
@@ -636,7 +635,7 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		Impegno impegno = resRIPC.getImpegno();
 		if(impegno==null) {
 			res.addErrori(resRIPC.getErrori());
-			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", subdoc.getImpegno().getNumero()+"/"+ subdoc.getImpegno().getAnnoMovimento()+""), Esito.FALLIMENTO);
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Impegno", subdoc.getImpegno().getNumeroBigDecimal()+"/"+ subdoc.getImpegno().getAnnoMovimento()+""), Esito.FALLIMENTO);
 		}
 	
 		return impegno;
@@ -740,6 +739,63 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		return provvisorioDiCassa;
 	}
 
+	/**
+	 * SIAC-8153
+	 * Utilita' per il caricamento della struttura amministrativo contabile associata alla quota
+	 */
+	protected void caricaStrutturaCompetenteQuota() {
+		if(subdoc.getStrutturaCompetenteQuota() == null || subdoc.getStrutturaCompetenteQuota().getUid() == 0){
+			return;
+		}
+		StrutturaAmministrativoContabile strutturaCompetente = ricercaStrutturaCompetente();
+		if(strutturaCompetente==null){
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("struttura competente"), Esito.FALLIMENTO);
+		}else{
+			log.debug("caricaStrutturaCompetenteQuota", "trovata struttura con uid: " + strutturaCompetente.getUid() + " e codice " + strutturaCompetente.getCodice());
+		}
+		
+		//controllo che sia una CDC e non una CDR
+		controlloTipoStrutturaCompetente(strutturaCompetente);
+		
+		subdoc.setStrutturaCompetenteQuota(strutturaCompetente);
+		log.logXmlTypeObject(subdoc.getStrutturaCompetenteQuota(), "STRUTTURA COMPETENTE QUOTA >>>>>>>>>>>>>>>>>>");
+	}
+	
+	/**
+	 * SIAC-8153
+	 * Controllo tipologia della struttura amministrativo contabile associata alla quota
+	 */
+	private void controlloTipoStrutturaCompetente(StrutturaAmministrativoContabile strutturaCompetente) {
+		if(TipologiaClassificatore.CDR.name().equals(strutturaCompetente.getTipoClassificatore().getCodice())){
+			throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Il valore del parametro Struttura Competente non &eacute consentito: deve essere un SETTORE "), Esito.FALLIMENTO);
+		}
+	}
+	
+	/**
+	 * SIAC-8153
+	 * Ricerca della struttura amministrativo contabile associata alla quota
+	 */
+	private StrutturaAmministrativoContabile ricercaStrutturaCompetente() {
+		RicercaPuntualeClassificatore reqRPC = new RicercaPuntualeClassificatore();
+		
+		reqRPC.setBilancio(bilancio);
+		reqRPC.setDataOra(req.getDataOra());
+		reqRPC.setEnte(subdoc.getEnte());
+		reqRPC.setRichiedente(req.getRichiedente());
+
+		//il CDR non dovrebbe essere piu' utilizzato
+		reqRPC.setTipologiaClassificatore(TipologiaClassificatore.CDC);
+		//passo l'uid del classificatore da cercare
+		reqRPC.setUid(subdoc.getStrutturaCompetenteQuota().getUid());
+		
+		RicercaPuntualeClassificatoreResponse resRPC = classificatoreBilService.ricercaPuntualeClassificatore(reqRPC);
+		log.logXmlTypeObject(resRPC, "Risposta ottenuta dal servizio RicercaPuntualeClassificatore.");
+		checkServiceResponseFallimento(resRPC);
+		
+		StrutturaAmministrativoContabile strutturaCompetente = (StrutturaAmministrativoContabile) resRPC.getCodifica();
+		return strutturaCompetente;
+	}
+
 	
 	protected boolean isLiquidazioneDaInserire() {
 		final String methodName= "isLiquidazioneDaInserire";
@@ -826,289 +882,6 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		}
 	}
 
-//	protected Liquidazione popolaLiquidazione() {
-//		
-//		Liquidazione liquidazione = new Liquidazione();
-//		
-//		//se sono in aggiornamento della liquidazione -> carico quella presente sul db e sovrascrivo dopo i dati che potrebbero essere cambiati
-//		if(subdoc.getLiquidazione() != null && subdoc.getLiquidazione().getUid() != 0){		
-//			RicercaLiquidazionePerChiaveResponse resRLPC= ricercaLiquidazionePerChiave(subdoc.getLiquidazione(), bilancio);
-//			liquidazione = resRLPC.getLiquidazione();
-//			if(liquidazione == null){
-//				throw new BusinessException("Errore aggioranmento Liquidazione "+subdoc.getLiquidazione().getAnnoLiquidazione()+"/"+subdoc.getLiquidazione().getNumeroLiquidazione()
-//				+": Impossibile trovare la liquidazione con uid: "+subdoc.getLiquidazione().getUid());
-//			}
-//		}
-//		
-////		TransazioneElementare te = subdoc.getImpegnoOSubImpegno(); //firstNotNull(subdoc.getSubImpegno(), subdoc.getImpegno());
-////		copiaDatiDaTransazioneElementareALiquidazione(te,liquidazione);
-//		
-//		Impegno impegno = subdoc.getImpegno();
-//		SubImpegno subImpegno = subdoc.getSubImpegno();
-//		//impegnoBilDad.aggiungiCodiciClasssificatoriAImpegnoEOSubImpegno(impegno,subImpegno);
-//		
-//		if(subImpegno != null){
-//			impostaCodiciNellaLiquidazione(subImpegno, liquidazione);
-//		}else{
-//			impostaCodiciNellaLiquidazione(impegno, liquidazione);
-//		}
-//		
-//		liquidazione.setImportoLiquidazione(subdoc.getImportoDaPagare());
-//		liquidazione.setDescrizioneLiquidazione(subdoc.getCausaleOrdinativo());
-//		
-//		liquidazione.setImpegno(subdoc.getImpegno());
-//		if(subdoc.getSubImpegno() != null){
-//			liquidazione.setSubImpegno(subdoc.getSubImpegno());
-//		}
-//		liquidazione.setAttoAmministrativoLiquidazione(subdoc.getAttoAmministrativo());
-//		liquidazione.setCup(subdoc.getCup());
-//		liquidazione.setCig(subdoc.getCig());
-//		
-//		// Il numero del mutuo e' il numero della voceMutuo
-//		if(subdoc.getVoceMutuo() != null  && StringUtils.isNotBlank(subdoc.getVoceMutuo().getNumeroMutuo())) {
-//			liquidazione.setNumeroMutuo(integerize(subdoc.getVoceMutuo().getNumeroMutuo()));
-//		}
-//		
-//		if(subdoc.getContoTesoreria() != null){
-//			// Ricerco i dati: il servizio delle liquidazioni richiede il codice per l'inserimento
-//			ContoTesoreria contoTesoreria = contoTesoreriaDad.findByUid(subdoc.getContoTesoreria().getUid());
-//			liquidazione.setContoTesoreria(contoTesoreria);
-//		}
-//		
-//		//e l'operatore ha l'azione associata con quietanza ('OP-Spe-insDocSpeQuietanza' o 'OP-Spe-aggDocSpeQuietanza').
-//		if(Boolean.TRUE.equals(subdoc.getFlagACopertura()) || (subdoc.getAttoAmministrativo().getAllegatoAtto()!= null && subdoc.getAttoAmministrativo().getAllegatoAtto().getUid() != 0)){
-//			liquidazione.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.PROVVISORIO);
-//		}else{
-//			liquidazione.setStatoOperativoLiquidazione(StatoOperativoLiquidazione.VALIDO);
-//		}
-//		
-//		//gestione soggetto e modalita' pagamento
-//		Soggetto soggettoLiquidazione = creaSoggettoLiquidazione();
-//		liquidazione.setSoggettoLiquidazione(soggettoLiquidazione);
-//		
-//		//se il TipoAccredito e' CSC o CSI la gestione della modalita' pagamento e' differente
-//		gestisciCessioneDelCredito(liquidazione);
-//		
-//		SubdocumentoSpesa quota = new SubdocumentoSpesa();
-//		quota.setUid(subdoc.getUid());
-//		DocumentoSpesa doc = new DocumentoSpesa();
-//		doc.setUid(documentoAssociato.getUid());
-//		doc.setTipoDocumento(documentoAssociato.getTipoDocumento());
-//		quota.setDocumento(doc);
-//		
-//		if(subdoc.getAttoAmministrativo()!=null) {
-//			quota.setAttoAmministrativo(subdoc.getAttoAmministrativo());
-//		}
-//			
-//		liquidazione.setSubdocumentoSpesa(quota);
-//		liquidazione.setForza(true);
-//		
-//		return liquidazione;
-//	}
-
-//	private RicercaLiquidazionePerChiaveResponse ricercaLiquidazionePerChiave(Liquidazione liquidazione, Bilancio bilancio2) {
-//		RicercaLiquidazionePerChiave reqRLPC = new RicercaLiquidazionePerChiave();
-//		reqRLPC.setRichiedente(req.getRichiedente());
-//		reqRLPC.setEnte(ente);
-//		reqRLPC.setDataOra(req.getDataOra());
-//		RicercaLiquidazioneK k = new RicercaLiquidazioneK();
-//		k.setAnnoEsercizio(bilancio.getAnno());
-//		k.setAnnoLiquidazione(liquidazione.getAnnoLiquidazione());
-//		k.setBilancio(bilancio);
-//		k.setLiquidazione(liquidazione);
-//		k.setNumeroLiquidazione(liquidazione.getNumeroLiquidazione());
-//		//k.setTipoRicerca(""); //Lascio il default
-//		reqRLPC.setpRicercaLiquidazioneK(k);
-//		RicercaLiquidazionePerChiaveResponse resRLPC = liquidazioneService.ricercaLiquidazionePerChiave(reqRLPC);
-//		checkServiceResponseFallimento(resRLPC);
-//		
-//		return resRLPC;
-//	}
-//	
-//	private void impostaCodiciNellaLiquidazione(Impegno impegno, Liquidazione l) {
-//		l.setCodPdc(impegno.getCodPdc() != null ? impegno.getCodPdc() : "");
-//		l.setCodTransazioneEuropeaSpesa(impegno.getCodTransazioneEuropeaSpesa() != null ? impegno.getCodTransazioneEuropeaSpesa() : "");
-//		l.setCodRicorrenteSpesa(impegno.getCodRicorrenteSpesa() != null ? impegno.getCodRicorrenteSpesa() : "");
-//		l.setCodContoEconomico(impegno.getCodContoEconomico() != null ? impegno.getCodContoEconomico() : "" );
-//		l.setCodSiope(impegno.getCodSiope() != null ? impegno.getCodSiope() : "" );
-//		l.setCodCofog(impegno.getCodCofog() != null ? impegno.getCodCofog() : "");
-//		// SIAC-3655
-//		l.setCodCapitoloSanitarioSpesa(impegno.getCodCapitoloSanitarioSpesa() != null ? impegno.getCodCapitoloSanitarioSpesa() : "");
-//		l.setCodPrgPolReg(impegno.getCodPrgPolReg() != null ? impegno.getCodPrgPolReg() : "");
-//	}
-
-	/**
-	 * Nel caso in cui la quota da liquidare è associata ad una modalità di pagamento 
-	 * di tipo cessione del credito (Tipo.Accredito=CSC) oltre alle verifiche ai punti precedenti,  
-	 * si inserisce la liquidazione da abbinare alla quota tramite il metodo Inserisce liquidazione  
-	 * del servizio Gestione liquidazione passando in input il 
-	 * 
-	 * soggetto e 
-	 * 
-	 * modalità di pagamento (con eventuale sede) 
-	 * 
-	 * che sono collegati alla modalità di pagamento della quota tramite la relazione 'Cessione del Credito ad altro soggetto'.
-	 */
-//	private void gestisciCessioneDelCredito(Liquidazione liquidazione) {
-//		
-//		Soggetto soggettoLiquidazione = liquidazione.getSoggettoLiquidazione();
-//		ModalitaPagamentoSoggetto mps = null;
-//		if(soggettoLiquidazione.getModalitaPagamentoList()!=null && !soggettoLiquidazione.getModalitaPagamentoList().isEmpty()){
-//			//riutilizzo ModalitaPagamentoSoggetto caricata dal servizio RicercaModalitaPagamentoPerChiave in precedenza (nel metodo #creaSoggettoLiquidazione)
-//			mps = soggettoLiquidazione.getModalitaPagamentoList().get(0); 
-//		}
-//		if(mps == null) {
-//			return;
-//		}
-//		
-//		String codiceGruppoAccredito = getCodiceGruppoAccredito(mps);
-//		
-//		// TODO: configurazione per FA e PI
-//		if(isTipoAccreditoCSCLike(codiceGruppoAccredito)) {
-//			Soggetto soggettoCessione = ottieniSoggettoCessione(mps);
-//			ModalitaPagamentoSoggetto mpsCessione = mps.getModalitaPagamentoSoggettoCessione2();
-//			// ModalitaPagamentoSoggetto mpsCessione = ricercaModalitaPagamento(mps.getModalitaPagamentoSoggettoCessione2(), soggettoCessione);
-//			popolaModalitaPagamentoCessione(liquidazione, mpsCessione, soggettoCessione);
-//			return;
-//		}
-//		
-//		//jira 2794
-////		if(isTipoAccreditoCSILike(codiceGruppoAccredito)) {
-////			Soggetto soggettoCessione = soggettoLiquidazione;
-////			ModalitaPagamentoSoggetto mpsCessione = mps.getModalitaPagamentoSoggettoCessione2();
-////			//ModalitaPagamentoSoggetto mpsCessione = ricercaModalitaPagamento(mps.getModalitaPagamentoSoggettoCessione2(), soggettoCessione);
-////			popolaModalitaPagamentoCessione(liquidazione, mpsCessione, soggettoCessione);
-////			return;
-////		}
-//	}
-//	
-//	private String getCodiceGruppoAccredito(ModalitaPagamentoSoggetto mps) {
-//		return soggettoDad.ottieniCodiceGruppoAccreditoByTipoAccredito(mps.getTipoAccredito());
-//	}
-//
-//	private boolean isTipoAccreditoCSCLike(String codiceGruppoAccredito) {
-//		return TipoAccredito.CSC.name().equalsIgnoreCase(codiceGruppoAccredito);
-//	}
-//	
-////	private boolean isTipoAccreditoCSILike(String codiceGruppoAccredito) {
-////		return TipoAccredito.CSI.name().equalsIgnoreCase(codiceGruppoAccredito);
-////	}
-//
-//	private void popolaModalitaPagamentoCessione(Liquidazione liquidazione, ModalitaPagamentoSoggetto mpsCessione, Soggetto soggetto) {
-//		List<ModalitaPagamentoSoggetto> modalitaPagamentoList = new ArrayList<ModalitaPagamentoSoggetto>();
-//		modalitaPagamentoList.add(mpsCessione);
-//		soggetto.setModalitaPagamentoList(modalitaPagamentoList);
-//		liquidazione.setSoggettoLiquidazione(soggetto);
-//		liquidazione.setModalitaPagamentoSoggetto(mpsCessione);
-//	}
-//
-//	private Soggetto ottieniSoggettoCessione(ModalitaPagamentoSoggetto mps) {
-//		RicercaSoggettoPerChiaveResponse resRSPC = ricercaSoggettoPerChiave(mps.getCessioneCodSoggetto());
-//		Soggetto soggettoCessione = resRSPC.getSoggetto();
-//		if(soggettoCessione == null || soggettoCessione.getUid() == 0){
-//			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Soggetto", "codice " + mps.getCessioneCodSoggetto()));
-//		}
-//		return soggettoCessione;
-//	}
-
-	/**
-	 * Integerizzazione di una stringa.
-	 * 
-	 * @param str la stringa di partenza
-	 * @return l'Integer corrispondente, se valido; <code>null</code> altrimenti
-	 */
-//	private Integer integerize(String str) {
-//		final String methodName = "integerize";
-//		try {
-//			return Integer.valueOf(str);
-//		} catch(NumberFormatException nfe) {
-//			log.debug(methodName, "NumberFormatException per la stringa " + str + ": " + (nfe != null ? nfe.getMessage() : ""));
-//		} catch(NullPointerException npe) {
-//			log.debug(methodName, "NullPointerException per la stringa " + str + ": " + (npe != null ? npe.getMessage() : ""));
-//		}
-//		log.debug(methodName, "Fallimento dell'integerizzazione della stringa " + str + ". Restituisco null");
-//		return null;
-//	}
-
-//	private void copiaDatiDaTransazioneElementareALiquidazione(TransazioneElementare te, Liquidazione liquidazione) {
-//		if(te instanceof SubImpegno){
-//			DummyMapper.mapNotNullNotEmpty((SubImpegno)te, liquidazione);
-//		}else if(te instanceof Impegno){
-//			DummyMapper.mapNotNullNotEmpty((Impegno)te, liquidazione);
-//		}
-//	}
-	
-	
-
-	
-//	private Soggetto creaSoggettoLiquidazione() {
-//		
-//		Soggetto soggettoLiquidazione = new Soggetto();
-//		
-//		RicercaSoggettoPerChiaveResponse resRSPC = ricercaSoggettoPerChiave(documentoAssociato.getSoggetto().getCodiceSoggetto());
-//		Soggetto soggettoDocumento = resRSPC.getSoggetto();
-//		if(soggettoDocumento == null || soggettoDocumento.getUid() == 0){
-//			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Soggetto", "codice " + documentoAssociato.getSoggetto().getCodiceSoggetto()));
-//		}
-//		
-//		soggettoLiquidazione.setUid(soggettoDocumento.getUid());
-//		soggettoLiquidazione.setCodiceSoggetto(soggettoDocumento.getCodiceSoggetto());
-//		soggettoLiquidazione.setStatoOperativo(soggettoDocumento.getStatoOperativo());
-//		
-//		List<ModalitaPagamentoSoggetto> modalitaPagamentoList = new ArrayList<ModalitaPagamentoSoggetto>();
-//		if(resRSPC.getListaModalitaPagamentoSoggetto() == null) {
-//			// TODO
-//			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("ListaModalitaPagamentoSoggetto", "Soggetto codice " + documentoAssociato.getSoggetto().getCodiceSoggetto()));
-//		}
-//		if(subdoc.getModalitaPagamentoSoggetto() != null) {
-//			for(ModalitaPagamentoSoggetto mps : resRSPC.getListaModalitaPagamentoSoggetto()){
-//				int uid = mps.getModalitaPagamentoSoggettoCessione2() != null && mps.getModalitaPagamentoSoggettoCessione2().getUid() != 0
-//						? mps.getModalitaPagamentoSoggettoCessione2().getUid()
-//						: mps.getUid();
-//				if(uid == subdoc.getModalitaPagamentoSoggetto().getUid()){
-//					mps = ricercaModalitaPagamento(mps, soggettoDocumento);
-//					modalitaPagamentoList.add(mps);
-//					break;
-//				}
-//			}
-//		}
-//		soggettoLiquidazione.setModalitaPagamentoList(modalitaPagamentoList);
-//		
-//		if(subdoc.getSedeSecondariaSoggetto() != null){
-//			List<SedeSecondariaSoggetto> sediSecondarie = new ArrayList<SedeSecondariaSoggetto>();
-//			SedeSecondariaSoggetto sedeSecondariaSoggetto = new SedeSecondariaSoggetto();
-//			sedeSecondariaSoggetto.setUid(subdoc.getSedeSecondariaSoggetto().getUid());
-//			sediSecondarie.add(sedeSecondariaSoggetto);
-//			soggettoLiquidazione.setSediSecondarie(sediSecondarie);
-//		}
-//		
-//		return soggettoLiquidazione;
-//	}
-//
-//	private RicercaSoggettoPerChiaveResponse ricercaSoggettoPerChiave(String codiceSoggetto) {
-//		RicercaSoggettoPerChiave reqRSPC = new RicercaSoggettoPerChiave();
-//		ParametroRicercaSoggettoK parametroSoggettoK = new ParametroRicercaSoggettoK();
-//		parametroSoggettoK.setCodice(codiceSoggetto /*documentoAssociato.getSoggetto().getCodiceSoggetto()*/);
-//		reqRSPC.setParametroSoggettoK(parametroSoggettoK);
-//		reqRSPC.setRichiedente(req.getRichiedente());
-//		reqRSPC.setEnte(ente /*documentoAssociato.getEnte()*/);
-//		RicercaSoggettoPerChiaveResponse resRSPC = soggettoService.ricercaSoggettoPerChiave(reqRSPC);
-//		log.logXmlTypeObject(resRSPC, "response ricerca soggetto per chiave");
-//		return resRSPC;
-//	}
-//
-//	
-//	private ModalitaPagamentoSoggetto ricercaModalitaPagamento(ModalitaPagamentoSoggetto mps, Soggetto soggetto) {
-//		RicercaModalitaPagamentoPerChiave reqRMPC = new RicercaModalitaPagamentoPerChiave();
-//		reqRMPC.setEnte(subdoc.getEnte());
-//		reqRMPC.setRichiedente(req.getRichiedente());
-//		reqRMPC.setModalitaPagamentoSoggetto(mps);
-//		reqRMPC.setSoggetto(soggetto);
-//		RicercaModalitaPagamentoPerChiaveResponse resRMPS = soggettoService.ricercaModalitaPagamentoPerChiave(reqRMPC);
-//		log.logXmlTypeObject(resRMPS, "response ricerca modalità pagamento per chiave: ");
-//		return resRMPS.getModalitaPagamentoSoggetto();
-//	}
-
 	
 	/*
 	 * Impostare flagOrdinativoSingolo = 'S'  (true) se vero almeno uno dei punti descritti di seguito.
@@ -1162,84 +935,8 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		
 	}
 	
-	/**
-	 * carica voce mutuo 
-	 * cerca la voce mutuo tra la lista vociMutuo dell'impegno o del subimpegno
-	 */
-	private void caricaVoceMutuo() {
-		String methodName = "caricaVoceMutuo";
-		boolean subImpegnoValorizzato = subdoc.getSubImpegno() != null && subdoc.getSubImpegno().getUid() != 0;
-		boolean impegnoValorizzato = subdoc.getImpegno() != null && subdoc.getImpegno().getUid() != 0;
 
-		if (subImpegnoValorizzato) {
-			log.debug(methodName, "subImpegno valorizzato");
-			VoceMutuo voceMutuo = null;
-			List<VoceMutuo> listaVociMutuo = subdoc.getSubImpegno().getListaVociMutuo();
 
-			if (listaVociMutuo != null && !listaVociMutuo.isEmpty()) {
-				for (VoceMutuo vm : listaVociMutuo) {
-					if (vm.getNumeroMutuo().equals(subdoc.getVoceMutuo().getNumeroMutuo())) {
-						voceMutuo = vm;
-						break;
-					}
-				}
-			}
-			// voce mutuo e' valida solo se il suo numero di mutuo e' uguale al
-			// numero di mutuo passato dall'utente
-			if (voceMutuo != null && voceMutuo.getUid() > 0) {
-				subdoc.setVoceMutuo(voceMutuo);
-				return;
-			}
-		}
-		if (impegnoValorizzato) {
-			log.debug(methodName, "Impegno valorizzato");
-			VoceMutuo voceMutuo = null;
-			List<VoceMutuo> listaVociMutuo = subdoc.getImpegno().getListaVociMutuo();
-
-			if (listaVociMutuo != null && !listaVociMutuo.isEmpty()) {
-				for (VoceMutuo vm : listaVociMutuo) {
-					if (vm.getNumeroMutuo().equals(subdoc.getVoceMutuo().getNumeroMutuo())) {
-						voceMutuo = vm;
-						break;
-					}
-				}
-			}
-			// voce mutuo e' valida solo se il suo numero di mutuo e' uguale al
-			// numero di mutuo passato dall'utente
-			if (voceMutuo != null && voceMutuo.getUid() > 0) {
-				subdoc.setVoceMutuo(voceMutuo);
-				return;
-			}
-		}
-		// Non ho i dati dell'impegno ne' del subimpegno: errore perche' in tal
-		// caso e' obbligatorio
-		// FIXME: trovare errore corretto
-		throw new BusinessException("mutuo non presente nell'elenco dei collegati al movimento di gestione");
-	}
-
-	/**
-	 * controlla la disponibilita a liquidare della voce mutuo
-	 * disponibilitaLiquidare + importo vecchio >= documento.importo
-	 */
-	protected void controllaDisponibilitaVoceMutuo() {
-		String methodName = "controllaDisponibilitaVoceMutuo";
-
-		BigDecimal importoPrecedente = BigDecimal.ZERO;
-		BigDecimal importoVecchioDisponiblitaLiquidare = BigDecimal.ZERO;
-
-		Integer uidVoceMutuoPrecedente = caricaUidVoceMutuoPrecedente();
-		log.debug(methodName, "uidVoceMutuoPrecedente: " + uidVoceMutuoPrecedente);
-		if (uidVoceMutuoPrecedente != null && uidVoceMutuoPrecedente == subdoc.getVoceMutuo().getUid()) {
-			importoPrecedente = caricaImportoDaPagarePrecedenteQuota();
-		}
-		importoVecchioDisponiblitaLiquidare = importoVecchioDisponiblitaLiquidare.add(importoPrecedente).add(subdoc.getVoceMutuo().getImportoDisponibileLiquidareVoceMutuo());
-		log.debug(methodName, "Importo vecchio + disponibilita a liquidare :" + importoVecchioDisponiblitaLiquidare);
-		log.debug(methodName, "Importo attuale documento " + subdoc.getImporto());
-		if (importoVecchioDisponiblitaLiquidare.compareTo(subdoc.getImporto()) < 0) {
-			log.debug(methodName, "Disponibilita insufficiente ");
-			throw new BusinessException(ErroreFin.DISPONIBILITA_INSUFFICIENTE_MOVIMENTO.getErrore("Aggiornamento quota documento spesa", "Voce Mutuo"));
-		}
-	}
 
 	protected void gestisciNumeroRegistrazioneIva() {
 		if(!Boolean.TRUE.equals(subdoc.getFlagRilevanteIVA())){
@@ -1255,12 +952,6 @@ public abstract class CrudDocumentoDiSpesaBaseService<REQ extends ServiceRequest
 		
 	}
 	
-	private Integer caricaUidVoceMutuoPrecedente() {
-		if (subdoc.getUid() == 0) {
-			return null;
-		}
-		return subdocumentoSpesaDad.findUidVoceMutuoSubdocumentoSpesaById(subdoc.getUid());
-	}
 	
 	protected void checkNumero() throws ServiceParamError {
 		checkCondition(StringUtils.isNotBlank(doc.getNumero()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero documento"));

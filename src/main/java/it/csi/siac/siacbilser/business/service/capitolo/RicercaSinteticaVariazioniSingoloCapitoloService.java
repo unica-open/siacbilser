@@ -17,6 +17,7 @@ import it.csi.siac.siacbilser.integration.dad.CapitoloDad;
 import it.csi.siac.siacbilser.integration.dad.VariazioniDad;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoSingoloCapitolo;
+import it.csi.siac.siacbilser.model.ric.SegnoImporti;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -57,9 +58,22 @@ public class RicercaSinteticaVariazioniSingoloCapitoloService extends CheckedAcc
 		Capitolo<?, ?> capitolo = capitoloDad.findOneWithMinimalData(Integer.valueOf(req.getCapitolo().getUid()));
 		res.setCapitolo(capitolo);
 		
-		ListaPaginata<VariazioneImportoSingoloCapitolo> variazioni = variazioniDad.ricercaSinteticaVariazioneImportoSingoloCapitolo(capitolo, req.getBilancio(),
-				req.getEnte(), req.getSegnoImportiVariazione(), req.getParametriPaginazione());
-		res.setVariazioni(variazioni);
+		if(req.getSegnoImportiVariazione()!= null && req.getSegnoImportiVariazione().equals(SegnoImporti.NULLO)){
+			ListaPaginata<VariazioneImportoSingoloCapitolo> variazioni = variazioniDad.ricercaSinteticaVariazioneNeutreImportoSingoloCapitolo(capitolo, req.getBilancio(),
+					req.getEnte(), req.getSegnoImportiVariazione(), req.getParametriPaginazione());
+			res.setVariazioni(variazioni);
+		}else{
+			ListaPaginata<VariazioneImportoSingoloCapitolo> variazioni = variazioniDad.ricercaSinteticaVariazioneImportoSingoloCapitolo(capitolo, req.getBilancio(),
+					req.getEnte(), req.getSegnoImportiVariazione(), req.getParametriPaginazione());
+			res.setVariazioni(variazioni);
+		}
+		
+		
+		
+		
+		
+		
+		
 	}
 	
 }

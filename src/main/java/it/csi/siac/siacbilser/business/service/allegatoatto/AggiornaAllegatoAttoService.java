@@ -14,7 +14,7 @@ import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.utility.ElaborazioniAttiveKeyHandler;
 import it.csi.siac.siacbilser.integration.dad.AllegatoAttoDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.utility.ElaborazioniManager;
 import it.csi.siac.siacbilser.model.ElabKeys;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
@@ -37,7 +37,7 @@ public class AggiornaAllegatoAttoService extends CheckedAccountBaseService<Aggio
 	private AllegatoAttoDad allegatoAttoDad;
 	
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	
 	// SIAC-6095
 	@Autowired
@@ -115,7 +115,7 @@ public class AggiornaAllegatoAttoService extends CheckedAccountBaseService<Aggio
 	 */
 	private void checkAttoAmministrativoInStatoDefinitivo() {
 		String methodName = "checkAttoAmministrativoInStatoDefinitivo";
-		StatoOperativoAtti stato = provvedimentoDad.findStatoOperativoAttoAmministrativo(allegatoAtto.getAttoAmministrativo());
+		StatoOperativoAtti stato = attoAmministrativoDad.findStatoOperativoAttoAmministrativo(allegatoAtto.getAttoAmministrativo());
 		
 		log.debug(methodName, "stato: "+stato);
 		if(!StatoOperativoAtti.DEFINITIVO.equals(stato)){
@@ -150,7 +150,7 @@ public class AggiornaAllegatoAttoService extends CheckedAccountBaseService<Aggio
 		}
 		if(!flagRitenute.equals(allegatoAtto.getFlagRitenute())) {
 			log.debug(methodName, "Flag ritenute non coerente: valore atteso " + flagRitenute + " - valore ottenuto " + allegatoAtto.getFlagRitenute());
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("flag ritenute", "deve essere pari a " + flagRitenute));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("flag ritenute", "deve essere pari a " + flagRitenute));
 		}
 	}
 	

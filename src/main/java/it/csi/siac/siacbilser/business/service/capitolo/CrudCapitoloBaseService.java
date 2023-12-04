@@ -11,13 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
-import it.csi.siac.siacbilser.business.service.documentoentrata.AnnullaDocumentoEntrataService;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.business.utility.Constants;
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaAttributiModificabiliCapitolo;
@@ -32,31 +29,20 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
 import it.csi.siac.siacbilser.model.TipologiaAttributo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
-import it.csi.siac.siaccorser.frontend.webservice.CoreService;
-import it.csi.siac.siaccorser.frontend.webservice.msg.GetAzioneRichiesta;
-import it.csi.siac.siaccorser.frontend.webservice.msg.GetAzioneRichiestaResponse;
-import it.csi.siac.siaccorser.model.Account;
-import it.csi.siac.siaccorser.model.Azione;
-import it.csi.siac.siaccorser.model.AzioneConsentita;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.Codifica;
-import it.csi.siac.siaccorser.model.Gruppo;
-import it.csi.siac.siaccorser.model.Ruolo;
-import it.csi.siac.siaccorser.model.RuoloAccount;
-import it.csi.siac.siaccorser.model.RuoloGruppo;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaDocumentoSpesaResponse;
-import it.csi.siac.siacfinser.integration.dad.AbstractFinDad;
 
 /**
  * Fornisce funzionalità di base ai servizi di Inserimento (C),  Ricerca (R), Aggiornamento (U), Elimina (D) di un Capitolo.
@@ -215,13 +201,6 @@ public abstract class CrudCapitoloBaseService<REQ extends ServiceRequest,RES ext
 			throw new BusinessException(ErroreBil.ATTRIBUTI_NON_MODIFICABILI.getErrore(TipologiaAttributo.toStringDescrizione(attributiNonValidi)));
 		}
 	}
-	
-	
-	
-	
-	
-
-	
 	
 	
 	/**
@@ -386,7 +365,7 @@ public abstract class CrudCapitoloBaseService<REQ extends ServiceRequest,RES ext
 	 * @param capitoloUscitaGestione il capitolo da controllare
 	 */
 	protected void checkCapitoloUscitaGestioneSeStandard(CapitoloUscitaGestione capitoloUscitaGestione) {
-		checkClassificazioneBilancio( capitoloUscitaGestione,"STD");
+		checkClassificazioneBilancio( capitoloUscitaGestione,CategoriaCapitoloEnum.STD.getCodice());
 	}	
 	
 	
@@ -396,7 +375,7 @@ public abstract class CrudCapitoloBaseService<REQ extends ServiceRequest,RES ext
 	 * @param capitoloUscitaGestione il capitolo da controllare
 	 */
 	protected void checkCapitoloUscitaGestioneSeFPV(CapitoloUscitaGestione capitoloUscitaGestione) {
-		checkClassificazioneBilancio( capitoloUscitaGestione,"FPV");
+		checkClassificazioneBilancio( capitoloUscitaGestione,CategoriaCapitoloEnum.FPV.getCodice());
 	}	
 	
 	
@@ -496,6 +475,25 @@ public abstract class CrudCapitoloBaseService<REQ extends ServiceRequest,RES ext
 				throw new BusinessException(ErroreCore.OPERAZIONE_INCOMPATIBILE_CON_STATO_ENTITA.getErrore(cegAttuale.getDescBilancioAnnoNumeroArticolo(), statoOperativo));
 			}		
 			log.debug("checkCapitoloModificabilePerAggiornamento", "STOP");
+		}
+		
+		/**
+		 * SIAC-7722.
+		 *
+		 * Metodo di controllo delle descrizioni del capitolo
+		 * rimuovendo il pattern "\r\n" utilizzato come "a capo"
+		 * 
+		 * @param <C> il capitolo
+		 * @return il capitolo
+		 */
+		protected <C extends Capitolo<?,?>> C pulisciDescrizioni(C capitolo) {
+			if(StringUtils.isNotBlank(capitolo.getDescrizione())) {
+				capitolo.setDescrizione((capitolo.getDescrizione().replace("\r", " ").replace("\n", " ")));
+			}
+			if(StringUtils.isNotBlank(capitolo.getDescrizioneArticolo())) {
+				capitolo.setDescrizioneArticolo(capitolo.getDescrizioneArticolo().replace("\r", " ").replace("\n", " "));
+			}
+			return capitolo;
 		}
 		
 		//SIAC-6884 controlli 		

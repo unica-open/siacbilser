@@ -41,6 +41,8 @@ public class RicercaTipoComponenteImportiCapitoloService extends BaseTipoCompone
 						req.getMacrotipoComponenteImportiCapitoloDaEscludere(),
 						req.getSottotipoComponenteImportiCapitoloDaEscludere(),
 						req.getPropostaDefaultComponenteImportiCapitoloDaEscludere(),
+						//SIAC-7349
+						req.getImpegnabileComponenteImportiCapitoloDaEscludere(),
 						null,
 						false,
 						TipoComponenteImportiCapitoloModelDetail.AmbitoComponenteImportiCapitolo,
@@ -50,7 +52,9 @@ public class RicercaTipoComponenteImportiCapitoloService extends BaseTipoCompone
 						TipoComponenteImportiCapitoloModelDetail.SottotipoComponenteImportiCapitolo,
 						TipoComponenteImportiCapitoloModelDetail.MomentoComponenteImportiCapitolo,
 						TipoComponenteImportiCapitoloModelDetail.PropostaDefaultComponenteImportiCapitolo,
-						TipoComponenteImportiCapitoloModelDetail.TipoGestioneComponenteImportiCapitolo));
+						//SIAC-7349
+						//TipoComponenteImportiCapitoloModelDetail.TipoGestioneComponenteImportiCapitolo
+						TipoComponenteImportiCapitoloModelDetail.ImpegnabileComponenteImportiCapitolo));
 	}
 
 }

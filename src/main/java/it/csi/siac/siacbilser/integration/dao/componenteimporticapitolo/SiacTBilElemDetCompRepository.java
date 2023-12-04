@@ -159,4 +159,60 @@ public interface SiacTBilElemDetCompRepository extends JpaRepository<SiacTBilEle
 			+ " ) "
 			+ " GROUP BY dbedct ")
 	List<Object[]> sumBySiacDBilElemDetCompTipo(@Param("bilId") Integer bilId, @Param("anno") String anno);
+	
+
+	@Query("SELECT stbedc "
+			+ "FROM SiacTBilElemDetComp stbedc "
+			+ "WHERE stbedc.siacTBilElemDet.dataCancellazione IS NULL " 
+			+ "AND stbedc.siacTBilElemDet.siacTBilElem.elemId = :elemId " //stbedc2.siacTBilElemDet.siacTBilElem.elemId 
+			+ "AND stbedc.elemDetCompId <> :elemDetCompId " 
+			+ "AND stbedc.dataCancellazione IS NULL "
+			+ "AND EXISTS ( "
+			+ "	FROM SiacTBilElemDetComp stbedc2 "
+			+ "	WHERE stbedc2.dataCancellazione IS NULL "
+			+ "	AND stbedc2.siacTBilElemDet.siacTBilElem.elemId = :elemId "
+			+ "	AND stbedc2.siacDBilElemDetCompTipo.elemDetCompTipoId = stbedc.siacDBilElemDetCompTipo.elemDetCompTipoId "
+			+ "	AND stbedc2.siacTBilElemDet.elemDetId = stbedc.siacTBilElemDet.elemDetId "
+			+ "	AND stbedc2.elemDetCompId = :elemDetCompId "
+			+ ") "
+			+ "AND NOT EXISTS ( "
+			+ "  FROM SiacTBilElemDetVarComp stb  "
+			+ "  WHERE stb.siacTBilElemDetComp = stbedc "
+			+ "  AND stb.elemDetFlag = 'N' "
+			+ "  AND stb.siacTBilElemDetVar.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode <> 'D' "
+			+ "  AND stb.dataCancellazione IS NULL "
+			+ "  AND stb.siacTBilElemDetVar.dataCancellazione IS NULL "
+			+ "  AND stb.siacTBilElemDetVar.siacRVariazioneStato.dataCancellazione IS NULL "
+			+ ")"
+			
+			)
+	List<SiacTBilElemDetComp> findComponenteOnElemIdWithSameTipo(@Param("elemId") Integer elemId, @Param("elemDetCompId") Integer elemDetCompId);
+
+	@Query(" SELECT COUNT(*) "
+			+ " FROM SiacTBilElemDetComp stbedc "
+			+ " WHERE stbedc.dataCancellazione IS NULL "
+			+ " AND stbedc.siacTBilElemDet.dataCancellazione IS NULL "
+			+ " AND stbedc.siacDBilElemDetCompTipo.dataCancellazione IS NULL "
+			+ " AND stbedc.siacTBilElemDet.siacTBilElem.dataCancellazione IS NULL "
+			+ " AND stbedc.siacTBilElemDet.siacTBilElem.elemId = :elemId "
+			+ " AND stbedc.siacDBilElemDetCompTipo.elemDetCompTipoId = :elemDetCompTipoId "
+		)
+	Long countSiacTBilElemDetCompByElemIdAndDetCompTipoId(@Param("elemId") Integer elemId, @Param("elemDetCompTipoId") Integer elemDetCompTipoId);
+	
+	@Query(" FROM SiacTBilElemDetComp tbedvc "
+			+ " WHERE tbedvc.elemDetCompId = :elemDetCompId "
+			+ " AND tbedvc.dataCancellazione IS NULL "
+			+ " AND tbedvc.dataFineValidita IS NULL ")
+	SiacTBilElemDetComp findComponenteLogicamenteValidaById(@Param("elemDetCompId") Integer elemDetCompId);
+	
+	//SIAC-7349
+//		@Query(" FROM SiacTBilElemDetComp stbedc "
+//				+ " WHERE stbedc.elemDetCompId IN ( "
+//				+ " SELECT DISTINCT srmbe.elemDetCompId FROM SiacRMovgestBilElem srmbe "
+//				+ " WHERE srmbe.elemDetCompId IS NOT NULL "
+//				+ " AND srmbe.dataInizioValidita <= CURRENT_TIMESTAMP "
+//				+ " AND (srmbe.dataFineValidita IS NULL OR CURRENT_TIMESTAMP < srmbe.dataFineValidita) "
+//				+ " AND srmbe.dataCancellazione IS NULL "
+//				+ ")")
+//		List<SiacTBilElemDetComp> findByMovgestBilElemExist();
 }

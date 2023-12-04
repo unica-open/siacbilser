@@ -63,7 +63,7 @@ public class RicercaOrdinativoPagamentoService extends AbstractBaseService<Ricer
 		// secondo i parametri di ricerca
 		Long conteggioRecords = ordinativoPagamentoDad.calcolaNumeroOrdinativiPagamentoDaEstrarre(parametroRicercaOrdinativoPagamento, idEnte);
 		//...solo se il numero di risultati attesi e minore del numero massimo accettabile si procede con il caricamento di tutti i dati:
-		//if(conteggioRecords <= Constanti.MAX_RIGHE_ESTRAIBILI.longValue()){
+		//if(conteggioRecords <= CostantiFin.MAX_RIGHE_ESTRAIBILI.longValue()){
 			
 			List<OrdinativoPagamento> listaRisultati = ordinativoPagamentoDad.ricercaSinteticaOrdinativiPagamento(richiedente, parametroRicercaOrdinativoPagamento, idEnte, req.getNumPagina(), req.getNumRisultatiPerPagina(),now);
 				

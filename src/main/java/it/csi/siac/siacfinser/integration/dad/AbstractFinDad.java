@@ -28,24 +28,22 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
 import it.csi.siac.siacbilser.integration.entity.SiacRSubdocLiquidazione;
+import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siaccommon.util.threadlocal.ThreadLocalUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
-import it.csi.siac.siaccommonser.integration.dad.base.BaseDadImpl;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
 import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Bilancio;
-import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
-import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Entita;
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CodiciOperazioni;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
+import it.csi.siac.siacfinser.business.service.util.NumericUtils;
 import it.csi.siac.siacfinser.integration.dad.datacontainer.DisponibilitaMovimentoGestioneContainer;
 import it.csi.siac.siacfinser.integration.dao.carta.SiacRCartacontAttrRepository;
 import it.csi.siac.siacfinser.integration.dao.carta.SiacRCartacontDetAttrRepository;
@@ -69,7 +67,6 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneAvanzoVin
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneModalitaPagamentoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneModificheMovimentoGestioneDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneMovGestDto;
-import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneMutuoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneOrdinativoPagamentoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneSoggettoDto;
 import it.csi.siac.siacfinser.integration.dao.liquidazione.LiquidazioneFinDao;
@@ -97,8 +94,6 @@ import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestTsDetRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTMovgestTsRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTProgressivoRepository;
-import it.csi.siac.siacfinser.integration.dao.mutuo.MutuoDao;
-import it.csi.siac.siacfinser.integration.dao.mutuo.SiacTMutuoRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.OrdinativoDao;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoAttrRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacROrdinativoClassRepository;
@@ -111,12 +106,106 @@ import it.csi.siac.siacfinser.integration.dao.soggetto.SiacRSoggettoAttrReposito
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacTAttrRepository;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SoggettoDao;
 import it.csi.siac.siacfinser.integration.dao.subdoc.SubdocumentoDaoCustom;
-import it.csi.siac.siacfinser.integration.entity.*;
+import it.csi.siac.siacfinser.integration.entity.SiacDAttoAmmTipoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacDAttrTipoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacDClassTipoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacDModificaTipoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacDSiopeAssenzaMotivazioneFin;
+import it.csi.siac.siacfinser.integration.entity.SiacDSiopeTipoDebitoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRAccountRuoloOpFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRAttoAmmClassFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRAttoAmmStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRAttrBaseFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRBilFaseOperativaFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRCartacontAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRCartacontDetAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRCartacontEsteraAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRClassBaseFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRComuneProvinciaFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRComuneRegioneFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRDocStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRFormaGiuridicaFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRGruppoAccountFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRGruppoRuoloOpFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneAttoAmmFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneClassFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneMovgestFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneOrdFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneSoggettoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRModificaStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRModpagOrdineFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRModpagStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestBilElemFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestClassFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsAttoAmmFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsProgrammaFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsSogFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsSogModFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsSogclasseFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsSogclasseModFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoClassFin;
+import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoModpagFin;
+import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoSoggettoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoTsMovgestTFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRProgrammaAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRRuoloOpAzioneFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSoggettoAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSoggettoAttrModFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSoggettoClasseFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSoggettoOnereFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSoggettoRelazFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSoggettoRelazStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSoggettoStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSoggettoTipoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSoggrelModpagFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSubdocLiquidazioneFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRSubdocOrdinativoTFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRVincoloAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRVincoloBilElemFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTAttoAmmFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTAttrFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTAvanzovincoloFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTBilElemFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTBilFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTCartacontDetFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTCartacontEsteraFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTCartacontFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTClassFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTComuneFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTDocFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTEnteProprietarioFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTIndirizzoSoggettoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTLiquidazioneFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTModificaFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTModpagFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTModpagModFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsDetFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsDetModFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTNazioneFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTsDetFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTPersonaFisicaFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTPersonaGiuridicaFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTProgrammaFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTProgressivoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTRecapitoSoggettoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoModFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTVincoloFin;
 import it.csi.siac.siacfinser.integration.entity.base.SiacConModificaStato;
 import it.csi.siac.siacfinser.integration.entity.base.SiacTEnteBase;
-import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
 import it.csi.siac.siacfinser.integration.helper.ModalitaPagamentoSoggettoHelper;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.EntityToModelConverter;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.integration.util.TipoOggettoConClassificatori;
@@ -127,24 +216,15 @@ import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubAccertamento;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.TransazioneElementare;
-import it.csi.siac.siacfinser.model.mutuo.Mutuo;
-import it.csi.siac.siacfinser.model.mutuo.Mutuo.StatoOperativoMutuo;
-import it.csi.siac.siacfinser.model.mutuo.VariazioneImportoVoceMutuo;
-import it.csi.siac.siacfinser.model.mutuo.VariazioneImportoVoceMutuo.TipoVariazioneImportoVoceMutuo;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeTipoDebito;
-import it.csi.siac.siacfinser.model.soggetto.ClassificazioneSoggetto;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
-public abstract class AbstractFinDad extends BaseDadImpl {
+public abstract class AbstractFinDad extends ExtendedBaseFinDad {
 	
 	@Autowired
 	protected SiacTLiquidazioneFinRepository siacTLiquidazioneRepository;
 	
-	@Autowired
-	protected SiacTMutuoRepository siacTMutuoRepository;
-
 	@Autowired
 	protected AccertamentoDao accertamentoDao;
 	
@@ -163,9 +243,6 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	@Autowired
 	private LiquidazioneFinDao liquidazioneDao;
 	
-	@Autowired
-	protected MutuoDao mutuoDao;
-
 	@Autowired
 	private SiacRAccountRuoloOpRepository siacRAccountRuoloOpRepository;
 
@@ -196,9 +273,6 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	@Autowired
 	protected SiacRBilElemSacVisibilitaFinRepository siacRBilElemSacVisibilitaFinRepository;
 	
-
-	private static final String GESTISCI_SOGGETTO_DEC = CodiciOperazioni.OP_SOG_gestisciSoggDec;
-
 	@Autowired
 	protected SiacDClassTipoRepository siacDClassTipoRepository;
 
@@ -295,9 +369,6 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	
 	protected ModalitaPagamentoSoggettoHelper modalitaPagamentoSoggettoHelper;
 	
-	protected Ente ente;
-	protected String loginOperazione;
-	
 	private static final UseClockTimeThreadLocal USE_CLOCK_TIME = (UseClockTimeThreadLocal) ThreadLocalUtil.registerThreadLocal(UseClockTimeThreadLocal.class);
 
 	
@@ -360,10 +431,10 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		Boolean usaClockTs = USE_CLOCK_TIME.get();
 		if(usaClockTs!=null && usaClockTs == true){
 			//CASO PARTICOLARE (es. reintroito service)
-			return getClockTimeSeconds();
+			return getClockTimestamp();
 		} else {
 			//CASO TIPICO
-			return getCurrentTimeSeconds();
+			return getCurrentTimestamp();
 		}
 	}
 	
@@ -371,7 +442,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	 * Ritorna il timing dell'istante corrente preso da db
 	 * @return
 	 */
-	protected long getClockTimeSeconds(){
+	protected long getClockTimestamp(){
 		return ((Timestamp) entityManager.createNativeQuery("SELECT CLOCK_TIMESTAMP()").getSingleResult()).getTime();
 	}
 	
@@ -379,7 +450,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	 * Ritorna il timing dell'istante di inizio transazione
 	 * @return
 	 */
-	protected long getCurrentTimeSeconds(){
+	protected long getCurrentTimestamp(){
 		return ((Timestamp) entityManager.createNativeQuery("SELECT CURRENT_TIMESTAMP").getSingleResult()).getTime();
 	}
 	
@@ -393,7 +464,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	 */
 	public DatiOperazioneDto avanzaAClockTime(DatiOperazioneDto datiOperazione){
 		DatiOperazioneDto datiOperazioneAvanzaTs = clone(datiOperazione);
-		datiOperazioneAvanzaTs.setCurrMillisec(getClockTimeSeconds());
+		datiOperazioneAvanzaTs.setCurrMillisec(getClockTimestamp());
 		return datiOperazioneAvanzaTs;
 	}
 
@@ -404,39 +475,33 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	}
 
 
-	/**
-	 * Claudio Picco.
-	 * 
-	 * Metodo provvisorio introdotto il 30 maggio 2017:
-	 * 
-	 * Ho notato che in diversi punti dell'applicativo si utilizzava System.currentTimeMillis() come riferimento
-	 * per date da usare per valutare dati validi sul database.
-	 * 
-	 * Dovrebbe essere piu sensato usare il current_timestamp del database, tuttavia a scopo precauzionale per 
-	 * evitare malfunzionamenti a cui non ho pensato, non uso direttamente il vecchio metodo getCurrentMilliseconds
-	 * che gia' legge il current_timestamp dal database ma creo questo metodo solo per i System.currentTimeMillis()
-	 * che ho sostituito in data 30 maggio.
-	 * 
-	 * 
-	 * Se dovessero esserci problemi bastera' usare System.currentTimeMillis() dentro questo metodo per tornare alla situazione
-	 * precendete.
-	 * 
-	 * Se dopo qualche tempo non dovessero esserci problemi questo metodo puo' essere eliminato e al suo posto usare
-	 * il getCurrentMilliseconds.
-	 * 
-	 * 
-	 * 
-	 * @return
-	 */
-	protected long getCurrentMillisecondsTrentaMaggio2017()
+
+	protected long currentTimeMillis()
 	{
-//		return ((Timestamp) entityManager.createNativeQuery("SELECT CURRENT_TIMESTAMP").getSingleResult()).getTime();
-		
-		//usare questo se da problemi:
 		return System.currentTimeMillis();
 	}
 	
-
+	/**
+	 * SIAC-7619
+	 * Metodo che permette di ottenere una lista 
+	 * con la prima entita valida trovata
+	 * 
+	 * In caso non vi sia nessuna entita valida verra' fornita una lista vuota
+	 * 
+	 * @param List<T> lista
+	 * @return List<T> listaValidata
+	 */
+	protected <T extends SiacTBase> List<T> ottieniListaConEnitaValida(List<T> lista){
+		List<T> listaValidata = new ArrayList<T>();
+		for (T oggettoIterato : lista) {
+			if(oggettoIterato.isEntitaValida()) {
+				listaValidata.add(oggettoIterato);
+				break;
+			}
+		}
+		return listaValidata;
+	}
+	
 	/**
 	 * Metodo che permette di effettuare la copia di un oggetto, cambiando
 	 * l'allocazione di memoria dell'oggetto copiato
@@ -517,7 +582,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	// listaRAttoAmmStato=listaSiacTAttoAmm.get(0).getSiacRAttoAmmStatos();
 	// if (listaRAttoAmmStato!=null && listaRAttoAmmStato.size()>0) {
 	// List<SiacRAttoAmmStatoFin>
-	// listaRAttoAmmStatoValidi=DatiOperazioneUtils.soloValidi(listaRAttoAmmStato,
+	// listaRAttoAmmStatoValidi=DatiOperazioneUtil.soloValidi(listaRAttoAmmStato,
 	// getNow());
 	// if (listaRAttoAmmStatoValidi!=null && listaRAttoAmmStatoValidi.size()==1)
 	// {
@@ -586,7 +651,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 			attoAmministrativoEstratto = attoAmm;
 			attoAmministrativoEstratto.setUid(siatTAttoAmm.getUid());
-			SiacRAttoAmmStatoFin rAttoAmmStato = DatiOperazioneUtils.getValido(
+			SiacRAttoAmmStatoFin rAttoAmmStato = DatiOperazioneUtil.getValido(
 					siatTAttoAmm.getSiacRAttoAmmStatos(), null);
 			if (rAttoAmmStato != null) {
 				attoAmministrativoEstratto.setStatoOperativo(rAttoAmmStato
@@ -676,7 +741,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			List<SiacRMovgestClassFin> old = getRClassEsistentiMultiplo(attributoInfo, datiOperazioneDto, codeTipoClassMultiplo);
 			
 			// INVALIDO GLI (eventuali) OLD:
-			DatiOperazioneUtils.cancellaRecords(old, repositoryRelazione, datiOperazioneDto, siacTAccountRepository);
+			DatiOperazioneUtil.cancellaRecords(old, repositoryRelazione, datiOperazioneDto, siacTAccountRepository);
 
 			// restituisce il 31/12 dell'anno di Bilancio
 			// Timestamp tstampFineAnno =
@@ -725,6 +790,49 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		}
 		// Termino restituendo l'oggetto di ritorno:
 		return ritorno;
+	}
+	
+	/**
+	 * SIAC-8281
+	 * 
+	 * Metodo per la gestione della disponibilita' con movimenti su anni successivi rispetto a quello di bilancio
+	 * 
+	 * @param valoreModifica
+	 * @param capitoloEscGest
+	 * @param accertamento
+	 * 
+	 * @return La nuova disponibilita' ad accertare
+	 */
+	protected BigDecimal calcolaNuovaDisponibilitaAccertareSuPiuAnniCapitolo(BigDecimal valoreModifica,
+			CapitoloEntrataGestione capitoloEscGest, Accertamento accertamento) {
+		//passo a zero il valore di defualt in modo che se i controlli formali non passino
+		//venga generato l'errore <FIN_INF_0062 - Superamento della disponibilita' >
+		BigDecimal vecchiaDispAccCap = BigDecimal.ZERO;
+		
+		if(NumericUtils.valorizzatoEMaggioreDiZero(capitoloEscGest.getBilancioAnno()) 
+				&& NumericUtils.valorizzatoEMaggioreDiZero(accertamento.getAnnoMovimento())) {
+			
+			switch (accertamento.getAnnoMovimento() - capitoloEscGest.getBilancioAnno()) {
+				case 0:
+					//anno del movimento uguale a quello di bilancio
+					vecchiaDispAccCap = capitoloEscGest.getImportiCapitoloEG().getDisponibilitaAccertareAnno1();
+					break;
+				case 1:
+					//anno del movimento successivo a quello di bilancio (+1)
+					vecchiaDispAccCap = capitoloEscGest.getImportiCapitoloEG().getDisponibilitaAccertareAnno2();
+					break;
+				case 2:
+					//anno del movimento successivo a quello di bilancio (+2)
+					vecchiaDispAccCap = capitoloEscGest.getImportiCapitoloEG().getDisponibilitaAccertareAnno3();
+					break;
+				default:
+					//c'e' qualcosa che non va, il caso potrebbe essere sporco
+					break;
+			}
+			
+		}
+		//nuovaDispAccCap = vecchiaDispAccCap - valoreModifica
+		return vecchiaDispAccCap.subtract(valoreModifica);
 	}
 
 	public static void main(String[] args) {
@@ -789,15 +897,15 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 					.findByTipoCodesAndEnteAndSelezionato(idEnte,
 							datiOperazioneDto.getTs(), codeTipoClassMultiplo,
 							codeSelezionato);
-			if (!CommonUtils.entrambiVuotiOrEntrambiConElementi(lclassOld,
+			if (!CommonUtil.entrambiVuotiOrEntrambiConElementi(lclassOld,
 					lclassNew)) {
 				// uno dei due e' vuoto e l'altro non lo e' --> sono sicuramenti
 				// diversi
 				isModificato = true;
 				return isModificato;
-			} else if (CommonUtils.entrambiConElementi(lclassOld, lclassNew)) {
+			} else if (CommonUtil.entrambiConElementi(lclassOld, lclassNew)) {
 				// c'e' la possibilita' che ci sia una modifica
-				boolean tuttiPresenti = DatiOperazioneUtils
+				boolean tuttiPresenti = DatiOperazioneUtil
 						.tuttiPresentiNellAltraLista(lclassOld, lclassNew);
 				if (!tuttiPresenti) {
 					isModificato = true;
@@ -828,7 +936,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		E repositoryRelazione = stabilisciRepositoryRClass(attributoInfo);
 		if (l != null && l.size() > 0) {
 			for (SiacDClassTipoFin tipo : l) {
-				String codeForSearch = StringUtils.toLowerSafe(codeSelezionato);
+				String codeForSearch = StringUtilsFin.toLowerSafe(codeSelezionato);
 				List<SiacTClassFin> lclass = siacTClassRepository
 						.findByCodeAndTipoAndEnte(idEnte,
 								datiOperazioneDto.getTs(), codeForSearch,
@@ -836,7 +944,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 				List<T> old = getRClassEsistenti(attributoInfo,
 						datiOperazioneDto, tipo);
 				// INVALIDIAMO EVENTUALE OLDS:
-				DatiOperazioneUtils.cancellaRecords(old, repositoryRelazione,
+				DatiOperazioneUtil.cancellaRecords(old, repositoryRelazione,
 						datiOperazioneDto, siacTAccountRepository);
 				// ///////////////////////////
 				// SAVE:
@@ -874,14 +982,14 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		E repositoryRelazione = stabilisciRepositoryRClass(attributoInfo);
 		if (l != null && l.size() > 0) {
 			for (SiacDClassTipoFin tipo : l) {
-				String codeForSearch = StringUtils.toLowerSafe(codeSelezionato);
+				String codeForSearch = StringUtilsFin.toLowerSafe(codeSelezionato);
 				
 				List<SiacTClassFin> lclass = siacTClassRepository.findByCodeAndTipoAndEnte(idEnte,datiOperazioneDto.getTs(), codeForSearch,tipo.getClassifTipoId());
 				
 				List<T> old = getRClassEsistenti(attributoInfo,datiOperazioneDto, tipo);
 				
 				// INVALIDIAMO EVENTUALE OLDS:
-				DatiOperazioneUtils.cancellaRecordsOttimizzato(old, repositoryRelazione,datiOperazioneDto, siacTAccountRepository);
+				DatiOperazioneUtil.cancellaRecordsOttimizzato(old, repositoryRelazione,datiOperazioneDto, siacTAccountRepository);
 				// ///////////////////////////
 				// SAVE:
 				if (lclass != null && lclass.size() > 0) {
@@ -1052,7 +1160,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	
 	protected List<SiacTMovgestFin> getSiacTMovgestFinBySiacTMovgestTsFin(List<SiacTMovgestTsFin> listaTs){
 		List<SiacTMovgestFin> ritorno = new ArrayList<SiacTMovgestFin>();
-		if(!StringUtils.isEmpty(listaTs)){
+		if(!StringUtilsFin.isEmpty(listaTs)){
 			for(SiacTMovgestTsFin it : listaTs){
 				if(it!=null){
 					ritorno.add(it.getSiacTMovgest());
@@ -1139,13 +1247,13 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			List<SiacROrdinativoClassFin> siacROrdinativoClass = siacTOrdinativo
 					.getSiacROrdinativoClasses();
 			if (siacROrdinativoClass != null && siacROrdinativoClass.size() > 0) {
-				siacROrdinativoClass = DatiOperazioneUtils.soloValidi(
+				siacROrdinativoClass = DatiOperazioneUtil.soloValidi(
 						siacROrdinativoClass, getNow());
 				for (SiacROrdinativoClassFin it : siacROrdinativoClass) {
 					if (it != null
 							&& it.getSiacTClass() != null
 							&& it.getSiacTClass().getSiacDClassTipo() != null
-							&& StringUtils.sonoUgualiTrimmed(it.getSiacTClass()
+							&& StringUtilsFin.sonoUgualiTrimmed(it.getSiacTClass()
 									.getSiacDClassTipo().getClassifTipoCode(),
 									classifTipoCode)) {
 						trovato = (T) it;
@@ -1202,32 +1310,32 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		if (!entrata) {
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodMissione(),
-					Constanti.D_CLASS_TIPO_MISSIONE));
+					CostantiFin.D_CLASS_TIPO_MISSIONE));
 		}
 
 		// PROGRAMMA:
 		if (!entrata) {
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodProgramma(),
-					Constanti.D_CLASS_TIPO_PROGRAMMA));
+					CostantiFin.D_CLASS_TIPO_PROGRAMMA));
 		}
 
 		addAll(saved,
 				salvaAttributoTClassMultiplo(datiOperazioneDto, attributoInfo,
 						transazioneElementare.getCodPdc(),
-						Constanti.getCodiciPianoDeiConti(),false,true));
+						CostantiFin.getCodiciPianoDeiConti(),false,true));
 
 		// PIANO DEI CONTI ECONOMICO:
 		// CR-2023 si elimina
 		// addAll(saved, salvaAttributoTClassMultiplo(datiOperazioneDto,
 		// attributoInfo, transazioneElementare.getCodContoEconomico(),
-		// Constanti.getCodiciPianoDeiContiEconomico()));
+		// CostantiFin.getCodiciPianoDeiContiEconomico()));
 
 		// Cofog
 		if (!entrata) {
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodCofog(),
-					Constanti.D_CLASS_TIPO_GRUPPO_COFOG));
+					CostantiFin.D_CLASS_TIPO_GRUPPO_COFOG));
 		}
 		// Cofog
 
@@ -1235,11 +1343,11 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		if (entrata) {
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodTransazioneEuropeaSpesa(),
-					Constanti.D_CLASS_TIPO_TRANSAZIONE_UE_ENTRATA));
+					CostantiFin.D_CLASS_TIPO_TRANSAZIONE_UE_ENTRATA));
 		} else {
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodTransazioneEuropeaSpesa(),
-					Constanti.D_CLASS_TIPO_TRANSAZIONE_UE_SPESA));
+					CostantiFin.D_CLASS_TIPO_TRANSAZIONE_UE_SPESA));
 		}
 
 		// CUP:
@@ -1254,11 +1362,11 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		if (entrata) {
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodRicorrenteSpesa(),
-					Constanti.D_CLASS_TIPO_CLASSE_RICORRENTE_ENTRATA));
+					CostantiFin.D_CLASS_TIPO_CLASSE_RICORRENTE_ENTRATA));
 		} else {
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodRicorrenteSpesa(),
-					Constanti.D_CLASS_TIPO_CLASSE_RICORRENTE_SPESA));
+					CostantiFin.D_CLASS_TIPO_CLASSE_RICORRENTE_SPESA));
 		}
 
 		//
@@ -1273,7 +1381,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			addAll(saved,
 					salvaAttributoTClassMultiplo(datiOperazioneDto,
 							attributoInfo, transazioneElementare.getCodSiope(),
-							Constanti.getCodiciSiopeSpesa(),validitaRispettoAnnoBilancio,false));
+							CostantiFin.getCodiciSiopeSpesa(),validitaRispettoAnnoBilancio,false));
 		} else {
 			
 			//per il siope si considerano i record che sono stati validi nell'anno di bilancio
@@ -1283,18 +1391,18 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			addAll(saved,
 					salvaAttributoTClassMultiplo(datiOperazioneDto,
 							attributoInfo, transazioneElementare.getCodSiope(),
-							Constanti.getCodiciSiopeEntrata(),validitaRispettoAnnoBilancio,false));
+							CostantiFin.getCodiciSiopeEntrata(),validitaRispettoAnnoBilancio,false));
 		}
 
 		// Capitoli perimetro sanitario spesa
 		if (entrata) {
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodCapitoloSanitarioSpesa(),
-					Constanti.D_CLASS_TIPO_CLASSE_PERIMETRO_SANITARIO_ENTRATA));
+					CostantiFin.D_CLASS_TIPO_CLASSE_PERIMETRO_SANITARIO_ENTRATA));
 		} else {
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodCapitoloSanitarioSpesa(),
-					Constanti.D_CLASS_TIPO_CLASSE_PERIMETRO_SANITARIO_SPESA));
+					CostantiFin.D_CLASS_TIPO_CLASSE_PERIMETRO_SANITARIO_SPESA));
 		}
 
 		// PROGRAMMA_POLITICHE_REGIONALI_UNITARIE:
@@ -1303,7 +1411,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 					datiOperazioneDto,
 					attributoInfo,
 					transazioneElementare.getCodPrgPolReg(),
-					Constanti.D_CLASS_TIPO_PROGRAMMA_POLITICHE_REGIONALI_UNITARIE));
+					CostantiFin.D_CLASS_TIPO_PROGRAMMA_POLITICHE_REGIONALI_UNITARIE));
 		}
 
 		// i classficatori hanno un metodo centralizzato dedicato:
@@ -1311,8 +1419,16 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 				salvaClassificatori(attributoInfo, datiOperazioneDto,
 						transazioneElementare));
 
-		ritorno.settClassSaved(saved);
-		// Termino restituendo l'oggetto di ritorno:
+		// SIAC-8612
+		List<SiacRClassBaseFin> savedNotNull = new ArrayList<SiacRClassBaseFin>();
+		for (SiacRClassBaseFin siacRClassBaseFin : saved) {
+			if (siacRClassBaseFin != null) {
+				savedNotNull.add(siacRClassBaseFin);
+			} 
+		}
+		
+		ritorno.settClassSaved(savedNotNull);
+
 		return ritorno;
 	}
 
@@ -1337,23 +1453,23 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			// classficatore fin 16
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen16(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_16));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_16));
 			// classficatore fin 17
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen17(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_17));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_17));
 			// classficatore fin 18
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen18(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_18));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_18));
 			// classficatore fin 19
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen19(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_19));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_19));
 			// classficatore fin 20
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen20(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_20));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_20));
 
 		} else if (TransazioneElementareEntityToModelConverter
 				.getTipoClassificatori(transazioneElementare).equals(
@@ -1361,23 +1477,23 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			// classficatore fin 11
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen11(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_11));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_11));
 			// classficatore fin 12
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen12(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_12));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_12));
 			// classficatore fin 13
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen13(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_13));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_13));
 			// classficatore fin 14
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen14(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_14));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_14));
 			// classficatore fin 15
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen15(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_15));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_15));
 
 		} else if (TransazioneElementareEntityToModelConverter
 				.getTipoClassificatori(transazioneElementare).equals(
@@ -1386,23 +1502,23 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			// classficatore fin 21
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen11(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_21));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_21));
 			// classficatore fin 22
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen12(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_22));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_22));
 			// classficatore fin 23
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen13(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_23));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_23));
 			// classficatore fin 24
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen14(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_24));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_24));
 			// classficatore fin 25
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen15(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_25));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_25));
 
 		} else if (TransazioneElementareEntityToModelConverter
 				.getTipoClassificatori(transazioneElementare).equals(
@@ -1410,23 +1526,23 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			// classficatore fin 16
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen16(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_26));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_26));
 			// classficatore fin 17
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen17(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_27));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_27));
 			// classficatore fin 18
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen18(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_28));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_28));
 			// classficatore fin 19
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen19(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_29));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_29));
 			// classficatore fin 20
 			saved.add(salvaAttributoTClass(datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodClassGen20(),
-					Constanti.D_CLASS_TIPO_CLASSIFICATORE_30));
+					CostantiFin.D_CLASS_TIPO_CLASSIFICATORE_30));
 		}
 		// Termino restituendo l'oggetto di ritorno:
 		return saved;
@@ -1459,7 +1575,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			// CUP:
 			isModificato = isAttributoModificato(
 					((SubImpegno) transazioneElementare).getCup(),
-					Constanti.T_ATTR_CODE_CUP, datiOperazioneDto, attributoInfo);
+					CostantiFin.T_ATTR_CODE_CUP, datiOperazioneDto, attributoInfo);
 			if (isModificato) {
 				return isModificato;
 			}
@@ -1468,7 +1584,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		// PIANO DEI CONTI:
 		isModificato = isModificatoAttributoTClassMultiplo(datiOperazioneDto,
 				attributoInfo, transazioneElementare.getCodPdc(),
-				Constanti.getCodiciPianoDeiConti());
+				CostantiFin.getCodiciPianoDeiConti());
 		if (isModificato) {
 			return isModificato;
 		}
@@ -1477,7 +1593,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		// CR-2023 si elimina
 		// isModificato = isModificatoAttributoTClassMultiplo(datiOperazioneDto,
 		// attributoInfo, transazioneElementare.getCodContoEconomico(),
-		// Constanti.getCodiciPianoDeiContiEconomico());
+		// CostantiFin.getCodiciPianoDeiContiEconomico());
 		// if(isModificato){
 		// return isModificato;
 		// }
@@ -1487,12 +1603,12 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			isModificato = isModificatoAttributoTClass(datiOperazioneDto,
 					attributoInfo,
 					transazioneElementare.getCodTransazioneEuropeaSpesa(),
-					Constanti.D_CLASS_TIPO_TRANSAZIONE_UE_ENTRATA);
+					CostantiFin.D_CLASS_TIPO_TRANSAZIONE_UE_ENTRATA);
 		} else {
 			isModificato = isModificatoAttributoTClass(datiOperazioneDto,
 					attributoInfo,
 					transazioneElementare.getCodTransazioneEuropeaSpesa(),
-					Constanti.D_CLASS_TIPO_TRANSAZIONE_UE_SPESA);
+					CostantiFin.D_CLASS_TIPO_TRANSAZIONE_UE_SPESA);
 		}
 		if (isModificato) {
 			return isModificato;
@@ -1501,7 +1617,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		// Cofog
 		isModificato = isModificatoAttributoTClass(datiOperazioneDto,
 				attributoInfo, transazioneElementare.getCodCofog(),
-				Constanti.D_CLASS_TIPO_GRUPPO_COFOG);
+				CostantiFin.D_CLASS_TIPO_GRUPPO_COFOG);
 		if (isModificato) {
 			return isModificato;
 		}
@@ -1511,12 +1627,12 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			isModificato = isModificatoAttributoTClassMultiplo(
 					datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodSiope(),
-					Constanti.getCodiciSiopeEntrata());
+					CostantiFin.getCodiciSiopeEntrata());
 		} else {
 			isModificato = isModificatoAttributoTClassMultiplo(
 					datiOperazioneDto, attributoInfo,
 					transazioneElementare.getCodSiope(),
-					Constanti.getCodiciSiopeSpesa());
+					CostantiFin.getCodiciSiopeSpesa());
 		}
 		if (isModificato) {
 			return isModificato;
@@ -1525,7 +1641,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		// Ricorrente spesa
 		isModificato = isModificatoAttributoTClass(datiOperazioneDto,
 				attributoInfo, transazioneElementare.getCodRicorrenteSpesa(),
-				Constanti.D_CLASS_TIPO_CLASSE_RICORRENTE_SPESA);
+				CostantiFin.D_CLASS_TIPO_CLASSE_RICORRENTE_SPESA);
 		if (isModificato) {
 			return isModificato;
 		}
@@ -1535,7 +1651,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		isModificato = isModificatoAttributoTClass(datiOperazioneDto,
 				attributoInfo,
 				transazioneElementare.getCodCapitoloSanitarioSpesa(),
-				Constanti.D_CLASS_TIPO_CLASSE_PERIMETRO_SANITARIO_SPESA);
+				CostantiFin.D_CLASS_TIPO_CLASSE_PERIMETRO_SANITARIO_SPESA);
 		if (isModificato) {
 			return isModificato;
 		}
@@ -1543,7 +1659,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		// PROGRAMMA_POLITICHE_REGIONALI_UNITARIE:
 		isModificato = isModificatoAttributoTClass(datiOperazioneDto,
 				attributoInfo, transazioneElementare.getCodPrgPolReg(),
-				Constanti.D_CLASS_TIPO_PROGRAMMA_POLITICHE_REGIONALI_UNITARIE);
+				CostantiFin.D_CLASS_TIPO_PROGRAMMA_POLITICHE_REGIONALI_UNITARIE);
 		if (isModificato) {
 			return isModificato;
 		}
@@ -1568,7 +1684,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 				.getEnteProprietarioId();
 		String cigOld = getValoreAttr(attributoInfo, datiOperazioneDto, idEnte,
 				code);
-		if (!StringUtils.sonoUguali(nuovoValore, cigOld)) {
+		if (!StringUtilsFin.sonoUguali(nuovoValore, cigOld)) {
 			isModificato = true;
 		}
 		return isModificato;
@@ -1590,7 +1706,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		if (siacRMovgestClass == null) {
 			siacRMovgestClass = new SiacRMovgestClassFin();
 		}
-		siacRMovgestClass = DatiOperazioneUtils.impostaDatiOperazioneLogin(
+		siacRMovgestClass = DatiOperazioneUtil.impostaDatiOperazioneLogin(
 				siacRMovgestClass, datiOperazioneDto, siacTAccountRepository);
 		siacRMovgestClass.setSiacTClass(siacTClass);
 		siacRMovgestClass.setSiacTMovgestT(siacTMovgestTs);
@@ -1606,10 +1722,10 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		List<SiacRMovgestClassFin> siacRMovgestClassList = new ArrayList<SiacRMovgestClassFin>();
 		
-		if(!StringUtils.isEmpty(siacTMovgestTs)){
+		if(!StringUtilsFin.isEmpty(siacTMovgestTs)){
 			for(SiacTMovgestTsFin it: siacTMovgestTs){
 				SiacRMovgestClassFin siacRMovgestClass = new SiacRMovgestClassFin();
-				siacRMovgestClass = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRMovgestClass, datiOperazioneDto, siacTAccountRepository);
+				siacRMovgestClass = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRMovgestClass, datiOperazioneDto, siacTAccountRepository);
 				siacRMovgestClass.setSiacTClass(siacTClass);
 				siacRMovgestClass.setSiacTMovgestT(it);
 				siacRMovgestClassList.add(siacRMovgestClass);
@@ -1642,7 +1758,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		if (siacRLiquidazioneClass == null) {
 			siacRLiquidazioneClass = new SiacRLiquidazioneClassFin();
 		}
-		siacRLiquidazioneClass = DatiOperazioneUtils
+		siacRLiquidazioneClass = DatiOperazioneUtil
 				.impostaDatiOperazioneLogin(siacRLiquidazioneClass,
 						datiOperazioneDto, siacTAccountRepository);
 		siacRLiquidazioneClass.setSiacTClass(siacTClass);
@@ -1669,7 +1785,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		if (siacROrdinativoClass == null) {
 			siacROrdinativoClass = new SiacROrdinativoClassFin();
 		}
-		siacROrdinativoClass = DatiOperazioneUtils
+		siacROrdinativoClass = DatiOperazioneUtil
 				.impostaDatiOperazioneLogin(siacROrdinativoClass,
 						datiOperazioneDto, siacTAccountRepository);
 		siacROrdinativoClass.setSiacTClass(siacTClass);
@@ -1693,7 +1809,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			DatiOperazioneDto datiOperazioneDto, int enteId, String codice) {
 		List<SiacRAttrBaseFin> lista = getRAttrEsistenti(attributoInfo,
 				datiOperazioneDto, codice);
-		SiacRAttrBaseFin vecchioAttr = CommonUtils.getFirst(lista);
+		SiacRAttrBaseFin vecchioAttr = CommonUtil.getFirst(lista);
 		if (vecchioAttr != null) {
 			return getValoreAttr(vecchioAttr);
 		} else {
@@ -1731,15 +1847,15 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		SiacDAttrTipoFin siacDAttrTipoOld = siacRAttrBase.getSiacTAttr()
 				.getSiacDAttrTipo();
 		String attrTipoDescOld = siacDAttrTipoOld.getAttrTipoDesc();
-		if (attrTipoDescOld.equals(Constanti.TIPO_ATTR_TESTO)) {
+		if (attrTipoDescOld.equals(CostantiFin.TIPO_ATTR_TESTO)) {
 			testoOld = siacRAttrBase.getTesto();
-		} else if (attrTipoDescOld.equals(Constanti.TIPO_ATTR_NUMERICO)) {
+		} else if (attrTipoDescOld.equals(CostantiFin.TIPO_ATTR_NUMERICO)) {
 			testoOld = siacRAttrBase.getNumerico().toString();
-		} else if (attrTipoDescOld.equals(Constanti.TIPO_ATTR_BOOLEAN)) {
+		} else if (attrTipoDescOld.equals(CostantiFin.TIPO_ATTR_BOOLEAN)) {
 			testoOld = siacRAttrBase.getBoolean_();
-		} else if (attrTipoDescOld.equals(Constanti.TIPO_ATTR_PERCENTUALE)) {
+		} else if (attrTipoDescOld.equals(CostantiFin.TIPO_ATTR_PERCENTUALE)) {
 			testoOld = siacRAttrBase.getPercentuale().toString();
-		} else if (attrTipoDescOld.equals(Constanti.TIPO_ATTR_TABELLA)) {
+		} else if (attrTipoDescOld.equals(CostantiFin.TIPO_ATTR_TABELLA)) {
 			testoOld = siacRAttrBase.getTabellaId().toString();
 		}
 		// Termino restituendo l'oggetto di ritorno:
@@ -1823,11 +1939,11 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 					.getSiacTOrdinativo();
 			List<SiacROrdinativoAttrFin> list = siacTOrdinativo
 					.getSiacROrdinativoAttrs();
-			list = DatiOperazioneUtils.soloValidi(list, getNow());
+			list = DatiOperazioneUtil.soloValidi(list, getNow());
 			if (list != null && list.size() > 0) {
 				for (SiacROrdinativoAttrFin it : list) {
 					if (it.getSiacTAttr() != null
-							&& StringUtils.sonoUgualiTrimmed(it.getSiacTAttr()
+							&& StringUtilsFin.sonoUgualiTrimmed(it.getSiacTAttr()
 									.getAttrCode(), codice)) {
 						ritorno = (T) it;
 						break;
@@ -1855,9 +1971,9 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	protected SiacRAttrBaseFin salvaAttributoTAttr(AttributoTClassInfoDto attributoInfo,DatiOperazioneDto datiOperazioneDto, boolean valore, String codice) {
 		String valoreString = "";
 		if (valore) {
-			valoreString = Constanti.TRUE;
+			valoreString = CostantiFin.TRUE;
 		} else {
-			valoreString = Constanti.FALSE;
+			valoreString = CostantiFin.FALSE;
 		}
 		return salvaAttributoTAttr(attributoInfo, datiOperazioneDto,valoreString, codice);
 	}
@@ -1897,7 +2013,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		return salvaAttributoTAttr(attributoInfo,
 				 datiOperazioneDto, org.apache.commons.lang.StringUtils.upperCase(valoreNuovo),
-				 Constanti.T_ATTR_CODE_CIG);
+				 CostantiFin.T_ATTR_CODE_CIG);
 	}	
 
 	
@@ -1915,7 +2031,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		return salvaAttributoTAttr(attributoInfo,
 				 datiOperazioneDto, org.apache.commons.lang.StringUtils.upperCase(valoreNuovo),
-				 Constanti.T_ATTR_CODE_CUP);
+				 CostantiFin.T_ATTR_CODE_CUP);
 	}	
 
 	
@@ -1932,7 +2048,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			AttributoTClassInfoDto attributoInfo,
 			DatiOperazioneDto datiOperazioneDto, String valoreNuovo,
 			String codice) {
-		if (StringUtils.isEmpty(valoreNuovo)) {
+		if (StringUtilsFin.isEmpty(valoreNuovo)) {
 			valoreNuovo = "";// set to blank
 		}
 
@@ -1963,12 +2079,12 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 							.getSiacDAttrTipo().getAttrTipoDesc();
 					String newTipoDesc = sda.getAttrTipoDesc();
 					boolean modificato = false;
-					if (!StringUtils.sonoUguali(oldTipoDesc, newTipoDesc)) {
+					if (!StringUtilsFin.sonoUguali(oldTipoDesc, newTipoDesc)) {
 						// se cambia il tipo per forza e' cambiato
 						modificato = true;
 					} else {
 						String valoreOld = getValoreAttr(vecchioAttr);
-						if (!StringUtils.sonoUguali(valoreNuovo, valoreOld)) {
+						if (!StringUtilsFin.sonoUguali(valoreNuovo, valoreOld)) {
 							modificato = true;
 						}
 					}
@@ -1979,42 +2095,42 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 					} else {
 						if (OggettoDellAttributoTClass.T_MOVGEST_TS
 								.equals(tipoOgg)) {
-							DatiOperazioneUtils.cancellaRecord(vecchioAttr,
+							DatiOperazioneUtil.cancellaRecord(vecchioAttr,
 									siacRMovgestTsAttrRepository,
 									datiOperazioneDto, siacTAccountRepository);
 						} else if (OggettoDellAttributoTClass.T_LIQUIDAZIONE
 								.equals(tipoOgg)) {
-							DatiOperazioneUtils.cancellaRecord(vecchioAttr,
+							DatiOperazioneUtil.cancellaRecord(vecchioAttr,
 									siacRLiquidazioneAttrRepository,
 									datiOperazioneDto, siacTAccountRepository);
 						} else if (OggettoDellAttributoTClass.T_ORDINATIVO
 								.equals(tipoOgg)) {
-							DatiOperazioneUtils.cancellaRecord(vecchioAttr,
+							DatiOperazioneUtil.cancellaRecord(vecchioAttr,
 									siacROrdinativoAttrRepository,
 									datiOperazioneDto, siacTAccountRepository);
 						} else if (OggettoDellAttributoTClass.T_SOGGETTO
 								.equals(tipoOgg)) {
-							DatiOperazioneUtils.cancellaRecord(vecchioAttr,
+							DatiOperazioneUtil.cancellaRecord(vecchioAttr,
 									siacRSoggettoAttrRepository,
 									datiOperazioneDto, siacTAccountRepository);
 						} else if (OggettoDellAttributoTClass.T_SOGGETTO_MOD
 								.equals(tipoOgg)) {
-							DatiOperazioneUtils.cancellaRecord(vecchioAttr,
+							DatiOperazioneUtil.cancellaRecord(vecchioAttr,
 									siacRSoggettoAttrModRepository,
 									datiOperazioneDto, siacTAccountRepository);
 						} else if (OggettoDellAttributoTClass.T_CARTACONT
 								.equals(tipoOgg)) {
-							DatiOperazioneUtils.cancellaRecord(vecchioAttr,
+							DatiOperazioneUtil.cancellaRecord(vecchioAttr,
 									siacRCartacontAttrRepository,
 									datiOperazioneDto, siacTAccountRepository);
 						} else if (OggettoDellAttributoTClass.T_CARTACONT_DET
 								.equals(tipoOgg)) {
-							DatiOperazioneUtils.cancellaRecord(vecchioAttr,
+							DatiOperazioneUtil.cancellaRecord(vecchioAttr,
 									siacRCartacontDetAttrRepository,
 									datiOperazioneDto, siacTAccountRepository);
 						} else if (OggettoDellAttributoTClass.T_CARTACONT_ESTERA
 								.equals(tipoOgg)) {
-							DatiOperazioneUtils.cancellaRecord(vecchioAttr,
+							DatiOperazioneUtil.cancellaRecord(vecchioAttr,
 									siacRCartacontEsteraAttrRepository,
 									datiOperazioneDto, siacTAccountRepository);
 						}
@@ -2082,20 +2198,20 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		siacRAttr.setSiacTAttr(sta);
 
 		// Controllo di che tipo deve essere la nota
-		if (atd.equals(Constanti.TIPO_ATTR_TESTO)) {
+		if (atd.equals(CostantiFin.TIPO_ATTR_TESTO)) {
 			siacRAttr.setTesto(valoreNuovo);
-		} else if (atd.equals(Constanti.TIPO_ATTR_NUMERICO)) {
+		} else if (atd.equals(CostantiFin.TIPO_ATTR_NUMERICO)) {
 			siacRAttr.setNumerico(new BigDecimal(valoreNuovo));
-		} else if (atd.equals(Constanti.TIPO_ATTR_BOOLEAN)) {
+		} else if (atd.equals(CostantiFin.TIPO_ATTR_BOOLEAN)) {
 			siacRAttr.setBoolean_(valoreNuovo);
-		} else if (atd.equals(Constanti.TIPO_ATTR_PERCENTUALE)) {
+		} else if (atd.equals(CostantiFin.TIPO_ATTR_PERCENTUALE)) {
 			siacRAttr.setPercentuale(new BigDecimal(valoreNuovo));
-		} else if (atd.equals(Constanti.TIPO_ATTR_TABELLA)) {
+		} else if (atd.equals(CostantiFin.TIPO_ATTR_TABELLA)) {
 			siacRAttr.setTabellaId(Integer.parseInt(valoreNuovo));
 		}
 		DatiOperazioneDto datiOperazioneInserimento = DatiOperazioneDto
 				.buildDatiOperazione(datiOperazioneDto, Operazione.INSERIMENTO);
-		siacRAttr = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacRAttr,
+		siacRAttr = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacRAttr,
 				datiOperazioneInserimento, siacTAccountRepository);
 
 		if (OggettoDellAttributoTClass.T_MOVGEST_TS.equals(tipoOgg)) {
@@ -2277,7 +2393,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			AttributoTClassInfoDto attributoInfo,
 			DatiOperazioneDto datiOperazioneDto, String valoreNuovo,
 			String codice) {
-		if (StringUtils.isEmpty(valoreNuovo)) {
+		if (StringUtilsFin.isEmpty(valoreNuovo)) {
 			valoreNuovo = "";// set to blank
 		}
 
@@ -2305,7 +2421,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 							.getSiacDAttrTipo().getAttrTipoDesc();
 					String newTipoDesc = sda.getAttrTipoDesc();
 
-					if (!StringUtils.sonoUguali(oldTipoDesc, newTipoDesc)) {
+					if (!StringUtilsFin.sonoUguali(oldTipoDesc, newTipoDesc)) {
 						// se cambia il tipo per forza e' cambiato
 						modificato = true;
 					} else {
@@ -2318,7 +2434,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 				}
 			} else {
 				// non ci sono attributi gia salvati
-				if (!StringUtils.isEmpty(valoreNuovo)) {
+				if (!StringUtilsFin.isEmpty(valoreNuovo)) {
 					// si puo' considerare modificato se c'e' un valore
 					modificato = true;
 				}
@@ -2356,7 +2472,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	 * @return
 	 */
 	public boolean isDecentrato(Account account) {
-		return isAbilitato(account, GESTISCI_SOGGETTO_DEC);
+		return isAzioneConsentita(account, AzioneConsentitaEnum.OP_SOG_gestisciSoggDec);
 	}
 
 	/**
@@ -2367,7 +2483,8 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	 * @param codeAzione
 	 * @return
 	 */
-	protected boolean isAbilitato(Account account, String codeAzione) {
+	public boolean isAzioneConsentita(Account account, AzioneConsentitaEnum azioneConsentita) {
+				
 		List<SiacRAccountRuoloOpFin> l = siacRAccountRuoloOpRepository
 				.findByAccount(account.getUid());
 		List<Integer> listaRuoloOpId = new ArrayList<Integer>();
@@ -2376,9 +2493,10 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			for (SiacRAccountRuoloOpFin sraro : l) {
 				listaRuoloOpId.add(sraro.getSiacDRuoloOp().getRuoloOpId());
 			}
-		} else {
-			// Non ci sono ruoli direttamente collegati all'account passato in
-			// input
+		} 
+		//SIAC-7986 controllo anche i gruppi collegati all'account
+//		else {
+			// Non ci sono ruoli direttamente collegati all'account passato in input
 			// Estratto i gruppi di appartenenza dell'account
 			List<SiacRGruppoAccountFin> listaSiacRGruppoAccount = siacRGruppoAccountRepository
 					.findGruppiByAccountId(account.getUid());
@@ -2398,11 +2516,11 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 					}
 				}
 			}
-		}
+//		}
 		if (null != listaRuoloOpId && listaRuoloOpId.size() > 0) {
 			for (Integer ruoloId : listaRuoloOpId) {
 				List<SiacRRuoloOpAzioneFin> linner = siacRRuoloOpAzioneRepository
-						.findByAzioneERuolo(ruoloId, codeAzione);
+						.findByAzioneERuolo(ruoloId, azioneConsentita.getNomeAzione());
 				if (linner != null)
 					counter += linner.size();
 				if (counter > 0)
@@ -2501,7 +2619,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		String bilCode = caricaCodiceBilancio(datiOperazioneDto, bilancio.getAnno());
 
-		if (!StringUtils.isEmpty(bilCode) && Constanti.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(bilCode)) {
+		if (!StringUtilsFin.isEmpty(bilCode) && CostantiFin.BIL_FASE_OPERATIVA_PREDISPOSIZIONE_CONSUNTIVO.equals(bilCode)) {
 			statoBilancioPerDoggiaGest = true;
 		}
 
@@ -2531,11 +2649,11 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			annoBil = null;	
 		}
 		
-		if(!StringUtils.isEmpty(annoBil)){
+		if(!StringUtilsFin.isEmpty(annoBil)){
 
 			List<SiacTBilFin> siacTBils = siacTBilRepository.getValidoByAnno(idEnte,annoBil, datiOperazioneDto.getTs());
 			
-			SiacTBilFin siacTBil = CommonUtils.getFirst(siacTBils);
+			SiacTBilFin siacTBil = CommonUtil.getFirst(siacTBils);
 			
 			if(siacTBil!=null){
 				
@@ -2628,7 +2746,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 											.getSiacDOrdinativoStato()
 											.getOrdStatoCode()
 											.equalsIgnoreCase(
-													Constanti.D_ORDINATIVO_STATO_ANNULLATO)) {
+													CostantiFin.D_ORDINATIVO_STATO_ANNULLATO)) {
 										// l'ordinativo � in stato valido, cio�
 										// non annullato
 										// quindi la quota estratta � valida ed
@@ -2660,7 +2778,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 																.getSiacDOrdinativoTsDetTipo()
 																.getOrdTsDetTipoCode()
 																.equalsIgnoreCase(
-																		Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
+																		CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
 													elencoSiacTOrdinativoTsDet
 															.add(siacTOrdinativoTsDet);
 												}
@@ -2708,14 +2826,14 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		// siacROrdinativoTsMovgestTsRepository.findValidoByIdMovGestTs(idEnte,
 		// getNow(), siacTMovgestTs.getMovgestTsId());
 
-		elencoSiacROrdinativoTsMovgestT = DatiOperazioneUtils.soloValidi(
+		elencoSiacROrdinativoTsMovgestT = DatiOperazioneUtil.soloValidi(
 				elencoSiacROrdinativoTsMovgestT, getNow());
 		if (elencoSiacROrdinativoTsMovgestT != null
 				&& elencoSiacROrdinativoTsMovgestT.size() > 0) {
 			for (SiacROrdinativoTsMovgestTFin siacROrdinativoTsMovgestT : elencoSiacROrdinativoTsMovgestT) {
 				SiacTOrdinativoTFin siacTOrdinativoT = siacROrdinativoTsMovgestT
 						.getSiacTOrdinativoT();
-				List<SiacTOrdinativoTFin> soloSeValido = DatiOperazioneUtils
+				List<SiacTOrdinativoTFin> soloSeValido = DatiOperazioneUtil
 						.soloValidi(toList(siacTOrdinativoT), getNow());
 				if (soloSeValido != null && soloSeValido.size() == 1) {
 					// la quota � valida
@@ -2726,7 +2844,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 
 					List<SiacROrdinativoStatoFin> elencoSiacROrdinativoStato = siacTOrdinativo
 							.getSiacROrdinativoStatos();
-					elencoSiacROrdinativoStato = DatiOperazioneUtils
+					elencoSiacROrdinativoStato = DatiOperazioneUtil
 							.soloValidi(elencoSiacROrdinativoStato, getNow());
 
 					if (elencoSiacROrdinativoStato != null
@@ -2736,7 +2854,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 									.getSiacDOrdinativoStato()
 									.getOrdStatoCode()
 									.equalsIgnoreCase(
-											Constanti.D_ORDINATIVO_STATO_ANNULLATO)) {
+											CostantiFin.D_ORDINATIVO_STATO_ANNULLATO)) {
 								// l'ordinativo � in stato valido, cio� non
 								// annullato
 								// quindi la quota estratta � valida ed � legata
@@ -2746,7 +2864,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 
 								List<SiacTOrdinativoTsDetFin> listaSiacTOrdinativoTsDet = siacTOrdinativoT
 										.getSiacTOrdinativoTsDets();
-								listaSiacTOrdinativoTsDet = DatiOperazioneUtils
+								listaSiacTOrdinativoTsDet = DatiOperazioneUtil
 										.soloValidi(listaSiacTOrdinativoTsDet,
 												getNow());
 
@@ -2761,7 +2879,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 														.getSiacDOrdinativoTsDetTipo()
 														.getOrdTsDetTipoCode()
 														.equalsIgnoreCase(
-																Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
+																CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
 											elencoSiacTOrdinativoTsDet
 													.add(siacTOrdinativoTsDet);
 										}
@@ -2798,11 +2916,11 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		// disponibilitaIncassare = 0
 
 		BigDecimal disponibilitaIncassare = BigDecimal.ZERO;
-		if (!StringUtils.isEmpty(statoCod)
-				&& (statoCod.equals(Constanti.MOVGEST_STATO_DEFINITIVO) || statoCod
-						.equals(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE))) {
+		if (!StringUtilsFin.isEmpty(statoCod)
+				&& (statoCod.equals(CostantiFin.MOVGEST_STATO_DEFINITIVO) || statoCod
+						.equals(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE))) {
 			BigDecimal importoAttualeAccertamento = siacTMovgestTsDetRepository
-					.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE,
+					.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE,
 							siacTMovgestTs.getUid());
 			BigDecimal totaleSubOrdinativi = BigDecimal.ZERO;
 			List<SiacTOrdinativoTsDetFin> elencoSiacTOrdinativoTsDet = findQuoteValideFromAccertamentoSubAccertamento(
@@ -2916,12 +3034,12 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		// il vecchio calcolo era questo:
 		/*
 		 * if(!StringUtils.isEmpty(statoCod) &&
-		 * (statoCod.equals(Constanti.MOVGEST_STATO_DEFINITIVO) ||
+		 * (statoCod.equals(CostantiFin.MOVGEST_STATO_DEFINITIVO) ||
 		 * statoCod.equals
-		 * (Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE))){ BigDecimal
+		 * (CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE))){ BigDecimal
 		 * importoAttualeAccertamento =
 		 * ottimizzazioneDto.estraiImporto(siacTMovgestTs.getUid(),
-		 * Constanti.MOVGEST_TS_DET_TIPO_ATTUALE); BigDecimal
+		 * CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE); BigDecimal
 		 * totaleSubOrdinativi = BigDecimal.ZERO; List<SiacTOrdinativoTsDetFin>
 		 * elencoSiacTOrdinativoTsDet =
 		 * findQuoteValideFromAccertamentoSubAccertamentoOPT(idEnte,
@@ -2962,10 +3080,10 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 
 		// BigDecimal importoAttualeSubAccertamento =
 		// siacTMovgestTsDetRepository.findImporto(idEnte,
-		// Constanti.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgest.getUid());
+		// CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE, siacTMovgest.getUid());
 		// BigDecimal disponibilitaIncassare = BigDecimal.ZERO;
 		// if(!StringUtils.isEmpty(statoCod) &&
-		// statoCod.equals(Constanti.MOVGEST_STATO_DEFINITIVO)){
+		// statoCod.equals(CostantiFin.MOVGEST_STATO_DEFINITIVO)){
 		// BigDecimal totaleSubOrdinativi = BigDecimal.ZERO;
 		// List<SiacTOrdinativoTsDetFin> elencoSiacTOrdinativoTsDet =
 		// findQuoteValideFromAccertamentoSubAccertamento(idEnte, siacTMovgest);
@@ -3019,12 +3137,12 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 
 		// BigDecimal importoAttualeSubAccertamento =
 		// ottimizzazioneDto.estraiImporto(siacTMovgestTs.getMovgestTsId(),
-		// Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
+		// CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE);
 
 		/*
 		 * BigDecimal disponibilitaIncassare = BigDecimal.ZERO;
 		 * if(!StringUtils.isEmpty(statoCod) &&
-		 * statoCod.equals(Constanti.MOVGEST_STATO_DEFINITIVO)){ //
+		 * statoCod.equals(CostantiFin.MOVGEST_STATO_DEFINITIVO)){ //
 		 * disponibilitaIncassare = new BigDecimal("14"); BigDecimal
 		 * totaleSubOrdinativi = BigDecimal.ZERO; List<SiacTOrdinativoTsDetFin>
 		 * elencoSiacTOrdinativoTsDet =
@@ -3078,7 +3196,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			List<SiacTMovgestTsFin> elencoSiacTMovgestTs = siacTMovgest.getSiacTMovgestTs();
 			if (elencoSiacTMovgestTs != null && elencoSiacTMovgestTs.size() > 0) {
 				for (SiacTMovgestTsFin siacTMovgestTsIterato : elencoSiacTMovgestTs) {
-					if (CommonUtils.isValidoSiacTBase(siacTMovgestTsIterato, getNow()) 
+					if (CommonUtil.isValidoSiacTBase(siacTMovgestTsIterato, getNow()) 
 							&& siacTMovgestTsIterato.getMovgestTsId().compareTo(siacTMovgestTs.getMovgestTsId()) != 0) {
 						// controllo se ci sono liquidazioni collegate
 						// verifico se ci sono quote di orinativo collegate alla
@@ -3095,7 +3213,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 						
 						//FIX PER JIRA  SIAC-3960 (non veniva fatto l'add all ma riportava solo l'ultimo ciclato)
 						List<SiacTOrdinativoTsDetFin> elencoSiacTOrdinativoTsDetSubIt = estraiElencoSiacTOrdinativoTsDet(elencoSiacRLiquidazioneMovgestSubImp, idEnte,ottimizzazioneMovGestDtoPerISub);
-						elencoSiacTOrdinativoTsDet = CommonUtils.addAllConNew(elencoSiacTOrdinativoTsDet, elencoSiacTOrdinativoTsDetSubIt);
+						elencoSiacTOrdinativoTsDet = CommonUtil.addAllConNew(elencoSiacTOrdinativoTsDet, elencoSiacTOrdinativoTsDetSubIt);
 						//
 					}
 				}
@@ -3137,7 +3255,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		final String methodName="estraiElencoSiacTOrdinativoTsDet";
 		List<SiacTOrdinativoTsDetFin> elencoSiacTOrdinativoTsDet = new ArrayList<SiacTOrdinativoTsDetFin>();
 		
-		elencoSiacRLiquidazioneMovgest = CommonUtils.soloValidiSiacTBase(elencoSiacRLiquidazioneMovgest, getNow());
+		elencoSiacRLiquidazioneMovgest = CommonUtil.soloValidiSiacTBase(elencoSiacRLiquidazioneMovgest, getNow());
 		
 		if (elencoSiacRLiquidazioneMovgest != null && elencoSiacRLiquidazioneMovgest.size() > 0) {
 			
@@ -3147,16 +3265,16 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 				SiacTLiquidazioneFin siacTLiquidazione = siacRLiquidazioneMovgest.getSiacTLiquidazione();
 				
 				List<SiacRLiquidazioneStatoFin> elencoSiacRLiquidazioneStato = siacTLiquidazione.getSiacRLiquidazioneStatos();
-				SiacRLiquidazioneStatoFin siacRLiquidazioneStato = CommonUtils.getValidoSiacTBase(elencoSiacRLiquidazioneStato, getNow());
+				SiacRLiquidazioneStatoFin siacRLiquidazioneStato = CommonUtil.getValidoSiacTBase(elencoSiacRLiquidazioneStato, getNow());
 				
 				//GIUGNO 2016 - fix per errore apparentemente randomico che portava ad una null pointer
 				if(isStatoLiqNull(siacRLiquidazioneStato)){
-					log.info(methodName, "TROVATO PROBLEMA isStatoLiqNull(siacRLiquidazioneStato)");
+					log.debug(methodName, "TROVATO PROBLEMA isStatoLiqNull(siacRLiquidazioneStato)");
 					entityRefresh(siacTLiquidazione);
 					siacTLiquidazioneRepository.flush();
 					SiacTLiquidazioneFin siacTLiquidazioneReload =siacTLiquidazioneRepository.findOne(siacTLiquidazione.getLiqId());
 					elencoSiacRLiquidazioneStato = siacTLiquidazioneReload.getSiacRLiquidazioneStatos();
-					siacRLiquidazioneStato = CommonUtils.getValidoSiacTBase(elencoSiacRLiquidazioneStato, getNow());
+					siacRLiquidazioneStato = CommonUtil.getValidoSiacTBase(elencoSiacRLiquidazioneStato, getNow());
 					siacTLiquidazione = siacTLiquidazioneReload;
 					
 					if(isStatoLiqNull(siacRLiquidazioneStato)){
@@ -3167,7 +3285,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 				}
 				// END fix -
 							
-				if (!isStatoLiqNull(siacRLiquidazioneStato) && siacRLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoCode().equalsIgnoreCase(Constanti.LIQUIDAZIONE_STATO_VALIDO)) {
+				if (!isStatoLiqNull(siacRLiquidazioneStato) && siacRLiquidazioneStato.getSiacDLiquidazioneStato().getLiqStatoCode().equalsIgnoreCase(CostantiFin.LIQUIDAZIONE_STATO_VALIDO)) {
 					// la liquidazione e' in stato valido verifico se ci sono quote di orinativo collegate alla liquidazione
 					
 					
@@ -3180,7 +3298,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 						elencoSiacRLiquidazioneOrd = ottimizzazioneMovGestDtoPerISub.filtraSiacRLiquidazioneOrdFinBySiacTLiquidazioneFin(siacTLiquidazione);
 					}
 					
-					elencoSiacRLiquidazioneOrd = CommonUtils.soloValidiSiacTBase(elencoSiacRLiquidazioneOrd, getNow());
+					elencoSiacRLiquidazioneOrd = CommonUtil.soloValidiSiacTBase(elencoSiacRLiquidazioneOrd, getNow());
 					
 					if (elencoSiacRLiquidazioneOrd != null && elencoSiacRLiquidazioneOrd.size() > 0) {
 						
@@ -3189,7 +3307,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 							// ci sono relazioni liquidazione sub-ordinativo valide,  controllo se  la quota e' valida
 							SiacTOrdinativoTFin siacTOrdinativoT = siacRLiquidazioneOrd.getSiacTOrdinativoT();
 							
-							if (CommonUtils.isValidoSiacTBase(siacTOrdinativoT, getNow())) {
+							if (CommonUtil.isValidoSiacTBase(siacTOrdinativoT, getNow())) {
 								// la quota  e' valida adesso controllo  che sia in stato valido anche l'ordinativo  a della quota
 								SiacTOrdinativoFin siacTOrdinativo = siacTOrdinativoT.getSiacTOrdinativo();
 								// Da prendere direttamente dal db per problemi  con cache di hibernate sull'inserimento quote ordinativo
@@ -3204,9 +3322,9 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 									elencoSiacROrdinativoStato = ottimizzazioneMovGestDtoPerISub.filtraSiacROrdinativoStatoFinBySiacTOrdinativoFin(siacTOrdinativo);
 								}
 								
-								SiacROrdinativoStatoFin siacROrdinativoStato = CommonUtils.getValidoSiacTBase(elencoSiacROrdinativoStato, getNow());
+								SiacROrdinativoStatoFin siacROrdinativoStato = CommonUtil.getValidoSiacTBase(elencoSiacROrdinativoStato, getNow());
 								
-								if (!siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(Constanti.D_ORDINATIVO_STATO_ANNULLATO)) {
+								if (!siacROrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode().equalsIgnoreCase(CostantiFin.D_ORDINATIVO_STATO_ANNULLATO)) {
 									// l'ordinativo e' in stato valido cioe' non annullato quindi la quota estratta e' valida e legata ad un ordinativo valido
 									//allora devo prenderla in considerazione per il calcolo 
 									
@@ -3219,11 +3337,11 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 										listaSiacTOrdinativoTsDet = ottimizzazioneMovGestDtoPerISub.filtraSiacTOrdinativoTsDetFinBySiacTOrdinativoTFin(siacTOrdinativoT);
 									}
 									
-									listaSiacTOrdinativoTsDet = CommonUtils.soloValidiSiacTBase(listaSiacTOrdinativoTsDet, getNow());
+									listaSiacTOrdinativoTsDet = CommonUtil.soloValidiSiacTBase(listaSiacTOrdinativoTsDet, getNow());
 									if (listaSiacTOrdinativoTsDet != null && listaSiacTOrdinativoTsDet.size() > 0) {
 										for (SiacTOrdinativoTsDetFin siacTOrdinativoTsDet : listaSiacTOrdinativoTsDet) {
 											// estraggo solo la riga valida e relativa all'importo attuale:
-											if (siacTOrdinativoTsDet.getSiacDOrdinativoTsDetTipo().getOrdTsDetTipoCode().equalsIgnoreCase(Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
+											if (siacTOrdinativoTsDet.getSiacDOrdinativoTsDetTipo().getOrdTsDetTipoCode().equalsIgnoreCase(CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE)) {
 												elencoSiacTOrdinativoTsDet.add(siacTOrdinativoTsDet);
 											}
 										}
@@ -3292,22 +3410,22 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		Integer movgestTsId = siacTMovgestTs.getMovgestTsId();
 		
-		log.info(methodName, "movgestTsId : " + movgestTsId);
+		log.debug(methodName, "movgestTsId : " + movgestTsId);
 		
 		if(ottimizzazioneMovGestDtoPerISub!=null){
 			disponibilitaAPagare = ottimizzazioneMovGestDtoPerISub.estraiDisponibilePagareDaFunction(movgestTsId);
-			log.info(methodName, "estraiDisponibilePagareDaFunction - disponibilitaAPagare : " + disponibilitaAPagare);
+			log.debug(methodName, "estraiDisponibilePagareDaFunction - disponibilitaAPagare : " + disponibilitaAPagare);
 		} else {
 			disponibilitaAPagare = impegnoDao.calcolaDisponibileAPagare(movgestTsId);
-			log.info(methodName, "calcolaDisponibileAPagare - calcolaDisponibileAPagare : " + disponibilitaAPagare);
+			log.debug(methodName, "calcolaDisponibileAPagare - calcolaDisponibileAPagare : " + disponibilitaAPagare);
 		}
 		
 		/*
-		if (!StringUtils.isEmpty(statoCod) && (statoCod.equals(Constanti.MOVGEST_STATO_DEFINITIVO) || statoCod.equals(Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE))) {
+		if (!StringUtils.isEmpty(statoCod) && (statoCod.equals(CostantiFin.MOVGEST_STATO_DEFINITIVO) || statoCod.equals(CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE))) {
 			
 			// se il chiamante ha gia' calcolato l'importo attuale e' buona norma che vi venga passato per ottimizzare:
 			if(importoAttualeImpegno==null){
-				importoAttualeImpegno = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE,siacTMovgestTs.getUid());
+				importoAttualeImpegno = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE,siacTMovgestTs.getUid());
 			}
 			//
 
@@ -3375,11 +3493,11 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		// ALTRIMENTI
 		// disponibilitaPagare = 0
 		
-		if (!StringUtils.isEmpty(statoCod) && statoCod.equals(Constanti.MOVGEST_STATO_DEFINITIVO)) {
+		if (!StringUtils.isEmpty(statoCod) && statoCod.equals(CostantiFin.MOVGEST_STATO_DEFINITIVO)) {
 			
 			// se il chiamante ha gia' calcolato l'importo attuale e' buona norma che vi venga passato per ottimizzare:
 			if(importoAttualeSubImpegno==null){
-				importoAttualeSubImpegno = siacTMovgestTsDetRepository.findImporto(idEnte, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE,siacTMovgestTs.getUid());
+				importoAttualeSubImpegno = siacTMovgestTsDetRepository.findImporto(idEnte, CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE,siacTMovgestTs.getUid());
 			}
 			//
 			
@@ -3412,14 +3530,14 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	protected SiacTAttoAmmFin getSiacTAttoAmmFromAttoAmministrativo(
 			AttoAmministrativo attAmm, int idEnte) {
 		SiacTAttoAmmFin attoTrovato = null;
-		Timestamp now = new Timestamp(getCurrentMillisecondsTrentaMaggio2017());
+		Timestamp now = new Timestamp(currentTimeMillis());
 		if (attAmm != null) {
 			String anno = Integer.toString(attAmm.getAnno());
 			Integer numero = attAmm.getNumero();
 			String tipoCode = null;
 			
 			if (attAmm.getTipoAtto() != null
-					&& !StringUtils.isEmpty(attAmm.getTipoAtto().getCodice())) {
+					&& !StringUtilsFin.isEmpty(attAmm.getTipoAtto().getCodice())) {
 				
 				// BACO! il codice del tipo atto non è detto che sia a due cifre (può anche essere di un solo carattere
 				// tipo CMTO (ente = 3) la delibera a tipo atto 1 e non va ricercato con 01!!!
@@ -3430,7 +3548,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 					
 					tipoCode = attAmm.getTipoAtto().getCodice();
 					if (tipoCode.length() == 1) {
-						tipoCode = StringUtils.formattaConZeriInTesta(tipoCode, 2);
+						tipoCode = StringUtilsFin.formattaConZeriInTesta(tipoCode, 2);
 					}
 					
 				}else{
@@ -3454,7 +3572,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 					
 					for (SiacTAttoAmmFin it : siacTAttoAmms) {
 						
-						SiacRAttoAmmClassFin legameValido = DatiOperazioneUtils.getValido(it.getSiacRAttoAmmClasses(),getNow());
+						SiacRAttoAmmClassFin legameValido = DatiOperazioneUtil.getValido(it.getSiacRAttoAmmClasses(),getNow());
 						
 						if (legameValido != null && legameValido.getSiacTClass().getUid().intValue() == idTClass) {
 							siacTAttoAmmsFiltratiPerSac.add(it);
@@ -3471,7 +3589,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 					//prendo quello senza struttura:
 					attoTrovato = siacTAttoAmms.get(0);
 					for (SiacTAttoAmmFin it : siacTAttoAmms) {
-						SiacRAttoAmmClassFin legameValido = DatiOperazioneUtils.getValido(it.getSiacRAttoAmmClasses(),getNow());
+						SiacRAttoAmmClassFin legameValido = DatiOperazioneUtil.getValido(it.getSiacRAttoAmmClasses(),getNow());
 						if (legameValido == null) {
 							attoTrovato = it;
 							break;
@@ -3532,36 +3650,8 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	}
 
 	protected Timestamp getNow() {
-		return new Timestamp(getCurrentMillisecondsTrentaMaggio2017());
+		return new Timestamp(currentTimeMillis());
 	}
-
-	// SEMPLICI WRAPPER DI METODI DI COMMONUTILS e String Utils per scrivere piu velocemente le
-	// chiamate ad essi:
-	protected <T extends Object> List<T> toList(T... oggetto) {
-		return CommonUtils.toList(oggetto);
-	}
-
-	protected <T extends Object> List<T> toList(List<T>... liste) {
-		return CommonUtils.toList(liste);
-	}
-
-	protected <T extends Object> List<T> addAll(List<T> listaTo,
-			List<T> listaFrom) {
-		return CommonUtils.addAll(listaTo, listaFrom);
-	}
-	
-	protected boolean isEmpty(String s){
-		return StringUtils.isEmpty(s);
-	}
-	
-	protected <OBJ extends Object> boolean isEmpty(List<OBJ> list){
-		return StringUtils.isEmpty(list);
-	}
-	
-	public final static <T extends Object> T getFirst(List<T> lista){
-		return CommonUtils.getFirst(lista);
-	}
-	
 	//
 
 	// ////////////////////////////////////////////////////////////////////////////////////////////
@@ -3573,7 +3663,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	 * @return
 	 */
 	protected AttoAmministrativo buildAttoAmministrativoFromListMovgestTsAttoAmm(List<SiacRMovgestTsAttoAmmFin> list) {
-		return buildAttoAmministrativoFromListMovgestTsAttoAmm(DatiOperazioneUtils.getValido(list,null));
+		return buildAttoAmministrativoFromListMovgestTsAttoAmm(DatiOperazioneUtil.getValido(list,null));
 	}
 	
 	protected AttoAmministrativo buildAttoAmministrativoFromListMovgestTsAttoAmm(SiacRMovgestTsAttoAmmFin rAttoAmm) {
@@ -3628,8 +3718,8 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	protected boolean isRilevanteFPV(SiacTProgrammaFin siacTProgramma,OttimizzazioneMovGestDto ottimizzazioneDto) {
 		boolean rilevanteFPV = false;
 		// verifico che abbia l'attributo rilevanteFPV
-		SiacRProgrammaAttrFin siacRProgrammaAttr = getSiacRProgrammaAttr(siacTProgramma, ottimizzazioneDto, Constanti.PROGRAMMA_T_ATTR_RILEVANTE_FPV);
-		if(siacRProgrammaAttr!=null && !StringUtils.isEmpty(siacRProgrammaAttr.getBoolean_()) && siacRProgrammaAttr.getBoolean_().equals(Constanti.TRUE)) {
+		SiacRProgrammaAttrFin siacRProgrammaAttr = getSiacRProgrammaAttr(siacTProgramma, ottimizzazioneDto, CostantiFin.PROGRAMMA_T_ATTR_RILEVANTE_FPV);
+		if(siacRProgrammaAttr!=null && !StringUtilsFin.isEmpty(siacRProgrammaAttr.getBoolean_()) && siacRProgrammaAttr.getBoolean_().equals(CostantiFin.TRUE)) {
 			rilevanteFPV = true;
 		}
 		return rilevanteFPV;
@@ -3641,7 +3731,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	
 	protected BigDecimal getValoreComplessivo(SiacTProgrammaFin siacTProgramma,OttimizzazioneMovGestDto ottimizzazioneDto) {
 		BigDecimal valoreComplessivo = BigDecimal.ZERO;
-		SiacRProgrammaAttrFin siacRProgrammaAttr = getSiacRProgrammaAttr(siacTProgramma, ottimizzazioneDto, Constanti.PROGRAMMA_T_ATTR_VALORE_COMPLESSIVO);
+		SiacRProgrammaAttrFin siacRProgrammaAttr = getSiacRProgrammaAttr(siacTProgramma, ottimizzazioneDto, CostantiFin.PROGRAMMA_T_ATTR_VALORE_COMPLESSIVO);
 		if (siacRProgrammaAttr != null) {
 			valoreComplessivo  = siacRProgrammaAttr.getNumerico();
 		}
@@ -3664,7 +3754,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			
 			if (rProgr != null && !rProgr.isEmpty()) {
 				for (SiacRProgrammaAttrFin siacRProgrammaAttr : rProgr) {
-					if(CommonUtils.isValidoSiacTBase(siacRProgrammaAttr, getNow())){
+					if(CommonUtil.isValidoSiacTBase(siacRProgrammaAttr, getNow())){
 						if (siacRProgrammaAttr.getSiacTAttr().getAttrCode().equals(codice)) {
 							trovato  = siacRProgrammaAttr;
 							break;
@@ -3721,7 +3811,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 			
 			List<Integer> idsAll = siacRBilElemSacVisibilitaFinRepository.getIdTClassVisibilitaAllValidiBySiacTBilElem(enteProprietarioId, elemId, now);
 			
-			if(!StringUtils.isEmpty(idsAll)){
+			if(!StringUtilsFin.isEmpty(idsAll)){
 				datiVisibilita.setVisibiliAll(true);
 			} else {
 				datiVisibilita.setVisibiliAll(false);
@@ -3761,15 +3851,15 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	 * @return
 	 */
 	protected <T> List<T> getPaginata(List<T> totale, int numPagina, int numRisultatiPerPagina) {
-		return CommonUtils.getPaginata(totale, numPagina, numRisultatiPerPagina);
+		return CommonUtil.getPaginata(totale, numPagina, numRisultatiPerPagina);
 	}
 	
 	protected String getIdsPaginati(List<String> totale, int numPagina, int numRisultatiPerPagina) {
-		return CommonUtils.getIdsPaginati(totale, numPagina, numRisultatiPerPagina);
+		return CommonUtil.getIdsPaginati(totale, numPagina, numRisultatiPerPagina);
 	}
 	
 	protected  List<Integer> getIdsPaginatiList( List<Integer> ids, int numPagina, int numRisultatiPerPagina) {
-		return CommonUtils.getIdsPaginatiListIntegerToInteger(ids, numPagina, numRisultatiPerPagina);
+		return CommonUtil.getIdsPaginatiListIntegerToInteger(ids, numPagina, numRisultatiPerPagina);
 	}
 	
 	
@@ -3830,7 +3920,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 
 		//compongo la lista di tutti gli ordinativi coinvolti:
 		List<SiacTOrdinativoFin> altriOrdinativi = ottimizzazioneDto.estraiSiacTOrdinativoFinCoinvoltiBySiacRLiquidazioneOrdFinCoinvoltiAncheVersoAltriOrdinativi();
-		List<SiacTOrdinativoFin> allOrdinativi = CommonUtils.addAllConNewAndSoloDistintiByUid(altriOrdinativi,toList(siacTOrdinativo));
+		List<SiacTOrdinativoFin> allOrdinativi = CommonUtil.addAllConNewAndSoloDistintiByUid(altriOrdinativi,toList(siacTOrdinativo));
 		
 		//ottengo cosi gli stati di tutti gli ordinativi anche di quelli indirettamente collegati:
 		List<SiacROrdinativoStatoFin> distintiSiacROrdinativoStatoFin = ordinativoDao.ricercaBySiacTOrdinativoFinMassive(allOrdinativi, "SiacROrdinativoStatoFin");
@@ -3838,7 +3928,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		//compongo la lista di tutti gli ordinativi T coinvolti:
 		List<SiacTOrdinativoTFin> altriOrdinativiT = ottimizzazioneDto.estraiSiacTOrdinativoTFinCoinvoltiBySiacRLiquidazioneOrdFinCoinvoltiAncheVersoAltriOrdinativi();
-		List<SiacTOrdinativoTFin> allOrdinativiT = CommonUtils.addAllConNewAndSoloDistintiByUid(altriOrdinativiT,listaSubOrdinativiCoinvolti);
+		List<SiacTOrdinativoTFin> allOrdinativiT = CommonUtil.addAllConNewAndSoloDistintiByUid(altriOrdinativiT,listaSubOrdinativiCoinvolti);
 		
 		//ottengo cosi gli importi di tutti i sub ordinativi anche di quelli indirettamente collegati:
 		List<SiacTOrdinativoTsDetFin> distintiSiacTOrdinativoTsDetFin = ordinativoDao.ricercaBySiacTOrdinativoTFinMassive(allOrdinativiT, "SiacTOrdinativoTsDetFin");
@@ -3908,10 +3998,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		ottimizzazioneDto.setDistintiSiacRSubdocLiquidazioneCoinvolti(distintiSiacRSubdocLiquidazioneCoinvolti);
 		//
 		
-		// Distinti SiacRMutuoVoceLiquidazioneFin
-		List<SiacRMutuoVoceLiquidazioneFin> distintiSiacRMutuoVoceLiquidazioneFinCoinvolti = liquidazioneDao.ricercaByLiquidazioneMassive(distintiSiacTLiquidazioneCoinvolti, "SiacRMutuoVoceLiquidazioneFin");
-		ottimizzazioneDto.setDistintiSiacRMutuoVoceLiquidazioneFinCoinvolti(distintiSiacRMutuoVoceLiquidazioneFinCoinvolti);
-		
+			
 		
 		// Distinti SiacRLiquidazioneMovgestFin
 		List<SiacRLiquidazioneMovgestFin> distintiSiacRLiquidazioneMovgestFin = liquidazioneDao.ricercaByLiquidazioneMassive(distintiSiacTLiquidazioneCoinvolti, "SiacRLiquidazioneMovgestFin");
@@ -3930,7 +4017,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		//OTTIMIZZAZIONI MOV GEST COLLEGATI: 
 		OttimizzazioneMovGestDto ottimizzazioneMovGest = new OttimizzazioneMovGestDto();
-		ottimizzazioneMovGest = caricaDatiOttimizzazioneMovGest(ottimizzazioneMovGest, distintiSiacTMovgestFinCoinvolti, Constanti.MOVGEST_TIPO_IMPEGNO, datiOperazioneDto);
+		ottimizzazioneMovGest = caricaDatiOttimizzazioneMovGest(ottimizzazioneMovGest, distintiSiacTMovgestFinCoinvolti, CostantiFin.MOVGEST_TIPO_IMPEGNO, datiOperazioneDto);
 		ottimizzazioneDto.setOttimizzazioneMovimentiCoinvolti(ottimizzazioneMovGest);
 		List<SiacTMovgestTsFin> distintiSiacTMovgestTsFin = ottimizzazioneMovGest.getDistintiSiacTMovgestTsFinCoinvolti();
 		
@@ -3941,17 +4028,18 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		//DISPONIBILI A LIQUIDARE DEI SOLI MOVIMENTI COINVOLTI non avrebbe senso caricarli per tutti dato che poi si invochera' il ricerca impegno per chiave
 		//solo verso l'eventuale singolo sub (e sua testata) coinvolto verso una liquidazione:
 		List<SiacTMovgestTsFin> testateDeiSubDirettamenteCoinvolti = listaTestateDeiSubCoinvolti(distintiSiacTMovgestTsFinCoinvoltiDirettamente, distintiSiacTMovgestTsFin);
-		List<SiacTMovgestTsFin> distintiSiacTMovgestTsFinCoinvoltiDirettamenteERelativeTestate = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacTMovgestTsFinCoinvoltiDirettamente,testateDeiSubDirettamenteCoinvolti);
+		List<SiacTMovgestTsFin> distintiSiacTMovgestTsFinCoinvoltiDirettamenteERelativeTestate = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacTMovgestTsFinCoinvoltiDirettamente,testateDeiSubDirettamenteCoinvolti);
 				
 				
 		List<CodificaImportoDto> listaDisponibiliLiquidareMovimentiCoinvoltiDirettamente = impegnoDao.calcolaDisponibilitaALiquidareMassive(distintiSiacTMovgestTsFinCoinvoltiDirettamenteERelativeTestate);
 		ottimizzazioneMovGest.setListaDisponibiliLiquidareDaFunction(listaDisponibiliLiquidareMovimentiCoinvoltiDirettamente);
 		
 		//Dati per risalire ai vincoli (come per il disp a liquidare SOLO per i direttamente coinvolti)
-		List<SiacRMovgestTsFin> distintiSiacRMovgestTsFinCoinvolti =movimentoGestioneDao.ricercaBySiacTMovgestTsFinMassive(distintiSiacTMovgestTsFinCoinvoltiDirettamenteERelativeTestate, true);
+		//SIAC-7596, aggiunto boolean escludiMovgestAAnnullati, qui messo a false per mantenere comportamento precedente
+		List<SiacRMovgestTsFin> distintiSiacRMovgestTsFinCoinvolti =movimentoGestioneDao.ricercaBySiacTMovgestTsFinMassive(distintiSiacTMovgestTsFinCoinvoltiDirettamenteERelativeTestate, Boolean.TRUE, Boolean.FALSE);
 		ottimizzazioneMovGest.setDistintiSiacRMovgestTsFinCoinvolti(distintiSiacRMovgestTsFinCoinvolti);
 		//i bil elem li prendo tutti tanto sono pochi dati:
-		List<SiacTMovgestFin> listaAllSiacTMovgestFin = CommonUtils.addAllConNewAndSoloDistintiByUid(ottimizzazioneMovGest.getDistintiSiacTMovgestFinCoinvolti(),ottimizzazioneMovGest.estraiSiacTMovgestFinBySiacRMovgestTsFinCoinvolti());
+		List<SiacTMovgestFin> listaAllSiacTMovgestFin = CommonUtil.addAllConNewAndSoloDistintiByUid(ottimizzazioneMovGest.getDistintiSiacTMovgestFinCoinvolti(),ottimizzazioneMovGest.estraiSiacTMovgestFinBySiacRMovgestTsFinCoinvolti());
 		List<SiacRMovgestBilElemFin> distintiSiacRMovgestBilElemCoinvolti =  movimentoGestioneDao.ricercaSiacRMovgestBilElemMassive(listaAllSiacTMovgestFin);
 		ottimizzazioneMovGest.setDistintiSiacRMovgestBilElemCoinvolti(distintiSiacRMovgestBilElemCoinvolti);
 		
@@ -3987,7 +4075,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		//TODO QUI EVENTUALMENTE ANDARE A PRENDERE TUTTE LE RELAZIONI VERSO SOGGETTI TRAMITE ALTRE ENETITA E AGGIUNGERLI A allSoggettiCoinvolti
 		
 		List<SiacTSoggettoFin> soggettiLiquidazioni = ottimizzazioneDto.estraiSiacTSoggettoFinCoinvoltiBySiacRLiquidazioneSoggettoFinCoinvolti();
-		List<SiacTSoggettoFin> allSoggettiCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(soggettoOrdinativo,soggettiImpegni,soggettiLiquidazioni,soggettiModificheDeiMovimenti);
+		List<SiacTSoggettoFin> allSoggettiCoinvolti = CommonUtil.addAllConNewAndSoloDistintiByUid(soggettoOrdinativo,soggettiImpegni,soggettiLiquidazioni,soggettiModificheDeiMovimenti);
 		
 		
 		//METODO CORE DEI SOGGETTI:
@@ -4036,7 +4124,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	protected List<SiacTOrdinativoFin> getDistintiOrdinativi(List<SiacTOrdinativoTFin> elencoSiacTOrdinativoT){
 		List<SiacTOrdinativoFin> ordinativi = new ArrayList<SiacTOrdinativoFin>();
 		for(SiacTOrdinativoTFin subIt : elencoSiacTOrdinativoT){
-			ordinativi = CommonUtils.addAllConNewAndSoloDistintiByUid(ordinativi,toList(subIt.getSiacTOrdinativo()));
+			ordinativi = CommonUtil.addAllConNewAndSoloDistintiByUid(ordinativi,toList(subIt.getSiacTOrdinativo()));
 		}
 		return ordinativi;
 	}
@@ -4076,7 +4164,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		List<SiacROrdinativoModpagFin> distintiSiacROrdinativoModpagFinCoinvolti = null;
 		for(SiacTOrdinativoFin siacTOrdinativo: allOrdinativi){
-			distintiSiacROrdinativoModpagFinCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacROrdinativoModpagFinCoinvolti,siacTOrdinativo.getSiacROrdinativoModpags());
+			distintiSiacROrdinativoModpagFinCoinvolti = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacROrdinativoModpagFinCoinvolti,siacTOrdinativo.getSiacROrdinativoModpags());
 		}
 		
 		//MODALITA PAGAMENTO DEGLI ORDINATIVI:
@@ -4090,7 +4178,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		List<SiacROrdinativoSoggettoFin> distintiSiacROrdinativoSoggettoFinCoinvolti = null;
 		for(SiacTOrdinativoFin siacTOrdinativo: allOrdinativi){
-			distintiSiacROrdinativoSoggettoFinCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacROrdinativoSoggettoFinCoinvolti,siacTOrdinativo.getSiacROrdinativoSoggettos());
+			distintiSiacROrdinativoSoggettoFinCoinvolti = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacROrdinativoSoggettoFinCoinvolti,siacTOrdinativo.getSiacROrdinativoSoggettos());
 		}
 		
 		List<SiacTSoggettoFin> soggettoOrdinativo = null;
@@ -4102,7 +4190,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		//Soggetti coinvolti tramite impegni e sub:
 		OttimizzazioneSoggettoDto ottimizzazioneSoggettoDto = new OttimizzazioneSoggettoDto();
-		List<SiacTSoggettoFin> allSoggettiCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(soggettoOrdinativo);
+		List<SiacTSoggettoFin> allSoggettiCoinvolti = CommonUtil.addAllConNewAndSoloDistintiByUid(soggettoOrdinativo);
 		
 		//METODO CORE DEI SOGGETTI:
 		ottimizzazioneSoggettoDto = caricaDatiOttimizzazioneRicercaSoggettoByDistintiSoggetti(allSoggettiCoinvolti);
@@ -4135,7 +4223,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	
 	private List<SiacTMovgestTsFin> listaTestateDeiSubCoinvolti(List<SiacTMovgestTsFin> distintiSiacTMovgestTsFinCoinvoltiDirettamente, List<SiacTMovgestTsFin>  distintiSiacTMovgestTsFin){
 		List<SiacTMovgestTsFin> testateDeiSubDirettamenteCoinvolti = new ArrayList<SiacTMovgestTsFin>();
-		if(!StringUtils.isEmpty(distintiSiacTMovgestTsFinCoinvoltiDirettamente) && !StringUtils.isEmpty(distintiSiacTMovgestTsFin)){
+		if(!StringUtilsFin.isEmpty(distintiSiacTMovgestTsFinCoinvoltiDirettamente) && !StringUtilsFin.isEmpty(distintiSiacTMovgestTsFin)){
 			for(SiacTMovgestTsFin itCoinvoltoDirettamente : distintiSiacTMovgestTsFinCoinvoltiDirettamente){
 				if(itCoinvoltoDirettamente!=null && itCoinvoltoDirettamente.getMovgestTsIdPadre()!=null){
 					//e' un sub
@@ -4210,7 +4298,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		ottimizzazioneDto.setDistintiSiacTMovgestFinCoinvolti(distintiSiacTMovgestFinCoinvolti);
 		
 		// Distinti SiacTMovgestTsFin
-		List<Integer> listaMovgestIds = CommonUtils.getIdListSiacTBase(distintiSiacTMovgestFinCoinvolti);
+		List<Integer> listaMovgestIds = CommonUtil.getIdListSiacTBase(distintiSiacTMovgestFinCoinvolti);
 		List<SiacTMovgestTsFin> distintiSiacTMovgestTsFin = movimentoGestioneDao.ricercaSiacTMovgestTsFinBySiacTMovgestMassive(listaMovgestIds, true);
 		
 		ottimizzazioneDto = caricaDatiOttimizzazioneMovGestTs(ottimizzazioneDto, distintiSiacTMovgestTsFin, tipoMovimento,datiOperazione);
@@ -4254,18 +4342,13 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		//
 		
 		//In caso di impegno ci serve caricare i legami verso le liquidazioni:
-		if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
+		if(tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)){
 			ottimizzazioneDto = caricaDatiOttimizzazioneVersoLiquidazioniEOrdinativiByImpegnoTsDto(distintiSiacTMovgestTsFin, ottimizzazioneDto);
-		}else if (tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO)){
+		}else if (tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO)){
 			ottimizzazioneDto = caricaDatiOttimizzazioneVersoOrdinativiByAccertamentoTsDto(distintiSiacTMovgestTsFin, ottimizzazioneDto);
 		}
 		
-		//LUGLIO 2016 - In caso di impegno ci serve caricare i legami verso i mutui:
-		OttimizzazioneMutuoDto ottimizzazioneMutuoDto = new OttimizzazioneMutuoDto();
-		if(tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)){
-			ottimizzazioneMutuoDto = caricaDatiOttimizzazioneMutuiByMovimenti(distintiSiacTMovgestTsFin,idEnte);
-			ottimizzazioneDto.setOttimizzazioneMutuoDto(ottimizzazioneMutuoDto);
-		}
+	
 		
 		
 		//T CLASS:
@@ -4377,7 +4460,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		OttimizzazioneSoggettoDto ottimizzazioneSoggettoDto = new OttimizzazioneSoggettoDto();
 		
 		//SOGGETTI INPUT:
-		List<SiacTSoggettoFin> distintiSiacTSoggettiCoinvoltiDirettamente = CommonUtils.ritornaSoloDistintiByUid(soggettiInput);
+		List<SiacTSoggettoFin> distintiSiacTSoggettiCoinvoltiDirettamente = CommonUtil.ritornaSoloDistintiByUid(soggettiInput);
 		ottimizzazioneSoggettoDto.setDistintiSiacTSoggettiCoinvoltiDirettamente(distintiSiacTSoggettiCoinvoltiDirettamente );
 		
 		//DISTINTI SiacRSoggettoRelazFin
@@ -4390,7 +4473,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		//FACCIO UNA LISTA SIA CON I SOGGETTI RICHIESTI DIRETTAMENTE CHE CON QUELLI RELAZIONATI (i chiamanti spesso compilano i
 		// dati delle sedi secondarie e delle loro modalita' di pagamento) :
-		List<SiacTSoggettoFin> distintiSiacTSoggettiCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(soggettiInput, soggettiDaRelazioni);
+		List<SiacTSoggettoFin> distintiSiacTSoggettiCoinvolti = CommonUtil.addAllConNewAndSoloDistintiByUid(soggettiInput, soggettiDaRelazioni);
 		//
 		
 		//Da qui in poi si ragiona con distintiSiacTSoggettiCoinvolti composta da soggettiInput sommato a soggettiDaRelazioni
@@ -4419,7 +4502,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		List<SiacTModpagFin> distintiSiacTModpagFinCoinvoltiPerCessioni = ottimizzazioneSoggettoDto.getListaTModpagsCessioniAll();
 		
-		List<SiacTModpagFin> tuttiIModPagCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacTModpagFinCoinvolti, distintiSiacTModpagFinCoinvoltiPerCessioni);
+		List<SiacTModpagFin> tuttiIModPagCoinvolti = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacTModpagFinCoinvolti, distintiSiacTModpagFinCoinvoltiPerCessioni);
 		
 		List<SiacTModpagModFin> distintiSiacTModpagModFinCoinvolti =  soggettoDao.ricercaSiacTModpagModFinMassive(tuttiIModPagCoinvolti);
 		ottimizzazioneSoggettoDto.setDistintiSiacTModpagModFinCoinvolti(distintiSiacTModpagModFinCoinvolti);
@@ -4434,7 +4517,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		//cerchiamo ora i SiacRModpagStato
 		List<SiacRModpagOrdineFin> distintiSiacRModpagOrdineFinCoinvoltiByModPag = soggettoDao.ricercaSiacRModpagOrdineFinBySiacTModpagFin(tuttiIModPagCoinvolti);
 		List<SiacRModpagOrdineFin> distintiSiacRModpagOrdineFinCoinvoltiBySoggetti = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti, "SiacRModpagOrdineFin");
-		List<SiacRModpagOrdineFin> distintiSiacRModpagOrdineFinCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacRModpagOrdineFinCoinvoltiByModPag, distintiSiacRModpagOrdineFinCoinvoltiBySoggetti);
+		List<SiacRModpagOrdineFin> distintiSiacRModpagOrdineFinCoinvolti = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacRModpagOrdineFinCoinvoltiByModPag, distintiSiacRModpagOrdineFinCoinvoltiBySoggetti);
 		ottimizzazioneSoggettoDto.setDistintiSiacRModpagOrdineFinCoinvolti(distintiSiacRModpagOrdineFinCoinvolti);
 		//
 		
@@ -4469,7 +4552,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		List<SiacTComuneFin> distintiSiacTComuneFinCoinvoltiByIndirizziSogg = soggettoDao.ricercaSiacTComuneFinBySiacTIndirizzoSoggettoFin(distintiSiacTIndirizzoSoggetto);
 		
 		//COMPONGO TUTTI I COMUNI IN GIOCO:
-		List<SiacTComuneFin> distintiSiacTComuneFinCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacTComuneFinCoinvoltiByPersoneFisiche, distintiSiacTComuneFinCoinvoltiByIndirizziSogg);
+		List<SiacTComuneFin> distintiSiacTComuneFinCoinvolti = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacTComuneFinCoinvoltiByPersoneFisiche, distintiSiacTComuneFinCoinvoltiByIndirizziSogg);
 		
 		
 		List<SiacRComuneProvinciaFin> distintiSiacRComuneProvinciaFinCoinvolti =  soggettoDao.ricercaSiacRComuneProvinciaFinBySiacTComuneFin(distintiSiacTComuneFinCoinvolti);
@@ -4523,604 +4606,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	}
 	
 	
-	/**
-	 * Da usare per esempio dal ricerca impegno, gli si passa le testate di tutti i suoi sub per caricare in un colpo
-	 * solo i dati di ogni eventuale mutuo dei vari sub impegni
-	 * @param movimentiTs
-	 * @return
-	 */
-	public OttimizzazioneMutuoDto caricaDatiOttimizzazioneMutuiByMovimenti(List<SiacTMovgestTsFin> movimentiTs,Integer idEnte){
-		OttimizzazioneMutuoDto ottimizzazioneMutuoDto = new OttimizzazioneMutuoDto();
-		
-		//SiacRMutuoVoceMovgestFin convolti rispetti ai movimenti indicati:
-		List<SiacRMutuoVoceMovgestFin> distintiSiacRMutuoVoceMovgestFinCoinvolti = movimentoGestioneDao.ricercaByMovGestTsMassive(movimentiTs, "SiacRMutuoVoceMovgestFin", "siacTMovgestTs", Boolean.TRUE);
-		//ottimizzazioneMutuoDto.setDistintiSiacRMutuoVoceMovgestFinCoinvolti(distintiSiacRMutuoVoceMovgestFinCoinvolti);
-		
-		List<SiacTMovgestFin> listaMovimenti = new ArrayList<SiacTMovgestFin>();
-		if(!StringUtils.isEmpty(movimentiTs)){
-			for(SiacTMovgestTsFin it : movimentiTs){
-				listaMovimenti.add(it.getSiacTMovgest());
-			}
-		}
-		
-		//Liste SiacTMutuoVoceFin, SiacTMutuoFin,  SiacTMovgestFin e SiacTMovgestTsFin:
-		List<SiacTMutuoFin> listaSiacTMutuoFin = ottimizzazioneMutuoDto.estraiSiacTMutuoFinBySiacRMutuoVoceMovgestFin(distintiSiacRMutuoVoceMovgestFinCoinvolti);
-		
-		//Carichiamo i dati relativi ad altri movimenti e voci di mutuo a partire dai mutui coinvolti:
-		/*List<SiacTMutuoVoceFin> siacTMutuoVoceAltri = mutuoDao.ricercaSiacTMutuoVoceFinBySiacTMutuoFinMassive(listaSiacTMutuoFin, true);
-		List<SiacRMutuoVoceMovgestFin> siacRMutuoVoceMovgestFinAltri = mutuoDao.ricercaByMutuoVoceMassive(siacTMutuoVoceAltri, "SiacRMutuoVoceMovgestFin", Boolean.TRUE);
-		List<SiacTMovgestFin> listaSiacTMovgestAltri = estraiSiacTMovgestFinBySiacRMutuoVoceMovgestFin(siacRMutuoVoceMovgestFinAltri);
-		List<SiacTMovgestTsFin> listaSiacTMovgestTsFinAltri = estraiSiacTMovgestTsFinBySiacRMutuoVoceMovgestFin(siacRMutuoVoceMovgestFinAltri);
-		List<SiacTMutuoVoceFin> listaSiacTMutuoVoceFinAltri = estraiSiacTMutuoVoceFinBySiacRMutuoVoceMovgestFin(siacRMutuoVoceMovgestFinAltri);
-		List<SiacTMutuoFin> listaSiacTMutuoFinAltri = estraiSiacTMutuoFinBySiacRMutuoVoceMovgestFin(siacRMutuoVoceMovgestFinAltri);
-		
-		
-		ottimizzazioneMutuoDto.setDistintiSiacTMovgestFinCoinvolti(listaSiacTMovgestAltri);
-		ottimizzazioneMutuoDto.setDistintiSiacTMovgestTsFinCoinvolti(listaSiacTMovgestTsFinAltri);
-		ottimizzazioneMutuoDto.setDistintiSiacTMutuoVoceFinCoinvolti(listaSiacTMutuoVoceFinAltri);
-		ottimizzazioneMutuoDto.setDistintiSiacTMutuoFinCoinvolti(listaSiacTMutuoFinAltri);*/
-		
-		ottimizzazioneMutuoDto = caricaDatiOttimizzazioneMutuo(listaSiacTMutuoFin,idEnte);
-		
-		return ottimizzazioneMutuoDto;
-	}
-	
-	
-	public OttimizzazioneMutuoDto caricaDatiOttimizzazioneMutuo(List<SiacTMutuoFin> listaSiacTMutuoFin,Integer idEnte){
-		OttimizzazioneMutuoDto ottimizzazioneMutuoDto = new OttimizzazioneMutuoDto();
-		
-		//Setto i mutui stessi:
-		ottimizzazioneMutuoDto.setDistintiSiacTMutuoFinCoinvolti(listaSiacTMutuoFin);
-		
-		//VOCI DI MUTUO:
-		List<SiacTMutuoVoceFin> vociDiMutuo = mutuoDao.ricercaSiacTMutuoVoceFinBySiacTMutuoFinMassive(listaSiacTMutuoFin, true);
-		ottimizzazioneMutuoDto.setDistintiSiacTMutuoVoceFinCoinvolti(vociDiMutuo);
-		
-		//LIQUIDAZIONI VALIDE:
-		List<Integer> idVoceMutuoList = CommonUtils.getIdListSiacTBase(vociDiMutuo);
-		List<SiacRMutuoVoceLiquidazioneFin> distintiSiacRMutuoVoceLiquidazioneFinCoinvoltiInStatoValido = 
-				siacTLiquidazioneRepository.findSiacRMutuoVoceLiquidazioneFinByVociMutuo(idEnte, idVoceMutuoList, Constanti.LIQUIDAZIONE_STATO_VALIDO, getNow());
-		ottimizzazioneMutuoDto.setDistintiSiacRMutuoVoceLiquidazioneFinCoinvoltiInStatoValido(distintiSiacRMutuoVoceLiquidazioneFinCoinvoltiInStatoValido);
-		
-		//STATI DEI MUTUI:
-		List<SiacRMutuoStatoFin> distintiSiacRMutuoStatoFinCoinvolti = mutuoDao.ricercaBySiacTMutuoFinMassive(listaSiacTMutuoFin, "SiacRMutuoStatoFin", true);
-		ottimizzazioneMutuoDto.setDistintiSiacRMutuoStatoFinCoinvolti(distintiSiacRMutuoStatoFinCoinvolti);
-		
-		//ATTO AMMINISTRATIVO (dei mutui):
-		List<SiacRMutuoAttoAmmFin> distintiSiacRMutuoAttoAmmFinCoinvolti  = mutuoDao.ricercaBySiacTMutuoFinMassive(listaSiacTMutuoFin, "SiacRMutuoAttoAmmFin", true);;
-		ottimizzazioneMutuoDto.setDistintiSiacRMutuoAttoAmmFinCoinvolti(distintiSiacRMutuoAttoAmmFinCoinvolti);
-		
-		//DISTINI SiacRMutuoSoggettoFin
-		List<SiacRMutuoSoggettoFin> distintiSiacRMutuoSoggettoFinCoinvolti = mutuoDao.ricercaBySiacTMutuoFinMassive(listaSiacTMutuoFin, "SiacRMutuoSoggettoFin", true);;
-		ottimizzazioneMutuoDto.setDistintiSiacRMutuoSoggettoFinCoinvolti(distintiSiacRMutuoSoggettoFinCoinvolti);
-		
-		//DISTINTI SiacRMutuoVoceMovgestFin
-		List<SiacRMutuoVoceMovgestFin> distintiSiacRMutuoVoceMovgestFinCoinvolti = mutuoDao.ricercaByMutuoVoceMassive(vociDiMutuo, "SiacRMutuoVoceMovgestFin", Boolean.TRUE);
-		
-		//SOGGETTI DEI MUTUI:
-		List<SiacTSoggettoFin> distintiSiacTSoggettiCoinvolti = ottimizzazioneMutuoDto.estraiSiacTSoggettoFinBySiacRMutuoSoggettoFin(distintiSiacRMutuoSoggettoFinCoinvolti);
-		List<SiacRSoggettoClasseFin> distintiSiacRSoggettoClasses = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacRSoggettoClasseFin");
-		ottimizzazioneMutuoDto.setDistintiSiacRSoggettoClasseFinCoinvolti(distintiSiacRSoggettoClasses);
-		
-		//Liste SiacTMovgestFin e SiacTMovgestTsFin:
-		List<SiacTMovgestFin> listaSiacTMovgest = ottimizzazioneMutuoDto.estraiSiacTMovgestFinBySiacRMutuoVoceMovgestFin(distintiSiacRMutuoVoceMovgestFinCoinvolti);
-		List<SiacTMovgestTsFin> listaSiacTMovgestTsFin = ottimizzazioneMutuoDto.estraiSiacTMovgestTsFinBySiacRMutuoVoceMovgestFin(distintiSiacRMutuoVoceMovgestFinCoinvolti);
-		
-		//Occorre tirare su anche gli altri SiacRMutuoVoceMovgestFin legati ai movimenti in questione verso altri mutui (servira' per il disp a finanziare dei movimenti)
-		List<SiacRMutuoVoceMovgestFin> siacRMutuoVoceMovgestFinByMovimenti = movimentoGestioneDao.ricercaByMovGestTsMassive(listaSiacTMovgestTsFin, "SiacRMutuoVoceMovgestFin", "siacTMovgestTs", Boolean.TRUE);
-		List<SiacRMutuoVoceMovgestFin> tuttiSiacRMutuoVoceMovgestFin = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacRMutuoVoceMovgestFinCoinvolti, siacRMutuoVoceMovgestFinByMovimenti);
-		ottimizzazioneMutuoDto.setDistintiSiacRMutuoVoceMovgestFinCoinvolti(tuttiSiacRMutuoVoceMovgestFin);
-		
-		//DISTINTI SiacRMovgestBilElemFin
-		List<SiacRMovgestBilElemFin> distintiSiacRMovgestBilElemCoinvolti =  movimentoGestioneDao.ricercaSiacRMovgestBilElemMassive(listaSiacTMovgest);
-		ottimizzazioneMutuoDto.setDistintiSiacRMovgestBilElemCoinvolti(distintiSiacRMovgestBilElemCoinvolti);
-		
-		//ATTO AMMINISTRATIVO (dei movimenti):
-		List<SiacRMovgestTsAttoAmmFin> distintiSiacRMovgestTsAttoAmmCoinvolti =movimentoGestioneDao.ricercaByMovGestTsMassive(listaSiacTMovgestTsFin, "SiacRMovgestTsAttoAmmFin");
-		ottimizzazioneMutuoDto.setDistintiSiacRMovgestTsAttoAmmCoinvolti(distintiSiacRMovgestTsAttoAmmCoinvolti);
-		
-		//IMPORTI DEI MOVIMENTI COLLEGATI:
-		List<SiacTMovgestTsDetFin> distintiSiacTMovgestTsDetCoinvolti = movimentoGestioneDao.ricercaByMovGestTsMassive(listaSiacTMovgestTsFin,"SiacTMovgestTsDetFin");
-		ottimizzazioneMutuoDto.setDistintiSiacTMovgestTsDetCoinvolti(distintiSiacTMovgestTsDetCoinvolti);
-		
-		//DATI PER DISP LIQUIDARE DEGLI IMPORTI COLLEGATI:
-		List<CodificaImportoDto> listaDisponibiliLiquidare = impegnoDao.calcolaDisponibilitaALiquidareMassive(listaSiacTMovgestTsFin);
-		ottimizzazioneMutuoDto.setListaDisponibiliLiquidare(listaDisponibiliLiquidare);
-		
-		//DISTINTI SIAC_T_MOVGEST_TS_DET_MOD_FIN:
-		List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvolti =movimentoGestioneDao.ricercaByMovGestTsMassive(listaSiacTMovgestTsFin, "SiacTMovgestTsDetModFin",Boolean.TRUE);
-		ottimizzazioneMutuoDto.setDistintiSiacTMovgestTsDetModFinCoinvolti(distintiSiacTMovgestTsDetModFinCoinvolti);
-		//
-		
-		//VARAZIONI
-		//DISTINTI SiacRMutuoVoceMovgestFin
-		List<SiacTMutuoVoceVarFin> distintiSiacTMutuoVoceVarFinCoinvolti = mutuoDao.ricercaByMutuoVoceMassive(vociDiMutuo, "SiacTMutuoVoceVarFin", Boolean.TRUE);
-		ottimizzazioneMutuoDto.setDistintiSiacTMutuoVoceVarFinCoinvolti(distintiSiacTMutuoVoceVarFinCoinvolti);
-		
-		//Termino restituendo l'oggetto di ritorno: 
-        return ottimizzazioneMutuoDto;
-	}
-	
-	/**
-	 * Wrapper di retro compatibilita
-	 * @param annoMovimento
-	 * @param numeroMovimento
-	 * @param richiedente
-	 * @param idEnte
-	 * @param siacTMovgestTs
-	 * @param datiOperazioneDto
-	 * @return
-	 */
-	public List<VoceMutuo> estraiElencoVociMutuo(Integer annoMovimento,
-			BigDecimal numeroMovimento, Richiedente richiedente,
-			Integer idEnte, SiacTMovgestTsFin siacTMovgestTs,
-			DatiOperazioneDto datiOperazioneDto) {
-		return estraiElencoVociMutuo(annoMovimento, numeroMovimento, richiedente, idEnte, siacTMovgestTs, datiOperazioneDto, null);
-	}
-	
-	/**
-	 * Si occupa di estrarre l'elenco delle voci di mutuo
-	 * @param annoMovimento
-	 * @param numeroMovimento
-	 * @param richiedente
-	 * @param idEnte
-	 * @param siacTMovgestTs
-	 * @param datiOperazioneDto
-	 * @param ottimizzazioneDto 
-	 * @return
-	 */
-	public List<VoceMutuo> estraiElencoVociMutuo(Integer annoMovimento,
-			BigDecimal numeroMovimento, Richiedente richiedente,
-			Integer idEnte, SiacTMovgestTsFin siacTMovgestTs,
-			DatiOperazioneDto datiOperazioneDto, OttimizzazioneMutuoDto ottimizzazioneDto) {
 
-		List<VoceMutuo> elencoVociMutuo = new ArrayList<VoceMutuo>();
-
-		List<SiacRMutuoVoceMovgestFin> listaSiacRMutuoVoceMovgest = null;
-		if(ottimizzazioneDto!=null){
-			//RAMO OTTIMIZZATO
-			listaSiacRMutuoVoceMovgest = ottimizzazioneDto.filtraSiacRMovgestTsFinBySiacTMovgestTsFin(siacTMovgestTs);
-		} else {
-			//RAMO CLASSICO
-			listaSiacRMutuoVoceMovgest = siacTMovgestTs.getSiacRMutuoVoceMovgests();
-		}
-		
-		listaSiacRMutuoVoceMovgest = CommonUtils.soloValidiSiacTBase(listaSiacRMutuoVoceMovgest, null);
-		
-		
-		if (null != listaSiacRMutuoVoceMovgest	&& listaSiacRMutuoVoceMovgest.size() > 0) {
-			for (SiacRMutuoVoceMovgestFin siacRMutuoVoceMovgest : listaSiacRMutuoVoceMovgest) {
-				if (siacRMutuoVoceMovgest!=null) {
-
-					SiacTMutuoFin siacTMutuo = siacRMutuoVoceMovgest.getSiacTMutuoVoce().getSiacTMutuo();
-
-					if (CommonUtils.isValidoSiacTBase(siacTMutuo, null)) {
-						
-						Mutuo mutuo = ricercaMutuo(idEnte,	siacTMutuo.getMutCode(), datiOperazioneDto.getTs(),ottimizzazioneDto);
-						
-						List<VoceMutuo> elencoVociMutuoTotale = mutuo.getListaVociMutuo();
-						
-						if (null != elencoVociMutuoTotale && elencoVociMutuoTotale.size() > 0) {
-							for (VoceMutuo voceMutuo : elencoVociMutuoTotale) {
-								int annoImpegno = voceMutuo.getImpegno().getAnnoMovimento();
-								BigDecimal numeroImpegno = voceMutuo.getImpegno().getNumero();
-
-								if (annoImpegno == annoMovimento.intValue() 
-										&& numeroImpegno.equals(numeroMovimento)
-										&& siacRMutuoVoceMovgest.getSiacTMutuoVoce().getMutVoceId().intValue() == voceMutuo.getUid()) {
-									voceMutuo.setIstitutoMutuante(mutuo.getSoggettoMutuo());
-									voceMutuo.setDescrizioneMutuo(mutuo.getDescrizioneMutuo());
-
-									//Va linkata al mutuo stesso:
-									Mutuo mutuoCloneToAdd = clone(mutuo);//per evitare incroci pericoli di referenze ricorsive lo cloniamo..
-									voceMutuo.setMutuo(mutuoCloneToAdd);
-									//
-									
-									elencoVociMutuo.add(voceMutuo);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		//Termino restituendo l'oggetto di ritorno: 
-        return elencoVociMutuo;
-	}
-	
-	/**
-	 * Wrapper di retro compatibilita'
-	 * @param codiceEnte
-	 * @param numeroMutuo
-	 * @param now
-	 * @return
-	 */
-	public Mutuo ricercaMutuo(Integer codiceEnte, String numeroMutuo,Timestamp now) {
-		SiacTMutuoFin siacTMutuo = mutuoDao.ricercaMutuo(codiceEnte, numeroMutuo,now);
-		OttimizzazioneMutuoDto ottimizzazioneDto = caricaDatiOttimizzazioneMutuo(toList(siacTMutuo),codiceEnte);
-		return ricercaMutuo(codiceEnte, numeroMutuo, now,ottimizzazioneDto);
-	}
-	
-	/**
-	 * Questo metodo deve effetture un mapping equivalente a map-id="SiacTMutuo_Mutuo"
-	 * ma usando un approccio ottimizzato
-	 * 
-	 * @param siacTOrdinativoT
-	 * @param subOrdinativoPagamento
-	 * @param datiOttimizzazione
-	 * @return
-	 */
-	private Mutuo siacTMutuoFinToMutuoModel(SiacTMutuoFin siacTMutuo,OttimizzazioneMutuoDto datiOttimizzazione){
-		
-		Mutuo mutuo = new Mutuo();
-		
-		if(siacTMutuo!=null && datiOttimizzazione!=null){
-			
-			mutuo = map(siacTMutuo, Mutuo.class, FinMapId.SiacTMutuo_Mutuo_Minimo);
-			
-			//1. Mapping dell'atto amm
-			//deve essere equivalente al mapping:
-			//<field custom-converter-id="mutuoAttoAmmConverter">
-			//	 <a>this</a>
-	 		//	 <b>this</b> 
-			//</field>
-			
-			List<SiacRMutuoAttoAmmFin> attoAmms = datiOttimizzazione.filtraSiacRMutuoAttoAmmFinBySiacTMutuoVoceFin(siacTMutuo);
-			SiacRMutuoAttoAmmFin rMutuoAttoAmm = DatiOperazioneUtils.getValido(attoAmms, null);
-			if(rMutuoAttoAmm!=null && rMutuoAttoAmm.getSiacTAttoAmm()!=null){
-				AttoAmministrativo attoAmm = EntityToModelConverter.siacTAttoToAttoAmministrativo(rMutuoAttoAmm.getSiacTAttoAmm());
-				mutuo.setAttoAmministrativoMutuo(attoAmm);
-				mutuo.setIdAttoAmministrativoMutuo(rMutuoAttoAmm.getSiacTAttoAmm().getAttoammId());
-				mutuo.setAnnoAttoAmministrativoMutuo(Integer.valueOf(rMutuoAttoAmm.getSiacTAttoAmm().getAttoammAnno()));
-				mutuo.setNumeroAttoAmministrativoMutuo(rMutuoAttoAmm.getSiacTAttoAmm().getAttoammNumero());
-			}
-			
-
-			//2. Mapping del soggetto
-			//deve essere equivalente al mapping:
-			//<field custom-converter-id="mutuoSoggettoConverter">
-			// <a>this</a>
- 			// <b>this</b> 
-			// </field>
-			List<SiacRMutuoSoggettoFin> listaRMutuoSoggetto =  datiOttimizzazione.filtraSiacRMutuoSoggettoFinBySiacTMutuoVoceFin(siacTMutuo);
-			SiacRMutuoSoggettoFin rMutuoSoggetto = DatiOperazioneUtils.getValido(listaRMutuoSoggetto, null);
-			if(rMutuoSoggetto!=null && rMutuoSoggetto.getSiacTSoggetto()!=null){
-				mutuo.setIdSoggettoMutuo(rMutuoSoggetto.getSiacTSoggetto().getSoggettoId());
-				mutuo.setCodiceSoggettoMutuo(rMutuoSoggetto.getSiacTSoggetto().getSoggettoCode());
-			}
-			
-			
-			//2. Mapping dello stato
-			//deve essere equivalente al mapping:
-			//<field custom-converter-id="mutuoStatoConverter">
-			// <a>this</a>
- 			// <b>this</b>
- 			//  </field>
-			
-			List<SiacRMutuoStatoFin> listaRMutuoStato =  datiOttimizzazione.filtraSiacRMutuoStatoFinBySiacTMutuoVoceFin(siacTMutuo);
-			SiacRMutuoStatoFin rMutuoStato =  DatiOperazioneUtils.getValido(listaRMutuoStato, null);
-			if(rMutuoStato!=null){
-				String code = rMutuoStato.getSiacDMutuoStato().getMutStatoCode();
-				StatoOperativoMutuo statoOpMutuo = Constanti.statoOperativoMutuoStringToEnum(code);
-				mutuo.setStatoOperativoMutuo(statoOpMutuo);
-				
-				mutuo.setIdStatoOperativoMutuo(rMutuoStato.getSiacDMutuoStato().getMutStatoId());
-				mutuo.setDataStatoOperativoMutuo(rMutuoStato.getDataInizioValidita());
-				
-				ClassificatoreGenerico classificatoreStatoOperativoMutuo = new ClassificatoreGenerico();
-				classificatoreStatoOperativoMutuo.setCodice(rMutuoStato.getSiacDMutuoStato().getMutStatoCode());
-				classificatoreStatoOperativoMutuo.setDescrizione(rMutuoStato.getSiacDMutuoStato().getMutStatoDesc());
-				mutuo.setClassificatoreStatoOperativoMutuo(classificatoreStatoOperativoMutuo);
-			}
-			
-			
-		}
-		
-		return mutuo;
-	}
-	
-	public Mutuo ricercaMutuo(Integer codiceEnte, String numeroMutuo,Timestamp now,OttimizzazioneMutuoDto ottimizzazioneDto) {
-
-		long startMetodo = System.currentTimeMillis();
-		
-		Mutuo mutuo = null;
-		
-		SiacTMutuoFin siacTMutuo = ottimizzazioneDto.estraiSiacTMutuoByNumeroMutuo(numeroMutuo);
-		
-		long startMapping = System.currentTimeMillis();
-		mutuo = map(siacTMutuo, Mutuo.class, FinMapId.SiacTMutuo_Mutuo);
-		//mutuo = siacTMutuoFinToMutuoModel(siacTMutuo, ottimizzazioneDto);
-		long stopMapping = System.currentTimeMillis();
-		
-		// Tipo Mutuo
-		mutuo.setTipoMutuo(Constanti.tipoMutuoStringToEnum(siacTMutuo.getSiacDMutuoTipo().getMutTipoCode()));
-		mutuo.setIdTipoMutuo(siacTMutuo.getSiacDMutuoTipo().getMutTipoId().toString());
-		mutuo.setDescrizioneTipoMutuo(siacTMutuo.getSiacDMutuoTipo().getMutTipoDesc());
-
-		// dati login
-		// sulla tabella siac_t_mutuo esiste solo il campo login_operazione
-		mutuo.setLoginCreazione(siacTMutuo.getLoginOperazione());
-		mutuo.setLoginModifica(siacTMutuo.getLoginOperazione());
-
-		// Stato Mutuo
-		List<SiacRMutuoStatoFin> statos = ottimizzazioneDto.filtraSiacRMutuoStatoFinBySiacTMutuoVoceFin(siacTMutuo);
-		for (SiacRMutuoStatoFin rMutuoStato : statos){
-			if (CommonUtils.isValidoSiacTBase(rMutuoStato, null)) {
-				mutuo.setStatoOperativoMutuo(Constanti.statoOperativoMutuoStringToEnum(rMutuoStato.getSiacDMutuoStato().getMutStatoCode()));
-				break;
-			}
-		}
-		
-		// Provvedimento
-		List<SiacRMutuoAttoAmmFin> rMutuoAttoAmms = ottimizzazioneDto.filtraSiacRMutuoAttoAmmFinBySiacTMutuoVoceFin(siacTMutuo);
-		mutuo.setAttoAmministrativoMutuo(getAttoMutuoValido(rMutuoAttoAmms));
-
-		// Istituto mutuante
-		
-		List<SiacRMutuoSoggettoFin> siacRMutuoSoggettos = ottimizzazioneDto.filtraSiacRMutuoSoggettoFinBySiacTMutuoVoceFin(siacTMutuo);
-		for (SiacRMutuoSoggettoFin rMutuoSogg : siacRMutuoSoggettos){
-			if (CommonUtils.isValidoSiacTBase(rMutuoSogg, null)) {
-				Soggetto soggetto = new Soggetto();
-				soggetto.setUid(rMutuoSogg.getSiacTSoggetto().getSoggettoId());
-				soggetto.setCodiceSoggetto(rMutuoSogg.getSiacTSoggetto().getSoggettoCode());
-				soggetto.setCodiceFiscale(rMutuoSogg.getSiacTSoggetto().getCodiceFiscale());
-				soggetto.setPartitaIva(rMutuoSogg.getSiacTSoggetto().getPartitaIva());
-				soggetto.setDenominazione(rMutuoSogg.getSiacTSoggetto().getSoggettoDesc());
-
-				ArrayList<ClassificazioneSoggetto> cSoggettos = new ArrayList<ClassificazioneSoggetto>();
-				// RsoggettoClasse
-				List<SiacRSoggettoClasseFin> soggClasses = ottimizzazioneDto.filtraSiacRSoggettoClasseFinBySiacTSoggettoFin(rMutuoSogg.getSiacTSoggetto());
-				for (SiacRSoggettoClasseFin rSoggettoClasse : soggClasses)
-					if (CommonUtils.isValidoSiacTBase(rSoggettoClasse,null)) {
-						ClassificazioneSoggetto cSoggetto = new ClassificazioneSoggetto();
-						cSoggetto.setSoggettoClasseCode(rSoggettoClasse.getSiacDSoggettoClasse().getSoggettoClasseCode());
-						cSoggetto.setSoggettoClasseDesc(rSoggettoClasse.getSiacDSoggettoClasse().getSoggettoClasseDesc());
-						cSoggettos.add(cSoggetto);
-					}
-				soggetto.setElencoClass(cSoggettos);
-
-				mutuo.setSoggettoMutuo(soggetto);
-			}
-		}
-		// Voci mutuo
-		ArrayList<VoceMutuo> vociMutuo = new ArrayList<VoceMutuo>();
-		// I totali sono memorizzati nei corrispondenti campi di un oggetto
-		// VoceMutuo
-		VoceMutuo totali = new VoceMutuo();
-		totali.setImpegno(new Impegno());
-		// I valori sono memorizzati nei campi corrispondenti solo se non zero
-		// (in caso contrario il campo resta null)
-		BigDecimal totImpegno = BigDecimal.ZERO;
-		BigDecimal totImpegnoDispMod = BigDecimal.ZERO;
-		BigDecimal totImporto = BigDecimal.ZERO;
-		BigDecimal totEco = BigDecimal.ZERO;
-		BigDecimal totRid = BigDecimal.ZERO;
-		BigDecimal totSto = BigDecimal.ZERO;
-		BigDecimal totRes = BigDecimal.ZERO;
-		BigDecimal dispMod = BigDecimal.ZERO;
-		
-		
-		long startCICLO = System.currentTimeMillis();
-		
-		long totCICLO = 0;
-		long totCICLOINTERNO_1=0;
-		long totVARIAZIONI = 0;
-		long totPARTE_FINALE=0;
-		
-		for (SiacTMutuoVoceFin mutuoVoce : siacTMutuo.getSiacTMutuoVoces()){
-			if (mutuoVoce.getDataFineValidita() == null) {
-				VoceMutuo voceMutuo = map(mutuoVoce, VoceMutuo.class,FinMapId.SiacTMutuoVoce_VoceMutuo);
-				voceMutuo.setOrigineVoceMutuo(Constanti.origineVoceMutuoStringToEnum(mutuoVoce.getSiacDMutuoVoceTipo().getMutVoceTipoCode()));
-
-				// Impegno / subimpegno
-				ArrayList<SubImpegno> elencoSubImpegni = new ArrayList<SubImpegno>();
-				
-				long startCICLOINTERNO_1 = System.currentTimeMillis();
-				
-				List<SiacRMutuoVoceMovgestFin> listaSiacRMutuoVoceMovgests = ottimizzazioneDto.filtraSiacRMovgestTsFinBySiacTMutuoVoceFin(mutuoVoce);
-				
-				for (SiacRMutuoVoceMovgestFin rMutuoVoceMovgest : listaSiacRMutuoVoceMovgests) {
-					
-					SiacTMovgestTsFin siacTMovgestTsFin = rMutuoVoceMovgest.getSiacTMovgestTs();
-					SiacTMovgestFin movgest = siacTMovgestTsFin.getSiacTMovgest();
-					SiacRMovgestTsAttoAmmFin attoFin =  ottimizzazioneDto.getSiacRMovgestTsAttoAmmFinValido(siacTMovgestTsFin);
-					AttoAmministrativo atto = buildAttoAmministrativoFromListMovgestTsAttoAmm(attoFin);
-					
-					SiacRMovgestBilElemFin bilElem = ottimizzazioneDto.getSiacRMovgestBilElemFinValido(movgest);
-					Integer capitolo = bilElem.getSiacTBilElem().getElemId();
-					
-					Impegno imp = map(movgest, Impegno.class,FinMapId.SiacTMovgest_Impegno);
-					imp.setChiaveCapitoloUscitaGestione(capitolo);
-					
-					//ATTO AMMINISTRATIVO:
-					imp.setAttoAmministrativo(atto);
-					
-					setImportiImpegnoDelMutuo(codiceEnte, now,	siacTMovgestTsFin, imp,ottimizzazioneDto);
-					
-					List<SiacTMovgestTsDetModFin> detMod = ottimizzazioneDto.filtraSiacTMovgestTsDetModFinBySiacTMovgestTsFin(siacTMovgestTsFin);
-					dispMod = getDisponibileModifiche(detMod);
-					
-					if (siacTMovgestTsFin.getSiacDMovgestTsTipo().getMovgestTsTipoCode().equals(Constanti.MOVGEST_TS_TIPO_TESTATA)) {
-						// Constanti.MOVGEST_TS_TIPO_TESTATA identifica le righe
-						// di IMPEGNO sulla tabella SIAC_T_MOVGEST_TS
-						totImpegno = totImpegno.add(imp.getImportoAttuale());
-					} else if (siacTMovgestTsFin.getSiacDMovgestTsTipo().getMovgestTsTipoCode().equals(Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO)) {
-						// Constanti.MOVGEST_TS_TIPO_SUBIMPEGNO identifica le
-						// righe di SUBIMPEGNO sulla tabella SIAC_T_MOVGEST_TS
-						SubImpegno simp = map(siacTMovgestTsFin,SubImpegno.class,FinMapId.SiacTMovgestTs_SubImpegno);
-						setImportiImpegnoDelMutuo(codiceEnte, now,siacTMovgestTsFin, simp,ottimizzazioneDto);
-						totImpegno = totImpegno.add(simp.getImportoAttuale());
-						elencoSubImpegni.add(simp);
-						// non si aggiunge l'importo dell'impegno in quanto gia'
-						// compreso in quello del subimpegno
-						imp.setElencoSubImpegni(elencoSubImpegni);
-					}
-					voceMutuo.setImpegno(imp);
-				}
-				
-				long stopCICLOINTERNO_1 = System.currentTimeMillis();
-				totCICLOINTERNO_1 = totCICLOINTERNO_1 + (stopCICLOINTERNO_1-startCICLOINTERNO_1);
-				
-				if ((voceMutuo.getImpegno() != null) && !elencoSubImpegni.isEmpty()){
-					voceMutuo.getImpegno().setElencoSubImpegni(elencoSubImpegni);
-				}	
-
-				// Variazioni
-				
-				long startVARIAZIONI = System.currentTimeMillis();
-				
-				List<SiacTMutuoVoceVarFin> siacTMutuoVoceVars  = ottimizzazioneDto.filtraSiacTMutuoVoceVarFinFinBySiacTMutuoVoceFin(mutuoVoce);
-				
-				if (!StringUtils.isEmpty(siacTMutuoVoceVars)) {
-					BigDecimal eco = BigDecimal.ZERO;
-					BigDecimal rid = BigDecimal.ZERO;
-					BigDecimal sto = BigDecimal.ZERO;
-					BigDecimal res = BigDecimal.ZERO;
-					ArrayList<VariazioneImportoVoceMutuo> listaVariazioniImportoVoceMutuo = new ArrayList<VariazioneImportoVoceMutuo>();
-					for (SiacTMutuoVoceVarFin mutuoVoceVar : siacTMutuoVoceVars){
-						if(CommonUtils.isValidoSiacTBase(mutuoVoceVar, null)){
-
-							TipoVariazioneImportoVoceMutuo tipoVarVoce = Constanti.tipoVariazioneImportoVoceMutuoStringToEnum(mutuoVoceVar.getSiacDMutuoVarTipo().getMutVarTipoCode());
-
-							if (tipoVarVoce == TipoVariazioneImportoVoceMutuo.ECONOMIA){
-								eco = eco.add(mutuoVoceVar.getMutVoceVarImporto());
-							}	
-							if (tipoVarVoce == TipoVariazioneImportoVoceMutuo.RIDUZIONE){
-								rid = rid.add(mutuoVoceVar.getMutVoceVarImporto());
-							}	
-							if (tipoVarVoce == TipoVariazioneImportoVoceMutuo.STORNO){
-								sto = sto.add(mutuoVoceVar.getMutVoceVarImporto());
-							}	
-							if (tipoVarVoce == TipoVariazioneImportoVoceMutuo.A_RESIDUO){
-								res = res.add(mutuoVoceVar.getMutVoceVarImporto());
-							}	
-
-							VariazioneImportoVoceMutuo vivm = map(mutuoVoceVar,VariazioneImportoVoceMutuo.class,FinMapId.SiacTMutuoVoceVar_VariazioneImportoVoceMutuo);
-							vivm.setTipoVariazioneImportoVoceMutuo(tipoVarVoce);
-							listaVariazioniImportoVoceMutuo.add(vivm);
-						}
-					}
-					if (eco.doubleValue() != 0.0) {
-						voceMutuo.setImportoVariazioniEconomia(eco);
-						totEco = totEco.add(eco);
-						dispMod = dispMod.subtract(eco);
-					}
-					if (rid.doubleValue() != 0.0) {
-						voceMutuo.setImportoVariazioniRiduzione(rid);
-						totRid = totRid.add(rid);
-						dispMod = dispMod.subtract(rid);
-					}
-					if (sto.doubleValue() != 0.0) {
-						voceMutuo.setImportoVariazioniStorno(sto);
-						totSto = totSto.add(sto);
-						dispMod = dispMod.subtract(sto);
-					}
-					if (res.doubleValue() != 0.0) {
-						voceMutuo.setImportoVariazioniResiduo(res);
-						totRes = totRes.add(res);
-					}
-					voceMutuo.setListaVariazioniImportoVoceMutuo(listaVariazioniImportoVoceMutuo);
-				}
-				long stopVARIAZIONI = System.currentTimeMillis();
-				totVARIAZIONI = totVARIAZIONI + (stopVARIAZIONI-startVARIAZIONI);
-				
-				
-				long startPARTE_FINALE = System.currentTimeMillis();
-
-				if (dispMod.doubleValue() != 0.0) {
-					voceMutuo.setImportoDisponibileModificheImpegno(dispMod);
-					totImpegnoDispMod = totImpegnoDispMod.add(dispMod);
-				}
-
-				if (voceMutuo.getImportoAttualeVoceMutuo().doubleValue() != 0.0){
-					totImporto = totImporto.add(voceMutuo.getImportoAttualeVoceMutuo());
-				}
-				
-				/* OLD
-				BigDecimal liquidatoVoceMutuo = BigDecimal.ZERO;
-				liquidatoVoceMutuo = siacTLiquidazioneRepository.findDisponibilitaLiquidareVoceMutuo(codiceEnte,voceMutuo.getIdVoceMutuo().intValue(),Constanti.LIQUIDAZIONE_STATO_VALIDO, now);
-				liquidatoVoceMutuo = liquidatoVoceMutuo == null ? BigDecimal.ZERO	: liquidatoVoceMutuo;
-				*/
-				
-				//NEW OTTIMIZZATO:
-				BigDecimal liquidatoVoceMutuo = ottimizzazioneDto.calcolaSommaLiquidazioniByVoceMutuo(mutuoVoce);
-				
-				voceMutuo.setImportoDisponibileLiquidareVoceMutuo(voceMutuo.getImportoAttualeVoceMutuo().subtract(liquidatoVoceMutuo));
-
-				vociMutuo.add(voceMutuo);
-				
-				
-				long stopPARTE_FINALE = System.currentTimeMillis();
-				totPARTE_FINALE = totPARTE_FINALE + (stopPARTE_FINALE-startPARTE_FINALE);
-				
-			}
-		}
-		
-		long stopCICLO = System.currentTimeMillis();
-		totCICLO = stopCICLO - startCICLO;
-		
-		mutuo.setListaVociMutuo(vociMutuo);
-		// Totali
-		if (totImpegno.doubleValue() != 0.0)
-			totali.getImpegno().setImportoAttuale(totImpegno);
-		if (totImpegnoDispMod.doubleValue() != 0.0)
-			totali.setImportoDisponibileModificheImpegno(totImpegnoDispMod);
-
-		if (totImporto.doubleValue() != 0.0){
-			totali.setImportoAttualeVoceMutuo(totImporto);
-		}	
-		if (totEco.doubleValue() != 0.0){
-			totali.setImportoVariazioniEconomia(totEco);
-		}	
-		if (totRid.doubleValue() != 0.0){
-			totali.setImportoVariazioniRiduzione(totRid);
-		}	
-		if (totSto.doubleValue() != 0.0){
-			totali.setImportoVariazioniStorno(totSto);
-		}	
-		if (totRes.doubleValue() != 0.0){
-			totali.setImportoVariazioniResiduo(totRes);
-		}	
-		mutuo.setTotaleVociMutuo(totali);
-		mutuo.setDisponibileMutuo(mutuo.getImportoAttualeMutuo().subtract(totImporto));
-		
-		long stopMetodo = System.currentTimeMillis();
-		long totMetodo = stopMetodo - startMetodo;
-		//System.out.println("TOT METODO:                     " + totMetodo);
-		
-		long totMapping = stopMapping - startMapping;
-//		System.out.println("TOT MAPPING:                     " + totMapping);
-//		
-//		System.out.println("TOT CICLO:                     " + totCICLO);
-//		System.out.println("		 DI CUI ");
-//		System.out.println("         totCICLOINTERNO_1:    " + totCICLOINTERNO_1);
-//		System.out.println("         totVARIAZIONI:        " + totVARIAZIONI);
-//		System.out.println("         totPARTE_FINALE:      " + totPARTE_FINALE);
-		
-
-		//Termino restituendo l'oggetto di ritorno: 
-        return mutuo;
-	}
-	
-	/**
-	 * Filtra tra gli atti indicati in base alla validita'
-	 * @param atti
-	 * @return
-	 */
-	protected AttoAmministrativo getAttoMutuoValido(List<SiacRMutuoAttoAmmFin> atti) {
-		AttoAmministrativo atto = null;
-		//Puo' esserci un solo valido alla volta:
-		SiacRMutuoAttoAmmFin rMutuoAtto = DatiOperazioneUtils.getValido(atti, getNow());
-		if (rMutuoAtto != null) {
-			SiacTAttoAmmFin siacTAttoAmm = rMutuoAtto.getSiacTAttoAmm();
-			if(siacTAttoAmm!=null){
-				atto = EntityToModelConverter.siacTAttoToAttoAmministrativo(siacTAttoAmm);
-			}
-		}
-		//Termino restituendo l'oggetto di ritorno: 
-		return atto;
-	}
 	
 	/**
 	 * Somma le modifiche di importo di tipo RIUtilizzo applicate all'impegno /
@@ -5130,7 +4616,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	 */
 	protected BigDecimal getDisponibileModifiche(List<SiacTMovgestTsDetModFin> tMovgestTsDetMods) {
 		BigDecimal totale = BigDecimal.ZERO;
-		if(!StringUtils.isEmpty(tMovgestTsDetMods)){
+		if(!StringUtilsFin.isEmpty(tMovgestTsDetMods)){
 			for (SiacTMovgestTsDetModFin movgestTsDetMod : tMovgestTsDetMods){
 				if (movgestTsDetMod.getDataFineValidita() == null) {
 					SiacDModificaTipoFin modTipo = movgestTsDetMod.getSiacRModificaStato().getSiacTModifica().getSiacDModificaTipo();
@@ -5146,147 +4632,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
         return totale;
 	}
 	
-	/**
-	 * Valorizzazione degli importi dell'impegno / subimpegno calcolati
-	 * 
-	 * @param codiceEnte
-	 * @param now
-	 * @param siacTMovgestTs
-	 * @param imp
-	 */
-	private void setImportiImpegnoDelMutuo(Integer codiceEnte, Timestamp now,SiacTMovgestTsFin siacTMovgestTs, Impegno imp,OttimizzazioneMutuoDto ottimizzazioneDto) {
-		// inizializzazione
-		imp.setImportoAttuale(BigDecimal.ZERO);
-		// ricerca importi iniziale e attuale
-		
-		Integer movgestTsId = siacTMovgestTs.getMovgestTsId();
 
-		BigDecimal importoIniziale = ottimizzazioneDto.estraiImporto(movgestTsId, Constanti.MOVGEST_TS_DET_TIPO_INIZIALE);
-		BigDecimal importoAttuale = ottimizzazioneDto.estraiImporto(movgestTsId, Constanti.MOVGEST_TS_DET_TIPO_ATTUALE);
-		
-		imp.setImportoIniziale(importoIniziale);
-		imp.setImportoAttuale(importoAttuale);
-
-		// calcolo disponibilita a liquidare
-		BigDecimal disponibilitaLiquidare = ottimizzazioneDto.estraiDisponibileLiquidare(movgestTsId);
-		imp.setDisponibilitaLiquidare(disponibilitaLiquidare);
-
-		// calcolo disponibilita a finanziare
-		BigDecimal totVociMutuoSubimpegno = ottimizzazioneDto.findSommaVociMutuoValideBySiacTMovgestTsFin(siacTMovgestTs);
-		imp.setDisponibilitaFinanziare(imp.getImportoAttuale().subtract(totVociMutuoSubimpegno));
-		// SIAC-6695
-		imp.setMotivazioneDisponibilitaFinanziare("Disponibilita' calcolata come differenza tra l'importo attuale (" + importoAttuale
-				+ ") e il totale delle voci di mutuo valide (" + totVociMutuoSubimpegno + ")");
-
-	}
-	
-	/*public OttimizzazioneSoggettoDto caricaDatiOttimizzazioneRicercaSoggettoByDistintiSoggetti(List<SiacTSoggettoFin> distintiSiacTSoggettiCoinvolti){
-		OttimizzazioneSoggettoDto ottimizzazioneSoggettoDto = new OttimizzazioneSoggettoDto();
-		
-		//DISTINTI SiacTSoggettoFin
-		ottimizzazioneSoggettoDto.setDistintiSiacTSoggettiCoinvolti(distintiSiacTSoggettiCoinvolti);
-		//
-		
-		List<SiacRSoggettoStatoFin> distintiSiacRSoggettoStatoCoinvolti = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti, "SiacRSoggettoStatoFin");
-		List<SiacRFormaGiuridicaFin> distintiSiacRFormaGiuridicaCoinvolti = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti, "SiacRFormaGiuridicaFin");
-		List<SiacRSoggettoAttrFin> distintiSiacRSoggettoAttrCoinvolti = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti, "SiacRSoggettoAttrFin");
-		
-		//DISTINTI SiacRSoggettoRelazFin
-		List<SiacRSoggettoRelazFin> distintiSiacRSoggettoRelaz = soggettoDao.ricercaSiacRSoggettoRelazMassive(distintiSiacTSoggettiCoinvolti);
-		
-		//Prendiamo i soggetti da relazioni:
-		List<SiacTSoggettoFin> soggettiDaRelazioni = soggettoDao.ricercaSiacTSoggettoFinBySiacRSoggettoRelazFin(distintiSiacRSoggettoRelaz);
-		ottimizzazioneSoggettoDto.setDistintiSiacTSoggettiCoinvoltiTramiteRelazioni(soggettiDaRelazioni);
-		//
-		
-		ottimizzazioneSoggettoDto.setDistintiSiacRSoggettoRelaz(distintiSiacRSoggettoRelaz);
-		//
-		
-		//per mod pag e mod pag cessioni:
-		List<SiacTModpagFin> distintiSiacTModpagFinCoinvolti = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacTModpagFin");
-		List<SiacRSoggrelModpagFin> distintiSiacRSoggrelModpagFinCoinvolti = soggettoDao.ricercaSiacRSoggrelModpagFinMassive(distintiSiacRSoggettoRelaz);
-		List<SiacRSoggettoRelazStatoFin> distintSiacRSoggettoRelazStatoFinCoinvolti = soggettoDao.ricercaSiacRSoggettoRelazStatoFinMassive(distintiSiacRSoggettoRelaz);
-		
-		ottimizzazioneSoggettoDto.setDistintiSiacTModpagFinCoinvolti(distintiSiacTModpagFinCoinvolti);
-		ottimizzazioneSoggettoDto.setDistintiSiacRSoggrelModpagFinCoinvolti(distintiSiacRSoggrelModpagFinCoinvolti);
-		ottimizzazioneSoggettoDto.setDistintSiacRSoggettoRelazStatoFinCoinvolti(distintSiacRSoggettoRelazStatoFinCoinvolti);
-		//
-		
-		List<SiacTModpagFin> distintiSiacTModpagFinCoinvoltiPerCessioni = ottimizzazioneSoggettoDto.getListaTModpagsCessioniAll();
-		
-		List<SiacTModpagFin> tuttiIModPagCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacTModpagFinCoinvolti, distintiSiacTModpagFinCoinvoltiPerCessioni);
-		
-		List<SiacTModpagModFin> distintiSiacTModpagModFinCoinvolti =  soggettoDao.ricercaSiacTModpagModFinMassive(tuttiIModPagCoinvolti);
-		ottimizzazioneSoggettoDto.setDistintiSiacTModpagModFinCoinvolti(distintiSiacTModpagModFinCoinvolti);
-		//
-		
-		//cerchiamo ora i SiacRModpagStato
-		List<SiacRModpagStatoFin> distintiSiacRModpagStatoFinCoinvolti = soggettoDao.ricercaSiacRModpagStatoBySiacTModpagFin(tuttiIModPagCoinvolti);
-		ottimizzazioneSoggettoDto.setDistintiSiacRModpagStatoFinCoinvolti(distintiSiacRModpagStatoFinCoinvolti);
-		//
-		
-		
-		//cerchiamo ora i SiacRModpagStato
-		List<SiacRModpagOrdineFin> distintiSiacRModpagOrdineFinCoinvoltiByModPag = soggettoDao.ricercaSiacRModpagOrdineFinBySiacTModpagFin(tuttiIModPagCoinvolti);
-		List<SiacRModpagOrdineFin> distintiSiacRModpagOrdineFinCoinvoltiBySoggetti = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti, "SiacRModpagOrdineFin");
-		List<SiacRModpagOrdineFin> distintiSiacRModpagOrdineFinCoinvolti = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacRModpagOrdineFinCoinvoltiByModPag, distintiSiacRModpagOrdineFinCoinvoltiBySoggetti);
-		ottimizzazioneSoggettoDto.setDistintiSiacRModpagOrdineFinCoinvolti(distintiSiacRModpagOrdineFinCoinvolti);
-		//
-		
-		List<SiacRSoggettoClasseFin> distintiSiacRSoggettoClasses = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacRSoggettoClasseFin");
-		List<SiacRSoggettoTipoFin> distintiSiacRSoggettoTipo = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacRSoggettoTipoFin");
-		List<SiacTRecapitoSoggettoFin> distintiSiacTRecapitoSoggetto = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacTRecapitoSoggettoFin");
-		List<SiacRSoggettoOnereFin> distintiSiacRSoggettoOnere = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacRSoggettoOnereFin");
-		List<SiacTIndirizzoSoggettoFin> distintiSiacTIndirizzoSoggetto = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacTIndirizzoSoggettoFin");
-		List<SiacTPersonaFisicaFin> distintiSiacTPersonaFisica = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacTPersonaFisicaFin");
-		List<SiacTPersonaGiuridicaFin> distintiSiacTPersonaGiuridica = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacTPersonaGiuridicaFin");
-		//set nel dto:
-		ottimizzazioneSoggettoDto.setDistintiSiacRSoggettoStatoCoinvolti(distintiSiacRSoggettoStatoCoinvolti);
-		ottimizzazioneSoggettoDto.setDistintiSiacRFormaGiuridicaCoinvolti(distintiSiacRFormaGiuridicaCoinvolti);
-		
-		//SiacTSoggettoModFin
-		List<SiacTSoggettoModFin> distintiSiacTSoggettoModFinCoinvolti = soggettoDao.ricercaBySoggettoMassive(distintiSiacTSoggettiCoinvolti,"SiacTSoggettoModFin");
-		ottimizzazioneSoggettoDto.setDistintiSiacTSoggettoModFinCoinvolti(distintiSiacTSoggettoModFinCoinvolti);
-		//
-		
-		ottimizzazioneSoggettoDto.setDistintiSiacRSoggettoTipo(distintiSiacRSoggettoTipo);
-		ottimizzazioneSoggettoDto.setDistintiSiacRSoggettoClasses(distintiSiacRSoggettoClasses);
-		ottimizzazioneSoggettoDto.setDistintiSiacTRecapitoSoggetto(distintiSiacTRecapitoSoggetto);
-		ottimizzazioneSoggettoDto.setDistintiSiacRSoggettoOnere(distintiSiacRSoggettoOnere);
-		ottimizzazioneSoggettoDto.setDistintiSiacTIndirizzoSoggetto(distintiSiacTIndirizzoSoggetto);
-		ottimizzazioneSoggettoDto.setDistintiSiacTPersonaFisica(distintiSiacTPersonaFisica);
-		ottimizzazioneSoggettoDto.setDistintiSiacTPersonaGiuridica(distintiSiacTPersonaGiuridica);
-		
-		
-		//Data una persona fisica occorre anche ottimizzare le relazioni verso comune, provincia, regione e nazione:
-		List<SiacTComuneFin> distintiSiacTComuneFinCoinvolti = soggettoDao.ricercaSiacTComuneFinBySiacTPersonaFisicaFin(distintiSiacTPersonaFisica);
-		List<SiacRComuneProvinciaFin> distintiSiacRComuneProvinciaFinCoinvolti =  soggettoDao.ricercaSiacRComuneProvinciaFinBySiacTComuneFin(distintiSiacTComuneFinCoinvolti);
-		List<SiacRComuneRegioneFin> distintiSiacRComuneRegioneFinCoinvolti = soggettoDao.ricercaSiacRComuneRegioneFinBySiacTComuneFin(distintiSiacTComuneFinCoinvolti);
-		
-		
-//		List<SiacTProvinciaFin>  distintiSiacTProvinciaFinCoinvolti =   soggettoDao.ricercaSiacTProvinciaFinBySiacRComuneProvinciaFin(distintiSiacRComuneProvinciaFinCoinvolti);
-//		List<SiacRProvinciaRegioneFin>  distintiSiacRProvinciaRegioneFinCoinvolti =  soggettoDao.ricercaSiacRProvinciaRegioneFinBySiacTProvinciaFin(distintiSiacTProvinciaFinCoinvolti);
-//		List<SiacTRegioneFin> distintiSiacTRegioneFinCoinvolti =   soggettoDao.ricercaSiacTRegioneFinFinBySiacRProvinciaRegioneFin(distintiSiacRProvinciaRegioneFinCoinvolti);
-//		List<SiacTNazioneFin>  distintiSiacTNazioneFinCoinvolti =  soggettoDao.ricercaSiacTNazioneFinBySiacTComuneFin(distintiSiacTComuneFinCoinvolti);
-		
-		
-		ottimizzazioneSoggettoDto.setDistintiSiacTComuneFinCoinvolti(distintiSiacTComuneFinCoinvolti);
-		ottimizzazioneSoggettoDto.setDistintiSiacRComuneProvinciaFinCoinvolti(distintiSiacRComuneProvinciaFinCoinvolti);
-		ottimizzazioneSoggettoDto.setDistintiSiacRComuneRegioneFinCoinvolti(distintiSiacRComuneRegioneFinCoinvolti);
-		
-		
-//		ottimizzazioneSoggettoDto.setDistintiSiacTProvinciaFinCoinvolti(distintiSiacTProvinciaFinCoinvolti);
-//		ottimizzazioneSoggettoDto.setDistintiSiacRProvinciaRegioneFinCoinvolti(distintiSiacRProvinciaRegioneFinCoinvolti);
-//		ottimizzazioneSoggettoDto.setDistintiSiacTRegioneFinCoinvolti(distintiSiacTRegioneFinCoinvolti);
-//		ottimizzazioneSoggettoDto.setDistintiSiacTNazioneFinCoinvolti(distintiSiacTNazioneFinCoinvolti);
-		
-		
-		//
-		
-		//Termino restituendo l'oggetto di ritorno: 
-        return ottimizzazioneSoggettoDto;
-	}*/
-	
 	/**
 	 * Metodo che aggrega i dati in maniera ottimizzata
 	 * @param listaSiacTMovgestTsCoinvolti
@@ -5340,23 +4686,23 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		//POTENZIALE RIDONDANZA. Non sono sicuro di questa query (forse e' ridondante):
 		List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvoltiByRModificaStato =movimentoGestioneDao.ricercaSiacTMovgestTsDetModFinBySiacRModificaStatoFinMassive(distintiSiacRModificaStatoCoinvolti, Boolean.TRUE);
-		List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvoltiALL = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacTMovgestTsDetModFinCoinvolti, distintiSiacTMovgestTsDetModFinCoinvoltiByRModificaStato);
+		List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvoltiALL = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacTMovgestTsDetModFinCoinvolti, distintiSiacTMovgestTsDetModFinCoinvoltiByRModificaStato);
 		ottimizzazioneModificheDto.setDistintiSiacTMovgestTsDetModFinCoinvolti(distintiSiacTMovgestTsDetModFinCoinvoltiALL);
 		//il mio dubbio e' che distintiSiacTMovgestTsDetModFinCoinvolti sia gia' uguale a distintiSiacTMovgestTsDetModFinCoinvoltiALL
 		
 		
 		//POTENZIALE RIDONDANZA. Non sono sicuro di questa query (forse e' ridondante):
 		List<SiacRMovgestTsSogModFin> distintiSiacRMovgestTsSogModFinCoinvoltiByRModificaStato =movimentoGestioneDao.ricercaSiacRMovgestTsSogModFinBySiacRModificaStatoFinMassive(distintiSiacRModificaStatoCoinvolti, Boolean.TRUE);
-		List<SiacRMovgestTsSogModFin> distintiSiacRMovgestTsSogModFinCoinvoltiALL = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacRMovgestTsSogModFinCoinvolti, distintiSiacRMovgestTsSogModFinCoinvoltiByRModificaStato);
+		List<SiacRMovgestTsSogModFin> distintiSiacRMovgestTsSogModFinCoinvoltiALL = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacRMovgestTsSogModFinCoinvolti, distintiSiacRMovgestTsSogModFinCoinvoltiByRModificaStato);
 		ottimizzazioneModificheDto.setDistintiSiacRMovgestTsSogModFinCoinvolti(distintiSiacRMovgestTsSogModFinCoinvoltiALL);
 		//il mio dubbio e' che distintiSiacRMovgestTsSogModFinCoinvolti sia gia' uguale a distintiSiacRMovgestTsSogModFinCoinvoltiALL
 		
 		
 		//POTENZIALE RIDONDANZA. Non sono sicuro di questa query (forse e' ridondante):
 		List<SiacRMovgestTsSogclasseModFin> distintiSiacRMovgestTsSogclasseModFinCoinvoltiByRModificaStato =movimentoGestioneDao.ricercaSiacRMovgestTsSogclasseModFinBySiacRModificaStatoFinMassive(distintiSiacRModificaStatoCoinvolti, Boolean.TRUE);
-		List<SiacRMovgestTsSogclasseModFin> distintiSiacRMovgestTsSogclasseModFinCoinvoltiALL = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacRMovgestTsSogclasseModFinCoinvolti, distintiSiacRMovgestTsSogclasseModFinCoinvoltiByRModificaStato);
+		List<SiacRMovgestTsSogclasseModFin> distintiSiacRMovgestTsSogclasseModFinCoinvoltiALL = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacRMovgestTsSogclasseModFinCoinvolti, distintiSiacRMovgestTsSogclasseModFinCoinvoltiByRModificaStato);
 		ottimizzazioneModificheDto.setDistintiSiacRMovgestTsSogclasseModFinCoinvolti(distintiSiacRMovgestTsSogclasseModFinCoinvoltiALL);
-		//il mio dubbio e' che distintiSiacRMovgestTsSogclasseModFinCoinvolti sia gia' uguale a distintiSiacRMovgestTsSogclasseModFinCoinvoltiALL
+		//il mio dubbio e' che distintiSiacRMovgestTsSogclasseModFinCoinvolti sia gia' uguale a distintiSiacRMovgestTsSogclasseModFinCoinvoltiALL	
 		
 		//Termino restituendo l'oggetto di ritorno: 
         return ottimizzazioneModificheDto;
@@ -5411,21 +4757,21 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		//POTENZIALE RIDONDANZA. Non sono sicuro di questa query (forse e' ridondante):
 		List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvoltiByRModificaStato =movimentoGestioneDao.ricercaSiacTMovgestTsDetModFinBySiacRModificaStatoFinMassive(distintiSiacRModificaStatoCoinvolti, Boolean.TRUE);
-		List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvoltiALL = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacTMovgestTsDetModFinCoinvolti, distintiSiacTMovgestTsDetModFinCoinvoltiByRModificaStato);
+		List<SiacTMovgestTsDetModFin> distintiSiacTMovgestTsDetModFinCoinvoltiALL = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacTMovgestTsDetModFinCoinvolti, distintiSiacTMovgestTsDetModFinCoinvoltiByRModificaStato);
 		ottimizzazioneModificheDto.setDistintiSiacTMovgestTsDetModFinCoinvolti(distintiSiacTMovgestTsDetModFinCoinvoltiALL);
 		//il mio dubbio e' che distintiSiacTMovgestTsDetModFinCoinvolti sia gia' uguale a distintiSiacTMovgestTsDetModFinCoinvoltiALL
 		
 		
 		//POTENZIALE RIDONDANZA. Non sono sicuro di questa query (forse e' ridondante):
 		List<SiacRMovgestTsSogModFin> distintiSiacRMovgestTsSogModFinCoinvoltiByRModificaStato =movimentoGestioneDao.ricercaSiacRMovgestTsSogModFinBySiacRModificaStatoFinMassive(distintiSiacRModificaStatoCoinvolti, Boolean.TRUE);
-		List<SiacRMovgestTsSogModFin> distintiSiacRMovgestTsSogModFinCoinvoltiALL = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacRMovgestTsSogModFinCoinvolti, distintiSiacRMovgestTsSogModFinCoinvoltiByRModificaStato);
+		List<SiacRMovgestTsSogModFin> distintiSiacRMovgestTsSogModFinCoinvoltiALL = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacRMovgestTsSogModFinCoinvolti, distintiSiacRMovgestTsSogModFinCoinvoltiByRModificaStato);
 		ottimizzazioneModificheDto.setDistintiSiacRMovgestTsSogModFinCoinvolti(distintiSiacRMovgestTsSogModFinCoinvoltiALL);
 		//il mio dubbio e' che distintiSiacRMovgestTsSogModFinCoinvolti sia gia' uguale a distintiSiacRMovgestTsSogModFinCoinvoltiALL
 		
 		
 		//POTENZIALE RIDONDANZA. Non sono sicuro di questa query (forse e' ridondante):
 		List<SiacRMovgestTsSogclasseModFin> distintiSiacRMovgestTsSogclasseModFinCoinvoltiByRModificaStato =movimentoGestioneDao.ricercaSiacRMovgestTsSogclasseModFinBySiacRModificaStatoFinMassive(distintiSiacRModificaStatoCoinvolti, Boolean.TRUE);
-		List<SiacRMovgestTsSogclasseModFin> distintiSiacRMovgestTsSogclasseModFinCoinvoltiALL = CommonUtils.addAllConNewAndSoloDistintiByUid(distintiSiacRMovgestTsSogclasseModFinCoinvolti, distintiSiacRMovgestTsSogclasseModFinCoinvoltiByRModificaStato);
+		List<SiacRMovgestTsSogclasseModFin> distintiSiacRMovgestTsSogclasseModFinCoinvoltiALL = CommonUtil.addAllConNewAndSoloDistintiByUid(distintiSiacRMovgestTsSogclasseModFinCoinvolti, distintiSiacRMovgestTsSogclasseModFinCoinvoltiByRModificaStato);
 		ottimizzazioneModificheDto.setDistintiSiacRMovgestTsSogclasseModFinCoinvolti(distintiSiacRMovgestTsSogclasseModFinCoinvoltiALL);
 		//il mio dubbio e' che distintiSiacRMovgestTsSogclasseModFinCoinvolti sia gia' uguale a distintiSiacRMovgestTsSogclasseModFinCoinvoltiALL
 		
@@ -5448,14 +4794,14 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		OttimizzazioneMovGestDto ottimizzazioneMovGest = new OttimizzazioneMovGestDto();
 		
 		//RELAZIONE VERSO I VINCOLI:
-		List<SiacRMovgestTsFin> listaRelazioniVincoli = movimentoGestioneDao.ricercaBySiacTMovgestTsFinMassive(toList(siacTMovgestTsAccertamento), true);
+		List<SiacRMovgestTsFin> listaRelazioniVincoli = movimentoGestioneDao.ricercaBySiacTMovgestTsFinMassive(toList(siacTMovgestTsAccertamento), Boolean.TRUE, Boolean.TRUE);
 		ottimizzazioneMovGest.setDistintiSiacRMovgestTsFinCoinvolti(listaRelazioniVincoli);
 		
 		List<SiacTMovgestFin> distintiSiacTMovgestFinCoinvolti = ottimizzazioneMovGest.estraiDistintiSiacTMovgestFinImpegniBySiacRMovgestTsFinCoinvolti();
 		
 		
 		//metodo core di ottimizzazione:
-		ottimizzazioneMovGest = caricaDatiOttimizzazioneMovGestTsPerConultaVincoliAccertamento(ottimizzazioneMovGest, distintiSiacTMovgestFinCoinvolti, Constanti.MOVGEST_TIPO_IMPEGNO, datiOperazioneDto);
+		ottimizzazioneMovGest = caricaDatiOttimizzazioneMovGestTsPerConultaVincoliAccertamento(ottimizzazioneMovGest, distintiSiacTMovgestFinCoinvolti, CostantiFin.MOVGEST_TIPO_IMPEGNO, datiOperazioneDto);
 		
 		List<SiacTMovgestTsFin> distintiSiacTMovgestTsFin = ottimizzazioneMovGest.getDistintiSiacTMovgestTsFinCoinvolti();
 		
@@ -5509,7 +4855,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		ottimizzazioneDto.setDistintiSiacTMovgestFinCoinvolti(distintiSiacTMovgestFinCoinvolti);
 		
 		// Distinti SiacTMovgestTsFin
-		List<Integer> listaMovgestIds = CommonUtils.getIdListSiacTBase(distintiSiacTMovgestFinCoinvolti);
+		List<Integer> listaMovgestIds = CommonUtil.getIdListSiacTBase(distintiSiacTMovgestFinCoinvolti);
 		List<SiacTMovgestTsFin> distintiSiacTMovgestTsFin = movimentoGestioneDao.ricercaSiacTMovgestTsFinBySiacTMovgestMassive(listaMovgestIds, true);
 		ottimizzazioneDto.setDistintiSiacTMovgestTsFinCoinvolti(distintiSiacTMovgestTsFin);
 		
@@ -5562,10 +4908,10 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		
 		//SIOPE TIPO DEBITO
 		String codiceTipoDebito = null;
-		if(siopeTipoDebito!=null && !StringUtils.isEmpty(siopeTipoDebito.getCodice())){
+		if(siopeTipoDebito!=null && !StringUtilsFin.isEmpty(siopeTipoDebito.getCodice())){
 			//recuperiamo il record della codifica ricevuta:
 			List<SiacDSiopeTipoDebitoFin> dstdebitos = siacDSiopeTipoDebitoFinRepository.findByCode(idEnte, datiOperazione.getTs(), siopeTipoDebito.getCodice());
-			SiacDSiopeTipoDebitoFin siacDSiopeTipoDebito = CommonUtils.getFirst(dstdebitos);
+			SiacDSiopeTipoDebitoFin siacDSiopeTipoDebito = CommonUtil.getFirst(dstdebitos);
 			if(siacDSiopeTipoDebito!=null){
 				//ok esiste valido
 				codiceTipoDebito = siopeTipoDebito.getCodice();
@@ -5584,28 +4930,28 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		//MOTIVAZIONE ASSENZA CIG
 		
 		String codiceMotivazioneAssenzaCig = null;
-		if(siopeAssenzaMotivazione!=null && !StringUtils.isEmpty(siopeAssenzaMotivazione.getCodice())){
+		if(siopeAssenzaMotivazione!=null && !StringUtilsFin.isEmpty(siopeAssenzaMotivazione.getCodice())){
 			codiceMotivazioneAssenzaCig = siopeAssenzaMotivazione.getCodice();
 		}
 		
-		if(Constanti.SIOPE_CODE_COMMERCIALE.equals(codiceTipoDebito)
-	    		&& StringUtils.entrambiVuoti(cig,codiceMotivazioneAssenzaCig)){
+		if(CostantiFin.SIOPE_CODE_COMMERCIALE.equals(codiceTipoDebito)
+	    		&& StringUtilsFin.entrambiVuoti(cig,codiceMotivazioneAssenzaCig)){
 	    	//SE Tipo SIOPE = Commerciale
 	        //CIG o, in alternativa, Motivazione assenza CIG sono obbligatori 
-	    	listaErrori.add(ErroreCore.VALORE_NON_VALIDO.getErrore("CIG", " (Per tipo debito Commerciale occorre indicare il CIG oppure la Motivazione assenza CIG )"));
+	    	listaErrori.add(ErroreCore.VALORE_NON_CONSENTITO.getErrore("CIG", " (Per tipo debito Commerciale occorre indicare il CIG oppure la Motivazione assenza CIG )"));
 	    	return listaErrori;
 		}
 		
-		if(StringUtils.entrambiValorizzati(cig,codiceMotivazioneAssenzaCig)){
+		if(StringUtilsFin.entrambiValorizzati(cig,codiceMotivazioneAssenzaCig)){
 	    	//CIG e Motivazione assenza CIG non possono coesistere
-	    	listaErrori.add(ErroreCore.VALORE_NON_VALIDO.getErrore("CIG", " (Compilare un solo campo tra CIG e Motivazione assenza CIG)"));
+	    	listaErrori.add(ErroreCore.VALORE_NON_CONSENTITO.getErrore("CIG", " (Compilare un solo campo tra CIG e Motivazione assenza CIG)"));
 	    	return listaErrori;
 	    }
 		
-		if(!StringUtils.isEmpty(codiceMotivazioneAssenzaCig)){
+		if(!StringUtilsFin.isEmpty(codiceMotivazioneAssenzaCig)){
 			//recuperiamo il record della codifica ricevuta:
 			List<SiacDSiopeAssenzaMotivazioneFin> aMtvs = siacDSiopeAssenzaMotivazioneFinRepository.findByCode(idEnte, datiOperazione.getTs(), siopeAssenzaMotivazione.getCodice());
-			SiacDSiopeAssenzaMotivazioneFin siacDSiopeAssenzaMotivazione = CommonUtils.getFirst(aMtvs);
+			SiacDSiopeAssenzaMotivazioneFin siacDSiopeAssenzaMotivazione = CommonUtil.getFirst(aMtvs);
 			if(siacDSiopeAssenzaMotivazione==null){
 				//non esiste
 				listaErrori.add(ErroreCore.ENTITA_NON_TROVATA.getErrore("Siope Assenza Motivazione CIG", "codice: " + codiceMotivazioneAssenzaCig ));
@@ -5617,14 +4963,18 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 					//Non sono da impegno (quindi liq o ordinativo), queste motivazioni assenza non sono accettabili:
 					
 					//SIAC-5526
-					if(Constanti.ASSENZA_CIG_DA_DEFINIRE_IN_FASE_DI_LIQUIDAZIONE.equals(siacDSiopeAssenzaMotivazione.getSiopeAssenzaMotivazioneCode())){
-						listaErrori.add(ErroreCore.VALORE_NON_VALIDO.getErrore("CIG", "Cig da definire in fase di liquidazione non accettabile"));
+					if(CostantiFin.ASSENZA_CIG_DA_DEFINIRE_IN_FASE_DI_LIQUIDAZIONE.equals(siacDSiopeAssenzaMotivazione.getSiopeAssenzaMotivazioneCode())){
+						//SIAC-7904
+//						listaErrori.add(ErroreCore.VALORE_NON_CONSENTITO.getErrore("CIG", "Cig da definire in fase di liquidazione non accettabile"));
+						listaErrori.add(ErroreCore.VALORE_NON_CONSENTITO.getErrore("motivo assenza cig :"  + CostantiFin.ASSENZA_CIG_DA_DEFINIRE_IN_FASE_DI_LIQUIDAZIONE,"selezionare una motivazione valida"));
 						return listaErrori;
 					}
 					
 					// SIAC-5543
-					if(Constanti.ASSENZA_CIG_CODE_IN_CORSO_DI_DEFINIZIONE.equals(siacDSiopeAssenzaMotivazione.getSiopeAssenzaMotivazioneCode())){
-						listaErrori.add(ErroreCore.VALORE_NON_VALIDO.getErrore("CIG", "Cig in corso di definizione non accettabile"));
+					if(CostantiFin.ASSENZA_CIG_CODE_IN_CORSO_DI_DEFINIZIONE.equals(siacDSiopeAssenzaMotivazione.getSiopeAssenzaMotivazioneCode())){
+						//SIAC-7904
+//						listaErrori.add(ErroreCore.VALORE_NON_CONSENTITO.getErrore("CIG", "Cig in corso di definizione non accettabile"));
+						listaErrori.add(ErroreCore.VALORE_NON_CONSENTITO.getErrore("motivo assenza cig :"  + CostantiFin.ASSENZA_CIG_CODE_IN_CORSO_DI_DEFINIZIONE,"selezionare una motivazione valida"));
 						return listaErrori;
 					}
 				}
@@ -5728,7 +5078,7 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 	protected SiacTMovgestTsFin estraiTestata(SiacTMovgestFin siacTMovgest){
 		SiacTMovgestTsFin testata = null;
 		if(siacTMovgest!=null && siacTMovgest.getSiacTMovgestTs()!=null && siacTMovgest.getSiacTMovgestTs().size()>0){
-			List<SiacTMovgestTsFin> puliti = DatiOperazioneUtils.soloValidi(siacTMovgest.getSiacTMovgestTs(), getNow());
+			List<SiacTMovgestTsFin> puliti = DatiOperazioneUtil.soloValidi(siacTMovgest.getSiacTMovgestTs(), getNow());
 			for(SiacTMovgestTsFin it: puliti){
 				if(it.getMovgestTsIdPadre()==null){
 					testata = it;
@@ -5739,21 +5089,5 @@ public abstract class AbstractFinDad extends BaseDadImpl {
 		//Termino restituendo l'oggetto di ritorno: 
         return testata;
 	}
-	
-	protected void flushAndClearEntMng() {
-		entityManager.flush();
-		entityManager.clear();
-	}
-	
-	protected void flushEntMng() {
-		entityManager.flush();
-	}
 
-	public void setEnte(Ente ente) {
-		this.ente = ente;
-	}
-
-	public void setLoginOperazione(String loginOperazione) {
-		this.loginOperazione = loginOperazione;
-	}
 }

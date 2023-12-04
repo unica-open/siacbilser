@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:pag="http://www.digitpa.gov.it/schemas/2011/Pagamenti/"
 	xmlns:tns="http://www.csi.it/epay/epaywso/rendicontazione"
@@ -74,7 +78,7 @@
 		<sequence>
 		    <element name="AnagraficaPagatore" type="types:SoggettoType" minOccurs="0"></element>
 			<element name="DescrizioneCausaleVersamento" type="types:String200Type" minOccurs="0"></element>
-		    <element name="Causale" type="types:String135Type" minOccurs="0"></element>
+		    <element name="Causale" type="types:String140Type" minOccurs="0"></element>
 		    <element name="DataPagamento" type="dateTime" minOccurs="0"></element>
     		<element name="EsitoPagamento" type="types:String70Type" minOccurs="0"></element>
     		<element name="ImportoSingoloVersamento" type="types:ImportoSignedType" minOccurs="0"></element>

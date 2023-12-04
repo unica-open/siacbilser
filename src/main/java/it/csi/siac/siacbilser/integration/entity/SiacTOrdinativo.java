@@ -20,6 +20,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import it.csi.siac.siacbilser.integration.entity.SiacROrdinativoQuietanza;
+
 
 /**
  * The persistent class for the siac_t_ordinativo database table.
@@ -193,6 +195,12 @@ public class SiacTOrdinativo extends SiacTEnteBaseExt {
 	@JoinColumn(name="siope_assenza_motivazione_id")
 	private SiacDSiopeAssenzaMotivazione siacDSiopeAssenzaMotivazione;
 
+	
+	//bi-directional many-to-one association to SiacROrdinativoQuietanza
+	@OneToMany(mappedBy="siacTOrdinativo")
+	private List<SiacROrdinativoQuietanza> siacROrdinativoQuietanzas;
+
+	
 	/**
 	 * Instantiates a new siac t ordinativo.
 	 */
@@ -1075,6 +1083,14 @@ public class SiacTOrdinativo extends SiacTEnteBaseExt {
 	@Override
 	public void setUid(Integer uid) {
 		this.ordId = uid;
+	}
+
+	public List<SiacROrdinativoQuietanza> getSiacROrdinativoQuietanzas() {
+		return siacROrdinativoQuietanzas;
+	}
+
+	public void setSiacROrdinativoQuietanzas(List<SiacROrdinativoQuietanza> siacROrdinativoQuietanzas) {
+		this.siacROrdinativoQuietanzas = siacROrdinativoQuietanzas;
 	}
 
 }

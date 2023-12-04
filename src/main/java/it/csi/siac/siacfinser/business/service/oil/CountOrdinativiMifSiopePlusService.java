@@ -32,7 +32,7 @@ public class CountOrdinativiMifSiopePlusService extends BaseCountOrdinativiMifSe
 	@Override
 	protected void execute()
 	{
-		res.setNumeroOrdinativiPerAnnoEsercizio(countOrdinativiMifSiopePlusDad.countOrdinativiPerAnnoEsercizio(req.getIdElaborazione()));
+		res.setNumeroOrdinativiPerAnnoEsercizioCodiceIstat(countOrdinativiMifSiopePlusDad.countOrdinativiPerAnnoEsercizioCodiceIstat(req.getIdElaborazione())); 
 		res.setEsito(Esito.SUCCESSO);
 	}
 }

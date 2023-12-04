@@ -11,7 +11,7 @@ import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.integration.dad.ImpegnoBilDad;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siaccecser.model.RichiestaEconomale;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -30,7 +30,7 @@ import it.csi.siac.siacgenser.model.RegistrazioneMovFin;
  * @author Domenico
  */
 public class RichiestaEconomaleMovimentoHandler extends MovimentoHandler<RichiestaEconomale> {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private ImpegnoBilDad impegnoBilDad; 
 	

@@ -10,7 +10,9 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import it.csi.siac.siacbilser.integration.entity.SiacTMovgest;
 import it.csi.siac.siacbilser.integration.entity.SiacTProgramma;
+import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDProgrammaStatoEnum;
 import it.csi.siac.siacbilser.model.TipoProgetto;
 import it.csi.siac.siaccommonser.integration.dao.base.Dao;
@@ -97,7 +99,10 @@ public interface ProgettoDao extends Dao<SiacTProgramma, Integer> {
 	 * @param string anno
 	 * @return
 	 */
-	List<Object[]> calcoloProspettoRiassuntivoCronoprogrammaDiGestione(Integer uidCronoprogramma,
-			String anno);
+	List<Object[]> calcoloProspettoRiassuntivoCronoprogrammaDiGestioneAggiorna(Integer uidCronoprogramma, String anno);
+
+	List<Object[]> calcoloProspettoRiassuntivoCronoprogrammaDiGestioneConsulta(Integer uidCronoprogramma, String anno);
+	
+	Page<SiacTProgramma> ricercaProgettiMutuo(Integer enteProprietarioId, Integer mutuoId, String codiceProgetto,Integer annoBilancio, Integer attoammId, Integer attoammAnno, Integer attoammNumero, Integer attoammTipoId, Integer attoammSacId, Integer tipoAmbitoId, Pageable pageable);	
 
 }

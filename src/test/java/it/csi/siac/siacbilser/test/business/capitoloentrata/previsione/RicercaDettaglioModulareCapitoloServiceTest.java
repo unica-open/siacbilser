@@ -6,6 +6,9 @@ package it.csi.siac.siacbilser.test.business.capitoloentrata.previsione;
 
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +28,7 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
+import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siacfin2ser.model.CapitoloEntrataGestioneModelDetail;
@@ -127,10 +131,16 @@ public class RicercaDettaglioModulareCapitoloServiceTest extends BaseJunit4TestC
 		request.setModelDetails(modelRichiesti);
 		request.setRichiedente(getRichiedenteByProperties("consip","regp"));
 		CapitoloUscitaGestione capitolo = new CapitoloUscitaGestione();
-		capitolo.setUid(16856);
+		capitolo.setUid(140963);
 		//capitolo.setUid(17131); //capitolo annullato
 		//capitolo.setUid(31216); //con ex-capitolo e capirolo equivalente
 		request.setCapitoloUscitaGestione(capitolo);
+		Set<ImportiCapitoloEnum> importiDerivati = new HashSet<ImportiCapitoloEnum>();
+		importiDerivati.add(ImportiCapitoloEnum.diCuiImpegnatoAnno1);
+		importiDerivati.add(ImportiCapitoloEnum.diCuiImpegnatoAnno2);
+		importiDerivati.add(ImportiCapitoloEnum.diCuiImpegnatoAnno3);
+		
+		request.setImportiDerivatiRichiesti(importiDerivati);
 		
 		
 		TipologiaClassificatore[] classifRichiesti = ottieniClassificatoriUscita();
@@ -142,17 +152,17 @@ public class RicercaDettaglioModulareCapitoloServiceTest extends BaseJunit4TestC
 	
 	private CapitoloUscitaGestioneModelDetail[] ottieniModelDetailCapitoloUscitaGestione() {
 		return new CapitoloUscitaGestioneModelDetail[]{
-				CapitoloUscitaGestioneModelDetail.AttoDiLegge,
-				CapitoloUscitaGestioneModelDetail.Attributi,
-				CapitoloUscitaGestioneModelDetail.Bilancio,
-				CapitoloUscitaGestioneModelDetail.CapitoloEquivalente,
-				CapitoloUscitaGestioneModelDetail.Categoria,
+//				CapitoloUscitaGestioneModelDetail.AttoDiLegge,
+//				CapitoloUscitaGestioneModelDetail.Attributi,
+//				CapitoloUscitaGestioneModelDetail.Bilancio,
+//				CapitoloUscitaGestioneModelDetail.CapitoloEquivalente,
+//				CapitoloUscitaGestioneModelDetail.Categoria,
 				CapitoloUscitaGestioneModelDetail.Classificatori,
-				CapitoloUscitaGestioneModelDetail.DataAnnullamento,
-				CapitoloUscitaGestioneModelDetail.Ente, 
-				CapitoloUscitaGestioneModelDetail.ExCapitolo,
+//				CapitoloUscitaGestioneModelDetail.DataAnnullamento,
+//				CapitoloUscitaGestioneModelDetail.Ente, 
+//				CapitoloUscitaGestioneModelDetail.ExCapitolo,
 				CapitoloUscitaGestioneModelDetail.Importi,
-				CapitoloUscitaGestioneModelDetail.Stato
+//				CapitoloUscitaGestioneModelDetail.Stato
 		};
 	}
 	private CapitoloEntrataGestioneModelDetail[] ottieniModelDetailCapitoloCapitoloEntrataGestione() {
@@ -181,36 +191,36 @@ public class RicercaDettaglioModulareCapitoloServiceTest extends BaseJunit4TestC
 				TipologiaClassificatore.PDC_III,
 				TipologiaClassificatore.PDC_IV,
 				TipologiaClassificatore.PDC_IV,
-				TipologiaClassificatore.TITOLO_SPESA,
-				TipologiaClassificatore.MACROAGGREGATO,
-				TipologiaClassificatore.MISSIONE,
-				TipologiaClassificatore.PROGRAMMA,
-				TipologiaClassificatore.CLASSE_COFOG,
-				TipologiaClassificatore.SIOPE_ENTRATA,
-				TipologiaClassificatore.SIOPE_ENTRATA_I,
-				TipologiaClassificatore.SIOPE_ENTRATA_II,
-				TipologiaClassificatore.SIOPE_ENTRATA_III,
-				TipologiaClassificatore.TIPO_FINANZIAMENTO,
-				TipologiaClassificatore.TIPO_FONDO,
-				TipologiaClassificatore.RICORRENTE_ENTRATA,
-				TipologiaClassificatore.PERIMETRO_SANITARIO_ENTRATA,
-				TipologiaClassificatore.TRANSAZIONE_UE_ENTRATA,
-				TipologiaClassificatore.CLASSIFICATORE_1,
-				TipologiaClassificatore.CLASSIFICATORE_2,
-				TipologiaClassificatore.CLASSIFICATORE_3,
-				TipologiaClassificatore.CLASSIFICATORE_4,
-				TipologiaClassificatore.CLASSIFICATORE_5,
-				TipologiaClassificatore.CLASSIFICATORE_6,
-				TipologiaClassificatore.CLASSIFICATORE_7,
-				TipologiaClassificatore.CLASSIFICATORE_8,
-				TipologiaClassificatore.CLASSIFICATORE_9,
-				TipologiaClassificatore.CLASSIFICATORE_10,
-				TipologiaClassificatore.CLASSIFICATORE_31,
-				TipologiaClassificatore.CLASSIFICATORE_32,
-				TipologiaClassificatore.CLASSIFICATORE_33,
-				TipologiaClassificatore.CLASSIFICATORE_34,
-				TipologiaClassificatore.CLASSIFICATORE_35,
-				TipologiaClassificatore.POLITICHE_REGIONALI_UNITARIE
+//				TipologiaClassificatore.TITOLO_SPESA,
+//				TipologiaClassificatore.MACROAGGREGATO,
+//				TipologiaClassificatore.MISSIONE,
+//				TipologiaClassificatore.PROGRAMMA,
+//				TipologiaClassificatore.CLASSE_COFOG,
+//				TipologiaClassificatore.SIOPE_ENTRATA,
+//				TipologiaClassificatore.SIOPE_ENTRATA_I,
+//				TipologiaClassificatore.SIOPE_ENTRATA_II,
+//				TipologiaClassificatore.SIOPE_ENTRATA_III,
+//				TipologiaClassificatore.TIPO_FINANZIAMENTO,
+//				TipologiaClassificatore.TIPO_FONDO,
+//				TipologiaClassificatore.RICORRENTE_ENTRATA,
+//				TipologiaClassificatore.PERIMETRO_SANITARIO_ENTRATA,
+//				TipologiaClassificatore.TRANSAZIONE_UE_ENTRATA,
+//				TipologiaClassificatore.CLASSIFICATORE_1,
+//				TipologiaClassificatore.CLASSIFICATORE_2,
+//				TipologiaClassificatore.CLASSIFICATORE_3,
+//				TipologiaClassificatore.CLASSIFICATORE_4,
+//				TipologiaClassificatore.CLASSIFICATORE_5,
+//				TipologiaClassificatore.CLASSIFICATORE_6,
+//				TipologiaClassificatore.CLASSIFICATORE_7,
+//				TipologiaClassificatore.CLASSIFICATORE_8,
+//				TipologiaClassificatore.CLASSIFICATORE_9,
+//				TipologiaClassificatore.CLASSIFICATORE_10,
+//				TipologiaClassificatore.CLASSIFICATORE_31,
+//				TipologiaClassificatore.CLASSIFICATORE_32,
+//				TipologiaClassificatore.CLASSIFICATORE_33,
+//				TipologiaClassificatore.CLASSIFICATORE_34,
+//				TipologiaClassificatore.CLASSIFICATORE_35,
+//				TipologiaClassificatore.POLITICHE_REGIONALI_UNITARIE
 		};
 	}
 

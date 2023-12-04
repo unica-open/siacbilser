@@ -29,5 +29,17 @@ public interface SiacDModificaTipoRepository extends JpaRepository<SiacDModifica
 	@Query("FROM SiacDModificaTipoFin WHERE siacTEnteProprietario.enteProprietarioId = :enteProprietarioId AND " +
 			" (upper(modTipoDesc) like 'ROR%' or upper(modTipoDesc) like 'ECO%') AND " + condizione + " ORDER BY modTipoDesc ASC ")
 	public List<SiacDModificaTipoFin> findListaMotiviRORValidiByEnte(@Param("enteProprietarioId") Integer enteProprietarioId , @Param("dataInput") Timestamp dataInput);
+	
+	@Query("FROM SiacDModificaTipoFin tipo "
+			+ "WHERE tipo.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			+ " AND " + condizione 
+			+ " AND EXISTS ( "
+			+ "    FROM SiacRModificaTipoApplicazioneFin rappl "
+			+ "    WHERE rappl.dataCancellazione IS NULL "
+			+ "    AND rappl.siacDModificaTipoApplicazione.modTipoApplCode = :modTipoApplCode "
+			+ "    AND rappl.siacDModificaTipo = tipo "
+			+ " )"
+			+ " ORDER BY tipo.modTipoDesc ASC ")
+	public List<SiacDModificaTipoFin> findValidiByEnteAndApplicazione(@Param("enteProprietarioId") Integer enteProprietarioId , @Param("dataInput") Timestamp dataInput, @Param("modTipoApplCode") String modTipoApplCode);
 
 }

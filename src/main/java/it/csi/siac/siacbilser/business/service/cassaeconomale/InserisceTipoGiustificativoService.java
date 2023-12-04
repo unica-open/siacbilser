@@ -4,7 +4,6 @@
 */
 package it.csi.siac.siacbilser.business.service.cassaeconomale;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
+import it.csi.siac.siacbilser.business.utility.BilUtilities;
 import it.csi.siac.siacbilser.integration.dad.TipoGiustificativoDad;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceTipoGiustificativo;
 import it.csi.siac.siaccecser.frontend.webservice.msg.InserisceTipoGiustificativoResponse;
@@ -47,11 +47,11 @@ public class InserisceTipoGiustificativoService extends CheckedAccountBaseServic
 		checkCondition(StringUtils.isNotBlank(tipoGiustificativo.getDescrizione()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo giustificativo"), false);
 		
 		checkCondition(tipoGiustificativo.getPercentualeAnticipoMissione() == null || 
-						(tipoGiustificativo.getPercentualeAnticipoMissione().signum()>=0 && tipoGiustificativo.getPercentualeAnticipoMissione().subtract(new BigDecimal(100)).signum()<=0), 
+						(tipoGiustificativo.getPercentualeAnticipoMissione().signum()>=0 && tipoGiustificativo.getPercentualeAnticipoMissione().subtract(BilUtilities.BIG_DECIMAL_ONE_HUNDRED).signum()<=0), 
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("percentuale anticipo missione ", ": deve essere compreso tra zero e cento."), false);
 		
 		checkCondition(tipoGiustificativo.getPercentualeAnticipoTrasferta() == null || 
-				(tipoGiustificativo.getPercentualeAnticipoTrasferta().signum()>=0 && tipoGiustificativo.getPercentualeAnticipoTrasferta().subtract(new BigDecimal(100)).signum()<=0), 
+				(tipoGiustificativo.getPercentualeAnticipoTrasferta().signum()>=0 && tipoGiustificativo.getPercentualeAnticipoTrasferta().subtract(BilUtilities.BIG_DECIMAL_ONE_HUNDRED).signum()<=0), 
 				ErroreCore.FORMATO_NON_VALIDO.getErrore("percentuale anticipo trasferta ", ": deve essere compreso tra zero e cento."), false);
 		
 		// Lotto M

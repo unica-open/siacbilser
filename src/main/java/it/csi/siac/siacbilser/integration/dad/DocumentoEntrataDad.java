@@ -44,6 +44,7 @@ import it.csi.siac.siacfin2ser.model.CodiceBollo;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrataModelDetail;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
+import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoIvaEntrata;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
@@ -243,7 +244,7 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 	 * @return the lista paginata
 	 */
 	public ListaPaginata<DocumentoEntrata> ricercaSinteticaDocumentoEntrata(DocumentoEntrata doc, AttoAmministrativo attoAmministrativo,
-			Accertamento accertamento, Boolean rilevanteIva, ElencoDocumentiAllegato elencoDocumenti, Boolean contabilizzaGenPcc, ParametriPaginazione parametriPaginazione) {
+			Accertamento accertamento, Boolean rilevanteIva, ElencoDocumentiAllegato elencoDocumenti, Boolean contabilizzaGenPcc, PreDocumentoEntrata predocumentoEntrata, ParametriPaginazione parametriPaginazione) {
 
 		Page<SiacTDoc> lista = documentoDao.ricercaSinteticaDocumento(doc.getEnte().getUid(),
 				SiacDDocFamTipoEnum.Entrata,
@@ -279,6 +280,8 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 				doc.getRegistroRepertorio(),
 				contabilizzaGenPcc,
 				doc.getStatoSDI(),
+				//SIAC-8245
+				predocumentoEntrata != null ? predocumentoEntrata.getNumero() : null,
 				toPageable(parametriPaginazione));
 
 		return toListaPaginata(lista, DocumentoEntrata.class, BilMapId.SiacTDoc_DocumentoEntrata);
@@ -297,7 +300,7 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 	 * @return the lista paginata
 	 */
 	public ListaPaginata<DocumentoEntrata> ricercaSinteticaDocumentoEntrata(DocumentoEntrata doc, AttoAmministrativo attoAmministrativo,
-			Accertamento accertamento, Boolean rilevanteIva, ElencoDocumentiAllegato elencoDocumenti, Boolean contabilizzaGenPcc, ParametriPaginazione parametriPaginazione,
+			Accertamento accertamento, Boolean rilevanteIva, ElencoDocumentiAllegato elencoDocumenti, Boolean contabilizzaGenPcc, PreDocumentoEntrata predocumentoEntrata, ParametriPaginazione parametriPaginazione,
 			DocumentoEntrataModelDetail...documentoEntrataModelDetails) {
 
 		//SIAC-6565-CR1215
@@ -336,6 +339,8 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 				doc.getRegistroRepertorio(),
 				contabilizzaGenPcc,
 				doc.getStatoSDI(),
+				//SIAC-6780
+				predocumentoEntrata != null? predocumentoEntrata.getNumero() : null,
 				toPageable(parametriPaginazione));
 
 		return toListaPaginata(lista, DocumentoEntrata.class, BilMapId.SiacTDoc_DocumentoEntrata_ModelDetail, documentoEntrataModelDetails);
@@ -390,6 +395,7 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 				null,
 				null,
 				null,
+				null,
 				toPageable(parametriPaginazione));
 
 		return toListaPaginata(lista, DocumentoEntrata.class, BilMapId.SiacTDoc_DocumentoEntrata);
@@ -407,7 +413,7 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 	 * @return the big decimal
 	 */
 	public BigDecimal ricercaSinteticaDocumentoEntrataImportoTotale(DocumentoEntrata doc, AttoAmministrativo attoAmministrativo,
-			Accertamento accertamento, Boolean rilevanteIva, ElencoDocumentiAllegato elencoDocumenti, Boolean contabilizzaGenPcc, ParametriPaginazione parametriPaginazione) {
+			Accertamento accertamento, Boolean rilevanteIva, ElencoDocumentiAllegato elencoDocumenti, Boolean contabilizzaGenPcc, PreDocumentoEntrata preDocumentoEntrata,ParametriPaginazione parametriPaginazione) {
 		
 		BigDecimal importoTotale = documentoDao.ricercaSinteticaDocumentoImportoTotale(doc.getEnte().getUid(),
 				SiacDDocFamTipoEnum.Entrata,
@@ -443,6 +449,8 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 				doc.getRegistroRepertorio(),
 				contabilizzaGenPcc,
 				doc.getStatoSDI(),
+				//SIAC-6780
+				preDocumentoEntrata!= null ? preDocumentoEntrata.getNumero() : null,
 				toPageable(parametriPaginazione));
 		
 		return importoTotale;
@@ -496,6 +504,8 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 				null,
 				null,
 				null,
+				null,
+				//SIAC-6780
 				null,
 				toPageable(parametriPaginazione));
 		
@@ -560,8 +570,8 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 				doc.getTipoDocumento()!=null?doc.getTipoDocumento().getUid():null,
 				doc.getStatoOperativoDocumento()!=null?SiacDDocStatoEnum.byStatoOperativo(doc.getStatoOperativoDocumento()):null,
 				statoOperativoDocumentoDaEscludere!=null?SiacDDocStatoEnum.byStatoOperativo(statoOperativoDocumentoDaEscludere):null,
-						null,
-						null,
+				null,
+				null,
 				null,
 				null,
 				null,
@@ -569,6 +579,7 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 				null,
 				null,
 				doc.getSoggetto() != null ? doc.getSoggetto().getUid() : null,
+				null,
 				null,
 				null,
 				null,
@@ -721,12 +732,14 @@ public class DocumentoEntrataDad extends ExtendedBaseDadImpl {
 	 * @param uidDocumento the uid documento
 	 * @param statoSDIDocumento the stato operativo documento
 	 */
-	public void aggiornaStatoSDIDocumentoEntrata(Integer uidDocumento, String statoSDIDocumento, String esitoStatoSDI) {
+	public void aggiornaStatoSDIDocumentoEntrata(Integer uidDocumento, String statoSDIDocumento, String esitoStatoSDI, Date dataCambioStato) {
 		SiacTDoc siacTDoc = documentoDao.findById(uidDocumento);
 		
 		siacTDoc.setStatoSDI(statoSDIDocumento);
 		siacTDoc.setEsitoStatoSDI(esitoStatoSDI);
-		
+		//SIAC-7562 - 25/06/2020 - CM e GM
+		if(dataCambioStato != null)
+			siacTDoc.setDataCambioStatoFel(dataCambioStato);
 		siacTDocRepository.saveAndFlush(siacTDoc);
 		
 	}

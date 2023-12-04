@@ -36,6 +36,7 @@ import it.csi.siac.siacbilser.business.service.stampa.allegatoatto.model.StampaA
 import it.csi.siac.siacbilser.business.service.stampa.allegatoatto.model.StampaAllegatoAttoSubdocumento;
 import it.csi.siac.siacbilser.business.service.stampa.base.JAXBBaseReportHandler;
 import it.csi.siac.siacbilser.integration.dad.AllegatoAttoDad;
+import it.csi.siac.siacbilser.integration.dad.CapitoloDad;
 import it.csi.siac.siacbilser.integration.dad.ClassificatoriDad;
 import it.csi.siac.siacbilser.integration.dad.DocumentoSpesaDad;
 import it.csi.siac.siacbilser.integration.dad.ElencoDocumentiAllegatoDad;
@@ -44,9 +45,13 @@ import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.integration.dad.SubImpegnoBilDad;
 import it.csi.siac.siacbilser.integration.dad.SubdocumentoDad;
 import it.csi.siac.siacbilser.integration.dad.SubdocumentoSpesaDad;
+import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siaccommon.util.cache.Cache;
 import it.csi.siac.siaccommon.util.cache.CacheElementInitializer;
 import it.csi.siac.siaccommon.util.cache.MapCache;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.Function;
+import it.csi.siac.siaccommon.util.collections.filter.NotNullFilter;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ExecuteExternalServiceException;
 import it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService;
@@ -71,6 +76,7 @@ import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoIvaSplitReverse;
 import it.csi.siac.siacfin2ser.model.TipoStampaAllegatoAtto;
+import it.csi.siac.siacfin2ser.model.allegatoattochecklist.Checklist;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.carta.CartaContabile;
@@ -100,6 +106,10 @@ public class StampaAllegatoAttoReportHandler extends JAXBBaseReportHandler<Stamp
 	private Integer annoEsercizio;
 	private TipoStampaAllegatoAtto tipoStampa;
 	
+	// SIAC-8804
+	private Checklist allegatoAttoChecklist;
+
+	
 	//DADs
 	@Autowired
 	private AllegatoAttoDad allegatoAttoDad;
@@ -121,6 +131,8 @@ public class StampaAllegatoAttoReportHandler extends JAXBBaseReportHandler<Stamp
 	private SubImpegnoBilDad subImpegnoBilDad;
 	@Autowired
 	protected OperazioneAsincronaService operazioneAsincronaService;
+	@Autowired
+	private CapitoloDad capitoloDad;
 	
 	//Services
 	@Autowired
@@ -190,6 +202,7 @@ public class StampaAllegatoAttoReportHandler extends JAXBBaseReportHandler<Stamp
 	@Override
 	protected void elaborateData() {
 		result.setAllegatoAtto(getAllegatoAtto());
+		result.setAllegatoAttoChecklist(getAllegatoAttoChecklist());
 		
 		// Inizializzazione dei dati
 		init();
@@ -366,11 +379,41 @@ public class StampaAllegatoAttoReportHandler extends JAXBBaseReportHandler<Stamp
 				sovrascriviCigCupConDatiQuoteDaNonEsporre(saai);
 			}
 			
+			// SIAC-8835
+			handleListaCapitoliSottoConto(saae);
+			
 			// Ordino la lista dei subdocumenti
 			Collections.sort(saae.getListaStampaAllegatoAttoSubdocumento(), ComparatorStampaAllegatoAttoSubdocumento.INSTANCE);
 			
 			result.getListaStampaAllegatoAttoElenco().add(saae);
 		}
+	}
+
+	private void handleListaCapitoliSottoConto(StampaAllegatoAttoElenco saae) {
+		if (saae == null) {
+			return;
+		}
+		
+		saae.setListaCapitoliSottoConto(new ArrayList<CapitoloUscitaGestione>(
+			CollectionUtil.distinct(	
+				CollectionUtil.filter(
+					CollectionUtil.map(saae.getListaStampaAllegatoAttoImpegno(), new Function<StampaAllegatoAttoImpegno, CapitoloUscitaGestione>() {
+						@Override
+						public CapitoloUscitaGestione map(StampaAllegatoAttoImpegno source) {
+							return source == null || source.getImpegno() == null ? null : source.getImpegno().getCapitoloUscitaGestione();
+					}}),
+					new NotNullFilter<CapitoloUscitaGestione>()
+				),
+				new Function<CapitoloUscitaGestione, String>() {
+					@Override
+					public String map(CapitoloUscitaGestione source) {
+						return String.valueOf(source.getUid());
+					}
+				}
+			)
+		));
+		
+		saae.setHasCapitoliSottoConto(CollectionUtil.isNotEmpty(saae.getListaCapitoliSottoConto()));
 	}
 
 	/**
@@ -538,6 +581,11 @@ public class StampaAllegatoAttoReportHandler extends JAXBBaseReportHandler<Stamp
 		// SIAC-5271: Nel caso che una fattura sia stata sospesa e quindi riattivata, la stampa deve riportare, come data di scadenza, quella dopo la sospensione
 		Date dataScadenza = subdocumentoSpesa.getDataScadenzaDopoSospensione() != null ? subdocumentoSpesa.getDataScadenzaDopoSospensione() : subdocumentoSpesa.getDataScadenza();
 		saas.setDataScadenza(dataScadenza);
+		
+		// SIAC-8835
+		if (impegno.getCapitoloUscitaGestione() != null) {
+			impegno.getCapitoloUscitaGestione().setSottoConto(capitoloDad.getContoTesoreriaCapitolo(impegno.getCapitoloUscitaGestione()));
+		}
 				
 		// Aggiungo i totali
 		BigDecimal importoImponibile = subdocumentoSpesa.getImportoNotNull().subtract(subdocumentoSpesa.getImportoDaDedurreNotNull());
@@ -714,16 +762,16 @@ public class StampaAllegatoAttoReportHandler extends JAXBBaseReportHandler<Stamp
 	}
 	
 	private String ottieniEstremiImpegno(SubdocumentoSpesa subdocumentoSpesa) {
-		if(subdocumentoSpesa.getImpegno() == null || subdocumentoSpesa.getImpegno().getNumero() == null) {
+		if(subdocumentoSpesa.getImpegno() == null || subdocumentoSpesa.getImpegno().getNumeroBigDecimal() == null) {
 			return null;
 		}
 		StringBuilder sb = new StringBuilder()
 				.append(subdocumentoSpesa.getImpegno().getAnnoMovimento())
 				.append("/")
-				.append(subdocumentoSpesa.getImpegno().getNumero().toPlainString());
-		if(subdocumentoSpesa.getSubImpegno() != null && subdocumentoSpesa.getSubImpegno().getNumero() != null) {
+				.append(subdocumentoSpesa.getImpegno().getNumeroBigDecimal().toPlainString());
+		if(subdocumentoSpesa.getSubImpegno() != null && subdocumentoSpesa.getSubImpegno().getNumeroBigDecimal() != null) {
 			sb.append("-")
-				.append(subdocumentoSpesa.getSubImpegno().getNumero().toPlainString());
+				.append(subdocumentoSpesa.getSubImpegno().getNumeroBigDecimal().toPlainString());
 		}
 		return sb.toString();
 	}
@@ -995,8 +1043,6 @@ public class StampaAllegatoAttoReportHandler extends JAXBBaseReportHandler<Stamp
 			return;
 		}
 		aggiornaOperazioneAsinc(StatoOperazioneAsincronaEnum.STATO_OPASINC_ERRORE);
-		
-		
 	}
 
 	/**
@@ -1059,6 +1105,14 @@ public class StampaAllegatoAttoReportHandler extends JAXBBaseReportHandler<Stamp
 					+ "\nErrori riscontrati da  InserisciDettaglioOperazioneAsincService : {" + resAgg.getDescrizioneErrori().replaceAll("\n", "\n\t") + "}.",
 					resAgg.getErrori());
 		}
+	}
+
+	public Checklist getAllegatoAttoChecklist() {
+		return allegatoAttoChecklist;
+	}
+
+	public void setAllegatoAttoChecklist(Checklist allegatoAttoChecklist) {
+		this.allegatoAttoChecklist = allegatoAttoChecklist;
 	}
 	
 

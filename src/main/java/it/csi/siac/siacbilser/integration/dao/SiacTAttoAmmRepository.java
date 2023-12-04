@@ -9,7 +9,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.integration.entity.SiacRAttoAmmStatoInOut;
 import it.csi.siac.siacbilser.integration.entity.SiacTAttoAmm;
@@ -19,7 +18,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 /**
  * The Interface SiacTAttoAmmRepository.
  */
-@Component
+
 public interface SiacTAttoAmmRepository extends JpaRepository<SiacTAttoAmm, Integer> {
 	
 	/**
@@ -42,7 +41,8 @@ public interface SiacTAttoAmmRepository extends JpaRepository<SiacTAttoAmm, Inte
 			+ " AND atto.siacTEnteProprietario = :ente "
 			+ " AND (( :attoammId = -1 ) OR atto.attoammId = :attoammId ) "
 			+ " AND (( :anno = '' OR :anno IS NULL ) OR atto.attoammAnno = :anno ) "
-			+ " AND (( :oggetto = '' OR :oggetto IS NULL ) OR atto.attoammOggetto = :oggetto ) "
+			//SIAC-8355
+			+ " AND (( :oggetto = '' OR :oggetto IS NULL ) OR UPPER(atto.attoammOggetto) LIKE CONCAT('%', UPPER(:oggetto), '%') ) "
 			+ " AND (( :note = '' OR :note IS NULL ) OR atto.attoammNote = :note ) "
 			+ " AND (( :numero = -1 ) OR atto.attoammNumero = :numero ) "
 			+ " AND (( :uidTipoAtto = -1) OR atto.siacDAttoAmmTipo.attoammTipoId = :uidTipoAtto ) "

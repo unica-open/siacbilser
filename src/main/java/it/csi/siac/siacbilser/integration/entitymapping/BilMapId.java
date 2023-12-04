@@ -86,6 +86,8 @@ public enum BilMapId implements MapId {
 	SiacTVariazione_VariazioneImportoCapitolo,
 	SiacTVariazione_VariazioneImportoCapitolo_Medium,
 	SiacTVariazione_VariazioneImportoCapitolo_Base,
+	//SIAC-8264
+	SiacTVariazione_VariazioneImportoCapitolo_Base_Asincrone,
 	SiacTVariazione_VariazioneImportoCapitolo_Minimal,
 	SiacTVariazione_VariazioneCodificaCapitolo,
 	SiacTVariazione_StornoUEB,
@@ -99,6 +101,8 @@ public enum BilMapId implements MapId {
 	SiacTVincolo_VincoloCapitoli,
 	// SIAC-5076
 	SiacDVincoloGenere_GenereVincolo,
+	//SIAC-7192
+	SiacDVincoloRisorseVincolate_RisorsaVincolata,
 	
 	SiacTProgramma_Progetto,
 	SiacTCronop_Cronoprogramma,
@@ -300,9 +304,6 @@ public enum BilMapId implements MapId {
 	
 	SiacTRegistrounicoDoc_RegistroUnico,
 	
-	// Mutuo (la nomenclatura con 'BIL' e' per evitare che condividano il nome con i mapping del modulo FIN)
-	SiacTMutuo_Mutuo_BIL,
-	SiacTMutuoVoce_VoceMutuo_BIL,
 	
 	SiacTOrdine_Ordine,
 	
@@ -311,6 +312,9 @@ public enum BilMapId implements MapId {
 	ListOfObjectArrayCount_RiepilogoDatiVariazioneImportoCapitoloAnno,
 	SiacTVariazione_VariazioneImportoSingoloCapitolo,
 	SiacTBilElem_Capitolo_Minimal,
+	//SIAC-7735
+	ListOfObjectArrayTotale_RiepilogoDatiVariazioneNeutreImportoCapitoloAnno,
+	ListOfObjectArrayTotale_RiepilogoDatiVariazioneNeutreCountImportoCapitoloAnno,
 	
 	
 	// CR-4088
@@ -321,6 +325,10 @@ public enum BilMapId implements MapId {
 	// SIAC-4422
 	SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilitaRendiconto_ModelDetail,
 	SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilitaRendiconto,
+	
+	// SIAC-7858
+	SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilitaGestione_ModelDetail,
+	SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilitaGestione,
 	
 	// SIAC-4210
 	SiacTCartacont_CartaContabile_BIL,
@@ -362,6 +370,29 @@ public enum BilMapId implements MapId {
 	Stilo_SiacTMovgestT_SubAccertamento,
 	Stilo_SiacTModifica_ModificaMovimentoGestioneSpesa_BIL,
 	Stilo_SiacTModifica_ModificaMovimentoGestioneEntrata_BIL,
-	;
 	
+	//SIAC-7556
+	PagopaTElaborazioni_Elaborazione,
+	PagopaTElaborazioneFlusso_Elaborazione,
+	PagopaTRiconciliazione_Riconciliazione,
+	PagopaTRiconciliazioneDoc_RiconciliazioneDoc,
+	PagopaTRiconciliazioneDocConDettagli,	
+	//SIAC-8046 CM 19/03/2021 Task 2.1 Inizio
+	SiacTFilePagopa,
+	SiacDFilePagopaStato,
+	//SIAC-8046 CM 19/03/2021 Task 2.1 Fine
+	
+	//SIAC-7757 inizio FL
+	SirfelDTipoDocumento_TipoDocFEL,
+	//SIAC-7757 fine FL
+	
+	// SIAC-7858
+	SiacTAccFondiDubbiaEsigBil_AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio_ModelDetail,
+	SiacTAccFondiDubbiaEsigBil_AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio,
+	SiacTVisibilita_Visibilita_ModelDetail,
+	SiacTVisibilita_Visibilita,
+	
+	//SIAC-8191
+	SiacRBilElemPrevisioneImpacc_PrevisioneImpegnatoAccertato,
+	;
 }

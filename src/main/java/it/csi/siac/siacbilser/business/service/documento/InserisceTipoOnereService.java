@@ -107,7 +107,7 @@ public class InserisceTipoOnereService extends CheckedAccountBaseService<Inseris
 		
 		// Se la natura ha codice ES (ESENZIONE) => il tipo deve essere Esenzione
 		if("ES".equals(naturaOnere.getCodice()) && !TipoIvaSplitReverse.ESENZIONE.equals(tipoOnere.getTipoIvaSplitReverse())) {
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("tipo IVA split / reverse", ": se la natura onere e' ES deve essere ESENZIONE"));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("tipo IVA split / reverse", ": se la natura onere e' ES deve essere ESENZIONE"));
 		}
 		if(naturaOnere.isSplitReverse() && tipoOnere.getTipoIvaSplitReverse() == null) {
 			throw new BusinessException(ErroreCore.DATO_OBBLIGATORIO_OMESSO.getErrore("tipo IVA split / reverse"));

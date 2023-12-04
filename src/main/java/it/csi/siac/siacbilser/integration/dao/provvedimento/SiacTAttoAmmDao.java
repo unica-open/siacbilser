@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import it.csi.siac.siacbilser.integration.entity.SiacTAttoAmm;
+import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siaccommonser.integration.dao.base.Dao;
 
 
@@ -92,5 +93,14 @@ public interface SiacTAttoAmmDao extends Dao<SiacTAttoAmm, Integer> {
 			String note, Integer tipoAttoId, Integer uidStrutturaAmm, String statoOperativo, Boolean conDocumentoAssociato, Pageable pageable);
 
 	void annullaMovimentiGestioneCollegatiAllAttoAmm(Integer attoAmmId, String loginOperazione);
+
+	void aggiornaParereFinanziarioMovgestTs(Integer uidAtto, boolean parereFinanziario, String loginOperazione);
+
 	
+	public List<SiacTAttoAmm> ricercaProvvedimento(SiacTEnteProprietario ente, String anno, String oggetto, Integer numero, 
+			String note, Integer uidTipoAtto, Integer attoammId, Integer uidStrutt, String attoammStatoDesc, Boolean conQuotaAssociata,
+			//SIAC-6929
+			Boolean bloccoRagioneria, String inseritoManualmente);
+	
+
 }

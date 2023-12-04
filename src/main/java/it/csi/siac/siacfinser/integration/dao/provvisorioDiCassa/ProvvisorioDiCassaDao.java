@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
-import it.csi.siac.siaccommonser.integration.dao.base.BaseDao;
+import it.csi.siac.siaccommonser.integration.dao.base.Dao;
 import it.csi.siac.siacfinser.integration.entity.SiacTProvCassaFin;
 import it.csi.siac.siacfinser.model.ric.ParametroRicercaProvvisorio;
 
-public interface ProvvisorioDiCassaDao extends BaseDao {
+public interface ProvvisorioDiCassaDao extends Dao<SiacTProvCassaFin, Integer> {
 
 	public SiacTProvCassaFin ricercaProvvisorioDiCassaPerChiave(Integer idEnte, Integer anno, Integer numero, Timestamp now, String TipoProvvisorio);
 	

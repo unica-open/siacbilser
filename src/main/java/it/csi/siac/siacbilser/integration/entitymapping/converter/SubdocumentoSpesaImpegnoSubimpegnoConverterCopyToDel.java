@@ -27,7 +27,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTSubdoc;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
@@ -40,7 +40,7 @@ import it.csi.siac.siacfinser.model.SubImpegno;
 public class SubdocumentoSpesaImpegnoSubimpegnoConverterCopyToDel extends ExtendedDozerConverter<SubdocumentoSpesa, SiacTSubdoc> {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 //	@Autowired
 //	private EnumEntityFactory eef;
@@ -112,7 +112,7 @@ public class SubdocumentoSpesaImpegnoSubimpegnoConverterCopyToDel extends Extend
 		s.setUid(siacTMovgestT.getUid());
 		
 		try{
-			s.setNumero(new BigDecimal(siacTMovgestT.getMovgestTsCode()));		
+			s.setNumeroBigDecimal(new BigDecimal(siacTMovgestT.getMovgestTsCode()));		
 		} catch(RuntimeException re) {
 			log.error(methodName, "Impssibile ottenere un BigDecimal a partire dalla stringa: \"" + siacTMovgestT.getMovgestTsCode() + "\". Returning null!",re);
 		}
@@ -133,7 +133,7 @@ public class SubdocumentoSpesaImpegnoSubimpegnoConverterCopyToDel extends Extend
 		SiacTMovgest siacTMovgest = siacTMovgestT.getSiacTMovgest(); //Legame con l'impegno.
 		Impegno impegno = new Impegno();
 		impegno.setUid(siacTMovgest.getUid());
-		impegno.setNumero(siacTMovgest.getMovgestNumero());
+		impegno.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 		String anno = siacTMovgest.getSiacTBil().getSiacTPeriodo().getAnno();
 		impegno.setAnnoMovimento(Integer.parseInt(anno));
 	

@@ -11,7 +11,7 @@ import org.dozer.DozerConverter;
 import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.integration.entity.SiacRGestioneEnte;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siacfinser.integration.entity.SiacTEnteProprietarioFin;
@@ -24,7 +24,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacTEnteProprietarioFin;
 @Component
 public class EnteGestioneLivelliFinConverter extends DozerConverter<Ente, SiacTEnteProprietarioFin> {
 	
-	private LogUtil log =new LogUtil(EnteGestioneLivelliFinConverter.class);
+	private LogSrvUtil log =new LogSrvUtil(EnteGestioneLivelliFinConverter.class);
 	/**
 	 * Instantiates a new ente gestione livello converter.
 	 */

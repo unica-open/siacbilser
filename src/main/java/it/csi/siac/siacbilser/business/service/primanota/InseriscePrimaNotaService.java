@@ -64,6 +64,7 @@ public class InseriscePrimaNotaService extends InseriscePrimaNotaBaseService<Ins
 				}
 			}
 		}
+		
 	}
 	
 	@Override
@@ -81,6 +82,9 @@ public class InseriscePrimaNotaService extends InseriscePrimaNotaBaseService<Ins
 		effettuaOperazioniPreliminariSuRegistrazioni();
 		
 		popolaSoggetto();
+		
+		//SIAC-8134
+		popolaStrutturaCompetente();
 		
 		Integer numero = primaNotaDad.staccaNumeroPrimaNota(Integer.toString(primaNota.getBilancio().getAnno()), primaNota.getAmbito());
 		log.debug(methodName, "Numero della PrimaNota: " + numero);
@@ -187,7 +191,7 @@ public class InseriscePrimaNotaService extends InseriscePrimaNotaBaseService<Ins
 			}
 		}
 	}
-	
+
 	private RegistrazioneMovFin getRegistrazioneMovFin0() {
 		for(MovimentoEP mov: primaNota.getListaMovimentiEP()){
 			return mov.getRegistrazioneMovFin();

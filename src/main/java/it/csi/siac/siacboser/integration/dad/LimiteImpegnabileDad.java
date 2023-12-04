@@ -55,19 +55,19 @@ public class LimiteImpegnabileDad extends BaseDadImpl
 		String anno = getAnno(capitoloLimiteImpegnabile, annoNum);
 		BigDecimal importoCapitolo = getImportoAnno(capitoloLimiteImpegnabile, annoNum);
 
-		if (checkImportoCapitolo(importoCapitolo, idCapitolo, anno, idEnte))
+		if (checkImportoCapitolo(importoCapitolo, idCapitolo, anno, idEnte, capitoloLimiteImpegnabile))
 			aggiornaImportoCapitolo(idCapitolo, importoCapitolo, anno, idEnte, loginOperazione);
 	}
 
-	private boolean checkImportoCapitolo(BigDecimal importoCapitolo, Integer idCapitolo, String anno, Integer idEnte)
+	private boolean checkImportoCapitolo(BigDecimal importoCapitolo, Integer idCapitolo, String anno, Integer idEnte, CapitoloLimiteImpegnabile capitoloLimiteImpegnabile)
 	{
 		Map<String, Object> importoCompetenzaCapitoloMap = limiteImpegnabileDao.leggiImportoCapitolo(idCapitolo, anno,
 				SiacDBilElemDetTipoEnum.Stanziamento.getCodice(), idEnte);
 
 		if (importoCompetenzaCapitoloMap == null)
-		{
+		{//SIAC-8185
 			messaggi.add(MessaggioCore.MESSAGGIO_DI_SISTEMA.getMessaggio(
-					String.format("stanziamento di competenza dell'anno %s non trovato per il capitolo ID %d", anno, idCapitolo)));
+					String.format("stanziamento di competenza dell'anno %s non trovato per il capitolo %d", anno, capitoloLimiteImpegnabile.getNumeroCapitolo())));
 
 			return false;
 		}
@@ -78,8 +78,9 @@ public class LimiteImpegnabileDad extends BaseDadImpl
 			return true;
 
 		messaggi.add(MessaggioCore.MESSAGGIO_DI_SISTEMA.getMessaggio(String.format(
-				"il limite impegnabile dell'anno %s per il capitolo ID %s supera lo stanziamento di competenza (%s Euro)",
-				anno, idCapitolo, importoCompetenzaCapitolo.toPlainString())));
+				"il limite impegnabile dell'anno %s per il capitolo %s supera lo stanziamento di competenza (%s Euro)",
+				//SIAC-8185
+				anno, capitoloLimiteImpegnabile.getNumeroCapitolo(), importoCompetenzaCapitolo.toPlainString())));
 
 		return false;
 	}

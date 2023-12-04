@@ -19,7 +19,10 @@ import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.entity.SiacTAttoAmm;
+import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.integration.dao.base.JpaDao;
+import it.csi.siac.siaccorser.model.errore.ErroreCore;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -79,7 +82,7 @@ public class SiacTAttoAmmDaoImpl extends JpaDao<SiacTAttoAmm, Integer> implement
 	public List<Integer> aggiornaStatoMovgestTs(Integer attoAmmId, String attoammStatCode, boolean isEsecutivo, String loginOperazione) {
 		final String methodName = "aggiornaStatoMovgestTs";
 		
-		log.info(methodName, "Calling functionName: fnc_siac_atto_amm_aggiorna_stato_movgest for attoAmmId: "+ attoAmmId 
+		log.debug(methodName, "Calling functionName: fnc_siac_atto_amm_aggiorna_stato_movgest for attoAmmId: "+ attoAmmId 
 				+", attoammStatCode:  "+ attoammStatCode + ", isEsecutivo: "+isEsecutivo+", loginOperazione:"+loginOperazione);
 		String sql = "SELECT * FROM fnc_siac_atto_amm_aggiorna_stato_movgest(:attoAmmId,:attoammStatCode,:isEsecutivo,:loginOperazione)";
 		
@@ -229,4 +232,129 @@ public class SiacTAttoAmmDaoImpl extends JpaDao<SiacTAttoAmm, Integer> implement
 	public void annullaMovimentiGestioneCollegatiAllAttoAmm(Integer attoAmmId, String loginOperazione) {
 		throw new UnsupportedOperationException();
 	}
+
+
+	@Override
+	public void aggiornaParereFinanziarioMovgestTs(Integer uidAtto, boolean parereFinanziario, String loginOperazione) {
+		final String methodName = "aggiornaParereFinanziarioMovgestTs";
+		log.error(methodName, "Calling functionName: fnc_siac_atto_amm_aggiorna_parere_fin for attoAmmId: "+ uidAtto +
+			", parereFinanziario: "+parereFinanziario+", loginOperazione:"+loginOperazione);
+		String sql = "SELECT * FROM fnc_siac_atto_amm_aggiorna_parere_fin(:attoAmmId,:parereFinanziario,:loginOperazione)";
+		
+		Query query = entityManager.createNativeQuery(sql);
+		
+		query.setParameter("attoAmmId", uidAtto);
+		query.setParameter("parereFinanziario", parereFinanziario);
+		query.setParameter("loginOperazione", loginOperazione);
+		
+		@SuppressWarnings("unchecked")
+		String result = (String) query.getSingleResult();
+		if (StringUtils.isNotEmpty(result) && result.startsWith("ERR")) {
+			log.error(methodName, result);
+		}
+		log.error(methodName, "returning result: "+result);
+		
+	}
+
+
+
+
+	final String PROVENIENZA_ATTO_INSERITO_MANUALMENTE = "MANUALE";
+	
+	@Override
+	public List<SiacTAttoAmm> ricercaProvvedimento(SiacTEnteProprietario ente, String anno, String oggetto,
+			Integer numero, String note, Integer uidTipoAtto, Integer attoammId, Integer uidStrutt,
+			String attoammStatoDesc, Boolean conQuotaAssociata, Boolean bloccoRagioneria, String provenienza) {
+		final String methodName = "ricercaProvvedimento";
+		
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		componiQueryRicercaProvvedimento(jpql, param,
+				ente, anno, oggetto,
+				numero, note, uidTipoAtto, attoammId, uidStrutt,
+				attoammStatoDesc, conQuotaAssociata, bloccoRagioneria, provenienza);
+		
+//		// Elenco ordinato
+		jpql.append(" ORDER BY atto.attoammAnno, atto.attoammNumero ");
+		return getList(jpql.toString(), param);
+	}
+
+	private void componiQueryRicercaProvvedimento(StringBuilder jpql, Map<String, Object> param,
+			SiacTEnteProprietario ente, String anno, String oggetto, Integer numero, String note, Integer uidTipoAtto,
+			Integer attoammId, Integer uidStrutt, String attoammStatoDesc, Boolean conQuotaAssociata,
+			Boolean bloccoRagioneria, String provenienza) {
+		
+		jpql.append(" FROM SiacTAttoAmm atto ")
+			.append(" WHERE atto.dataCancellazione IS NULL ");
+		if(ente != null) {
+			Integer uidEnte = ente.getUid();
+			jpql.append(" AND atto.siacTEnteProprietario.enteProprietarioId = :enteId ");
+			param.put("enteId", uidEnte);
+		}
+		if(attoammId != null && attoammId.intValue() != 0) {
+			jpql.append(" AND atto.attoammId = :attoammId ");
+			param.put("attoammId",attoammId);
+		}
+		if(StringUtils.isNotBlank(anno)) {
+			jpql.append("AND atto.attoammAnno = :anno ");
+			param.put("anno",anno);
+		}
+		if(StringUtils.isNotBlank(oggetto)) {
+			//SIAC-8355
+			jpql.append(" AND " + Utility.toJpqlSearchLike("atto.attoammOggetto", "CONCAT('%', :oggetto, '%')"));
+			param.put("oggetto",oggetto);
+		}
+		if(StringUtils.isNotBlank(note)) {
+			jpql.append(" AND " + Utility.toJpqlSearchLike("atto.attoammNote", "CONCAT('%', :note, '%')"));
+			param.put("note",note);
+		}
+		if(numero != null && numero.intValue() != 0 ) {
+			jpql.append(" AND atto.attoammNumero = :numero ");
+			param.put("numero",numero);
+		}
+		if(uidTipoAtto != null && uidTipoAtto.intValue() != 0 ) {
+			jpql.append(" AND atto.siacDAttoAmmTipo.attoammTipoId = :uidTipoAtto ");
+			param.put("uidTipoAtto",uidTipoAtto);
+		}
+		if(uidStrutt != null && uidStrutt.intValue() != 0 ) {
+			jpql.append(" AND EXISTS (")
+			    .append("    FROM SiacRAttoAmmClass classificatori ")
+			    .append("    WHERE classificatori.siacTAttoAmm = atto ")
+			    .append("    AND classificatori.dataCancellazione IS NULL ")
+			    .append("    AND classificatori.siacTClass.classifId = :uidStrutt ")
+			    .append(" )");
+			param.put("uidStrutt",uidStrutt);
+		}
+		// SIAC-5419: aggiunto stato diverso da A-ANNULLATO
+		if(StringUtils.isNotBlank(attoammStatoDesc)) {
+			jpql.append(" AND EXISTS (")
+		    .append("    FROM atto.siacRAttoAmmStatos raas ")
+		    .append("    WHERE raas.siacDAttoAmmStato.attoammStatoDesc = :attoammStatoDesc ")
+		    .append("    AND raas.dataCancellazione IS NULL ")
+		    .append("    AND raas.siacDAttoAmmStato.dataCancellazione IS NULL")
+		    .append(" )");
+			param.put("attoammStatoDesc",attoammStatoDesc);
+		}
+		if(Boolean.TRUE.equals(conQuotaAssociata)) {
+			jpql.append(" AND EXISTS (")
+				.append("     FROM atto.siacRSubdocAttoAmms rsaa, SiacRDocStato rds ")
+				.append("     WHERE rds.siacTDoc = rsaa.siacTSubdoc.siacTDoc ")
+				.append("     AND rsaa.dataCancellazione IS NULL ")
+				.append("     AND rds.dataCancellazione IS NULL ")
+				.append("     AND rds.siacDDocStato.docStatoCode <> 'A' ")
+			    .append(" )");
+		}
+		
+		//SIAC-6929 per ricerca filtrata
+		if(bloccoRagioneria != null) {
+			jpql.append("AND atto.attoammBlocco = :bloccoRagioneria ");
+			param.put("bloccoRagioneria",bloccoRagioneria);
+		}
+		
+		if(StringUtils.isNotBlank(provenienza)) {
+			jpql.append(" AND atto.attoammProvenienza ").append(PROVENIENZA_ATTO_INSERITO_MANUALMENTE.equals(provenienza)? " = " : " <> ").append("'" + PROVENIENZA_ATTO_INSERITO_MANUALMENTE + "'");
+		}
+	}
+
 }

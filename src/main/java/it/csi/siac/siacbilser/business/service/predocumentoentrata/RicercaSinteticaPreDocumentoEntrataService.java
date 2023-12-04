@@ -70,7 +70,7 @@ public class RicercaSinteticaPreDocumentoEntrataService extends CheckedAccountBa
 			ListaPaginata<PreDocumentoEntrata> listaDocumentoEntrata = preDocumentoEntrataDad.ricercaSinteticaPreDocumento(preDoc, req.getTipoCausale(),
 					req.getDataCompetenzaDa(), req.getDataCompetenzaA(), req.getDataTrasmissioneDa(), req.getDataTrasmissioneA(),
 					req.getCausaleEntrataMancante(),  req.getSoggettoMancante(), req.getProvvedimentoMancante(), req.getContoCorrenteMancante(), req.getNonAnnullati(),
-					req.getOrdinativoIncasso(), req.getOrdinamentoPreDocumentoEntrata(), req.getParametriPaginazione());
+					req.getOrdinativoIncasso(), req.getOrdinamentoPreDocumentoEntrata(), req.getUidPredocumentiDaFiltrare(), req.getParametriPaginazione());
 			res.setPreDocumenti(listaDocumentoEntrata);
 		}
 		
@@ -80,7 +80,7 @@ public class RicercaSinteticaPreDocumentoEntrataService extends CheckedAccountBa
 		BigDecimal importoTotale = preDocumentoEntrataDad.ricercaSinteticaPreDocumentoImportoTotale(preDoc, req.getTipoCausale(),
 				req.getDataCompetenzaDa(), req.getDataCompetenzaA(), req.getDataTrasmissioneDa(), req.getDataTrasmissioneA(),
 				req.getCausaleEntrataMancante(),  req.getSoggettoMancante(), req.getProvvedimentoMancante(), req.getContoCorrenteMancante(),
-				req.getOrdinativoIncasso(), req.getNonAnnullati());
+				req.getOrdinativoIncasso(), req.getNonAnnullati(), req.getUidPredocumentiDaFiltrare());
 		res.setImportoTotale(importoTotale);
 		
 	}

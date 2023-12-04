@@ -43,7 +43,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDElencoDocStato
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDRelazTipoEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
-import it.csi.siac.siacbilser.model.ModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccommonser.util.dozer.MapId;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Entita;
@@ -355,9 +355,9 @@ public class ElencoDocumentiAllegatoDad extends ExtendedBaseDadImpl {
 	 * @return the ricerca sintetica
 	 */
 	public ListaPaginata<ElencoDocumentiAllegato> ricercaSinteticaElencoDocumentiAllegato(ElencoDocumentiAllegato elencoDocumentiAllegato,
-			AttoAmministrativo attoAmministrativo, List<StatoOperativoElencoDocumenti> listStatoOperativoElencoDocumenti, Integer numeroElencoDa, Integer numeroElencoA, ParametriPaginazione parametriPaginazione, ModelDetail... modelDetails) {
-		ModelDetail[] elencoDocumentiModelDetails = modelDetails == null ? 
-				new ModelDetail[] {
+			AttoAmministrativo attoAmministrativo, List<StatoOperativoElencoDocumenti> listStatoOperativoElencoDocumenti, Integer numeroElencoDa, Integer numeroElencoA, ParametriPaginazione parametriPaginazione, ModelDetailEnum... modelDetails) {
+		ModelDetailEnum[] elencoDocumentiModelDetails = modelDetails == null ? 
+				new ModelDetailEnum[] {
 						ElencoDocumentiAllegatoModelDetail.Stato,
 						ElencoDocumentiAllegatoModelDetail.TotaleDaPagareIncassare,
 						ElencoDocumentiAllegatoModelDetail.TotaleQuoteSpesaEntrata,
@@ -795,7 +795,7 @@ public class ElencoDocumentiAllegatoDad extends ExtendedBaseDadImpl {
 	 * @return the list
 	 */
 	//SIAC-5584
-	public List<ElencoDocumentiAllegato> findElenchiByAllegatoAttoAndStatoElenco(AllegatoAtto allegato, StatoOperativoElencoDocumenti statoOperativo, ModelDetail... modelDetails){
+	public List<ElencoDocumentiAllegato> findElenchiByAllegatoAttoAndStatoElenco(AllegatoAtto allegato, StatoOperativoElencoDocumenti statoOperativo, ModelDetailEnum... modelDetails){
 		final String methodName = "findElenchiByAttoAmministrativoAndStatoElenco";
 		List<SiacTElencoDoc> siacTElencoDocs = siacTElencoDocRepository.findEldocByAttoalIdStatoElenco(allegato.getUid(), SiacDElencoDocStatoEnum.byStatoOperativo(statoOperativo).getCodice());
 		if(siacTElencoDocs.isEmpty()) {

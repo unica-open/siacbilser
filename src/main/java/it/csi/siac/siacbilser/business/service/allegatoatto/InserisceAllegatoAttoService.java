@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.integration.dad.AllegatoAttoDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -37,7 +37,7 @@ public class InserisceAllegatoAttoService extends CheckedAccountBaseService<Inse
 	private AllegatoAttoDad allegatoAttoDad;
 	
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {
@@ -104,7 +104,7 @@ public class InserisceAllegatoAttoService extends CheckedAccountBaseService<Inse
 	 */
 	private void checkAttoAmministrativoInStatoDefinitivo() {
 		String methodName = "checkAttoAmministrativoInStatoDefinitivo";
-		StatoOperativoAtti stato = provvedimentoDad.findStatoOperativoAttoAmministrativo(allegatoAtto.getAttoAmministrativo());
+		StatoOperativoAtti stato = attoAmministrativoDad.findStatoOperativoAttoAmministrativo(allegatoAtto.getAttoAmministrativo());
 		
 		log.debug(methodName, "stato: "+stato);
 		if(!StatoOperativoAtti.DEFINITIVO.equals(stato)){

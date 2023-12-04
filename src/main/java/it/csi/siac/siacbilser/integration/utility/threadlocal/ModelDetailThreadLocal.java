@@ -9,18 +9,18 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import it.csi.siac.siacbilser.model.ModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 
 /**
  * Thread-local for handling ModelDetails
  * @author Marchino Alessandro
  *
  */
-public class ModelDetailThreadLocal extends ThreadLocal<Collection<ModelDetail>> {
+public class ModelDetailThreadLocal extends ThreadLocal<Collection<ModelDetailEnum>> {
 	
 	@Override
-	protected Collection<ModelDetail> initialValue() {
-		return new HashSet<ModelDetail>();
+	protected Collection<ModelDetailEnum> initialValue() {
+		return new HashSet<ModelDetailEnum>();
 	}
 	
 	/**
@@ -29,11 +29,11 @@ public class ModelDetailThreadLocal extends ThreadLocal<Collection<ModelDetail>>
 	 * @return the model details coherent with the required class
 	 */
 	@SuppressWarnings("unchecked")
-	public <MD extends ModelDetail> MD[] byModelDetailClass(Class<MD> clazz) {
+	public <MD extends ModelDetailEnum> MD[] byModelDetailClass(Class<MD> clazz) {
 		Collection<MD> res = new HashSet<MD>();
-		Collection<ModelDetail> currentData = this.get();
+		Collection<ModelDetailEnum> currentData = this.get();
 		
-		for(ModelDetail md : currentData) {
+		for(ModelDetailEnum md : currentData) {
 			if(clazz.isInstance(md)) {
 				res.add((MD)md);
 			}
@@ -54,21 +54,21 @@ public class ModelDetailThreadLocal extends ThreadLocal<Collection<ModelDetail>>
 	 * @param clazz the class for the model detail
 	 * @return the model details coherent with the required class
 	 */
-	public void clearByModelDetailClass(Class<? extends ModelDetail> clazz) {
-		Collection<ModelDetail> currentData = this.get();
+	public void clearByModelDetailClass(Class<? extends ModelDetailEnum> clazz) {
+		Collection<ModelDetailEnum> currentData = this.get();
 		
-		for(Iterator<ModelDetail> it = currentData.iterator(); it.hasNext();) {
-			ModelDetail md = it.next();
+		for(Iterator<ModelDetailEnum> it = currentData.iterator(); it.hasNext();) {
+			ModelDetailEnum md = it.next();
 			if(clazz.isInstance(md)) {
 				it.remove();
 			}
 		}
 	}
 	
-	public void addModelDetails(ModelDetail... modelDetails) {
+	public void addModelDetails(ModelDetailEnum... modelDetails) {
 		if(modelDetails != null && modelDetails.length > 0) {
-			Collection<ModelDetail> currentData = this.get();
-			for(ModelDetail md : modelDetails) {
+			Collection<ModelDetailEnum> currentData = this.get();
+			for(ModelDetailEnum md : modelDetails) {
 				currentData.add(md);
 			}
 		}

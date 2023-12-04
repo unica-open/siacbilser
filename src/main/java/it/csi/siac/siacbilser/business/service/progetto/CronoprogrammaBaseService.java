@@ -20,6 +20,10 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaRigaEntrata;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaRigaEntrataResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaRigaSpesa;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaRigaSpesaResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.CancellaRelazioneRigaEntrata;
+import it.csi.siac.siacbilser.frontend.webservice.msg.CancellaRelazioneRigaEntrataResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.CancellaRelazioneRigaSpesa;
+import it.csi.siac.siacbilser.frontend.webservice.msg.CancellaRelazioneRigaSpesaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CancellaRigaEntrata;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CancellaRigaEntrataResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CancellaRigaSpesa;
@@ -30,7 +34,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceRigaSpesa;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceRigaSpesaResponse;
 import it.csi.siac.siacbilser.integration.dad.CronoprogrammaDad;
 import it.csi.siac.siacbilser.integration.dad.ProgettoDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.model.Cronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioEntrataCronoprogramma;
 import it.csi.siac.siacbilser.model.DettaglioUscitaCronoprogramma;
@@ -75,7 +79,7 @@ public abstract class CronoprogrammaBaseService<REQ extends ServiceRequest, RES 
 	
 	/** The provvedimento dad. */
 	@Autowired
-	protected ProvvedimentoDad provvedimentoDad;
+	protected AttoAmministrativoDad attoAmministrativoDad;
 	
 	/** The inserisce riga spesa service. */
 	@Autowired
@@ -101,6 +105,16 @@ public abstract class CronoprogrammaBaseService<REQ extends ServiceRequest, RES 
 	@Autowired
 	protected CancellaRigaEntrataService cancellaRigaEntrataService;
 	
+	/** The cancella relazione riga entrata service. */
+	//SIAC-8791
+	@Autowired
+	protected CancellaRelazioneRigaEntrataService cancellaRelazioneRigaEntrataService;
+	
+	/** The cancella relazione riga spesa service. */
+	//SIAC-8791
+		@Autowired
+	protected CancellaRelazioneRigaSpesaService cancellaRelazioneRigaSpesaService;
+
 	/**
 	 * Inserisci dettaglio entrata.
 	 *
@@ -154,6 +168,26 @@ public abstract class CronoprogrammaBaseService<REQ extends ServiceRequest, RES 
 		dett.setEnte(cronoprogramma.getEnte());
 		irreq.setDettaglioEntrataCronoprogramma(dett);
 		CancellaRigaEntrataResponse irres = executeExternalServiceSuccess(cancellaRigaEntrataService, irreq);
+		dett = irres.getDettaglioEntrataCronoprogramma();
+		return dett;
+	}
+	
+	/**
+	 * Cancella la relazione con il capitolo esistente su dettaglio entrata.
+	 *
+	 * @param dett the dett
+	 * @return the dettaglio entrata cronoprogramma
+	 */
+	//SIAC-8791
+	protected DettaglioEntrataCronoprogramma cancellaRelazioneDettaglioEntrata(DettaglioEntrataCronoprogramma dett) {
+		CancellaRelazioneRigaEntrata irreq = new CancellaRelazioneRigaEntrata();
+		irreq.setRichiedente(req.getRichiedente());
+		Cronoprogramma cron = new Cronoprogramma();
+		cron.setUid(cronoprogramma.getUid());
+		dett.setCronoprogramma(cron);
+		dett.setEnte(cronoprogramma.getEnte());
+		irreq.setDettaglioEntrataCronoprogramma(dett);
+		CancellaRelazioneRigaEntrataResponse irres = executeExternalServiceSuccess(cancellaRelazioneRigaEntrataService, irreq);
 		dett = irres.getDettaglioEntrataCronoprogramma();
 		return dett;
 	}
@@ -238,6 +272,25 @@ public abstract class CronoprogrammaBaseService<REQ extends ServiceRequest, RES 
 	}
 	
 	
+	/**
+	 * Cancella la relazione con il capitolo esistente su dettaglio spesa.
+	 *
+	 * @param dett the dett
+	 * @return the dettaglio spesa cronoprogramma
+	 */
+	//SIAC-8791
+	protected DettaglioUscitaCronoprogramma cancellaRelazioneDettaglioUscita(DettaglioUscitaCronoprogramma dett) {
+		CancellaRelazioneRigaSpesa irreq = new CancellaRelazioneRigaSpesa();
+		irreq.setRichiedente(req.getRichiedente());
+		Cronoprogramma cron = new Cronoprogramma();
+		cron.setUid(cronoprogramma.getUid());
+		dett.setCronoprogramma(cron);
+		dett.setEnte(cronoprogramma.getEnte());
+		irreq.setDettaglioUscitaCronoprogramma(dett);
+		CancellaRelazioneRigaSpesaResponse irres = executeExternalServiceSuccess(cancellaRelazioneRigaSpesaService, irreq);
+		dett = irres.getDettaglioUscitaCronoprogramma();
+		return dett;
+	}
 	
 	/**
 	 * Per ogni cronoprogramma, somma l'importo delle spese per anno di 
@@ -388,7 +441,7 @@ public abstract class CronoprogrammaBaseService<REQ extends ServiceRequest, RES 
 	 * Carica atto amministrativo.
 	 */
 	protected void caricaAttoAmministrativo() {
-		this.attoAmministrativo = provvedimentoDad.findProvvedimentoById(cronoprogramma.getAttoAmministrativo().getUid());
+		this.attoAmministrativo = attoAmministrativoDad.findProvvedimentoById(cronoprogramma.getAttoAmministrativo().getUid());
 		if(this.attoAmministrativo == null) {
 			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("atto amministrativo", "uid " + cronoprogramma.getAttoAmministrativo().getUid()));
 		}

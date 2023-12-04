@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacfinser.integration.dao.movgest;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import it.csi.siac.siacbilser.integration.entity.SiacTClass;
 import it.csi.siac.siacfinser.integration.entity.SiacTClassFin;
 
 public interface SiacTClassFinRepository extends JpaRepository<SiacTClassFin, Integer> {
@@ -68,5 +70,53 @@ public interface SiacTClassFinRepository extends JpaRepository<SiacTClassFin, In
 	@Query(findByTipoCodesAndEnteAndSelezionato + " AND " + condizioneValidoInRangeInJoin )
 	public List<SiacTClassFin> findByTipoCodesAndEnteAndSelezionato(@Param("enteProprietarioId") Integer enteProprietarioId,
 			@Param("classifTipoCodes") List<String> classifTipoCodes,@Param("codeSelezionato") String codeSelezionato,@Param("inizioRange") Timestamp  inizioRange, @Param("fineRange") Timestamp  fineRange);
+
+	/**
+	 * SIAC-8229
+	 * 
+	 * <p>Cerco la struttura amministrativa tramite movgest e anno bilancio.</p>
+	 * 
+	 * @param annoMovimento
+	 * @param numeroMovimento
+	 * @param annoBilancio
+	 * @param codiceTipoMovimento
+	 * @return
+	 */
+	@Query( " SELECT stc " +
+			" FROM SiacTClassFin stc " + 
+			" JOIN stc.siacTEnteProprietario step " + 
+			" JOIN stc.siacRMovgestClass srmc " + 
+			" JOIN stc.siacDClassTipo sdct " + 
+			" JOIN srmc.siacTMovgestT stmt " + 
+			" JOIN stmt.siacTMovgest stm " + 
+			" JOIN stm.siacDMovgestTipo sdmt " + 
+			" JOIN stm.siacTBil stb " + 
+			" JOIN stb.siacTPeriodo stp " + 
+			" WHERE stm.movgestAnno = :annoMovimento " + 
+			" AND stm.movgestNumero = :numeroMovimento " + 
+			" AND stp.anno < :annoBilancio " + 
+			" AND sdmt.movgestTipoCode = :codiceTipoMovimento " + 
+			" AND sdct.classifTipoCode IN ('CDC', 'CDR')  " + 
+			" AND srmc.dataCancellazione IS NULL " +
+			" AND stm.dataCancellazione IS NULL ")
+	public List<SiacTClassFin> findSiacTClassFromSiacTMovgestAndSiacTPeriodo(
+			@Param("annoMovimento") Integer annoMovimento,
+			@Param("numeroMovimento") BigDecimal numeroMovimento,
+			@Param("annoBilancio") String annoBilancio,
+			@Param("codiceTipoMovimento") String codiceTipoMovimento
+			);
 	
+	@Query(findByTipoCodesAndEnteAndSelezionato + " AND st.dataFineValidita IS NULL AND st.dataCancellazione IS NULL ) " )
+	public List<SiacTClassFin> findByTipoCodesAndEnteAndSelezionato(@Param("enteProprietarioId") Integer enteProprietarioId,
+			@Param("classifTipoCodes") List<String> classifTipoCodes,@Param("codeSelezionato") String codeSelezionato);
+
+	
+	@Query("SELECT cl "+
+			" FROM SiacRClassFamTreeFin cft, SiacTClassFin cl "+
+			" WHERE cft.siacTClass1.classifId = :classifId "
+			+ " AND cft.classifIdPadre = cl.classifId "
+			+ " AND cft.dataCancellazione IS NULL " 
+	)
+	public SiacTClassFin findPadreClassificatoreByClassifId(@Param("classifId") Integer classifId );
+
 }

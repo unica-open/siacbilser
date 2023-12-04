@@ -34,7 +34,7 @@ import it.csi.siac.siacbilser.model.TipoFondo;
 import it.csi.siac.siacbilser.model.TipologiaTitolo;
 import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
-import it.csi.siac.siaccommon.util.CoreUtils;
+import it.csi.siac.siaccommon.util.CoreUtil;
 import it.csi.siac.siaccorser.business.BaseGestioneImpl;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.Esito;
@@ -49,19 +49,15 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
  */
 @Component
 @Transactional
-public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
-		GestioneClassificatoreBil {
+public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements GestioneClassificatoreBil {
 
 	/** The codifica bil dao. */
 	@Autowired
 	private CodificaBilDao codificaBilDao;
 
-	/* (non-Javadoc)
-	 * @see it.csi.siac.siacbilser.business.GestioneClassificatoreBil#findClassificatoriByIdPadre(it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriBilByIdPadre)
-	 */
 	@Override
 	public LeggiClassificatoriBilByIdPadreResponse findClassificatoriByIdPadre(LeggiClassificatoriBilByIdPadre params) {
-
+		final String methodName = "findClassificatoriByIdPadre";
 		LeggiClassificatoriBilByIdPadreResponse res = new LeggiClassificatoriBilByIdPadreResponse();
 
 		try {
@@ -143,7 +139,7 @@ public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
 
 		} catch (Exception t) {
 			//t.printStackTrace();
-			log.error("findClassificatoriGenericiByTipoElementoBil errore generico.", t);
+			log.error(methodName, "errore generico.", t);
 			res.addErroreDiSistema(t);
 			res.setEsito(Esito.FALLIMENTO);
 		}
@@ -151,12 +147,9 @@ public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
 
 	}
 
-	/* (non-Javadoc)
-	 * @see it.csi.siac.siacbilser.business.GestioneClassificatoreBil#findClassificatoriGenericiByTipoElementoBil(it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriGenericiByTipoElementoBil)
-	 */
 	@Override
-	public LeggiClassificatoriGenericiByTipoElementoBilResponse findClassificatoriGenericiByTipoElementoBil(
-			LeggiClassificatoriGenericiByTipoElementoBil req) {
+	public LeggiClassificatoriGenericiByTipoElementoBilResponse findClassificatoriGenericiByTipoElementoBil(LeggiClassificatoriGenericiByTipoElementoBil req) {
+		final String methodName = "findClassificatoriGenericiByTipoElementoBil";
 
 		LeggiClassificatoriGenericiByTipoElementoBilResponse res = new LeggiClassificatoriGenericiByTipoElementoBilResponse();
 		try {
@@ -188,7 +181,7 @@ public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
 
 					for (SiacTClass c : siacTClasses) {
 						
-						log.debug("findClassificatoriGenericiByTipoElementoBil. Codice: "+c.getSiacDClassTipo().getClassifTipoCode());
+						log.debug(methodName, "Codice: "+c.getSiacDClassTipo().getClassifTipoCode());
 
 						TipologiaClassificatore tipo = TipologiaClassificatore
 								.fromCodice(c.getSiacDClassTipo().getClassifTipoCode());
@@ -264,7 +257,7 @@ public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
 
 		} catch (Exception t) {
 			//t.printStackTrace();
-			log.error("findClassificatoriGenericiByTipoElementoBil errore generico.", t);
+			log.error(methodName, "errore generico.", t);
 			res.addErroreDiSistema(t);
 			res.setEsito(Esito.FALLIMENTO);
 		}
@@ -272,12 +265,9 @@ public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
 
 	}
 
-	/* (non-Javadoc)
-	 * @see it.csi.siac.siacbilser.business.GestioneClassificatoreBil#findClassificatoriConLivelloByTipoElementoBil(it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipoElementoBil)
-	 */
 	@Override
-	public LeggiClassificatoriByTipoElementoBilResponse findClassificatoriConLivelloByTipoElementoBil(
-			LeggiClassificatoriByTipoElementoBil req) {
+	public LeggiClassificatoriByTipoElementoBilResponse findClassificatoriConLivelloByTipoElementoBil(LeggiClassificatoriByTipoElementoBil req) {
+		final String methodName = "findClassificatoriConLivelloByTipoElementoBil";
 
 		LeggiClassificatoriByTipoElementoBilResponse res = new LeggiClassificatoriByTipoElementoBilResponse();
 		try {
@@ -305,14 +295,14 @@ public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
 								req.getAnno(), req.getIdEnteProprietario(),
 								req.getTipoElementoBilancio());
 
-				log.debug("Dto trovati: " + (siacTClasses!=null?siacTClasses.size():"null"));
+				log.debug(methodName, "Dto trovati: " + (siacTClasses!=null?siacTClasses.size():"null"));
 				
 				if (siacTClasses != null && !siacTClasses.isEmpty()) {				
 
 					for (SiacTClass c : siacTClasses) {						
-						log.debug("CodificaDto: "+ c);
+						log.debug(methodName, "CodificaDto: "+ c);
 						if(c!=null && c.getSiacDClassTipo()!=null){
-							log.debug("CodificaDto codice: "+ c.getSiacDClassTipo().getClassifTipoCode());
+							log.debug(methodName, "CodificaDto codice: "+ c.getSiacDClassTipo().getClassifTipoCode());
 							
 							TipologiaClassificatore codice = TipologiaClassificatore.fromCodice(c
 									.getSiacDClassTipo().getClassifTipoCode());
@@ -353,20 +343,17 @@ public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
 				
 		} catch (Exception t) {
 			//t.printStackTrace();
-			log.error("findClassificatoriGenericiByTipoElementoBil errore generico.", t);
+			log.error(methodName, "errore generico.", t);
 			res.addErroreDiSistema(t);
 			res.setEsito(Esito.FALLIMENTO);
 		}
-		CoreUtils.logXmlTypeObject(res, "Service Response param");
+		CoreUtil.logXmlTypeObject(res, "Service Response param");
 		return res;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.csi.siac.siacbilser.business.GestioneClassificatoreBil#findTreePianoDeiConti(it.csi.siac.siacbilser.frontend.webservice.msg.LeggiTreePianoDeiConti)
-	 */
 	@Override
-	public LeggiTreePianoDeiContiResponse findTreePianoDeiConti(
-			LeggiTreePianoDeiConti req) {
+	public LeggiTreePianoDeiContiResponse findTreePianoDeiConti(LeggiTreePianoDeiConti req) {
+		final String methodName = "findTreePianoDeiConti";
 
 		LeggiTreePianoDeiContiResponse res = new LeggiTreePianoDeiContiResponse();
 		List<ElementoPianoDeiConti> result = new ArrayList<ElementoPianoDeiConti>();
@@ -423,7 +410,7 @@ public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
 				
 		} catch (Exception t) {
 			//t.printStackTrace();
-			log.error("findClassificatoriGenericiByTipoElementoBil errore generico.", t);
+			log.error(methodName, "errore generico.", t);
 			res.addErroreDiSistema(t);
 			res.setEsito(Esito.FALLIMENTO);
 		}
@@ -443,8 +430,7 @@ public class GestioneClassificatoreBilImpl extends BaseGestioneImpl implements
 	 * @param padre the padre
 	 * @return the list
 	 */
-	private List<ElementoPianoDeiConti> convertTreeDto(List<SiacTClass> dtos,
-			List<ElementoPianoDeiConti> list, ElementoPianoDeiConti padre) {
+	private List<ElementoPianoDeiConti> convertTreeDto(List<SiacTClass> dtos, List<ElementoPianoDeiConti> list, ElementoPianoDeiConti padre) {
 
 		for (SiacTClass dto : dtos) {
 

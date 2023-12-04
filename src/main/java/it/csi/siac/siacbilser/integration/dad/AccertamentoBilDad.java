@@ -6,11 +6,13 @@ package it.csi.siac.siacbilser.integration.dad;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.csi.siac.siacbilser.integration.dad.mapper.movimentogestione.SiacTMovgestAccertamentoMapper;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgest;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgestT;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
@@ -25,6 +27,8 @@ import it.csi.siac.siacfinser.model.SubAccertamento;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Transactional
 public class AccertamentoBilDad  extends MovimentoGestioneBilDad<Accertamento>  {
+	
+	private @Autowired SiacTMovgestAccertamentoMapper siacTMovgestAccertamentoMapper;
 	
 	public Accertamento findMiniminalAccertamentoDataByUid(Integer uid) {
 		SiacTMovgestT siacTMovgestT = findTestataByUidMovimento(uid);
@@ -87,7 +91,7 @@ public class AccertamentoBilDad  extends MovimentoGestioneBilDad<Accertamento>  
 		Accertamento accertamento = new Accertamento();
 		accertamento.setUid(siacTMovgest.getUid());
 		accertamento.setAnnoMovimento(siacTMovgest.getMovgestAnno());
-		accertamento.setNumero(siacTMovgest.getMovgestNumero());
+		accertamento.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 		log.debug(methodName, " accertamento trovato: " + accertamento.getUid());
 		return accertamento;
 	}
@@ -102,11 +106,13 @@ public class AccertamentoBilDad  extends MovimentoGestioneBilDad<Accertamento>  
 		SubAccertamento subaccertamento = new SubAccertamento();
 		subaccertamento.setUid(siacTMovgestTs.getUid());
 		subaccertamento.setAnnoMovimento(siacTMovgestTs.getSiacTMovgest().getMovgestAnno());
-		subaccertamento.setNumero(siacTMovgestTs.getSiacTMovgest().getMovgestNumero());
+		subaccertamento.setNumeroBigDecimal(siacTMovgestTs.getSiacTMovgest().getMovgestNumero());
 		log.debug(methodName, " subaccertamento trovato: " + subaccertamento.getUid());
 		return subaccertamento;
 	}
 	
-
+	public Accertamento ricercaDettaglioAccertamento(Accertamento accertamento, AccertamentoModelDetail... accertamentoModelDetails) {
+		return siacTMovgestAccertamentoMapper.map(movimentoGestioneDao.findById(accertamento.getUid()), mapperDecoratorHelper.getDecoratorsFromModelDetails(accertamentoModelDetails));		
+	}    
 
 }

@@ -12,7 +12,7 @@ import java.util.List;
 
 import it.csi.siac.siacbilser.integration.entity.SiacRSubdocLiquidazione;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.integration.entity.SiacRDocStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneAttoAmmFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneAttrFin;
@@ -21,7 +21,6 @@ import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneMovgestFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneOrdFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneStatoFin;
-import it.csi.siac.siacfinser.integration.entity.SiacRMutuoVoceLiquidazioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoModpagFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoStatoFin;
@@ -79,9 +78,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 	private List<SiacRSubdocLiquidazioneFin> distintiSiacRSubdocLiquidazioneFinCoinvolti;//FIN
 	private List<SiacRSubdocLiquidazione> distintiSiacRSubdocLiquidazioneCoinvolti;//BIL
 	//
-	
-	private List<SiacRMutuoVoceLiquidazioneFin> distintiSiacRMutuoVoceLiquidazioneFinCoinvolti;
-	
+		
 	
 	private SiacTLiquidazioneFin siacTLiquidazioneConsiderata;
 	
@@ -131,7 +128,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -148,7 +145,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -165,7 +162,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -188,7 +185,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -205,7 +202,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -220,7 +217,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -234,7 +231,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -325,21 +322,10 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 	}
 	
 	public SiacRSubdocLiquidazione getSiacRSubdocLiquidazioneById(Integer subdocLiqId){
-		return CommonUtils.getByIdSiacTBaseBil(distintiSiacRSubdocLiquidazioneCoinvolti, subdocLiqId);
+		return CommonUtil.getByIdSiacTBaseBil(distintiSiacRSubdocLiquidazioneCoinvolti, subdocLiqId);
 	}
 	
 	
-	public List<SiacRMutuoVoceLiquidazioneFin> filtraSiacRMutuoVoceLiquidazioneFinByLiqId(Integer idLiquidazione){
-		List<SiacRMutuoVoceLiquidazioneFin> filtrati = new ArrayList<SiacRMutuoVoceLiquidazioneFin>();
-		if(idLiquidazione!=null && distintiSiacRMutuoVoceLiquidazioneFinCoinvolti!=null && distintiSiacRMutuoVoceLiquidazioneFinCoinvolti.size()>0){
-			for(SiacRMutuoVoceLiquidazioneFin it : distintiSiacRMutuoVoceLiquidazioneFinCoinvolti){
-				if(it.getSiacTLiquidazione().getLiqId().intValue()==idLiquidazione.intValue()){
-					filtrati.add(it);
-				}
-			}
-		}
-		return filtrati;
-	}
 	
 	public List<SiacRLiquidazioneMovgestFin> filtraSiacRLiquidazioneMovgestFinByLiqId(Integer idLiquidazione){
 		List<SiacRLiquidazioneMovgestFin> filtrati = new ArrayList<SiacRLiquidazioneMovgestFin>();
@@ -366,7 +352,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -379,7 +365,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -392,7 +378,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -406,7 +392,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -419,7 +405,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -433,7 +419,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -446,7 +432,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -461,7 +447,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -475,7 +461,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -488,7 +474,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	
@@ -497,7 +483,7 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 		List<SiacTOrdinativoTsDetFin> listaDet = filtraSiacTOrdinativoTsDetFinBySiacTOrdinativoTFin(sub);
 		BigDecimal importo = BigDecimal.ZERO;
 		for(SiacTOrdinativoTsDetFin detIt : listaDet){
-			if(CommonUtils.isValidoSiacTBase(detIt, null)){
+			if(CommonUtil.isValidoSiacTBase(detIt, null)){
 				if(tipoImporto.equalsIgnoreCase(detIt.getSiacDOrdinativoTsDetTipo().getOrdTsDetTipoCode())){
 					importo = detIt.getOrdTsDetImporto();
 					break;
@@ -606,14 +592,6 @@ public class OttimizzazioneOrdinativoPagamentoDto implements Serializable {
 		this.distintiSiacRSubdocLiquidazioneFinCoinvolti = distintiSiacRSubdocLiquidazioneFinCoinvolti;
 	}
 
-	public List<SiacRMutuoVoceLiquidazioneFin> getDistintiSiacRMutuoVoceLiquidazioneFinCoinvolti() {
-		return distintiSiacRMutuoVoceLiquidazioneFinCoinvolti;
-	}
-
-	public void setDistintiSiacRMutuoVoceLiquidazioneFinCoinvolti(
-			List<SiacRMutuoVoceLiquidazioneFin> distintiSiacRMutuoVoceLiquidazioneFinCoinvolti) {
-		this.distintiSiacRMutuoVoceLiquidazioneFinCoinvolti = distintiSiacRMutuoVoceLiquidazioneFinCoinvolti;
-	}
 
 	public List<SiacRSubdocLiquidazione> getDistintiSiacRSubdocLiquidazioneCoinvolti() {
 		return distintiSiacRSubdocLiquidazioneCoinvolti;

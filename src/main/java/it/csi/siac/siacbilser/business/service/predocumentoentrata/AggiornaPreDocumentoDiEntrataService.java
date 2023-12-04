@@ -14,6 +14,7 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrataResponse;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
+import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -51,6 +52,8 @@ public class AggiornaPreDocumentoDiEntrataService extends CrudPreDocumentoDiEntr
 		checkNotNull(preDoc.getCausaleEntrata(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("causale"));
 		checkCondition(preDoc.getCausaleEntrata().getUid()!=0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("uid causale"),false);
 		
+//		checkCondition(preDoc.getImporto().compareTo(BigDecimal.ZERO) > 0, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("importo predocumento a 0"),false);
+
 		checkNotNull(preDoc.getDataDocumento(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("data documento predocumento"));
 		checkNotNull(preDoc.getDataCompetenza(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("data competenza predocumento"));
 		checkNotNull(preDoc.getPeriodoCompetenza(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("periodo competenza predocumento"));
@@ -58,9 +61,9 @@ public class AggiornaPreDocumentoDiEntrataService extends CrudPreDocumentoDiEntr
 		if(preDoc.getAccertamento() != null) { //accertamento facoltativo
 			checkCondition(preDoc.getAccertamento().getUid()!=0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("uid acertamento predocumento"));
 			checkCondition(preDoc.getAccertamento().getAnnoMovimento()!=0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno accertamento predocumento"));
-			checkNotNull(preDoc.getAccertamento().getNumero(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero accertamento predocumento"));
-			
+			checkNotNull(preDoc.getAccertamento().getNumeroBigDecimal(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero accertamento predocumento"));
 		}
+
 		checkCondition(preDoc.getSoggetto() == null || (preDoc.getSoggetto()!=null && preDoc.getSoggetto().getUid()!=0), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("uid soggetto predocumento"));
 		checkCondition(preDoc.getAttoAmministrativo() == null || (preDoc.getAttoAmministrativo()!=null && preDoc.getAttoAmministrativo().getUid()!=0), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("uid provvedimento predocumento"));
 		checkCondition(preDoc.getProvvisorioDiCassa() == null ||  
@@ -87,7 +90,7 @@ public class AggiornaPreDocumentoDiEntrataService extends CrudPreDocumentoDiEntr
 	protected void init() {
 		super.init();
 		preDocumentoEntrataDad.setLoginOperazione(loginOperazione);
-		preDocumentoEntrataDad.setEnte(preDoc.getEnte());
+		preDocumentoEntrataDad.setEnte(ente);
 		
 		//inizializzo msgOperazione per i messaggi di errore
 		msgOperazione= "aggiornamento";
@@ -104,17 +107,38 @@ public class AggiornaPreDocumentoDiEntrataService extends CrudPreDocumentoDiEntr
 		checkCongruenzaSoggettoIncasso();
 		checkProvvedimento();
 		caricaAccertamentoESubAccertemanto();
-		checkAccertamento();
-		checkSubAccertamento();		
+		//SIAC-6780
+//		if(!req.isAggiornaPreDocCollegaDocumento()) {
+			checkAccertamento(req.isSaltaCheckDisponibilita());
+			checkSubAccertamento(req.isSaltaCheckDisponibilita());
+//		} else {
+//			checkAccertamento(" - per aggiorna predocumento conclusa senza errori");
+//			checkSubAccertamento(" - per aggiorna predocumento conclusa senza errori");
+//		}
 		//AGGIUNTi IL 15/06/2015
 	    caricaProvvisorioDiCassa();
 	    checkProvvisorioDicassaAggiornamento();
 		preDocumentoEntrataDad.aggiornaAnagraficaPreDocumento(preDoc);	
 		
-		StatoOperativoPreDocumento statoOperativoPreDocumento = aggiornaStatoOperativoPreDocumento(preDoc, false);
+		StatoOperativoPreDocumento statoOperativoPreDocumento = null;
+		
+//		if(!req.isAggiornaPreDocCollegaDocumento()) {
+		statoOperativoPreDocumento = aggiornaStatoOperativoPreDocumento(preDoc, false);	
+//		} else {
+//			statoOperativoPreDocumento = aggiornaStatoOperativoPreDocumentoEntrata(preDoc, false, req.isAggiornaPreDocCollegaDocumento());	
+//		}
+		
 		preDoc.setStatoOperativoPreDocumento(statoOperativoPreDocumento);	
 		
 		res.setPreDocumentoEntrata(preDoc);		
+	}
+	
+	@Override
+	protected void checkRegolarizzazioneAggiornamento(ProvvisorioDiCassa provvisorioDiCassa,String keyProvvisorio) {
+		if(req.isSaltaCheckDisponibilita()) {
+			return;
+		}
+		super.checkRegolarizzazioneAggiornamento(provvisorioDiCassa,keyProvvisorio);
 	}
 
 }

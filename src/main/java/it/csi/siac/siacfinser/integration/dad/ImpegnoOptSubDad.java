@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneMovGestDto;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin;
@@ -77,7 +77,7 @@ public class ImpegnoOptSubDad extends MovimentoGestioneOptSubsDad<Impegno, SubIm
 
 	@Override
 	protected boolean checkStato(String stato) {
-		return Constanti.MOVGEST_STATO_DEFINITIVO.equals(stato) || Constanti.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(stato);
+		return CostantiFin.MOVGEST_STATO_DEFINITIVO.equals(stato) || CostantiFin.MOVGEST_STATO_DEFINITIVO_NON_LIQUIDABILE.equals(stato);
 	}
 	
 	

@@ -21,8 +21,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaCartaContabile;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaCartaContabileResponse;
 import it.csi.siac.siacfinser.integration.dad.CartaContabileDad;
@@ -114,7 +114,7 @@ public class AggiornaCartaContabileService extends AbstractGestioneCartaContabil
 		}
 		// FINE - EEstrazione documenti dei subdocumentispesa
 
-		EsitoGestioneCartaContabileDto esitoAggiornaCartaContabile = cartaContabileDad.aggiornaCartaContabile(richiedente, Constanti.AMBITO_FIN, ente, bilancio,
+		EsitoGestioneCartaContabileDto esitoAggiornaCartaContabile = cartaContabileDad.aggiornaCartaContabile(richiedente, CostantiFin.AMBITO_FIN, ente, bilancio,
 						cartaContabile, datiOperazione);
 
 		if (esitoAggiornaCartaContabile.getListaErrori() != null
@@ -203,7 +203,7 @@ public class AggiornaCartaContabileService extends AbstractGestioneCartaContabil
 //				if(isRigaDaMovimenti(preDocumentoCarta)){
 					//questo controllo solo per righe da movimenti
 					if(preDocumentoCarta.getContoTesoreria()==null ||
-							StringUtils.isEmpty(preDocumentoCarta.getContoTesoreria().getCodice())){
+							StringUtilsFin.isEmpty(preDocumentoCarta.getContoTesoreria().getCodice())){
 						if(elencoParamentriNonInizializzati.length() > 0){
 							elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", CONTO_TESORIERE_PREDOCUMENTO";
 						}else{
@@ -214,7 +214,7 @@ public class AggiornaCartaContabileService extends AbstractGestioneCartaContabil
 			
 		}
 
-		if (!StringUtils.isEmpty(elencoParamentriNonInizializzati))
+		if (!StringUtilsFin.isEmpty(elencoParamentriNonInizializzati))
 			checkCondition(false,
 					ErroreCore.PARAMETRO_NON_INIZIALIZZATO
 							.getErrore(elencoParamentriNonInizializzati));

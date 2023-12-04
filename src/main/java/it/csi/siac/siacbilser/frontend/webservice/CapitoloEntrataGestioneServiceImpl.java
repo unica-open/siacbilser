@@ -278,8 +278,14 @@ public class CapitoloEntrataGestioneServiceImpl implements CapitoloEntrataGestio
 	}
 
 	@Override
+	@WebMethod
+	@WebResult
 	public RicercaDisponibilitaCapitoloEntrataGestioneResponse ricercaDisponibilitaCapitoloEntrataGestione(RicercaDisponibilitaCapitoloEntrataGestione parameters) {
 		return BaseServiceExecutor.execute(appCtx, RicercaDisponibilitaCapitoloEntrataGestioneService.class, parameters);
 	}
+
+	/* (non-Javadoc)
+	 * @see it.csi.siac.siacbilser.frontend.webservice.CapitoloEntrataGestioneService#ricercaStanziamentiCapitoloEntrataGestioneRequest(it.csi.siac.siacbilser.frontend.webservice.msg.RicercaStanziamentiCapitoloEntrataGestione)
+	 */
 
 }

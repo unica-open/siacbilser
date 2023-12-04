@@ -24,6 +24,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacDSommaNonSoggettaTipo;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
+import it.csi.siac.siacbilser.model.TipoOnereEnum;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -131,7 +132,7 @@ public class TipoOnereDad extends ExtendedBaseDadImpl {
 	}
 	
 	public List<TipoOnere> identificaDettaglioOnerePerAliquotaFatturaFEL(BigDecimal aliquotaIva) {
-		String codiceSplitReverse = "SP"; /*vedere cosa utilizzare per non schiantare il codice così*/ 
+		String codiceSplitReverse = TipoOnereEnum.SP.name(); 
 		List<SiacDOnere> siacDOneres = siacDOnereRepository.findSiacRDocOnereByAliquotaNaturaOnereETipoIva(aliquotaIva, codiceSplitReverse, TipoIvaSplitReverse.SPLIT_ISTITUZIONALE.getCodice(), 
 																			ente.getUid(), SiacTAttrEnum.AliquotaCaricoSogg.getCodice());
 		return convertiLista(siacDOneres, TipoOnere.class, BilMapId.SiacDOnere_TipoOnere);

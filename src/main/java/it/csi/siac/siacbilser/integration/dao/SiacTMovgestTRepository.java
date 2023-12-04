@@ -12,7 +12,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.integration.entity.SiacDMovgestStato;
 import it.csi.siac.siacbilser.integration.entity.SiacDSiopeAssenzaMotivazione;
@@ -24,7 +23,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTMovgestT;
 /**
  * The Interface SiacTMovgestTRepository.
  */
-@Component
+
 public interface SiacTMovgestTRepository extends JpaRepository<SiacTMovgestT, Integer> {
 	
 	
@@ -191,6 +190,8 @@ public interface SiacTMovgestTRepository extends JpaRepository<SiacTMovgestT, In
 			+ " WHERE r.siacTAttr.attrCode = :attrCode "
 			+ " AND r.siacTMovgestT.siacTMovgest.movgestId = :movgestId"
 			+ " AND r.dataCancellazione IS NULL "
+			//SIAC-8125
+			+ " AND r.siacTMovgestT.dataCancellazione IS NULL "
 			+ " AND r.siacTMovgestT.siacDMovgestTsTipo.movgestTsTipoCode = 'T' ")
 	String findTestoAttrValueBySiacTMovgestId(@Param("movgestId") Integer movgestId, @Param("attrCode") String attrCode);
 	
@@ -324,20 +325,47 @@ public interface SiacTMovgestTRepository extends JpaRepository<SiacTMovgestT, In
 	
 	
 	
+//	@Query(" SELECT mt FROM SiacTMovgestT mt "
+//			+ " JOIN mt.siacTMovgest m "//
+//			+ " JOIN m.siacTBil tBil "//
+//			+ " JOIN tBil.siacTPeriodo tPeriodo "//
+//			+ " JOIN mt.siacRMovgestTsAttoAmms mtaa "
+//			+ " WHERE mtaa.siacTAttoAmm.attoammNumero=:attoammNumero "
+//			+ " AND tPeriodo.anno = :annoBilancio "//
+//			+ " AND mtaa.siacTAttoAmm.attoammAnno=:attoammAnno "
+//			+ " AND mtaa.siacTAttoAmm.siacDAttoAmmTipo.attoammTipoId=:attoammTipoId "
+//			+ " AND mtaa.siacTAttoAmm.dataCancellazione IS NULL "
+//			+ " AND mtaa.dataCancellazione IS NULL "
+//			+ " AND mt.siacDMovgestTsTipo.movgestTsTipoCode='S' "
+//			+ " AND mt.dataCancellazione IS NULL "
+//			+ " AND (:attoammSacId IS NULL OR EXISTS ("
+//			+ " SELECT 1 FROM mtaa.siacTAttoAmm aa JOIN aa.siacRAttoAmmClasses x WHERE x.siacTClass.classifId=CAST(CAST(:attoammSacId AS string) AS integer)) "
+//			+ " ) "
+//			+ " AND mt.siacTEnteProprietario.enteProprietarioId=:enteProprietarioId")
+	
+	//SIAC-7383 Esclusione movimenti annullati
 	@Query(" SELECT mt FROM SiacTMovgestT mt "
+			+ " JOIN mt.siacTMovgest m "//
+			+ " JOIN mt.siacRMovgestTsStatos ms "
+			+ " JOIN ms.siacDMovgestStato dms "
+			+ " JOIN m.siacTBil tBil "//
+			+ " JOIN tBil.siacTPeriodo tPeriodo "//
 			+ " JOIN mt.siacRMovgestTsAttoAmms mtaa "
 			+ " WHERE mtaa.siacTAttoAmm.attoammNumero=:attoammNumero "
+			+ " AND tPeriodo.anno = :annoBilancio "//
 			+ " AND mtaa.siacTAttoAmm.attoammAnno=:attoammAnno "
 			+ " AND mtaa.siacTAttoAmm.siacDAttoAmmTipo.attoammTipoId=:attoammTipoId "
 			+ " AND mtaa.siacTAttoAmm.dataCancellazione IS NULL "
 			+ " AND mtaa.dataCancellazione IS NULL "
 			+ " AND mt.siacDMovgestTsTipo.movgestTsTipoCode='S' "
 			+ " AND mt.dataCancellazione IS NULL "
+			+ " AND ms.dataCancellazione IS NULL AND dms.movgestStatoCode != 'A'"
 			+ " AND (:attoammSacId IS NULL OR EXISTS ("
 			+ " SELECT 1 FROM mtaa.siacTAttoAmm aa JOIN aa.siacRAttoAmmClasses x WHERE x.siacTClass.classifId=CAST(CAST(:attoammSacId AS string) AS integer)) "
 			+ " ) "
 			+ " AND mt.siacTEnteProprietario.enteProprietarioId=:enteProprietarioId")
 	List<SiacTMovgestT> findSiacTMovgestTsBySiacTAttoAmm(
+		@Param("annoBilancio") String annoBilancio,// SIAC-7365
 		@Param("attoammNumero") Integer attoammNumero,
 		@Param("attoammAnno") String attoammAnno,
 		@Param("attoammTipoId") Integer attoammTipoId,

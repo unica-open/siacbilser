@@ -17,7 +17,7 @@ import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamErr
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggetti;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettiResponse;
@@ -60,7 +60,7 @@ public class RicercaSoggettiSiacService extends
 		String codiceAmbito = req.getCodiceAmbito();
 
 		if (codiceAmbito == null)
-			codiceAmbito = Constanti.AMBITO_FIN;
+			codiceAmbito = CostantiFin.AMBITO_FIN;
 
 		// 2. Si invoca il metodo ricercaSoggetti che ci restituisce il numero
 		// di risultati attesi dalla query composta
@@ -70,7 +70,7 @@ public class RicercaSoggettiSiacService extends
 
 		// ...solo se il numero di risultati attesi e minore del numero massimo
 		// accettabile si procede con il caricamento di tutti i dati:
-		if (listaRisultati.size() <= Constanti.MAX_RIGHE_ESTRAIBILI)
+		if (listaRisultati.size() <= CostantiFin.MAX_RIGHE_ESTRAIBILI)
 		{
 			// 3. si invoca il metodo che carica tutti i dati rispetto alla
 			// query composta dall'input ricevuto:
@@ -114,7 +114,8 @@ public class RicercaSoggettiSiacService extends
 						|| StringUtils.isNotBlank(paramRicSogg.getSesso())
 						|| StringUtils.isNotBlank(paramRicSogg.getMatricola())
 						|| StringUtils.isNotBlank(paramRicSogg.getComuneNascita())
-						|| StringUtils.isNotBlank(paramRicSogg.getStatoSoggetto())
+						|| StringUtils.isNotBlank(paramRicSogg.getIdStatoSoggetto())
+						|| StringUtils.isNotBlank(paramRicSogg.getCodiceStatoSoggetto())
 						//SIAC-6565-CR1215
 						
 						|| StringUtils.isNotBlank(paramRicSogg.getCodiceSoggettoPrecedente())

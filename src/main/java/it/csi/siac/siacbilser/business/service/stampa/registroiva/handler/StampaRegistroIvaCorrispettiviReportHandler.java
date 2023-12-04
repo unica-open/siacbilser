@@ -55,7 +55,7 @@ public class StampaRegistroIvaCorrispettiviReportHandler extends StampaRegistroI
 		//fine periodo
 		Date protocolloDefinitivoA = p.getFinePeriodo(getBilancio().getAnno()); 
 				
-		List<SubdocumentoIvaEntrata> listaSubdocumentoIvaEntrataNelPeriodo = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataNonQPID(sie, null, null, protocolloDefinitivoDa, protocolloDefinitivoA);
+		List<SubdocumentoIvaEntrata> listaSubdocumentoIvaEntrataNelPeriodo = subdocumentoIvaEntrataDad.ricercaDettaglioSubdocumentoIvaEntrataNonQPID(sie, null, null, protocolloDefinitivoDa, protocolloDefinitivoA, null, null);
 		return listaSubdocumentoIvaEntrataNelPeriodo;
 	}
 	

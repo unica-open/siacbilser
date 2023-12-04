@@ -21,7 +21,7 @@ import it.csi.siac.siacbilser.business.utility.BilUtilities;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siaccorser.util.comparator.ComparatorUtils;
+import it.csi.siac.siaccorser.util.comparator.ComparatorUtil;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoSubdocumentoIvaSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoSubdocumentoIvaSpesaResponse;
 import it.csi.siac.siacfin2ser.model.AliquotaSubdocumentoIva;
@@ -93,7 +93,7 @@ public class AggiornaStatoSubdocumentoIvaSpesaService extends CrudSubdocumentoIv
 		}
 		
 		documentoSpesa = ricercaDettaglioDocumentoSpesa(subdocIva.getDocumentoCollegato().getUid());
-		subdocSpesa = ComparatorUtils.searchByUid(documentoSpesa.getListaSubdocumenti(), subdocSpesa);
+		subdocSpesa = ComparatorUtil.searchByUid(documentoSpesa.getListaSubdocumenti(), subdocSpesa);
 		subdocIva.setStatoSubdocumentoIva(StatoSubdocumentoIva.PROVVISORIO_DEFINITIVO);
 		
 		assegnaNumeroEDataProtocollo();

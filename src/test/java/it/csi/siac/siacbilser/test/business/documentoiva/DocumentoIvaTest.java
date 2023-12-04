@@ -25,7 +25,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTIvaAliquota;
 import it.csi.siac.siacbilser.integration.entity.SiacTIvaAttivita;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 //import it.csi.siac.siacfin2ser.frontend.webservice.RegistroIvaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaAliquotaIva;
@@ -61,7 +61,7 @@ import it.csi.siac.siacfin2ser.model.TipoRegistroIva;
 public class DocumentoIvaTest extends BaseJunit4TestCase {
 	
 	/** The l. */
-	private LogUtil l = new LogUtil(getClass());
+	private LogSrvUtil l = new LogSrvUtil(getClass());
 	
 	/** The mapper. */
 	@Autowired

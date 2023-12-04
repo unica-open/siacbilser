@@ -22,7 +22,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entity.SiacTVincolo;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
 import it.csi.siac.siacbilser.model.Vincolo;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -32,7 +32,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class VincoloAttrConverter extends DozerConverter<Vincolo, SiacTVincolo > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

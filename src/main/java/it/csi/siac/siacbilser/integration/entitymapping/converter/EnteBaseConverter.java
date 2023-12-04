@@ -10,14 +10,14 @@ import it.csi.siac.siacbilser.integration.entity.SiacTEnteBaseExt;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siaccorser.model.Ente;
-import it.csi.siac.siaccorser.model.Entita;
+import it.csi.siac.siaccorser.model.EntitaExt;
 
 
 /**
  * The Class EnteBaseConverter.
  */
 @Component
-public abstract class EnteBaseConverter<A extends Entita> extends ExtendedDozerConverter<A, SiacTEnteBaseExt> {
+public abstract class EnteBaseConverter<A extends EntitaExt> extends ExtendedDozerConverter<A, SiacTEnteBaseExt> {
 	
 	/**
 	 * Instantiates a EnteBaseConverter.

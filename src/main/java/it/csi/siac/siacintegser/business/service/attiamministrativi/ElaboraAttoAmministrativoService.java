@@ -31,7 +31,7 @@ import it.csi.siac.siacbilser.business.service.provvedimento.InserisceProvvedime
 import it.csi.siac.siacbilser.business.service.provvedimento.VerificaAnnullabilitaProvvedimentoService;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
 import it.csi.siac.siacbilser.integration.dad.EnteDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siaccommonser.business.service.base.cache.KeyAdapter;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
@@ -68,7 +68,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	@Autowired
 	private EnteDad enteDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	
 	//Services
 	@Autowired
@@ -89,7 +89,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	
 	@Override
 	protected void init() {
-		provvedimentoDad.setEnte(ente);
+		attoAmministrativoDad.setEnte(ente);
 		
 		this.isEsecutivo = null;
 	}
@@ -120,11 +120,8 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 		String key = calcolaChiaveAttoAmministrativo(attoAmministrativo);
 		String msg = "L'operazione e' stata completata con successo: " + tipoOperazione + " Atto Amministrativo " + key;
 
-		log.info(methodName, msg);
-		Messaggio m = new Messaggio();
-		m.setCodice("CRU_CON_2001");
-		m.setDescrizione(msg);
-		res.getMessaggi().add(m);
+		log.info(methodName, "Elaborazione file Atti Amministrativi: " + msg);
+		res.getMessaggi().add(new Messaggio("CRU_CON_2001", msg));
 	}
 
 	/**
@@ -133,14 +130,13 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	 */
 	private void inserisciAggiornaAttoAmministrativo() {
 		String methodName = "inserisciAggiornaAttoAmministrativo";
-		log.debug(methodName, "INIZIO");
-		String key = calcolaChiaveAttoAmministrativo(attoAmministrativo) + " Uid Ente :" + attoAmministrativo.getEnte().getUid();
-		log.info(methodName, "Elaborazione Atto Amministrativo " + key);
-		log.info(methodName, "Tipo di elaborazione : " + attoAmministrativo.getTipoDiVariazione());
-		log.info(methodName, "isAttoDaAggiornare :" + attoAmministrativo.isAttoAmministrativoDaAggiornare());
-		log.info(methodName, "Stato operativo  Atto In archivio  :" + attoAmministrativo.getStatoOperativo());
-		log.info(methodName, "Stato operativo Atto da Input  :" + attoAmministrativo.getStatoOperativoInput());
-		log.info(methodName, "Codice Tipo Atto  :" + attoAmministrativo.getTipoAtto().getCodice());
+		log.info(methodName, 
+				new StringBuilder("Elaborazione file Atti Amministrativi: ")
+					.append("atto").append(calcolaChiaveAttoAmministrativoCompleta(attoAmministrativo))
+					.append(" ; tipo elaborazione: ").append(attoAmministrativo.getTipoDiVariazione())
+					.append(" ; isAttoDaAggiornare: ").append(attoAmministrativo.isAttoAmministrativoDaAggiornare())
+					.append(" ; stato di input : ").append(attoAmministrativo.getStatoOperativoInput())
+				.toString());
 
 		String tipoOperazione;
 		if (attoAmministrativo.isAttoAmministrativoDaAggiornare()) {
@@ -154,7 +150,6 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 		}
 		
 		impostaMessaggioSuccesso(tipoOperazione);
-		log.debug(methodName, "FINE");
 	}
 	/**
 	 * <font color='blue'><b> Verifica tipo di operazione per aggiornamento  </b></font><br />
@@ -162,7 +157,8 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	 */
 	private void verificaCompatibilitaTipoDiOperazionePerAggiornamento() {
 		checkBusinessConditionNotToBeSatisfied(!attoAmministrativo.isTipoDiVariazioneVariazione(),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Tipo di Gestione", ": l'atto e' gia' presente, l'elaborazione deve essere di tipo V"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Tipo di Gestione = I", ": l'atto " 
+					+ calcolaChiaveAttoAmministrativoCompleta(attoAmministrativo) + " e' gia' presente, l'elaborazione deve essere di tipo U"));
 	}
 
 	/**
@@ -171,7 +167,8 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	 */
 	private void verificaCompatibilitaTipoDiOperazionePerInserimento() {
 		checkBusinessConditionNotToBeSatisfied(!attoAmministrativo.isTipoDiVariazioneInserimento(),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("Tipo di Gestione", ": l'atto non e' ancora presente, l'elaborazione deve essere di tipo I"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("Tipo di Gestione = U", ": l'atto " 
+						+ calcolaChiaveAttoAmministrativoCompleta(attoAmministrativo) + " non e' ancora presente, l'elaborazione deve essere di tipo I"));
 	}
 	/**
 	 * Punto 7 della'analisi elaborazioneTracciatoAttiAmministrativi<br /> 
@@ -199,9 +196,9 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	 * </ul>
 	 */
 	private void verificaEdEseguiAggiornamentoInBaseAlloStatoOperativo() {
-		String key = calcolaChiaveAttoAmministrativo(attoAmministrativo);
+
 		if (isStatoAnnullato(attoAmministrativo.getStatoOperativo())) {
-			throw new BusinessException(ErroreAtt.PROVVEDIMENTO_E_GIA_ANNULLATO.getErrore(key), Esito.FALLIMENTO);
+			throw new BusinessException(ErroreAtt.PROVVEDIMENTO_E_GIA_ANNULLATO.getErrore(calcolaChiaveAttoAmministrativo(attoAmministrativo)), Esito.FALLIMENTO);
 		}
 
 		// SIAC-2547: controllo che l'aggiornamento sia possibile
@@ -236,7 +233,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 		}
 		String key = StringUtils.join(chunks, "/");
 		
-		Long count = provvedimentoDad.countByAnnoAndNumeroAndTipoAndSACAndNotUid(attoAmministrativo);
+		Long count = attoAmministrativoDad.countByAnnoAndNumeroAndTipoAndSACAndNotUid(attoAmministrativo);
 		checkBusinessConditionNotToBeSatisfied(count == null, ErroreCore.ERRORE_DI_SISTEMA.getErrore("Errore nel reperimento dei provvedimenti per chiave " + key));
 		checkBusinessConditionNotToBeSatisfied(count.longValue() > 0L, ErroreCore.ENTITA_PRESENTE.getErrore("Provvedimento", key));
 	}
@@ -262,10 +259,32 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 			aggiornaAttoAmministrativo();
 			return;
 		}
-		log.debug(methodName, "Atto Amministrativo " + key + " Non annullabile");
+		log.info(methodName, "Atto Amministrativo " + key + " Non annullabile");
 		throw new BusinessException(ErroreAtt.PROVVEDIMENTO_CON_MOVIMENTI_NON_ANNULLABILE.getErrore(key), Esito.FALLIMENTO);
 	}
 
+	/**
+	 * <font color='blue'><b>Calcola la chiave per l'atto amministrativo</b></font><br/>
+	 * la chiave &egrave; composta da anno/numero.
+	 *
+	 * @param attoAmministrativo the atto amministrativo
+	 * @return la chiave dell'atto
+	 */
+	private String calcolaChiaveAttoAmministrativoCompleta(AttoAmministrativoElab attoAmministrativo) {
+		if(attoAmministrativo == null) {
+			return "nessun parametroo di ricerca impostato";
+		}
+		return  new StringBuilder()
+				.append(calcolaChiaveAttoAmministrativo(attoAmministrativo))
+				.append("/")
+				.append(attoAmministrativo.getTipoAtto() != null? StringUtils.defaultIfBlank(attoAmministrativo.getTipoAtto().getCodice(), "N.D.") : "null")
+				.append("/")
+				.append(attoAmministrativo.getStrutturaAmmContabile() != null? StringUtils.defaultIfBlank(attoAmministrativo.getStrutturaAmmContabile().getCodice(), "N.D.") : "null")
+				.toString();
+				
+	}
+	
+	
 	/**
 	 *<font color='blue'><b>Calcola la chiave per l'atto amministrativo</b></font><br/>
 	 * la chiave &egrave; composta da anno/numero
@@ -273,7 +292,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	 * @return la chiave dell'atto
 	 */
 	private String calcolaChiaveAttoAmministrativo(AttoAmministrativoElab attoAmministrativo) {
-		return attoAmministrativo.getAnno() + "/" + attoAmministrativo.getNumero() + "/" + attoAmministrativo.getStatoOperativo();
+		return attoAmministrativo == null ? "null" : attoAmministrativo.getAnno() + "/" + attoAmministrativo.getNumero() + "/" + attoAmministrativo.getStatoOperativo();
 	}
 
 	/**
@@ -368,7 +387,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 		request.setTipoAtto(attoAmministrativo.getTipoAtto());
 		
 		InserisceProvvedimentoResponse res = serviceExecutor.executeServiceSuccess(InserisceProvvedimentoService.class, request);
-		log.debug(methodName, "Inserito atto amministrativo con uid " + res.getAttoAmministrativoInserito().getUid());
+		log.info(methodName, "Elaborazione file Atti Amministrativi: inserito atto con uid " + res.getAttoAmministrativoInserito().getUid());
 
 		return res;
 	}
@@ -396,7 +415,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 		Class<? extends AggiornaProvvedimentoService> aggiornaProvvedimentoServiceClass = getAggiornaProvvedimentoServiceClass();
 		
 		AggiornaProvvedimentoResponse res = serviceExecutor.executeServiceSuccess(aggiornaProvvedimentoServiceClass, request);
-		log.debug(methodName, "Aggiornato atto amministrativo con uid " + res.getAttoAmministrativoAggiornato().getUid());
+		log.info(methodName, "Elaborazione file Atti Amministrativi: aggiornato atto con uid " + res.getAttoAmministrativoAggiornato().getUid());
 
 		return res;
 	}
@@ -426,7 +445,6 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	 */
 	private void ricercaAttoAmministrativo() {
 		String methodName = "ricercaAttoAmministrativo";
-		log.info(methodName, "Inizio");
 		
 		AttoAmministrativo attAmministrativoFromRicerca = null;
 		
@@ -438,7 +456,10 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 			attoPerRicerca.setNumero(attoAmministrativo.getNumero());
 			attoPerRicerca.setTipoAtto(attoAmministrativo.getTipoAtto());
 			attoPerRicerca.setStrutturaAmmContabile(attoAmministrativo.getStrutturaAmmContabile());
-			attAmministrativoFromRicerca = provvedimentoDad.findAttoAmministrativoByAnnoAndNumeroAndTipo(attoPerRicerca);
+			
+			log.info(methodName, getStringaLogParametriRicerca(attoPerRicerca));
+			
+			attAmministrativoFromRicerca = attoAmministrativoDad.findAttoAmministrativoByAnnoAndNumeroAndTipo(attoPerRicerca);
 		} else if(attoAmministrativo.isTipoDiVariazioneVariazione()) {
 			AttoAmministrativo attoPerRicerca = new AttoAmministrativo();
 			attoPerRicerca.setEnte(attoAmministrativo.getEnte());
@@ -446,14 +467,35 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 			attoPerRicerca.setNumero(attoAmministrativo.getNumeroAttoChiave());
 			attoPerRicerca.setTipoAtto(attoAmministrativo.getTipoAttoChiave());
 			attoPerRicerca.setStrutturaAmmContabile(attoAmministrativo.getStrutturaAmmContabileChiave());
-			attAmministrativoFromRicerca = provvedimentoDad.findAttoAmministrativoByAnnoAndNumeroAndTipo(attoPerRicerca);
+			
+			log.info(methodName, getStringaLogParametriRicerca(attoPerRicerca));
+			
+			attAmministrativoFromRicerca = attoAmministrativoDad.findAttoAmministrativoByAnnoAndNumeroAndTipo(attoPerRicerca);
 		}
 		if (attAmministrativoFromRicerca != null && attAmministrativoFromRicerca.getUid() != 0) {
+			log.info(methodName, "atto amministrativo trovato su base dati");
 			attoAmministrativo.setUid(attAmministrativoFromRicerca.getUid());
 			attoAmministrativo.setStatoOperativo(attAmministrativoFromRicerca.getStatoOperativo());
 		}
-		log.info(methodName, "FINE");
+		
 
+	}
+
+	private String getStringaLogParametriRicerca(AttoAmministrativo attoPerRicerca) {
+		return new StringBuilder()
+				.append("Cerco l'atto con i seguenti parametri di ricerca. Anno: ")
+				.append(attoPerRicerca.getAnno())
+				.append(", numero: ")
+				.append(attoPerRicerca.getNumero())
+				.append(", tipo atto : ")
+				.append(attoPerRicerca.getTipoAtto() != null? 
+						(attoPerRicerca.getTipoAtto().getUid() + " - " + StringUtils.defaultIfBlank(attoPerRicerca.getTipoAtto().getCodice(), "N.D.")) 
+						: "null" )
+				.append(", struttura amministrativo contabile: ")
+				.append(attoPerRicerca.getStrutturaAmmContabile() != null? 
+						(attoPerRicerca.getStrutturaAmmContabile().getUid() + " - " + StringUtils.defaultIfBlank(attoPerRicerca.getStrutturaAmmContabile().getCodice(), "N.D.")) 
+						: "null" )
+				.toString();
 	}
 
 	/**
@@ -486,7 +528,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 		String methodName = "valorizzaCodiceStatoOutput";
 		// ottengo la codifica dello stato operativo
 		valorizzaStatoOperativoAttoFromFlusso();
-		String codiceStato = provvedimentoDad.findCodiceStatoOut(attoAmministrativo);
+		String codiceStato = attoAmministrativoDad.findCodiceStatoOut(attoAmministrativo);
 		attoAmministrativo.setStatoOperativoInput(codiceStato);
 		checkValiditaEntita(codiceStato.isEmpty(), "Codice Stato");
 		log.debug(methodName, "Codice Stato operativo out (From SIAC) :" + codiceStato);
@@ -591,7 +633,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 		StringBuilder sb = new StringBuilder()
 			.append(StringUtils.join(chunks1, ", "))
 			.append(suffix != null ? " " + suffix : "");
-		checkBusinessConditionNotToBeSatisfied(sac == null || sac.getUid() == 0, ErroreCore.VALORE_NON_VALIDO.getErrore(sb.toString(), ": " + StringUtils.join(chunks2, ", ")));
+		checkBusinessConditionNotToBeSatisfied(sac == null || sac.getUid() == 0, ErroreCore.VALORE_NON_CONSENTITO.getErrore(sb.toString(), ": " + StringUtils.join(chunks2, ", ")));
 	}
 
 	/**
@@ -612,7 +654,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 				return sa;
 			}
 		}
-		throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("centro di responsabilita'", ": il centro con codice " + centroDiResponsabilita.getCodice() + " non e' presente su base dati"));
+		throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("centro di responsabilita'", ": il centro con codice " + centroDiResponsabilita.getCodice() + " non e' presente su base dati"));
 	}
 	
 	/**
@@ -633,7 +675,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 				return sa;
 			}
 		}
-		throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("centro di costo", ": il centro con codice " + centroDiCosto.getCodice()
+		throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("centro di costo", ": il centro con codice " + centroDiCosto.getCodice()
 				+ " (centro di responsabilita' " + centroDiResponsabilita.getCodice() + ") non e' presente su base dati"));
 	}
 
@@ -671,10 +713,10 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	 */
 	private void checkTipoAttoPerEnte() {
 		
-		provvedimentoDad.setEnte(attoAmministrativo.getEnte());
+		attoAmministrativoDad.setEnte(attoAmministrativo.getEnte());
 		checkParametroValorizzato(attoAmministrativo.getTipoAtto() == null, "Tipo Atto");
 
-		List<TipoAtto> listaTipoAtto = provvedimentoDad.getElencoTipi();
+		List<TipoAtto> listaTipoAtto = attoAmministrativoDad.getElencoTipi();
 		TipoAtto tipoAtto = ottieniTipoAttoDaLista(attoAmministrativo.getTipoAtto(), listaTipoAtto);
 		TipoAtto tipoAttoChiave = ottieniTipoAttoDaLista(attoAmministrativo.getTipoAttoChiave(), listaTipoAtto);
 		
@@ -700,7 +742,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 				return ta;
 			}
 		}
-		log.debug(methodName, "Tipo Atto : " + tipoAtto.getCodice() + " Non Definito per l'ente  " + attoAmministrativo.getEnte().getUid());
+		log.info(methodName, "Elaborazione file Atti Amministrativi: tipo atto : " + tipoAtto.getCodice() + " non definito per l'ente  " + attoAmministrativo.getEnte().getUid());
 		throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Tipo Atto", tipoAtto.getCodice()), Esito.FALLIMENTO);
 	}
 
@@ -717,7 +759,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 			String msg = "Bilancio con stato Diverso da PREVISIONE per ente " + attoAmministrativo.getEnte();
 			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore(msg), Esito.FALLIMENTO);
 		}
-		log.info(methodName, "Info Bilancio Trovato  (Anno/Fase/Uid):"
+		log.info(methodName, "Elaborazione file Atti Amministrativi: Info Bilancio Trovato  (Anno/Fase/Uid):"
 				+ bilancio.getAnno() + "/" + bilancio.getFaseEStatoAttualeBilancio().getFaseBilancio().toString() + "/" + bilancio.getUid());
 		attoAmministrativo.setBilancio(bilancio);
 		
@@ -754,11 +796,11 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 			return;
 		}
 		
-		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getAnnoAttoChiave() != null, ErroreCore.VALORE_NON_VALIDO.getErrore("anno atto chiave", ": non puo' essere valorizzato in inserimento"));
-		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getNumeroAttoChiave() != null, ErroreCore.VALORE_NON_VALIDO.getErrore("numero atto chiave", ": non puo' essere valorizzato in inserimento"));
-		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getTipoAttoChiave() != null, ErroreCore.VALORE_NON_VALIDO.getErrore("tipo atto chiave", ": non puo' essere valorizzato in inserimento"));
-		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getSacCentroDiCostoChiave() != null, ErroreCore.VALORE_NON_VALIDO.getErrore("centro di costo chiave", ": non puo' essere valorizzato in inserimento"));
-		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getSacCentroDiResponsabilitaChiave() != null, ErroreCore.VALORE_NON_VALIDO.getErrore("centro di responsabilita chiave", ": non puo' essere valorizzato in inserimento"));
+		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getAnnoAttoChiave() != null, ErroreCore.VALORE_NON_CONSENTITO.getErrore("anno atto chiave", ": non puo' essere valorizzato in inserimento"));
+		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getNumeroAttoChiave() != null, ErroreCore.VALORE_NON_CONSENTITO.getErrore("numero atto chiave", ": non puo' essere valorizzato in inserimento"));
+		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getTipoAttoChiave() != null, ErroreCore.VALORE_NON_CONSENTITO.getErrore("tipo atto chiave", ": non puo' essere valorizzato in inserimento"));
+		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getSacCentroDiCostoChiave() != null, ErroreCore.VALORE_NON_CONSENTITO.getErrore("centro di costo chiave", ": non puo' essere valorizzato in inserimento"));
+		checkBusinessConditionNotToBeSatisfied(attoAmministrativo.getSacCentroDiResponsabilitaChiave() != null, ErroreCore.VALORE_NON_CONSENTITO.getErrore("centro di responsabilita chiave", ": non puo' essere valorizzato in inserimento"));
 	}
 
 	/**
@@ -776,7 +818,7 @@ public class ElaboraAttoAmministrativoService extends CheckedAccountBaseService<
 	 * @param nomeParametro il nome del parametro
 	 */
 	protected void checkValoreParametroValido(boolean condition, Object... nomeParametro) {
-		checkBusinessConditionNotToBeSatisfied(condition, ErroreCore.VALORE_NON_VALIDO.getErrore(nomeParametro));
+		checkBusinessConditionNotToBeSatisfied(condition, ErroreCore.VALORE_NON_CONSENTITO.getErrore(nomeParametro));
 	}
 	
 	/**

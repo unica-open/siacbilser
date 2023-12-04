@@ -15,7 +15,14 @@ public class IdAccertamentoSubAccertamento implements Serializable {
 	private String stato;
 	private String codiceSoggetto;
 	private String codiceSoggettoClasse;
+	
+	//SIAC-6997
+	private Integer movgestTsId;
+	private String movgestTsCode;
+	private String movgestTsTipoCode;
 
+	//SIAC-7533 
+	//i nuovi campi invalidano alcune ricerche sul repository a seguito della 6997
 	public IdAccertamentoSubAccertamento(Integer idAccertamento, Integer idAccertamentoPadre,
 			BigDecimal numero, Integer anno, String stato, String codiceSoggetto, String codiceSoggettoClasse) {
 		this.idAccertamento = idAccertamento;
@@ -25,6 +32,21 @@ public class IdAccertamentoSubAccertamento implements Serializable {
 		this.stato = stato;
 		this.codiceSoggetto = codiceSoggetto;
 		this.codiceSoggettoClasse = codiceSoggettoClasse;
+	}
+	//
+	
+	public IdAccertamentoSubAccertamento(Integer idAccertamento, Integer idAccertamentoPadre,
+			BigDecimal numero, Integer anno, String stato, String codiceSoggetto, String codiceSoggettoClasse,Integer movgestTsId,String movgestTsCode,String movgestTsTipoCode) {
+		this.idAccertamento = idAccertamento;
+		this.idAccertamentoPadre = idAccertamentoPadre;
+		this.numero = numero;
+		this.anno = anno;
+		this.stato = stato;
+		this.codiceSoggetto = codiceSoggetto;
+		this.codiceSoggettoClasse = codiceSoggettoClasse;
+		this.movgestTsId = movgestTsId;
+		this.movgestTsCode = movgestTsCode;
+		this.movgestTsTipoCode = movgestTsTipoCode;
 	}
 
 	/**
@@ -135,6 +157,48 @@ public class IdAccertamentoSubAccertamento implements Serializable {
 	@Override
 	public int hashCode() {
 		return super.hashCode();
+	}
+
+	/**
+	 * @return the movgestTsId
+	 */
+	public Integer getMovgestTsId() {
+		return movgestTsId;
+	}
+
+	/**
+	 * @param movgestTsId the movgestTsId to set
+	 */
+	public void setMovgestTsId(Integer movgestTsId) {
+		this.movgestTsId = movgestTsId;
+	}
+
+	/**
+	 * @return the movgestTsCode
+	 */
+	public String getMovgestTsCode() {
+		return movgestTsCode;
+	}
+
+	/**
+	 * @param movgestTsCode the movgestTsCode to set
+	 */
+	public void setMovgestTsCode(String movgestTsCode) {
+		this.movgestTsCode = movgestTsCode;
+	}
+
+	/**
+	 * @return the movgestTsTipoCode
+	 */
+	public String getMovgestTsTipoCode() {
+		return movgestTsTipoCode;
+	}
+
+	/**
+	 * @param movgestTsTipoCode the movgestTsTipoCode to set
+	 */
+	public void setMovgestTsTipoCode(String movgestTsTipoCode) {
+		this.movgestTsTipoCode = movgestTsTipoCode;
 	}
 
 }

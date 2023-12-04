@@ -19,7 +19,6 @@ import java.util.Properties;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
@@ -27,6 +26,7 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.springframework.test.context.TestContextManager;
 
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Operatore;
@@ -40,11 +40,8 @@ import it.csi.siac.siaccorser.model.ServiceResponse;
 public class TestBase {
 	
 	
-	/** The log report. */
-	protected Logger logReport = Logger.getLogger("it.csi.siac.siacbilser.test.report");
-	
 	/** The log. */
-	protected Logger log = Logger.getLogger(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(getClass());
 	   	   
 	/** The fileparam. */
 	protected String fileparam;
@@ -77,16 +74,27 @@ public class TestBase {
 	private void init() {
 		accountProperties = new Properties();
 		
-		InputStream is = getClass().getClassLoader().getResourceAsStream("./spring/account.properties");
-		if(is != null) {
-			try {
-				accountProperties.load(is);
-			} catch (IOException e) {
-				// Non fare nulla
-				log.error("Errore nella lettura delle properties", e);
+		InputStream is = null;
+		try {
+			is = getClass().getClassLoader().getResourceAsStream("./spring/account.properties");
+			if(is != null) {
+				try {
+					accountProperties.load(is);
+				} catch (IOException e) {
+					// Non fare nulla
+					log.error("Errore nella lettura delle properties", e);
+				}
+			} else {
+				log.error("init", "Properties non lette");
 			}
-		} else {
-			log.error("Properties non lette");
+		} finally {
+			if(is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					// Ignore
+				}
+			}
 		}
 	}
 	
@@ -137,6 +145,9 @@ public class TestBase {
 	@Rule
 	public TestRule regola=new TestWatcher() {
 		
+		/** The log. */
+		private LogSrvUtil logReport = new LogSrvUtil(getClass());
+		
 		private String testcount;
 		private String className;
 		private String row;
@@ -151,13 +162,15 @@ public class TestBase {
 		}
 		
 		@Override
-		protected void failed(Throwable e, Description description) {			
-			logReport.error(className + " RUN"+ testcount + " (excel row:"+row+") FAILED   - Obiettivo test:  " + obiettivoTest + ". Errore:"+ e.getMessage());
+		protected void failed(Throwable e, Description description) {
+			final String methodName = "failed";
+			logReport.error(methodName, " RUN"+ testcount + " (excel row:"+row+") FAILED   - Obiettivo test:  " + obiettivoTest + ". Errore:"+ e.getMessage());
 		}
 		
 		  @Override
 		protected void succeeded(Description description) {			
-			logReport.info( className + " RUN"+ testcount + " (excel row:"+row+") SUCCEDED - Obiettivo test:  " + obiettivoTest);
+			final String methodName = "succeeded";
+			logReport.info(methodName, " RUN"+ testcount + " (excel row:"+row+") SUCCEDED - Obiettivo test:  " + obiettivoTest);
 			
 		}
 		@Override

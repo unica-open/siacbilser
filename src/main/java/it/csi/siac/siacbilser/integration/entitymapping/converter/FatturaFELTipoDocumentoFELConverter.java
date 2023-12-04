@@ -4,10 +4,13 @@
 */
 package it.csi.siac.siacbilser.integration.entitymapping.converter;
 
+import java.util.List;
+
 import org.dozer.DozerConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import it.csi.siac.siacbilser.integration.dao.SirfelDTipoDocumentoRepository;
 import it.csi.siac.siacbilser.integration.dao.SirfelTFatturaRepository;
 import it.csi.siac.siacbilser.integration.entity.SirfelDTipoDocumento;
 import it.csi.siac.siacbilser.integration.entity.SirfelDTipoDocumentoPK;
@@ -24,6 +27,8 @@ public class FatturaFELTipoDocumentoFELConverter extends DozerConverter<FatturaF
 	
 	@Autowired
 	private SirfelTFatturaRepository sirfelTFatturaRepository;
+	@Autowired
+	private SirfelDTipoDocumentoRepository sirfelDTipoDocumentoRepository;
 	
 	/**
 	 * Instantiates a new documento spesa stato converter.
@@ -39,6 +44,15 @@ public class FatturaFELTipoDocumentoFELConverter extends DozerConverter<FatturaF
 	public FatturaFEL convertFrom(SirfelTFattura src, FatturaFEL dest) {
 		if(src.getSirfelDTipoDocumento() != null){
 			SirfelDTipoDocumentoEnum tipoDocumentoEnum = SirfelDTipoDocumentoEnum.byCodice(src.getSirfelDTipoDocumento().getId().getCodice());
+			//SIAC-7557-VG
+			List<SirfelDTipoDocumento> sirfelDTipoDocumentos = sirfelDTipoDocumentoRepository.findSirfelDTipoDocumentoByEnteAndCodFel(src.getEnteProprietarioId(), 
+					src.getSirfelDTipoDocumento().getId().getCodice());
+			
+			if(sirfelDTipoDocumentos!= null && !sirfelDTipoDocumentos.isEmpty() &&
+					sirfelDTipoDocumentos.get(0).getSiacDDocTipoS()!= null){
+				dest.setDocTipoSpesa(sirfelDTipoDocumentos.get(0).getSiacDDocTipoS().getDocTipoId());
+			}
+			
 			dest.setTipoDocumentoFEL(tipoDocumentoEnum.getTipoDocumentoFEL());
 		}
 		return dest;

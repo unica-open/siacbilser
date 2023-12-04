@@ -25,7 +25,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.lang3.StringUtils;
 
 import it.csi.siac.siacbilser.business.utility.OauthHelperExt;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.file.File;
 import it.csi.wso2.apiman.oauth2.helper.OauthHelper;
@@ -36,7 +36,7 @@ import it.csi.wso2.apiman.oauth2.helper.OauthHelper;
  * @author Domenico Lisi
  */
 public class AttiliqStartServletInvoker {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private String host;// = "tst-api-ent.ecosis.csi.it"; // "tst-wls9-01.csi.it";
 	private int port;// = 80; //9130
@@ -156,6 +156,7 @@ public class AttiliqStartServletInvoker {
 		if(statusCode != HttpStatus.SC_OK || result.startsWith("KO") || !"OK".equals(result)){
 			String msg = "Errore nella trasmissione del file ad Atti Di Liquidazione. " + result.replaceFirst("KO", "").trim();
 			log.error(methodName, "statusCode:" + statusCode + ". " + msg);
+			log.error(methodName, "Risposta dalla Servlet: "+ result);
 			throw new BusinessException(msg);
 		}
 		

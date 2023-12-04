@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.csi.siac.siaccorser.model.Errore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.StringUtilsFin;
 
 public class EsitoControlliDto implements Serializable {
 	
@@ -23,7 +23,7 @@ public class EsitoControlliDto implements Serializable {
 	private List<Errore> listaWarning;
 	
 	public boolean presenzaErrori(){
-		return !StringUtils.isEmpty(listaErrori);
+		return !StringUtilsFin.isEmpty(listaErrori);
 	}
 	
 	public List<Errore> getListaErrori(){
@@ -52,14 +52,14 @@ public class EsitoControlliDto implements Serializable {
 		if(listaErrori==null){
 			listaErrori = new ArrayList<Errore>();
 		}
-		listaErrori = CommonUtils.toList(listaErrori,listaErrorie);
+		listaErrori = CommonUtil.toList(listaErrori,listaErrorie);
 	}
 	
 	public void addWarning(List<Errore> warnings){
 		if(listaWarning==null){
 			listaWarning = new ArrayList<Errore>();
 		}
-		listaWarning = CommonUtils.toList(listaWarning,warnings);
+		listaWarning = CommonUtil.toList(listaWarning,warnings);
 	}
 
 }

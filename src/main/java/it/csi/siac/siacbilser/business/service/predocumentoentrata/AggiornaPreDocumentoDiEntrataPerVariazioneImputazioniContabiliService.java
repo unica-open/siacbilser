@@ -62,7 +62,7 @@ public class AggiornaPreDocumentoDiEntrataPerVariazioneImputazioniContabiliServi
 			// TODO: controllare i dati
 			checkCondition(preDoc.getAccertamento().getUid()!=0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("uid acertamento predocumento"));
 			checkCondition(preDoc.getAccertamento().getAnnoMovimento()!=0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno accertamento predocumento"));
-			checkNotNull(preDoc.getAccertamento().getNumero(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero accertamento predocumento"));
+			checkNotNull(preDoc.getAccertamento().getNumeroBigDecimal(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero accertamento predocumento"));
 		}
 		checkEntitaFacoltativa(preDoc.getSoggetto(), "soggetto");
 		checkEntitaFacoltativa(preDoc.getAttoAmministrativo(), "provvedimento predocumento");

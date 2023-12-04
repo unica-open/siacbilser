@@ -8,7 +8,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import it.csi.siac.custom.business.service.ElaboraFileCustomService;
+import it.csi.siac.custom.business.service.base.ElaboraFileCustomService;
 import it.csi.siac.siacintegser.business.service.base.ElaboraFileBaseService;
 import it.csi.siac.siacintegser.business.service.base.ElaboraFileServiceInfo;
 

@@ -21,7 +21,7 @@ import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siaccorser.util.comparator.ComparatorUtils;
+import it.csi.siac.siaccorser.util.comparator.ComparatorUtil;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AggiornaRisconto;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AggiornaRiscontoResponse;
 import it.csi.siac.siacgenser.frontend.webservice.msg.InseriscePrimaNotaAutomaticaResponse;
@@ -115,7 +115,7 @@ public class AggiornaRiscontoService extends CheckedAccountBaseService<AggiornaR
 		primaNotaDad.aggiornaRisconto(req.getRisconto());
 		
 		//tolgo il vecchio risconto
-		RateoRisconto rrDaTogliere = ComparatorUtils.searchByUid(primaNota.getListaRateoRisconto(), rateoRiscontoPrecedente);
+		RateoRisconto rrDaTogliere = ComparatorUtil.searchByUid(primaNota.getListaRateoRisconto(), rateoRiscontoPrecedente);
 		primaNota.getListaRateoRisconto().remove(rrDaTogliere);
 		primaNota.addRateoRisconto(req.getRisconto());
 		
@@ -188,7 +188,7 @@ public class AggiornaRiscontoService extends CheckedAccountBaseService<AggiornaR
 		PrimaNota pn = new PrimaNota();
 		pn.setUid(idPrimaNotaRisconto);
 		
-		PrimaNota primaNotaCollegata = ComparatorUtils.searchByUid(primaNota.getListaPrimaNotaFiglia(), pn);
+		PrimaNota primaNotaCollegata = ComparatorUtil.searchByUid(primaNota.getListaPrimaNotaFiglia(), pn);
 		
 		registrazioneGENServiceHelper.annullaPrimaNota(primaNotaCollegata);
 		

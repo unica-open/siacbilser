@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.frontend.webservice.msg.AnnullaVariazioneCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AnnullaVariazioneCodificheResponse;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.frontend.webservice.msg.ExecAzioneRichiesta;
 import it.csi.siac.siaccorser.model.Azione;
@@ -72,7 +72,7 @@ public class AnnullaVariazioneCodificheService extends VariazioneCodificheBaseSe
 	@Override
 	protected void execute() {
 		
-		variazione.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.ANNULLATA);
+		variazione.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneBilancio.ANNULLATA);
 		variazioniDad.aggiornaVariazioneCodificaCapitolo(variazione);		
 		
 		res.setVariazioneCodificaCapitolo(variazione);

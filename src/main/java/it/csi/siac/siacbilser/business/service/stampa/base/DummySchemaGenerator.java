@@ -88,7 +88,7 @@ public class DummySchemaGenerator {
 	
 	private static class MySchemaOutputResolver extends SchemaOutputResolver {
 
-		private final LogUtil log = new LogUtil(getClass());
+		private final LogSrvUtil log = new LogSrvUtil(getClass());
 		private String name;
 
 		public MySchemaOutputResolver(String name) {
@@ -113,9 +113,9 @@ public class DummySchemaGenerator {
 
 	}
 	
-	private static class LogUtil {
+	private static class LogSrvUtil {
 		private final String className;
-		LogUtil(Class<?> clazz) {
+		LogSrvUtil(Class<?> clazz) {
 			this.className = clazz.getSimpleName();
 		}
 		public void info(String methodName, String message) {

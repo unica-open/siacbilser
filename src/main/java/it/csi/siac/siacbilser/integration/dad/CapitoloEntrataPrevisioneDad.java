@@ -5,9 +5,10 @@
 package it.csi.siac.siacbilser.integration.dad;
 
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.csi.siac.siacbilser.integration.dao.SiacTBilElemRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemStato;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemStato;
@@ -33,7 +33,6 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CategoriaTipologiaTitolo;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEP;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siacbilser.model.TipoFondo;
 import it.csi.siac.siacbilser.model.TipologiaTitolo;
@@ -41,13 +40,13 @@ import it.csi.siac.siacbilser.model.TitoloEntrata;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloEPrev;
 import it.csi.siac.siacbilser.model.ric.RicercaPuntualeCapitoloEPrev;
 import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloEPrev;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2ser.model.CapitoloEntrataPrevisioneModelDetail;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CapitoloEntrataPrevisioneDad.
  *
@@ -58,14 +57,6 @@ import it.csi.siac.siacfin2ser.model.CapitoloEntrataPrevisioneModelDetail;
 @Transactional
 public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 	
-	/** The classificatori dad. */
-	@Autowired
-	private ClassificatoriDad classificatoriDad;
-	
-	/** The siac t bil elem repository. */
-	@Autowired
-	private SiacTBilElemRepository siacTBilElemRepository;	
-
 	/**
 	 * Creates the.
 	 *
@@ -308,7 +299,8 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 				null,//criteriRicerca.getFlagFondoSvalutazioneCrediti(),
 				null,//criteriRicerca.getFlagFunzioniDelegate(),
 				criteriRicerca.getFlagPerMemoria(),
-				null,//criteriRicerca.getFlagRilevanteIva(),
+				//SIAC-8547 si ripristina il flag rilevante iva
+				criteriRicerca.getFlagRilevanteIva(),
 				null,//criteriRicerca.getFlagTrasferimentoOrganiComunitari(),	
 				criteriRicerca.getFlagEntrateRicorrenti(),
 				null,//criteriRicerca.getFlagFondoPluriennaleVinc(),
@@ -323,43 +315,44 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 				criteriRicerca.getCodiceTransazioneUnioneEuropeaEntrata(), null, //criteriRicerca.getCodiceTransazioneUnioneEuropeaSpesa(),
 				null,//criteriRicerca.getCodicePoliticheRegionaliUnitarie(), 
 				
-				criteriRicerca.getCodiceClassificatoreGenerico1(),
-				criteriRicerca.getCodiceClassificatoreGenerico2(),
-				criteriRicerca.getCodiceClassificatoreGenerico3(),
-				criteriRicerca.getCodiceClassificatoreGenerico4(),
-				criteriRicerca.getCodiceClassificatoreGenerico5(),
-				criteriRicerca.getCodiceClassificatoreGenerico6(),
-				criteriRicerca.getCodiceClassificatoreGenerico7(),
-				criteriRicerca.getCodiceClassificatoreGenerico8(),
-				criteriRicerca.getCodiceClassificatoreGenerico9(),
-				criteriRicerca.getCodiceClassificatoreGenerico10(),	
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,	
 				
 				null,
 				null,
 				null,
 				null,
 				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
+				criteriRicerca.getCodiceClassificatoreGenerico36(),
+				criteriRicerca.getCodiceClassificatoreGenerico37(),
+				criteriRicerca.getCodiceClassificatoreGenerico38(),
+				criteriRicerca.getCodiceClassificatoreGenerico39(),
+				criteriRicerca.getCodiceClassificatoreGenerico40(),
+				criteriRicerca.getCodiceClassificatoreGenerico41(),
+				criteriRicerca.getCodiceClassificatoreGenerico42(),
+				criteriRicerca.getCodiceClassificatoreGenerico43(),
+				criteriRicerca.getCodiceClassificatoreGenerico44(),
+				criteriRicerca.getCodiceClassificatoreGenerico45(),
+				criteriRicerca.getCodiceClassificatoreGenerico46(),
+				criteriRicerca.getCodiceClassificatoreGenerico47(),
+				criteriRicerca.getCodiceClassificatoreGenerico48(),
+				criteriRicerca.getCodiceClassificatoreGenerico49(),
+				criteriRicerca.getCodiceClassificatoreGenerico50(),
 				
 				//classificatori gerarchici
 				criteriRicerca.getCodicePianoDeiConti(),
 				null,null,//criteriRicerca.getCodiceCofog(),criteriRicerca.getCodiceTipoCofog(),
 				criteriRicerca.getCodiceStrutturaAmmCont(), criteriRicerca.getCodiceTipoStrutturaAmmCont(),
-				
+				//task-90
+				mapToString(criteriRicerca.getIdStrutturaAmmCont(),null),
 				criteriRicerca.getCodiceSiopeEntrata(), criteriRicerca.getCodiceTipoSiopeEntrata(),
 				null,null,//criteriRicerca.getCodiceSiopeSpesa(), criteriRicerca.getCodiceTipoSiopeSpesa(),
 				
@@ -375,7 +368,12 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 				criteriRicerca.getTipoAttoDilegge(),
 				
 				criteriRicerca.getRichiediAccantonamentoFondiDubbiaEsigibilita(),
+				null,
+				criteriRicerca.getFlagEntrataDubbiaEsigFCDE(),
+				criteriRicerca.getVersioneAccFcde(),
+				criteriRicerca.getTipoAccFcde(),
 				
+				null,
 				toPageable(parametriPaginazione));
 		
 				
@@ -437,18 +435,6 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 				null,
 				// criteriRicerca.getCodicePoliticheRegionaliUnitarie()
 				null,
-				
-				criteriRicerca.getCodiceClassificatoreGenerico1(),
-				criteriRicerca.getCodiceClassificatoreGenerico2(),
-				criteriRicerca.getCodiceClassificatoreGenerico3(),
-				criteriRicerca.getCodiceClassificatoreGenerico4(),
-				criteriRicerca.getCodiceClassificatoreGenerico5(),
-				criteriRicerca.getCodiceClassificatoreGenerico6(),
-				criteriRicerca.getCodiceClassificatoreGenerico7(),
-				criteriRicerca.getCodiceClassificatoreGenerico8(),
-				criteriRicerca.getCodiceClassificatoreGenerico9(),
-				criteriRicerca.getCodiceClassificatoreGenerico10(),
-				
 				null,
 				null,
 				null,
@@ -458,17 +444,27 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 				null,
 				null,
 				null,
+				null,				
 				null,
 				null,
 				null,
 				null,
 				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
+				criteriRicerca.getCodiceClassificatoreGenerico36(),
+				criteriRicerca.getCodiceClassificatoreGenerico37(),
+				criteriRicerca.getCodiceClassificatoreGenerico38(),
+				criteriRicerca.getCodiceClassificatoreGenerico39(),
+				criteriRicerca.getCodiceClassificatoreGenerico40(),
+				criteriRicerca.getCodiceClassificatoreGenerico41(),
+				criteriRicerca.getCodiceClassificatoreGenerico42(),
+				criteriRicerca.getCodiceClassificatoreGenerico43(),
+				criteriRicerca.getCodiceClassificatoreGenerico44(),
+				criteriRicerca.getCodiceClassificatoreGenerico45(),
+				criteriRicerca.getCodiceClassificatoreGenerico46(),
+				criteriRicerca.getCodiceClassificatoreGenerico47(),
+				criteriRicerca.getCodiceClassificatoreGenerico48(),
+				criteriRicerca.getCodiceClassificatoreGenerico49(),
+				criteriRicerca.getCodiceClassificatoreGenerico50(),
 				
 				//classificatori gerarchici
 				criteriRicerca.getCodicePianoDeiConti(),
@@ -504,7 +500,10 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 				criteriRicerca.getCommaAttoDilegge(),
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
-				criteriRicerca.getRichiediAccantonamentoFondiDubbiaEsigibilita());
+				criteriRicerca.getRichiediAccantonamentoFondiDubbiaEsigibilita(),
+				null,
+				criteriRicerca.getFlagEntrataDubbiaEsigFCDE()
+				);
 		if(objs == null) {
 			return null;
 		}
@@ -570,37 +569,37 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 				criteriRicerca.getCodiceTransazioneUnioneEuropeaEntrata(), null, //criteriRicerca.getCodiceTransazioneUnioneEuropeaSpesa(),
 				null,//criteriRicerca.getCodicePoliticheRegionaliUnitarie(), 
 				
-				criteriRicerca.getCodiceClassificatoreGenerico1(),
-				criteriRicerca.getCodiceClassificatoreGenerico2(),
-				criteriRicerca.getCodiceClassificatoreGenerico3(),
-				criteriRicerca.getCodiceClassificatoreGenerico4(),
-				criteriRicerca.getCodiceClassificatoreGenerico5(),
-				criteriRicerca.getCodiceClassificatoreGenerico6(),
-				criteriRicerca.getCodiceClassificatoreGenerico7(),
-				criteriRicerca.getCodiceClassificatoreGenerico8(),
-				criteriRicerca.getCodiceClassificatoreGenerico9(),
-				criteriRicerca.getCodiceClassificatoreGenerico10(),
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
 				
 				null,
 				null,
 				null,
 				null,
 				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
+				criteriRicerca.getCodiceClassificatoreGenerico36(),
+				criteriRicerca.getCodiceClassificatoreGenerico37(),
+				criteriRicerca.getCodiceClassificatoreGenerico38(),
+				criteriRicerca.getCodiceClassificatoreGenerico39(),
+				criteriRicerca.getCodiceClassificatoreGenerico40(),
+				criteriRicerca.getCodiceClassificatoreGenerico41(),
+				criteriRicerca.getCodiceClassificatoreGenerico42(),
+				criteriRicerca.getCodiceClassificatoreGenerico43(),
+				criteriRicerca.getCodiceClassificatoreGenerico44(),
+				criteriRicerca.getCodiceClassificatoreGenerico45(),
+				criteriRicerca.getCodiceClassificatoreGenerico46(),
+				criteriRicerca.getCodiceClassificatoreGenerico47(),
+				criteriRicerca.getCodiceClassificatoreGenerico48(),
+				criteriRicerca.getCodiceClassificatoreGenerico49(),
+				criteriRicerca.getCodiceClassificatoreGenerico50(),
 				
 				//classificatori gerarchici
 				criteriRicerca.getCodicePianoDeiConti(),
@@ -621,7 +620,8 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 				criteriRicerca.getPuntoAttoDilegge(),
 				criteriRicerca.getTipoAttoDilegge(),
 				
-				criteriRicerca.getRichiediAccantonamentoFondiDubbiaEsigibilita()
+				criteriRicerca.getRichiediAccantonamentoFondiDubbiaEsigibilita(),
+				criteriRicerca.getFlagEntrataDubbiaEsigFCDE()
 				);
 		
 				
@@ -643,7 +643,7 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 		return mapNotNull(bilElem, CapitoloEntrataPrevisione.class, BilMapId.SiacTBilElem_CapitoloEntrataPrevisione);
 	}
 	
-	public CapitoloEntrataPrevisione ricercaDettaglioModulareCapitoloEntrataPrevisione(CapitoloEntrataPrevisione capitoloEntrataPrevisione,ModelDetail[] modelDetails){
+	public CapitoloEntrataPrevisione ricercaDettaglioModulareCapitoloEntrataPrevisione(CapitoloEntrataPrevisione capitoloEntrataPrevisione,ModelDetailEnum[] modelDetails){
 		SiacTBilElem siacTBilElem = siacTBilElemRepository.findOne(capitoloEntrataPrevisione.getUid());
 		if(siacTBilElem == null) {
 			return null;
@@ -923,34 +923,15 @@ public class CapitoloEntrataPrevisioneDad extends CapitoloDad {
 		return bilElems.get(0).getUid();
 	}
 
-//	public CapitoloEntrataPrevisione getExCapitoloEntrataPrevisione(CapitoloEntrataPrevisione capitolo) {
-//		final String methodName = "getEquivalenteGestione";
-//		
-//		log.debug(methodName, "capitolo.uid: "+ capitolo.getUid());
-//		
-//		SiacTBilElem bilElemOld = siacTBilElemRepository.findRelTempoByElemTipoCode(capitolo.getUid(),SiacDBilElemTipoEnum.CapitoloEntrataPrevisione.getCodice());		
-//		
-//		return mapNotNull(bilElemOld, CapitoloEntrataPrevisione.class, BilMapId.SiacTBilElem_CapitoloEntrataPrevisione);
-//	}
-//	
-//
-//	public CapitoloEntrataGestione getEquivalenteGestione(CapitoloEntrataPrevisione capitolo) {
-//		final String methodName = "getEquivalenteGestione";
-//		
-//		log.debug(methodName, "capitolo.uid: "+ capitolo.getUid());
-//		
-//		SiacTBilElem bilElemOld = siacTBilElemRepository.findCapitoloEquivalenteByIdAndTipoCode(capitolo.getUid(),SiacDBilElemTipoEnum.CapitoloUscitaPrevisione.getCodice());		
-//		
-//		return mapNotNull(bilElemOld, CapitoloEntrataGestione.class, BilMapId.SiacTBilElem_CapitoloEntrataGestione);
-//	}
-
-
-	
-
-
-	
-
-
+	// SIAC-7858
+	public Map<Integer, BigDecimal> getImportoAccertatoPerAnno(int uidCapitolo, int annoMin, int annoMax) {
+		List<Object[]> importiPerAnno = siacTBilElemRepository.findImportoAccertatoPerAnno(uidCapitolo, annoMin, annoMax);
+		return toMapAnnoImporto(importiPerAnno);
+	}
+	public Map<Integer, BigDecimal> getImportoIncassatoPerAnno(int uidCapitolo, int annoMin, int annoMax) {
+		List<Object[]> importiPerAnno = siacTBilElemRepository.findImportoIncassatoPerAnno(uidCapitolo, annoMin, annoMax);
+		return toMapAnnoImporto(importiPerAnno);
+	}
 	
 }
 

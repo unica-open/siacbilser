@@ -21,6 +21,8 @@ import it.csi.siac.siacbilser.integration.dad.ProvvisorioBilDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.integration.dad.SubdocumentoSpesaDad;
 import it.csi.siac.siaccommon.util.JAXBUtility;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
+import it.csi.siac.siaccommon.util.collections.Filter;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -37,6 +39,7 @@ import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoIvaSplitReverse;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.integration.dad.oil.AccreditoTipoOilIsPagoPADad;
 import it.csi.siac.siacfinser.model.provvisoriDiCassa.ProvvisorioDiCassa;
 
 /**
@@ -59,6 +62,10 @@ public class SpezzaQuotaSpesaService extends CheckedAccountBaseService<SpezzaQuo
 	private SubdocumentoSpesaDad subdocumentoSpesaDad;
 	@Autowired
 	private SoggettoDad soggettoDad;
+	
+	//SIAC-8853
+	@Autowired
+	private AccreditoTipoOilIsPagoPADad AccreditoTipoOilIsPagoPADad;
 	
 	private SubdocumentoSpesa subdocumentoSpesa;
 	private ProvvisorioDiCassa provvisorioDiCassa;
@@ -130,7 +137,7 @@ public class SpezzaQuotaSpesaService extends CheckedAccountBaseService<SpezzaQuo
 	private void checkSubdocumento() {
 		// NUOVO IMPORTO QUOTA: Deve essere < importo quota originale e > 0
 		if(importoOriginale.compareTo(req.getSubdocumentoSpesa().getImporto()) <= 0) {
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("importo", "deve essere inferiore l'importo originale del subdocumento"));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo", "deve essere inferiore l'importo originale del subdocumento"));
 		}
 		// NUOVO IMPORTO IVA SPLIT: Deve essere < importo quota Iva originale(se presente) e > 0
 		if(subdocumentoSpesa.getImportoSplitReverse() != null && subdocumentoSpesa.getImportoSplitReverse().signum() > 0) {
@@ -144,10 +151,10 @@ public class SpezzaQuotaSpesaService extends CheckedAccountBaseService<SpezzaQuo
 			}
 			// L'importo non puo' superare l'importo originale
 			if(subdocumentoSpesa.getImportoSplitReverse().compareTo(req.getSubdocumentoSpesa().getImportoSplitReverse()) < 0) {
-				throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("importo split-reverse", "non deve essere superiore l'importo split-reverse originale del subdocumento"));
+				throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo split-reverse", "non deve essere superiore l'importo split-reverse originale del subdocumento"));
 			}
 		} else if(req.getSubdocumentoSpesa().getImportoSplitReverse() != null){
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("importo split-reverse", "non deve essere valorizzato in quanto non presente sulla quota"));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo split-reverse", "non deve essere valorizzato in quanto non presente sulla quota"));
 		}
 		
 		// SIAC-5468
@@ -155,7 +162,7 @@ public class SpezzaQuotaSpesaService extends CheckedAccountBaseService<SpezzaQuo
 			// Non devo avere collegate note di credito
 			throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("la quota da spezzare e' collegata a una nota di credito"));
 		}
-		//SIAC-7032
+		//SIAC-7032 //SIAC-8853
 		checkModPagIsPagoPA();
 		
 		checkProvvisorioCassa();
@@ -184,7 +191,7 @@ public class SpezzaQuotaSpesaService extends CheckedAccountBaseService<SpezzaQuo
 			pdc.setImportoDaRegolarizzare(importoDaRegolarizzare);
 		} else {
 			checkBusinessCondition(pdc.getImportoDaRegolarizzare() == null || pdc.getImportoDaRegolarizzare().compareTo(req.getSubdocumentoSpesa().getImporto()) >= 0,
-				ErroreCore.VALORE_NON_VALIDO.getErrore("importo", "non deve essere superiore all'importo da regolarizzare del provvisorio di cassa (" + pdc.getImportoDaRegolarizzare().toPlainString() + ")"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo", "non deve essere superiore all'importo da regolarizzare del provvisorio di cassa (" + pdc.getImportoDaRegolarizzare().toPlainString() + ")"));
 		}
 		provvisorioDiCassa = pdc;
 	}
@@ -333,14 +340,17 @@ public class SpezzaQuotaSpesaService extends CheckedAccountBaseService<SpezzaQuo
 			throw new BusinessException(ErroreCore.ENTITA_NON_COMPLETA.getErrore("documento spesa collegato", "impossibile reperire il tipo documento" ));
 		}
 		//SIAC-6840 (analisi) Se la riga non e' associato ad un documento (deriva daAssocia Movimento) la modalità di pagamento non può essere Avviso PagoPA
+		//SIAC-8853
 		if (subdocumentoSpesa.getDocumento().getTipoDocumento().isAllegatoAtto() && isModalitaPagamentoPagoPa()) {
 			throw new BusinessException(ErroreFin.MOD_PAGO_PA_NON_AMMESSA.getErrore());
 		}
 		
 	}
 
+	//SIAC-8853
 	private boolean isModalitaPagamentoPagoPa() {
 		String tipoAccreditoNuovoSubdocumento = soggettoDad.getTipoAccreditoModalitaPagamentoSoggetto(req.getSubdocumentoSpesa().getModalitaPagamentoSoggetto().getUid());
-		return tipoAccreditoNuovoSubdocumento != null && "APA".equals(tipoAccreditoNuovoSubdocumento);
+    	return tipoAccreditoNuovoSubdocumento != null && AccreditoTipoOilIsPagoPADad.accreditoTipoOilIsPagoPA(ente.getUid(), tipoAccreditoNuovoSubdocumento);
 	}
+	
 }

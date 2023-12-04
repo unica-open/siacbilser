@@ -46,7 +46,7 @@ public class RicercaMovimentoGestioneService extends ExtendedBaseService<Ricerca
 	
 	@Override
 	public void execute() {
-		List<MovimentoGestione> movGestList = movimentoGestioneStiloDad.ricercaMovimentiGestionePerProvvedimento(req.getNumeroProvvedimento(),
+		List<MovimentoGestione> movGestList = movimentoGestioneStiloDad.ricercaMovimentiGestionePerProvvedimento(req.getAnnoBilancio(),req.getNumeroProvvedimento(),
 				req.getAnnoProvvedimento(),	 req.getTipoProvvedimento() , req.getStrutturaAmministrativoContabileProvvedimento() ,req.getEnteProprietarioId());
 		res.setMovimentiGestione(movGestList);
 	}

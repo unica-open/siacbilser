@@ -8,7 +8,7 @@ package it.csi.siac.siacbilser.integration.entity.enumeration;
 
 /**
  * 
-select replace(initcap(attoamm_tipo_desc),' ','') || '("' || attoamm_tipo_code || '" , "' ||  initcap(attoamm_tipo_desc) || '"),' 
+select replace(initcap(attoamm_tipo_desc),' ','') || '("' || attoamm_tipo_code || '", "' ||  initcap(attoamm_tipo_desc) || '"),' 
 from siac_d_atto_amm_tipo where ente_proprietario_id = 1
  */
 @EnumEntity(entityName="SiacDAttoAmmTipo", idPropertyName="attoammTipoId", codePropertyName="attoammTipoCode")
@@ -18,24 +18,24 @@ public enum SiacDAttoAmmTipoEnum {
 	//Non piu' presente su DB
 	Delibera("01", "Delibera"),
 	
-	Determina("02" , "Determina"),
-	MovimentoInterno("MIN" , "Movimento Interno"),
-	DeliberaDiGiunta("DG" , "Delibera Di Giunta"),
-	DeliberaDiGiuntaDUrgenza("DGU" , "Delibera Di Giunta D'Urgenza"),
-	DeliberaDiConsiglio("DC" , "Delibera Di Consiglio"),
-	DeliberaDiCircoscrizionePropria("DCIP" , "Delibera Di Circoscrizione Propria"),
-	DeliberaDiCircoscrizioneDelegata("DCID" , "Delibera Di Circoscrizione Delegata"),
-	Parere("DPCI" , "Parere"),
-	DeterminaDiImpegno("DTI" , "Determina Di Impegno"),
-	DeterminaDiLiquidazione("DTL" , "Determina Di Liquidazione"),
-	Mozione("MO" , "Mozione"),
-	Interpellanza("INT" , "Interpellanza"),
-	DeliberaGenerica("FF" , "Delibera Generica"),
-	DeliberaDiNomina("NO" , "Delibera Di Nomina"),
-	DeterminaDiAccertamento("DTA" , "Determina Di Accertamento"),
-	DeterminaDiIncasso("DTS" , "Determina Di Incasso"),
-	DeterminaBianca("DTB" , "Determina Bianca"),
-	Alg("ALG" , "ALG");
+	Determina("02", "Determina"),
+	MovimentoInterno("MIN", "Movimento Interno"),
+	DeliberaDiGiunta("DG", "Delibera Di Giunta"),
+	DeliberaDiGiuntaDUrgenza("DGU", "Delibera Di Giunta D'Urgenza"),
+	DeliberaDiConsiglio("DC", "Delibera Di Consiglio"),
+	DeliberaDiCircoscrizionePropria("DCIP", "Delibera Di Circoscrizione Propria"),
+	DeliberaDiCircoscrizioneDelegata("DCID", "Delibera Di Circoscrizione Delegata"),
+	Parere("DPCI", "Parere"),
+	DeterminaDiImpegno("DTI", "Determina Di Impegno"),
+	DeterminaDiLiquidazione("DTL", "Determina Di Liquidazione"),
+	Mozione("MO", "Mozione"),
+	Interpellanza("INT", "Interpellanza"),
+	DeliberaGenerica("FF", "Delibera Generica"),
+	DeliberaDiNomina("NO", "Delibera Di Nomina"),
+	DeterminaDiAccertamento("DTA", "Determina Di Accertamento"),
+	DeterminaDiIncasso("DTS", "Determina Di Incasso"),
+	DeterminaBianca("DTB", "Determina Bianca"),
+	Alg("ALG", "ALG");
 
 	
 	

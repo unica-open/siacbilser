@@ -86,6 +86,10 @@ public class InserisceElencoService extends InserisceElencoBaseService {
 		
 		checkMovimentiResidui();
 		
+		//SIAC-7470
+		if(super.isBloccoRORAttivo())
+			checkBloccoRor();
+		
 		staccaNumeroElenco();
 		
 		if(elencoDocumentiAllegato.getAllegatoAtto() != null){

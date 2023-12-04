@@ -20,8 +20,8 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDVariazioneStat
 import it.csi.siac.siacbilser.model.DatiVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.DatiVariazioneImportoCapitoloAnno;
 import it.csi.siac.siacbilser.model.RiepilogoDatiVariazioneImportoCapitoloAnno;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * The Class RiepilogoDatiVariazioneImportoCapitoloAnnoConverter.
@@ -30,7 +30,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class RiepilogoDatiVariazioneImportoCapitoloAnnoTotaleConverter extends DozerConverter<RiepilogoDatiVariazioneImportoCapitoloAnno, List<Object[]>> {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 //	private static final ThreadLocal<Map<String, Method>> METHOD_CACHE = new ThreadLocal<Map<String, Method>>() {
 //		protected Map<String,Method> initialValue() {
 //			return new HashMap<String, Method>();
@@ -66,7 +66,7 @@ public class RiepilogoDatiVariazioneImportoCapitoloAnnoTotaleConverter extends D
 		
 		// Anno, codice stato variazione, tipo importo, importo
 		Integer anno = Integer.valueOf((String)arr[0]);
-		StatoOperativoVariazioneDiBilancio sovdb = SiacDVariazioneStatoEnum.byCodice((String)arr[1]).getStatoOperativoVariazioneDiBilancio();
+		StatoOperativoVariazioneBilancio sovdb = SiacDVariazioneStatoEnum.byCodice((String)arr[1]).getStatoOperativoVariazioneDiBilancio();
 		SiacDBilElemDetTipoEnum sdbedte = SiacDBilElemDetTipoEnum.byCodice((String)arr[2]);
 		BigDecimal importo = (BigDecimal)arr[3];
 		

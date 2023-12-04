@@ -15,7 +15,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTMovgestT;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgestTsDet;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTsDetTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTsTipoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.model.MovimentoGestione;
 import it.csi.siac.siacfinser.model.codifiche.ClasseSoggetto;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione;
@@ -27,7 +27,7 @@ import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 @Component
 public class MovimentoGestioneImportiConverter extends DozerConverter<MovimentoGestione, SiacTMovgest> {
 	
-	private final LogUtil log = new LogUtil(getClass());
+	private final LogSrvUtil log = new LogSrvUtil(getClass());
 	/**
 	 * Instantiates a new movimento gestione importi converter
 	 */

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
 SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
 SPDX-License-Identifier: EUPL-1.2
@@ -238,8 +239,114 @@ SPDX-License-Identifier: EUPL-1.2
 			</soggetto>
 			<totaleImpegni>0.05</totaleImpegni>
 			<totaleImportoDaDedurre>0</totaleImportoDaDedurre>
+			<hasCapitoliSottoConto>true</hasCapitoliSottoConto>
+			<capitoliSottoConto>
+				<capitoloSottoConto>
+					<sottoConto>
+						<stato>VALIDO</stato>
+						<uid>0</uid>
+						<codice>0000101</codice>
+						<descrizione>0000101 - Sanità</descrizione>
+						<vincolato>false</vincolato>
+					</sottoConto>
+					<loginOperazione>batch</loginOperazione>
+					<stato>VALIDO</stato>
+					<uid>59203</uid>
+					<annoCapitolo>2017</annoCapitolo>
+					<bilancio>
+						<loginOperazione>admin</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>131</uid>
+						<anno>2017</anno>
+						<faseEStatoAttualeBilancio>
+							<stato>VALIDO</stato>
+							<uid>0</uid>
+							<faseBilancio>ESERCIZIO_PROVVISORIO</faseBilancio>
+						</faseEStatoAttualeBilancio>
+					</bilancio>
+					<categoriaCapitolo>
+						<stato>VALIDO</stato>
+						<uid>3</uid>
+						<codice>STD</codice>
+						<descrizione>Standard</descrizione>
+					</categoriaCapitolo>
+					<descrizione>CONTRIBUTI AL COMUNE DI TORINO PER LA CREAZIONE DI PARCHEGGI FINALIZZATI ALL'INTERSCAMBIO CON SISTEMI DI  TRASPORTO COLLETTIVO VOLTI A FAVORIRE IL DECONGESTIONAMENTO DEI CENTRI URBANI (L.R. 52/96).</descrizione>
+					<descrizioneArticolo>descrizione dell'articolo</descrizioneArticolo>
+					<elementoPianoDeiConti>
+						<stato>VALIDO</stato>
+						<uid>129798</uid>
+						<codice>U.2.03.01.02.000</codice>
+						<descrizione>Contributi agli investimenti a Amministrazioni Locali</descrizione>
+						<livello>0</livello>
+						<tipoClassificatore>
+							<stato>VALIDO</stato>
+							<uid>37</uid>
+							<codice>PDC_IV</codice>
+						</tipoClassificatore>
+					</elementoPianoDeiConti>
+					<ente>
+						<loginOperazione>admin</loginOperazione>
+						<stato>VALIDO</stato>
+						<uid>2</uid>
+						<codiceFiscale>80087670016</codiceFiscale>
+						<gestioneLivelli/>
+						<nome>Regione Piemonte</nome>
+					</ente>
+					<flagRilevanteIva>false</flagRilevanteIva>
+					<numeroArticolo>0</numeroArticolo>
+					<numeroCapitolo>233419</numeroCapitolo>
+					<numeroUEB>1</numeroUEB>
+					<statoOperativoElementoDiBilancio>VALIDO</statoOperativoElementoDiBilancio>
+					<tipoCapitolo>CAPITOLO_USCITA_GESTIONE</tipoCapitolo>
+					<uidCapitoloEquivalente>0</uidCapitoloEquivalente>
+					<uidExCapitolo>0</uidExCapitolo>
+					<macroaggregato>
+						<stato>VALIDO</stato>
+						<uid>118962</uid>
+						<codice>2030000</codice>
+						<descrizione>Contributi agli investimenti</descrizione>
+						<livello>0</livello>
+						<tipoClassificatore>
+							<stato>VALIDO</stato>
+							<uid>48</uid>
+							<codice>MACROAGGREGATO</codice>
+						</tipoClassificatore>
+					</macroaggregato>
+				</capitoloSottoConto>				
+			</capitoliSottoConto>
 		</elenco>
 	</elenchi>
+	<hasChecklist>true</hasChecklist>
+	<allegatoAttoChecklist>
+		<soggettoCreditore>
+			<label>Qui ci va la descrizione soggetto creditore</label>
+			<value>No</value>
+		</soggettoCreditore>
+		<sommaDovuta>
+			<label>Qui ci va la descrizione somma dovuta</label>
+			<value>Si</value>
+		</sommaDovuta>
+		<causale>
+			<label>Qui ci va la descrizione causale</label>
+			<value>NonRileva</value>
+		</causale>
+		<modalitaPagamento><label>abcdefg</label><value>NonRileva</value></modalitaPagamento>
+		<scadenza><label>abcdefg</label><value>NonRileva</value></scadenza>
+		<estremiProvvedimentoDirigenziale><label>abcdefg</label><value>NonRileva</value></estremiProvvedimentoDirigenziale>
+		<allegati><label>abcdefg</label><value>NonRileva</value></allegati>
+		<esigibileSpesa><label>abcdefg</label><value>NonRileva</value></esigibileSpesa>
+		<congruitaSpesaSommaImpegnata><label>abcdefg</label><value>NonRileva</value></congruitaSpesaSommaImpegnata>
+		<applicazioneNormativaFiscale><label>abcdefg</label><value>NonRileva</value></applicazioneNormativaFiscale>
+		<iva><label>abcdefg</label><value>NonRileva</value></iva>
+		<entrataVincolata><label>abcdefg</label><value>NonRileva</value></entrataVincolata>
+		<accertamento><label>abcdefg</label><value>xyz</value></accertamento>
+		<incasso><label>abcdefg</label><value>xyz</value></incasso>
+		<cig><label>abcdefg</label><value>NonRileva</value></cig>
+		<cup><label>abcdefg</label><value>NonRileva</value></cup>
+		<contributiva><label>abcdefg</label><value>NonRileva</value></contributiva>
+		<pubblicazione><label>abcdefg</label><value>NonRileva</value></pubblicazione>
+		<regolaritaContabile><label>abcdefg</label><value>NonRileva</value></regolaritaContabile>
+	</allegatoAttoChecklist>
 	<allegatoAtto>
 		<loginOperazione>2 -  ACCOUNT  - AMMINISTRATORE</loginOperazione>
 		<stato>VALIDO</stato>

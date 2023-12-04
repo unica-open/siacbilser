@@ -40,7 +40,7 @@ public class AggiornaRichiestaEconomalePagamentoService extends AggiornaRichiest
 		
 		for(Giustificativo giustificativo : richiestaEconomale.getGiustificativi()){
 			checkNotNull(giustificativo.getImportoGiustificativo(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("importo giustificativo"));
-			checkCondition(giustificativo.getImportoGiustificativo() == null || giustificativo.getImportoGiustificativo().signum() > 0,ErroreCore.VALORE_NON_VALIDO.getErrore("Importo",": l'importo deve essere positivo"));
+			checkCondition(giustificativo.getImportoGiustificativo() == null || giustificativo.getImportoGiustificativo().signum() > 0,ErroreCore.VALORE_NON_CONSENTITO.getErrore("Importo",": l'importo deve essere positivo"));
 			checkEntita(giustificativo.getTipoGiustificativo(), "tipo giustificativo");
 			checkEntita(giustificativo.getValuta(), "valuta giustificativo");
 			checkNotNull(giustificativo.getFlagInclusoNelPagamento(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("flag incluso nel pagamento giustificativo"));

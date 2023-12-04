@@ -49,6 +49,9 @@ public class RicercaSinteticaTipoComponenteImportiCapitoloService extends BaseTi
 						req.getMacrotipoComponenteImportiCapitoloDaEscludere(),
 						req.getSottotipoComponenteImportiCapitoloDaEscludere(),
 						req.getPropostaDefaultComponenteImportiCapitoloDaEscludere(),
+						//SIAC-7349
+						req.getImpegnabileComponenteImportiCapitoloDaEscludere(),
+						req.getSaltaControlloSuDateValidita(),
 						req.getAnnoBilancio(),
 						req.isSoloValidiPerBilancio(),
 						req.getParametriPaginazione(),
@@ -60,7 +63,9 @@ public class RicercaSinteticaTipoComponenteImportiCapitoloService extends BaseTi
 						TipoComponenteImportiCapitoloModelDetail.MomentoComponenteImportiCapitolo,
 						TipoComponenteImportiCapitoloModelDetail.PropostaDefaultComponenteImportiCapitolo,
 						TipoComponenteImportiCapitoloModelDetail.StatoTipoComponenteImportiCapitolo,
-						TipoComponenteImportiCapitoloModelDetail.TipoGestioneComponenteImportiCapitolo));
+						//SIAC-7349
+						//TipoComponenteImportiCapitoloModelDetail.TipoGestioneComponenteImportiCapitolo,
+						TipoComponenteImportiCapitoloModelDetail.ImpegnabileComponenteImportiCapitolo));
 	}
 
 }

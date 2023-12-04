@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import it.csi.siac.siacbilser.business.service.stampa.base.ReportInternalSvcDictionary;
+import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 import it.csi.siac.siacfinser.model.soggetto.modpag.ModalitaPagamentoSoggetto;
@@ -43,6 +44,12 @@ public class StampaAllegatoAttoElenco {
 	//SIAC-6190
 	private SedeSecondariaSoggetto sedeSecondariaSoggetto;
 	
+	// SIAC-8835
+	private Boolean hasCapitoliSottoConto = Boolean.FALSE;
+	@XmlElementWrapper(name="capitoliSottoConto")
+	@XmlElement(name="capitoloSottoConto")
+	private List<CapitoloUscitaGestione> listaCapitoliSottoConto;
+
 	/**
 	 * @return the soggetto
 	 */
@@ -194,6 +201,23 @@ public class StampaAllegatoAttoElenco {
 	 */
 	public void setSedeSecondariaSoggetto(SedeSecondariaSoggetto sedeSecondariaSoggetto) {
 		this.sedeSecondariaSoggetto = sedeSecondariaSoggetto;
+	}
+
+	public Boolean getHasCapitoliSottoConto() {
+		return hasCapitoliSottoConto;
+	}
+
+	public void setHasCapitoliSottoConto(Boolean hasCapitoliSottoConto) {
+		this.hasCapitoliSottoConto = hasCapitoliSottoConto;
+	}
+
+	@XmlTransient
+	public List<CapitoloUscitaGestione> getListaCapitoliSottoConto() {
+		return listaCapitoliSottoConto;
+	}
+
+	public void setListaCapitoliSottoConto(List<CapitoloUscitaGestione> listaCapitoliSottoConto) {
+		this.listaCapitoliSottoConto = listaCapitoliSottoConto;
 	}
 	
 }

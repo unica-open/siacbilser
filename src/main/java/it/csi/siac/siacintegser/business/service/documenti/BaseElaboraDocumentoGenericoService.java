@@ -16,7 +16,7 @@ public abstract class BaseElaboraDocumentoGenericoService<ED extends ElaboraDocu
 
 	@Override
 	protected void checkServiceParameters(ED edReq) throws ServiceParamError {
-		assertNotNull(edReq.getCodiceTipoDocumento(),
+		assertParamNotNull(edReq.getCodiceTipoDocumento(),
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo documento"));
 	}
 	

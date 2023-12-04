@@ -16,7 +16,7 @@ import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamErr
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettiOttimizzato;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaSoggettiOttimizzatoResponse;
@@ -64,7 +64,7 @@ public class RicercaSoggettiSiacOttimizzatoService extends
 		DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.RICERCA, null);
 
 		if (codiceAmbito == null){
-			codiceAmbito = Constanti.AMBITO_FIN;
+			codiceAmbito = CostantiFin.AMBITO_FIN;
 		}
 
 		// 2. Si invoca il metodo ricercaSoggetti che ci restituisce il numero
@@ -105,7 +105,8 @@ public class RicercaSoggettiSiacOttimizzatoService extends
 						|| StringUtils.isNotBlank(paramRicSogg.getSesso())
 						|| StringUtils.isNotBlank(paramRicSogg.getMatricola())
 						|| StringUtils.isNotBlank(paramRicSogg.getComuneNascita())
-						|| StringUtils.isNotBlank(paramRicSogg.getStatoSoggetto())
+						|| StringUtils.isNotBlank(paramRicSogg.getIdStatoSoggetto())
+						|| StringUtils.isNotBlank(paramRicSogg.getCodiceStatoSoggetto())
 						|| StringUtils.isNotBlank(paramRicSogg.getCodiceSoggettoPrecedente())
 						|| StringUtils.isNotBlank(paramRicSogg.getCodiceSoggettoSuccessore()),
 				ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore("NESSUN PARAMETRO INIZIALIZZATO"));

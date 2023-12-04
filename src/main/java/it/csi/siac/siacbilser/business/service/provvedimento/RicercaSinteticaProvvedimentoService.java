@@ -14,7 +14,7 @@ import it.csi.siac.siacattser.frontend.webservice.msg.RicercaSinteticaProvvedime
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaSinteticaProvvedimentoResponse;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -25,15 +25,15 @@ import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 public class RicercaSinteticaProvvedimentoService extends CheckedAccountBaseService<RicercaSinteticaProvvedimento, RicercaSinteticaProvvedimentoResponse>{
 	/** The provvedimento dad. */
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siaccommonser.business.service.base.BaseService#init()
 	 */
 	@Override
 	protected void init() {
-		provvedimentoDad.setLoginOperazione(loginOperazione);
-		provvedimentoDad.setEnte(req.getEnte());
+		attoAmministrativoDad.setLoginOperazione(loginOperazione);
+		attoAmministrativoDad.setEnte(req.getEnte());
 	}
 	
 	 
@@ -68,7 +68,7 @@ public class RicercaSinteticaProvvedimentoService extends CheckedAccountBaseServ
 	@Override
 	protected void execute() {
 		
-		ListaPaginata<AttoAmministrativo> listaAtti = provvedimentoDad.ricercaSintetica(req.getRicercaAtti(), req.getParametriPaginazione(), req.getAttoAmministrativoModelDetail());
+		ListaPaginata<AttoAmministrativo> listaAtti = attoAmministrativoDad.ricercaSintetica(req.getRicercaAtti(), req.getParametriPaginazione(), req.getAttoAmministrativoModelDetail());
 		
 		res.setAttiAmministrativi(listaAtti);
 		
@@ -80,16 +80,16 @@ public class RicercaSinteticaProvvedimentoService extends CheckedAccountBaseServ
 	 *
 	 * @return the provvedimento dad
 	 */
-	public ProvvedimentoDad getProvvedimentoDad() {
-		return provvedimentoDad;
+	public AttoAmministrativoDad getAttoAmministrativoDad() {
+		return attoAmministrativoDad;
 	}
 
 	/**
 	 * Sets the provvedimento dad.
 	 *
-	 * @param provvedimentoDad the new provvedimento dad
+	 * @param attoAmministrativoDad the new provvedimento dad
 	 */
-	public void setProvvedimentoDad(ProvvedimentoDad provvedimentoDad) {
-		this.provvedimentoDad = provvedimentoDad;
+	public void setAttoAmministrativoDad(AttoAmministrativoDad attoAmministrativoDad) {
+		this.attoAmministrativoDad = attoAmministrativoDad;
 	}
 }

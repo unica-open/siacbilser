@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 import it.csi.siac.siacbilser.business.service.stampa.base.ReportInternalSvcDictionary;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
+import it.csi.siac.siacfin2ser.model.allegatoattochecklist.Checklist;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
 @XmlType(namespace = ReportInternalSvcDictionary.NAMESPACE)
@@ -44,6 +45,10 @@ public class StampaAllegatoAttoReportModel {
 	@XmlElementWrapper(name="elenchi")
 	@XmlElement(name="elenco")
 	private List<StampaAllegatoAttoElenco> listaStampaAllegatoAttoElenco = new ArrayList<StampaAllegatoAttoElenco>();
+	
+	// SIAC-8804
+	private Boolean hasChecklist = Boolean.FALSE;
+	private Checklist allegatoAttoChecklist;
 
 	/**
 	 * @return the allegatoAtto
@@ -277,6 +282,23 @@ public class StampaAllegatoAttoReportModel {
 	 */
 	public void setDataScadenza(Date dataScadenza) {
 		this.dataScadenza = dataScadenza;
+	}
+
+	public Boolean getHasChecklist() {
+		return hasChecklist;
+	}
+
+	public void setHasChecklist(Boolean hasChecklist) {
+		this.hasChecklist = hasChecklist;
+	}
+
+	public Checklist getAllegatoAttoChecklist() {
+		return allegatoAttoChecklist;
+	}
+
+	public void setAllegatoAttoChecklist(Checklist allegatoAttoChecklist) {
+		this.allegatoAttoChecklist = allegatoAttoChecklist;
+		setHasChecklist(Boolean.valueOf(allegatoAttoChecklist != null));
 	}
 
 }

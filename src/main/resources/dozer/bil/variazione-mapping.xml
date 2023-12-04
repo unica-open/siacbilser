@@ -45,6 +45,23 @@ SPDX-License-Identifier: EUPL-1.2
 		</field>
 	</mapping>
 	
+	<mapping map-id="SiacTVariazione_VariazioneImportoCapitolo_Base_Asincrone" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.VariazioneImportoCapitolo</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVariazione</class-b>
+		
+		<field map-id="SiacTVariazione_VariazioneImportoCapitolo_Base">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneImportoCapitoloUltimaAsincronaAggiornamentoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="variazioneImportoCapitoloUltimaAsincronaDefinizioneConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
 	
 	<mapping map-id="SiacTVariazione_VariazioneImportoCapitolo_Base" wildcard="true">
 		<class-a>it.csi.siac.siacbilser.model.VariazioneImportoCapitolo</class-a>
@@ -311,6 +328,31 @@ SPDX-License-Identifier: EUPL-1.2
 			<b>this</b>
 		</field>
 	</mapping>
+	
+	<!-- SIAC-7735 -->
+	<mapping map-id="ListOfObjectArrayTotale_RiepilogoDatiVariazioneNeutreImportoCapitoloAnno" wildcard="false">
+		<class-a>it.csi.siac.siacbilser.model.RiepilogoDatiVariazioneImportoCapitoloAnno</class-a>
+		<class-b>java.util.List</class-b>
+		
+		<field custom-converter-id="riepilogoDatiVariazioneNeutreImportoCapitoloAnnoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="ListOfObjectArrayTotale_RiepilogoDatiVariazioneNeutreCountImportoCapitoloAnno" wildcard="false">
+		<class-a>it.csi.siac.siacbilser.model.RiepilogoDatiVariazioneImportoCapitoloAnno</class-a>
+		<class-b>java.util.List</class-b>
+		
+		<field custom-converter-id="riepilogoDatiVariazioneNeutreImportoCapitoloAnnoCountConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	<!-- SIAC-7735 FINE -->
+	
+	
+	
 	
 	<mapping map-id="SiacTVariazione_VariazioneDiBilancio_Base" wildcard="true">
 		<class-a>it.csi.siac.siacbilser.model.VariazioneDiBilancio</class-a>

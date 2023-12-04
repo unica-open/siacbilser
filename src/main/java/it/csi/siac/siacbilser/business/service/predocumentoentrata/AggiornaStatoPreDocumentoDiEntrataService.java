@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoEntrataDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoPreDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoPreDocumentoDiEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioPreDocumentoEntrata;
@@ -60,6 +60,7 @@ public class AggiornaStatoPreDocumentoDiEntrataService extends CheckedAccountBas
 	@Override
 	protected void init() {
 		preDocumentoEntrataDad.setLoginOperazione(loginOperazione);
+		preDocumentoEntrataDad.setEnte(ente);
 	}
 
 	/* (non-Javadoc)
@@ -85,7 +86,7 @@ public class AggiornaStatoPreDocumentoDiEntrataService extends CheckedAccountBas
 			caricaDettaglioPreDocumentoEntrata();
 		}		
 
-		StatoOperativoPreDocumento statoNew = determinaStatoOperativoPreDocumento(preDocumento);
+		StatoOperativoPreDocumento statoNew = determinaStatoOperativoPreDocumento();
 
 		if (!statoNew.equals(preDocumento.getStatoOperativoPreDocumento())) {
 			log.info(methodName, "Aggiornamento dello stato da " + preDocumento.getStatoOperativoPreDocumento() + " a " + statoNew);
@@ -118,7 +119,7 @@ public class AggiornaStatoPreDocumentoDiEntrataService extends CheckedAccountBas
 	 * @param totaleQuoteENoteCreditoMenoImportiDaDedurre
 	 * @return
 	 */
-	private StatoOperativoPreDocumento determinaStatoOperativoPreDocumento(PreDocumentoEntrata preDocumento) {
+	private StatoOperativoPreDocumento determinaStatoOperativoPreDocumento() {
 
 		if (StatoOperativoPreDocumento.ANNULLATO.equals(preDocumento.getStatoOperativoPreDocumento())) {
 			return preDocumento.getStatoOperativoPreDocumento();
@@ -128,11 +129,19 @@ public class AggiornaStatoPreDocumentoDiEntrataService extends CheckedAccountBas
 			return StatoOperativoPreDocumento.COMPLETO;
 		} 
 		
+//		if(isDefinito()) {
+//		return StatoOperativoPreDocumento.DEFINITO;
+//	}
+		
 		if(StatoOperativoPreDocumento.DEFINITO.equals(preDocumento.getStatoOperativoPreDocumento())){
 			return StatoOperativoPreDocumento.DEFINITO;
-		}else {
-			return StatoOperativoPreDocumento.INCOMPLETO;
 		}
+		
+		return StatoOperativoPreDocumento.INCOMPLETO;
+	}
+
+	private boolean isDefinito() {
+		return preDocumentoEntrataDad.hasDocumentiCollegati(preDocumento);
 	}
 
 	/**
@@ -167,7 +176,7 @@ public class AggiornaStatoPreDocumentoDiEntrataService extends CheckedAccountBas
 		// Non e' piu' necessario per il completamento
 //		boolean capitolo = preDocumento.getCapitoloEntrataGestione() != null && preDocumento.getCapitoloEntrataGestione().getUid() != 0;
 		//SIAC-4868
-		boolean azioneConsentita = isAzioneConsentita(AzioniConsentite.PREDOCUMENTO_ENTRATA_COMPLETA_SENZA_ACCERTAMENTO.getNomeAzione());
+		boolean azioneConsentita = isAzioneConsentita(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_COMPLETA_SENZA_ACCERTAMENTO.getNomeAzione());
 		boolean soggetto = preDocumento.getSoggetto() != null && preDocumento.getSoggetto().getUid() != 0;
 		log.debug(methodName, "subaccertamento presente? " + subAccertamento + "accertamento presente? " + accertamento + "azioneConsentita presente? " + azioneConsentita + "soggetto presente? " + soggetto);
 		return (azioneConsentita && soggetto) || (!azioneConsentita && (subAccertamento || accertamento) && soggetto);

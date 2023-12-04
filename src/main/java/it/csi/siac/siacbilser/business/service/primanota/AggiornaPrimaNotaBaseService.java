@@ -8,14 +8,13 @@ import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
 import it.csi.siac.siacbilser.integration.dad.PrimaNotaDad;
 import it.csi.siac.siacbilser.integration.dad.RegistrazioneMovFinDad;
 import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AggiornaPrimaNota;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AggiornaPrimaNotaResponse;
@@ -35,18 +34,13 @@ import it.csi.siac.siacgenser.model.errore.ErroreGEN;
  * @author Valentina
  *
  */
-public abstract class AggiornaPrimaNotaBaseService<REQ extends AggiornaPrimaNota, RES extends AggiornaPrimaNotaResponse> extends CheckedAccountBaseService<REQ, RES> {
+public abstract class AggiornaPrimaNotaBaseService<REQ extends AggiornaPrimaNota, RES extends AggiornaPrimaNotaResponse> extends PrimaNotaBaseService<REQ, RES> {
 	
 	//DADs
-	@Autowired
-	protected PrimaNotaDad primaNotaDad;
 	@Autowired
 	protected RegistrazioneMovFinDad registrazioneMovFinDad;
 	@Autowired
 	private BilancioDad bilancioDad;
-	
-	//Fields
-	protected PrimaNota primaNota;
 	
 	
 	@Override
@@ -160,11 +154,18 @@ public abstract class AggiornaPrimaNotaBaseService<REQ extends AggiornaPrimaNota
 
 	protected void checkBilancio() {
 		caricaBilancio();
-		if(FaseBilancio.CHIUSO.equals(primaNota.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio())
+		if(escludiSeFaseBilancioChiuso()
 				|| FaseBilancio.PREVISIONE.equals(primaNota.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio())
 				|| FaseBilancio.PLURIENNALE.equals(primaNota.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio())){
 			throw new BusinessException(ErroreGEN.MOVIMENTO_CONTABILE_NON_MODIFICABILE.getErrore("fase di bilancio incongruente."));
 		}
+	}
+
+
+	protected boolean escludiSeFaseBilancioChiuso() {
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		return !isPrimaNotaGSA() &&
+						FaseBilancio.CHIUSO.equals(primaNota.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio());
 	}
 	
 	private void caricaBilancio() {
@@ -214,6 +215,5 @@ public abstract class AggiornaPrimaNotaBaseService<REQ extends AggiornaPrimaNota
 		//in questa implementazione non viene fatto alcuno controllo.
 		
 	}
-
-
+	
 }

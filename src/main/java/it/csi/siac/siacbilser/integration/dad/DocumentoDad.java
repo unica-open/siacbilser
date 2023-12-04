@@ -34,6 +34,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacRDoc;
 import it.csi.siac.siacbilser.integration.entity.SiacRDocAttr;
 import it.csi.siac.siacbilser.integration.entity.SiacRDocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRSubdocAttoAmm;
+import it.csi.siac.siacbilser.integration.entity.SiacTAccount;
 import it.csi.siac.siacbilser.integration.entity.SiacTAttoAmm;
 import it.csi.siac.siacbilser.integration.entity.SiacTAttr;
 import it.csi.siac.siacbilser.integration.entity.SiacTDoc;
@@ -400,5 +401,18 @@ public class DocumentoDad extends ExtendedBaseDadImpl {
 		log.debug(methodName, "result: "+ result);
 		return result;
 	}
+	
+	//SIAC-6988 Inizio FL
+	public String  findStatoSDIDocumento(Documento<?,?> doc) {
+		
+		SiacTDoc siacTDoc = siacTDocRepository.findOne(doc.getUid());
+		if(siacTDoc==null) {
+			throw new IllegalArgumentException("Impossibile trovare Doc con uid: "+doc.getUid());
+		}
+		return siacTDoc.getStatoSDI();
+		
+	}
+	//SIAC-6988 Fine FL
+	
 	
 }

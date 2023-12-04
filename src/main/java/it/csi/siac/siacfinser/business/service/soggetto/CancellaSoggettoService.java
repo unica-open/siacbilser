@@ -17,7 +17,7 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.CancellaSoggetto;
 import it.csi.siac.siacfinser.frontend.webservice.msg.CancellaSoggettoResponse;
 import it.csi.siac.siacfinser.integration.dad.SoggettoFinDad;
@@ -66,11 +66,11 @@ public class CancellaSoggettoService extends AbstractSoggettoService<CancellaSog
 		String ambitoDaService = null;
 		if(null==req.getCodificaAmbito() || "".equals(req.getCodificaAmbito())){
 			// se non c'e' assumo di default che sia FIN
-			ambitoDaService = Constanti.AMBITO_FIN;
+			ambitoDaService = CostantiFin.AMBITO_FIN;
 		}
 		
 		// Se FIN allora devo far partire i controlli
-		if(null!=ambitoDaService && ambitoDaService.equals(Constanti.AMBITO_FIN)){
+		if(null!=ambitoDaService && ambitoDaService.equals(CostantiFin.AMBITO_FIN)){
 		
 			//2.Occorre verificare che non ci siano legami con altri oggetti che ci impediscono di procedere con l'operazione:
 			List<Errore> listaErroriLegami = controlliDipendenzaEntita(idSoggettoIn, enteIn, req.getRichiedente(), Operazione.CANCELLAZIONE_LOGICA_RECORD);

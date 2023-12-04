@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.dozer.DozerConverter;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto;
 import it.csi.siac.siacintegser.model.integ.Recapito;
 
@@ -16,7 +16,7 @@ public class RecapitoListIndirizzoSoggettoConverter extends
 		DozerConverter<Recapito, List<IndirizzoSoggetto>>
 {
 
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	@SuppressWarnings("unchecked")
 	public RecapitoListIndirizzoSoggettoConverter()
@@ -48,7 +48,7 @@ public class RecapitoListIndirizzoSoggettoConverter extends
 				recapito.setDescrizioneNazione(indirizzoSoggetto.getNazione());
 				recapito.setComune(indirizzoSoggetto.getComune());
 				recapito.setProvincia(indirizzoSoggetto.getProvincia());
-				recapito.setCodiceIstatComune(indirizzoSoggetto.getIdComune());
+				recapito.setCodiceIstatComune(indirizzoSoggetto.getCodiceIstatComune());
 				recapito.setIndirizzo(indirizzoSoggetto.getDenominazione());
 				recapito.setNumeroCivico(indirizzoSoggetto.getNumeroCivico());
 				recapito.setSedime(indirizzoSoggetto.getSedime());

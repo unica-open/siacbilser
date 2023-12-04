@@ -250,6 +250,7 @@ public class DocumentoDaoImpl extends JpaDao<SiacTDoc, Integer> implements Docum
 			String registroRepertorio, 
 			Boolean contabilizzaGenPcc,
 			String statoSDI, //SIAC-6565-CR1215
+			String numerPreDoc,
 			Pageable pageable) {
 		
 		final String methodName = "ricercaSinteticaDocumento";
@@ -258,7 +259,7 @@ public class DocumentoDaoImpl extends JpaDao<SiacTDoc, Integer> implements Docum
 		Map<String, Object> param = new HashMap<String, Object>();
 		
 		componiQueryRicercaSinteticaDocumento( jpql, param, enteProprietarioId, docFamTipoCode, docAnno, docNumero, docNumeroEsatto, docDataEmissione,docDataOperazione, docTipoId, docStato, docStatoToExclude,
-				flagRilevanteIva, impegnoId, accertamentoId, attoAmministrativoId, annoProv,numProv, attoammTipoId,sacId, soggettoId, eldocAnno, eldocNumero, liqAnno, liqNumero, bilId, anno, collegatoCEC, annoRepertorio, dataRepertorio, numeroRepertorio, registroRepertorio, contabilizzaGenPcc,statoSDI);
+				flagRilevanteIva, impegnoId, accertamentoId, attoAmministrativoId, annoProv,numProv, attoammTipoId,sacId, soggettoId, eldocAnno, eldocNumero, liqAnno, liqNumero, bilId, anno, collegatoCEC, annoRepertorio, dataRepertorio, numeroRepertorio, registroRepertorio, contabilizzaGenPcc,statoSDI,numerPreDoc);
 		
 		jpql.append(" ORDER BY d.docAnno, d.docNumero, d.dataCreazione ");
 		
@@ -305,6 +306,7 @@ public class DocumentoDaoImpl extends JpaDao<SiacTDoc, Integer> implements Docum
 			String registroRepertorio,
 			Boolean contabilizzaGenPcc,
 			String statoSDI, //SIAC-6565-CR1215
+			String numeroPreDoc,
 			Pageable pageable) {
 		
 		final String methodName = "ricercaSinteticaDocumentoImportoTotale";
@@ -318,7 +320,7 @@ public class DocumentoDaoImpl extends JpaDao<SiacTDoc, Integer> implements Docum
 		componiQueryRicercaSinteticaDocumento( jpql, param, enteProprietarioId, docFamTipoCode, docAnno, docNumero, docNumeroEsatto,
 				docDataEmissione, docDataOperazione,docTipoId, docStato, docStatoToExclude,
 				flagRilevanteIva, impegnoId, accertamentoId, attoAmministrativoId, annoProv, numProv, attoammTipoId,sacId,soggettoId, eldocAnno, eldocNumero, liqAnno, liqNumero, bilId, anno, 
-				collegatoCEC, annoRepertorio, dataRepertorio, numeroRepertorio, registroRepertorio, contabilizzaGenPcc,statoSDI);
+				collegatoCEC, annoRepertorio, dataRepertorio, numeroRepertorio, registroRepertorio, contabilizzaGenPcc, statoSDI, numeroPreDoc);
 		
 		Query query = createQuery(jpql.toString(), param);
 		BigDecimal result = (BigDecimal) query.getSingleResult();
@@ -362,7 +364,7 @@ public class DocumentoDaoImpl extends JpaDao<SiacTDoc, Integer> implements Docum
 			String docNumero,String docNumeroEsatto, Date docDataEmissione,Date docDataOperazione, Integer docTipoId, SiacDDocStatoEnum docStato, SiacDDocStatoEnum docStatoToExclude,  
 			Boolean flagRilevanteIva, Integer impegnoId, Integer accertamentoId, Integer attoAmministrativoId,String annoProv, Integer numProv,Integer attoammTipoId,Integer sacId, Integer soggettoId, Integer eldocAnno,
 			Integer eldocNumero,Integer liqAnno, BigDecimal liqNumero, Integer bilId, String anno, Boolean flagCollegatoCEC, Integer annoRepertorio,
-			Date dataRepertorio, String numeroRepertorio, String registroRepertorio, Boolean contabilizzaGenPcc,String statoSDI) {
+			Date dataRepertorio, String numeroRepertorio, String registroRepertorio, Boolean contabilizzaGenPcc,String statoSDI, String numeroPreDoc) {
 		
 		jpql.append("FROM SiacTDoc d ");
 		jpql.append(" WHERE ");
@@ -698,6 +700,18 @@ public class DocumentoDaoImpl extends JpaDao<SiacTDoc, Integer> implements Docum
 			jpql.append(" ) ");			
 			param.put("docContabilizzaGenpcc", contabilizzaGenPcc);
 		}
-		//log.info("ricerca Documento JPL ", jpql);
+		
+		//SIAC-6780
+		if(StringUtils.isNotBlank(numeroPreDoc)) {
+			jpql.append(" AND EXISTS(");
+			jpql.append("         FROM SiacRPredocSubdoc rp ");
+			jpql.append("         WHERE rp.siacTPredoc.predocNumero = :predocNumero ");
+			jpql.append("         AND rp.siacTSubdoc.siacTDoc = d ");
+			jpql.append("         AND rp.dataCancellazione IS NULL ");
+			jpql.append("         AND rp.siacTSubdoc.dataCancellazione IS NULL ");
+			jpql.append(" ) ");			
+			param.put("predocNumero", numeroPreDoc);
+		}
 	}
+
 }

@@ -17,8 +17,8 @@ import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfinser.business.service.ordinativo.RicercaOrdinativoPagamentoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativo;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativoResponse;
-import it.csi.siac.siacintegser.business.service.ServiceHelper;
 import it.csi.siac.siacintegser.business.service.base.RicercaPaginataBaseService;
+import it.csi.siac.siacintegser.business.service.helper.ProvvedimentoServiceHelper;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.ordinativo.RicercaOrdinativoSpesa;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.ordinativo.RicercaOrdinativoSpesaResponse;
@@ -31,8 +31,8 @@ public class RicercaOrdinativoSpesaService extends
 		RicercaPaginataBaseService<RicercaOrdinativoSpesa, RicercaOrdinativoSpesaResponse>
 {
 
-	@Autowired
-	ServiceHelper serviceHelper;
+	@Autowired private ProvvedimentoServiceHelper provvedimentoServiceHelper;
+	
 	
 	@Override
 	protected RicercaOrdinativoSpesaResponse execute(RicercaOrdinativoSpesa ireq)
@@ -44,7 +44,7 @@ public class RicercaOrdinativoSpesaService extends
 		
 		RicercaOrdinativoSpesaResponse ires = instantiateNewIRes();
 		
-		TipoAtto tipoAtto = serviceHelper.ricercaTipoProvvedimentoByCodice(ente,richiedente, ireq.getCodiceTipoProvvedimento());
+		TipoAtto tipoAtto = provvedimentoServiceHelper.findTipoAttoByCodice(ente,richiedente, ireq.getCodiceTipoProvvedimento());
 		if(tipoAtto ==null){
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, "il codice del provvedimento non esiste");
 			return ires;
@@ -54,7 +54,7 @@ public class RicercaOrdinativoSpesaService extends
 		//FIXME: la struttura nella ricerca dell'ordinativo (del back-end del siac) non viene gestita 
 			
 		RicercaOrdinativoResponse res = appCtx.getBean(RicercaOrdinativoPagamentoService.class).executeService(req);
-		checkBusinessServiceResponse(res);
+		checkServiceResponse(res);
 		
 		List<OrdinativoPagamento> elencoOrdinativi = dozerUtil.mapList(res.getElencoOrdinativoPagamento(),OrdinativoPagamento.class, IntegMapId.ListOrdinativoPagamento_IntegOrdinativoSpesa);
 		if(elencoOrdinativi==null || elencoOrdinativi.isEmpty()){
@@ -74,26 +74,26 @@ public class RicercaOrdinativoSpesaService extends
 	protected void checkServiceParameters(RicercaOrdinativoSpesa ireq) throws ServiceParamError {		
 		
 		// controllo parametri in input
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || ireq.getAnnoProvvedimento() != null ||
 				ireq.getCodiceTipoProvvedimento() == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno provvedimento"));
 
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() != null || ireq.getAnnoProvvedimento() == null || 
 				ireq.getCodiceTipoProvvedimento()  == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getNumeroProvvedimento() == null || ireq.getAnnoProvvedimento() == null || 
 				ireq.getCodiceTipoProvvedimento()  != null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo provvedimento"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getCodiceStruttura() == null || ireq.getCodiceTipoStruttura() != null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice tipo struttura"));	
 		
-		checkCondition(
+		checkParamCondition(
 				ireq.getCodiceStruttura() != null || ireq.getCodiceTipoStruttura() == null,
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("codice struttura"));	
 	}	

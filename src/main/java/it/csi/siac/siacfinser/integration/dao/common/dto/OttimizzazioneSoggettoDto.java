@@ -8,8 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRComuneProvinciaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRComuneRegioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRFormaGiuridicaFin;
@@ -40,7 +40,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacTRecapitoSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTRegioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoModFin;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
 public class OttimizzazioneSoggettoDto implements Serializable {
@@ -121,7 +121,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 		List<SiacTSoggettoFin> listaSedi = new ArrayList<SiacTSoggettoFin>();
 		if(idSoggetto!=null){
 			List<SiacRSoggettoRelazFin> filtratiBySoggetto1 = filtraSiacRSoggettoRelaz1BySoggettoId(idSoggetto);
-			List<SiacRSoggettoRelazFin> relazSediSecondarie = filtraByTipoRelazione(filtratiBySoggetto1, Constanti.SEDE_SECONDARIA);
+			List<SiacRSoggettoRelazFin> relazSediSecondarie = filtraByTipoRelazione(filtratiBySoggetto1, CostantiFin.SEDE_SECONDARIA);
 			if(relazSediSecondarie!=null && relazSediSecondarie.size()>0){
 				for(SiacRSoggettoRelazFin sedeIt : relazSediSecondarie){
 					if(sedeIt!=null && sedeIt.getSiacTSoggetto2()!=null){
@@ -160,7 +160,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -177,7 +177,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -193,7 +193,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -206,7 +206,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		return filtrati;
 	}
 	
@@ -231,7 +231,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		filtrati = CommonUtils.soloValidiSiacTBase(filtrati, null);
+		filtrati = CommonUtil.soloValidiSiacTBase(filtrati, null);
 		if(filtrati!=null && filtrati.size()>0){
 			//IN TEORIA SEMPRE UNO ED UNO SOLO
 			return filtrati.get(0);
@@ -254,7 +254,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		SiacRComuneRegioneFin valido = CommonUtils.getValidoSiacTBase(filtrati, null);
+		SiacRComuneRegioneFin valido = CommonUtil.getValidoSiacTBase(filtrati, null);
 		return valido;
 	}
 	
@@ -272,7 +272,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		SiacRComuneProvinciaFin valido = CommonUtils.getValidoSiacTBase(filtrati, null);
+		SiacRComuneProvinciaFin valido = CommonUtil.getValidoSiacTBase(filtrati, null);
 		return valido;
 	}
 	
@@ -291,7 +291,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 	public SiacTFormaGiuridicaFin filtraSiacTFormaGiuridicaBySiacRForma(Integer idForma){
 		SiacTFormaGiuridicaFin trovato = null;
 		if(idForma!=null && distintiSiacRFormaGiuridicaCoinvolti!=null && distintiSiacRFormaGiuridicaCoinvolti.size()>0){
-			SiacRFormaGiuridicaFin siacRForma = DatiOperazioneUtils.getById(distintiSiacRFormaGiuridicaCoinvolti, idForma);
+			SiacRFormaGiuridicaFin siacRForma = DatiOperazioneUtil.getById(distintiSiacRFormaGiuridicaCoinvolti, idForma);
 			return siacRForma.getSiacTFormaGiuridica();
 		}
 		return trovato;
@@ -424,11 +424,11 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 	}
 	
 	public SiacTSoggettoFin findSiacTSoggettoFinByID(Integer soggettoID){
-		return CommonUtils.getByIdSiacTBase(distintiSiacTSoggettiCoinvolti, soggettoID);
+		return CommonUtil.getByIdSiacTBase(distintiSiacTSoggettiCoinvolti, soggettoID);
 	}
 	
 	public SiacRSoggettoRelazFin findSiacRSoggettoRelazFinByID(Integer soggettoRelazId){
-		return CommonUtils.getByIdSiacTBase(distintiSiacRSoggettoRelaz, soggettoRelazId);
+		return CommonUtil.getByIdSiacTBase(distintiSiacRSoggettoRelaz, soggettoRelazId);
 //		SiacRSoggettoRelazFin trovato = null;
 //		if(soggettoRelazId!=null && distintiSiacRSoggettoRelaz!=null && distintiSiacRSoggettoRelaz.size()>0){
 //			for(SiacRSoggettoRelazFin it : distintiSiacRSoggettoRelaz){
@@ -442,7 +442,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 	}
 	
 	public SiacTNazioneFin findSiacTNazioneFinByID(Integer idNazione){
-		return CommonUtils.getByIdSiacTBase(distintiSiacTNazioneFinCoinvolti, idNazione);
+		return CommonUtil.getByIdSiacTBase(distintiSiacTNazioneFinCoinvolti, idNazione);
 	}
 	
 	public SiacTNazioneFin findSiacTNazioneFinCode(String nazioneCode){
@@ -454,7 +454,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		return CommonUtils.getValidoSiacTBase(filtrati, null);
+		return CommonUtil.getValidoSiacTBase(filtrati, null);
 	}
 	
 	/////////////
@@ -547,7 +547,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		bySoggettoUno = CommonUtils.soloValidiSiacTBase(bySoggettoUno, null);
+		bySoggettoUno = CommonUtil.soloValidiSiacTBase(bySoggettoUno, null);
 		return bySoggettoUno;
 	}
 	
@@ -560,7 +560,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		listaValidi = CommonUtils.soloValidiSiacTBase(listaValidi, null);
+		listaValidi = CommonUtil.soloValidiSiacTBase(listaValidi, null);
 		return listaValidi;
 	}
 	
@@ -582,7 +582,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 			}
 			
 		}
-		siacRSoggrelModpagFinByRelaz = CommonUtils.soloValidiSiacTBase(siacRSoggrelModpagFinByRelaz, null);
+		siacRSoggrelModpagFinByRelaz = CommonUtil.soloValidiSiacTBase(siacRSoggrelModpagFinByRelaz, null);
 		return siacRSoggrelModpagFinByRelaz;
 	}
 	
@@ -595,7 +595,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		distintiSiacTModpagFinBySoggRelazModPag = CommonUtils.soloValidiSiacTBase(distintiSiacTModpagFinBySoggRelazModPag, null);
+		distintiSiacTModpagFinBySoggRelazModPag = CommonUtil.soloValidiSiacTBase(distintiSiacTModpagFinBySoggRelazModPag, null);
 		return distintiSiacTModpagFinBySoggRelazModPag;
 	}
 	
@@ -616,7 +616,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		listaTModpagsCessioni = CommonUtils.soloValidiSiacTBase(listaTModpagsCessioni, null);
+		listaTModpagsCessioni = CommonUtil.soloValidiSiacTBase(listaTModpagsCessioni, null);
 		return listaTModpagsCessioni;
 	}
 	
@@ -637,7 +637,7 @@ public class OttimizzazioneSoggettoDto implements Serializable {
 				}
 			}
 		}
-		listaTModpagsCessioni = CommonUtils.soloValidiSiacTBase(listaTModpagsCessioni, null);
+		listaTModpagsCessioni = CommonUtil.soloValidiSiacTBase(listaTModpagsCessioni, null);
 		return listaTModpagsCessioni;
 	}
 	

@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import it.csi.siac.siacbilser.integration.dao.EnumEntityFactory;
 import it.csi.siac.siacbilser.integration.dao.PreDocumentoDao;
 import it.csi.siac.siacbilser.integration.dao.SiacTPredocNumRepository;
+import it.csi.siac.siacbilser.integration.dao.SiacTPredocRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacDPredocStato;
-import it.csi.siac.siacbilser.integration.entity.SiacRPredocProvCassa;
 import it.csi.siac.siacbilser.integration.entity.SiacRPredocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRPredocSubdoc;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
@@ -29,7 +29,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTPredocAnagr;
 import it.csi.siac.siacbilser.integration.entity.SiacTPredocNum;
 import it.csi.siac.siacbilser.integration.entity.SiacTSubdoc;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDPredocStatoEnum;
-import it.csi.siac.siacbilser.model.ModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siacfin2ser.model.PreDocumento;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
 
@@ -38,7 +38,7 @@ import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
  *
  * @author Domenico
  */
-public abstract class PreDocumentoDad<P extends PreDocumento<?, ?>, MD extends ModelDetail> extends ExtendedBaseDadImpl {
+public abstract class PreDocumentoDad<P extends PreDocumento<?, ?>, MD extends ModelDetailEnum> extends ExtendedBaseDadImpl {
 	
 	/** The pre documento dao. */
 	@Autowired
@@ -52,6 +52,9 @@ public abstract class PreDocumentoDad<P extends PreDocumento<?, ?>, MD extends M
 	@Autowired
 	protected SiacTPredocNumRepository siacTPredocNumRepository;
 	
+	@Autowired
+	protected SiacTPredocRepository siacTPredocRepository;
+	
 	/**
 	 * Find pre documento by id.
 	 *
@@ -59,7 +62,7 @@ public abstract class PreDocumentoDad<P extends PreDocumento<?, ?>, MD extends M
 	 * @return the pre documento entrata
 	 */
 	public abstract P findPreDocumentoById(Integer uid);
-	
+
 	/**
 	 * Find pre documento by id, with model details.
 	 *
@@ -170,6 +173,41 @@ public abstract class PreDocumentoDad<P extends PreDocumento<?, ?>, MD extends M
 	}
 	
 	/**
+	 * Colllega pre documento.
+	 *
+	 * @param uidPreDocumento the uid pre documento
+	 * @param uidSubdocumento the uid subdocumento
+	 */
+	public void collegaPreDocumento(Integer uidPreDocumento, Integer uidSubdocumento) {
+		if(uidSubdocumento == null || uidSubdocumento.intValue() == 0) {
+			// Non ho il predoc: esco
+			return;
+		}
+		SiacTPredoc siacTPredoc = preDocumentoDao.findById(uidPreDocumento);
+		
+		Date dataCancellazione = new Date();
+		if(siacTPredoc.getSiacRPredocSubdocs()==null){
+			siacTPredoc.setSiacRPredocSubdocs(new ArrayList<SiacRPredocSubdoc>());
+		}		
+		for(SiacRPredocSubdoc r : siacTPredoc.getSiacRPredocSubdocs()){
+			r.setDataCancellazioneIfNotSet(dataCancellazione);
+		}
+		Date now = new Date();
+		SiacRPredocSubdoc siacRPredocSubdoc = new SiacRPredocSubdoc();
+		SiacTSubdoc siacTSubdoc = new SiacTSubdoc();
+		siacTSubdoc.setUid(uidSubdocumento);
+		siacRPredocSubdoc.setSiacTSubdoc(siacTSubdoc);
+		siacRPredocSubdoc.setSiacTPredoc(siacTPredoc);
+		siacRPredocSubdoc.setSiacTEnteProprietario(siacTPredoc.getSiacTEnteProprietario());
+		siacRPredocSubdoc.setDataInizioValidita(now);
+		siacRPredocSubdoc.setDataCreazione(now);
+		siacRPredocSubdoc.setDataModifica(now);
+		siacRPredocSubdoc.setLoginOperazione(loginOperazione);
+		
+		siacTPredoc.addSiacRPredocSubdoc(siacRPredocSubdoc);
+	}
+	
+	/**
 	 * Aggiorna stato pre documento.
 	 *
 	 * @param uidPreDocumento the uid pre documento
@@ -178,11 +216,12 @@ public abstract class PreDocumentoDad<P extends PreDocumento<?, ?>, MD extends M
 	public void aggiornaStatoPreDocumento(Integer uidPreDocumento, StatoOperativoPreDocumento statoOperativoPreDocumento) {
 		SiacTPredoc siacTPredoc = preDocumentoDao.findById(uidPreDocumento);
 		Date now = new Date();
-		if(siacTPredoc.getSiacRPredocProvCassas()!=null){
+		//SIAC-YYYY
+		/*if(siacTPredoc.getSiacRPredocProvCassas()!=null){
 			for(SiacRPredocProvCassa r : siacTPredoc.getSiacRPredocProvCassas()){
 				r.setDataCancellazioneIfNotSet(now);
 			}
-		}
+		}*/
 		aggiornaStatoPreDocumento(siacTPredoc, statoOperativoPreDocumento);
 	}
 	
@@ -364,5 +403,22 @@ public abstract class PreDocumentoDad<P extends PreDocumento<?, ?>, MD extends M
 		}
 		return predocStatoCodes;
 	}
+	
+	//SIAC-6780
+	/**
+	 * Checks for documenti collegati.
+	 *
+	 * @param predocumento the predocumento
+	 * @return true, if successful
+	 */
+	public boolean hasDocumentiCollegati(PreDocumento predocumento) {
+		if(predocumento == null) {
+			return false;
+		}
+		
+		List<SiacTSubdoc> findSubdocCollegatiAPredoc = siacTPredocRepository.findSubdocCollegatiAPredoc(ente.getUid(), predocumento.getUid());
+		return findSubdocCollegatiAPredoc != null && !findSubdocCollegatiAPredoc.isEmpty();
+	}
+	
 	
 }

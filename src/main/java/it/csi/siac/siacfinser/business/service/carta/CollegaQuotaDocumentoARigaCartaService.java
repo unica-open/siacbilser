@@ -32,8 +32,8 @@ import it.csi.siac.siacfin2ser.model.DocumentoSpesaModelDetail;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesaModelDetail;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.ModelUtils;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.CollegaQuotaDocumentoARigaCarta;
@@ -86,7 +86,7 @@ public class CollegaQuotaDocumentoARigaCartaService extends AbstractBaseService<
 		final String methodName = "CollegaQuotaDocumentoARigaCartaService - execute()";
 		log.debug(methodName, " - Begin");
 		
-		String codiceAmbito = Constanti.AMBITO_FIN;
+		String codiceAmbito = CostantiFin.AMBITO_FIN;
 		
 		Ente ente = req.getEnte();
 		Integer annoBilancio = req.getBilancio().getAnno();
@@ -199,7 +199,7 @@ public class CollegaQuotaDocumentoARigaCartaService extends AbstractBaseService<
 		//I Tipi documento accettati possono essere tutti (compreso ALG) si esclude solo NCD e CCN
 		if(documentoSpesa.getTipoDocumento().getCodice().equals("NCD") || 
 				documentoSpesa.getTipoDocumento().getCodice().equals("CCN")){
-			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Documento Spesa", "Il documento non puo' essere di tipo NCD o CCN"));
+			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Documento Spesa", "Il documento non puo' essere di tipo NCD o CCN"));
 			return collegaQuotaInfo;
 		}
 		//
@@ -210,7 +210,7 @@ public class CollegaQuotaDocumentoARigaCartaService extends AbstractBaseService<
 		SubdocumentoSpesa subDocSpesaDaCollegare = req.getSubDocumentoDaCollegare();
 		Integer numeroSubDocRichiesto = subDocSpesaDaCollegare.getNumero();
 		SubdocumentoSpesa subDocRicaricato = ModelUtils.getSubdocumentoSpesaByNumero(listaSubDoc,numeroSubDocRichiesto);
-		if(subDocRicaricato==null || !CommonUtils.maggioreDiZero(subDocRicaricato.getNumero())){
+		if(subDocRicaricato==null || !CommonUtil.maggioreDiZero(subDocRicaricato.getNumero())){
 			String messaggio = numeroSubDocRichiesto + " per il documento " + numeroDocumento;
 			collegaQuotaInfo.addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Sub Documento Spesa", messaggio));
 			return collegaQuotaInfo;
@@ -219,14 +219,14 @@ public class CollegaQuotaDocumentoARigaCartaService extends AbstractBaseService<
 		
 		//I SUB-DOCUMENTI NON DEVONO ESSERE GIA' COLLEGATI ALLE CARTE
 		if(cartaContabileDad.isCollegatoACarta(subDocSpesaDaCollegare.getUid(), datiOperazione)){
-			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Sub Documento Spesa", "Gia' collegato ad una carta contabile"));
+			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Sub Documento Spesa", "Gia' collegato ad una carta contabile"));
 			return collegaQuotaInfo;
 		}
 		
 		//non deve essere gia pagato da un ordinativo di pagamento:
 		boolean giaPagato = subdocumentoSpesaDadCustom.giaPagatoDaOrdinativoSpesa(subDocRicaricato.getUid(), datiOperazione);
 		if(giaPagato){
-			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Sub Documento Spesa", "Gia' pagato da un ordinativo di spesa"));
+			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Sub Documento Spesa", "Gia' pagato da un ordinativo di spesa"));
 			return collegaQuotaInfo;
 		}
 		
@@ -260,13 +260,13 @@ public class CollegaQuotaDocumentoARigaCartaService extends AbstractBaseService<
 		
 		//I Documenti di spesa devono pagare lo stesso soggetto della carta
 		if(!documentoSpesa.getSoggetto().getCodiceSoggetto().equals(preDocumentoCarta.getSoggetto().getCodiceSoggetto()) ){
-			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Sub Documento Spesa", "Il soggetto del documento non e' lo stesso della riga carta"));
+			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Sub Documento Spesa", "Il soggetto del documento non e' lo stesso della riga carta"));
 			return collegaQuotaInfo;
 		}
 		
 		//I sub-documenti devono essere dello stesso importo della riga carta 
 		if(!preDocumentoCarta.getImporto().equals(subdocumentoSpesa.getImporto())){
-			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_VALIDO.getErrore("Sub Documento Spesa", "Il subdocumento deve essere dello stesso importo della riga carta"));
+			collegaQuotaInfo.addErrore(ErroreCore.VALORE_NON_CONSENTITO.getErrore("Sub Documento Spesa", "Il subdocumento deve essere dello stesso importo della riga carta"));
 			return collegaQuotaInfo;
 		}
 		
@@ -339,7 +339,7 @@ public class CollegaQuotaDocumentoARigaCartaService extends AbstractBaseService<
 		if(preDocumentoCarta==null){
 			listParametriNonInizializzati.add(RIGA_CARTA_CONTABILE);
 		} else {
-			if(!CommonUtils.maggioreDiZero(preDocumentoCarta.getNumero())){
+			if(!CommonUtil.maggioreDiZero(preDocumentoCarta.getNumero())){
 				listParametriNonInizializzati.add("Numero Riga Carta");
 			}
 		}
@@ -364,10 +364,10 @@ public class CollegaQuotaDocumentoARigaCartaService extends AbstractBaseService<
 		if(cartaContabile==null){
 			listParametriNonInizializzati.add(CARTA_CONTABILE);
 		} else {
-			if(!CommonUtils.maggioreDiZero(cartaContabile.getNumero())){
+			if(!CommonUtil.maggioreDiZero(cartaContabile.getNumero())){
 				listParametriNonInizializzati.add("Numero Carta Contabile");
 			}
-			if(cartaContabile.getBilancio()==null || !CommonUtils.maggioreDiZero(cartaContabile.getBilancio().getAnno())){
+			if(cartaContabile.getBilancio()==null || !CommonUtil.maggioreDiZero(cartaContabile.getBilancio().getAnno())){
 				listParametriNonInizializzati.add("Bilancio Carta Contabile");
 			}
 		}

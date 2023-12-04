@@ -21,9 +21,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.integration.dao.common.AbstractDao;
 import it.csi.siac.siacfinser.integration.dao.common.dto.MovgestPkDto;
 import it.csi.siac.siacfinser.integration.entity.SiacRModificaStatoFin;
@@ -45,8 +45,8 @@ import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTProgrammaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTVincoloFin;
 import it.csi.siac.siacfinser.integration.entity.base.SiacConModificaStato;
-import it.csi.siac.siacfinser.integration.util.DataValiditaUtils;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DataValiditaUtil;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 
 
 @Component
@@ -206,7 +206,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public <ST extends SiacTBase>  List<ST> ricercaByMovGestTsMassive(List<SiacTMovgestTsFin> listaSiacTMovgestTs, String nomeEntity,String nomeProperty, Boolean validi) {
 		List<ST> listaRitorno = new ArrayList<ST>();
 		if(listaSiacTMovgestTs!=null && listaSiacTMovgestTs.size()>0){
-			List<List<SiacTMovgestTsFin>> esploso = StringUtils.esplodiInListe(listaSiacTMovgestTs, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestTsFin>> esploso = StringUtilsFin.esplodiInListe(listaSiacTMovgestTs, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestTsFin> listaIt : esploso){
 					List<ST> risultatoParziale = ricercaByMovGestTsMassiveCORE(listaIt, nomeEntity, nomeProperty, validi);
@@ -215,7 +215,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -244,8 +244,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			
 			if(validi!=null && validi){
 				//validi filtrai on-query
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -255,7 +255,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -266,7 +266,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<Integer> getIdsSiacRLiquidazioneMovgestFinByMovGestTsMassive(List<SiacTMovgestTsFin> listaInput) {
 		List<Integer> listaRitorno = new ArrayList<Integer>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTMovgestTsFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestTsFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestTsFin> listaIt : esploso){
 					List<Integer> risultatoParziale = getIdsSiacRLiquidazioneMovgestFinByMovGestTsMassiveCORE(listaIt);
@@ -301,8 +301,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			//solo validi
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -324,7 +324,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacRMovgestTsProgrammaFin> ricercaSiacRMovgestTsProgrammaByProgrammaMassive(List<SiacTProgrammaFin> listaSiacTProgrammaFin, Boolean validi, String tipoMovimento) {
 		List<SiacRMovgestTsProgrammaFin> listaRitorno = new ArrayList<SiacRMovgestTsProgrammaFin>();
 		if(listaSiacTProgrammaFin!=null && listaSiacTProgrammaFin.size()>0){
-			List<List<SiacTProgrammaFin>> esploso = StringUtils.esplodiInListe(listaSiacTProgrammaFin, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTProgrammaFin>> esploso = StringUtilsFin.esplodiInListe(listaSiacTProgrammaFin, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTProgrammaFin> listaIt : esploso){
 					List<SiacRMovgestTsProgrammaFin> risultatoParziale = ricercaSiacRMovgestTsProgrammaByProgrammaMassiveCORE(listaIt, validi,tipoMovimento);
@@ -333,7 +333,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -360,15 +360,15 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			}
 			jpql.append(" ) ");
 			
-			if(!StringUtils.isEmpty(tipoMovimento)){
+			if(!StringUtilsFin.isEmpty(tipoMovimento)){
 				jpql.append(" AND rs.siacTMovgestT.siacTMovgest.siacDMovgestTipo.movgestTipoCode = :tipoMovimento ");
 				param.put("tipoMovimento", tipoMovimento);
 			}
 			
 			if(validi!=null && validi){
 				//validi filtrai on-query
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -378,7 +378,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -390,7 +390,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public <SCMS extends SiacConModificaStato> List<SiacRModificaStatoFin> ricercaBySiacConModificaStatoMassive(List<SCMS> listaInput, Boolean validi) {
 		List<SiacRModificaStatoFin> listaRitorno = new ArrayList<SiacRModificaStatoFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SCMS>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SCMS>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SCMS> listaIt : esploso){
 					List<SiacRModificaStatoFin> risultatoParziale = ricercaBySiacConModificaStatoMassiveCORE(listaIt, validi);
@@ -399,7 +399,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -408,7 +408,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacTMovgestTsDetModFin> ricercaEscludendoModificheAutomatiche(List<SiacTMovgestTsFin> listaInput) {
 		List<SiacTMovgestTsDetModFin> listaRitorno = new ArrayList<SiacTMovgestTsDetModFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTMovgestTsFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestTsFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestTsFin> listaIt : esploso){
 					List<SiacTMovgestTsDetModFin> risultatoParziale = ricercaEscludendoModificheAutomaticheCore(listaIt);
@@ -417,7 +417,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -452,9 +452,9 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 				
 				// SIAC-5219
 				Collection<String> modDescParolas = new ArrayList<String>();
-				modDescParolas.add(Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO);
-				modDescParolas.add(Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
-				modDescParolas.add(Constanti.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
+				modDescParolas.add(CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO);
+				modDescParolas.add(CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
+				modDescParolas.add(CostantiFin.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
 				
 				param.put("modDescParolas", modDescParolas);
 				
@@ -463,10 +463,10 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//
 			
 			//validi filtrati on-query
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -507,17 +507,17 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 //				jpql.append(" rs.siacRModificaStato.siacTModifica.modDesc != :parolaUno AND rs.siacRModificaStato.siacTModifica.modDesc != :parolaDue");
 //				
 //				TODOs: Aggiungere MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO
-//				param.put("parolaUno", Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO);
-//				param.put("parolaDue", Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
+//				param.put("parolaUno", CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO);
+//				param.put("parolaDue", CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
 //				
 //			jpql.append(" ) ");
 //			//
 //			
 //			//validi filtrati on-query
-//			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-//			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato"));
-//			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
-//			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+//			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+//			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato"));
+//			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
+//			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 //			
 //			//LANCIO DELLA QUERY:
 //			Query query =  createQuery(jpql.toString(), param);
@@ -532,7 +532,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacTMovgestTsDetModFin> ricercaSoloModificheAutomatiche(List<SiacTMovgestTsFin> listaInput) {
 		List<SiacTMovgestTsDetModFin> listaRitorno = new ArrayList<SiacTMovgestTsDetModFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTMovgestTsFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestTsFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestTsFin> listaIt : esploso){
 					List<SiacTMovgestTsDetModFin> risultatoParziale = ricercaSoloModificheAutomaticheCore(listaIt);
@@ -541,7 +541,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -575,9 +575,9 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 				
 				// SIAC-5219
 				Collection<String> modDescParolas = new ArrayList<String>();
-				modDescParolas.add(Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO);
-				modDescParolas.add(Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
-				modDescParolas.add(Constanti.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
+				modDescParolas.add(CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO);
+				modDescParolas.add(CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
+				modDescParolas.add(CostantiFin.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
 				
 				param.put("modDescParolas", modDescParolas);
 				
@@ -586,10 +586,10 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//
 			
 			//validi filtrati on-query
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -603,7 +603,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<Integer> ricercaSoloModificheAutomaticheIds(List<SiacTMovgestTsFin> listaInput) {
 		List<Integer> listaRitorno = new ArrayList<Integer>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTMovgestTsFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestTsFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestTsFin> listaIt : esploso){
 					List<Integer> risultatoParziale = ricercaSoloModificheAutomaticheIdsCore(listaIt);
@@ -644,19 +644,19 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 				
 				// SIAC-5219
 				Collection<String> modDescParolas = new ArrayList<String>();
-				modDescParolas.add(Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO);
-				modDescParolas.add(Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
-				modDescParolas.add(Constanti.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
+				modDescParolas.add(CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO);
+				modDescParolas.add(CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_MANUALE_ORDINATIVO);
+				modDescParolas.add(CostantiFin.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
 				
 				param.put("modDescParolas", modDescParolas);
 			jpql.append(" ) ");
 			//
 			
 			//validi filtrati on-query
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -670,7 +670,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<Integer> ricercaModificheImportoInStatoIds(List<SiacTMovgestTsFin> listaInput, String statoCode) {
 		List<Integer> listaRitorno = new ArrayList<Integer>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTMovgestTsFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestTsFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestTsFin> listaIt : esploso){
 					List<Integer> risultatoParziale = ricercaModificheImportoInStatoIdsCore(listaIt,statoCode);
@@ -711,10 +711,10 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			
 			
 			//validi filtrati on-query
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -730,7 +730,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<BigDecimal> ricercaImportiSiacTMovgestTsDetModFinByIDs(List<Integer> listaInput) {
 		List<BigDecimal> listaRitorno = new ArrayList<BigDecimal>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<Integer>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<Integer>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<Integer> listaIt : esploso){
 					List<BigDecimal> risultatoParziale = ricercaImportiSiacTMovgestTsDetModFinByIDsCore(listaIt);
@@ -795,8 +795,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -806,7 +806,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -841,7 +841,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			listaRitorno = query.getResultList();
 			
 			//FILTRO VALIDI O MENO:
-			listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+			listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			//
 		}
 		//Termino restituendo l'oggetto di ritorno: 
@@ -851,7 +851,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacRMovgestTsSogclasseModFin> ricercaSiacRMovgestTsSogclasseModFinBySiacRModificaStatoFinMassive(List<SiacRModificaStatoFin> listaInput, Boolean validi) {
 		List<SiacRMovgestTsSogclasseModFin> listaRitorno = new ArrayList<SiacRMovgestTsSogclasseModFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRModificaStatoFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRModificaStatoFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRModificaStatoFin> listaIt : esploso){
 					List<SiacRMovgestTsSogclasseModFin> risultatoParziale = ricercaSiacRMovgestTsSogclasseModFinBySiacRModificaStatoFinMassiveCORE(listaIt, validi);
@@ -860,7 +860,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -888,8 +888,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -899,7 +899,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -910,7 +910,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacRMovgestTsSogModFin> ricercaSiacRMovgestTsSogModFinBySiacRModificaStatoFinMassive(List<SiacRModificaStatoFin> listaInput, Boolean validi) {
 		List<SiacRMovgestTsSogModFin> listaRitorno = new ArrayList<SiacRMovgestTsSogModFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRModificaStatoFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRModificaStatoFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRModificaStatoFin> listaIt : esploso){
 					List<SiacRMovgestTsSogModFin> risultatoParziale = ricercaSiacRMovgestTsSogModFinBySiacRModificaStatoFinMassiveCORE(listaIt, validi);
@@ -919,7 +919,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -947,8 +947,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -958,7 +958,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -970,7 +970,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacRProgrammaAttrFin> ricercaSiacRProgrammaAttrFinBySiacRMovgestTsProgrammaFinMassive(List<SiacRMovgestTsProgrammaFin> listaInput, Boolean validi){
 		List<SiacRProgrammaAttrFin> listaRitorno = new ArrayList<SiacRProgrammaAttrFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRMovgestTsProgrammaFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRMovgestTsProgrammaFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRMovgestTsProgrammaFin> listaIt : esploso){
 					List<SiacRProgrammaAttrFin> risultatoParziale = ricercaSiacRProgrammaAttrFinBySiacRMovgestTsProgrammaFinMassiveCORE(listaIt, validi);
@@ -979,7 +979,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1007,8 +1007,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -1018,7 +1018,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -1030,7 +1030,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacTMovgestTsDetModFin> ricercaSiacTMovgestTsDetModFinBySiacRModificaStatoFinMassive(List<SiacRModificaStatoFin> listaInput, Boolean validi) {
 		List<SiacTMovgestTsDetModFin> listaRitorno = new ArrayList<SiacTMovgestTsDetModFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRModificaStatoFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRModificaStatoFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRModificaStatoFin> listaIt : esploso){
 					List<SiacTMovgestTsDetModFin> risultatoParziale = ricercaSiacTMovgestTsDetModFinBySiacRModificaStatoFinMassiveCORE(listaIt, validi);
@@ -1039,7 +1039,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1067,8 +1067,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -1078,7 +1078,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -1089,7 +1089,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacTModificaFin> ricercaBySiacRModificaStatoFinMassive(List<SiacRModificaStatoFin> listaInput, Boolean validi) {
 		List<SiacTModificaFin> listaRitorno = new ArrayList<SiacTModificaFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacRModificaStatoFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacRModificaStatoFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacRModificaStatoFin> listaIt : esploso){
 					List<SiacTModificaFin> risultatoParziale = ricercaBySiacRModificaStatoFinMassiveCORE(listaIt, validi);
@@ -1098,7 +1098,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1126,8 +1126,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -1137,7 +1137,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -1148,7 +1148,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacRMovgestTsFin> ricercaSiacRMovgestTsFinBySiacTAvanzovincoloFinMassive(List<SiacTAvanzovincoloFin> listaInput, Boolean validi) {
 		List<SiacRMovgestTsFin> listaRitorno = new ArrayList<SiacRMovgestTsFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTAvanzovincoloFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTAvanzovincoloFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTAvanzovincoloFin> listaIt : esploso){
 					List<SiacRMovgestTsFin> risultatoParziale = ricercaSiacRMovgestTsFinBySiacTAvanzovincoloFinMassiveCORE(listaIt, validi);
@@ -1157,7 +1157,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1185,8 +1185,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -1196,7 +1196,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -1204,25 +1204,25 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
         return listaRitorno;
 	}
 	
-	public List<SiacRMovgestTsFin> ricercaBySiacTMovgestTsFinMassive(List<SiacTMovgestTsFin> listaInput, Boolean validi) {
+	public List<SiacRMovgestTsFin> ricercaBySiacTMovgestTsFinMassive(List<SiacTMovgestTsFin> listaInput, Boolean soloRelazioniValide, Boolean escludiMovgestBAnnullati) {
 		List<SiacRMovgestTsFin> listaRitorno = new ArrayList<SiacRMovgestTsFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTMovgestTsFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestTsFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestTsFin> listaIt : esploso){
-					List<SiacRMovgestTsFin> risultatoParziale = ricercaBySiacTMovgestTsFinMassiveCORE(listaIt, validi);
+					List<SiacRMovgestTsFin> risultatoParziale = ricercaBySiacTMovgestTsFinMassiveCORE(listaIt, soloRelazioniValide, escludiMovgestBAnnullati);
 					if(risultatoParziale!=null && risultatoParziale.size()>0){
 						listaRitorno.addAll(risultatoParziale);
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
 	}
 	
-	private List<SiacRMovgestTsFin> ricercaBySiacTMovgestTsFinMassiveCORE(List<SiacTMovgestTsFin> listaSiacTMovgestTsFin, Boolean validi){
+	private List<SiacRMovgestTsFin> ricercaBySiacTMovgestTsFinMassiveCORE(List<SiacTMovgestTsFin> listaSiacTMovgestTsFin, Boolean soloRelazioniValide, Boolean escludiMovgestBAnnullati){
 		Map<String,Object> param = new HashMap<String, Object>();
 		List<SiacRMovgestTsFin> listaRitorno = new ArrayList<SiacRMovgestTsFin>();
 		
@@ -1257,9 +1257,26 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			
-			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			if(soloRelazioniValide!=null && Boolean.TRUE.equals(soloRelazioniValide)){
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
+				//SIAC-7646
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacTMovgestTsA"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
+				
+				//SIAC-7646
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacTMovgestTsB"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
+			}
+			//SIAC-7596
+			if(Boolean.TRUE.equals(escludiMovgestBAnnullati)) {
+				jpql.append(" AND EXISTS ( ");
+				jpql.append(" FROM SiacRMovgestTsStatoFin rmtsf ");
+				jpql.append(" WHERE rmtsf.dataCancellazione IS NULL  ");
+				jpql.append(" AND (rmtsf.siacTMovgestT = rs.siacTMovgestTsB)");
+				jpql.append(" AND rmtsf.siacDMovgestStato.movgestStatoCode <> 'A'");
+				jpql.append(" )");
+				
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -1267,9 +1284,9 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			listaRitorno = query.getResultList();
 			
 			//FILTRO VALIDI O MENO:
-			if(validi!=null && !validi){
+			if(soloRelazioniValide!=null && !soloRelazioniValide){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),soloRelazioniValide);
 			}
 			//
 		}
@@ -1308,7 +1325,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			listaRitorno = query.getResultList();
 			
 			//FILTRO VALIDI O MENO:
-			listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+			listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			//
 		}
 		//Termino restituendo l'oggetto di ritorno: 
@@ -1319,7 +1336,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacTMovgestTsFin> ricercaSiacTMovgestTsFinBySiacTMovgestMassive(List<Integer> listaInput, Boolean validi) {
 		List<SiacTMovgestTsFin> listaRitorno = new ArrayList<SiacTMovgestTsFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<Integer>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<Integer>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<Integer> listaIt : esploso){
 					List<SiacTMovgestTsFin> risultatoParziale = ricercaSiacTMovgestTsFinBySiacTMovgestMassiveCORE(listaIt, validi);
@@ -1328,7 +1345,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1356,8 +1373,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -1367,7 +1384,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -1378,7 +1395,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacTMovgestTsFin> ricercaSiacTMovgestTsFinMassive(List<Integer> listaInput, Boolean validi) {
 		List<SiacTMovgestTsFin> listaRitorno = new ArrayList<SiacTMovgestTsFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<Integer>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<Integer>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<Integer> listaIt : esploso){
 					List<SiacTMovgestTsFin> risultatoParziale = ricercaSiacTMovgestTsFinMassiveCORE(listaIt, validi);
@@ -1387,7 +1404,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1415,8 +1432,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -1426,7 +1443,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -1437,7 +1454,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacTMovgestTsFin> ricercaSubCoinvoltiMassive(List<Integer> listaInput, Boolean validi) {
 		List<SiacTMovgestTsFin> listaRitorno = new ArrayList<SiacTMovgestTsFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<Integer>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<Integer>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<Integer> listaIt : esploso){
 					List<SiacTMovgestTsFin> risultatoParziale = ricercaSubCoinvoltiMassiveCORE(listaIt, validi);
@@ -1446,7 +1463,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1474,8 +1491,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			if(validi!=null && validi){
-				jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-				param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+				jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+				param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			}
 			
 			//LANCIO DELLA QUERY:
@@ -1485,7 +1502,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			//FILTRO VALIDI O MENO:
 			if(validi!=null && !validi){
 				//solo per non validi, i validi vengono richiesti on-query
-				listaRitorno = DatiOperazioneUtils.filtraByValidita(listaRitorno, getNow(),validi);
+				listaRitorno = DatiOperazioneUtil.filtraByValidita(listaRitorno, getNow(),validi);
 			}
 			//
 		}
@@ -1498,7 +1515,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacRMovgestBilElemFin> ricercaSiacRMovgestBilElemMassive(List<SiacTMovgestFin> listaInput) {
 		List<SiacRMovgestBilElemFin> listaRitorno = new ArrayList<SiacRMovgestBilElemFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTMovgestFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestFin> listaIt : esploso){
 					List<SiacRMovgestBilElemFin> risultatoParziale = ricercaSiacRMovgestBilElemMassiveCORE(listaIt);
@@ -1507,7 +1524,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1540,8 +1557,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			//SOLO VALIDI:
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			//
 			
 			//LANCIO DELLA QUERY:
@@ -1556,7 +1573,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacRVincoloBilElemFin> ricercaSiacRVincoloBilElemFinMassive(List<SiacTBilElemFin> listaInput) {
 		List<SiacRVincoloBilElemFin> listaRitorno = new ArrayList<SiacRVincoloBilElemFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTBilElemFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTBilElemFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTBilElemFin> listaIt : esploso){
 					List<SiacRVincoloBilElemFin> risultatoParziale = ricercaSiacRVincoloBilElemFinMassiveCORE(listaIt);
@@ -1565,7 +1582,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1598,8 +1615,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			//SOLO VALIDI:
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			//
 			
 			//LANCIO DELLA QUERY:
@@ -1614,7 +1631,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<SiacRVincoloAttrFin> ricercaSiacRVincoloAttrFinMassive(List<SiacTVincoloFin> listaInput) {
 		List<SiacRVincoloAttrFin> listaRitorno = new ArrayList<SiacRVincoloAttrFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTVincoloFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTVincoloFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTVincoloFin> listaIt : esploso){
 					List<SiacRVincoloAttrFin> risultatoParziale = ricercaSiacRVincoloAttrFinMassiveCORE(listaIt);
@@ -1623,7 +1640,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1656,8 +1673,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			//SOLO VALIDI:
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			//
 			
 			//LANCIO DELLA QUERY:
@@ -1679,7 +1696,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 		Map<String,Object> param = new HashMap<String, Object>();
 		List<SiacTMovgestFin> listaMov = new ArrayList<SiacTMovgestFin>();
 		
-		if(!StringUtils.isEmpty(clausolaIN)){
+		if(!StringUtilsFin.isEmpty(clausolaIN)){
 			StringBuilder jpql = new StringBuilder("SELECT mvg ")
 			.append("FROM SiacTMovgestFin mvg ")
 			.append("WHERE mvg.movgestId IN ( ")
@@ -1696,10 +1713,32 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	}
 	
 	
+	//SIAC-6997
+	@SuppressWarnings("unchecked")
+	public List<SiacTMovgestTsFin> ricercaSiacTMovgestTsPerIN(String clausolaIN){
+		Map<String,Object> param = new HashMap<String, Object>();
+		List<SiacTMovgestTsFin> listaMov = new ArrayList<SiacTMovgestTsFin>();
+		
+		if(!StringUtilsFin.isEmpty(clausolaIN)){
+			
+			StringBuilder jpql = new StringBuilder("SELECT mvgts ")
+					.append("FROM SiacTMovgestTsFin mvgts left join mvgts.siacTMovgest mvg ")
+					.append("WHERE mvgts.movgestTsId IN ( ")
+					.append(clausolaIN).append(" ) ")
+					.append("order by mvg.movgestId, mvgts.movgestTsId ");
+			
+			Query query =  createQuery(jpql.toString(),param);
+			listaMov = query.getResultList();
+		}
+        return listaMov;
+	}
+	
+	
+	
 	public List<SiacTMovgestTsDetFin> findImportoMassive(Integer enteProprietarioId, List<Integer> listaInput, String tipoImporto) {
 		List<SiacTMovgestTsDetFin> listaRitorno = new ArrayList<SiacTMovgestTsDetFin>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<Integer>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<Integer>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<Integer> listaIt : esploso){
 					List<SiacTMovgestTsDetFin> risultatoParziale = findImportoMassiveCORE(enteProprietarioId, listaIt, tipoImporto);
@@ -1708,7 +1747,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 					}
 				}
 				//per sicurezza che non ci siano doppioni:
-				listaRitorno = CommonUtils.ritornaSoloDistintiByUid(listaRitorno);
+				listaRitorno = CommonUtil.ritornaSoloDistintiByUid(listaRitorno);
 			}
 		}
         return listaRitorno;
@@ -1801,7 +1840,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			for (int i = 0; i < result.size();) {
 				
 				String flag = String.valueOf(((Character)result.get(i)[8]));
-				if(flag!=null && Constanti.TRUE.equalsIgnoreCase(flag)){
+				if(flag!=null && CostantiFin.TRUE.equalsIgnoreCase(flag)){
 					flagTrasferimentiVincolati = Boolean.TRUE;
 		    	}
 	    		//deve avere un solo elemento, quindi break
@@ -1815,11 +1854,11 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 
 	
 	public SiacTMovgestFin findAccertamento(Integer enteProprietarioId, Integer anno,BigDecimal numero,String bilancio,Timestamp  dataInput){
-		return findByEnteAnnoNumeroBilancioValido(enteProprietarioId, anno, numero, Constanti.MOVGEST_TIPO_ACCERTAMENTO, bilancio, dataInput);
+		return findByEnteAnnoNumeroBilancioValido(enteProprietarioId, anno, numero, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, bilancio, dataInput);
 	}
 	
 	public SiacTMovgestFin findImpegno(Integer enteProprietarioId, Integer anno,BigDecimal numero,String bilancio,Timestamp  dataInput){
-		return findByEnteAnnoNumeroBilancioValido(enteProprietarioId, anno, numero, Constanti.MOVGEST_TIPO_IMPEGNO, bilancio, dataInput);
+		return findByEnteAnnoNumeroBilancioValido(enteProprietarioId, anno, numero, CostantiFin.MOVGEST_TIPO_IMPEGNO, bilancio, dataInput);
 	}
 	
 	/**
@@ -1840,7 +1879,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 		}
 		List<SiacTMovgestFin> siacTMovgestS = siacTMovgestRepository.findByEnteAnnoNumeroBilancioValido(enteProprietarioId, anno , numero, tipoMovimento, bilancio, dataInput);
 		if(siacTMovgestS!=null && siacTMovgestS.size()>0){
-			siacTMovgest = CommonUtils.getFirst(siacTMovgestS);
+			siacTMovgest = CommonUtil.getFirst(siacTMovgestS);
 		}
 		return siacTMovgest;
 	}
@@ -1963,7 +2002,7 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<Integer> ricercaNumeroModificheByMovgestTs(List<SiacTMovgestTsFin> listaInput, String nomeTabellaModifiche) {
 		List<Integer> listaRitorno = new ArrayList<Integer>();
 		if(listaInput!=null && listaInput.size()>0){
-			List<List<SiacTMovgestTsFin>> esploso = StringUtils.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
+			List<List<SiacTMovgestTsFin>> esploso = StringUtilsFin.esplodiInListe(listaInput, DIMENSIONE_MASSIMA_QUERY_IN);
 			if(esploso!=null && esploso.size()>0){
 				for(List<SiacTMovgestTsFin> listaIt : esploso){
 					List<Integer> risultatoParziale = ricercaNumeroModificheByMovgestTsCore(listaIt,nomeTabellaModifiche);
@@ -1999,10 +2038,10 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 			jpql.append(" ) ");
 			
 			//validi filtrati on-query
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato"));
+			jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
+			param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());
 			
 			//LANCIO DELLA QUERY:
 			Query query =  createQuery(jpql.toString(), param);
@@ -2016,40 +2055,45 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	
 	
 	public  Integer ricercaMaxValueNumeroModificaByMovgestTs(List<SiacTMovgestTsFin> listaSiacTMovgestTs,String nomeTabellaModifiche) {
-		Map<String,Object> param = new HashMap<String, Object>();
-		Integer maxValue = 0;
+		final String methodName ="ricercaMaxValueNumeroModificaByMovgestTs";
 		
-		if(listaSiacTMovgestTs!=null && listaSiacTMovgestTs.size()>0){
-			
-			StringBuilder jpql = new StringBuilder("SELECT max(rs.siacRModificaStato.siacTModifica.modNum) FROM "+nomeTabellaModifiche+" rs "
-					+ "  WHERE ");
-			
-			jpql.append(" rs.siacTMovgestT.movgestTsId IN ( ");
-			int i =0;
-			for(SiacTMovgestTsFin it: listaSiacTMovgestTs){
-				if(i>0){
-					jpql.append(" , ");
-				}
-				String idParamName = "id" + i;
-				jpql.append("  :"+idParamName+" ");
-				param.put(idParamName, it.getMovgestTsId());
-				i++;
-			}
-			jpql.append(" ) ");
-			
-			//validi filtrati on-query
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato"));
-			jpql.append(" AND ").append(DataValiditaUtils.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
-			param.put(DataValiditaUtils.NOW_DATE_PARAM_JPQL, getNowDate());
-			
-			//LANCIO DELLA QUERY:
-			Query query =  createQuery(jpql.toString(), param);
-			maxValue = (Integer)query.getSingleResult();
-			
+		Map<String,Object> param = new HashMap<String, Object>();
+		
+		if(listaSiacTMovgestTs==null || listaSiacTMovgestTs.isEmpty()){
+			return Integer.valueOf(0);
 		}
 		
-        return maxValue;
+		StringBuilder jpql = new StringBuilder("SELECT max(rs.siacRModificaStato.siacTModifica.modNum) FROM "+nomeTabellaModifiche+" rs "
+				+ "  WHERE ");
+		
+		jpql.append(" rs.siacTMovgestT.movgestTsId IN ( :movgestTsIds ) ");
+		param.put("movgestTsIds", extractUids(listaSiacTMovgestTs));
+		
+		/*jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato"));
+		jpql.append(" AND ").append(DataValiditaUtil.validitaForQuery("rs.siacRModificaStato.siacTModifica"));
+		param.put(DataValiditaUtil.NOW_DATE_PARAM_JPQL, getNowDate());*/
+		
+		jpql.append( " AND rs.dataCancellazione IS NULL" );
+		jpql.append( " AND rs.siacRModificaStato.dataCancellazione IS NULL" );
+		jpql.append( " AND rs.siacRModificaStato.siacTModifica.dataCancellazione IS NULL" );
+		
+		log.debug(methodName, "JPQL TO EXECUTE: " + jpql.toString());
+		//LANCIO DELLA QUERY:
+		Query query =  createQuery(jpql.toString(), param);
+		return  (Integer)query.getSingleResult();
+		
+	}
+	
+	private List<Integer> extractUids(List<? extends SiacTBase> siacTBases){
+		List<Integer> uids = new ArrayList<Integer>();
+		if(siacTBases == null) {
+			return uids;
+		}
+		for (SiacTBase base : siacTBases) {
+			uids.add(base.getUid());
+		}
+		return uids;
 	}
 	
 	
@@ -2060,8 +2104,8 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 	public List<String> gestisciRelazioneModificaImportoEVincoli(
 			Integer idModifica, String loginOperazione, String tipoOperazione) {
 		final String methodName = "gestisciRelazioneModificaImportoEVincoli";
-		
-		log.info(methodName, "Calling functionName: siac.fnc_siac_riaccertamento for modificaId: "+ idModifica 
+		//SIAC-8649
+		log.warn(methodName, "Calling functionName: siac.fnc_siac_riaccertamento for modificaId: "+ idModifica 
 				+", loginOperazione:"+loginOperazione
 				+", tipoOperazione:"+tipoOperazione);
 		
@@ -2079,5 +2123,43 @@ public class MovimentoGestioneFinDaoImpl extends AbstractDao<SiacTMovgestFin, In
 		
 		return result;		
 	}
+
+	
+	
+	//SIAC-6997
+	@SuppressWarnings("unchecked")
+	public List<SiacTMovgestTsFin> ricercaSiacTMovgestTsPerAnnoEsercizioUid(Integer enteUid, Integer annoBilancio, BigDecimal numero,
+			int anno, String tipoMovGest){
+		Map<String,Object> param = new HashMap<String, Object>();
+		List<SiacTMovgestTsFin> listaMov = new ArrayList<SiacTMovgestTsFin>();
+		
+			StringBuilder jpql = new StringBuilder("SELECT mvgts ")
+			.append("FROM SiacTMovgestTsFin mvgts left join mvgts.siacTMovgest mvg ")
+			.append("left join mvg.siacDMovgestTipo dMovgestTipo ")
+			.append("left join mvg.siacTBil tBil left join tBil.siacTPeriodo tPeriodo ")	
+			.append(" WHERE mvg.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ")
+			.append("AND dMovgestTipo.movgestTipoCode = :tipoMovimento ")
+			.append("AND tPeriodo.anno = :annoBilancio ")
+			.append("AND mvg.movgestNumero = :numero ")
+			.append(" AND mvg.movgestAnno = :anno ");
+					
+					
+			param.put("anno",anno);
+			param.put("numero", numero);
+			param.put("annoBilancio", String.valueOf(annoBilancio));
+			param.put("enteProprietarioId", enteUid);
+			param.put("tipoMovimento", tipoMovGest );
+			
+			
+			Query query =  createQuery(jpql.toString(),param);
+			listaMov = query.getResultList();
+		
+        return listaMov;
+	}
+	
+	
+	
+	
+	
 
 }

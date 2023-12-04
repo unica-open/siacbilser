@@ -16,6 +16,7 @@ import it.csi.siac.siacbilser.business.service.predocumentoentrata.AggiornaCausa
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.AggiornaDataTrasmissionePreDocumentoEntrataAsyncService;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.AggiornaDataTrasmissionePreDocumentoEntrataService;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.AggiornaPreDocumentoDiEntrataService;
+import it.csi.siac.siacbilser.business.service.predocumentoentrata.AggiornaPreDocumentoEntrataCollegaDocumentoService;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.AggiornaStatoPreDocumentoDiEntrataService;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.AnnullaCausaleEntrataService;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.AnnullaPreDocumentoEntrataService;
@@ -50,6 +51,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDataTrasmissioneP
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDataTrasmissionePreDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoEntrataCollegaDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoEntrataCollegaDocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoPreDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoPreDocumentoDiEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaCausaleEntrata;
@@ -250,5 +253,16 @@ public class PreDocumentoEntrataServiceImpl implements PreDocumentoEntrataServic
 	public RicercaTotaliPreDocumentoEntrataPerStatoResponse ricercaTotaliPreDocumentoEntrataPerStato(RicercaTotaliPreDocumentoEntrataPerStato parameters) {
 		return BaseServiceExecutor.execute(appCtx, RicercaTotaliPreDocumentoEntrataPerStatoService.class, parameters);
 	}
+	
+	@Override
+	public RicercaTotaliPreDocumentoEntrataPerStatoResponse ricercaTotaliPreDocumentoEntrataPerStatoRiepilogo(RicercaTotaliPreDocumentoEntrataPerStato parameters) {
+		return BaseServiceExecutor.execute(appCtx, RicercaTotaliPreDocumentoEntrataPerStatoService.class, parameters);
+	}
+	
+	@Override
+	public AggiornaPreDocumentoEntrataCollegaDocumentoResponse aggiornaPreDocumentoEntrataCollegaDocumento(AggiornaPreDocumentoEntrataCollegaDocumento parameters) {
+		return BaseServiceExecutor.execute(appCtx, AggiornaPreDocumentoEntrataCollegaDocumentoService.class, parameters);
+	}
+
 	
 }

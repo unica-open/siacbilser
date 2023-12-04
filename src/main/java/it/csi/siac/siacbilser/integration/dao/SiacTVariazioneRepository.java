@@ -6,6 +6,7 @@ package it.csi.siac.siacbilser.integration.dao;
 
 
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -100,7 +101,20 @@ public interface SiacTVariazioneRepository extends JpaRepository<SiacTVariazione
 			+ "   AND rvs.siacTVariazione.variazioneId = :variazioneId"
 			+ " ) ")
 	List<Object[]> findStanziamentoCapitoloInVariazione(@Param("elemIds") Collection<Integer> uidElems, @Param("variazioneId") Integer variazioneId);
-
+	
+	@Query(" SELECT dv.elemDetImporto "
+			+ " FROM SiacTBilElemDetVar dv"
+			+ " WHERE dv.dataCancellazione IS NULL"
+			+ " AND dv.siacTBilElem.elemId = :elemId"
+			+ " AND dv.siacDBilElemDetTipo.elemDetTipoCode = :elemDetTipoCode "
+			+ " AND dv.siacTPeriodo.anno = :anno"
+			+ " AND EXISTS ( "
+			+ "   FROM dv.siacRVariazioneStato rvs "
+			+ "   WHERE rvs.dataCancellazione IS NULL "
+			+ "   AND rvs.siacTVariazione.variazioneId = :variazioneId"
+			+ " ) ")
+	BigDecimal findSingoloStanziamentoCapitoloInVariazione(@Param("elemId")Integer uidElem, @Param("variazioneId") Integer variazioneId, @Param("anno") String anno, @Param("elemDetTipoCode") String elemDetTipoCode);
+	
 	
 	@Query( " FROM SiacTBilElemDetVar tbedv "
 			+ " WHERE tbedv.dataCancellazione IS NULL "
@@ -120,6 +134,42 @@ public interface SiacTVariazioneRepository extends JpaRepository<SiacTVariazione
 			+ " GROUP BY tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacDBilElemDetTipo.elemDetTipoCode ")
 	List<Object[]> findTotalePositiveGroupedByImportoCapitolo(@Param("elemId") Integer elemId, @Param("bilId") Integer bilId);
 	
+	// CONTABILIA-285 INIZIO 
+	/* Prima versione */ 
+	@Query( "SELECT  tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacDBilElemDetTipo.elemDetTipoCode,  SUM(COALESCE(tbedv.elemDetImporto, 0)) "
+			+ " FROM SiacTBilElemDetVar tbedv "
+			+ " WHERE tbedv.dataCancellazione IS NULL "
+			+ " AND tbedv.siacTBilElem.elemId = :elemId "
+			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.siacTBil.bilId = :bilId "
+			+ " AND tbedv.siacRVariazioneStato.dataCancellazione IS NULL "
+			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.dataCancellazione IS NULL "
+			+ " AND tbedv.elemDetImporto = 0 "
+			+ " AND EXISTS (FROM tbedv.siacTBilElemDetVarComps comp WHERE comp.elemDetImporto != 0)" 
+			+ " GROUP BY tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacDBilElemDetTipo.elemDetTipoCode "
+			+ "  ") //
+	List<Object[]> findTotaleNeutreGroupedByImportoCapitolo(@Param("elemId") Integer elemId, @Param("bilId") Integer bilId);
+	// Seconda versione
+//	@Query( "SELECT tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacDBilElemDetTipo.elemDetTipoCode, SUM(COALESCE(tbedv.elemDetImporto, 0)) "
+//			+ " FROM SiacTBilElemDetVar tbedv "
+//			+ " WHERE tbedv.dataCancellazione IS NULL "
+//			+ " AND tbedv.siacTBilElem.elemId = :elemId "
+//			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.siacTBil.bilId = :bilId "
+//			+ " AND tbedv.siacRVariazioneStato.dataCancellazione IS NULL "
+//			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.dataCancellazione IS NULL "
+//			+ " AND tbedv.elemDetImporto = 0 "
+//			+ " AND ((SELECT SUM(COALESCE(itbedv.elemDetImporto, 0)) " 
+//			+ " 		  FROM 	SiacTBilElemDetVar itbedv "
+//			+ " 		  WHERE itbedv.siacRVariazioneStato.siacTVariazione.variazioneId = tbedv.siacRVariazioneStato.siacTVariazione.variazioneId "
+//			+ " 			AND itbedv.dataCancellazione IS NULL "
+//			+ " 			AND itbedv.siacRVariazioneStato.dataCancellazione IS NULL "
+//			+ " 		  	AND itbedv.siacRVariazioneStato.siacTVariazione.dataCancellazione IS NULL "
+//			+ " 			AND itbedv.siacTBilElem.elemId = :elemId "
+//			+ "			) = 0) "
+//			+ " GROUP BY tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacDBilElemDetTipo.elemDetTipoCode ")
+//	List<Object[]> findTotaleNeutreGroupedByImportoCapitolo(@Param("elemId") Integer elemId, @Param("bilId") Integer bilId); 
+	// CONTABILIA-285 FINE
+	
+	
 	@Query( "SELECT tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, COALESCE(COUNT(DISTINCT tbedv.siacRVariazioneStato.siacTVariazione), 0) "
 			+ " FROM SiacTBilElemDetVar tbedv "
 			+ " WHERE tbedv.dataCancellazione IS NULL "
@@ -130,6 +180,42 @@ public interface SiacTVariazioneRepository extends JpaRepository<SiacTVariazione
 			+ " AND tbedv.elemDetImporto > 0 "
 			+ " GROUP BY tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode ")
 	List<Object[]> findCountPositiveGroupedByImportoCapitolo(@Param("elemId") Integer elemId, @Param("bilId") Integer bilId);
+	
+	// CONTABILIA-285 INIZIO 
+	/* Prima versione  */ 
+	@Query( "SELECT tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, COALESCE(COUNT(DISTINCT tbedv.siacRVariazioneStato.siacTVariazione), 0) "
+			+ " FROM SiacTBilElemDetVar tbedv "
+			+ " WHERE tbedv.dataCancellazione IS NULL "
+			+ " AND tbedv.siacTBilElem.elemId = :elemId "
+			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.siacTBil.bilId = :bilId "
+			+ " AND tbedv.siacRVariazioneStato.dataCancellazione IS NULL "
+			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.dataCancellazione IS NULL "
+			+ " AND tbedv.elemDetImporto = 0 "
+			+ " AND EXISTS (FROM tbedv.siacTBilElemDetVarComps comp WHERE comp.elemDetImporto != 0)" 
+			+ " GROUP BY tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode "
+			+ " ") //
+	List<Object[]> findCountNeutreGroupedByImportoCapitolo(@Param("elemId") Integer elemId, @Param("bilId") Integer bilId); 
+	// Seconda versione
+//	 @Query( "SELECT tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, COALESCE(COUNT(DISTINCT tbedv.siacRVariazioneStato.siacTVariazione), 0) "
+//			+ " FROM SiacTBilElemDetVar tbedv "
+//			+ " WHERE tbedv.dataCancellazione IS NULL "
+//			+ " AND tbedv.siacTBilElem.elemId = :elemId "
+//			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.siacTBil.bilId = :bilId "
+//			+ " AND tbedv.siacRVariazioneStato.dataCancellazione IS NULL "
+//			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.dataCancellazione IS NULL "
+//			+ " AND tbedv.elemDetImporto = 0 "
+//			+ " AND ((SELECT SUM(COALESCE(itbedv.elemDetImporto, 0)) " 
+//			+ " 		  FROM 	SiacTBilElemDetVar itbedv "
+//			+ " 		  WHERE itbedv.siacRVariazioneStato.siacTVariazione.variazioneId = tbedv.siacRVariazioneStato.siacTVariazione.variazioneId "
+//			+ " 			AND itbedv.dataCancellazione IS NULL "
+//			+ " 			AND itbedv.siacRVariazioneStato.dataCancellazione IS NULL "
+//			+ " 		  	AND itbedv.siacRVariazioneStato.siacTVariazione.dataCancellazione IS NULL "
+//			+ " 			AND itbedv.siacTBilElem.elemId = :elemId "
+//			+ "			) = 0) "
+//			+ " GROUP BY tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode ")
+//	List<Object[]> findCountNeutreGroupedByImportoCapitolo(@Param("elemId") Integer elemId, @Param("bilId") Integer bilId);  
+
+	// CONTABILIA-285 FINE
 	
 	@Query( "SELECT tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacDBilElemDetTipo.elemDetTipoCode, SUM(COALESCE(tbedv.elemDetImporto, 0)) "
 			+ " FROM SiacTBilElemDetVar tbedv "
@@ -168,4 +254,41 @@ public interface SiacTVariazioneRepository extends JpaRepository<SiacTVariazione
 			+ " WHERE siacRVariazioneStato.variazioneStatoId = :variazioneStatoId "
 			+ " AND dataCancellazione IS NULL ")
 	List<SiacRBilElemClassVar> findSiacRBilElemClassVarByVariazioneStatoId(@Param("variazioneStatoId") Integer variazioneId);
+	
+	
+	
+	
+	/*
+	 * SIAC-7735
+	 */
+	@Query( "SELECT  tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacDBilElemDetTipo.elemDetTipoCode, tbedv.siacRVariazioneStato.siacTVariazione.variazioneId, SUM(COALESCE(tbedv.elemDetImporto, 0)) "
+			+ " FROM SiacTBilElemDetVar tbedv "
+			+ " WHERE tbedv.dataCancellazione IS NULL "
+			+ " AND tbedv.siacTBilElem.elemId = :elemId "
+			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.siacTBil.bilId = :bilId "
+			+ " AND tbedv.siacRVariazioneStato.dataCancellazione IS NULL "
+			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.dataCancellazione IS NULL "
+			+ " AND tbedv.elemDetImporto = 0 "
+			+ " AND EXISTS (FROM tbedv.siacTBilElemDetVarComps comp WHERE comp.elemDetImporto != 0)" 
+			+ " GROUP BY tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacDBilElemDetTipo.elemDetTipoCode, tbedv.siacRVariazioneStato.siacTVariazione.variazioneId "
+			+ " ORDER BY tbedv.siacRVariazioneStato.siacTVariazione.variazioneId ") //
+	List<Object[]> findTotaleNeutreGroupedByImportoCapitoloVarId(@Param("elemId") Integer elemId, @Param("bilId") Integer bilId);
+
+	@Query( "SELECT tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacRVariazioneStato.siacTVariazione.variazioneId, COALESCE(COUNT(DISTINCT tbedv.siacRVariazioneStato.siacTVariazione), 0) "
+			+ " FROM SiacTBilElemDetVar tbedv "
+			+ " WHERE tbedv.dataCancellazione IS NULL "
+			+ " AND tbedv.siacTBilElem.elemId = :elemId "
+			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.siacTBil.bilId = :bilId "
+			+ " AND tbedv.siacRVariazioneStato.dataCancellazione IS NULL "
+			+ " AND tbedv.siacRVariazioneStato.siacTVariazione.dataCancellazione IS NULL "
+			+ " AND tbedv.elemDetImporto = 0 "
+			+ " AND EXISTS (FROM tbedv.siacTBilElemDetVarComps comp WHERE comp.elemDetImporto != 0)" 
+			+ " GROUP BY tbedv.siacTPeriodo.anno, tbedv.siacRVariazioneStato.siacDVariazioneStato.variazioneStatoTipoCode, tbedv.siacRVariazioneStato.siacTVariazione.variazioneId "
+			+ " ORDER BY tbedv.siacRVariazioneStato.siacTVariazione.variazioneId ") //
+	List<Object[]> findCountNeutreGroupedByImportoCapitoloVarId(@Param("elemId") Integer elemId, @Param("bilId") Integer bilId); 
+
+	
+	
+	
+	
 }

@@ -13,7 +13,7 @@ import it.csi.siac.siacbilser.integration.dao.MovimentoGestioneDao;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgest;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgestT;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTsTipoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * The Class MovimentoGestioneCalcolaDisponibilitaBaseConverter.
@@ -22,7 +22,7 @@ public abstract class MovimentoGestioneCalcolaDisponibilitaBaseConverter<A, B> e
 
 	@Autowired
 	private MovimentoGestioneDao movimentoGestioneDao;
-	protected final LogUtil log = new LogUtil(getClass());
+	protected final LogSrvUtil log = new LogSrvUtil(getClass());
 	
 	/**
 	 * Costruttore

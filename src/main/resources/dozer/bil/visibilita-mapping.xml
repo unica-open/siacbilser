@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="SiacTVisibilita_Visibilita_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.visibilita.Visibilita</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVisibilita</class-b>
+		<field>
+			<a>campo</a>
+			<b>visCampo</b>
+		</field>
+		<field>
+			<a>visibile</a>
+			<b>visVisibile</b>
+		</field>
+		<field>
+			<a>funzionalita</a>
+			<b>visFunzionalita</b>
+		</field>
+		<field>
+			<a>valoreDefault</a>
+			<b>visDefault</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTVisibilita_Visibilita" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.visibilita.Visibilita</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTVisibilita</class-b>
+		<field map-id="SiacTVisibilita_Visibilita_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="visibilitaTipoCampoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="visibilitaAzioneConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+</mappings>

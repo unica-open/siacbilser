@@ -26,7 +26,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTVariazione;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemDetTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTBilElemDetVarElemDetFlagEnum;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * The Class VariazioneImportiCapitoloStornoConverter.
@@ -39,7 +39,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class VariazioneImportiCapitoloStornoConverter extends DozerConverter<List<DettaglioVariazioneImportoCapitolo>, SiacTVariazione /*List<SiacTBilElemDetVar>*/>  {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The siac t periodo repository. */
 	@Autowired

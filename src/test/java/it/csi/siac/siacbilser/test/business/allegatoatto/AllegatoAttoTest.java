@@ -137,6 +137,7 @@ import it.csi.siac.siacfin2ser.model.StatoOperativoElencoDocumenti;
 import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoIva;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
+import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoStampaAllegatoAtto;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
@@ -1814,6 +1815,24 @@ public class AllegatoAttoTest extends BaseJunit4TestCase {
 		
 		assertTrue(dateNow.compareTo(dateFineDurc) > 0 == false);
 		assertNotNull(mappaSoggettoData);
+	}
+	
+	@Test
+	public void testCaricamentoDati() {
+		subdocumentoSpesaDad.setEnte(create(Ente.class, 2));
+		subdocumentoSpesaDad.ricercaSubdocumentiSpesaPerProvvisorio(
+				create(TipoDocumento.class, 72),
+				Integer.valueOf(2020),
+				"28/C",
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				getParametriPaginazioneTest()
+				);
 	}
 	
 	

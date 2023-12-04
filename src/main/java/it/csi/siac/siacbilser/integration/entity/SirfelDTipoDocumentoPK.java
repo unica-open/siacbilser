@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacbilser.integration.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
@@ -15,9 +16,10 @@ public class SirfelDTipoDocumentoPK extends SirfelPKBase {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
+	//SIAC-7557 INIZIO MODIFICA 
 //	@Column(name="ente_proprietario_id"/*, insertable=false, updatable=false*/)
 //	private Integer enteProprietarioId;
-
+	@Column(name="codice")
 	private String codice;
 
 	public SirfelDTipoDocumentoPK() {

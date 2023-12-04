@@ -73,8 +73,13 @@ public class SiacTComuneFin extends SiacTEnteBase
 	@OneToMany(mappedBy = "siacTComune")
 	private List<SiacTPersonaFisicaModFin> siacTPersonaFisicaMods;
 
-	public SiacTComuneFin()
-	{
+	public SiacTComuneFin()	{
+		super();
+	}
+
+	public SiacTComuneFin(Integer uid) {
+		this();
+		setUid(uid);
 	}
 
 	public Integer getComuneId()

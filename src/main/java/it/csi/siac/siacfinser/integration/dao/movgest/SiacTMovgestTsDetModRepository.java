@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacfinser.integration.dao.movgest;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -57,5 +58,21 @@ public interface SiacTMovgestTsDetModRepository extends JpaRepository<SiacTMovge
 
 	@Query(MODIFICA)
 	public List<SiacTMovgestTsDetModFin> findListaFromModifica(@Param("enteProprietarioId") Integer enteProprietarioId, @Param("modificaId") Integer modificaId, @Param("dataInput")Timestamp dataImput);
+	
+	//SIAC-7647
+	@Query(" SELECT COUNT(*) " +
+			" FROM SiacTMovgestTsDetModFin mod, SiacTMovgestFin mov "  +
+			" WHERE mod.dataCancellazione IS NULL " + 
+			" AND mod.siacTMovgestT.dataCancellazione IS NULL " + 
+			" AND mod.siacRModificaStato.dataCancellazione IS NULL " +
+			" AND mod.siacTMovgestT.siacTMovgest = mov " +
+			" AND mov.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId " +
+			" AND mov.movgestAnno = :movgestAnno " +
+			" AND mov.movgestNumero = :movgestNumero " +
+			" AND mov.siacDMovgestTipo.movgestTipoCode = :movgestTipoCode " + 
+			" AND CAST(mov.siacTBil.siacTPeriodo.anno AS integer) = (:annoBilancio +1) " +  
+			" AND mod.siacRModificaStato.siacDModificaStato.modStatoCode <> 'A'")
+	public Long countModificheImportoValideSuMovgestResiduo(@Param("enteProprietarioId") Integer enteProprietarioId, @Param("movgestAnno") Integer annoMovimento, @Param("movgestNumero") BigDecimal numeroMovimento, @Param("movgestTipoCode") String string, @Param("annoBilancio") Integer annoBilancioCorrente);
+	
 //	
 }

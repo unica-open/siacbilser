@@ -36,13 +36,15 @@ public class RicercaAccSubAccParamDto implements Serializable {
 	private boolean competenzaCorrente;
 	private boolean competenzaCompetenza;
 	private boolean competenzaFuturi;
+	//SIAC-6997
+	private boolean competenzaResiduiRor;
 	private Integer annoAccertamentoRiaccertato;
 	private Integer numeroAccertamentoRiaccertato;
 	private Integer annoAccertamentoOrigine;
 	private Integer numeroAccertamentoOrigine;
 	private String flagDaRiaccertamento;
 	private String codiceClasseSoggetto;
-	
+	private boolean ricercaResiduiRorFlag;
 	private Integer uidCapitolo;
 	private Integer uidProvvedimento;
 	private Integer uidStrutturaAmministrativoContabile;
@@ -54,7 +56,38 @@ public class RicercaAccSubAccParamDto implements Serializable {
 	//SIAC-5253 introduciamo la possibilita' di escludere stati precisi:
 	private List<String> statiDaEscludere;
 	
+	//SIAC-6997
+	private Boolean reanno;
+	private String strutturaSelezionataCompetente;
 	
+	//SIAC-7486
+	private List<Integer> listStrutturaCompetenteInt;
+	
+	
+	/**
+	 * @return the reanno
+	 */
+	public Boolean getReanno() {
+		return reanno;
+	}
+	/**
+	 * @param reanno the reanno to set
+	 */
+	public void setReanno(Boolean reanno) {
+		this.reanno = reanno;
+	}
+	/**
+	 * @return the strutturaSelezionataCompetente
+	 */
+	public String getStrutturaSelezionataCompetente() {
+		return strutturaSelezionataCompetente;
+	}
+	/**
+	 * @param strutturaSelezionataCompetente the strutturaSelezionataCompetente to set
+	 */
+	public void setStrutturaSelezionataCompetente(String strutturaSelezionataCompetente) {
+		this.strutturaSelezionataCompetente = strutturaSelezionataCompetente;
+	}
 	/**
 	 * @return the codiceClasseSoggetto
 	 */
@@ -320,6 +353,42 @@ public class RicercaAccSubAccParamDto implements Serializable {
 	}
 	public void setStatiDaEscludere(List<String> statiDaEscludere) {
 		this.statiDaEscludere = statiDaEscludere;
+	}
+	/**
+	 * @return the competenzaResiduiRor
+	 */
+	public boolean isCompetenzaResiduiRor() {
+		return competenzaResiduiRor;
+	}
+	/**
+	 * @param competenzaResiduiRor the competenzaResiduiRor to set
+	 */
+	public void setCompetenzaResiduiRor(boolean competenzaResiduiRor) {
+		this.competenzaResiduiRor = competenzaResiduiRor;
+	}
+	/**
+	 * @return the ricercaResiduiRorFlag
+	 */
+	public boolean isRicercaResiduiRorFlag() {
+		return ricercaResiduiRorFlag;
+	}
+	/**
+	 * @param ricercaResiduiRorFlag the ricercaResiduiRorFlag to set
+	 */
+	public void setRicercaResiduiRorFlag(boolean ricercaResiduiRorFlag) {
+		this.ricercaResiduiRorFlag = ricercaResiduiRorFlag;
+	}
+	/**
+	 * @return the listStrutturaCompetenteInt
+	 */
+	public List<Integer> getListStrutturaCompetenteInt() {
+		return listStrutturaCompetenteInt;
+	}
+	/**
+	 * @param listStrutturaCompetenteInt the listStrutturaCompetenteInt to set
+	 */
+	public void setListStrutturaCompetenteInt(List<Integer> listStrutturaCompetenteInt) {
+		this.listStrutturaCompetenteInt = listStrutturaCompetenteInt;
 	}
 	
 }

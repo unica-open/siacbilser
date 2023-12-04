@@ -5,9 +5,12 @@
 package it.csi.siac.siacfinser.business.service.movgest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -23,7 +26,7 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaMovimentoSpesa;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaMovimentoSpesaResponse;
@@ -41,6 +44,9 @@ import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesa;
 import it.csi.siac.siacgenser.model.TipoCollegamento;
 
+/**
+ * The Class AnnullaMovimentoSpesaService.
+ */
 @Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class AnnullaMovimentoSpesaService extends AbstractBaseService<AnnullaMovimentoSpesa, AnnullaMovimentoSpesaResponse> {
@@ -50,9 +56,27 @@ public class AnnullaMovimentoSpesaService extends AbstractBaseService<AnnullaMov
 	@Autowired
 	private ModificaMovimentoGestioneDad modificaMovimentoGestioneDad;
 	
+	private static final String[] MOD_TIPO_CODES_NON_IN_CALCOLO_DISPONIBILE_CAPITOLO = new String[] {"ECONB"};
+	
+	
+	@Override
+	protected void checkServiceParam() throws ServiceParamError {		
+		//dati di input presi da request:
+		Ente ente = req.getEnte();
+		Impegno impegno = req.getImpegno();
+		Bilancio bilancio = req.getBilancio();
+		
+		checkCondition(ente != null || impegno != null || bilancio != null, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore("NESSUN_PARAMETRO_DI_RICERCA_INIZIALIZZATO"));
+		checkCondition(ente != null, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("ENTE"));
+		checkCondition(impegno != null, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("IMPEGNO"));
+		checkCondition(bilancio != null, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("BILANCIO"));
+		checkCondition(req.getBilancio().getAnno() != 0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("ANNO_BILANCIO"));
+		checkCondition(req.getImpegno().getUid() != 0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("ID_IMPEGNO"));
+	}	
+	
 	@Override
 	protected void init() {
-		final String methodName = "AnnullaMovimentoSpesaService : init()";
+		final String methodName = "init";
 		log.debug(methodName, "- Begin");
 	}	
 
@@ -64,8 +88,6 @@ public class AnnullaMovimentoSpesaService extends AbstractBaseService<AnnullaMov
 	
 	@Override
 	public void execute() {
-		final String methodName = "AnnullaMovimentoSpesaService : execute()";
-		log.debug(methodName, "- Begin");
 		
 		//1. Leggiamo i dati ricevuti dalla request:
 		Richiedente richiedente = req.getRichiedente();
@@ -79,6 +101,9 @@ public class AnnullaMovimentoSpesaService extends AbstractBaseService<AnnullaMov
 		//2. Si inizializza l'oggetto DatiOperazioneDto, dto di comodo generico che verra' passato tra i metodi:
 		DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, req.getRichiedente(), Operazione.ANNULLA, bilancio.getAnno());
 		
+		//SIAC-6865
+		checkImpegnoCollegatoAggiudicazione(impegno);
+		
 		//2.1. Si valorizza l'oggetto ImpegnoInModificaInfoDto, dto di comodo specifico di questo servizio
 		Impegno impegnoClone = caricaAnnoENumeroSeVuotiMaUidPresente(clone(impegno));
 		@SuppressWarnings("rawtypes")
@@ -88,28 +113,34 @@ public class AnnullaMovimentoSpesaService extends AbstractBaseService<AnnullaMov
 		HashMap<Integer, CapitoloUscitaGestione> capitoliDaServizio = 
 				caricaCapitoloUscitaGestioneEResiduo(richiedente, impegnoClone.getChiaveCapitoloUscitaGestione(), impegnoInModificaInfoDto.getChiaveCapitoloResiduo());
 		
-		checkDisponibilitaModificheNegativeSpesa(impegno, impegnoClone.getChiaveCapitoloUscitaGestione(), impegnoInModificaInfoDto.getChiaveCapitoloResiduo(), capitoliDaServizio);
+		//setto l'atto amministrativo se nullo da chiamante:
+		impegno = caricaAnnoENumeroSeVuotiMaUidPresente(impegno);
+		impegno = impegnoOttimizzatoDad.caricaAttoAmministrativoSeNonValorizzato(impegno);
+		
+		//SIAC-6750
+		checkDisponibilitaModificheNegativeSpesa(impegno, impegnoClone.getChiaveCapitoloUscitaGestione(), impegnoInModificaInfoDto.getChiaveCapitoloResiduo(), capitoliDaServizio, impegnoClone.getAnnoMovimento(), annoBilancioRequest);
 		
 		CapitoliInfoDto capitoliInfo = new CapitoliInfoDto();
 		capitoliInfo.setCapitoliDaServizioUscita(capitoliDaServizio);
 		
-		//setto l'atto amministrativo se nullo da chiamante:
-		impegno = caricaAnnoENumeroSeVuotiMaUidPresente(impegno);
-		impegno = impegnoOttimizzatoDad.caricaAttoAmministrativoSeNonValorizzato(impegno);
 		//
 		
-		String tipoMovimento = Constanti.MOVGEST_TIPO_IMPEGNO;
+		String tipoMovimento = CostantiFin.MOVGEST_TIPO_IMPEGNO;
 		boolean inserireDoppiaGestione = impegnoOttimizzatoDad.inserireDoppiaGestione(bilancio, (Impegno)impegno, datiOperazione);
 		Impegno impegnoCaricatoPerDoppiaGestione = null;
 		if(inserireDoppiaGestione){
 			String annoEsercizio = Integer.toString(bilancio.getAnno());
 			Integer annoMovimento = impegno.getAnnoMovimento();
-			BigDecimal numeroMovimento = impegno.getNumero();
+			BigDecimal numeroMovimento = impegno.getNumeroBigDecimal();
 			impegnoCaricatoPerDoppiaGestione = ricaricaMovimentoPerAnnullaModifica(richiedente, numeroMovimento, annoEsercizio, annoMovimento, tipoMovimento);
 		}
 		
 		//3. Si invoca il metodo che esegue l'operazione "core" di annullamento di impegni o accertamenti:
 		EsitoAggiornamentoMovimentoGestioneDto esitoAnnullaMovimento = impegnoOttimizzatoDad.annullaMovimento(ente, richiedente, impegno,tipoMovimento ,datiOperazione,bilancio,capitoliInfo,impegnoInModificaInfoDto,impegnoCaricatoPerDoppiaGestione);
+		
+		if (req.isVerificaImportiDopoAnnullamentoModifica()) { // SIAC-8090
+			impegnoOttimizzatoDad.verificaImportiDopoAnnullamentoModifica(ente.getUid(), req.getBilancio().getUid(), "I", impegno.getAnnoMovimento(),  impegno.getNumeroBigDecimal());
+		}
 		
 		//5. Costruzione response:
 		if ( (esitoAnnullaMovimento.getListaErrori()!=null && esitoAnnullaMovimento.getListaErrori().size()>0) || esitoAnnullaMovimento.getMovimentoGestione()==null) {
@@ -123,7 +154,7 @@ public class AnnullaMovimentoSpesaService extends AbstractBaseService<AnnullaMov
 			TransactionAspectSupport.currentTransactionStatus().flush();
 			//String annoEsercizio = Integer.toString(bilancio.getAnno());
 			Integer annoImpegno = impegno.getAnnoMovimento();
-			BigDecimal numeroImpegno = impegno.getNumero();
+			BigDecimal numeroImpegno = impegno.getNumeroBigDecimal();
 			if(annoImpegno != null && annoImpegno.intValue()>0 && numeroImpegno!=null && numeroImpegno.intValue()>0){
 				// Ricarico l'impegno modificato 
 				
@@ -131,7 +162,9 @@ public class AnnullaMovimentoSpesaService extends AbstractBaseService<AnnullaMov
 				PaginazioneSubMovimentiDto paginazioneSubMovimentiDto = new PaginazioneSubMovimentiDto();
 				paginazioneSubMovimentiDto.setNoSub(true);
 				
-				EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, Integer.toString(annoBilancioRequest), annoImpegno, numeroImpegno,paginazioneSubMovimentiDto , null, Constanti.MOVGEST_TIPO_IMPEGNO, true);
+				EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(
+						richiedente, ente, Integer.toString(annoBilancioRequest), annoImpegno, numeroImpegno,
+						paginazioneSubMovimentiDto , null, CostantiFin.MOVGEST_TIPO_IMPEGNO, true, true);
 				
 				Impegno impegnoReload = null;
 				if(esitoRicercaMov!=null){
@@ -179,64 +212,120 @@ public class AnnullaMovimentoSpesaService extends AbstractBaseService<AnnullaMov
 	}
 
 	
-	private void checkDisponibilitaModificheNegativeSpesa(Impegno impegno, int chiaveCapitoloUscitaGestione,Integer chiaveCapitoloResiduo, HashMap<Integer, CapitoloUscitaGestione> capitoliDaServizio) {
-		List<ModificaMovimentoGestioneSpesa> listaModificheMovimentoGestioneSpesa = impegno.getListaModificheMovimentoGestioneSpesa();
-		if(listaModificheMovimentoGestioneSpesa ==null || listaModificheMovimentoGestioneSpesa.isEmpty() || capitoliDaServizio == null){
-			//non sto annullando una modifica
+	private void checkImpegnoCollegatoAggiudicazione(Impegno impegno) {
+		List<ModificaMovimentoGestioneSpesa> mods = impegno.getListaModificheMovimentoGestioneSpesa();
+		if(mods == null){
 			return;
 		}
+		
+		for (ModificaMovimentoGestioneSpesa mod : mods) {
+			 List<String> chiaviMovgestAgg = modificaMovimentoGestioneDad.getChiaviLogicheMovimentoGestioneAggiudicazioneDaModifica(mod);
+			 if(chiaviMovgestAgg == null || chiaviMovgestAgg.isEmpty()) {
+				 continue;
+			 }
+			 throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("annullamento impossibile, provvedere ad annullare prima i seguenti impegni di aggiudicazione: " + StringUtils.join(chiaviMovgestAgg.toArray(), ",")));
+		} 
+	}
+
+	/**
+	 * Checks if is controllo su disponibilita da effettuare.
+	 * Saltare il controllo se:
+	 * <ul>
+	 *     <li>l'anno non e' compreso tra l'anno di bilancio e l'anno di bilancio +2 (come accade per gli impegni residui)</li>
+	 *     <li>flagSDF = true</li>
+	 *     <li>il provvedimento collegato e' provvisorio</li>
+	 * </ul> 
+	 * 
+	 * @param impegno the impegno
+	 * @param annoMovimento the anno movimento
+	 * @param annoBilancioRequest the anno bilancio request
+	 * @param capitoliDaServizio 
+	 * @param listaModificheMovimentoGestioneSpesa 
+	 * @param datiOperazione the dati operazione
+	 * @return true, if is controllo su disponibilita da effettuare
+	 */
+	private boolean saltaControlloModificheNegativePerCaratteristicheImpegno(Impegno impegno,int annoMovimento, Integer annoBilancioRequest, List<ModificaMovimentoGestioneSpesa> listaModificheMovimentoGestioneSpesa, HashMap<Integer, CapitoloUscitaGestione> capitoliDaServizio) {
+		
+		if(listaModificheMovimentoGestioneSpesa ==null || listaModificheMovimentoGestioneSpesa.isEmpty() || capitoliDaServizio == null){
+			//non sto annullando una modifica o non ho i dati per effettuare il controllo
+			return true;
+		}
+		
+		//SIAC-7390
+		boolean annoMovimentoCompatibileConControlloDisponibilita =annoBilancioRequest != null &&  annoMovimento >= annoBilancioRequest.intValue() && annoMovimento <= (annoBilancioRequest.intValue() + 2);
+		if(!annoMovimentoCompatibileConControlloDisponibilita) {
+			//l'anno non e' compreso tra anno esercizio e anno esercizio + 2
+			return true;
+		}
+		
+
+		// SIAC-7390
+		Boolean bFlagSDF = impegnoOttimizzatoDad.getAttributoBoolean(impegno.getUid(), "flagSDF");
+		 
+		if(!Boolean.FALSE.equals(bFlagSDF)) {
+			//se null, salto il controllo
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
+	
+	private boolean saltaControlloModificheNegativePerCaratteristicheModifica(ModificaMovimentoGestioneSpesa modificaMovimentoGestioneSpesa,BigDecimal importoAttualeModifica, List<String> listaTipiSenzaControlloDisponibilita ) {
+		
+		if(importoAttualeModifica == null || importoAttualeModifica.signum() >=0) {
+			return true;
+		}
+		
+		String tipoModificaCode = modificaMovimentoGestioneDad.getTipoModifica(modificaMovimentoGestioneSpesa);
+		if(tipoModificaCode != null && listaTipiSenzaControlloDisponibilita.contains(tipoModificaCode)) {
+			return true;
+		}
+		//SIAC-7480
+		String statoProvvedimentoCode =  modificaMovimentoGestioneDad.determinaStatoOperativoProvvedimentoCollegato(modificaMovimentoGestioneSpesa);//impegnoOttimizzatoDad.determinaStatoImpegno(datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId(), impegno);
+		if(CostantiFin.ATTO_AMM_STATO_PROVVISORIO.equals(statoProvvedimentoCode)) {
+			return true;
+		}
+		return false;
+	}
+	
+	
+	private void checkDisponibilitaModificheNegativeSpesa(Impegno impegno, int chiaveCapitoloUscitaGestione,Integer chiaveCapitoloResiduo, HashMap<Integer, CapitoloUscitaGestione> capitoliDaServizio, int annoMovimento, Integer annoBilancioRequest) {
+		List<ModificaMovimentoGestioneSpesa> listaModificheMovimentoGestioneSpesa = impegno.getListaModificheMovimentoGestioneSpesa();
+		
+		boolean saltaControllo = saltaControlloModificheNegativePerCaratteristicheImpegno(impegno, annoMovimento, annoBilancioRequest, listaModificheMovimentoGestioneSpesa, capitoliDaServizio); 
+		if(saltaControllo) {
+			return;
+		}
+		
 		BigDecimal sommaImportiModificheNegative = BigDecimal.ZERO;
+		List<String> listaTipiSenzaControlloDisponibilita =Arrays.asList(MOD_TIPO_CODES_NON_IN_CALCOLO_DISPONIBILE_CAPITOLO);
+		
 		for (ModificaMovimentoGestioneSpesa modificaMovimentoGestioneSpesa : listaModificheMovimentoGestioneSpesa) {
 			BigDecimal importoAttualeModifica = modificaMovimentoGestioneDad.getImportoAttualeModifica(modificaMovimentoGestioneSpesa);
-			if(importoAttualeModifica == null || importoAttualeModifica.signum() >=0) {
+			
+			if(saltaControlloModificheNegativePerCaratteristicheModifica(modificaMovimentoGestioneSpesa, importoAttualeModifica, listaTipiSenzaControlloDisponibilita)) {
 				continue;
 			}
+			
 			//modifica di importo negativa
 			sommaImportiModificheNegative = sommaImportiModificheNegative.add(importoAttualeModifica);
 		}
-		if(BigDecimal.ZERO.compareTo(sommaImportiModificheNegative) <=0){
-			//non ho modifiche di importo negative
-			return;
-		}
+		
 		CapitoloUscitaGestione capitoloUscitaGestione = capitoliDaServizio.get(chiaveCapitoloUscitaGestione);
 		BigDecimal disponibilitaImpegnare = capitoloUscitaGestione.getImportiCapitolo().getDisponibilitaImpegnareAnno1();
+
 		
-		if(disponibilitaImpegnare == null || disponibilitaImpegnare.add(sommaImportiModificheNegative).compareTo(BigDecimal.ZERO) <0) {
+		if(BigDecimal.ZERO.compareTo(sommaImportiModificheNegative) > 0 && (disponibilitaImpegnare == null || disponibilitaImpegnare.add(sommaImportiModificheNegative).compareTo(BigDecimal.ZERO) <0)) {
 			String stringDisponibilita = disponibilitaImpegnare != null? disponibilitaImpegnare.toString() : "null";
-			throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impossibile annullare una modifica se l'importo del movimento di gestione dopo l'annullamento supera la disponibilit&agrave; ad impegnare del capitolo. Dispoonibilita ad impegnare del capitolo  " + chiaveCapitoloUscitaGestione + " : " + stringDisponibilita));
+			// SIAC-7405
+			String errore = "Impossibile annullare una modifica se l'importo del movimento di gestione dopo l'annullamento supera la disponibilit&agrave; ad impegnare del capitolo. "
+					+ "Disponibilita ad impegnare del capitolo " + capitoloUscitaGestione.getAnnoNumeroArticolo() + " [uid: " + chiaveCapitoloUscitaGestione + "] : "
+					+ stringDisponibilita;
+			throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore(errore));
+
 		}
-		
-		
 	}
 
-	@Override
-	protected void checkServiceParam() throws ServiceParamError {		
-		final String methodName = "AnnullaMovimentoSpesaService : checkServiceParam()";
-		log.debug(methodName, "- Begin");
-	
-		//dati di input presi da request:
-		Ente ente = req.getEnte();
-		Impegno impegno = req.getImpegno();
-		Bilancio bilancio = req.getBilancio();
-		Integer annoBilancio = req.getBilancio().getAnno();
-		Integer idImpegno = req.getImpegno().getUid();
-		
-		if(null==ente && null==impegno && null==bilancio){
-			checkCondition(false, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore("NESSUN_PARAMETRO_DI_RICERCA_INIZIALIZZATO"));
-		} else if(null==ente){
-			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("ENTE"));
-		} else if(null==impegno){
-			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("IMPEGNO"));
-		} else if(null==bilancio){
-			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("BILANCIO"));
-		} else if(null==annoBilancio){
-			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("ANNO_BILANCIO"));
-		} else if(null==idImpegno){
-			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("ID_IMPEGNO"));
-		}
-	}	
-	
-	
-
-	
 }

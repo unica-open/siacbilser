@@ -8,7 +8,7 @@ import org.dozer.DozerConverter;
 
 import it.csi.siac.siacbilser.integration.entity.SiacDVariazioneStato;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDVariazioneStatoEnum;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -16,7 +16,7 @@ import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
  *
  */
 @Deprecated
-public class VariazioneStatoConverter extends DozerConverter<StatoOperativoVariazioneDiBilancio, SiacDVariazioneStato>  {
+public class VariazioneStatoConverter extends DozerConverter<StatoOperativoVariazioneBilancio, SiacDVariazioneStato>  {
 	
 //	@Autowired
 //	private EnumEntityFactory eef;
@@ -25,14 +25,14 @@ public class VariazioneStatoConverter extends DozerConverter<StatoOperativoVaria
  * Instantiates a new variazione stato converter.
  */
 public VariazioneStatoConverter() {
-		super(StatoOperativoVariazioneDiBilancio.class, SiacDVariazioneStato.class);
+		super(StatoOperativoVariazioneBilancio.class, SiacDVariazioneStato.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.dozer.DozerConverter#convertFrom(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public StatoOperativoVariazioneDiBilancio convertFrom(SiacDVariazioneStato src, StatoOperativoVariazioneDiBilancio dest) {
+	public StatoOperativoVariazioneBilancio convertFrom(SiacDVariazioneStato src, StatoOperativoVariazioneBilancio dest) {
 		return SiacDVariazioneStatoEnum.byCodice(src.getVariazioneStatoTipoCode()).getStatoOperativoVariazioneDiBilancio();
 	}
 
@@ -40,7 +40,7 @@ public VariazioneStatoConverter() {
 	 * @see org.dozer.DozerConverter#convertTo(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public SiacDVariazioneStato convertTo(StatoOperativoVariazioneDiBilancio src, SiacDVariazioneStato dest) {
+	public SiacDVariazioneStato convertTo(StatoOperativoVariazioneBilancio src, SiacDVariazioneStato dest) {
 //		SiacDVariazioneStatoEnum e =  SiacDVariazioneStatoEnum.byStatoOperativoVariazioneDiBilancio(src);
 //		return eef.getEntity(e, 1, SiacDVariazioneStato.class); //TODO Occhio! ente 1 schiantato! Per ora questo converter NON viene usato
 		

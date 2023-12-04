@@ -31,10 +31,11 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<bean name="preDocumentoEntrataService" class="it.csi.siac.siacbilser.frontend.webservice.PreDocumentoEntrataServiceImpl" />
 
+	<bean name="contoTesoreriaService" class="it.csi.siac.siacbilser.frontend.webservice.ContoTesoreriaServiceImpl" />
 
 
 	
-	<bean id="iMissioniService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="iMissioniService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 	    <property name="serviceInterface" value="it.csi.srvpers.rapws.interfaccecxf.services.missioni.IMissioniService" />
 	    <property name="wsdlDocumentUrl" value="${HR.wsdlDocumentUrl}" />
 	    <property name="namespaceUri" value="http://missioni.services.interfaccecxf.rapws.srvpers.csi.it/" />

@@ -12,14 +12,14 @@ import it.csi.siac.siacbilser.integration.dao.SiacTOrdinativoBilRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacROrdinativoStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTOrdinativo;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDOrdinativoStatoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.model.ordinativo.Ordinativo;
 import it.csi.siac.siacfinser.model.ordinativo.Ordinativo.StatoOperativoOrdinativo;
 
 @Component
 public class OrdinativoStatoConverter extends DozerConverter<Ordinativo, SiacTOrdinativo > {
 	
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	@Autowired
 	private SiacTOrdinativoBilRepository siacTOrdinativoBilRepository;

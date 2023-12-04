@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.RegistroComunicazioniPCC;
 import it.tesoro.fatture.TipoOperazioneTipo;
 
@@ -26,7 +26,7 @@ import it.tesoro.fatture.TipoOperazioneTipo;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class PopolaStrutturaDatiOperazioneFactory {
 	
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	@Autowired
 	private ApplicationContext appCtx;

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.SubAccertamento;
 
@@ -36,7 +36,7 @@ public class AccertamentoPerDoppiaGestioneInfoDto extends OggettoPerDoppiaGestio
 	}	
 	
 	public ArrayList<SubAccertamentoPerDoppiaGestioneInfoDto> getSubAccertamenti(){
-		return StringUtils.hashMapToArrayList(mappaSub);
+		return StringUtilsFin.hashMapToArrayList(mappaSub);
 	}
 
 	public Accertamento getAccertamento() {

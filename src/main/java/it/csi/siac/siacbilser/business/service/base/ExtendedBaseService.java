@@ -71,6 +71,7 @@ public abstract class ExtendedBaseService<REQ extends ServiceRequest,RES extends
 	 * @param serviceRequest the service request
 	 * @return the res
 	 */
+	//SIAC-8309
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public RES executeServiceTxRequiresNew(REQ serviceRequest) {
 		return super.executeService(serviceRequest);
@@ -186,6 +187,30 @@ public abstract class ExtendedBaseService<REQ extends ServiceRequest,RES extends
 	}
 	
 	/**
+	 * Check uid di una Entita .
+	 *
+	 * @param uid the key
+	 * @param messaggio the messaggio
+	 * @throws ServiceParamError the service param error
+	 */
+	protected void checkUidEntita(int uid, String messaggio) throws ServiceParamError {
+		checkUidEntita (uid, messaggio, true);
+	}
+	/**
+	 * Check uid di una Entita .
+	 *
+	 * @param uid the key
+	 * @param messaggio the messaggio
+	 * @param toThrow the to throw
+	 * @throws ServiceParamError the service param error
+	 */
+	protected void checkUidEntita(int uid, String messaggio, boolean toThrow) throws ServiceParamError {
+		checkNotNull(uid, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(messaggio), toThrow);
+		checkCondition(uid != 0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(messaggio), toThrow);
+	}
+	
+	
+	/**
 	 * Check importo.
 	 *
 	 * @param importo the entita
@@ -206,7 +231,7 @@ public abstract class ExtendedBaseService<REQ extends ServiceRequest,RES extends
 	 */
 	protected void checkImporto(BigDecimal importo, String messaggio, boolean toThrow) throws ServiceParamError {
 		checkNotNull(importo, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(messaggio), toThrow);
-		checkCondition(importo == null || importo.compareTo(BigDecimal.ZERO) > 0, ErroreCore.VALORE_NON_VALIDO.getErrore(messaggio, "deve essere maggiore di zero"));
+		checkCondition(importo == null || importo.compareTo(BigDecimal.ZERO) > 0, ErroreCore.VALORE_NON_CONSENTITO.getErrore(messaggio, "deve essere maggiore di zero"));
 	}
 	
 	/**
@@ -332,7 +357,7 @@ public abstract class ExtendedBaseService<REQ extends ServiceRequest,RES extends
 	 * @throws ServiceParamError the service param error
 	 */
 	protected void checkLength(String s, int min, int max, String fieldName,  boolean toThrow) throws ServiceParamError {
-		Errore errore = ErroreCore.VALORE_NON_VALIDO.getErrore(fieldName, ": deve essere compreso tra " + min + " e " + max);
+		Errore errore = ErroreCore.VALORE_NON_CONSENTITO.getErrore(fieldName, ": deve essere compreso tra " + min + " e " + max);
 		checkLength(s, min, max, errore, toThrow);
 	}
 	

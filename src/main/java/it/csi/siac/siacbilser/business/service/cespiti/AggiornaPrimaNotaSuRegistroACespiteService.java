@@ -33,7 +33,6 @@ import it.csi.siac.siacbilser.integration.dad.DocumentoSpesaDad;
 import it.csi.siac.siacbilser.integration.dad.PrimaNotaInvDad;
 import it.csi.siac.siacbilser.integration.dad.RegistrazioneMovFinDad;
 import it.csi.siac.siacbilser.model.Ambito;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siacbilser.model.exception.DadException;
 import it.csi.siac.siaccecser.model.EventoRegistroACespiteSelector;
 import it.csi.siac.siaccespser.frontend.webservice.msg.AggiornaPrimaNotaSuRegistroACespite;
@@ -50,6 +49,7 @@ import it.csi.siac.siaccespser.model.DettaglioAmmortamentoAnnuoCespiteModelDetai
 import it.csi.siac.siaccespser.model.ImportiRegistroA;
 import it.csi.siac.siaccespser.model.TipoBeneCespite;
 import it.csi.siac.siaccespser.model.TipoBeneCespiteModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -92,11 +92,11 @@ import it.csi.siac.siacgenser.model.TipoCausale;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class AggiornaPrimaNotaSuRegistroACespiteService extends CheckedAccountBaseService<AggiornaPrimaNotaSuRegistroACespite, AggiornaPrimaNotaSuRegistroACespiteResponse> {
 
-	private static final ModelDetail[] defaultModelDetailsPerAmmortamento = new ModelDetail[]{
+	private static final ModelDetailEnum[] defaultModelDetailsPerAmmortamento = new ModelDetailEnum[]{
 			AmmortamentoAnnuoCespiteModelDetail.DettaglioAmmortamentoAnnuoCespiteModelDetail,
 			DettaglioAmmortamentoAnnuoCespiteModelDetail.PrimaNota
 	};
-	private static final ModelDetail[] defaultModelDetailsPerVendita = new ModelDetail[]{
+	private static final ModelDetailEnum[] defaultModelDetailsPerVendita = new ModelDetailEnum[]{
 			TipoBeneCespiteModelDetail.ContoAmmortamento, TipoBeneCespiteModelDetail.ContoFondoAmmortamento, 
 			TipoBeneCespiteModelDetail.ContoPlusvalenza, TipoBeneCespiteModelDetail.ContoMinusValenza, TipoBeneCespiteModelDetail.CausaleAmmortamento,
 	};

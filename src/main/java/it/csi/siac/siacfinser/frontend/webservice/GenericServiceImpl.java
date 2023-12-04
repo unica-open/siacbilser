@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.business.service.common.CercaProgettoService;
 import it.csi.siac.siacfinser.business.service.common.FindComunePerNomeService;
 import it.csi.siac.siacfinser.business.service.common.ListaSedimeService;
@@ -53,7 +53,7 @@ endpointInterface = "it.csi.siac.siacfinser.frontend.webservice.GenericService")
 public class GenericServiceImpl extends AbstractService implements GenericService {
 	
 
-	protected transient LogUtil log = new LogUtil(this.getClass());
+	protected transient LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	@Autowired
 	protected ApplicationContext appCtx;

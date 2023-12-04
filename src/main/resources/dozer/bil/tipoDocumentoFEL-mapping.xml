@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="SirfelDTipoDocumento_TipoDocFEL" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.TipoDocFEL</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SirfelDTipoDocumento</class-b>
+		<field>
+			<a>codice</a>
+			<b>id.codice</b>
+		</field>
+	
+	
+		<field>
+			<a>descrizione</a>
+			<b>descrizione</b>
+		</field>
+		
+		
+		
+			
+		<field map-id="SiacDDocTipo_TipoDocumento">
+			<a>tipoDocContabiliaEntrata</a>
+			<b>siacDDocTipoE</b>
+		</field>
+		
+			
+		<field map-id="SiacDDocTipo_TipoDocumento">
+			<a>tipoDocContabiliaSpesa</a>
+			<b>siacDDocTipoS</b>
+		</field>
+
+	</mapping>
+	 
+	
+	
+</mappings>

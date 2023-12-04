@@ -11,67 +11,48 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Workbook;
+
+import it.csi.siac.siacbilser.business.service.excel.base.executor.BigDecimalCellColumnExecutor;
+import it.csi.siac.siacbilser.business.service.excel.base.executor.BooleanCellColumnExecutor;
+import it.csi.siac.siacbilser.business.service.excel.base.executor.CalendarCellColumnExecutor;
+import it.csi.siac.siacbilser.business.service.excel.base.executor.CellColumnExecutor;
+import it.csi.siac.siacbilser.business.service.excel.base.executor.DateCellColumnExecutor;
+import it.csi.siac.siacbilser.business.service.excel.base.executor.FormulaCellColumnExecutor;
+import it.csi.siac.siacbilser.business.service.excel.base.executor.IntegerCellColumnExecutor;
+import it.csi.siac.siacbilser.business.service.excel.base.executor.StringCellColumnExecutor;
 
 public enum ReportColumnType {
 
-	STRING(String.class, new CellColumnExecutor() {
-		@Override
-		void applyOnCell(Map<String, CellStyle> styles, Cell cell, Object value) {
-			cell.setCellValue((String)value);
-			cell.setCellStyle(styles.get("cell_normal"));
-		}
-	}),
-	DATE(Date.class, new CellColumnExecutor() {
-		@Override
-		void applyOnCell(Map<String, CellStyle> styles, Cell cell, Object value) {
-			cell.setCellValue((String)value);
-			cell.setCellStyle(styles.get("cell_normal_date"));
-		}
-	}),
-	CALENDAR(Calendar.class, new CellColumnExecutor() {
-		@Override
-		void applyOnCell(Map<String, CellStyle> styles, Cell cell, Object value) {
-			cell.setCellValue((String)value);
-			cell.setCellStyle(styles.get("cell_normal_date"));
-		}
-	}),
-	BIG_DECIMAL(BigDecimal.class, new CellColumnExecutor() {
-		@Override
-		void applyOnCell(Map<String, CellStyle> styles, Cell cell, Object value) {
-			cell.setCellValue(((BigDecimal)value).doubleValue());
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-			cell.setCellStyle(styles.get("cell_decimal"));
-		}
-	}),
-	BOOLEAN(Boolean.class, new CellColumnExecutor() {
-		@Override
-		void applyOnCell(Map<String, CellStyle> styles, Cell cell, Object value) {
-			cell.setCellValue((String)value);
-			cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-			cell.setCellStyle(styles.get("cell_normal"));
-		}
-	}),
-	INTEGER(Integer.class, new CellColumnExecutor() {
-		@Override
-		void applyOnCell(Map<String, CellStyle> styles, Cell cell, Object value) {
-			cell.setCellValue((Integer)value);
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-			cell.setCellStyle(styles.get("cell_normal"));
-		}
-	}),
+	STRING(String.class, false, new StringCellColumnExecutor()),
+	DATE(Date.class, false, new DateCellColumnExecutor()),
+	CALENDAR(Calendar.class, false, new CalendarCellColumnExecutor()),
+	BIG_DECIMAL(BigDecimal.class, false, new BigDecimalCellColumnExecutor()),
+	BOOLEAN(Boolean.class, false, new BooleanCellColumnExecutor()),
+	INTEGER(Integer.class, false, new IntegerCellColumnExecutor()),
+	FORMULA(Formula.class, false, new FormulaCellColumnExecutor()),
+	// Nullable-types
+	STRING_NULLABLE(String.class, true, new StringCellColumnExecutor.Nullable()),
+	DATE_NULLABLE(Date.class, true, new DateCellColumnExecutor.Nullable()),
+	CALENDAR_NULLABLE(Calendar.class, true, new CalendarCellColumnExecutor.Nullable()),
+	BIG_DECIMAL_NULLABLE(BigDecimal.class, true, new BigDecimalCellColumnExecutor.Nullable()),
+	BOOLEAN_NULLABLE(Boolean.class, true, new BooleanCellColumnExecutor.Nullable()),
+	INTEGER_NULLABLE(Integer.class, true, new IntegerCellColumnExecutor.Nullable()),
 	;
 	
 	private final Class<?> clazz;
+	private final boolean nullable;
 	private final CellColumnExecutor executor;
 	
-	private ReportColumnType(Class<?> clazz, CellColumnExecutor executor) {
+	private ReportColumnType(Class<?> clazz, boolean nullable, CellColumnExecutor executor) {
 		this.clazz = clazz;
+		this.nullable = nullable;
 		this.executor = executor;
 	}
 	
-	public static ReportColumnType byClass(Class<?> clazz) {
+	public static ReportColumnType byClass(Class<?> clazz, boolean nullable) {
 		for(ReportColumnType type : values()) {
-			if(type.clazz.isAssignableFrom(clazz)) {
+			if(nullable == type.nullable && type.clazz.isAssignableFrom(clazz)) {
 				return type;
 			}
 		}
@@ -83,19 +64,21 @@ public enum ReportColumnType {
 		this.executor.applyOnCellBase(styles, cell, value);
 	}
 	
-	private abstract static class CellColumnExecutor {
-		void applyOnCellBase(Map<String, CellStyle> styles, Cell cell, Object value) {
-			if(value == null){
-				applyNullStyle(styles, cell);
-				return;
-			}
-			applyOnCell(styles, cell, value);
-		}
-		void applyNullStyle(Map<String, CellStyle> styles, Cell cell) {
-			cell.setCellValue("ND");
-			cell.setCellStyle(styles.get("cell_normal"));
-		}
-		abstract void applyOnCell(Map<String, CellStyle> styles, Cell cell, Object value);
+	public Object transformValue(Object value, int row, int column) {
+		return executor.transformValue(value, row, column);
 	}
 	
+	public void applyStyle(Workbook workbook, Map<String, CellStyle> styles, Cell cell, String styleName) {
+		executor.applyStyle(workbook, styles, cell, styleName);
+	}
+	
+	/**
+	 * Marker class for Formula usage
+	 * @author Alessandro Marchino
+	 * @version 1.0.0 - 12/07/2021
+	 *
+	 */
+	public static class Formula {
+		// Marker
+	}
 }

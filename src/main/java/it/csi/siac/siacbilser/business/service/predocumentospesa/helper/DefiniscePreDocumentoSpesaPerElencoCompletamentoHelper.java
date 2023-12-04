@@ -12,8 +12,9 @@ import it.csi.siac.siacbilser.business.service.base.Helper;
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoSpesaDad;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
+import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
@@ -34,8 +35,9 @@ public class DefiniscePreDocumentoSpesaPerElencoCompletamentoHelper implements H
 	private final SubImpegno subImpegno;
 	private final BigDecimal disponibilitaLiquidare;
 	
-	private final LogUtil log;
+	private final LogSrvUtil log;
 	private final List<Messaggio> messaggi;
+	private final List<Errore> errori;
 	
 	private boolean skip;
 	private BigDecimal sommaPredoc;
@@ -62,7 +64,8 @@ public class DefiniscePreDocumentoSpesaPerElencoCompletamentoHelper implements H
 		this.disponibilitaLiquidare = disponibilitaLiquidare;
 		
 		this.messaggi = new ArrayList<Messaggio>();
-		this.log = new LogUtil(getClass());
+		this.errori = new ArrayList<Errore>();
+		this.log = new LogSrvUtil(getClass());
 		
 		this.skip = false;
 	}
@@ -88,6 +91,12 @@ public class DefiniscePreDocumentoSpesaPerElencoCompletamentoHelper implements H
 		scriviLog();
 		
 		return null;
+	}
+	
+	
+
+	public List<Errore> getErrori() {
+		return errori;
 	}
 	
 	/**
@@ -184,4 +193,5 @@ public class DefiniscePreDocumentoSpesaPerElencoCompletamentoHelper implements H
 	private void scriviLog() {
 		addMessaggio("Elaborazione Convalida conclusa");
 	}
+
 }

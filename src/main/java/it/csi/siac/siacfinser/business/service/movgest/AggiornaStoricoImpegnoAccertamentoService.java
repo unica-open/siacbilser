@@ -91,7 +91,7 @@ public class AggiornaStoricoImpegnoAccertamentoService extends BaseInserisceAggi
 		return new StringBuilder()
 				.append(movgest.getAnnoMovimento())
 				.append("/")
-				.append(movgest.getNumero() != null? movgest.getNumero() : "N.D.")
+				.append(movgest.getNumeroBigDecimal() != null? movgest.getNumeroBigDecimal() : "N.D.")
 				.toString();
 	}
 

@@ -25,6 +25,9 @@ public interface CodificaBilDao extends CodificaDao {
 	 */
 	List<SiacTClass> findCodificheByTipoElemBilancio(
 			int anno, int enteProprietarioId, String codiceTipoElemBilancio);
+	
+	List<SiacTClass> findCodificheByTipoElemBilancio(
+			int anno, int enteProprietarioId, String codiceTipoElemBilancio, String classifTipoCode);
 
 	/**
 	 * Ricerca i classificatori con livello per tipo elemento di bilancio in input .
@@ -58,7 +61,10 @@ public interface CodificaBilDao extends CodificaDao {
 	 * @param anno the anno
 	 * @param enteProprietarioId the ente proprietario id
 	 * @param codiceTipoElemBilancio the codice tipo elem bilancio
+	 * @param classifTipoCode il codice del tipo del classificatore
 	 * @return the list
 	 */
-	List<SiacTClass> findCodificheGenericiTipoElemBilancio(int anno, int enteProprietarioId, String codiceTipoElemBilancio);
+	
+	List<SiacTClass> findCodificheGenericiTipoElemBilancio(int anno, int enteProprietarioId, String codiceTipoElemBilancio, String classifTipoCode);
+	
 }

@@ -17,13 +17,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDClassTipoEnum;
 import it.csi.siac.siacbilser.model.StatoOperativoProgetto;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siacfin2ser.model.CodiceBollo;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.integration.dao.carta.SiacDCartacontStatoRepository;
 import it.csi.siac.siacfinser.integration.dao.carta.SiacDCommissioniEsteroRepository;
@@ -34,16 +35,16 @@ import it.csi.siac.siacfinser.integration.dao.common.SiacDViaTipoRepository;
 import it.csi.siac.siacfinser.integration.dao.common.SiacTEnteProprietarioFinRepository;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoCercaProgrammaDto;
-import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacDContotesoreriaFinRepository;
 import it.csi.siac.siacfinser.integration.dao.liquidazione.SiacDDistintaRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacDModificaTipoRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacDMovgestStatoRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacDMovgestTipoRepository;
+import it.csi.siac.siacfinser.integration.dao.movgest.SiacRMovgestClassRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacRMovgestTsAttoAmmRepository;
 import it.csi.siac.siacfinser.integration.dao.movgest.SiacTProgrammaFinRepository;
-import it.csi.siac.siacfinser.integration.dao.mutuo.SiacDMutuoTipoRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDCodiceBolloFinRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDCommissioneTipoRepository;
+import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDContotesoreriaFinRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDNoteTesoriereFinRepository;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacDOrdinativoStatoRepository;
 import it.csi.siac.siacfinser.integration.dao.soggetto.SiacDAccreditoGruppoRepository;
@@ -73,7 +74,6 @@ import it.csi.siac.siacfinser.integration.entity.SiacDFormaGiuridicaTipoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDIndirizzoTipoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDModificaTipoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDMovgestStatoFin;
-import it.csi.siac.siacfinser.integration.entity.SiacDMutuoTipoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDNoteTesoriereFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDOnereFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDRecapitoModoFin;
@@ -84,6 +84,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacDSoggettoStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDSoggettoTipoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDValutaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDViaTipoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacRMovgestClassFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsAttoAmmFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTClassFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTComuneFin;
@@ -93,13 +94,15 @@ import it.csi.siac.siacfinser.integration.entity.SiacTMovgestTsFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTNazioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTProgrammaFin;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.EntityToModelConverter;
 import it.csi.siac.siacfinser.integration.util.ObjectStreamerHandler;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.model.AttoAmministrativoStoricizzato;
+import it.csi.siac.siacfinser.model.StrutturaAmmContabileFlatStoricizzato;
 import it.csi.siac.siacfinser.model.codifiche.CodificaExtFin;
 import it.csi.siac.siacfinser.model.codifiche.CodificaFin;
+import it.csi.siac.siacfinser.model.codifiche.ContoTesoreriaCodificaFin;
 import it.csi.siac.siacfinser.model.soggetto.ComuneNascita;
 
 /**
@@ -177,10 +180,7 @@ public class CommonDad extends AbstractFinDad {
 	
 	@Autowired
 	SiacDModificaTipoRepository siacDModificaTipoRepository;
-	
-	@Autowired
-	SiacDMutuoTipoRepository siacDMutuoTipoRepository;
-	
+		
 	@Autowired
 	SiacDContotesoreriaFinRepository siacDContotesoreriaRepository;
 	
@@ -211,6 +211,11 @@ public class CommonDad extends AbstractFinDad {
 	@Autowired
 	SiacRMovgestTsAttoAmmRepository siacRMovgestTsAttoAmmRepository;
 	
+
+	@Autowired
+	SiacRMovgestClassRepository siacRMovgestClassRepository;
+	
+	
 	private static final String CODE_TIPO_LEGAME_SOGGETTO = "Soggetto";
 	
 	/**
@@ -235,7 +240,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findTipoOneri(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		
@@ -254,7 +259,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findTipoMotivo(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		
@@ -267,13 +272,27 @@ public class CommonDad extends AbstractFinDad {
 				                                        FinMapId.SiacDModificaTipo_CodificaFin));	
 	}
 	
+	public ArrayList<CodificaFin> findTipoMotivoByCodiceApplicazione(Ente ente, String codiceApplicazione){
+		long currMillisec = currentTimeMillis();
+		Date dateInserimento = new Date(currMillisec);			
+		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	
+		
+		List<SiacDModificaTipoFin> dtos = new ArrayList<SiacDModificaTipoFin>();
+		
+		dtos = siacDModificaTipoRepository.findValidiByEnteAndApplicazione(ente.getUid(), timestampInserimento, codiceApplicazione);
+		
+		return new ArrayList<CodificaFin>(convertiLista(dtos, 
+				                                        CodificaFin.class, 
+				                                        FinMapId.SiacDModificaTipo_CodificaFin));	
+	}
+	
 	/**
 	 * caricamento combo dei tipi di accredito
 	 * @param ente
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findTipoAccredito(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);
 		
@@ -324,7 +343,7 @@ public class CommonDad extends AbstractFinDad {
 		
 		if(null==ambito || "".equals(ambito)){
 			// se non arriva assumo che di default sia quello di FIN
-			ambito = Constanti.AMBITO_FIN;
+			ambito = CostantiFin.AMBITO_FIN;
 		}
 		
 		SiacDAmbitoFin  siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(ambito, idEnte);
@@ -338,7 +357,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public String determinaUtenteLogin(DatiOperazioneDto datiOperazione){
-		String loginOperazione = DatiOperazioneUtils.determinaUtenteLogin(datiOperazione, siacTAccountRepository);
+		String loginOperazione = DatiOperazioneUtil.determinaUtenteLogin(datiOperazione, siacTAccountRepository);
 		return loginOperazione;
 	}
 	
@@ -348,7 +367,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaExtFin> findRecapitoModo(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		
@@ -367,7 +386,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findFormaGiuridicaTipo(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento= TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		List<SiacDFormaGiuridicaTipoFin> dtos = new ArrayList<SiacDFormaGiuridicaTipoFin>();
@@ -386,7 +405,7 @@ public class CommonDad extends AbstractFinDad {
 	 */
 	public ArrayList<CodificaFin> findStatiOperativi(Ente ente){
 		
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento= TimingUtils.convertiDataInTimeStamp(dateInserimento);		
 		List<SiacDSoggettoStatoFin> dtos2 = new ArrayList<SiacDSoggettoStatoFin>();	
@@ -402,7 +421,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findTipiIndirizziSede(Ente ente) {
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);
 		List<SiacDIndirizzoTipoFin> dtos = new ArrayList<SiacDIndirizzoTipoFin>();
@@ -433,7 +452,7 @@ public class CommonDad extends AbstractFinDad {
      * @return
      */
 	public ArrayList<CodificaExtFin> findListaNaturaGiuridica(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento= TimingUtils.convertiDataInTimeStamp(dateInserimento);
 		
@@ -454,7 +473,7 @@ public class CommonDad extends AbstractFinDad {
 	 */
 	public ArrayList<CodificaFin> findListaNaturaGiuridicaSoggetto(Ente ente){
 		List<SiacTFormaGiuridicaFin> dtos = new ArrayList<SiacTFormaGiuridicaFin>();
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento= TimingUtils.convertiDataInTimeStamp(dateInserimento);
 		
@@ -547,14 +566,14 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findSoggettiClasse(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento= TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		
 		
 		List<SiacDSoggettoClasseFin> dtos = new ArrayList<SiacDSoggettoClasseFin>();
 		
-		SiacDAmbitoFin  siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(Constanti.AMBITO_FIN, ente.getUid());
+		SiacDAmbitoFin  siacDAmbitoPerCode = siacDAmbitoRepository.findAmbitoByCode(CostantiFin.AMBITO_FIN, ente.getUid());
 		Integer idAmbito = siacDAmbitoPerCode.getAmbitoId();
 		
 		dtos = siacDSoggettoClasseRepository.findSoggettiClasse(ente.getUid(), idAmbito, timestampInserimento);
@@ -588,9 +607,9 @@ public class CommonDad extends AbstractFinDad {
 		// leggi uid ts dato mogvest (questo vale per l'impegno, se da frontend arriva il sub non mi sreve ricercarlo, è gia l'id della siacTmovgestTs)
 		Integer uidMovgestTs = null;
 		
-		if(tipoMovimento!= null && (tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TS_TIPO_TESTATA) 
-				|| tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_IMPEGNO)
-					||  tipoMovimento.equalsIgnoreCase(Constanti.MOVGEST_TIPO_ACCERTAMENTO))){
+		if(tipoMovimento!= null && (tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TS_TIPO_TESTATA) 
+				|| tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)
+					||  tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO))){
 			
 			//System.out.println("tipoMovimento: " + tipoMovimento);
 			//System.out.println("uidMovgest: " + uidMovgest);
@@ -622,6 +641,67 @@ public class CommonDad extends AbstractFinDad {
 	}
 	
 	
+	//SIAC-6997
+	/**
+	 * caricamento lo storico delle struttture competenti
+	 * @param ente
+	 * @return
+	 */
+	public List<StrutturaAmmContabileFlatStoricizzato> leggiStoricoAggiornamentoStrutturaCompetente(Integer uidMovgest, String tipoMovimento){
+		
+		List<StrutturaAmmContabileFlatStoricizzato> storicoAggiornamentoStrutturaCompetente = new ArrayList<StrutturaAmmContabileFlatStoricizzato>();
+		
+		
+		
+		//************* tirare fuori i dati della tabella di relazione
+		
+		
+		// leggi uid ts dato mogvest (questo vale per l'impegno, se da frontend arriva il sub non mi sreve ricercarlo, è gia l'id della siacTmovgestTs)
+		Integer uidMovgestTs = null;
+		
+		if(tipoMovimento!= null && (tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TS_TIPO_TESTATA) 
+				|| tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_IMPEGNO)
+					||  tipoMovimento.equalsIgnoreCase(CostantiFin.MOVGEST_TIPO_ACCERTAMENTO))){
+			
+			//System.out.println("tipoMovimento: " + tipoMovimento);
+			//System.out.println("uidMovgest: " + uidMovgest);
+			
+			SiacTMovgestTsFin siacTMovgestTs = findTestataByUidMovimento(uidMovgest);
+			uidMovgestTs = siacTMovgestTs.getUid();
+		}else{
+			
+			//System.out.println("(sub) uidMovgest: " + uidMovgest);
+			uidMovgestTs = uidMovgest;
+		}
+		
+ 
+		
+		List<SiacRMovgestClassFin> storicoSiacRMovgestClassFin = siacRMovgestClassRepository.findStoricoByClassifTipoCodeAndMovgestTs(uidMovgestTs,SiacDClassTipoEnum.Cdc.getCodice());
+		
+		if(storicoSiacRMovgestClassFin!=null && !storicoSiacRMovgestClassFin.isEmpty()){
+			for (SiacRMovgestClassFin siacRMovgestTsAttoAmmFin2 : storicoSiacRMovgestClassFin) {
+				
+				
+				
+				StrutturaAmmContabileFlatStoricizzato strutturaAmmContabileFlatStoricizzato = new StrutturaAmmContabileFlatStoricizzato(); 
+				
+				strutturaAmmContabileFlatStoricizzato.setCodice(siacRMovgestTsAttoAmmFin2.getSiacTClass().getClassifCode());
+				strutturaAmmContabileFlatStoricizzato.setDescrizione(siacRMovgestTsAttoAmmFin2.getSiacTClass().getClassifDesc());
+				strutturaAmmContabileFlatStoricizzato.setDataCancellazione(siacRMovgestTsAttoAmmFin2.getDataCancellazione());
+				
+				storicoAggiornamentoStrutturaCompetente.add(strutturaAmmContabileFlatStoricizzato);
+				
+				
+			}
+			
+			
+		}
+		 
+		 
+		return storicoAggiornamentoStrutturaCompetente;	
+	}
+	
+	
 
 	
 	/**
@@ -630,7 +710,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findStatoOperativoMovgest(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);		
 		List<SiacDMovgestStatoFin> dtos2 = new ArrayList<SiacDMovgestStatoFin>();	
@@ -646,13 +726,13 @@ public class CommonDad extends AbstractFinDad {
 	 */
 	@SuppressWarnings("static-access")
 	public ArrayList<CodificaFin> findTipoImpegno(Ente ente) {
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento=  null;
 		TimingUtils tu= new TimingUtils();
 		timestampInserimento= tu.convertiDataInTimeStamp(dateInserimento);		
 		List<SiacTClassFin> dtos2 = new ArrayList<SiacTClassFin>();
-		dtos2 = siacTClassRepository.findByTipoAndEnte(ente.getUid(), timestampInserimento, Constanti.D_CLASS_TIPO_TIPO_IMPEGNO );
+		dtos2 = siacTClassRepository.findByTipoAndEnte(ente.getUid(), timestampInserimento, CostantiFin.D_CLASS_TIPO_TIPO_IMPEGNO );
 		return new ArrayList<CodificaFin>(convertiLista(dtos2, CodificaExtFin.class, FinMapId.SiacTClass_CodificaExtFin));	
 	}
 	
@@ -662,7 +742,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findTipoSiopeSpesaI(Ente ente,Bilancio bilancio) {
-		return findTipoSiopeInternal(ente, bilancio, Constanti.D_CLASS_TIPO_SIOPE_SPESA_I);
+		return findTipoSiopeInternal(ente, bilancio, CostantiFin.D_CLASS_TIPO_SIOPE_SPESA_I);
 	}
 	
 	/**
@@ -671,7 +751,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findTipoSiopeEntrataI(Ente ente,Bilancio bilancio) {
-		return findTipoSiopeInternal(ente, bilancio, Constanti.D_CLASS_TIPO_SIOPE_ENTRATA_I);
+		return findTipoSiopeInternal(ente, bilancio, CostantiFin.D_CLASS_TIPO_SIOPE_ENTRATA_I);
 	}
 	
 	/**
@@ -681,7 +761,7 @@ public class CommonDad extends AbstractFinDad {
 	 */
 	@SuppressWarnings("static-access")
 	public ArrayList<CodificaFin> findMotivazioniAssenzaCig(Ente ente,Bilancio bilancio) {
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento=  null;
 		TimingUtils tu= new TimingUtils();
@@ -788,29 +868,15 @@ public class CommonDad extends AbstractFinDad {
         return esitoCercaProgrammaDto;
 	}
 	
-	/**
-	 * caricamento combo con i tipi di mutuo (boc, fideiussione...)
-	 * @param ente
-	 * @return
-	 */
-	public ArrayList<CodificaFin> findTipoMutuo(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
-		Date dateInserimento = new Date(currMillisec);			
-		Timestamp timestampInserimento= TimingUtils.convertiDataInTimeStamp(dateInserimento);	
-		List<SiacDMutuoTipoFin> dtos = new ArrayList<SiacDMutuoTipoFin>();
 
-		dtos = siacDMutuoTipoRepository.findDMutuoTipoValidoByEnte(ente.getUid(),timestampInserimento );
-
-		return new ArrayList<CodificaFin>(convertiLista( dtos , CodificaFin.class, FinMapId.SiacDMutuoTipo_CodificaFin));
-	}
 	
 	/**
 	 * caricamento combo con i tipi di conto tesoreria
 	 * @param ente
 	 * @return
 	 */
-	public ArrayList<CodificaFin> findContoTesoreria(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+	public List<ContoTesoreriaCodificaFin> findContoTesoreria(Ente ente){
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		List<SiacDContotesoreriaFin> dtos = new ArrayList<SiacDContotesoreriaFin>();
@@ -819,9 +885,9 @@ public class CommonDad extends AbstractFinDad {
 
 		//System.out.println("dtos.size: " + dtos!=null && !dtos.isEmpty() ? dtos.size(): "lista nulla!");
 		
-		return new ArrayList<CodificaFin>(convertiLista( dtos , 
-							  CodificaFin.class,
-				              FinMapId.SiacDContoTesoreria_CodificaFin));
+		return new ArrayList<ContoTesoreriaCodificaFin>(convertiLista( dtos , 
+				ContoTesoreriaCodificaFin.class,
+				              FinMapId.SiacDContoTesoreria_ContoTesoreriaCodificaFin));
 		
 	}
 
@@ -831,7 +897,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findNoteTesoriere(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento= TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		List<SiacDNoteTesoriereFin> dtos = new ArrayList<SiacDNoteTesoriereFin>();
@@ -850,7 +916,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findCodiceBollo(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		List<SiacDCodicebolloFin> dtos = new ArrayList<SiacDCodicebolloFin>();
@@ -869,7 +935,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findCommissioniOrdinativo(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		List<SiacDCommissioneTipoFin> dtos = new ArrayList<SiacDCommissioneTipoFin>();
@@ -886,11 +952,11 @@ public class CommonDad extends AbstractFinDad {
 	 */
 	// @SuppressWarnings("static-access")
 	public ArrayList<CodificaFin> findTipoAvviso(Ente ente) {
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);		
 		List<SiacTClassFin> dtos2 = new ArrayList<SiacTClassFin>();
-		dtos2 = siacTClassRepository.findByTipoAndEnte(ente.getUid(), timestampInserimento, Constanti.D_CLASS_TIPO_TIPO_AVVISO);
+		dtos2 = siacTClassRepository.findByTipoAndEnte(ente.getUid(), timestampInserimento, CostantiFin.D_CLASS_TIPO_TIPO_AVVISO);
 		return new ArrayList<CodificaFin>(convertiLista(dtos2, CodificaExtFin.class, FinMapId.SiacTClass_CodificaExtFin));	
 	}
 	
@@ -900,7 +966,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findDistintaTipoS(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento= TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		List<SiacDDistintaFin> dtos = new ArrayList<SiacDDistintaFin>();
@@ -917,7 +983,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findDistintaTipoE(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		List<SiacDDistintaFin> dtos = new ArrayList<SiacDDistintaFin>();
@@ -933,7 +999,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findStatoOperativoOrdinativo(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);		
 		List<SiacDMovgestStatoFin> dtos2 = new ArrayList<SiacDMovgestStatoFin>();	
@@ -948,7 +1014,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findStatiOpCartaCont(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	
 		List<SiacDCartacontStatoFin> dtos = new ArrayList<SiacDCartacontStatoFin>();
@@ -964,7 +1030,7 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findValuta(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);		
 		List<SiacDValutaFin> dtos = new ArrayList<SiacDValutaFin>();	
@@ -980,7 +1046,7 @@ public class CommonDad extends AbstractFinDad {
 	 */
 	public ArrayList<CodificaFin> findCommissioniEstero(Ente ente){
 		
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);		
 		List<SiacDCommissioniesteroFin> dtos = new ArrayList<SiacDCommissioniesteroFin>();	
@@ -995,11 +1061,11 @@ public class CommonDad extends AbstractFinDad {
 	 * @return
 	 */
 	public ArrayList<CodificaFin> findTipoDocumentoSpesa(Ente ente){
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);		
 		List<SiacDDocTipoFin> dtos = new ArrayList<SiacDDocTipoFin>();	
-		dtos = siacDDocTipoRepository.findDDocTipoValidiByEnteAndCodFam(ente.getUid(),Constanti.D_DOC_TIPO_CARTA_CONTABILE_FAMIGLIA_SPESA, timestampInserimento);
+		dtos = siacDDocTipoRepository.findDDocTipoValidiByEnteAndCodFam(ente.getUid(),CostantiFin.D_DOC_TIPO_CARTA_CONTABILE_FAMIGLIA_SPESA, timestampInserimento);
 		
 		return new ArrayList<CodificaFin>(convertiLista(dtos, CodificaFin.class, FinMapId.SiacDDocumentoTipo_CodificaFin));	
 	}
@@ -1072,7 +1138,7 @@ public class CommonDad extends AbstractFinDad {
 	 */
 	public ArrayList<CodificaFin> findTipoMotivoROR(Ente ente){
 		
-		long currMillisec = getCurrentMillisecondsTrentaMaggio2017();
+		long currMillisec = currentTimeMillis();
 		
 		Date dateInserimento = new Date(currMillisec);			
 		Timestamp timestampInserimento = TimingUtils.convertiDataInTimeStamp(dateInserimento);	

@@ -40,4 +40,13 @@ public interface DettaglioCronoprogrammaDao extends Dao<SiacTCronopElem, Integer
 	 */
 	void delete(SiacTCronopElem c);
 
+	/**
+	 * Elimina la relazione sulla SiacRCronopElem.
+	 *
+	 * @param c la SiacTCronopElem da eliminare
+	 * 
+	 */
+	//SIAC-8791
+	void deleteRelation(SiacTCronopElem c);
+
 }

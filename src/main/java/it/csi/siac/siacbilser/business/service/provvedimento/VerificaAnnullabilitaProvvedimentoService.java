@@ -14,7 +14,7 @@ import it.csi.siac.siacattser.frontend.webservice.msg.VerificaAnnullabilitaProvv
 import it.csi.siac.siacattser.frontend.webservice.msg.VerificaAnnullabilitaProvvedimentoResponse;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 
 /**
@@ -26,7 +26,7 @@ public class VerificaAnnullabilitaProvvedimentoService extends CheckedAccountBas
 	
 	/** The provvedimento dad. */
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	
 	 
 	@Override
@@ -42,8 +42,8 @@ public class VerificaAnnullabilitaProvvedimentoService extends CheckedAccountBas
 	
 	@Override
 	protected void init() {
-		provvedimentoDad.setLoginOperazione(loginOperazione);
-		provvedimentoDad.setEnte(ente);
+		attoAmministrativoDad.setLoginOperazione(loginOperazione);
+		attoAmministrativoDad.setEnte(ente);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class VerificaAnnullabilitaProvvedimentoService extends CheckedAccountBas
 	}
 
 	protected Boolean isAnnullabile(AttoAmministrativo attoAmministrativo) {
-		return provvedimentoDad.isAnnullabile(attoAmministrativo);
+		return attoAmministrativoDad.isAnnullabile(attoAmministrativo);
 	}
 
 

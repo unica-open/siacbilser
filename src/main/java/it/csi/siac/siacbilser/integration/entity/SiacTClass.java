@@ -6,6 +6,7 @@ package it.csi.siac.siacbilser.integration.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -44,8 +45,6 @@ public class SiacTClass extends SiacTEnteBase {
 	/** The classif desc. */
 	@Column(name="classif_desc")
 	private String classifDesc;
-
-	
 
 	//bi-directional many-to-one association to SiacRAccountRuoloOp
 	/** The siac r account ruolo ops. */
@@ -151,6 +150,11 @@ public class SiacTClass extends SiacTEnteBase {
 	//bi-directional many-to-one association to SiacRMovEpDetClass
 	@OneToMany(mappedBy="siacTClass")
 	private List<SiacRMovEpDetClass> siacRMovEpDetClasses;
+	
+	//bi-directional many-to-one association to SiacRPrimaNotaClass
+	@OneToMany(mappedBy="siacTClass", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
+	private List<SiacRPrimaNotaClass> siacRPrimaNotaClasses;
+	
 	/**
 	 * Instantiates a new siac t class.
 	 */
@@ -911,6 +915,46 @@ public class SiacTClass extends SiacTEnteBase {
 		siacRMovEpDetClass.setSiacTClass(null);
 
 		return siacRMovEpDetClass;
+	}
+	
+	/**
+	 * @return the siacRPrimaNotaClasses
+	 */
+	public List<SiacRPrimaNotaClass> getSiacRPrimaNotaClasses() {
+		return siacRPrimaNotaClasses;
+	}
+
+	/**
+	 * @param siacRPrimaNotaClasses the siacRPrimaNotaClasses to set
+	 */
+	public void setSiacRPrimaNotaClasses(List<SiacRPrimaNotaClass> siacRPrimaNotaClasses) {
+		this.siacRPrimaNotaClasses = siacRPrimaNotaClasses;
+	}
+	
+	/**
+	 * Adds the siac r prima nota class.
+	 *
+	 * @param siacRPrimaNotaClass the siac r prima nota class
+	 * @return the siac r prima nota class
+	 */
+	public SiacRPrimaNotaClass addSiacRPrimaNotaClass(SiacRPrimaNotaClass siacRPrimaNotaClass) {
+		getSiacRPrimaNotaClasses().add(siacRPrimaNotaClass);
+		siacRPrimaNotaClass.setSiacTClass(this);
+
+		return siacRPrimaNotaClass;
+	}
+
+	/**
+	 * Removes the siac r prima nota class.
+	 *
+	 * @param siacRPrimaNotaClass the siac r prima nota class
+	 * @return the siac r prima nota class
+	 */
+	public SiacRPrimaNotaClass removeSiacRPrimaNotaClass(SiacRPrimaNotaClass siacRPrimaNotaClass) {
+		getSiacRPrimaNotaClasses().remove(siacRPrimaNotaClass);
+		siacRPrimaNotaClass.setSiacTClass(null);
+
+		return siacRPrimaNotaClass;
 	}
 
 	/* (non-Javadoc)

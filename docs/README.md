@@ -39,6 +39,19 @@ All configuration MUST be set in the `buildfiles/<env>.properties` file used for
   - HR.tokenRenewalUrl = URL for the Token Renewal API
   - HR.consumerKey = Key for the Token Renewal API
   - HR.consumerSecret = Secret for the Token Renewal API
+- CONFIGURATION FOR INTEGRATION TO CSI FEL
+  - FEL.endpointAddress = Endpoint to the service
+  - FEL.wsdlDocumentUrl = Service WSDL location
+  - FEL.tokenRenewalUrl = URL for the Token Renewal API
+  - FEL.consumerKey = Key for the Token Renewal API
+  - FEL.consumerSecret = Secret for the Token Renewal API
+  - FEL.appCode = caller application code
+- CONFIGURATION FOR INTEGRATION TO CSI CPASS
+  - CPASS.endpointAddress = Endpoint to the service
+  - CPASS.wsdlDocumentUrl = Service WSDL location
+  - CPASS.tokenRenewalUrl = URL for the Token Renewal API
+  - CPASS.consumerKey = Key for the Token Renewal API
+  - CPASS.consumerSecret = Secret for the Token Renewal API
 - longExecutionTimeExecutor.poolSize = Pool size for the executor handling the
     (expected) long-running asynchronous elaborations
 - asyncExecutor.poolSize = Pool size for the executor handling the asynchronous

@@ -296,11 +296,11 @@ public class AggiornaStornoUEBUscitaService extends AggiornaStornoUEBBaseService
 	@Override
 	protected void checkTipoCapitolo() {
 		if(!capitoloUscitaPrevisioneDad.isTipoUscitaGestione(stornoUEB.getCapitoloSorgente().getUid())){
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("uid capitolo sorgente","Deve essere un capitolo di uscita gestione."));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("uid capitolo sorgente","Deve essere un capitolo di uscita gestione."));
 		}
 		
 		if(!capitoloUscitaPrevisioneDad.isTipoUscitaGestione(stornoUEB.getCapitoloDestinazione().getUid())){
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("uid capitolo destinazione","Deve essere un capitolo di uscita gestione."));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("uid capitolo destinazione","Deve essere un capitolo di uscita gestione."));
 		}		
 	}
 

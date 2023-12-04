@@ -24,7 +24,7 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.ConsultaDettaglioAccertame
 import it.csi.siac.siacfinser.integration.dad.CommonDad;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.util.Operazione;
-import it.csi.siac.siacfinser.model.AccertamentoDettaglioImporti;
+import it.csi.siac.siacfinser.model.DettaglioImportiAccertamento;
 
 @Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -61,7 +61,7 @@ public class ConsultaDettaglioAccertamentoService extends AbstractBaseService<Co
 		
 		DatiOperazioneDto datiOperazione = commonDad.inizializzaDatiOperazione(ente, richiedente, Operazione.RICERCA, annoBilancio);
 				
-		AccertamentoDettaglioImporti datiConsulta = accertamentoOttimizzatoDad.consultaDettaglioAccertamento(richiedente, ente, annoBilancioString, annoMovimento, numeroMovimento,numSub,datiOperazione);
+		DettaglioImportiAccertamento datiConsulta = accertamentoOttimizzatoDad.consultaDettaglioAccertamento(richiedente, ente, annoBilancioString, annoMovimento, numeroMovimento,numSub,datiOperazione);
 		
 		res.setAcertamentoDettaglioImporti(datiConsulta);
 		res.setEsito(Esito.SUCCESSO);

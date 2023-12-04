@@ -295,7 +295,6 @@ public class DefiniscePreDocumentoDiSpesaService extends BaseServiceOneWay<Defin
 //		subDoc.setCommissioniDocumento(CommissioniDocumento.BENEFICIARIO);
 		subDoc.setProvvisorioCassa(preDoc.getProvvisorioDiCassa());
 		
-		subDoc.setVoceMutuo(preDoc.getVoceMutuo());
 
 		subDoc.setDocumento(doc);
 		

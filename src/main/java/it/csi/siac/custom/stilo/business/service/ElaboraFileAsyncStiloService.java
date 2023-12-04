@@ -8,7 +8,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import it.csi.siac.custom.business.service.ElaboraFileCustomAsyncService;
+import it.csi.siac.custom.business.service.base.ElaboraFileCustomAsyncService;
 import it.csi.siac.custom.stilo.business.service.attiamministrativi.ElaboraFileAttiAmministrativiAsyncStiloService;
 import it.csi.siac.siacintegser.business.service.base.ElaboraFileAsyncBaseService;
 import it.csi.siac.siacintegser.business.service.base.ElaboraFileAsyncServiceInfo;

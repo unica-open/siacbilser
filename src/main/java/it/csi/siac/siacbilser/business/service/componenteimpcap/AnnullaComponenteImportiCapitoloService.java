@@ -17,8 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.frontend.webservice.msg.AnnullaComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AnnullaComponenteImportiCapitoloResponse;
+import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitoloModelDetail;
+import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.utils.TipoImportoCapitolo;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 
@@ -52,7 +55,9 @@ public class AnnullaComponenteImportiCapitoloService extends BaseGestioneCompone
 	@Override
 	protected void execute() {
 		initCapitolo(req.getCapitolo().getUid());
-		
+		//task-236
+		CategoriaCapitolo categoria = capitoloDad.findCategoriaCapitolo(Integer.valueOf(req.getCapitolo().getUid()));
+				
 		loadAndCheckComponentiImportiCapitolo();
 		// Clear data for each year
 		
@@ -65,7 +70,13 @@ public class AnnullaComponenteImportiCapitoloService extends BaseGestioneCompone
 			}
 			
 			updateImportoCapitolo(entry.getKey(), importiToSubtract, TipoImportoCapitolo.Values.STANZIAMENTO);
-			updateImportoCapitolo(entry.getKey(), importiToSubtract, TipoImportoCapitolo.Values.CASSA);
+			//task-236
+			if(req.getCapitolo().getTipoCapitolo().equals(TipoCapitolo.CAPITOLO_USCITA_PREVISIONE) && categoria != null && 
+				(CategoriaCapitoloEnum.FPV.getCodice().equals(categoria.getCodice()) || CategoriaCapitoloEnum.DAM.getCodice().equals(categoria.getCodice()))) {
+				updateImportoCapitolo(entry.getKey(), BigDecimal.ZERO, TipoImportoCapitolo.Values.CASSA);					
+			} else {
+				updateImportoCapitolo(entry.getKey(), importiToSubtract, TipoImportoCapitolo.Values.CASSA);
+			}	
 		}
 		componenteImportiCapitoloDad.flushAndClear();
 		// Load data

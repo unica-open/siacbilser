@@ -52,6 +52,8 @@ public enum FinMapId implements MapId {
 	SiacDViaTipo_CodificaExtFin,
 	SiacDRelazTipo_CodificaFin,
 	SiacTMovgest_Impegno,
+	SiacTMovgest_Impegno_Bilancio,
+	SiacTMovgest_Impegno_Capitolo_Bilancio,
 	SiacTMovgestTs_SubImpegno,
 	SiacDMovgestTipo_CodificaExtFin,
 	SiacTModifica_ModificaMovimentoGestioneSpesa,
@@ -59,17 +61,14 @@ public enum FinMapId implements MapId {
 	SiacTProgramma_CodificaFin,
 	SiacTClass_CodificaExtFin,
 	SiacTMovgest_Accertamento,
+	SiacTMovgest_Accertamento_Bilancio,
+	SiacTMovgest_Accertamento_Capitolo_Bilancio,
 	SiacTModifica_ModificaMovimentoGestioneEntrata,
 	SiacTModificaBIL_ModificaMovimentoGestioneEntrata,
-	SiacDMutuoTipo_CodificaFin,
 	SiacTMovgestTs_SubAccertamento,
-	SiacTMutuo_Mutuo,
-	SiacTMutuo_Mutuo_Minimo,
 	SiacTLiquidazione_Liquidazione,
 	SiacTLiquidazione_Liquidazione_Base,
-	SiacTMutuoVoce_VoceMutuo,
-	SiacTMutuoVoceVar_VariazioneImportoVoceMutuo,
-	SiacDContoTesoreria_CodificaFin,
+	SiacDContoTesoreria_ContoTesoreriaCodificaFin,
 	SiacDContotesoreria_Contotesoreria,
 	SiacDDistinta_CodificaFin,
 	SiacDDistinta_Distinta,	
@@ -99,7 +98,6 @@ public enum FinMapId implements MapId {
 	SiacDCommissioniestero_CodificaFin,
 	SiacDDocumentoTipo_CodificaFin,
 	SiacTBil_Bilancio,
-	SiacDMutuoTipo_ClassificatoreGenerico, 
 	SiacTCab_Banca,
 	SiacTDocFin_DocumentoSpesa,
 	SiacTDocFin_DocumentoSpesa_Minimo,
@@ -115,8 +113,40 @@ public enum FinMapId implements MapId {
 	SiacTCbpiSaldoAddebitoFin_AddebitoContoCorrente,
 	SiacDSiopeAssenzaMotivazioneFin_CodificaExtFin,
 	SiacTEnteProprietario_Ente_GestioneLivelliFin,
+	//SIAC-7779
+	SiacRMovgestTsFin_VincoloImpegno,
+	SiacRMovgestTsFin_VincoloAccertamento,	
+	//SIAC-7779
 	
+	//SIAC-8117
+	ModificaMovimentoGestioneSpesaCollegata_SiacRMovgestTsDetModFin_ModelDetail,
+	ModificaMovimentoGestioneSpesaCollegata_SiacRMovgestTsDetModFin_Default_ModelDetail,
+	//SIAC-8650
+	VincoloAccertamento_SiacRMovgestTsFin_Base_ModelDetail,
+	VincoloImpegno_SiacRMovgestTsFin_Base_ModelDetail,
+	SiacTAvanzovincoloFin_Avanzovincolo_Complete,
+	SiacRMovgestTsFin_VincoloImpegno_Accertamento_Base,
+	SiacRMovgestTsFin_VincoloAccertamento_Impegno_Base,
+	SiacRMovgestTsFin_VincoloImpegno_Accertamento_Bilancio,
+	SiacRMovgestTsFin_VincoloAccertamento_Impegno_Bilancio,
+	SiacRMovgestTsFin_VincoloAccertamento_Importo_Impegno,
+	SiacRMovgestTsFin_VincoloImpegno_Importo_Accertamento,
 	
+	VincoloImpegno_SiacRMovgestTsDetModFin_ModelDetail,
+	SiacRMovgestTsDetModFin_VincoloEsplicito,
+	SiacRMovgestTsDetModFin_ModificaMovimentoGestioneSpesa,
+	SiacRMovgestTsDetModFin_ModificaMovimentoGestioneEntrata,
+	SiacRMovgestTsDetModFin_ImportiModificaMovimentoGestioneSpesa,
+	SiacRMovgestTsDetModFin_ImportiModificaMovimentoGestioneEntrata,
+	SiacRMovgestTsDetModFin_ReimputazioneModificaMovimentoGestioneSpesa,
+	SiacRMovgestTsDetModFin_ReimputazioneModificaMovimentoGestioneEntrata,
+	SiacRMovgestTsDetModFin_AltriDatiImportoModificaMovimentoGestioneSpesaConverter,
+	SiacRMovgestTsDetModFin_AltriDatiImportoModificaMovimentoGestioneEntrataConverter,
+	SiacTModificaFin_ModificaMovimentoGestioneSpesaCollegataConverter,
+	SiacTModificaFin_ModificaMovimentoGestioneSpesaConverter,
+	//SIAC-8589
+	SiacTBilElemFin_CapitoloUscitaGestione_ModelDetail,
+	SiacTBilElemFin_CapitoloEntrataGestione_ModelDetail
 	;
 	
 	

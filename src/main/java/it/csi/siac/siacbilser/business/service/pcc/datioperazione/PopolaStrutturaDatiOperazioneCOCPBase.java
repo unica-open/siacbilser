@@ -119,7 +119,7 @@ public abstract class PopolaStrutturaDatiOperazioneCOCPBase extends PopolaStrutt
 		
 		String result = sdf.format(impegno.getDataEmissione()) 
 				+ "-" + impegno.getAnnoMovimento() 
-				+ "/" + impegno.getNumero();
+				+ "/" + impegno.getNumeroBigDecimal();
 		
 		return result;
 	}

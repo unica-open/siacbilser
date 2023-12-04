@@ -5,7 +5,11 @@
 package it.csi.siac.siacbilser.test.business.predocumento;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilser.business.service.classificatorebil.LeggiClassificatoriByTipologieClassificatoriService;
+import it.csi.siac.siacbilser.business.service.documento.RicercaQuoteDaAssociarePredocumentoService;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.AggiornaPreDocumentoDiEntrataService;
+import it.csi.siac.siacbilser.business.service.predocumentoentrata.AggiornaPreDocumentoEntrataCollegaDocumentoService;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.AnnullaPreDocumentoEntrataService;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.CompletaDefiniscePreDocumentoEntrataService;
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.InseriscePreDocumentoEntrataService;
@@ -26,17 +32,23 @@ import it.csi.siac.siacbilser.business.service.predocumentoentrata.RicercaTotali
 import it.csi.siac.siacbilser.business.service.predocumentoentrata.ValidaStatoOperativoPreDocumentoEntrataService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatori;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoriByTipologieClassificatoriResponse;
+import it.csi.siac.siacbilser.integration.dad.AccertamentoBilDad;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoEntrataDad;
+import it.csi.siac.siacbilser.integration.dad.ProvvisorioBilDad;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.ContoCorrentePredocumentoEntrata;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccommon.util.JAXBUtility;
+import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Entita.StatoEntita;
+import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoDiEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoEntrataCollegaDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaPreDocumentoEntrataCollegaDocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaPreDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AssociaImputazioniContabiliVariatePreDocumentoEntrata;
@@ -49,6 +61,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.LeggiContiCorrenteRespons
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.OrdinamentoPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioPreDocumentoEntrataResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociarePredocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociarePredocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaPreDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaPreDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaTotaliPreDocumentoEntrataPerStato;
@@ -57,8 +71,13 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.ValidaStatoOperativoPreDo
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.ValidaStatoOperativoPreDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.model.CausaleEntrata;
 import it.csi.siac.siacfin2ser.model.ContoCorrente;
+import it.csi.siac.siacfin2ser.model.PreDocumento;
 import it.csi.siac.siacfin2ser.model.PreDocumentoEntrata;
+import it.csi.siac.siacfin2ser.model.PreDocumentoEntrataModelDetail;
+import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.StatoOperativoPreDocumento;
+import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
+import it.csi.siac.siacfin2ser.model.TipoCausale;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.SubAccertamento;
 import it.csi.siac.siacfinser.model.codifiche.ModalitaAccreditoSoggetto;
@@ -95,6 +114,15 @@ public class PreDocumentoEntrataTest extends BaseJunit4TestCase {
 	private CompletaDefiniscePreDocumentoEntrataService completaDefiniscePreDocumentoEntrataService;
 	@Autowired
 	private RicercaTotaliPreDocumentoEntrataPerStatoService ricercaTotaliPreDocumentoEntrataPerStatoService;
+	
+	@Autowired
+	private RicercaQuoteDaAssociarePredocumentoService ricercaQuoteDaAssociarePredocumentoService;
+
+	@Autowired
+	private AccertamentoBilDad accertamentoBilDad;
+	
+	@Autowired
+	private ProvvisorioBilDad provvisorioBilDad;
 	
 	/**
 	 * Leggi conti corrente.
@@ -190,7 +218,7 @@ public class PreDocumentoEntrataTest extends BaseJunit4TestCase {
 		Accertamento impegno= new Accertamento();
 		//impegno.setUid(2);
 		impegno.setAnnoMovimento(2013);
-		impegno.setNumero(new BigDecimal("1"));
+		impegno.setNumeroBigDecimal(new BigDecimal("1"));
 		preDoc.setAccertamento(null);
 		
 //		SubAccertamento subImpegno = new SubAccertamento();
@@ -243,7 +271,7 @@ public class PreDocumentoEntrataTest extends BaseJunit4TestCase {
 		preDoc.setNumero(8);
 		preDoc.setAccertamento(create(Accertamento.class, 84759));
 		preDoc.getAccertamento().setAnnoMovimento(2017);
-		preDoc.getAccertamento().setNumero(new BigDecimal("61"));
+		preDoc.getAccertamento().setNumeroBigDecimal(new BigDecimal("61"));
 		
 		AggiornaPreDocumentoDiEntrataResponse res = aggiornaPreDocumentoDiEntrataService.executeService(req);
 		assertNotNull(res);
@@ -272,12 +300,15 @@ public class PreDocumentoEntrataTest extends BaseJunit4TestCase {
 		RicercaSinteticaPreDocumentoEntrata req = new RicercaSinteticaPreDocumentoEntrata();
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
 		req.setParametriPaginazione(getParametriPaginazioneTest());
-		req.setAnnoBilancio(Integer.valueOf(2018));
+		req.setAnnoBilancio(Integer.valueOf(2020));
 		
 		PreDocumentoEntrata preDocumentoEntrata = new PreDocumentoEntrata();
 		preDocumentoEntrata.setEnte(req.getRichiedente().getAccount().getEnte());
 		preDocumentoEntrata.setStatoOperativoPreDocumento(StatoOperativoPreDocumento.INCOMPLETO);
 		req.setPreDocumentoEntrata(preDocumentoEntrata);
+		
+		req.setUidPredocumentiDaFiltrare(new ArrayList<Integer>());
+		req.getUidPredocumentiDaFiltrare().add(2818);
 		
 		//req.setOrdinamentoPreDocumentoEntrata(OrdinamentoPreDocumentoEntrata.PERIODO_COMPETENZA);
 		req.setOrdinamentoPreDocumentoEntrata(OrdinamentoPreDocumentoEntrata.DATA_COMPETENZA_NOMINATIVO);
@@ -407,7 +438,7 @@ public class PreDocumentoEntrataTest extends BaseJunit4TestCase {
 		
 		ListaPaginata<PreDocumentoEntrata> listaDocumentoEntrata = preDocumentoEntrataDad.ricercaSinteticaPreDocumento(preDoc, null,
 				null,null, null, null,
-				Boolean.FALSE,  Boolean.FALSE, Boolean.FALSE, contoCorrenteMancante, null, null, null, pp);
+				Boolean.FALSE,  Boolean.FALSE, Boolean.FALSE, contoCorrenteMancante, null, null, null,null, pp);
 		log.debug("ricercaSinteticaPreDocumentoByContoCorrente", "Trovati " + listaDocumentoEntrata.size() + "predocumenti");
 		for (PreDocumentoEntrata pde : listaDocumentoEntrata) {
 			log.debug("ricercaSinteticaPreDocumentoByContoCorrente", "PreDocumento uid: " + pde.getUid()
@@ -416,6 +447,19 @@ public class PreDocumentoEntrataTest extends BaseJunit4TestCase {
 					+ " con importo " + pde.getImportoNotNull()
 					);
 		}
+	}
+	
+	@Test
+	public void testQuery () {
+		preDocumentoEntrataDad.setEnte(create(Ente.class, 16));
+		preDocumentoEntrataDad.findPreDocumentiByCausaleDataCompetenzaStati(15, new Date(), new Date(), create(ContoCorrentePredocumentoEntrata.class, 13),Arrays.asList(Integer.valueOf(16)),  Arrays.asList(StatoOperativoPreDocumento.INCOMPLETO), PreDocumentoEntrataModelDetail.Accertamento);
+	}
+	
+	@Test
+	public void testQuery2 () {
+		preDocumentoEntrataDad.setEnte(create(Ente.class, 2));
+		boolean hasDocumentiCollegati = preDocumentoEntrataDad.hasDocumentiCollegati(create(PreDocumento.class, 54299));
+		System.out.println("hasDocumentiCollegati?" + hasDocumentiCollegati);
 	}
 	
 	@Test
@@ -498,25 +542,62 @@ public class PreDocumentoEntrataTest extends BaseJunit4TestCase {
 		CompletaDefiniscePreDocumentoEntrata req = new CompletaDefiniscePreDocumentoEntrata();
 		
 		req.setDataOra(new Date());
-		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
-		req.setBilancio(getBilancioTest(131, 2017));
+		req.setRichiedente(getRichiedenteTest("AAAAAA00A11C000K", 52, 2));
+		
+		req.setBilancio(getBilancio2020Test());
 		req.setAnnoBilancio(Integer.valueOf(req.getBilancio().getAnno()));
 		
+		RicercaSinteticaPreDocumentoEntrata reqRicerca = new RicercaSinteticaPreDocumentoEntrata();
+		reqRicerca.setPreDocumentoEntrata(new PreDocumentoEntrata());
+		reqRicerca.getPreDocumentoEntrata().setEnte(req.getRichiedente().getAccount().getEnte());
+//		reqRicerca.getPreDocumentoEntrata().setContoCorrente(create(ContoCorrentePredocumentoEntrata.class,75644534));
+		
+		List<Integer> listaUid = new ArrayList<Integer>();
+		listaUid.add(54491);
+		reqRicerca.setUidPredocumentiDaFiltrare(listaUid);
+		/*
 		Calendar cal = Calendar.getInstance();
-		cal.set(2017, Calendar.JULY, 4, 0, 0, 0);
-		req.setDataCompetenzaDa(cal.getTime());
-		
+		cal.set(2020, Calendar.APRIL, 1, 0, 0, 0);
 		Calendar cal2 = Calendar.getInstance();
-		cal2.set(2017, Calendar.JULY, 7, 0, 0, 0);
-		req.setDataCompetenzaA(cal2.getTime());
+		cal2.set(2020, Calendar.APRIL, 2, 0, 0, 0);
+		 */
 		
-		// 2018 / 424
-		req.setAccertamento(create(Accertamento.class, 64624));
+		String sDate1 = "2020-04-01";  
+		Date date1 = null;
+		try {
+			date1 = new SimpleDateFormat("yyyy-MM-dd").parse(sDate1);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		String sDate2 = "2020-04-02";
+		Date date2 = null;
+	    try {
+	    	date2 = new SimpleDateFormat("yyyy-MM-dd").parse(sDate2);
+	    } catch (ParseException e) {
+	    	e.printStackTrace();
+	    }
+		
+	    req.setDataCompetenzaDa(date1);
+		req.setDataCompetenzaA(date2);
+
+		req.setRicercaSinteticaPredocumentoEntrata(reqRicerca);
 		// 19827
-		req.setSoggetto(create(Soggetto.class, 130002));
+		// 108297 -> 138171
+		Soggetto soggetto = create(Soggetto.class, 138171);
+		req.setSoggetto(soggetto);
 		
-		//
-		req.setAttoAmministrativo(create(AttoAmministrativo.class, 35076));
+		// 2018 / 424 -> 120914
+		// 2020 / 368 -> 165397
+		Accertamento accertamento = accertamentoBilDad.findAccertamentoByUid(165397);
+		req.setAccertamento(accertamento);
+		
+//		req.setAttoAmministrativo(create(AttoAmministrativo.class, 70536));
+		
+		//2020/12 -> 47627
+		ProvvisorioDiCassa provvisorio = provvisorioBilDad.findProvvisorioById(47627);
+
+		req.setProvvisorioCassa(provvisorio);
 		
 		CompletaDefiniscePreDocumentoEntrataResponse res = completaDefiniscePreDocumentoEntrataService.executeService(req);
 		assertNotNull(res);
@@ -528,16 +609,74 @@ public class PreDocumentoEntrataTest extends BaseJunit4TestCase {
 		
 		req.setDataOra(new Date());
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
-		req.setBilancio(getBilancioTest(133, 2018));
+		req.setBilancio(getBilancioByProperties("consip", "regp", "2020"));
 		req.setAnnoBilancio(Integer.valueOf(req.getBilancio().getAnno()));
 		
-		Calendar cal = Calendar.getInstance();
-		cal.set(2018, Calendar.JANUARY, 1, 0, 0, 0);
-		req.setDataCompetenzaDa(cal.getTime());
+		PreDocumentoEntrata preDoc = new PreDocumentoEntrata();
+		preDoc.setEnte(req.getRichiedente().getAccount().getEnte());
+		preDoc.setCausaleEntrata(create(CausaleEntrata.class, 240));
+//		ContoCorrentePredocumentoEntrata ccpe = new ContoCorrentePredocumentoEntrata();
+//		ccpe.setUid(455991);
+//		preDoc.setContoCorrente(ccpe);
+		ParametriPaginazione pp = new ParametriPaginazione();
+		pp.setElementiPerPagina(50);
+		pp.setNumeroPagina(0);
 		
-		req.setCausaleEntrata(create(CausaleEntrata.class, 1));
+		RicercaSinteticaPreDocumentoEntrata reqRicerca = new RicercaSinteticaPreDocumentoEntrata();
+		reqRicerca.setRichiedente(getRichiedenteByProperties("consip","regp"));
+		reqRicerca.setParametriPaginazione(pp);
+		reqRicerca.setPreDocumentoEntrata(preDoc);
+		
+		reqRicerca.setTipoCausale(create(TipoCausale.class, 240));
+		
+		/*Calendar cal = Calendar.getInstance();
+		cal.set(2020, Calendar.JANUARY, 1, 0, 0, 0);
+		reqRicerca.setDataCompetenzaDa(cal.getTime());
+		
+		Calendar cal2 = Calendar.getInstance();
+		cal2.set(2020, Calendar.FEBRUARY, 6, 0, 0, 0);
+		reqRicerca.setDataCompetenzaA(cal2.getTime());*/
+		
+		req.setRequestRicerca(reqRicerca);
+		
 		
 		RicercaTotaliPreDocumentoEntrataPerStatoResponse res = ricercaTotaliPreDocumentoEntrataPerStatoService.executeService(req);
 		assertNotNull(res);
+	}
+	
+	@Autowired
+	AggiornaPreDocumentoEntrataCollegaDocumentoService aggiornaPreDocumentoEntrataCollegaDocumentoService;
+	
+	@Test
+	public void testCollega() {
+		AggiornaPreDocumentoEntrataCollegaDocumento req = new AggiornaPreDocumentoEntrataCollegaDocumento();
+		req.setBilancio(getBilancioByProperties("consip", "regp", "2020"));
+		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
+		req.setPreDocumentoEntrata(create(PreDocumentoEntrata.class, 54299));
+		req.setSubDocumentoEntrata(create(SubdocumentoEntrata.class, 109619));
+		AggiornaPreDocumentoEntrataCollegaDocumentoResponse res = aggiornaPreDocumentoEntrataCollegaDocumentoService.executeService(req);
+		
+		// Controllo gli errori
+		assertFalse(res.getErrori().size() > 0);
+		assertTrue(res.getSubDocumentoEntrata() != null);
+		assertTrue(res.getPreDocumentoEntrataAggiornato() != null);
+		assertTrue(res.getEsito().equals(Esito.SUCCESSO));
+	}
+	
+	@Test
+	public void ricercaQuoteDaAssociare() {
+		
+		RicercaQuoteDaAssociarePredocumento req = new RicercaQuoteDaAssociarePredocumento();
+		req.setBilancio(getBilancioByProperties("consip", "regp", "2020"));
+		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
+		req.setEnte(req.getRichiedente().getAccount().getEnte());
+		req.setParametriPaginazione(getParametriPaginazioneTest());
+		req.setStatiOperativoDocumento(Arrays.asList(StatoOperativoDocumento.INCOMPLETO, StatoOperativoDocumento.ANNULLATO, StatoOperativoDocumento.EMESSO));
+		req.setImportoPerRicercaQuote(new BigDecimal("10.00"));
+		req.setNumeroDocumento("2020-02");
+		req.setAnnoDocumento(2020);
+//		req.setPreDocumentoEntrata(create(PreDocumentoEntrata.class, 54299));
+//		req.setSubDocumentoEntrata(create(SubdocumentoEntrata.class, 109619));
+		RicercaQuoteDaAssociarePredocumentoResponse res = ricercaQuoteDaAssociarePredocumentoService.executeService(req);
 	}
 }

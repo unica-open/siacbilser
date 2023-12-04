@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilitaGestione_ModelDetail" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilitaGestione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAccFondiDubbiaEsig</class-b>
+		<field>
+			<a>percentualeAccantonamentoFondi</a>
+			<b>percAccFondi</b>
+		</field>
+		<field>
+			<a>percentualeAccantonamentoFondi1</a>
+			<b>percAccFondi1</b>
+		</field>
+		<field>
+			<a>percentualeAccantonamentoFondi2</a>
+			<b>percAccFondi2</b>
+		</field>
+		<field>
+			<a>percentualeAccantonamentoFondi3</a>
+			<b>percAccFondi3</b>
+		</field>
+		<field>
+			<a>percentualeAccantonamentoFondi4</a>
+			<b>percAccFondi4</b>
+		</field>
+		<!-- SIAC-7858 -->
+		<field>
+			<a>numeratore</a>
+			<b>accFdeNumeratore</b>
+		</field>
+		<field>
+			<a>numeratore1</a>
+			<b>accFdeNumeratore1</b>
+		</field>
+		<field>
+			<a>numeratore2</a>
+			<b>accFdeNumeratore2</b>
+		</field>
+		<field>
+			<a>numeratore3</a>
+			<b>accFdeNumeratore3</b>
+		</field>
+		<field>
+			<a>numeratore4</a>
+			<b>accFdeNumeratore4</b>
+		</field>
+		<field>
+			<a>denominatore</a>
+			<b>accFdeDenominatore</b>
+		</field>
+		<field>
+			<a>denominatore1</a>
+			<b>accFdeDenominatore1</b>
+		</field>
+		<field>
+			<a>denominatore2</a>
+			<b>accFdeDenominatore2</b>
+		</field>
+		<field>
+			<a>denominatore3</a>
+			<b>accFdeDenominatore3</b>
+		</field>
+		<field>
+			<a>denominatore4</a>
+			<b>accFdeDenominatore4</b>
+		</field>
+		<field>
+			<a>mediaSempliceTotali</a>
+			<b>accFdeMediaSempliceTotali</b>
+		</field>
+		<field>
+			<a>mediaSempliceRapporti</a>
+			<b>accFdeMediaSempliceRapporti</b>
+		</field>
+		<field>
+			<a>mediaPonderataTotali</a>
+			<b>accFdeMediaPonderataTotali</b>
+		</field>
+		<field>
+			<a>mediaPonderataRapporti</a>
+			<b>accFdeMediaPonderataRapporti</b>
+		</field>
+		<field>
+			<a>mediaUtente</a>
+			<b>accFdeMediaUtente</b>
+		</field>
+		<field>
+			<a>note</a>
+			<b>accFdeNote</b>
+		</field>
+		<field>
+			<a>numeratoreOriginale</a>
+			<b>accFdeMetaNumeratoreOriginale</b>
+		</field>
+		<field>
+			<a>numeratore1Originale</a>
+			<b>accFdeMetaNumeratore1Originale</b>
+		</field>
+		<field>
+			<a>numeratore2Originale</a>
+			<b>accFdeMetaNumeratore2Originale</b>
+		</field>
+		<field>
+			<a>numeratore3Originale</a>
+			<b>accFdeMetaNumeratore3Originale</b>
+		</field>
+		<field>
+			<a>numeratore4Originale</a>
+			<b>accFdeMetaNumeratore4Originale</b>
+		</field>
+		<field>
+			<a>denominatoreOriginale</a>
+			<b>accFdeMetaDenominatoreOriginale</b>
+		</field>
+		<field>
+			<a>denominatore1Originale</a>
+			<b>accFdeMetaDenominatore1Originale</b>
+		</field>
+		<field>
+			<a>denominatore2Originale</a>
+			<b>accFdeMetaDenominatore2Originale</b>
+		</field>
+		<field>
+			<a>denominatore3Originale</a>
+			<b>accFdeMetaDenominatore3Originale</b>
+		</field>
+		<field>
+			<a>denominatore4Originale</a>
+			<b>accFdeMetaDenominatore4Originale</b>
+		</field>
+		<field>
+			<a>mediaUtenteOriginale</a>
+			<b>accFdeMetaMediaUtenteOriginale</b>
+		</field>
+		<field>
+			<a>mediaConfronto</a>
+			<b>accFdeMediaConfronto</b>
+		</field>
+		<field>
+			<a>accantonamento</a>
+			<b>accFdeAccantonamento</b>
+		</field>
+		<field>
+			<a>accantonamento1</a>
+			<b>accFdeAccantonamento1</b>
+		</field>
+		<field>
+			<a>accantonamento2</a>
+			<b>accFdeAccantonamento2</b>
+		</field>
+		<field>
+			<a>accantonamentoOriginale</a>
+			<b>accFdeMetaAccantonamentoOriginale</b>
+		</field>
+		<field>
+			<a>accantonamento1Originale</a>
+			<b>accFdeMetaAccantonamento1Originale</b>
+		</field>
+		<field>
+			<a>accantonamento2Originale</a>
+			<b>accFdeMetaAccantonamento2Originale</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilitaGestione" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilitaGestione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAccFondiDubbiaEsig</class-b>
+		<field map-id="SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilitaGestione_ModelDetail">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaGestioneCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaTipoMediaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaTipoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaGestioneTipoMediaConfrontoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaBaseAttributiBilancioConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+	</mapping>
+	
+</mappings>

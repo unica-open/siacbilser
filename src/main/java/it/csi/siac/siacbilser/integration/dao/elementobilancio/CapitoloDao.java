@@ -7,6 +7,8 @@ package it.csi.siac.siacbilser.integration.dao.elementobilancio;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.Tuple;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,10 +16,12 @@ import it.csi.siac.siacbilser.integration.entity.SiacTBilElem;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemTipoEnum;
 import it.csi.siac.siacbilser.integration.utility.CompareOperator;
+import it.csi.siac.siacbilser.model.wrapper.ImportiImpegnatoPerComponente;
+import it.csi.siac.siacbilser.model.wrapper.ImportiImpegnatoPerComponenteAnniSuccNoStanz;
+import it.csi.siac.siacbilser.model.wrapper.ImportiImpegnatoPerComponenteTriennioNoStanz;
 import it.csi.siac.siaccommonser.integration.dao.base.Dao;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface CapitoloDao.
  */
@@ -118,6 +122,8 @@ public interface CapitoloDao extends Dao<SiacTBilElem, Integer>  {
 	 * @param attoleggeComma the attolegge comma
 	 * @param attoleggePunto the attolegge punto
 	 * @param attoleggeTipoCode the attolegge tipo code
+	 * @param flagEntrataDubbiaEsigFCDE
+	 * @param isCapitoloPerPrevisioneImpegnatoAccertato 
 	 * @param pageable the pageable
 	 * @return the page
 	 */
@@ -186,6 +192,8 @@ public interface CapitoloDao extends Dao<SiacTBilElem, Integer>  {
 			String codicePianoDeiConti,
 			String codiceCofog, String codiceTipoCofog,
 			String codiceStruttAmmCont, String codiceTipoStruttAmmCont,
+			//task-90
+			String idStruttAmmCont,
 			String codiceSiopeEntrata, String codiceTipoSiopeEntrata,
 			String codiceSiopeSpesa, String codiceTipoSiopeSpesa,
 			String codiceMissione, String codiceProgrmma,
@@ -201,8 +209,15 @@ public interface CapitoloDao extends Dao<SiacTBilElem, Integer>  {
 			
 			// SIAC-4088
 			Boolean collegatoFondiDubbiaEsigibilita,
+			//SIAC-7192
+			String codiceRisorsaAccantonata,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE,
+			//SIAC-8581
+			Integer versioneAccFcde,
+			String tipoAccFcde,
 			
-			Pageable pageable);
+			Boolean isCapitoloPerPrevisioneImpegnatoAccertato, Pageable pageable);
 
 	/**
 	 * Ricerca sintetica capitolo.
@@ -347,6 +362,8 @@ public interface CapitoloDao extends Dao<SiacTBilElem, Integer>  {
 			
 			// SIAC-4088
 			Boolean collegatoFondiDubbiaEsigibilita,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE,
 			
 			Pageable pageable);
 	
@@ -501,7 +518,9 @@ public interface CapitoloDao extends Dao<SiacTBilElem, Integer>  {
 			String attoleggeTipoCode,
 			
 			// SIAC-4088
-			Boolean collegatoFondiDubbiaEsigibilita
+			Boolean collegatoFondiDubbiaEsigibilita,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE
 			);
 
 	/**
@@ -644,7 +663,9 @@ public interface CapitoloDao extends Dao<SiacTBilElem, Integer>  {
 			String attoleggePunto,
 			String attoleggeTipoCode,
 			// SIAC-4088
-			Boolean collegatoFondiDubbiaEsigibilita
+			Boolean collegatoFondiDubbiaEsigibilita,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE
 			);
 
 
@@ -773,7 +794,10 @@ public interface CapitoloDao extends Dao<SiacTBilElem, Integer>  {
 			String attoleggeComma,
 			String attoleggePunto,
 			String attoleggeTipoCode,
-			Boolean collegatoFondiDubbiaEsigibilita);
+			Boolean collegatoFondiDubbiaEsigibilita,
+			String codiceRisorsaAccantonata,
+			// SIAC-7858
+			String flagEntrataDubbiaEsigFCDE);
 	
 	Long countMovgestNonAnnullatiByBilElemIdsAndMovgestAnnoAndOperator(List<Integer> elemIds, Integer movgestAnno, CompareOperator jpqlCompareOperator);
 	Long countLiquidazioniNonAnnullateByBilElemIdsAndLiqAnnoAndOperator(List<Integer> elemIds, Integer movgestAnno, CompareOperator jpqlCompareOperator);
@@ -788,9 +812,11 @@ public interface CapitoloDao extends Dao<SiacTBilElem, Integer>  {
 
 	
 	// SIAC-6899 
-	BigDecimal sumMovgestImportoFinanziatodaAvanzodaFPVNonAnnullatiByBilElemIdsAndMovgestAnnoAndOperator(List<Integer> elemIds, Integer movgestAnno, CompareOperator jpqlCompareOperator,List<String>  avavincoloTipoCode);
+	// SIAC-8839 aggiunto il parametro ente.getUid()
+	BigDecimal sumMovgestImportoFinanziatodaAvanzodaFPVNonAnnullatiByBilElemIdsAndMovgestAnnoAndOperator(Integer enteProprietarioId, List<Integer> elemIds, Integer movgestAnno, CompareOperator jpqlCompareOperator,List<String>  avavincoloTipoCode);
 	
-
+	//SIAC-8838
+	BigDecimal computeTotaleImportiModificheNegativeEdEconbCapitoloByAnno(List<Integer> elemIds, String function);
 	
 	BigDecimal sumMovgestImportoDaPrenotazioneNonAnnullatiByBilElemIdsAndMovgestAnnoAndOperator(List<Integer> elemIds, Integer movgestAnno, CompareOperator jpqlCompareOperator);
 	
@@ -799,8 +825,44 @@ public interface CapitoloDao extends Dao<SiacTBilElem, Integer>  {
 	
 	BigDecimal sumOrdinativoIncassoImportoNonAnnullatiByBilElemIdsAndOrdAnnoAndOperator(List<Integer> elemIds, Integer movgestAnno, CompareOperator jpqlCompareOperator);
 	BigDecimal sumOrdinativoPagamentoImportoNonAnnullatiByBilElemIdsAndOrdAnnoAndOperator(List<Integer> elemIds, Integer movgestAnno, CompareOperator jpqlCompareOperator);
-	List<Object[]> findCapitoliBySubdocIds(List<Integer> subdocIds);
-	List<Object[]> findCapitoliByElenco(List<Integer> elencoIds);
+	List<Object[]> findCapitoliBySubdocIds(List<Integer> subdocIds, List<String> tipoCapitoloCodes);
+	List<Object[]> findCapitoliByElenco(List<Integer> elencoIds, List<String> tipoCapitoloCodes);
 	
 	List<Integer> ricercaIdCapitoli(Integer enteProprietarioId, String annoBilancio, String elemTipoCode, String numeroCapitolo, String numeroArticolo, String numeroUEB);
+	
+	//SIAC-7349  - START - MR - SR90 - 02/04/2020 Calcolo della disponibilita impegnare per capitolo UG
+	BigDecimal findDisponibilitaImpegnareComponente(Integer bilElemId, Integer compId, String functionName);
+	//SIAC-7349 - FINE
+	
+	//SIAC-7349  - START - MR - SR210 - 16/04/2020 Calcolo della disponibilita variare per componenti capitolo UG
+	BigDecimal findDisponibilitaVariareComponente(Integer bilElemId, Integer compId, String functionName);
+	//SIAC-7349 - FINE
+	
+	//SIAC-7349  - START - MR - SR200 - 09/04/2020 Calcolo impegnato per capitolo UP
+	List<ImportiImpegnatoPerComponente> findImpegnatoComponente(Integer bilElemId, Integer compId, String functionName);
+	//SIAC-7349 - FINE
+	
+	//SIAC-7349  - START - MR - SR200 - 07/05/2020 Calcolo impegnato anni succ no stanziamento per capitolo UP
+	List<ImportiImpegnatoPerComponenteAnniSuccNoStanz> findImpegnatoAnniSuccNoStanz(Integer uid, List<Integer> uidComp, String fncImportoImpAnniSuccNoStanz);
+	//SIAC-7349 - FINE
+
+	// SIAC-7349 GS 17/07/2020
+	List<ImportiImpegnatoPerComponenteTriennioNoStanz> findImpegnatoTriennioNoStanz(Integer uid, List<Integer> uidComp,
+			String fncImportoImpTriennioNoStanz);
+
+	/**
+	 * SIAC-8012
+	 *
+	 * Calcolo della somma degli importi dei movimenti associati al capitolo
+	 * per ogni componente associata ad esso. 
+	 * 
+	 */
+	List<Tuple> findImpegnatoComponentiByCapitoloUid(Integer uidCapitolo, Integer anno);
+	
+	
+	BigDecimal findDisponibilitaPagareSottoContoVincolato(Integer uidContoTesoreria, Integer uidCapitolo, Integer enteProprietarioId);
+	BigDecimal findDisponibilitaIncassareSottoContoVincolato(Integer uidContoTesoreria, Integer uidCapitolo, Integer enteProprietarioId);
+
+	List<Integer> findIdsContoTesoreriaCapitoliBySubdocIds(List<Integer> idsSubdocumentiSpesa);
+	
 }

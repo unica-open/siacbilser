@@ -29,7 +29,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiE
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaRegistrazioneIvaPagati;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AnnullaRegistrazioneIvaPagatiResponse;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaOrdinativoIncasso;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaOrdinativoIncassoResponse;
 import it.csi.siac.siacfinser.integration.dad.CommonDad;
@@ -112,7 +112,7 @@ public class AnnullaOrdinativoIncassoService extends AbstractInserisceAggiornaAn
 		List<SubOrdinativoIncasso> elencoSubOrdinativiDiIncasso = new ArrayList<SubOrdinativoIncasso>();
 		ordinativoIncasso.setElencoSubOrdinativiDiIncasso(elencoSubOrdinativiDiIncasso);
 		SubOrdinativoInModificaInfoDto subOrdinativoInModificaInfoDto = ordinativoIncassoDad.valutaSubOrdinativi(elencoSubOrdinativiDiIncasso, (Integer) ordinativoIncasso.getIdOrdinativo().intValue(),
-				datiOperazioneAnnulla, bilancio, richiedente,Constanti.ORDINATIVO_TIPO_INCASSO, ente);
+				datiOperazioneAnnulla, bilancio, richiedente,CostantiFin.ORDINATIVO_TIPO_INCASSO, ente);
 		
 		//5. annullmento ordinativo (si invoca il metodo "core" rispetto all'operazione di annullamento di un ordinativo):
 		AnnullaOrdinativoIncassoInfoDto annullaInfo = ordinativoIncassoDad.annullaOrdinativoIncasso(bilancio, ente, annoOrdinativoIncasso, numeroOrdinativoIncasso, datiOperazioneAnnulla, richiedente);
@@ -210,12 +210,12 @@ public class AnnullaOrdinativoIncassoService extends AbstractInserisceAggiornaAn
 	{
 		// VERIFICA PRESENZA ORDINATIVI COLLEGATI:
 		return checkOrdinativiCollegatiPerAnnulla(datiOperazioneAnnulla,
-				req.getOrdinativoIncassoDaAnnullare(), Constanti.D_ORDINATIVO_TIPO_INCASSO);
+				req.getOrdinativoIncassoDaAnnullare(), CostantiFin.D_ORDINATIVO_TIPO_INCASSO);
 	}
 	
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {		
-		final String methodName = "AnnullaMutuoService : checkServiceParam()";
+		final String methodName = " checkServiceParam()";
 		log.debug(methodName, "- Begin");
 
 		StringBuffer elencoParamentriNonInizializzati = new StringBuffer();
@@ -255,13 +255,13 @@ public class AnnullaOrdinativoIncassoService extends AbstractInserisceAggiornaAn
 			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(elencoParamentriNonInizializzati));
 		}
 		
-		boolean isQuietanziato=ordinativoIncassoDad.checkTipoOrdinativo(req.getOrdinativoIncassoDaAnnullare().getAnno(), req.getOrdinativoIncassoDaAnnullare().getNumero(), StatoOperativoOrdinativo.QUIETANZATO, Constanti.D_ORDINATIVO_TIPO_INCASSO,datiOperazioneAnnulla);
-		
+		boolean isQuietanziato=ordinativoIncassoDad.checkTipoOrdinativo(req.getOrdinativoIncassoDaAnnullare().getAnno(), req.getOrdinativoIncassoDaAnnullare().getNumero(), StatoOperativoOrdinativo.QUIETANZATO, CostantiFin.D_ORDINATIVO_TIPO_INCASSO,datiOperazioneAnnulla);
+		//SIAC-8482
 		if (isQuietanziato) {
-			checkCondition(false, ErroreFin.STATO_MOVIMENTO_IMPOSSIBILE.getErrore("QUIETANZATO","ANNULLATO","Ordinativo Incasso"));
+			checkCondition(false, ErroreFin.OPERAZIONE_INCOMPATIBILE_CON_STATO_ENTITA.getErrore("Ordinativo Incasso", "QUIETANZATO"));
 		}
 		
-		boolean isAnnullato=ordinativoIncassoDad.checkTipoOrdinativo(req.getOrdinativoIncassoDaAnnullare().getAnno(), req.getOrdinativoIncassoDaAnnullare().getNumero(), StatoOperativoOrdinativo.ANNULLATO, Constanti.D_ORDINATIVO_TIPO_INCASSO, datiOperazioneAnnulla);
+		boolean isAnnullato=ordinativoIncassoDad.checkTipoOrdinativo(req.getOrdinativoIncassoDaAnnullare().getAnno(), req.getOrdinativoIncassoDaAnnullare().getNumero(), StatoOperativoOrdinativo.ANNULLATO, CostantiFin.D_ORDINATIVO_TIPO_INCASSO, datiOperazioneAnnulla);
 		
 		if (isAnnullato) {
 			checkCondition(false, ErroreFin.STATO_MOVIMENTO_IMPOSSIBILE.getErrore("ANNULLATO","ANNULLATO","Ordinativo Incasso"));

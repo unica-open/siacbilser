@@ -15,7 +15,7 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.business.service.enumeration.CodiceEventoEnum;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaLiquidazioneModulare;
@@ -64,7 +64,7 @@ public class AggiornaLiquidazioneModulareService extends AbstractBaseService<Agg
 		
 		//recupero lo stato che sto per andare ad aggiornare cosi da poter effettuare i controlli per la generale
 		String liqCodiceStatoPreModifica = liquidazioneDad.getStatoCode(liquidazione.getUid());
-		String liqCodiceStatoInModifica = Constanti.statoOperativoLiquidazioneEnumToString(liquidazione.getStatoOperativoLiquidazione());
+		String liqCodiceStatoInModifica = CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazione.getStatoOperativoLiquidazione());
 		
 		// Commento il controllo per richiamare l'aggiornaLiquidazioneModulare in modo da non essere vincolati al cambio stato
 		// anche perchè nel metodo aggiornaLiquidazioneModulare controllo già cosa fare in base a cosa arriva
@@ -82,8 +82,8 @@ public class AggiornaLiquidazioneModulareService extends AbstractBaseService<Agg
 		if(liquidazione.getStatoOperativoLiquidazione()!=null && req.isFlagAggiornaStato()){
 			
 			// sono in aggiorna liquidazione e varia lo stato da PROVVISORIO a VALIDO, REGISTRO con LIQ-INS
-			if(liqCodiceStatoPreModifica.equals(Constanti.LIQUIDAZIONE_STATO_PROVVISORIO) && 
-					Constanti.statoOperativoLiquidazioneEnumToString(liquidazioneAggiornata.getStatoOperativoLiquidazione()).equals(Constanti.LIQUIDAZIONE_STATO_VALIDO)){
+			if(liqCodiceStatoPreModifica.equals(CostantiFin.LIQUIDAZIONE_STATO_PROVVISORIO) && 
+					CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazioneAggiornata.getStatoOperativoLiquidazione()).equals(CostantiFin.LIQUIDAZIONE_STATO_VALIDO)){
 				
 				if(liquidazione.getSubdocumentoSpesa()!=null)
 					liquidazioneAggiornata.setSubdocumentoSpesa(liquidazione.getSubdocumentoSpesa());
@@ -107,8 +107,8 @@ public class AggiornaLiquidazioneModulareService extends AbstractBaseService<Agg
 			
 			
 			// sono in aggiorna liquidazione e varia lo stato da VALIDO a PROVVISORIO, annulla la registrazione della liquidazione 
-			if(liqCodiceStatoPreModifica.equals(Constanti.LIQUIDAZIONE_STATO_VALIDO) && 
-					Constanti.statoOperativoLiquidazioneEnumToString(liquidazioneAggiornata.getStatoOperativoLiquidazione()).equals(Constanti.LIQUIDAZIONE_STATO_PROVVISORIO)){
+			if(liqCodiceStatoPreModifica.equals(CostantiFin.LIQUIDAZIONE_STATO_VALIDO) && 
+					CostantiFin.statoOperativoLiquidazioneEnumToString(liquidazioneAggiornata.getStatoOperativoLiquidazione()).equals(CostantiFin.LIQUIDAZIONE_STATO_PROVVISORIO)){
 				
 				annullaRegistrazioneEPrimaNotaLiquidazione(TipoCollegamento.LIQUIDAZIONE, liquidazioneAggiornata);
 			}

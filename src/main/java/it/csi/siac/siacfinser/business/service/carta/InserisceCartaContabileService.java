@@ -21,8 +21,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioDocumentoSpesa;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaDettaglioDocumentoSpesaResponse;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceCartaContabile;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceCartaContabileResponse;
 import it.csi.siac.siacfinser.integration.dad.CartaContabileDad;
@@ -106,7 +106,7 @@ public class InserisceCartaContabileService extends AbstractGestioneCartaContabi
 		}
 		//FINE - Estrazione documenti dei subdocumentispesa
 
-		EsitoGestioneCartaContabileDto esitoInserisciCartaContabile=cartaContabileDad.inserisciCartaContabile(richiedente, Constanti.AMBITO_FIN,
+		EsitoGestioneCartaContabileDto esitoInserisciCartaContabile=cartaContabileDad.inserisciCartaContabile(richiedente, CostantiFin.AMBITO_FIN,
 				ente, bilancio, cartaContabile, datiOperazione);
 		
 		if (esitoInserisciCartaContabile.getListaErrori()!=null && esitoInserisciCartaContabile.getListaErrori().size()>0) {
@@ -183,7 +183,7 @@ public class InserisceCartaContabileService extends AbstractGestioneCartaContabi
 		}else {
 			if(cartaContabile.getCartaEstera()!=null){
 				if(cartaContabile.getCartaEstera().getCommissioniEstero()==null || 
-						StringUtils.isEmpty(cartaContabile.getCartaEstera().getCommissioniEstero().getCodice())){
+						StringUtilsFin.isEmpty(cartaContabile.getCartaEstera().getCommissioniEstero().getCodice())){
 					if(elencoParamentriNonInizializzati.length() > 0){
 						elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", COMMISSIONI_ESTERO";
 					}else{
@@ -192,7 +192,7 @@ public class InserisceCartaContabileService extends AbstractGestioneCartaContabi
 				}
 				
 				if(cartaContabile.getCartaEstera().getValuta()==null || 
-						StringUtils.isEmpty(cartaContabile.getCartaEstera().getValuta().getCodice())){
+						StringUtilsFin.isEmpty(cartaContabile.getCartaEstera().getValuta().getCodice())){
 					if(elencoParamentriNonInizializzati.length() > 0){
 						elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", VALUTA";
 					}else{
@@ -229,7 +229,7 @@ public class InserisceCartaContabileService extends AbstractGestioneCartaContabi
 //					if(isRigaDaMovimenti(preDocumentoCarta)){
 						//questo controllo solo per righe da movimenti
 						if(preDocumentoCarta.getContoTesoreria()==null ||
-								StringUtils.isEmpty(preDocumentoCarta.getContoTesoreria().getCodice())){
+								StringUtilsFin.isEmpty(preDocumentoCarta.getContoTesoreria().getCodice())){
 							if(elencoParamentriNonInizializzati.length() > 0){
 								elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", CONTO_TESORIERE_PREDOCUMENTO";
 							}else{
@@ -243,7 +243,7 @@ public class InserisceCartaContabileService extends AbstractGestioneCartaContabi
 		}
 
 
-		if(!StringUtils.isEmpty(elencoParamentriNonInizializzati)){
+		if(!StringUtilsFin.isEmpty(elencoParamentriNonInizializzati)){
 			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(elencoParamentriNonInizializzati));
 		}	
 	}	

@@ -33,7 +33,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siaccommon.util.JAXBUtility;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Azione;
@@ -41,9 +41,12 @@ import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Entita;
+import it.csi.siac.siaccorser.model.Errore;
+import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Operatore;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.ServiceRequest;
+import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import junit.framework.TestCase;
 
@@ -78,7 +81,7 @@ import junit.framework.TestCase;
 public abstract class BaseJunit4TestCase extends TestCase {
 
 	/** The log. */
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	/** The application context. */
 	@Autowired
@@ -202,6 +205,10 @@ public abstract class BaseJunit4TestCase extends TestCase {
 	 */
 	protected Bilancio getBilancio2016Test() {
 		return getBilancioTest(43,2016);
+	}
+
+	protected Bilancio getBilancio2020Test() {
+		return getBilancioTest(136,2020);
 	}
 	
 
@@ -593,6 +600,30 @@ public abstract class BaseJunit4TestCase extends TestCase {
 		wrapper.getAzioneRichiesta().setAzione(create(Azione.class, uidAzione));
 		
 		return wrapper;
+	}
+
+	protected void printErrors(String methodName, ServiceResponse res) {
+		if(res != null && res.getErrori() != null && !res.getErrori().isEmpty()) {
+			for(Errore err : res.getErrori()) {
+				log.error(methodName, err.getTesto());
+			}
+		}
+	}
+	
+	protected static <RES extends ServiceResponse> void assertFallimento(RES res) {
+		assertTrue(Esito.FALLIMENTO.equals(res.getEsito()));
+	}
+
+	protected static <RES extends ServiceResponse> void assertNotFallimento(RES res) {
+		assertFalse(Esito.FALLIMENTO.equals(res.getEsito()));
+	}
+
+	protected static <RES extends ServiceResponse> void assertSuccesso(RES res) {
+		assertTrue(Esito.SUCCESSO.equals(res.getEsito()));
+	}
+	
+	protected static <RES extends ServiceResponse> void assertNotSuccesso(RES res) {
+		assertFalse(Esito.SUCCESSO.equals(res.getEsito()));
 	}
 
 }

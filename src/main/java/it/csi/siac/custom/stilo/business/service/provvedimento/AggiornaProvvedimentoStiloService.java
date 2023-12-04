@@ -9,7 +9,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import it.csi.siac.custom.stilo.integration.dad.ProvvedimentoStiloDad;
+import it.csi.siac.custom.stilo.integration.dad.AttoAmministrativoStiloDad;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacbilser.business.service.provvedimento.AggiornaProvvedimentoService;
@@ -19,7 +19,7 @@ import it.csi.siac.siacbilser.business.service.provvedimento.AggiornaProvvedimen
 public class AggiornaProvvedimentoStiloService extends AggiornaProvvedimentoService {
 	
 	@Autowired
-	private ProvvedimentoStiloDad provvedimentoStiloDad;
+	private AttoAmministrativoStiloDad attoAmministrativoStiloDad;
 
 	
 	@Override
@@ -27,13 +27,13 @@ public class AggiornaProvvedimentoStiloService extends AggiornaProvvedimentoServ
 		
 		super.init();
 		
-		provvedimentoStiloDad.setLoginOperazione(loginOperazione);
-		provvedimentoStiloDad.setEnte(req.getEnte());
+		attoAmministrativoStiloDad.setLoginOperazione(loginOperazione);
+		attoAmministrativoStiloDad.setEnte(req.getEnte());
 	}
 	
 	@Override
 	protected Boolean isAnnullabile() {
-		return provvedimentoStiloDad.isAnnullabile(req.getAttoAmministrativo());
+		return attoAmministrativoStiloDad.isAnnullabile(req.getAttoAmministrativo());
 	}
 
 	
@@ -42,7 +42,7 @@ public class AggiornaProvvedimentoStiloService extends AggiornaProvvedimentoServ
 	protected void effettuaOperazioniCollegateCambioStatoProvvedimento(AttoAmministrativo attoAmministrativoAggiornato) {
 		
 		if (StatoOperativoAtti.ANNULLATO.equals(req.getAttoAmministrativo().getStatoOperativoAtti())) {
-			provvedimentoStiloDad.annullaMovimentiGestioneCollegatiAllAttoAmm(req.getAttoAmministrativo());
+			attoAmministrativoStiloDad.annullaMovimentiGestioneCollegatiAllAttoAmm(req.getAttoAmministrativo());
 		}
 		
 		super.effettuaOperazioniCollegateCambioStatoProvvedimento(attoAmministrativoAggiornato);

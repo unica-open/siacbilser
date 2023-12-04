@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.integration.entity.enumeration.EnumEntity;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 
 /**
@@ -41,7 +41,7 @@ public class EnumEntityFactory {
 	/** Lock for synchronization */
 	private static final Object LOCK = new Object();
 	/** The log. */
-	private static LogUtil log = new LogUtil(EnumEntityFactory.class);
+	private static LogSrvUtil log = new LogSrvUtil(EnumEntityFactory.class);
 	
 	/** The entity manager. */
 	@PersistenceContext

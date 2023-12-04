@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.integration.entity.enumeration.CodificheEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.integration.dad.base.BaseDadImpl;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
 import it.csi.siac.siaccorser.model.Codifica;
@@ -44,7 +44,7 @@ import it.csi.siac.siaccorser.model.Codifica;
 public class CodificheFactory extends BaseDadImpl {
 	
 	/** The log. */
-	private static LogUtil log = new LogUtil(CodificheFactory.class);
+	private static LogSrvUtil log = new LogSrvUtil(CodificheFactory.class);
 	
 	/** The entity manager. */
 	@PersistenceContext

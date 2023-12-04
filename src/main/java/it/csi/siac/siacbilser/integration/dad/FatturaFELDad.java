@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.integration.dao.FatturaFELDao;
 import it.csi.siac.siacbilser.integration.dao.SiacRDocSirfelRepository;
+import it.csi.siac.siacbilser.integration.dao.SirfelTDatiRitenutaRepository;
 import it.csi.siac.siacbilser.integration.dao.SirfelTFatturaNumRepository;
 import it.csi.siac.siacbilser.integration.dao.SirfelTFatturaRepository;
 import it.csi.siac.siacbilser.integration.dao.SirfelTPrestatoreNumRepository;
@@ -29,6 +30,7 @@ import it.csi.siac.siacbilser.integration.entity.SirfelTCausale;
 import it.csi.siac.siacbilser.integration.entity.SirfelTCausalePK;
 import it.csi.siac.siacbilser.integration.entity.SirfelTDatiGestionali;
 import it.csi.siac.siacbilser.integration.entity.SirfelTDatiGestionaliPK;
+import it.csi.siac.siacbilser.integration.entity.SirfelTDatiRitenuta;
 import it.csi.siac.siacbilser.integration.entity.SirfelTDettaglioPagamento;
 import it.csi.siac.siacbilser.integration.entity.SirfelTDettaglioPagamentoPK;
 import it.csi.siac.siacbilser.integration.entity.SirfelTFattura;
@@ -53,6 +55,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SirfelDTipoDocument
 import it.csi.siac.siacbilser.integration.entitymapping.FelMapId;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siacfin2ser.model.Documento;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.sirfelser.model.CassaPrevidenzialeFEL;
 import it.csi.siac.sirfelser.model.CausaleFEL;
@@ -67,6 +70,7 @@ import it.csi.siac.sirfelser.model.PortaleFattureFEL;
 import it.csi.siac.sirfelser.model.PrestatoreFEL;
 import it.csi.siac.sirfelser.model.ProtocolloFEL;
 import it.csi.siac.sirfelser.model.RiepilogoBeniFEL;
+import it.csi.siac.sirfelser.model.RitenutaFEL;
 import it.csi.siac.sirfelser.model.StatoAcquisizioneFEL;
 
 /**
@@ -90,6 +94,10 @@ public class FatturaFELDad extends ExtendedBaseDadImpl {
 	@Autowired
 	private SirfelTPrestatoreNumRepository sirfelTPrestatoreNumRepository;
 	
+	//SIAC-7557
+	@Autowired
+	private SirfelTDatiRitenutaRepository sirfelTDatiRitenutaRepository ;
+	
 	@Autowired
 	private FatturaFELDao fatturaFELDao;
 
@@ -106,18 +114,33 @@ public class FatturaFELDad extends ExtendedBaseDadImpl {
 		// XXX: l'entity pare non tirare su la sola lista dei riepiloghi beni. Come workaround la tiriamo su separatamente
 //		List<SirfelTRiepilogoBeni> sirfelTRiepilogoBenis = sirfelTFatturaRepository.findSirfelTRiepilogoBenisByIdFatturaEEnte(idFattura, ente.getUid());
 		//sirfelTFattura.setSirfelTRiepilogoBenis(sirfelTRiepilogoBenis);
+		FatturaFEL fattura = mapNotNull(sirfelTFattura, FatturaFEL.class, FelMapId.SirfelTFattura_FatturaFEL);
 		
-		return mapNotNull(sirfelTFattura, FatturaFEL.class, FelMapId.SirfelTFattura_FatturaFEL);
+		//task-173
+		if(sirfelTFattura.getSiacRDocSirfels() != null) {
+			fattura.setDocumentoSpesa(new DocumentoSpesa());
+			fattura.getDocumentoSpesa().setSiopeIdentificativoLottoSdi(estrazioneSiope(sirfelTFattura.getSiacRDocSirfels().get(0)));
+		}
+		
+		return fattura;
+	}
+	
+	//task-173
+	private String estrazioneSiope(SiacRDocSirfel rdoc) {
+		return rdoc.getSiacTDoc().getDocSdiLottoSiope();
 	}
 
 
 	public ListaPaginata<FatturaFEL> ricercaSinteticaFatturaFEL( 
 			FatturaFEL fatturaFEL, Date dataDa, Date dataA, ParametriPaginazione parametriPaginazione) {
 		
+		//SIAC-7557 Inizio Modifica Prendo il valore caricato dal DB
 		SirfelDTipoDocumentoEnum sirfelDTipoDocumentoEnum = SirfelDTipoDocumentoEnum.byTipoDocumentoFELEvenNull(fatturaFEL.getTipoDocumentoFEL());
 		
 		Page<SirfelTFattura> sirfelTFatturas = fatturaFELDao.ricercaSinteticaFatturaFEL(ente.getUid(),
-				sirfelDTipoDocumentoEnum,
+				//SIAC-7557
+				//sirfelDTipoDocumentoEnum,
+				fatturaFEL.getTipoDocFEL() != null ? fatturaFEL.getTipoDocFEL().getCodice() : null,
 				fatturaFEL.getPrestatore() != null ? fatturaFEL.getPrestatore().getCodicePrestatore() : null,
 				fatturaFEL.getNumero(),	
 				fatturaFEL.getCodiceDestinatario(),
@@ -150,8 +173,16 @@ public class FatturaFELDad extends ExtendedBaseDadImpl {
 		sirfelTFatturaRepository.saveAndFlush(sirfelTFattura);
 	}
 	
-
-	public void inserisciRelazioneDocumentoFattura(DocumentoSpesa docSpesa, FatturaFEL fatturaFEL) {
+	/**
+	 * SIAC-7717 
+	 * Si porta il DocumentoDiSpesa a Generic
+	 * in modo da consentire il comportamento anche per le Fatture di Spesa Negative (FSN)
+	 * 
+	 * @param <D> figlio di Documento<?,?>
+	 * @param doc (Entrata, Spesa)
+	 * @param fatturaFEL
+	 */
+	public <D extends Documento<?, ?>> void inserisciRelazioneDocumentoFattura(D doc, FatturaFEL fatturaFEL) {
 		Date now = new Date();
 		SiacRDocSirfel siacRDocSirfel = new SiacRDocSirfel();
 		
@@ -163,7 +194,7 @@ public class FatturaFELDad extends ExtendedBaseDadImpl {
 		siacRDocSirfel.setSirfelTFattura(sirfelTFattura);
 		//documento
 		SiacTDoc siacTDoc = new SiacTDoc();
-		siacTDoc.setUid(docSpesa.getUid());
+		siacTDoc.setUid(doc.getUid());
 		siacRDocSirfel.setSiacTDoc(siacTDoc);
 		//date e login
 		siacRDocSirfel.setDataModificaInserimento(now);
@@ -332,6 +363,9 @@ public class FatturaFELDad extends ExtendedBaseDadImpl {
 		
 		fatturaFELDao.create(sirfelTCassaPrevidenziale);
 	}
+	
+	
+	
 	private SirfelTCassaPrevidenziale buildSirfelTCassaPrevidenziale(CassaPrevidenzialeFEL cassaPrevidenzialeFEL) {
 		final String methodName = "buildSirfelTCassaPrevidenziale";
 		SirfelTCassaPrevidenziale sirfelTCassaPrevidenziale = map(cassaPrevidenzialeFEL, SirfelTCassaPrevidenziale.class, FelMapId.SirfelTCassaPrevidenziale_CassaPrevidenzialeFEL);
@@ -346,6 +380,47 @@ public class FatturaFELDad extends ExtendedBaseDadImpl {
 		}
 		
 		return sirfelTCassaPrevidenziale;
+	}
+	
+	
+	/*
+	 * SIAC-7557
+	 */
+	public void inserisciDatiRitenutaFEL(RitenutaFEL ritenutaFEL) {
+		SirfelTDatiRitenuta sirfelTDatiRitenuta = new SirfelTDatiRitenuta();
+		
+		sirfelTDatiRitenuta.setAliquota(ritenutaFEL.getAliquota());
+		sirfelTDatiRitenuta.setImporto(ritenutaFEL.getImporto());
+		sirfelTDatiRitenuta.setTipo(ritenutaFEL.getTipo());
+		
+		
+		sirfelTDatiRitenuta.setCausalePagamento(ritenutaFEL.getCausalePagamento());
+		
+		
+		Date now = new Date();
+		SiacTEnteProprietario siacTEnteProprietario = new SiacTEnteProprietario();
+		siacTEnteProprietario.setUid(ritenutaFEL.getEnte().getUid());
+		//sirfelTDatiRitenuta.setSiacTEnteProprietario(siacTEnteProprietario);
+		
+		// TODO: login operazione?
+		sirfelTDatiRitenuta.setLoginOperazione("SIRFEL");
+		sirfelTDatiRitenuta.setDataCreazione(now);
+		sirfelTDatiRitenuta.setDataModifica(now);
+		sirfelTDatiRitenuta.setDataInizioValidita(now);
+		
+		//SirfelTFattura sirfelTFattura = new SirfelTFattura();
+		SirfelTFatturaPK sirfelTFatturaPK = new SirfelTFatturaPK();
+		sirfelTFatturaPK.setIdFattura(ritenutaFEL.getFattura().getIdFattura());
+		sirfelTFatturaPK.setEnteProprietarioId(siacTEnteProprietario.getEnteProprietarioId());
+//		sirfelTFattura.setId(sirfelTFatturaPK);
+		SirfelTFattura sirfelTFattura = sirfelTFatturaRepository.findOne(sirfelTFatturaPK);
+
+		sirfelTDatiRitenuta.setSirfelTFattura(sirfelTFattura);
+		
+		
+		
+		
+		sirfelTDatiRitenutaRepository.save(sirfelTDatiRitenuta);
 	}
 	
 	public void inserisciFattureCollegateFEL(FattureCollegateFEL fatturaCollegata) {

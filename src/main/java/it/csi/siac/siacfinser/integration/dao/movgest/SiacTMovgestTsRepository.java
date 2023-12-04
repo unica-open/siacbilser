@@ -53,11 +53,12 @@ public interface SiacTMovgestTsRepository extends JpaRepository<SiacTMovgestTsFi
 	@Query("FROM SiacTMovgestTsFin m "
 			+ " WHERE m.siacTMovgest.movgestId = :movgestId "
 			+ " AND m.siacDMovgestTsTipo.movgestTsTipoCode = 'T' "
-			+ " AND m.dataCancellazione IS NULL ")
+			+ " AND m.dataCancellazione IS NULL "
+			+ " AND m.dataFineValidita IS NULL ")
 	List<SiacTMovgestTsFin> findSiacTMovgestTestataBySiacTMovgestId(@Param("movgestId") Integer movgestId);
 	
 	
-	@Query("FROM SiacTMovgestTsFin WHERE siacTEnteProprietario.enteProprietarioId = :enteProprietarioId AND siacTMovgest.movgestId = :idMovgest AND " + condizione)
-	public List<SiacTMovgestTsFin> findMovgestTsByTMovgest(@Param("enteProprietarioId") Integer enteProprietarioId,@Param("dataInput") Timestamp  dataInput, @Param("idMovgest") Integer idMovgest);
+	@Query("FROM SiacTMovgestTsFin WHERE siacTEnteProprietario.enteProprietarioId = :enteProprietarioId AND siacTMovgest.movgestId = :idMovgest AND siacTMovgest.dataCancellazione IS NULL ")
+	public List<SiacTMovgestTsFin> findMovgestTsByTMovgest(@Param("enteProprietarioId") Integer enteProprietarioId, @Param("idMovgest") Integer idMovgest);
 	
 }

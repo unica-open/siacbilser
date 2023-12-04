@@ -41,6 +41,8 @@ SPDX-License-Identifier: EUPL-1.2
 			<a>descrizioneArticolo</a>
 			<b>elemDesc2</b>
 		</field>
+
+
 		<field custom-converter="it.csi.siac.siaccommonser.business.dtomapping.converter.StringFormatConverter" custom-converter-param="%05d"
 			type="one-way">
 			<a>numeroCapitolo</a> <!-- Integer -->

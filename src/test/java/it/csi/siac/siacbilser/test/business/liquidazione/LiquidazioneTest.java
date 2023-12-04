@@ -15,7 +15,7 @@ import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Richiedente;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.liquidazione.AggiornaLiquidazioneService;
 import it.csi.siac.siacfinser.business.service.liquidazione.RicercaEstesaLiquidazioniFinService;
 import it.csi.siac.siacfinser.business.service.liquidazione.RicercaLiquidazionePerChiaveService;
@@ -90,12 +90,12 @@ public class LiquidazioneTest extends BaseJunit4TestCase {
 		liquidazione.setNumeroLiquidazione(new BigDecimal("81099"));
 		prl.setLiquidazione(liquidazione);
 		
-		prl.setTipoRicerca(Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE);
+		prl.setTipoRicerca(CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE);
 		Bilancio bilancio = getBilancioByProperties("consip", "regp", "2016");
 		prl.setBilancio(bilancio);
 		prl.setAnnoEsercizio(Integer.valueOf(prl.getBilancio().getAnno()));
 
-		prl.setTipoRicerca(Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE);
+		prl.setTipoRicerca(CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE);
 
 		
 		reqRicerca.setpRicercaLiquidazioneK(prl);

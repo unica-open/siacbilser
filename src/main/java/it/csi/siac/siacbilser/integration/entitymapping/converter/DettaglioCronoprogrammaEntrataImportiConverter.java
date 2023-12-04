@@ -26,7 +26,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTCronopElemDet;
 import it.csi.siac.siacbilser.integration.entity.SiacTPeriodo;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemDetTipoEnum;
 import it.csi.siac.siacbilser.model.DettaglioEntrataCronoprogramma;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Esito;
 
@@ -38,7 +38,7 @@ import it.csi.siac.siaccorser.model.Esito;
 public class DettaglioCronoprogrammaEntrataImportiConverter extends DozerConverter<DettaglioEntrataCronoprogramma, SiacTCronopElem> {	
 
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

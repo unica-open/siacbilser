@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacfinser.integration.entity.enumeration;
 
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.StatoBilancio;
+import it.csi.siac.siaccorser.model.StatoBilancio;
 import it.csi.siac.siacfinser.integration.entity.converter.EnumEntityFin;
 
 @EnumEntityFin(entityName="SiacDBilStatoOpFin", idPropertyName="bilStatoOpId", codePropertyName="bilStatoOpCode")

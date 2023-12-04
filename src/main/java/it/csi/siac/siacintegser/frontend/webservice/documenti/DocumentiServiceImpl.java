@@ -19,6 +19,7 @@ import it.csi.siac.siacintegser.business.service.documenti.ElaboraAttiAmministra
 import it.csi.siac.siacintegser.business.service.documenti.ElaboraDocumentoGenericoAsyncService;
 import it.csi.siac.siacintegser.business.service.documenti.ElaboraDocumentoGenericoService;
 import it.csi.siac.siacintegser.business.service.documenti.LeggiStatoElaborazioneDocumentoService;
+import it.csi.siac.siacintegser.business.service.test.TestService;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraAttiAmministrativi;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraAttiAmministrativiAsyncResponse;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraAttiAmministrativiResponse;
@@ -27,6 +28,8 @@ import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraDocumen
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.ElaboraDocumentoResponse;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.LeggiStatoElaborazioneDocumento;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.LeggiStatoElaborazioneDocumentoResponse;
+import it.csi.siac.siacintegser.frontend.webservice.msg.test.Test;
+import it.csi.siac.siacintegser.frontend.webservice.msg.test.TestResponse;
 
 @WebService(serviceName = "DocumentiService", 
 	portName = "DocumentiServicePort", 
@@ -43,6 +46,12 @@ public class DocumentiServiceImpl implements DocumentiService
 	public void init()
 	{
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
+
+	@Override
+	@WebMethod
+	public @WebResult TestResponse test(@WebParam Test request) {
+		return appCtx.getBean(TestService.class).executeService(request);
 	}
 
 	@Override

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
 SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
 SPDX-License-Identifier: EUPL-1.2
@@ -69,8 +70,14 @@ SPDX-License-Identifier: EUPL-1.2
 			<a>this</a>
 			<b>this</b>
 		</field>
-		
+		<!-- SIAC-7349 -->
+		<!-- 
 		<field custom-converter-id="tipoComponenteImportiCapitoloTipoGestioneComponenteImportiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		 -->
+		<field custom-converter-id="tipoComponenteImportiCapitoloImpegnabileComponenteImportiCapitoloConverter">
 			<a>this</a>
 			<b>this</b>
 		</field>

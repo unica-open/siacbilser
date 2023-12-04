@@ -18,7 +18,7 @@ import it.csi.siac.siacbilser.integration.dao.SiacTBilElemRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacRClassFamTree;
 import it.csi.siac.siacbilser.integration.entity.SiacTClass;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 
 // TODO: Auto-generated Javadoc
@@ -27,7 +27,7 @@ import it.csi.siac.siaccorser.model.TipologiaClassificatore;
  */
 public class CodificaBilDaoImplTest extends BaseJunit4TestCase {
 	
-	private final LogUtil l = new LogUtil(getClass());
+	private final LogSrvUtil l = new LogSrvUtil(getClass());
 	
 	/** The codifica bil dao. */
 	private CodificaBilDao codificaBilDao;

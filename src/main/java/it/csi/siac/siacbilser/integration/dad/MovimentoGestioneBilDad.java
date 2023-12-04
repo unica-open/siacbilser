@@ -12,21 +12,33 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import it.csi.siac.siacbilser.integration.dad.mapper.movimentogestione.SiacTMovgestMovimentoGestioneMapper;
+import it.csi.siac.siacbilser.integration.dad.mapper.util.MapperDecoratorHelper;
 import it.csi.siac.siacbilser.integration.dao.MovimentoGestioneDao;
 import it.csi.siac.siacbilser.integration.dao.SiacTModificaBilRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTMovgestBilRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTMovgestTRepository;
 import it.csi.siac.siacbilser.integration.entity.SiacTClass;
+import it.csi.siac.siacbilser.integration.entity.SiacTMovgest;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgestT;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDClassTipoEnum;
+import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTsDetTipoEnum;
+import it.csi.siac.siacbilser.integration.entity.helper.SiacTMovgestHelper;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
+import it.csi.siac.siacbilser.model.StatoOperativoMovimentoGestione;
+import it.csi.siac.siacbilser.model.movimentogestione.MovimentoGestioneModelDetail;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.MovimentoGestione;
 
-
-public abstract class MovimentoGestioneBilDad<MG extends MovimentoGestione> extends ExtendedBaseDadImpl  {
+@Component
+@Scope(BeanDefinition.SCOPE_SINGLETON)
+public /*can't be abstract*/ class MovimentoGestioneBilDad<MG extends MovimentoGestione> extends ExtendedBaseDadImpl  {
 	
 	/** The siac t movgest t repository. */
 	@Autowired
@@ -39,11 +51,32 @@ public abstract class MovimentoGestioneBilDad<MG extends MovimentoGestione> exte
 	protected SiacTModificaBilRepository siacTModificaBilRepository;
 	
 	
-	@Autowired
-	protected MovimentoGestioneDao movimentoGestioneDao;
+	@Autowired	protected MovimentoGestioneDao movimentoGestioneDao;
+	
+	@Autowired	protected SiacTMovgestHelper siacTMovgestHelper;
+	@Autowired	@Qualifier("SiacTMovgestMovimentoGestioneMapper") protected SiacTMovgestMovimentoGestioneMapper siacTMovgestMovimentoGestioneMapper;
+	@Autowired	protected MapperDecoratorHelper mapperDecoratorHelper;
 	
 	
+	public MovimentoGestione ricercaMovimentoGestione(MovimentoGestione movimentoGestione, MovimentoGestioneModelDetail... movimentoGestioneModelDetail) {
+		
+		SiacTMovgest siacTMovgest = movimentoGestioneDao.findById(movimentoGestione.getUid());
+
+		return siacTMovgestMovimentoGestioneMapper.map(siacTMovgest, mapperDecoratorHelper.getDecoratorsFromModelDetails(movimentoGestioneModelDetail));
+	}
+
 	
+	/**
+	 * Ricerca lo stato associato al movimento passato in input
+	 * 
+	 * @param movimentoGestione 
+	 * 
+	 * @return StatoOperativoMovimentoGestione 
+	 */
+	public StatoOperativoMovimentoGestione findStatoOperativoMovimentoGestioneByMovimentoGestione(Integer movimentoGestioneId) {
+		return StatoOperativoMovimentoGestione.fromCodice(siacTMovgestHelper.getSiacDMovgestStato(
+				movimentoGestioneDao.findById(movimentoGestioneId)).getMovgestStatoCode());
+	}
 	
 	/**
 	 * Ottiene la testata a partire dall'uid del movimento
@@ -196,6 +229,16 @@ public abstract class MovimentoGestioneBilDad<MG extends MovimentoGestione> exte
 		return pdc;
 	}
 	
-
+	/**
+	 * Ritorna l'elenco dei movimenti dato anno , numero, tipo e ente
+	 * @param movgestAnno anno del movimento
+	 * @param movgestNumero nuemro del movimento
+	 * @param siacDMovgestTipoEnum tipo movimento
+	 * @param enteProprietarioId
+	 * @return elenco movgest
+	 */
+	public List<SiacTMovgest> findSiacTMovgestByAnnoNumeroTipo(Integer movgestAnno, BigDecimal movgestNumero, SiacDMovgestTipoEnum siacDMovgestTipoEnum, Integer enteProprietarioId) {
+		return siacTMovgestBilRepository.findMovgestByAnnoNumeroTipo(movgestAnno, movgestNumero, siacDMovgestTipoEnum.getCodice(), enteProprietarioId);
+	}
 
 }

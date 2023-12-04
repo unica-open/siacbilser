@@ -5,6 +5,7 @@
 package it.csi.siac.siacbilser.business.service.classificatorebil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,11 +99,18 @@ extends CheckedAccountBaseService<LeggiTreePianoDeiConti, LeggiTreePianoDeiConti
 	 * @param padre the padre
 	 * @return the list
 	 */
-	public  List<ElementoPianoDeiConti> convertTreeDto(List<SiacTClass> dtos,
-			List<ElementoPianoDeiConti> list, ElementoPianoDeiConti padre) {
-
+	public List<ElementoPianoDeiConti> convertTreeDto(List<SiacTClass> dtos, List<ElementoPianoDeiConti> list, ElementoPianoDeiConti padre) {
+		
+		//SIAC-8546 
+		Date primoGiornoAnno = Utility.primoGiornoDellAnno(req.getAnno());
+		
 		for (SiacTClass dto : dtos) {
 
+			//SIAC-8546
+			if(!dto.isDataValiditaCompresa(primoGiornoAnno)) {
+				continue;
+			}
+			
 			ElementoPianoDeiConti obj = new ElementoPianoDeiConti();
 
 			obj.setUid(dto.getUid());
@@ -126,11 +134,14 @@ extends CheckedAccountBaseService<LeggiTreePianoDeiConti, LeggiTreePianoDeiConti
 				List<SiacTClass> figli = new ArrayList<SiacTClass>();
 				
 				for(SiacRClassFamTree srcftp : siacRClassFamTreesPadre) {
-					if(srcftp.getDataCancellazione()!=null
-							|| !srcftp.isDataValiditaCompresa(Utility.primoGiornoDellAnno(req.getAnno()) /*qui ci va una data compresa nell'anno di bilancio*/)){
+					/*qui ci va una data compresa nell'anno di bilancio*/
+					if(srcftp.getDataCancellazione() != null || !srcftp.isDataValiditaCompresa(primoGiornoAnno)){
 						continue;
 					}
-					figli.add(srcftp.getSiacTClassFiglio());
+					//SIAC-8546
+					if(srcftp.getSiacTClassFiglio() != null && srcftp.getSiacTClassFiglio().isDataValiditaCompresa(primoGiornoAnno)) {
+						figli.add(srcftp.getSiacTClassFiglio());
+					}
 				}
 
 				List<ElementoPianoDeiConti> elemPdc = new ArrayList<ElementoPianoDeiConti>();

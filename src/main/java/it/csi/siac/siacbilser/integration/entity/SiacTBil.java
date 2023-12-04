@@ -46,11 +46,6 @@ public class SiacTBil extends SiacTEnteBase {
 	@Column(name="bil_desc")
 	private String bilDesc;
 
-	
-	
-	
-	
-
 	//bi-directional many-to-one association to SiacRBilFaseOperativa
 	/** The siac r bil fase operativas. */
 	@OneToMany(mappedBy="siacTBil")
@@ -137,6 +132,10 @@ public class SiacTBil extends SiacTEnteBase {
 	//bi-directional many-to-one association to SiacRBilAttr
 	@OneToMany(mappedBy="siacTBil", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
 	private List<SiacRBilAttr> siacRBilAttrs;
+	// SIAC-7858
+	// bi-directional many-to-one association to SiacTAccFondiDubbiaEsigBil
+	@OneToMany(mappedBy="siacTBil")
+	private List<SiacTAccFondiDubbiaEsigBil> siacTAccFondiDubbiaEsigBils;
 
 	/**
 	 * Instantiates a new siac t bil.
@@ -698,6 +697,50 @@ public class SiacTBil extends SiacTEnteBase {
 		siacRBilAttr.setSiacTBil(null);
 
 		return siacRBilAttr;
+	}
+	
+	/**
+	 * Gets the siac T acc fondi dubbia esig bils.
+	 *
+	 * @return the siac T acc fondi dubbia esig bils
+	 */
+	public List<SiacTAccFondiDubbiaEsigBil> getSiacTAccFondiDubbiaEsigBils() {
+		return this.siacTAccFondiDubbiaEsigBils;
+	}
+
+	/**
+	 * Sets the siac T acc fondi dubbia esig bils.
+	 *
+	 * @param siacTAccFondiDubbiaEsigBils the new siac T acc fondi dubbia esig bils
+	 */
+	public void setSiacTAccFondiDubbiaEsigBils(List<SiacTAccFondiDubbiaEsigBil> siacTAccFondiDubbiaEsigBils) {
+		this.siacTAccFondiDubbiaEsigBils = siacTAccFondiDubbiaEsigBils;
+	}
+
+	/**
+	 * Adds the siac T acc fondi dubbia esig bil.
+	 *
+	 * @param siacTAccFondiDubbiaEsigBil the siac T acc fondi dubbia esig bil
+	 * @return the siac T acc fondi dubbia esig bil
+	 */
+	public SiacTAccFondiDubbiaEsigBil addSiacTAccFondiDubbiaEsigBil(SiacTAccFondiDubbiaEsigBil siacTAccFondiDubbiaEsigBil) {
+		getSiacTAccFondiDubbiaEsigBils().add(siacTAccFondiDubbiaEsigBil);
+		siacTAccFondiDubbiaEsigBil.setSiacTBil(this);
+
+		return siacTAccFondiDubbiaEsigBil;
+	}
+
+	/**
+	 * Removes the siac T acc fondi dubbia esig bil.
+	 *
+	 * @param siacTAccFondiDubbiaEsigBil the siac T acc fondi dubbia esig bil
+	 * @return the siac T acc fondi dubbia esig bil
+	 */
+	public SiacTAccFondiDubbiaEsigBil removeSiacTAccFondiDubbiaEsigBil(SiacTAccFondiDubbiaEsigBil siacTAccFondiDubbiaEsigBil) {
+		getSiacTAccFondiDubbiaEsigBils().remove(siacTAccFondiDubbiaEsigBil);
+		siacTAccFondiDubbiaEsigBil.setSiacTBil(null);
+
+		return siacTAccFondiDubbiaEsigBil;
 	}
 
 	/* (non-Javadoc)

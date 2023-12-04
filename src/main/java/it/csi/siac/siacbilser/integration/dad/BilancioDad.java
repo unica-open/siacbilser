@@ -27,7 +27,7 @@ import it.csi.siac.siacbilser.model.AttributiBilancio;
 import it.csi.siac.siaccommonser.integration.dad.base.BaseDadImpl;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacfin2ser.model.Periodo;
 
 /**
@@ -65,12 +65,7 @@ public class BilancioDad extends BaseDadImpl  {
 	 * @return true, se la fase e' esercizio provvisiorio
 	 */
 	public boolean isFaseEsercizioProvvisiorio(int anno) {
-		SiacTPeriodo periodoEntity = siacTPeriodoRepository.findByAnnoAndEnteProprietario(Integer.toString(anno), enteEntity);
-		SiacDFaseOperativa fase = siacTBilRepository.getFase(periodoEntity, enteEntity);
-		if (fase == null){
-			return false;
-		} 
-		return SiacDFaseOperativaEnum.EsercizioProvvisorio.getCodice().equals(fase.getFaseOperativaCode());
+		return SiacDFaseOperativaEnum.EsercizioProvvisorio.equals(getSiacDFaseOperativaEnum(anno));
 	}
 	
 	
@@ -283,5 +278,17 @@ public class BilancioDad extends BaseDadImpl  {
 			return null;
 		}		
 		return mapNotNull(siacTBils.get(0), Bilancio.class, BilMapId.SiacTBil_Bilancio);
+	}
+	
+	public SiacDFaseOperativaEnum getSiacDFaseOperativaEnum (Integer anno) {
+		
+		SiacDFaseOperativa siacDFaseOperativa = siacTBilRepository.getSiacDFaseOperativaByAnno(anno, enteEntity.getUid());
+		
+		if (siacDFaseOperativa == null) {
+			return null;
+		}
+		
+		return SiacDFaseOperativaEnum.byCodice(siacDFaseOperativa.getFaseOperativaCode());
+		
 	}
 }

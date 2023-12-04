@@ -15,7 +15,7 @@ import it.csi.siac.siaccommon.util.JAXBUtility;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siacfinser.ReintroitoUtils;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.ReintroitoOrdinativoPagamentoResponse;
 
 /**
@@ -43,24 +43,24 @@ public class ReintroitoOrdinativoPagamentoAsyncResponseHandler extends BilAsyncR
 		
 		boolean endElab = elaborazioniManager.endElaborazione(ReintroitoOrdinativoPagamentoAsyncService.class, elabKey);
 		if(endElab){
-			log.info(methodName, "Elaborazione segnata come terminata.");
+			log.debug(methodName, "Elaborazione segnata come terminata.");
 		}
 		
 		//Imposto come Messaggio la response del servizio.
 		inserisciDettaglioOperazioneAsinc("ServiceResponse","Response del servizio: "
 				+ReintroitoOrdinativoPagamentoService.class.getSimpleName()+".", Esito.SUCCESSO, null, JAXBUtility.marshall(response));
 		
-		if(!StringUtils.isEmpty(response.getErrori())){
+		if(!StringUtilsFin.isEmpty(response.getErrori())){
 			//CONSIDERO FALLIMENTO LA PRESENZA DI ERRORI 
 			//PER NON PERDERE INFORMAZIONE SE HO DIMENTICATO DI SETTERE isFallimento
 			for(Errore errore : response.getErrori()) {
 				log.info(methodName, "Errore riscontrato: " + errore.getTesto());
 				inserisciDettaglioOperazioneAsinc(errore.getCodice(), errore.getDescrizione(), Esito.FALLIMENTO);
 			}
-		} else if(!response.isFallimento() && !StringUtils.isEmpty(response.getMessaggi())){
+		} else if(!response.isFallimento() && !StringUtilsFin.isEmpty(response.getMessaggi())){
 			//SE NON CI SONO ERRORI, E NON E' FALLIMENTO E CI SONO MESSAGGI:
 			for(Errore errore : response.getMessaggi()) {
-				log.info(methodName, "Messaggio: " + errore.getCodice() + " - "+ errore.getDescrizione());
+				log.debug(methodName, "Messaggio: " + errore.getCodice() + " - "+ errore.getDescrizione());
 				inserisciDettaglioOperazioneAsinc(errore.getCodice(), errore.getDescrizione(), Esito.SUCCESSO);
 			}
 		}

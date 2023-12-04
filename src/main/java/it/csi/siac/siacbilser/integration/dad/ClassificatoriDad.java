@@ -508,14 +508,14 @@ public class ClassificatoriDad extends ExtendedBaseDadImpl {
 
 
 	public Codifica ricercaClassificatoreGerarchicoByCodiceAndTipoAndAnno(Codifica classificatore, TipologiaClassificatore tipoClassificatore, Integer uidEnte, Integer anno) {
-		return ricercaClassificatoreByCodiceAndTipoAndAnno(classificatore, tipoClassificatore, uidEnte, anno, BilMapId.SiacTClass_ClassificatoreGerarchico);
+		return ricercaClassificatoreByCodiceAndTipoAndAnno(classificatore, tipoClassificatore, uidEnte, anno);
 	}
 	
-	public Codifica ricercaClassificatoreGenericoByCodiceAndTipoAndAnno(Codifica classificatore, TipologiaClassificatore tipoClassificatore, Integer uidEnte, Integer anno) {
-		return ricercaClassificatoreByCodiceAndTipoAndAnno(classificatore, tipoClassificatore, uidEnte, anno, BilMapId.SiacTClass_ClassificatoreGenerico);
-	}
-	
-	private Codifica ricercaClassificatoreByCodiceAndTipoAndAnno(Codifica classificatore, TipologiaClassificatore tipoClassificatore, Integer uidEnte, Integer anno, MapId mapId) {
+//	public Codifica ricercaClassificatoreGenericoByCodiceAndTipoAndAnno(Codifica classificatore, TipologiaClassificatore tipoClassificatore, Integer uidEnte, Integer anno) {
+//		return ricercaClassificatoreByCodiceAndTipoAndAnno(classificatore, tipoClassificatore, uidEnte, anno);
+//	}
+//	
+	private Codifica ricercaClassificatoreByCodiceAndTipoAndAnno(Codifica classificatore, TipologiaClassificatore tipoClassificatore, Integer uidEnte, Integer anno) {
 		SiacDClassTipoEnum siacDClassTipoEnum = SiacDClassTipoEnum.byTipologiaClassificatore(tipoClassificatore);
 		SiacTClass siacTClass = siacTClassDao.findClassifByCodiceAndEnteAndTipoCode(classificatore.getCodice(), uidEnte, anno, siacDClassTipoEnum.getCodice());
 		

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
 import it.csi.siac.siacfinser.frontend.webservice.msg.EliminaStoricoImpegnoAccertamento;
@@ -79,9 +79,9 @@ public class EliminaStoricoImpegnoAccertamentoService extends AbstractBaseServic
 		}
 		String annoBilancioPiuUno = String.valueOf(req.getAnnoBilancio() + 1);
 		SubImpegno sub = storicoImpegnoAccertamentoDad.getSubImpegnoStoricizzato(storicoImpegniAccertamenti);
-		BigDecimal numerosub = sub != null? sub.getNumero() : null;
+		BigDecimal numerosub = sub != null? sub.getNumeroBigDecimal() : null;
 		boolean storicizzazioneSuSub = isStoricizzazioneSuSub(sub);
-		Impegno impegnoAnnoBilancioPiuUno = getImpegno(impegno.getAnnoMovimento(), impegno.getNumero(), numerosub, annoBilancioPiuUno, storicizzazioneSuSub);
+		Impegno impegnoAnnoBilancioPiuUno = getImpegno(impegno.getAnnoMovimento(), impegno.getNumeroBigDecimal(), numerosub, annoBilancioPiuUno, storicizzazioneSuSub);
 		if(impegnoAnnoBilancioPiuUno == null || (storicizzazioneSuSub && !trovatoSubIndicato(impegnoAnnoBilancioPiuUno.getElencoSubImpegni(), sub))) {
 			log.debug(methodName, "Non ho un impegno nell'anno di bilancio + 1. Non ribalto il colleghamento.");
 			return;
@@ -99,7 +99,7 @@ public class EliminaStoricoImpegnoAccertamentoService extends AbstractBaseServic
 	 * @return
 	 */
 	protected boolean trovatoSubIndicato(List<SubImpegno> subImpegni, SubImpegno subImpegnoIndicato) {
-		return  subImpegni != null && !subImpegni.isEmpty() || subImpegnoIndicato.getNumero().compareTo(subImpegni.get(0).getNumero()) ==0;
+		return  subImpegni != null && !subImpegni.isEmpty() || subImpegnoIndicato.getNumeroBigDecimal().compareTo(subImpegni.get(0).getNumeroBigDecimal()) ==0;
 	}
 
 	
@@ -108,7 +108,7 @@ public class EliminaStoricoImpegnoAccertamentoService extends AbstractBaseServic
 	 * @return
 	 */
 	protected boolean isStoricizzazioneSuSub(SubImpegno sub) {
-		return sub != null && sub.getNumero() != null && sub.getNumero().signum() ==1;
+		return sub != null && sub.getNumeroBigDecimal() != null && sub.getNumeroBigDecimal().signum() ==1;
 	}
 
 	
@@ -123,7 +123,8 @@ public class EliminaStoricoImpegnoAccertamentoService extends AbstractBaseServic
 		DatiOpzionaliElencoSubTuttiConSoloGliIds caricaDatiOpzionaliDto = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		
 		EsitoRicercaMovimentoPkDto esitoRicercaMov = impegnoOttimizzatoDad.ricercaMovimentoPk(req.getRichiedente(),	ente, annoBilancioImpegno,
-				Integer.valueOf(annoImpegno), numeroImpegno, paginazioneSubMovimentiDto, caricaDatiOpzionaliDto, Constanti.MOVGEST_TIPO_IMPEGNO, false);
+				Integer.valueOf(annoImpegno), numeroImpegno, paginazioneSubMovimentiDto, caricaDatiOpzionaliDto,
+				CostantiFin.MOVGEST_TIPO_IMPEGNO, false, true);
 		
 		
 		return (Impegno) esitoRicercaMov.getMovimentoGestione();

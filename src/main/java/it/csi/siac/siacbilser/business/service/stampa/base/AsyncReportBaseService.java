@@ -6,8 +6,8 @@ package it.csi.siac.siacbilser.business.service.stampa.base;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.ReportServiceRequest;
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.ReportServiceResponse;
+import it.csi.siac.siaccorser.frontend.webservice.msg.report.ReportServiceRequest;
+import it.csi.siac.siaccorser.frontend.webservice.msg.report.ReportServiceResponse;
 
 
 

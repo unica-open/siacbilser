@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import it.csi.siac.siacbilser.integration.utility.function.jdbc.SQLParam;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * CallableStatementSetter di default.
@@ -24,7 +24,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
  */
 public class DefaultCallableStatementSetter implements CallableStatementSetter {
 	
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	private SQLParam[] functionParams;
 	

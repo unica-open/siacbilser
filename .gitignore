@@ -7,9 +7,10 @@
 *.ear
 
 # Target folder
-target/
-dist/
-logs/
+/target/
+/logs/
+/output-bin/
+/dist/
 
 # Eclipse files
 .classpath
@@ -23,15 +24,9 @@ logs/
 .recommenders/
 .settings/
 .sonar/
-
-# Own properties file
-/buildfiles/own.properties
-/bin/
-/build/
 /testbin/
-/buildfiles/local.properties
+/bin/
 
-# Mail utilities
-src/test/java/it/csi/siac/mail/include/*
-!src/test/java/it/csi/siac/mail/include/DND
-/own.properties
+# Allow non-standard dependencies
+!docs/lib/**/*.jar
+

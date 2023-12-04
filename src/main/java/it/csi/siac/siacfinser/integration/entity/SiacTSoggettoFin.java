@@ -74,6 +74,11 @@ public class SiacTSoggettoFin extends SiacLoginMultiplo {
 	
 	@Column(name="codice_pa")
 	private String canalePA;
+	
+	//task-6
+	@Column(name = "istituto_di_credito")
+	private Boolean istitutoDiCredito;
+
 
 	//bi-directional many-to-one association to SiacTPersonaFisicaFin
 	// @OneToOne(mappedBy="siacTSoggetto", optional=true, cascade = {CascadeType.ALL})
@@ -186,9 +191,6 @@ public class SiacTSoggettoFin extends SiacLoginMultiplo {
 	@OneToMany(mappedBy="siacTSoggetto")
 	private List<SiacTSoggettoModFin> siacTSoggettoMods;	
 
-	//bi-directional many-to-one association to SiacRMutuoSoggettoFin
-	@OneToMany(mappedBy="siacTSoggetto")
-	private List<SiacRMutuoSoggettoFin> siacRMutuoSoggettos;
 
 	//bi-directional many-to-one association to SiacRCartacontDetSoggettoFin
 	@OneToMany(mappedBy="siacTSoggetto")
@@ -549,27 +551,7 @@ public class SiacTSoggettoFin extends SiacLoginMultiplo {
 		this.soggettoId = uid;
 	}
 
-	public List<SiacRMutuoSoggettoFin> getSiacRMutuoSoggettos() {
-		return this.siacRMutuoSoggettos;
-	}
-
-	public void setSiacRMutuoSoggettos(List<SiacRMutuoSoggettoFin> siacRMutuoSoggettos) {
-		this.siacRMutuoSoggettos = siacRMutuoSoggettos;
-	}
-
-	public SiacRMutuoSoggettoFin addSiacRMutuoSoggetto(SiacRMutuoSoggettoFin siacRMutuoSoggetto) {
-		getSiacRMutuoSoggettos().add(siacRMutuoSoggetto);
-		siacRMutuoSoggetto.setSiacTSoggetto(this);
-
-		return siacRMutuoSoggetto;
-	}
-
-	public SiacRMutuoSoggettoFin removeSiacRMutuoSoggetto(SiacRMutuoSoggettoFin siacRMutuoSoggetto) {
-		getSiacRMutuoSoggettos().remove(siacRMutuoSoggetto);
-		siacRMutuoSoggetto.setSiacTSoggetto(null);
-
-		return siacRMutuoSoggetto;
-	}
+	
 
 	public List<SiacTPersonaFisicaFin> getSiacTPersonaFisica() {
 		return siacTPersonaFisica;
@@ -793,5 +775,14 @@ public class SiacTSoggettoFin extends SiacLoginMultiplo {
 	 */
 	public void setLoginModificaDurc(String loginModificaDurc) {
 		this.loginModificaDurc = loginModificaDurc;
+	}
+	
+	//task-6
+	public Boolean getIstitutoDiCredito() {
+		return istitutoDiCredito;
+	}
+
+	public void setIstitutoDiCredito(Boolean istitutoDiCredito) {
+		this.istitutoDiCredito = istitutoDiCredito;
 	}
 }

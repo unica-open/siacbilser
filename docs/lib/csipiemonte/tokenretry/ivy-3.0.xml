@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!--Fine modifica Chiara Machì: Aggiunto header di licenza in data 08/05/2020 per merge di consip in SIAC-7349 in accordo con Alessandro Marchino-->
+
+<ivy-module version="1.0">
+
+    <info organisation="csipiemonte" module="tokenretry" revision="3.0" status="integration" publication="20200427080000"/>
+    
+    <publications>
+        <artifact name="token-retry-3.0" type="jar"/>
+    </publications>
+ 
+</ivy-module>

@@ -9,9 +9,10 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converter;
 import it.csi.siac.siacbilser.integration.utility.DozerMapHelper;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
+import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
+import it.csi.siac.siaccommonser.integration.entitymapping.Converter;
 import it.csi.siac.siaccommonser.util.dozer.MapId;
 
 /**
@@ -23,11 +24,11 @@ import it.csi.siac.siaccommonser.util.dozer.MapId;
  */
 public abstract class ExtendedDozerConverter<A, B> extends DozerConverter<A, B> {
 	
-	
+	private static final Integer INTEGER_ZERO = Integer.valueOf(0);
 	/** The mapper. */
 	private static Mapper mapper;
 	
-	protected final LogUtil log = new LogUtil(getClass());
+	protected final LogSrvUtil log = new LogSrvUtil(getClass());
 
 	/** The app ctx. */
 	@Autowired
@@ -201,4 +202,14 @@ public abstract class ExtendedDozerConverter<A, B> extends DozerConverter<A, B> 
 		return i.toString();
 	}
 
+	protected <T extends SiacTBase> T sanifyEntity(T entity) {
+		if(INTEGER_ZERO.equals(entity.getUid())) {
+			entity.setUid(null);
+		}
+		return entity;
+	}
+	
+	protected <T> T ifNotNull(T t, T defaultValue) {
+		return t == null ? defaultValue : t;
+	}
 }

@@ -15,10 +15,10 @@ import it.csi.siac.siacatt.test.business.provvedimento.ProvvedimentoImplTest;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccommon.util.JAXBUtility;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -45,8 +45,8 @@ public class CaricaAttiAmministrativiTest extends BaseJunit4TestCase {
 	@Autowired
 	private BilancioDad bilancioDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
-	private static final LogUtil log = new LogUtil(ProvvedimentoImplTest.class);
+	private AttoAmministrativoDad attoAmministrativoDad;
+	private static final LogSrvUtil log = new LogSrvUtil(ProvvedimentoImplTest.class);
 
 	@Test
 	public void getAnnoBilancioFromEnte(){
@@ -74,8 +74,8 @@ public class CaricaAttiAmministrativiTest extends BaseJunit4TestCase {
 	
 	@Test
 	public void caricaTipiAtto(){
-		provvedimentoDad.setEnte(getEnteTest());
-		List<TipoAtto> listaTipoAtto = provvedimentoDad.getElencoTipi();
+		attoAmministrativoDad.setEnte(getEnteTest());
+		List<TipoAtto> listaTipoAtto = attoAmministrativoDad.getElencoTipi();
 		
 		log.debug("ahmad", "Size"+listaTipoAtto.size());
 		for(TipoAtto ta : listaTipoAtto)
@@ -89,7 +89,7 @@ public class CaricaAttiAmministrativiTest extends BaseJunit4TestCase {
 		AttoAmministrativo attoAmministrativo =  new  AttoAmministrativo();
 		attoAmministrativo.setEnte(getEnteTest());
 		attoAmministrativo.setStatoOperativo("DEFINITIVO");
-		String codiceStato =provvedimentoDad.findCodiceStatoOut(attoAmministrativo);
+		String codiceStato =attoAmministrativoDad.findCodiceStatoOut(attoAmministrativo);
 		
 		log.debug(methodName, "CODICE STATO REPERITO :"+codiceStato);
 	}
@@ -98,10 +98,10 @@ public class CaricaAttiAmministrativiTest extends BaseJunit4TestCase {
 	public void elaboraFileAttiAmministrativi() {
 		ElaboraFile req = new ElaboraFile();
 		req.setDataOra(new Date());
-		req.setRichiedente(getRichiedenteByProperties("forn1", "cmto"));
+		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
 		
 		req.setEnte(req.getRichiedente().getAccount().getEnte());
-		req.setBilancio(getBilancio2015Test());
+		req.setBilancio(getBilancioByProperties("consip", "regp", 2021));
 		req.setAccount(req.getRichiedente().getAccount());
 
 		File file = new File();
@@ -109,7 +109,7 @@ public class CaricaAttiAmministrativiTest extends BaseJunit4TestCase {
 		
 		byte[] contenuto;
 		try {
-			contenuto = getTestFileBytes("docs/test/atti/SIAC-4819_v2.txt");
+			contenuto = getTestFileBytes("docs/test/atti/ATTI_AIPO_20210712200030-20210712200034.txt");
 //			contenuto = getTestFileBytes("docs/test/atti/atti_29_09_2015.txt");
 
 		} catch (IOException e) {

@@ -61,7 +61,6 @@ import it.csi.siac.siacbilser.integration.entity.SiacTDoc;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entity.SiacTLiquidazione;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgestT;
-import it.csi.siac.siacbilser.integration.entity.SiacTMutuoVoce;
 import it.csi.siac.siacbilser.integration.entity.SiacTSoggetto;
 import it.csi.siac.siacbilser.integration.entity.SiacTSubdoc;
 import it.csi.siac.siacbilser.integration.entity.SiacTSubdocIva;
@@ -82,7 +81,7 @@ import it.csi.siac.siacbilser.integration.entitymapping.converter.BooleanToStrin
 import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.handler.SiacTAttrHandler;
 import it.csi.siac.siacbilser.model.TipologiaAttributo;
-import it.csi.siac.siaccommon.util.CoreUtils;
+import it.csi.siac.siaccommon.util.CoreUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -244,7 +243,6 @@ public class SubdocumentoSpesaDad extends ExtendedBaseDadImpl {
 	public List<SubdocumentoSpesa> findSubdocumentiSpesaByIdDocumento(Integer idDocumento) {
 		List<SiacTSubdoc> siacTSubdocs = siacTSubdocRepository.findSiacTSubdocByDocId(idDocumento);		
 		return convertiLista(siacTSubdocs, SubdocumentoSpesa.class, BilMapId.SiacTSubdoc_SubdocumentoSpesa);
-	
 	}
 	
 	/**
@@ -1123,7 +1121,7 @@ public class SubdocumentoSpesaDad extends ExtendedBaseDadImpl {
 		}
 		
 		if (siacTAttrEnum.getSiacTAttrHandlerType() != null) {
-			SiacTAttrHandler siacTAttrHandler = CoreUtils.instantiateNewClass(siacTAttrEnum.getSiacTAttrHandlerType());
+			SiacTAttrHandler siacTAttrHandler = CoreUtil.instantiateNewClass(siacTAttrEnum.getSiacTAttrHandlerType());
 			
 			value = siacTAttrHandler.handleAttrValue(value);
 		}
@@ -1535,20 +1533,6 @@ public class SubdocumentoSpesaDad extends ExtendedBaseDadImpl {
 		return findSubdocumentiSpesaByIdDocumento(uid);
 	}
 
-	public Integer findUidVoceMutuoSubdocumentoSpesaById(int uid) {
-		final String methodName = "findUidVoceMutuoSubdocumentoSpesaById";
-		log.debug(methodName, "uid: " + uid);
-		SiacTMutuoVoce siacTMutuoVoce = siacTSubdocRepository.findIdVoceMutuoBySubdoc(uid);
-
-		if (siacTMutuoVoce == null) {
-			log.debug(methodName, "Returning null. Impossibile trovare la voce mutuo  legato al SubdocumentoSpesa con id: " + uid);
-			return null;
-		}
-		// restituisco l'uid
-
-		return siacTMutuoVoce.getUid();
-
-	}
 
 	public Long countQuoteDocumentoNonEmesse(DocumentoSpesa documento) {
 		return siacTSubdocRepository.countQuoteDocumentoNonEmesse(documento.getUid());

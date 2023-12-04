@@ -192,26 +192,26 @@ public class RicercaSinteticaPrimaNotaIntegrataManualeService extends CheckedAcc
 			SubImpegno subImpegno = impegnoBilDad.findSubImpegnoByUid(entita.getUid(), SubImpegnoModelDetail.Padre);
 			annoMovimento = Integer.valueOf(subImpegno.getAnnoImpegnoPadre());
 			numeroMovimento = subImpegno.getNumeroImpegnoPadre().toPlainString();
-			numeroSubmovimento = Integer.valueOf(subImpegno.getNumero().intValue());
+			numeroSubmovimento = Integer.valueOf(subImpegno.getNumeroBigDecimal().intValue());
 			return;
 		}
 		if(entita instanceof Impegno) {
 			Impegno impegno = impegnoBilDad.findImpegnoByUid(entita.getUid());
 			annoMovimento = Integer.valueOf(impegno.getAnnoMovimento());
-			numeroMovimento = impegno.getNumero().toPlainString();
+			numeroMovimento = impegno.getNumeroBigDecimal().toPlainString();
 			return;
 		}
 		if(entita instanceof SubAccertamento) {
 			SubAccertamento subAccertamento = accertamentoBilDad.findSubAccertamentoByUid(entita.getUid(), SubAccertamentoModelDetail.Padre);
 			annoMovimento = Integer.valueOf(subAccertamento.getAnnoAccertamentoPadre());
 			numeroMovimento = subAccertamento.getNumeroAccertamentoPadre().toPlainString();
-			numeroSubmovimento = Integer.valueOf(subAccertamento.getNumero().intValue());
+			numeroSubmovimento = Integer.valueOf(subAccertamento.getNumeroBigDecimal().intValue());
 			return;
 		}
 		if(entita instanceof Accertamento) {
 			Accertamento accertamento = accertamentoBilDad.findAccertamentoByUid(entita.getUid());
 			annoMovimento = Integer.valueOf(accertamento.getAnnoMovimento());
-			numeroMovimento = accertamento.getNumero().toPlainString();
+			numeroMovimento = accertamento.getNumeroBigDecimal().toPlainString();
 			return;
 		}
 		throw new BusinessException(ErroreCore.FORMATO_NON_VALIDO.getErrore("l'entita' in ricerca di tipo " + entita.getClass().getSimpleName() + " non e' accettabile per la ricerca"));

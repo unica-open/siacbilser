@@ -19,7 +19,7 @@ import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.StatoOperativo;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Errore;
@@ -122,14 +122,14 @@ public abstract class VerificaAnnullabilitaCapitoloBaseService<REQ extends Verif
 	}
 	
 	protected void checkVariazioniImporti(CAP cap) {
-		Collection<StatoOperativoVariazioneDiBilancio> stati = EnumSet.allOf(StatoOperativoVariazioneDiBilancio.class);
-		stati.remove(StatoOperativoVariazioneDiBilancio.BOZZA);
+		Collection<StatoOperativoVariazioneBilancio> stati = EnumSet.allOf(StatoOperativoVariazioneBilancio.class);
+		stati.remove(StatoOperativoVariazioneBilancio.BOZZA);
 		checkLongValue(capitoloDad.countVariazioniImportiCapitolo(cap, stati), "Variazioni importi presenti.");
 	}
 	
 	protected void checkVariazioniCodifiche(CAP cap) {
-		Collection<StatoOperativoVariazioneDiBilancio> stati = EnumSet.allOf(StatoOperativoVariazioneDiBilancio.class);
-		stati.remove(StatoOperativoVariazioneDiBilancio.BOZZA);
+		Collection<StatoOperativoVariazioneBilancio> stati = EnumSet.allOf(StatoOperativoVariazioneBilancio.class);
+		stati.remove(StatoOperativoVariazioneBilancio.BOZZA);
 		checkLongValue(capitoloDad.countVariazioniCodificheCapitolo(cap, stati), "Variazioni codifiche presenti.");
 	}
 	

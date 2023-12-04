@@ -7,7 +7,7 @@ package it.csi.siac.siacbilser.business.service.pcc.datioperazione;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.RegistroComunicazioniPCC;
 import it.tesoro.fatture.StrutturaDatiOperazioneTipo;
 
@@ -18,7 +18,7 @@ import it.tesoro.fatture.StrutturaDatiOperazioneTipo;
  */
 public abstract class PopolaStrutturaDatiOperazione {
 	
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	protected RegistroComunicazioniPCC registrazione;
 	

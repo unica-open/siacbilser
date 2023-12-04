@@ -40,7 +40,7 @@ import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RegolarizzaCartaContabile;
@@ -215,11 +215,11 @@ public class RegolarizzaCartaContabileService extends AbstractBaseService<Regola
 
 					// tipo documento
 					TipoDocumento tipoDocumento = new TipoDocumento();
-					tipoDocumento = commonDad.getTipoDocumento(Constanti.D_DOC_TIPO_CARTA_CONTABILE_CODE, Constanti.D_DOC_TIPO_CARTA_CONTABILE_FAMIGLIA_SPESA, datiOperazione);
+					tipoDocumento = commonDad.getTipoDocumento(CostantiFin.D_DOC_TIPO_CARTA_CONTABILE_CODE, CostantiFin.D_DOC_TIPO_CARTA_CONTABILE_FAMIGLIA_SPESA, datiOperazione);
 
 					// codice bollo documento
 					CodiceBollo codiceBolloDocumento = new CodiceBollo(); 
-					codiceBolloDocumento = commonDad.getCodiceBollo(Constanti.D_CODICE_BOLLO_ESENTE_DA_BOLLO_CODE, datiOperazione);
+					codiceBolloDocumento = commonDad.getCodiceBollo(CostantiFin.D_CODICE_BOLLO_ESENTE_DA_BOLLO_CODE, datiOperazione);
 
 					// setto i valori del documento di spesa che verra' inserito
 					DocumentoSpesa documentoSpesaInsert = new DocumentoSpesa();
@@ -393,7 +393,7 @@ public class RegolarizzaCartaContabileService extends AbstractBaseService<Regola
 			k.setCartaContabile(cartaContabileDaRegolarizzare);
 			
 			// ricarco la carta
-			CartaContabile cartaContRestituita = cartaContabileDad.ricercaCartaContabile(k, richiedente, Constanti.AMBITO_FIN,ente, datiOperazione, true);
+			CartaContabile cartaContRestituita = cartaContabileDad.ricercaCartaContabile(k, richiedente, CostantiFin.AMBITO_FIN,ente, datiOperazione, true);
 			
 			if(cartaContRestituita.getListaPreDocumentiCarta()!=null && cartaContRestituita.getListaPreDocumentiCarta().size()>0){
 				for(PreDocumentoCarta preDocumentoCarta : cartaContRestituita.getListaPreDocumentiCarta()){
@@ -435,7 +435,7 @@ public class RegolarizzaCartaContabileService extends AbstractBaseService<Regola
 									Impegno imp = (Impegno)impegnoOttimizzatoDad.ricercaMovimentoPkByUid(subdocumentoSpesaIterato.getImpegno().getUid(),
 											                                                             richiedente,
 											                                                             ente,
-											                                                             Constanti.MOVGEST_TIPO_IMPEGNO,
+											                                                             CostantiFin.MOVGEST_TIPO_IMPEGNO,
 											                                                             false,pag,null);
 
 									if(imp!=null){

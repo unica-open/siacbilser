@@ -89,6 +89,9 @@ public class AggiornaCapitoloDiEntrataPrevisioneService extends CrudCapitoloBase
 	
 	@Override
 	protected void execute() {
+		//SIAC-7722: Pulisco le descrizioni da eventuali "a capo"
+		req.setCapitoloEntrataPrevisione(pulisciDescrizioni(req.getCapitoloEntrataPrevisione()));
+		
 		checkClassificazioneBilancioSeStandard(req.getCapitoloEntrataPrevisione());
 		
 		CapitoloEntrataPrevisione cepAttuale = cercaCapitoloEntrataPrevisioneAttuale();

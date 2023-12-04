@@ -16,8 +16,8 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.common.RicercaAttributiMovimentoGestioneOttimizzatoService;
 import it.csi.siac.siacfinser.business.service.util.Utility;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
@@ -27,6 +27,7 @@ import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaImpegnoPerChiaveOtt
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoRicercaMovimentoPkDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.PaginazioneSubMovimentiDto;
 import it.csi.siac.siacfinser.model.Impegno;
+import it.csi.siac.siacfinser.model.movgest.ModificaMovimentoGestioneSpesa;
 
 
 
@@ -62,21 +63,23 @@ public class RicercaImpegnoPerChiaveOttimizzatoService extends RicercaAttributiM
 		
 		long startUno = System.currentTimeMillis();
 		
-		EsitoRicercaMovimentoPkDto esitoRicerca = impegnoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoImpegno, numeroImpegno, paginazioneSubMovimentiDto,caricaDatiOpzionaliDto, Constanti.MOVGEST_TIPO_IMPEGNO, true);
+		EsitoRicercaMovimentoPkDto esitoRicerca = impegnoOttimizzatoDad.ricercaMovimentoPk(
+				richiedente, ente, annoEsercizio, annoImpegno, numeroImpegno, paginazioneSubMovimentiDto,
+				caricaDatiOpzionaliDto, CostantiFin.MOVGEST_TIPO_IMPEGNO, true, req.isCaricalistaModificheCollegate());
 		
 		long endUno = System.currentTimeMillis();
 		
 		long startDue = System.currentTimeMillis();
 		
 		// Jira 4189  FIN - Impegni: ricerca per chiave con tante liquidazioni
-		if(esitoRicerca!=null && esitoRicerca.getMovimentoGestione()!=null){
+		if(esitoRicerca != null && esitoRicerca.getMovimentoGestione() != null){
 			impegno = (Impegno) esitoRicerca.getMovimentoGestione();
 			//impegno.setCollegatoALiquidazioni(esitoRicerca.isMovimentoConLiquidazioni()); 
 		}
 		
 
 		
-		if(null!=impegno){
+		if(impegno != null){
 			
 			DatiOpzionaliCapitoli datiOpzionaliCapitoli = req.getDatiOpzionaliCapitoli();
 			
@@ -98,7 +101,7 @@ public class RicercaImpegnoPerChiaveOttimizzatoService extends RicercaAttributiM
 			long totUno = endUno - startUno;
 			long totDue = endDue - startDue;
 			
-			CommonUtils.println("totUno: " + totUno + " - totDue: " + totDue);
+			CommonUtil.println("totUno: " + totUno + " - totDue: " + totDue);
 			
 		} else {
 			//componiamo la respose esito negativo:
@@ -107,6 +110,7 @@ public class RicercaImpegnoPerChiaveOttimizzatoService extends RicercaAttributiM
 			res.setImpegno(null);
 			res.setEsito(Esito.FALLIMENTO);
 		}
+		
 	}
 	
 	

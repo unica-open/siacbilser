@@ -368,7 +368,35 @@ public interface SubdocumentoDao extends Dao<SiacTSubdoc, Integer> {
 			Boolean importoDaPagareOIncassareZero, 
 			Boolean rilevatiIvaConRegistrazioneONonRilevantiIva, 
 			Pageable pageable);
-
+	
+	//SIAC-6780
+	Page<SiacTSubdoc> ricercaSinteticaSubdocumentiDaAssociarePerCollegaDocumento(
+			int enteProprietarioId,
+			Collection<SiacDDocFamTipoEnum> tipoFam,
+			SiacDProvCassaTipoEnum tipoProvv,
+			Integer docTipoId,
+			Integer docAnno,
+			String docNumero,
+			BigDecimal preDocImporto, 
+			BigDecimal numeroProvvisorio, 
+			String  soggettoCode,
+			Set<SiacDDocStatoEnum> statiDocumento,
+			Pageable pageable);
+	
+	
+	BigDecimal ricercaSinteticaSubdocumentiDaAssociareTotaleImportiPerCollegaDocumento(
+			int enteProprietarioId,
+			Collection<SiacDDocFamTipoEnum> tipoFam,
+			SiacDProvCassaTipoEnum tipoProvv,
+			Integer docTipoId,
+			Integer docAnno,
+			String docNumero,
+			BigDecimal predocImporto, 
+			BigDecimal numeroProvvisorio,
+			String  soggettoCode,
+			Set<SiacDDocStatoEnum> statiDocumento,
+			Pageable pageable);
+	//
 
 	/**
 	 * Calcola una chiave per il subdocumento dato da i seguenti campi:
@@ -452,4 +480,13 @@ public interface SubdocumentoDao extends Dao<SiacTSubdoc, Integer> {
 			);
 	
 	void insertUpdateSiacTSubdocSospensione(Integer uid, List<SiacTSubdocSospensione> siacTSubdocSospensiones);
+	
+	//SIAC-8195
+	List<SiacTSubdoc> cercaSubdocSenzaResiduo(Integer subDocUids, Integer annoEsercizio);
+
+	//SIAC-8195
+	List<SiacTSubdoc> cercaSubdocConModificheRORM(Integer subDocUids, Integer annoEsercizio);
+	
+	//SIAC-8195
+	List<SiacTSubdoc> cercaSubdocsConModificheRORM(List<Integer> subDocUids, Integer annoEsercizio);
 }

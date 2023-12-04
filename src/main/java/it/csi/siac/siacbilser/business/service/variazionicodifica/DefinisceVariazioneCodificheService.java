@@ -25,8 +25,9 @@ import it.csi.siac.siacbilser.integration.dad.CapitoloUscitaPrevisioneDad;
 import it.csi.siac.siacbilser.integration.dad.ClassificatoriDad;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneCodificaCapitolo;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
+import it.csi.siac.siacbilser.processi.GestoreProcessiVariazioneBilancio;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.frontend.webservice.msg.ExecAzioneRichiesta;
@@ -76,7 +77,6 @@ public class DefinisceVariazioneCodificheService extends VariazioneCodificheBase
 		variazione = req.getVariazioneCodificaCapitolo();
 		//checkParamVariazione();
 	
-		checkNotNull(req.getIdAttivita(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("id attivita"), false);
 		checkNotNull(variazione, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("variazione"));
 		checkCondition(variazione.getUid() != 0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("id variazione"));
 		checkNotNull(variazione.getEnte(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("ente variazione"));
@@ -119,15 +119,18 @@ public class DefinisceVariazioneCodificheService extends VariazioneCodificheBase
 		checkFaseDiBilancio();	
 		
 		eliminaClassificatoriGerarchiciNonFoglia(variazione);
-		variazione.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.DEFINITIVA);
 		variazioniDad.aggiornaVariazioneCodificaCapitolo(variazione);
+		
+		StatoOperativoVariazioneBilancio statoSuccessivo = GestoreProcessiVariazioneBilancio.getStatoFinaleVariazioneDiCodifiche(variazione.getStatoOperativoVariazioneDiBilancio());
+		if(statoSuccessivo == null) {
+			//qua non dovrei mai finire in quanto la quadratura e' gia' controllata prima, ma lo metto per sicurezza
+			throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Impossibile evolvere il processo allo stato successivo."));
+		}
+		variazione.setStatoOperativoVariazioneDiBilancio(statoSuccessivo);
 				
 		aggiornaCodificheCapitolo();
-
 		
 		res.setVariazioneCodificaCapitolo(variazione);	
-		
-		definisciProcessoVariazioneDiBilancio(); 
 		
 	}
 	
@@ -295,7 +298,9 @@ public class DefinisceVariazioneCodificheService extends VariazioneCodificheBase
 
 	/**
 	 * Definisci processo variazione di bilancio.
+	 * @deprecated by SIAC-8332
 	 */
+	@Deprecated
 	private void definisciProcessoVariazioneDiBilancio() {
 		ExecAzioneRichiesta execAzioneRichiesta = new ExecAzioneRichiesta();
 		execAzioneRichiesta.setRichiedente(req.getRichiedente());

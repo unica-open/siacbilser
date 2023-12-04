@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.integration.dao.EnumEntityFactory;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDDocStatoEnum;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.SiacTDocFinRepository;
 import it.csi.siac.siacfinser.integration.entity.SiacDDocStatoFin;
@@ -28,7 +28,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacTDocFin;
 public class DocumentoEntrataStatoFinConverter extends DozerConverter<StatoOperativoDocumento, SiacTDocFin > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

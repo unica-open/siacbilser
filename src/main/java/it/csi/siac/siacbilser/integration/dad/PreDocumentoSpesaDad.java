@@ -21,7 +21,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTPredoc;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDDocFamTipoEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
-import it.csi.siac.siacbilser.model.ModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
 import it.csi.siac.siacfin2ser.model.PreDocumentoSpesa;
@@ -129,6 +129,7 @@ public class PreDocumentoSpesaDad extends PreDocumentoDad<PreDocumentoSpesa, Pre
 				null,
 				null,
 				null,
+				null,
 				toPageable(parametriPaginazione));
 
 		if(lista.getContent().isEmpty()) {
@@ -206,6 +207,7 @@ public class PreDocumentoSpesaDad extends PreDocumentoDad<PreDocumentoSpesa, Pre
 				preDoc.getElencoDocumentiAllegato() != null ? preDoc.getElencoDocumentiAllegato().getAnno() : null,
 				preDoc.getElencoDocumentiAllegato() != null ? preDoc.getElencoDocumentiAllegato().getNumero() : null,
 				null,
+				null,
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(lista, PreDocumentoSpesa.class, BilMapId.SiacTPredoc_PreDocumentoSpesa_Base);
@@ -233,7 +235,7 @@ public class PreDocumentoSpesaDad extends PreDocumentoDad<PreDocumentoSpesa, Pre
 			Boolean contoTesoreriaMancante, Boolean soggettoMancante,
 			Boolean provvedimentoMancante,
 			Boolean nonAnnullati, Ordinativo ordinativo,
-			ParametriPaginazione parametriPaginazione, ModelDetail... modelDetails) {
+			ParametriPaginazione parametriPaginazione, ModelDetailEnum... modelDetails) {
 	
 			
 		Page<SiacTPredoc> lista = preDocumentoDao.ricercaSinteticaPreDocumento(
@@ -277,6 +279,7 @@ public class PreDocumentoSpesaDad extends PreDocumentoDad<PreDocumentoSpesa, Pre
 				mapToUidIfNotZero(preDoc.getElencoDocumentiAllegato()),
 				preDoc.getElencoDocumentiAllegato() != null ? preDoc.getElencoDocumentiAllegato().getAnno() : null,
 				preDoc.getElencoDocumentiAllegato() != null ? preDoc.getElencoDocumentiAllegato().getNumero() : null,
+				null,
 				null,
 				toPageable(parametriPaginazione));
 		
@@ -340,7 +343,8 @@ public class PreDocumentoSpesaDad extends PreDocumentoDad<PreDocumentoSpesa, Pre
 				ordinativo != null ? toBigDecimal(ordinativo.getNumero()) : null,
 				mapToUidIfNotZero(preDoc.getElencoDocumentiAllegato()),
 				preDoc.getElencoDocumentiAllegato() != null ? preDoc.getElencoDocumentiAllegato().getAnno() : null,
-				preDoc.getElencoDocumentiAllegato() != null ? preDoc.getElencoDocumentiAllegato().getNumero() : null
+				preDoc.getElencoDocumentiAllegato() != null ? preDoc.getElencoDocumentiAllegato().getNumero() : null,
+				null
 				);
 
 		return importoTotale;
@@ -418,5 +422,5 @@ public class PreDocumentoSpesaDad extends PreDocumentoDad<PreDocumentoSpesa, Pre
 		
 		return convertiLista(siacTPredocs, PreDocumentoSpesa.class, BilMapId.SiacTPredoc_PreDocumentoSpesa, Converters.byModelDetails(modelDetails));
 	}
-	
+
 }

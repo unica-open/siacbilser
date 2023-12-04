@@ -16,8 +16,8 @@ import org.apache.commons.lang3.time.DateUtils;
 import it.csi.siac.siaccespser.model.Cespite;
 import it.csi.siac.siaccespser.model.ClassificazioneGiuridicaCespite;
 import it.csi.siac.siaccespser.model.TipoBeneCespite;
-import it.csi.siac.siaccommon.util.number.NumberUtils;
-import it.csi.siac.siacintegser.business.service.util.DelimitedTextFileParser.LineMapper;
+import it.csi.siac.siaccommon.util.fileparser.DelimitedTextFileParserExt.LineMapper;
+import it.csi.siac.siaccommon.util.number.NumberUtil;
 
 public class CespiteLineMapper implements LineMapper<Cespite>{
 
@@ -50,13 +50,13 @@ public class CespiteLineMapper implements LineMapper<Cespite>{
 		//cespite.setNumeroInventario(values[i++]);
 		cespite.setDataAccessoInventario(toDate(values[i++]));
 		cespite.setDataCessazione(toDate(values[i++]));
-		cespite.setValoreIniziale(NumberUtils.importoToBigDecimal(values[i++]));;
-		cespite.setValoreAttuale(NumberUtils.importoToBigDecimal(values[i++]));
+		cespite.setValoreIniziale(NumberUtil.importoToBigDecimal(values[i++]));;
+		cespite.setValoreAttuale(NumberUtil.importoToBigDecimal(values[i++]));
 		cespite.setFlagStatoBene(toBoolean(values[i++], "1", "2"));
 		cespite.setDescrizioneStato(values[i++]);
 		cespite.setUbicazione(values[i++]);
 		cespite.setNote(values[i++]);
-		cespite.setFondoAmmortamento(NumberUtils.importoToBigDecimal(values[i++]));
+		cespite.setFondoAmmortamento(NumberUtil.importoToBigDecimal(values[i++]));
 		
 		return cespite;
 	}

@@ -17,7 +17,7 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaLegameSoggetti;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaLegameSoggettiResponse;
@@ -54,7 +54,7 @@ public class AggiornaLegameSoggettiService extends AbstractBaseService<AggiornaL
 		String codiceAmbito = req.getCodificaAmbito();
 		
 		if (org.apache.commons.lang.StringUtils.isEmpty(codiceAmbito))
-			codiceAmbito = Constanti.AMBITO_FIN;
+			codiceAmbito = CostantiFin.AMBITO_FIN;
 		
 		//1. Come prima cosa occorre verificare che il legame indicato in input non sia gia' esistente:
 		boolean verificaEsistenzaLegameTraSoggetti = soggettoDad.verificaEsistenzaLegameTraSoggetti(req.getSoggettoCorrente(),

@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 import it.csi.siac.siaccorser.model.Account;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.integration.dad.CommonDad;
 import it.csi.siac.siacfinser.integration.dad.ImpegnoOttimizzatoDad;
 import it.csi.siac.siacfinser.integration.dad.MovimentoGestioneOttimizzatoDad;
@@ -44,7 +44,7 @@ public class DisponibilitaLiquidareImpegnoHelper {
 	}
 	
 	public DisponibilitaMovimentoGestioneContainer calcolaDisponibilitaALiquidare(Integer movgestTsI, Integer annoBilancio){
-		return CommonUtils.getFirst(calcolaDisponibilitaALiquidare(CommonUtils.toList(movgestTsI), annoBilancio));
+		return CommonUtil.getFirst(calcolaDisponibilitaALiquidare(CommonUtil.toList(movgestTsI), annoBilancio));
 	}
 	
 	public List<DisponibilitaMovimentoGestioneContainer> calcolaDisponibilitaALiquidare(List<Integer> listaInput, Integer annoBilancio){

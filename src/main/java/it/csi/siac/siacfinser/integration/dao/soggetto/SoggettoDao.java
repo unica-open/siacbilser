@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import it.csi.siac.siaccommonser.integration.dao.base.BaseDao;
+import it.csi.siac.siaccommonser.integration.dao.base.Dao;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaSoggettoParamDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.SoggettoTipoDto;
@@ -34,7 +34,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacTProvinciaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTRegioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTSoggettoFin;
 
-public interface SoggettoDao extends BaseDao {
+public interface SoggettoDao extends Dao<SiacTSoggettoFin, Integer> {
 
 	public SiacTSoggettoFin create(SiacTSoggettoFin soggetto);
 

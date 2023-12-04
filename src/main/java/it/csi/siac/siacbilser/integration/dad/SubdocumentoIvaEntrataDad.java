@@ -23,6 +23,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDSubdocIvaStato
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.Periodo;
 import it.csi.siac.siacfin2ser.model.RegistroIva;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
@@ -65,6 +66,20 @@ public class SubdocumentoIvaEntrataDad extends SubdocumentoIvaDad {
 		return convertiLista(siacTSubdocIvas, SubdocumentoIvaEntrata.class, BilMapId.SiacTSubdocIva_SubdocumentoIvaEntrata);
 	
 	}
+	
+	/**
+	 * Find subdocumenti iva entrata collegati al subdoc by id documento.
+	 *
+	 * @param idDocumento the id documento
+	 * @return the list
+	 */
+	public List<SubdocumentoIvaEntrata> findSubdocumentiIvaEntrataCollegatiAlSubdocByIdDocumento(Integer idDocumento) {
+		List<SiacTSubdocIva> siacTSubdocIvas = siacTSubdocIvaRepository.findSiacTSubdocIvaWithSiacTSubdocByDocId(idDocumento, ente.getUid());		
+		return convertiLista(siacTSubdocIvas, SubdocumentoIvaEntrata.class, BilMapId.SiacTSubdocIva_SubdocumentoIvaEntrata);
+	
+	}
+	
+	
 	
 	
 	/**
@@ -280,14 +295,14 @@ public class SubdocumentoIvaEntrataDad extends SubdocumentoIvaDad {
 		return siacTSubdocIvaRepository.findDataProtoDef(subdocIva.getUid());
 	}
 
-	public List<SubdocumentoIvaEntrata> ricercaDettaglioSubdocumentoIvaEntrataNonQPID(SubdocumentoIvaEntrata sie, Date protocolloProvvisorioDa, Date protocolloProvvisorioA,Date protocolloDefinitivoDa, Date protocolloDefinitivoA) {
+	public List<SubdocumentoIvaEntrata> ricercaDettaglioSubdocumentoIvaEntrataNonQPID(SubdocumentoIvaEntrata sie, Date protocolloProvvisorioDa, Date protocolloProvvisorioA,Date protocolloDefinitivoDa, Date protocolloDefinitivoA, Date docDataOperazioneDa, Date docDataOperazioneA) {
 		SiacDSubdocIvaStatoEnum sdsise = null;
 		if(sie.getStatoSubdocumentoIva() != null) {
 			sdsise = SiacDSubdocIvaStatoEnum.byStatoOperativo(sie.getStatoSubdocumentoIva());
 		}
 		
 		List<SiacTSubdocIva> lista = ottieniListaNonQPIDByDataProtocolloAndStatoAndDocFamTipo(sie,
-				protocolloProvvisorioDa, protocolloProvvisorioA, protocolloDefinitivoDa, protocolloDefinitivoA,
+				protocolloProvvisorioDa, protocolloProvvisorioA, protocolloDefinitivoDa, protocolloDefinitivoA, docDataOperazioneDa, docDataOperazioneA,
 				sdsise, Arrays.asList(SiacDDocFamTipoEnum.Entrata, SiacDDocFamTipoEnum.IvaEntrata));
 		
 		return convertiLista(lista, SubdocumentoIvaEntrata.class, BilMapId.SiacTSubdocIva_SubdocumentoIvaEntrata);
@@ -299,4 +314,9 @@ public class SubdocumentoIvaEntrataDad extends SubdocumentoIvaDad {
 	}
 
 
+	
+	public List<SubdocumentoIvaEntrata> caricaSubdocIvaCollegatiAiSubdocumentiByDocId(DocumentoEntrata doc) {
+		List<SiacTSubdocIva> lista = siacTSubdocIvaRepository.findSiacTSubdocIvaWithSiacTSubdocByDocId(doc.getUid(),ente.getUid());
+		return convertiLista(lista, SubdocumentoIvaEntrata.class, BilMapId.SiacTSubdocIva_SubdocumentoIvaEntrata);
+	}
 }

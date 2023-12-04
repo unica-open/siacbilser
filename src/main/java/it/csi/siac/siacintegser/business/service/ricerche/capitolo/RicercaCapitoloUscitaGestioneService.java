@@ -6,7 +6,6 @@ package it.csi.siac.siacintegser.business.service.ricerche.capitolo;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import it.csi.siac.siacbilser.business.service.capitolouscitagestione.RicercaSin
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaCapitoloUscitaGestioneResponse;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
-import it.csi.siac.siacintegser.business.service.ServiceHelper;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.capitolo.RicercaCapitoloUscitaGestione;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.capitolo.RicercaCapitoloUscitaGestioneResponse;
@@ -27,10 +25,6 @@ import it.csi.siac.siacintegser.model.messaggio.MessaggioInteg;
 public class RicercaCapitoloUscitaGestioneService extends
 	RicercaCapitoloService<RicercaCapitoloUscitaGestione, RicercaCapitoloUscitaGestioneResponse>
 {
-
-	@Autowired 
-	ServiceHelper serviceHelper;
-	
 	@Override
 	protected RicercaCapitoloUscitaGestioneResponse execute(RicercaCapitoloUscitaGestione ireq)
 	{
@@ -43,7 +37,7 @@ public class RicercaCapitoloUscitaGestioneService extends
 		
 		RicercaSinteticaCapitoloUscitaGestioneResponse res = appCtx.getBean(RicercaSinteticaCapitoloUscitaGestioneService.class).executeService(req);
 		
-		checkBusinessServiceResponse(res);
+		checkServiceResponse(res);
 		
 		if(res.getCapitoli()==null || res.getCapitoli().isEmpty()){
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, " nessun filtro di ricerca soddisfatto");

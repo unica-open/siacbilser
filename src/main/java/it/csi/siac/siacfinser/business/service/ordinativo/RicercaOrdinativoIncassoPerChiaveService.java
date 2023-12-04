@@ -22,7 +22,7 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseServiceRicercaOrdinativo;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativoIncassoPerChiave;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaOrdinativoIncassoPerChiaveResponse;
@@ -91,7 +91,7 @@ public class RicercaOrdinativoIncassoPerChiaveService extends AbstractBaseServic
 		List<Ordinativo> listaOrdinativiCollegati = new ArrayList<Ordinativo>();
 		List<SiacTOrdinativoCollegatoCustom> listaSiacTOrdinativoCollegatoCustom = ordinativoIncassoDad.checkOrdinativiCollegati(
 				ordinativoIncasso.getAnno(), ordinativoIncasso.getNumero(), 
-				ordinativoIncasso.getStatoOperativoOrdinativo(), Constanti.D_ORDINATIVO_TIPO_INCASSO,
+				ordinativoIncasso.getStatoOperativoOrdinativo(), CostantiFin.D_ORDINATIVO_TIPO_INCASSO,
 				req.getPaginazioneOrdinativiCollegati(),
 				datiOperazione);
 		listaOrdinativiCollegati = caricaOrdinativiInCollegamento(listaSiacTOrdinativoCollegatoCustom, datiOperazione, richiedente);

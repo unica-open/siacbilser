@@ -15,8 +15,8 @@ import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacfin2ser.model.CausaleEntrata;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoCausale;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneOrdinativoPagamentoDto;
 import it.csi.siac.siacfinser.integration.entity.SiacDCausaleFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDCausaleTipoFin;
@@ -82,7 +82,7 @@ public class EntityOrdinativiToModelOrdinativiConverter extends EntityToModelCon
 			for(SiacTOrdinativoTFin itsiac : dtos){
 				int idConfronto = itsiac.getOrdTsId();
 				if(idIterato==idConfronto){
-					OrdinativoPagamento ordPag = CommonUtils.getFirst(siacTOrdinativoEntityToOrdinativoPagamentoModel(CommonUtils.toList(itsiac.getSiacTOrdinativo()), CommonUtils.toList(it.getOrdinativoPagamento())));
+					OrdinativoPagamento ordPag = CommonUtil.getFirst(siacTOrdinativoEntityToOrdinativoPagamentoModel(CommonUtil.toList(itsiac.getSiacTOrdinativo()), CommonUtil.toList(it.getOrdinativoPagamento())));
 					if(ordPag!=null){
 						it.setOrdinativoPagamento(ordPag);
 					}
@@ -100,7 +100,7 @@ public class EntityOrdinativiToModelOrdinativiConverter extends EntityToModelCon
 			for(SiacTOrdinativoTFin itsiac : dtos){
 				int idConfronto = itsiac.getOrdTsId();
 				if(idIterato==idConfronto){
-					OrdinativoIncasso ordInc = CommonUtils.getFirst(siacTOrdinativoEntityToOrdinativoIncassoModel(CommonUtils.toList(itsiac.getSiacTOrdinativo()), CommonUtils.toList(it.getOrdinativoIncasso())));
+					OrdinativoIncasso ordInc = CommonUtil.getFirst(siacTOrdinativoEntityToOrdinativoIncassoModel(CommonUtil.toList(itsiac.getSiacTOrdinativo()), CommonUtil.toList(it.getOrdinativoIncasso())));
 					if(ordInc!=null){
 						it.setOrdinativoIncasso(ordInc);
 					}
@@ -141,7 +141,7 @@ public class EntityOrdinativiToModelOrdinativiConverter extends EntityToModelCon
 				for(SiacROrdinativoStatoFin rOrdinativoStato : listaROrdinativoStato){
 					if(rOrdinativoStato!=null && rOrdinativoStato.getDataFineValidita()==null){
 						String code = rOrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode();
-						StatoOperativoOrdinativo statoOpOrdinativo = Constanti.statoOperativoOrdinativoStringToEnum(code);
+						StatoOperativoOrdinativo statoOpOrdinativo = CostantiFin.statoOperativoOrdinativoStringToEnum(code);
 						ordinativoPagamento.setStatoOperativoOrdinativo(statoOpOrdinativo);
 						ordinativoPagamento.setDataInizioValidita(rOrdinativoStato.getDataInizioValidita());
 						ordinativoPagamento.setCodStatoOperativoOrdinativo(code);
@@ -351,7 +351,7 @@ public class EntityOrdinativiToModelOrdinativiConverter extends EntityToModelCon
 			for(SiacROrdinativoStatoFin rOrdinativoStato : listaROrdinativoStato){
 				if(rOrdinativoStato!=null && rOrdinativoStato.getDataFineValidita()==null){
 					String code = rOrdinativoStato.getSiacDOrdinativoStato().getOrdStatoCode();
-					StatoOperativoOrdinativo statoOpOrdinativo = Constanti.statoOperativoOrdinativoStringToEnum(code);
+					StatoOperativoOrdinativo statoOpOrdinativo = CostantiFin.statoOperativoOrdinativoStringToEnum(code);
 					it.setStatoOperativoOrdinativo(statoOpOrdinativo);
 					it.setDataInizioValidita(rOrdinativoStato.getDataInizioValidita());
 					it.setCodStatoOperativoOrdinativo(code);
@@ -457,7 +457,7 @@ public class EntityOrdinativiToModelOrdinativiConverter extends EntityToModelCon
 			causaleEntrata.setUid(siacDCausale.getUid());
 			causaleEntrata.setCodice(siacDCausale.getCausCode());
 			causaleEntrata.setDescrizione(siacDCausale.getCausDesc());
-			SiacRCausaleTipoFin rTipo = CommonUtils.getValidoSiacTBase(siacDCausale.getSiacRCausaleTipos(), null);
+			SiacRCausaleTipoFin rTipo = CommonUtil.getValidoSiacTBase(siacDCausale.getSiacRCausaleTipos(), null);
 			if(rTipo!=null){
 				//compongo il tipo
 				SiacDCausaleTipoFin tipo = rTipo.getSiacDCausaleTipo();
@@ -483,7 +483,7 @@ public class EntityOrdinativiToModelOrdinativiConverter extends EntityToModelCon
 	 * @param it
 	 */
 	private static void impostaAttoAmministrativo(SiacTOrdinativoFin itsiac, Ordinativo it){
-		SiacROrdinativoAttoAmmFin rOrdAtto = DatiOperazioneUtils.getValido(itsiac.getSiacROrdinativoAttoAmms(),null);
+		SiacROrdinativoAttoAmmFin rOrdAtto = DatiOperazioneUtil.getValido(itsiac.getSiacROrdinativoAttoAmms(),null);
 		if(rOrdAtto!=null){
 			SiacTAttoAmmFin siacTAttoAmm = rOrdAtto.getSiacTAttoAmm();
 			AttoAmministrativo attoAmministrativoOrdinativo = EntityToModelConverter.siacTAttoToAttoAmministrativo(siacTAttoAmm);

@@ -4,6 +4,8 @@
 */
 package it.csi.siac.siacbilser.business.service.documentoentrata;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -16,7 +18,7 @@ import it.csi.fel.eis.types.FatturaType;
 import it.csi.fel.eis.types.ResponseType;
 import it.csi.fel.eis.types.ResultType;
 import it.csi.siac.siacbilser.integration.dad.DocumentoEntrataDad;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -33,7 +35,7 @@ public class AggiornaStatoSdiDocumentoService { //extends CheckedAccountBaseServ
 	@Autowired
 	private DocumentoEntrataDad documentoEntrataDad;
 	
-	private LogUtil log = new LogUtil(getClass());
+	private LogSrvUtil log = new LogSrvUtil(getClass());
 
 
 	@Transactional
@@ -69,6 +71,8 @@ public class AggiornaStatoSdiDocumentoService { //extends CheckedAccountBaseServ
 		
 		int statoFT =  serviceRequest.getStatoElaborazioneFattura();
 		String esito = serviceRequest.getDettaglioEsitoElaborazione();
+		//SIAC-7562 - 25/06/2020 - CM e GM
+		Date dataCambioStato = serviceRequest.getDataCambioStato();
 		
 		/*String statoSdi = "";
 		if(statoFT.name() == statoFT.CONSEGNATO.name())
@@ -92,7 +96,7 @@ public class AggiornaStatoSdiDocumentoService { //extends CheckedAccountBaseServ
 		DocumentoEntrata docEnt = documentoEntrataDad.findDocumentoEntrataByIdMinimal(uid);
 	
 		if(docEnt != null) {
-			documentoEntrataDad.aggiornaStatoSDIDocumentoEntrata(uid, StatoSDIFel.getCodiceContabilia(statoFT),esito);
+			documentoEntrataDad.aggiornaStatoSDIDocumentoEntrata(uid, StatoSDIFel.getCodiceContabilia(statoFT), esito, dataCambioStato);
 			impostaRisposta("OK","Aggiornamento effettuato con successo", response);
 		}
 		else {

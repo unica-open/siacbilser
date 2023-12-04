@@ -306,7 +306,7 @@ public class DefiniscePreDocumentoEntrataService extends CheckedAccountBaseServi
 		reqIQDS.setRichiedente(req.getRichiedente());
 		reqIQDS.setSubdocumentoEntrata(subDoc);
 		reqIQDS.setBilancio(req.getBilancio());
-		reqIQDS.setSaltaControlloDisponibilitaAccertamento(true);
+		reqIQDS.setSaltaControlloDisponibilita(true);
 		
 		InserisceQuotaDocumentoEntrataResponse resIQDE = inserisceQuotaDocumentoEntrataService.executeServiceTxRequiresNew(reqIQDS);
 		checkServiceResponseFallimento(resIQDE);
@@ -611,7 +611,8 @@ public class DefiniscePreDocumentoEntrataService extends CheckedAccountBaseServi
 				req.getRicercaSinteticaPreDocumentoEntrata().getContoCorrenteMancante(),
 				req.getRicercaSinteticaPreDocumentoEntrata().getNonAnnullati(),
 				req.getRicercaSinteticaPreDocumentoEntrata().getOrdinativoIncasso(),
-				req.getRicercaSinteticaPreDocumentoEntrata().getOrdinamentoPreDocumentoEntrata(),
+				null,
+				null,
 				new ParametriPaginazione(numeroPagina, 100));
 	}
 	

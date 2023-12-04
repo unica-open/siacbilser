@@ -76,6 +76,10 @@ public class SiacTSoggettoModFin extends SiacTEnteBase {
 	@Column(name="login_modifica_durc")
 	private String loginModificaDurc;
 	
+	//task-68
+	@Column(name = "istituto_di_credito")
+	private Boolean istitutoDiCredito;
+	
 	
 	//bi-directional many-to-one association to SiacRSoggettoAttrModFin
 	@OneToMany(mappedBy="siacTSoggettoMod")
@@ -377,7 +381,14 @@ public class SiacTSoggettoModFin extends SiacTEnteBase {
 		return siacTModpagMod;
 	}
 
-	
+	//task-68
+	public Boolean getIstitutoDiCredito() {
+		return istitutoDiCredito;
+	}
+
+	public void setIstitutoDiCredito(Boolean istitutoDiCredito) {
+		this.istitutoDiCredito = istitutoDiCredito;
+	}
 
 //	public SiacTPersonaFisicaModFin addSiacTPersonaFisicaMod(SiacTPersonaFisicaModFin siacTPersonaFisicaMod) {
 //		getSiacTPersonaFisicaMods().add(siacTPersonaFisicaMod);

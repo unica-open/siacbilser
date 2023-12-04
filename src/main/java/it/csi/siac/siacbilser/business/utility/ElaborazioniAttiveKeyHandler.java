@@ -12,11 +12,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 import it.csi.siac.siacbilser.model.ElabKeys;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 public class ElaborazioniAttiveKeyHandler {
 
-	private static LogUtil log = new LogUtil(ElaborazioniAttiveKeyHandler.class);
+	private static LogSrvUtil log = new LogSrvUtil(ElaborazioniAttiveKeyHandler.class);
 	
 	//campi caratteristici dell'elemennto
 	private Integer uid;

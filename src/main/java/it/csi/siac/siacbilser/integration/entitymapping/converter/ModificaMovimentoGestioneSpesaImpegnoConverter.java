@@ -33,7 +33,7 @@ public class ModificaMovimentoGestioneSpesaImpegnoConverter extends ModificaMovi
 		Impegno i = new Impegno();
 		i.setUid(siacTMovgest.getUid());
 		i.setAnnoMovimento(siacTMovgest.getMovgestAnno());
-		i.setNumero(siacTMovgest.getMovgestNumero());
+		i.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 		
 		// SIAC-4467
 		impostaSoggetto(siacTMovgestT, i);
@@ -47,7 +47,7 @@ public class ModificaMovimentoGestioneSpesaImpegnoConverter extends ModificaMovi
 		SiacTMovgest siacTMovgest = siacTMovgestT.getSiacTMovgest();
 		SubImpegno si = new SubImpegno();
 		si.setUid(siacTMovgestT.getUid());
-		si.setNumero(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
+		si.setNumeroBigDecimal(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
 		si.setIdMovimentoPadre(siacTMovgest.getUid());
 		si.setAnnoImpegnoPadre(siacTMovgest.getMovgestAnno());
 		si.setNumeroImpegnoPadre(siacTMovgest.getMovgestNumero());

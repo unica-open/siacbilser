@@ -26,7 +26,7 @@ import it.csi.siac.siacbilser.business.service.predocumentoentrata.AggiornaPreDo
 import it.csi.siac.siacbilser.integration.dad.CapitoloUscitaGestioneDad;
 import it.csi.siac.siacbilser.integration.dad.ImpegnoBilDad;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoSpesaDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
@@ -71,7 +71,7 @@ public class AssociaImputazioniContabiliVariatePreDocumentoSpesaService extends 
 	@Autowired
 	private PreDocumentoSpesaDad preDocumentoSpesaDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private SoggettoDad soggettoDad;
 
@@ -351,7 +351,7 @@ public class AssociaImputazioniContabiliVariatePreDocumentoSpesaService extends 
 			attoAmministrativo = null;
 			return;
 		}
-		AttoAmministrativo aa = provvedimentoDad.findProvvedimentoByIdAndModelDetail(attoAmministrativo.getUid(), AttoAmministrativoModelDetail.StatoOperativo);
+		AttoAmministrativo aa = attoAmministrativoDad.findProvvedimentoByIdAndModelDetail(attoAmministrativo.getUid(), AttoAmministrativoModelDetail.StatoOperativo);
 		
 		checkBusinessCondition(aa != null, ErroreCore.ENTITA_NON_TROVATA.getErrore("provvedimetno", "uid " + attoAmministrativo.getUid()));
 		checkBusinessCondition(!StatoOperativoAtti.ANNULLATO.equals(aa.getStatoOperativoAtti()), ErroreAtt.PROVVEDIMENTO_ANNULLATO.getErrore());

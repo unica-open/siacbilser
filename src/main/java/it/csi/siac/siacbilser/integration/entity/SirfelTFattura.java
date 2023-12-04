@@ -45,16 +45,20 @@ public class SirfelTFattura extends SirfelTBase<SirfelTFatturaPK> {
     })
 	private SirfelTFatturaPK id;
 
-	@Column(name="aliquota_ritenuta")
-	private BigDecimal aliquotaRitenuta;
-
+	//SIAC-7557: questi campi sono stati gestiti sulla nuova tabella sirfel_t_datiritenuta
+	//@Column(name="aliquota_ritenuta")
+	//private BigDecimal aliquotaRitenuta;
+	//@Column(name="causale_pagamento")
+	//private String causalePagamento;
+	//@Column(name="importo_ritenuta")
+	//private BigDecimal importoRitenuta;
+	//@Column(name="tipo_ritenuta")
+	//private String tipoRitenuta;
+	
 	private BigDecimal arrotondamento;
 
 	@Column(name="bollo_virtuale")
 	private String bolloVirtuale;
-
-	@Column(name="causale_pagamento")
-	private String causalePagamento;
 
 	@Column(name="codice_destinatario")
 	private String codiceDestinatario;
@@ -75,9 +79,6 @@ public class SirfelTFattura extends SirfelTBase<SirfelTFatturaPK> {
 	@Column(name="importo_bollo")
 	private BigDecimal importoBollo;
 
-	@Column(name="importo_ritenuta")
-	private BigDecimal importoRitenuta;
-
 	@Column(name="importo_totale_documento")
 	private BigDecimal importoTotaleDocumento;
 
@@ -88,9 +89,6 @@ public class SirfelTFattura extends SirfelTBase<SirfelTFatturaPK> {
 
 	@Column(name="stato_fattura")
 	private String statoFattura;
-
-	@Column(name="tipo_ritenuta")
-	private String tipoRitenuta;
 
 	private String note;
 
@@ -167,6 +165,14 @@ public class SirfelTFattura extends SirfelTBase<SirfelTFatturaPK> {
 	//bi-directional many-to-one association to SirfelTRiepilogoBeni
 	@OneToMany(mappedBy="sirfelTFattura")
 	private List<SirfelTRiepilogoBeni> sirfelTRiepilogoBenis;
+	
+	/*
+	 * SIAC-7557-VG
+	 */
+	//bi-directional many-to-one association to SirfelTCassaPrevidenziale
+	@OneToMany(mappedBy="sirfelTFattura")
+	private List<SirfelTDatiRitenuta> sirfelTDatiRitenutas;
+	
 
 	public SirfelTFattura() {
 	}
@@ -191,13 +197,13 @@ public class SirfelTFattura extends SirfelTBase<SirfelTFatturaPK> {
 		this.id = id;
 	}
 
-	public BigDecimal getAliquotaRitenuta() {
+	/*public BigDecimal getAliquotaRitenuta() {
 		return this.aliquotaRitenuta;
 	}
 
 	public void setAliquotaRitenuta(BigDecimal aliquotaRitenuta) {
 		this.aliquotaRitenuta = aliquotaRitenuta;
-	}
+	}*/
 
 	public BigDecimal getArrotondamento() {
 		return this.arrotondamento;
@@ -215,13 +221,13 @@ public class SirfelTFattura extends SirfelTBase<SirfelTFatturaPK> {
 		this.bolloVirtuale = bolloVirtuale;
 	}
 
-	public String getCausalePagamento() {
+	/*public String getCausalePagamento() {
 		return this.causalePagamento;
 	}
 
 	public void setCausalePagamento(String causalePagamento) {
 		this.causalePagamento = causalePagamento;
-	}
+	}*/
 
 	public String getCodiceDestinatario() {
 		return this.codiceDestinatario;
@@ -279,16 +285,30 @@ public class SirfelTFattura extends SirfelTBase<SirfelTFatturaPK> {
 		this.importoBollo = importoBollo;
 	}
 
-	public BigDecimal getImportoRitenuta() {
+	/*public BigDecimal getImportoRitenuta() {
 		return this.importoRitenuta;
 	}
 
 	public void setImportoRitenuta(BigDecimal importoRitenuta) {
 		this.importoRitenuta = importoRitenuta;
-	}
+	}*/
 
 	public BigDecimal getImportoTotaleDocumento() {
 		return this.importoTotaleDocumento;
+	}
+
+	/**
+	 * @return the sirfelTDatiRitenutas
+	 */
+	public List<SirfelTDatiRitenuta> getSirfelTDatiRitenutas() {
+		return sirfelTDatiRitenutas;
+	}
+
+	/**
+	 * @param sirfelTDatiRitenutas the sirfelTDatiRitenutas to set
+	 */
+	public void setSirfelTDatiRitenutas(List<SirfelTDatiRitenuta> sirfelTDatiRitenutas) {
+		this.sirfelTDatiRitenutas = sirfelTDatiRitenutas;
 	}
 
 	public void setImportoTotaleDocumento(BigDecimal importoTotaleDocumento) {
@@ -319,13 +339,13 @@ public class SirfelTFattura extends SirfelTBase<SirfelTFatturaPK> {
 		this.statoFattura = statoFattura;
 	}
 
-	public String getTipoRitenuta() {
+	/*public String getTipoRitenuta() {
 		return this.tipoRitenuta;
 	}
 
 	public void setTipoRitenuta(String tipoRitenuta) {
 		this.tipoRitenuta = tipoRitenuta;
-	}
+	}*/
 
 	public String getNote() {
 		return note;

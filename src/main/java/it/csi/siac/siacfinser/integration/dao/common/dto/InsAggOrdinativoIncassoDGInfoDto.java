@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.SubAccertamento;
 
@@ -40,7 +40,7 @@ public class InsAggOrdinativoIncassoDGInfoDto implements Serializable {
 	}
 	
 	public ArrayList<AccertamentoPerDoppiaGestioneInfoDto> getAccertamenti(){
-		return StringUtils.hashMapToArrayList(mappaAccertamenti);
+		return StringUtilsFin.hashMapToArrayList(mappaAccertamenti);
 	}
 	
 }

@@ -29,7 +29,6 @@ import it.csi.siac.siacbilser.integration.dad.CespiteDad;
 import it.csi.siac.siacbilser.integration.dad.DettaglioAmmortamentoAnnuoCespiteDad;
 import it.csi.siac.siacbilser.integration.dad.DismissioneCespiteDad;
 import it.csi.siac.siacbilser.model.Ambito;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siaccespser.frontend.webservice.msg.InserisciPrimeNoteDismissioneCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.InserisciPrimeNoteDismissioneCespiteResponse;
 import it.csi.siac.siaccespser.model.AmmortamentoAnnuoCespite;
@@ -44,6 +43,7 @@ import it.csi.siac.siaccespser.model.DismissioneCespite;
 import it.csi.siac.siaccespser.model.DismissioneCespiteModelDetail;
 import it.csi.siac.siaccespser.model.TipoBeneCespite;
 import it.csi.siac.siaccespser.model.TipoBeneCespiteModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -86,7 +86,7 @@ public class InserisciPrimeNoteDismissioneCespiteService extends CheckedAccountB
 	
 	Map<Integer, PrimaNota> mappaDettaglioAmmortamentoPrimaNotaCollegata = new HashMap<Integer, PrimaNota>();
 	
-	private static final ModelDetail[] defaultModelDetails = new ModelDetail[]{
+	private static final ModelDetailEnum[] defaultModelDetails = new ModelDetailEnum[]{
 			CategoriaCespitiModelDetail.TipoCalcolo,
 			TipoBeneCespiteModelDetail.CategoriaCespitiModelDetail, TipoBeneCespiteModelDetail.ContoPatrimoniale, TipoBeneCespiteModelDetail.ContoAmmortamento, TipoBeneCespiteModelDetail.ContoFondoAmmortamento, TipoBeneCespiteModelDetail.ContoMinusValenza, TipoBeneCespiteModelDetail.CausaleAmmortamento,
 			AmmortamentoAnnuoCespiteModelDetail.DettaglioAmmortamentoAnnuoCespiteModelDetail,

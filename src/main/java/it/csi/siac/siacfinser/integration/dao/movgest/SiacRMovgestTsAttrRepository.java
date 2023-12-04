@@ -23,9 +23,17 @@ public interface SiacRMovgestTsAttrRepository extends JpaRepository<SiacRMovgest
 	@Query("from SiacRMovgestTsAttrFin where siacTMovgestT.movgestTsId = :idMovgestTs AND "+condizione+" AND siacTAttr.attrCode = :code")
 	public List<SiacRMovgestTsAttrFin>  findValidoByIdMovGestTsAndCode(@Param("idMovgestTs") Integer idMovgestTs, @Param("code") String code,@Param("dataInput") Timestamp  dataInput);
 
-	
 	@Query("from SiacRMovgestTsAttrFin where siacTMovgestT.movgestTsId = :idMovgestTs AND "+condizione)
 	public List<SiacRMovgestTsAttrFin>  findAllValidiByMovgestTs(@Param("idMovgestTs") Integer idMovgestTs,@Param("dataInput") Timestamp  dataInput);
+	
+	@Query(" SELECT r.boolean_ "
+			+ " FROM SiacRMovgestTsAttrFin r "
+			+ " WHERE r.siacTAttr.attrCode = :attrCode "
+			+ " AND r.siacTMovgestT.siacTMovgest.movgestId = :movgestId"
+			+ " AND r.dataCancellazione IS NULL "
+			+ " AND r.siacTMovgestT.siacDMovgestTsTipo.movgestTsTipoCode = 'T' ")
+	public String findBooleanAttrValueBySiacTMovgestId(@Param("movgestId") Integer movgestId, @Param("attrCode") String attrCode);
+	
 }
 
 

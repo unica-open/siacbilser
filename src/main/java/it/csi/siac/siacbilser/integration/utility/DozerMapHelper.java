@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacbilser.business.utility.Utility;
-import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converter;
+import it.csi.siac.siaccommonser.integration.entitymapping.Converter;
 import it.csi.siac.siaccommonser.util.dozer.MapId;
 
 public class DozerMapHelper {

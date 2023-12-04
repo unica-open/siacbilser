@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import it.csi.siac.custom.oopp.business.service.ricerca.RicercaDocumentiSpesaOOPPService;
+import it.csi.siac.custom.oopp.business.service.ricerca.RicercaEstesaMandatiOOPPService;
+import it.csi.siac.custom.oopp.business.service.ricerca.RicercaMovimentiGestioneOOPPService;
 import it.csi.siac.siacintegser.business.service.ricerche.capitolo.RicercaCapitoloEntrataGestioneService;
 import it.csi.siac.siacintegser.business.service.ricerche.capitolo.RicercaCapitoloUscitaGestioneService;
 import it.csi.siac.siacintegser.business.service.ricerche.documenti.RicercaDocumentoEntrataService;
@@ -29,6 +32,13 @@ import it.csi.siac.siacintegser.business.service.ricerche.ordinativo.RicercaOrdi
 import it.csi.siac.siacintegser.business.service.ricerche.provvisori.RicercaDeiProvvisoriDiCassaService;
 import it.csi.siac.siacintegser.business.service.ricerche.soggetto.RicercaDettaglioSoggettoService;
 import it.csi.siac.siacintegser.business.service.ricerche.soggetto.RicercaSinteticaSoggettiService;
+import it.csi.siac.siacintegser.business.service.test.TestService;
+import it.csi.siac.siacintegser.frontend.webservice.msg.custom.oopp.ricerca.RicercaDocumentiSpesaOOPP;
+import it.csi.siac.siacintegser.frontend.webservice.msg.custom.oopp.ricerca.RicercaDocumentiSpesaOOPPResponse;
+import it.csi.siac.siacintegser.frontend.webservice.msg.custom.oopp.ricerca.RicercaEstesaMandatiOOPP;
+import it.csi.siac.siacintegser.frontend.webservice.msg.custom.oopp.ricerca.RicercaEstesaMandatiOOPPResponse;
+import it.csi.siac.siacintegser.frontend.webservice.msg.custom.oopp.ricerca.RicercaMovimentiGestioneOOPP;
+import it.csi.siac.siacintegser.frontend.webservice.msg.custom.oopp.ricerca.RicercaMovimentiGestioneOOPPResponse;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.RicercaDocumentoEntrata;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.RicercaDocumentoEntrataResponse;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.RicercaDocumentoSpesa;
@@ -57,6 +67,8 @@ import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.Ricerc
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.RicercaDettaglioSoggettiResponse;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.RicercaSinteticaSoggetti;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ricerche.soggetto.RicercaSinteticaSoggettiResponse;
+import it.csi.siac.siacintegser.frontend.webservice.msg.test.Test;
+import it.csi.siac.siacintegser.frontend.webservice.msg.test.TestResponse;
 
 /**
  * The Class RicercaServiceImpl.
@@ -76,6 +88,12 @@ public class RicercaServiceImpl implements RicercaService {
 	@PostConstruct
 	public void init() {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
+
+	@Override
+	@WebMethod
+	public @WebResult TestResponse test(@WebParam Test request) {
+		return appCtx.getBean(TestService.class).executeService(request);
 	}
 
 	@Override
@@ -194,6 +212,21 @@ public class RicercaServiceImpl implements RicercaService {
 	RicercaEstesaOrdinativiSpesaResponse ricercaEstesaOrdinativiSpesa(
 			@WebParam RicercaEstesaOrdinativiSpesa request) {
 		return appCtx.getBean(RicercaEstesaOrdinativiSpesaService.class).executeService(request);
+	}
+
+	@Override
+	public @WebResult RicercaMovimentiGestioneOOPPResponse ricercaMovimentiGestioneOOPP(@WebParam RicercaMovimentiGestioneOOPP request) {
+		return appCtx.getBean(RicercaMovimentiGestioneOOPPService.class).executeService(request);
+	}
+
+	@Override
+	public @WebResult RicercaEstesaMandatiOOPPResponse ricercaEstesaMandatiOOPP(@WebParam RicercaEstesaMandatiOOPP request) {
+		return appCtx.getBean(RicercaEstesaMandatiOOPPService.class).executeService(request);
+	}
+
+	@Override
+	public @WebResult RicercaDocumentiSpesaOOPPResponse ricercaDocumentiSpesaOOPP(@WebParam RicercaDocumentiSpesaOOPP request) {
+		return appCtx.getBean(RicercaDocumentiSpesaOOPPService.class).executeService(request);
 	}
 
 }

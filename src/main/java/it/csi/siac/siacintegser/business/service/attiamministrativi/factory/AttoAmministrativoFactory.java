@@ -7,17 +7,18 @@ package it.csi.siac.siacintegser.business.service.attiamministrativi.factory;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
 import it.csi.siac.siacattser.model.TipoAtto;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Codifica;
+import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
+import it.csi.siac.siacintegser.business.service.attiamministrativi.AttoAmministrativoEnteConfig;
 import it.csi.siac.siacintegser.business.service.attiamministrativi.model.AttoAmministrativoElab;
 
 /**
@@ -30,25 +31,22 @@ import it.csi.siac.siacintegser.business.service.attiamministrativi.model.AttoAm
  */
 public class AttoAmministrativoFactory {
 
-	// CR-2778
-	protected static final Set<String> ENTI_IGNORING_CDC;
-	static {
-		Set<String> temp = new HashSet<String>();
-		temp.add("REGP");
-		ENTI_IGNORING_CDC = Collections.unmodifiableSet(temp);
-	}
-	
 	private final DateFormat dateFormatData = new SimpleDateFormat("yyyyMMdd", Locale.ITALIAN);
 	private final DateFormat dateFormatDateTime = new SimpleDateFormat("yyyyMMddHHmmss", Locale.ITALIAN);
 	
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
+
 	/**
 	 * New instance from flusso Atti Amministrativi
 	 *
 	 * @param line the line
+	 * @param lineNumber 
+	 * @param messaggi 
 	 * @return the AttoAmministrativoIntegser
 	 */
-	public AttoAmministrativoElab newInstanceFromFlussoAttiAmministrativi(String line, String codiceAccount) {
+	public AttoAmministrativoElab newInstanceFromFlussoAttiAmministrativi(String line, int lineNumber, String codiceAccount) {
 		if(StringUtils.isBlank(line)) {
+			log.info("newInstanceFromFlussoAttiAmministrativi", String.format("Riga %d scartata: vuota", lineNumber));
 			return null;
 		}
 		
@@ -59,6 +57,7 @@ public class AttoAmministrativoFactory {
 		// controllo se la linea sia da scartare
 		if("ENTE".equals(StringUtils.deleteWhitespace(a.getCodiceIstat()))) {
 			// Vuol dire la linea e' da scartare
+			log.info("newInstanceFromFlussoAttiAmministrativi", String.format("Riga %d scartata: Codice Istat = 'ENTE'", lineNumber));
 			return null;
 		}
 
@@ -71,7 +70,16 @@ public class AttoAmministrativoFactory {
 		
 		a.setAnno(parseInt("anno atto", StringUtils.deleteWhitespace(line.substring(47, 47 + 4))));
 		a.setNumero(parseInt("numero atto", StringUtils.deleteWhitespace(line.substring(52, 52 + 5))));
-		a.setTipoAtto(creaTipoAtto(line.substring(58, 58 + 4)));
+
+		String codiceTipoAtto = line.substring(58, 58 + 4).trim();
+		if (AttoAmministrativoEnteConfig.ignoreTipoAD(a.getCodiceIstat()) &&
+			"AD".equals(codiceTipoAtto)) {
+			log.info("newInstanceFromFlussoAttiAmministrativi", String.format("Riga %d scartata: Codice tipo atto = 'AD' da ignorare", lineNumber));
+			return null; // SIAC-7376
+		}
+		
+		a.setTipoAtto(creaTipoAtto(codiceTipoAtto));
+
 		a.setSacCentroDiResponsabilita(creaStrutturaAmministrativoContabile(line.substring(63, 63 + 10)));
 		a.setSacCentroDiCosto(creaStrutturaAmministrativoContabile(line.substring(74, 74 + 10)));
 		a.setDataCreazione(parseDateTime("Data Creazione", StringUtils.deleteWhitespace(line.substring(85, 85 + 14))));
@@ -89,16 +97,8 @@ public class AttoAmministrativoFactory {
 		a.setTrasparenza(StringUtils.trim(line.substring(927, 927 + 180)));   
 		// line should have length 1107
 		
-		// FIXME 
-		if (codiceAccount.startsWith("STILO")) {
-			String b = line.substring(1108, 1108 + 1);
-			a.setBloccoRagioneria("1".equals(b) ? Boolean.TRUE : "0".equals(b) ? Boolean.FALSE : null);
-		}
-		
-		
 		// CR-2778
-		boolean shouldIgnoreCDC = ENTI_IGNORING_CDC.contains(a.getCodiceIstat());
-		if(shouldIgnoreCDC) {
+		if(AttoAmministrativoEnteConfig.ignoreCDC(a.getCodiceIstat())) {
 			a.setSacCentroDiCostoChiave(null);
 			a.setSacCentroDiCosto(null);
 		}

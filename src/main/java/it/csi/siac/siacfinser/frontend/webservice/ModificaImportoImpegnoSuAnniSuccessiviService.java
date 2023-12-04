@@ -34,7 +34,7 @@ public class ModificaImportoImpegnoSuAnniSuccessiviService extends AbstractBaseS
 	private AggiornaImpegnoService aggiornaImpegnoService;
 	
 	@Autowired
-	private transient MovimentoGestioneService movimentoGestionService;
+	private transient MovimentoGestioneService movimentoGestioneService;
 	
 	@Override
 	protected void init() {
@@ -97,7 +97,7 @@ public class ModificaImportoImpegnoSuAnniSuccessiviService extends AbstractBaseS
 	private boolean lanciaInserisciImpegni(boolean fallimento) {
 		if(req.getInserisciImpegniRequest() != null) {
 			InserisceImpegniResponse response;
-			response = movimentoGestionService.inserisceImpegni(req.getInserisciImpegniRequest());
+			response = movimentoGestioneService.inserisceImpegni(req.getInserisciImpegniRequest());
 			fallimento = analizzaResponseInserisciImpegni(response);
 		}
 		return fallimento;
@@ -123,7 +123,7 @@ public class ModificaImportoImpegnoSuAnniSuccessiviService extends AbstractBaseS
 		List<Messaggio> listMess = new ArrayList<Messaggio>();
 		
 		
-		listMess.add(new Messaggio("FIN_INF_0070","Movimento aggiornato ( movimento = Impegno, anno = " + response.getImpegno().getAnnoMovimento() +  ", numero = "+ response.getImpegno().getNumero() +" )"));
+		listMess.add(new Messaggio("FIN_INF_0070","Movimento aggiornato ( movimento = Impegno, anno = " + response.getImpegno().getAnnoMovimento() +  ", numero = "+ response.getImpegno().getNumeroBigDecimal() +" )"));
 		res.setListaMessaggi(listMess);
 		
 		//ritorniamo il risultato dell'analisi:
@@ -155,7 +155,7 @@ public class ModificaImportoImpegnoSuAnniSuccessiviService extends AbstractBaseS
 				//passso alla response gli impegni inseriti se ce ne sono
 				res.setListaImpegniInseriti(impList);
 				for(Impegno app : impList){
-					listaMessaggi.add(new Messaggio("FIN_INF_0070","Movimento inserito ( movimento = Impegno, anno = " + app.getAnnoMovimento() +  ", numero = "+ app.getNumero() +" )"));
+					listaMessaggi.add(new Messaggio("FIN_INF_0070","Movimento inserito ( movimento = Impegno, anno = " + app.getAnnoMovimento() +  ", numero = "+ app.getNumeroBigDecimal() +" )"));
 				}
 			}
 			

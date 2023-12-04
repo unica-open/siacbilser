@@ -84,8 +84,6 @@ public class InserisciProvvisorioDiCassaService extends AbstractBaseService<Inse
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {
 		final String methodName="InserisciProvvisorioDiCassaService : checkServiceParam()";
-		log.info(methodName, " - Begin");
-		
 		
 		setBilancio(req.getBilancio());
 		
@@ -93,9 +91,6 @@ public class InserisciProvvisorioDiCassaService extends AbstractBaseService<Inse
 		Ente ente = req.getEnte();
 		ProvvisorioDiCassa provvisorioDiCassa = req.getProvvisorioDaInserire();
 
-		log.info(methodName, " provvisorioDiCassa.getImporto().signum() "+ provvisorioDiCassa.getImporto().signum());
-
-		
 		if(null==provvisorioDiCassa && null==bilancio && null==ente && null==richiedente){
 			checkCondition(false, ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore("NESSUN PARAMETRO INIZIALIZZATO"));
 		} else if(null==provvisorioDiCassa){

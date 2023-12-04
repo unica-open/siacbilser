@@ -57,7 +57,7 @@ public class AggiornaPreDocumentoDiSpesaPerVariazioneImputazioniContabiliService
 			// TODO: controllare i dati
 			checkCondition(preDoc.getImpegno().getUid() != 0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("uid impegno predocumento"));
 			checkCondition(preDoc.getImpegno().getAnnoMovimento() != 0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno impegno predocumento"));
-			checkNotNull(preDoc.getImpegno().getNumero(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero impegno predocumento"));
+			checkNotNull(preDoc.getImpegno().getNumeroBigDecimal(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numero impegno predocumento"));
 		}
 		checkEntitaFacoltativa(preDoc.getSoggetto(), "soggetto");
 		checkEntitaFacoltativa(preDoc.getAttoAmministrativo(), "provvedimento predocumento");
@@ -65,11 +65,6 @@ public class AggiornaPreDocumentoDiSpesaPerVariazioneImputazioniContabiliService
 				(preDoc.getProvvisorioDiCassa().getAnno() != null && preDoc.getProvvisorioDiCassa().getNumero() != null) ||
 				(preDoc.getProvvisorioDiCassa().getAnno() == null && preDoc.getProvvisorioDiCassa().getNumero() == null),
 				 ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero provvisorio di cassa") );
-		
-		// numero mutuo ---> voceMutuo
-		checkCondition(preDoc.getVoceMutuo() == null || StringUtils.isBlank(preDoc.getVoceMutuo().getNumeroMutuo())
-				|| (preDoc.getImpegno() != null && preDoc.getImpegno().getNumero() != null && preDoc.getImpegno().getAnnoMovimento() != 0),
-				ErroreFin.IMPEGNO_FINANZIATO_DA_MUTUO.getErrore());
 	}
 	
 	@Override

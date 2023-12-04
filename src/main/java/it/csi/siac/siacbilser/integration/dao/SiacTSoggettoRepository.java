@@ -38,6 +38,37 @@ public interface SiacTSoggettoRepository extends JpaRepository<SiacTSoggetto, In
 	String findSoggettoStatoCodeBySoggettoId(@Param("soggettoId") Integer soggettoId);
 	
 	
+	
+	
+	@Query("SELECT ts FROM SiacTSoggetto ts " 
+			+ " WHERE ts.soggettoCode=:soggettoCode "
+			+ " AND ts.siacTEnteProprietario.enteProprietarioId=:enteId "
+			+ " AND ts.siacDAmbito.ambitoCode = 'AMBITO_FIN'"
+			+ " AND NOT EXISTS ( "
+			+ " 	FROM ts.siacRSoggettoRelazs2 rsr "
+			+ "		WHERE rsr.siacDRelazTipo.relazTipoCode='SEDE_SECONDARIA' "
+			+ " 	AND rsr.dataCancellazione is NULL "
+			+ " 	AND rsr.dataInizioValidita < CURRENT_TIMESTAMP "
+			+ " 	AND (rsr.dataFineValidita is NULL or rsr.dataFineValidita > CURRENT_TIMESTAMP) "
+			+ " ) "
+			+ " AND ts.dataCancellazione IS NULL "
+			+ " AND ts.dataInizioValidita < CURRENT_TIMESTAMP "
+			+ " AND (ts.dataFineValidita IS NULL OR ts.dataFineValidita > CURRENT_TIMESTAMP) ")
+	SiacTSoggetto findValidSoggettoByLogicKey(@Param("soggettoCode") String codice, @Param("enteId") Integer enteId);
+	
+	@Query("SELECT ts FROM SiacTSoggetto ts " 
+			+ " WHERE ts.soggettoCode=:soggettoCode "
+			+ " AND ts.siacTEnteProprietario.enteProprietarioId=:enteId "
+			+ " AND ts.siacDAmbito.ambitoCode = 'AMBITO_FIN' "
+			+ " AND NOT EXISTS ( "
+			+ " 	FROM ts.siacRSoggettoRelazs2 rsr "
+			+ "		WHERE rsr.siacDRelazTipo.relazTipoCode='SEDE_SECONDARIA' "
+			+ " 	AND rsr.dataCancellazione is NULL "
+			+ " 	AND rsr.dataInizioValidita < CURRENT_TIMESTAMP "
+			+ " 	AND (rsr.dataFineValidita is NULL or rsr.dataFineValidita > CURRENT_TIMESTAMP) "
+			+ " ) ")
+	List<SiacTSoggetto> findSoggettoByLogicKey(@Param("soggettoCode") String codice, @Param("enteId") Integer enteId);
+	
 	/**
 	 * Find soggetto by id movgest ts.
 	 *

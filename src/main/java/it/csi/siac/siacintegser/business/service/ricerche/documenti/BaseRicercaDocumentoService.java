@@ -45,23 +45,23 @@ public abstract class BaseRicercaDocumentoService<IREQ extends BaseRicercaDocume
 	protected void checkServiceParameters(BaseRicercaDocumento ireq)
 			throws ServiceParamError {
 
-		checkCondition( false 
+		checkParamCondition( false 
 				|| ( isDefined(ireq.getAnnoDocumento()) && StringUtils.isNotEmpty(ireq.getTipoDocumento()) && ( StringUtils.isNotEmpty(ireq.getNumeroDocumento()) || StringUtils.isNotEmpty(ireq.getCodiceSoggetto()) ) ) 
 				|| ( ireq.getNumeroRepertorio() !=null && isDefined(ireq.getAnnoRepertorio()) /*&& ireq.getDataRepertorio() != null*/ )
 				,ErroreCore.NESSUN_CRITERIO_RICERCA.getErrore());
 		
 		if ( isDefined(ireq.getAnnoDocumento()) || StringUtils.isNotEmpty(ireq.getTipoDocumento()) ||  StringUtils.isNotEmpty(ireq.getNumeroDocumento()) || StringUtils.isNotEmpty(ireq.getCodiceSoggetto()) ) {
 			// presume che si voglia fare la ricerca per dati del documento
-			checkCondition( isDefined(ireq.getAnnoDocumento()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("annoDocumento") );
-			checkCondition( StringUtils.isNotEmpty(ireq.getTipoDocumento()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("tipoDocumento") );
-			checkCondition( StringUtils.isNotEmpty(ireq.getNumeroDocumento()) || StringUtils.isNotEmpty(ireq.getCodiceSoggetto()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numeroDocumento o codiceSoggetto") );
+			checkParamCondition( isDefined(ireq.getAnnoDocumento()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("annoDocumento") );
+			checkParamCondition( StringUtils.isNotEmpty(ireq.getTipoDocumento()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("tipoDocumento") );
+			checkParamCondition( StringUtils.isNotEmpty(ireq.getNumeroDocumento()) || StringUtils.isNotEmpty(ireq.getCodiceSoggetto()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numeroDocumento o codiceSoggetto") );
 			return;
 		}
 
 		if ( StringUtils.isNotEmpty(ireq.getNumeroRepertorio()) || isDefined(ireq.getAnnoRepertorio()) /*|| ireq.getDataRepertorio()!=null*/ ) {
 			// presume che si voglia fare la ricerca per protocollo, informa i campi no valorizzati
-			checkCondition(StringUtils.isNotEmpty(ireq.getNumeroRepertorio()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numeroRepertorio"));
-			checkCondition(isDefined(ireq.getAnnoRepertorio()) , ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("annoRepertorio"));
+			checkParamCondition(StringUtils.isNotEmpty(ireq.getNumeroRepertorio()), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("numeroRepertorio"));
+			checkParamCondition(isDefined(ireq.getAnnoRepertorio()) , ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("annoRepertorio"));
 //			checkCondition(ireq.getDataRepertorio() != null , ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("dataRepertorio"));
 			return;
 		}		

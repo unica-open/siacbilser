@@ -22,7 +22,9 @@ public interface FatturaFELDao extends Dao<SirfelTFattura, SirfelTFatturaPK> {
 
 	Page<SirfelTFattura> ricercaSinteticaFatturaFEL(
 			int enteProprietarioId,
-			SirfelDTipoDocumentoEnum sirfelDTipoDocumentoEnum, 
+			//SIAC-7557
+			//SirfelDTipoDocumentoEnum sirfelDTipoDocumentoEnum,
+			String codiceTipoDocFEL,
 			String codicePrestatore,
 			String numero, 
 			String codiceDestinatario, 

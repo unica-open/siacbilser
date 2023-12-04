@@ -60,20 +60,20 @@ public class StoricoImpegnoAccertamentoTest extends BaseJunit4TestCase {
 		
 		Impegno imp = new Impegno();
 		imp.setAnnoMovimento(2017);
-		imp.setNumero(new BigDecimal("2490"));
+		imp.setNumeroBigDecimal(new BigDecimal("2490"));
 		storico.setImpegno(imp);
 		
 		SubImpegno subi = new SubImpegno();
-		subi.setNumero(new BigDecimal("1"));
+		subi.setNumeroBigDecimal(new BigDecimal("1"));
 		storico.setSubImpegno(subi);
 		
 		Accertamento acc = new Accertamento();
 		acc.setAnnoMovimento(1492);
-		acc.setNumero(new BigDecimal("11"));
+		acc.setNumeroBigDecimal(new BigDecimal("11"));
 		storico.setAccertamento(acc);
 		
 		SubAccertamento suba = new SubAccertamento();
-		suba.setNumero(new BigDecimal("13"));
+		suba.setNumeroBigDecimal(new BigDecimal("13"));
 //		storico.setSubAccertamento(suba);
 
 		req.setStoricoImpegnoAccertamento(storico);
@@ -123,20 +123,20 @@ public class StoricoImpegnoAccertamentoTest extends BaseJunit4TestCase {
 		storico.setEnte(req.getEnte());
 		Impegno imp = new Impegno();
 		imp.setAnnoMovimento(2017);
-		imp.setNumero(new BigDecimal("2490"));
+		imp.setNumeroBigDecimal(new BigDecimal("2490"));
 //		storico.setImpegno(imp);
 		
 		SubImpegno subi = new SubImpegno();
-		subi.setNumero(new BigDecimal("1"));
+		subi.setNumeroBigDecimal(new BigDecimal("1"));
 //		storico.setSubImpegno(subi);
 		
 		Accertamento acc = new Accertamento();
 		acc.setAnnoMovimento(2017);
-		acc.setNumero(new BigDecimal("5"));
+		acc.setNumeroBigDecimal(new BigDecimal("5"));
 		storico.setAccertamento(acc);
 		
 		SubAccertamento suba = new SubAccertamento();
-		suba.setNumero(new BigDecimal("13"));
+		suba.setNumeroBigDecimal(new BigDecimal("13"));
 //		storico.setSubAccertamento(suba);
 		
 		par.setStoricoImpegnoAccertamento(storico);
@@ -146,7 +146,7 @@ public class StoricoImpegnoAccertamentoTest extends BaseJunit4TestCase {
 		RicercaStoricoImpegnoAccertamentoResponse res = ricercaStoricoImpegnoAccertamento.executeService(req);
 		if(res.getElencoStoricoImpegnoAccertamento() != null) {
 			for (StoricoImpegnoAccertamento i : res.getElencoStoricoImpegnoAccertamento()) {
-				System.out.println("storico su impegno: " + i.getImpegno().getAnnoMovimento() + " / " + i.getImpegno().getNumero());
+				System.out.println("storico su impegno: " + i.getImpegno().getAnnoMovimento() + " / " + i.getImpegno().getNumeroBigDecimal());
 			}
 			
 		}
@@ -171,20 +171,20 @@ public class StoricoImpegnoAccertamentoTest extends BaseJunit4TestCase {
 		
 		Impegno imp = new Impegno();
 		imp.setAnnoMovimento(2017);
-		imp.setNumero(new BigDecimal("1"));
+		imp.setNumeroBigDecimal(new BigDecimal("1"));
 		storico.setImpegno(imp);
 		
 		SubImpegno subi = new SubImpegno();
-		subi.setNumero(new BigDecimal("13"));
+		subi.setNumeroBigDecimal(new BigDecimal("13"));
 //		storico.setSubImpegno(subi);
 		
 		Accertamento acc = new Accertamento();
 		acc.setAnnoMovimento(1974);
-		acc.setNumero(new BigDecimal("5"));
+		acc.setNumeroBigDecimal(new BigDecimal("5"));
 		storico.setAccertamento(acc);
 		
 		SubAccertamento suba = new SubAccertamento();
-		suba.setNumero(new BigDecimal("13"));
+		suba.setNumeroBigDecimal(new BigDecimal("13"));
 //		storico.setSubAccertamento(suba);
 
 		req.setStoricoImpegnoAccertamento(storico);
@@ -212,11 +212,11 @@ public class StoricoImpegnoAccertamentoTest extends BaseJunit4TestCase {
 		
 		Accertamento acc = new Accertamento();
 		acc.setAnnoMovimento(1974);
-		acc.setNumero(new BigDecimal("5"));
+		acc.setNumeroBigDecimal(new BigDecimal("5"));
 		storico.setAccertamento(acc);
 		
 		SubAccertamento suba = new SubAccertamento();
-		suba.setNumero(new BigDecimal("13"));
+		suba.setNumeroBigDecimal(new BigDecimal("13"));
 //		storico.setSubAccertamento(suba);
 
 		req.setStoricoImpegnoAccertamento(storico);

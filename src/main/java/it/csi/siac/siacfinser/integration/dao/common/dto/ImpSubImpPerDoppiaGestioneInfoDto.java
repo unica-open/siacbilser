@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 
 public abstract class ImpSubImpPerDoppiaGestioneInfoDto extends OggettoPerDoppiaGestioneInfoDto implements Serializable {
@@ -33,7 +33,7 @@ public abstract class ImpSubImpPerDoppiaGestioneInfoDto extends OggettoPerDoppia
 	}	
 	
 	public ArrayList<LiquidazionePerDoppiaGestioneInfoDto> getLiquidazioni(){
-		return StringUtils.hashMapToArrayList(mappaLiq);
+		return StringUtilsFin.hashMapToArrayList(mappaLiq);
 	}
 
 }

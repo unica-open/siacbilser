@@ -4,7 +4,7 @@
 */
 package it.csi.siac.siacbilser.integration.entity.enumeration;
 
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 
 /**
  * The Enum SiacDFaseOperativaEnum.

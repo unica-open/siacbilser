@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+# SPDX-License-Identifier: EUPL-1.2
+# Impostazioni macchina locale
+jboss_dir      =
+consip_dir     =
+coll_dir       =
+tstamp.pattern =
+
+# Impostare se necessario modificare la JAVA_HOME
+#env.JAVA_HOME =
+
+# Componenti
+componenti.bilapp      = 
+componenti.boapp       = 
+componenti.cruapp      = 
+componenti.finapp      = 
+componenti.repapp      = 
+componenti.bilser      = siacbilser
+componenti.corser      = 
+componenti.bilitf      = 
+componenti.coritf      = 
+componenti.integitf    = 
+componenti.common      = 
+componenti.commonapp   = 
+componenti.commonser   = 
+componenti.siacbdiimpl = 
+componenti.siacreport  = 
+componenti.siacbatch   = 
+
+# Path release notes
+releaseNotesPath.bilapp      = docs/
+releaseNotesPath.boapp       = docs/
+releaseNotesPath.cruapp      = docs/
+releaseNotesPath.finapp      = docs/
+releaseNotesPath.repapp      = docs/
+releaseNotesPath.bilser      = docs/
+releaseNotesPath.corser      = docs/
+releaseNotesPath.attitf      = docs/
+releaseNotesPath.bilitf      = docs/
+releaseNotesPath.coritf      = docs/
+releaseNotesPath.finitf      = docs/
+releaseNotesPath.integitf    = docs/
+releaseNotesPath.commonlib   = docs/
+releaseNotesPath.siacbatch   = docs/
+
+# Lampione
+lampione.webmin.user.id = 
+
+# ReleaseMailTextBuilder configuration
+releaseMailTextBuilder.executablePath =
+releaseMailTextBuilder.scriptPath =
+# releaseMailTextBuilder.executablePath = C:/Program Files/Git/bin/bash.exe
+# releaseMailTextBuilder.scriptPath = /c/workspaces/siac/scripts/
+jiraProd.user=
+jiraProd.pwd=

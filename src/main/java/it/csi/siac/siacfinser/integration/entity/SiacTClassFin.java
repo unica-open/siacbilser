@@ -49,8 +49,10 @@ public class SiacTClassFin extends SiacTEnteBase {
 	//bi-directional many-to-one association to SiacRClassAttrFin
 	@OneToMany(mappedBy="siacTClass")
 	private List<SiacRClassAttrFin> siacRClassAttrs;
-
-	
+	//SIAC-8229
+	//bi-directional many-to-one association to SiacRMovgestClassFin
+	@OneToMany(mappedBy="siacTClass")
+	private List<SiacRMovgestClassFin> siacRMovgestClass;
 
 	//bi-directional many-to-one association to SiacRGruppoRuoloOpFin
 	@OneToMany(mappedBy="siacTClass")
@@ -202,4 +204,19 @@ public class SiacTClassFin extends SiacTEnteBase {
 		// TODO Auto-generated method stub
 		this.classifId = uid;
 	}
+
+	/**
+	 * @return the siacRMovgestClass
+	 */
+	public List<SiacRMovgestClassFin> getSiacRMovgestClass() {
+		return siacRMovgestClass;
+	}
+
+	/**
+	 * @param siacRMovgestClass the siacRMovgestClass to set
+	 */
+	public void setSiacRMovgestClass(List<SiacRMovgestClassFin> siacRMovgestClass) {
+		this.siacRMovgestClass = siacRMovgestClass;
+	}
+	
 }

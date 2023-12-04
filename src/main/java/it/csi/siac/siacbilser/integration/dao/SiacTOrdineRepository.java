@@ -27,6 +27,15 @@ public interface SiacTOrdineRepository extends JpaRepository<SiacTOrdine, Intege
 			+ "             )")
 	List<SiacTOrdine> findOrdiniByDocumentoSpesa(@Param("docId") Integer uidDoc);
 	
+	//SIAC-7557
+	@Query(" FROM SiacTOrdine o  "
+			+ " WHERE o.dataCancellazione IS NULL "
+			+ " AND EXISTS (FROM o.siacRDocOrdines rdo "
+			+ "            	WHERE rdo.dataCancellazione IS NULL "
+			+ "             AND rdo.siacTDoc.docId = :docId"
+			+ "             )")
+	List<SiacTOrdine> findOrdiniByDocumentoEntrata(@Param("docId") Integer uidDoc);
+	
 	@Query(" SELECT COALESCE(COUNT(o), 0)  "
 			+" FROM SiacTOrdine o  "
 			+ " WHERE o.dataCancellazione IS NULL "

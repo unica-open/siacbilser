@@ -16,10 +16,12 @@ import it.csi.siac.siacbilser.business.service.documento.CollegaDocumentiService
 import it.csi.siac.siacbilser.business.service.documento.RicercaAttivitaOnereService;
 import it.csi.siac.siacbilser.business.service.documento.RicercaCausale770Service;
 import it.csi.siac.siacbilser.business.service.documento.RicercaCodiceBolloService;
+import it.csi.siac.siacbilser.business.service.documento.RicercaCodiceCommissioneDocumentoService;
 import it.csi.siac.siacbilser.business.service.documento.RicercaCodicePCCService;
 import it.csi.siac.siacbilser.business.service.documento.RicercaCodiceUfficioDestinatarioPCCService;
 import it.csi.siac.siacbilser.business.service.documento.RicercaNaturaOnereService;
 import it.csi.siac.siacbilser.business.service.documento.RicercaNoteTesoriereService;
+import it.csi.siac.siacbilser.business.service.documento.RicercaQuoteDaAssociarePredocumentoService;
 import it.csi.siac.siacbilser.business.service.documento.RicercaQuoteDaAssociareService;
 import it.csi.siac.siacbilser.business.service.documento.RicercaSommaNonSoggettaService;
 import it.csi.siac.siacbilser.business.service.documento.RicercaTipoAvvisoService;
@@ -37,6 +39,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCausale770;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCausale770Response;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceBollo;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceBolloResponse;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceCommissioneDocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceCommissioneDocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodicePCC;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodicePCCResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaCodiceUfficioDestinatarioPCC;
@@ -46,6 +50,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNaturaOnereRespons
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNoteTesoriere;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaNoteTesoriereResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociare;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociarePredocumento;
+import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociarePredocumentoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaAssociareResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSommaNonSoggetta;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSommaNonSoggettaResponse;
@@ -88,6 +94,12 @@ public class DocumentoServiceImpl implements DocumentoService {
 		return BaseServiceExecutor.execute(appCtx, RicercaCodiceBolloService.class, parameters);
 	}
 
+	//task-291
+	@Override
+	public RicercaCodiceCommissioneDocumentoResponse ricercaCodiceCommissioneDocumento(RicercaCodiceCommissioneDocumento parameters) {
+		return BaseServiceExecutor.execute(appCtx, RicercaCodiceCommissioneDocumentoService.class, parameters);
+	}
+	
 	@Override
 	public RicercaTipoImpresaResponse ricercaTipoImpresa(RicercaTipoImpresa parameters) {
 		return BaseServiceExecutor.execute(appCtx, RicercaTipoImpresaService.class, parameters);
@@ -151,6 +163,11 @@ public class DocumentoServiceImpl implements DocumentoService {
 	@Override
 	public AggiornaRelazioneDocumentiResponse scollegaDocumenti(AggiornaRelazioneDocumenti parameters) {
 		return BaseServiceExecutor.execute(appCtx, ScollegaDocumentiService.class, parameters);
+	}
+
+	@Override
+	public RicercaQuoteDaAssociarePredocumentoResponse ricercaQuoteDaAssociarePredocumento(RicercaQuoteDaAssociarePredocumento parameters) {
+		return BaseServiceExecutor.execute(appCtx, RicercaQuoteDaAssociarePredocumentoService.class, parameters);
 	}
 
 }

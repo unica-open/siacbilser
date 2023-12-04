@@ -37,7 +37,7 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<!-- ################ Servizi di Core ################# -->
 	
-	<bean id="coreService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="coreService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.CoreService" />
 		<property name="wsdlDocumentUrl" value="${endpoint.url.service.cor}/CoreService?wsdl" />
 		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -45,7 +45,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<property name="endpointAddress" value="${endpoint.url.service.cor}/CoreService" />
 		<property name="lookupServiceOnStartup" value="false" />
 	</bean>
-	<bean id="classificatoreService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="classificatoreService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService" />
 		<property name="wsdlDocumentUrl" value="${endpoint.url.service.cor}/ClassificatoreService?wsdl" />
 		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -53,7 +53,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<property name="endpointAddress" value="${endpoint.url.service.cor}/ClassificatoreService" />
 		<property name="lookupServiceOnStartup" value="false" />
 	</bean>	
-	<bean id="fileService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="fileService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.FileService" />
 		<property name="wsdlDocumentUrl" value="${endpoint.url.service.cor}/FileService?wsdl" />
 		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -61,7 +61,7 @@ SPDX-License-Identifier: EUPL-1.2
  		<property name="endpointAddress" value="${endpoint.url.service.cor}/FileService" />
  		<property name="lookupServiceOnStartup" value="false" />
 	</bean>
-	<bean id="operazioneAsincronaService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="operazioneAsincronaService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.OperazioneAsincronaService" />
 		<property name="wsdlDocumentUrl" value="${endpoint.url.service.cor}/OperazioneAsincronaService?wsdl" />
 		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -80,7 +80,7 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<!-- ################ Servizio generazione Report ########### -->
 	
-	<bean id="reportService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="reportService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.siac.siaccorser.frontend.webservice.ReportService" />
 		<property name="wsdlDocumentUrl" value="${endpoint.url.service.rep}/ReportService?wsdl" />
 		<property name="namespaceUri" value="http://siac.csi.it/cor/svc/1.0" />
@@ -92,7 +92,7 @@ SPDX-License-Identifier: EUPL-1.2
 	<!-- ################ Servizi di MARC per integrazione PCC ################# -->
 	
 	<!-- TODO dati da parametrizzare -->
-	<bean id="marcWS" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="marcWS" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.siac.pcc.marc.services.webservices_1_0.MarcWSPortType" />
 		<property name="wsdlDocumentUrl" value="http://dev-srv-marc.bilancio.csi.it/wso004/services/MarcProxyService?wsdl" />
 		<property name="namespaceUri" value="http://www.csi.it/marc/services/webservices-1.0" />
@@ -101,7 +101,7 @@ SPDX-License-Identifier: EUPL-1.2
 		<property name="lookupServiceOnStartup" value="false" />
 	</bean>
 	
-	<bean id="felWS" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="felWS" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.fel.eis.bilanciotofel.BilancioToFel" />
 		<property name="wsdlDocumentUrl" value="http://tst-jb1fel.bilancio.csi.it:8121/http-router/webservices/bilancioToFelService?wsdl" />
 		<property name="namespaceUri" value="http://www.csi.it/fel/eis/bilancioToFel" />
@@ -113,7 +113,7 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<!-- ################ Servizi di HR per la Cassa Economale ################# -->
 	
-	<bean id="iMissioniService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="iMissioniService" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.srvpers.rapws.interfaccecxf.services.missioni.IMissioniService" />
 		<property name="wsdlDocumentUrl" value="https://tst-api-ent.ecosis.csi.it/wso007/registry/resource/_system/governance/apimgt/applicationdata/wsdls/pers-cre--PERS_RAP_RP-01_missioni-T1.0.wsdl" />
 		<property name="namespaceUri" value="http://missioni.services.interfaccecxf.rapws.srvpers.csi.it/" />
@@ -131,7 +131,7 @@ SPDX-License-Identifier: EUPL-1.2
 	
 	<!-- ################ Servizi di APPJ  ################# -->
 	
-	<bean id="appjWS" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+	<bean id="appjWS" class="it.csi.siac.siaccommonser.util.proxy.SiacJaxWsPortProxyFactoryBean">
 		<property name="serviceInterface" value="it.csi.appjwebsrv.business.WSInterface" />
 		<property name="wsdlDocumentUrl" value="https://tst-api-ent.ecosis.csi.it/wso007/registry/resource/_system/governance/apimgt/applicationdata/provider/bilancio-cre/BILANCIO_PROCUREMENT_CMTO_VerificaEvasione/1.0/documentation/files/bilancio-cre--BILANCIO_PROCUREMENT_CMTO_VerificaEvasione1.0.wsdl" />
 		<property name="namespaceUri" value="http://business.appjwebsrv.csi.it/" />

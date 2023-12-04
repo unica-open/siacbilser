@@ -34,7 +34,9 @@ import it.csi.siac.siacbilser.integration.dao.PrimaNotaDao;
 import it.csi.siac.siacbilser.integration.dao.RegistrazioneMovFinDao;
 import it.csi.siac.siacbilser.integration.dao.SiacDEventoRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacDEventoTipoRepository;
+import it.csi.siac.siacbilser.integration.dao.SiacRPrimaNotaClassRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacRPrimaNotaRepository;
+import it.csi.siac.siacbilser.integration.dao.SiacTClassRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTLiquidazioneRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTMovEpNumRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTMovgestTRepository;
@@ -51,7 +53,9 @@ import it.csi.siac.siacbilser.integration.entity.SiacDPrimaNotaRelTipo;
 import it.csi.siac.siacbilser.integration.entity.SiacDPrimaNotaStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRGsaClassifPrimaNota;
 import it.csi.siac.siacbilser.integration.entity.SiacRPrimaNota;
+import it.csi.siac.siacbilser.integration.entity.SiacRPrimaNotaClass;
 import it.csi.siac.siacbilser.integration.entity.SiacRPrimaNotaStato;
+import it.csi.siac.siacbilser.integration.entity.SiacTClass;
 import it.csi.siac.siacbilser.integration.entity.SiacTEnteProprietario;
 import it.csi.siac.siacbilser.integration.entity.SiacTGsaClassif;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovEp;
@@ -79,10 +83,12 @@ import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.Missione;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siacbilser.model.Programma;
 import it.csi.siac.siacbilser.model.exception.DadException;
 import it.csi.siac.siaccespser.model.Cespite;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
+import it.csi.siac.siaccommon.util.CoreUtil;
+import it.csi.siac.siaccommon.util.number.NumberUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -154,6 +160,11 @@ public class PrimaNotaDad extends ExtendedBaseDadImpl {
 	private SiacTLiquidazioneRepository siacTLiquidazioneRepository;
 	@Autowired
 	private SiacTSubdocRepository siacTSubdocRepository;
+	//SIAC-8134
+	@Autowired
+	private SiacRPrimaNotaClassRepository siacRPrimaNotaClassRepository;
+	@Autowired
+	private SiacTClassRepository siacTClassRepository;
 	
 	
 	@PersistenceContext
@@ -181,15 +192,69 @@ public class PrimaNotaDad extends ExtendedBaseDadImpl {
 	}
 	
 	/**
+	 * SIAC-8134 Aggiornamento della struttura competente della prima nota libera
+	 * @param siacTPrimaNota
+	 * @param primaNota
+	 */
+	private void aggiornaElencoStruttureCompetenti(SiacTPrimaNota siacTPrimaNota, PrimaNota primaNota) {
+		if(siacTPrimaNota == null || primaNota == null || !NumberUtil.isValidAndGreaterThanZero(primaNota.getUid())) {
+			return;
+		}
+		
+		// INVALIDAZIONE VECCHI RECORD
+		Date dataCancellazione = new Date();
+		List<SiacRPrimaNotaClass> legameStrutture = 
+				CoreUtil.checkList(siacRPrimaNotaClassRepository.findStrutturePrimaNotaValide(primaNota.getUid()));
+		
+		for (SiacRPrimaNotaClass siacRPrimaNotaClass : legameStrutture) {
+			siacRPrimaNotaClass.setDataCancellazioneIfNotSet(dataCancellazione);				
+		}
+
+		em.flush();
+		
+		//SIAC-8544 se non e' una prima nota libera o non ha la struttura competente valorizzata 
+		// non aggiungo relazioni e aggiorno il record con le invalidazioni
+		if(isNotPrimaNotaLibera(primaNota) || isStrutturaCompetenteNullaONonValida(primaNota)){
+			siacTPrimaNota.setSiacRPrimaNotaClasses(legameStrutture);
+			return;
+		}
+		
+		// NUOVO RECORD
+		Date dataCreazione = new Date();
+		SiacRPrimaNotaClass siacRPrimaNotaClass = new SiacRPrimaNotaClass();
+		SiacTClass siacTClass = siacTClassRepository.findOne(primaNota.getStrutturaCompetente().getUid());
+		siacRPrimaNotaClass.setSiacTClass(siacTClass);
+		siacRPrimaNotaClass.setSiacTPrimaNota(siacTPrimaNota);
+		siacRPrimaNotaClass.setSiacTEnteProprietario(siacTPrimaNota.getSiacTEnteProprietario());
+		siacRPrimaNotaClass.setDataInizioValidita(dataCreazione);
+		siacRPrimaNotaClass.setDataCreazione(dataCreazione);
+		siacRPrimaNotaClass.setDataModifica(dataCreazione);
+		siacRPrimaNotaClass.setLoginOperazione(siacTPrimaNota.getLoginOperazione());
+		
+		legameStrutture.add(siacRPrimaNotaClass);
+		
+		siacTPrimaNota.setSiacRPrimaNotaClasses(legameStrutture);
+	}
+	
+	private boolean isNotPrimaNotaLibera(PrimaNota primaNota) {
+		return primaNota.getTipoCausale() == null || TipoCausale.Integrata.getCodice().equals(primaNota.getTipoCausale().getCodice());
+	}
+	
+	//SIAC-8544 
+	private boolean isStrutturaCompetenteNullaONonValida(PrimaNota primaNota) {
+		return primaNota.getStrutturaCompetente() == null || !NumberUtil.isValidAndGreaterThanZero(primaNota.getStrutturaCompetente().getUid());
+	}
+	
+	/**
 	 * aggiorna soggetto prima nota
 	 * @param uidPrimaNota
 	 */
 	private void aggiornaSoggettoPrimanota(int uidPrimaNota) {
 		final String methodName = "aggiornaSoggettoPrimanota";
 		primaNotaDao.flush();
-		List<Object[]> ris = fi.invokeFunctionToObjectArray("siac_fnc_aggiornasoggettoprimanota", Integer.valueOf(uidPrimaNota));		 
+		List<Object[]> ris = fi.invokeFunctionToObjectArray("fnc_siac_aggiornasoggettoprimanota", Integer.valueOf(uidPrimaNota));		 
 
-		log.debug(methodName, "elaborazione della funzione siac_fnc_aggiornasoggettoprimanota terminata con esito= "+ (ris!= null && !ris.isEmpty() ? ris.get(0).toString():"null"));		
+		log.debug(methodName, "elaborazione della funzione fnc_siac_aggiornasoggettoprimanota terminata con esito= "+ (ris!= null && !ris.isEmpty() ? ris.get(0).toString():"null"));		
 		log.debug(methodName, "soggetto prima nota aggiornato");
 	}
 
@@ -202,11 +267,13 @@ public class PrimaNotaDad extends ExtendedBaseDadImpl {
 	public void aggiornaPrimaNota(PrimaNota primaNota) {
 		primaNota.setLoginModifica(loginOperazione);
 		SiacTPrimaNota siacTPrimaNota = buildSiacTPrimaNota(primaNota);
+		//SIAC-8134
+		aggiornaElencoStruttureCompetenti(siacTPrimaNota, primaNota);
+		
 		siacTPrimaNota.setLoginModifica(loginOperazione);
 		primaNotaDao.update(siacTPrimaNota);
 		primaNota.setUid(siacTPrimaNota.getUid());
 		//SIAC-5637
-		
 		aggiornaSoggettoPrimanota(primaNota.getUid());
 	}
 	
@@ -648,6 +715,7 @@ public class PrimaNotaDad extends ExtendedBaseDadImpl {
 				projectToUid(eventi),
 				primaNota.getNumero(),
 				primaNota.getNumeroRegistrazioneLibroGiornale(),
+				primaNota.getAnno(),
 				mapToUidIfNotZero(conto),
 				idMovimento,
 				siacDPrimaNotaStatoEnum,
@@ -812,6 +880,7 @@ public class PrimaNotaDad extends ExtendedBaseDadImpl {
 				projectToUid(eventi),
 				primaNota.getNumero(),
 				primaNota.getNumeroRegistrazioneLibroGiornale(),
+				primaNota.getAnno(),
 				mapToUidIfNotZero(conto),
 				mapToUidIfNotZero(causaleEP),
 				idMovimento,
@@ -1246,12 +1315,12 @@ public class PrimaNotaDad extends ExtendedBaseDadImpl {
 	}
 	
 
-	public ListaPaginata<Entita> ottieniEntitaCollegatePrimaNota(PrimaNota primaNota, TipoCollegamento tipoCollegamento, ModelDetail[] modelDetails, ParametriPaginazione parametriPaginazione) {
+	public ListaPaginata<Entita> ottieniEntitaCollegatePrimaNota(PrimaNota primaNota, TipoCollegamento tipoCollegamento, ModelDetailEnum[] modelDetails, ParametriPaginazione parametriPaginazione) {
 		final String methodName = "ottieniEntitaCollegatePrimaNota";
 		List<Entita> res = new ArrayList<Entita>();
 		SiacDCollegamentoTipoEnum sdcte = SiacDCollegamentoTipoEnum.byTipoCollegamento(tipoCollegamento);
 		if(sdcte.getModelDetailClass() != null) {
-			for(ModelDetail md : modelDetails) {
+			for(ModelDetailEnum md : modelDetails) {
 				if(!sdcte.getModelDetailClass().isInstance(md)) {
 					String str = "Il model detail " + md + " [classe " + md.getClass().getSimpleName() + "] non corrisponde alla famiglia richiesta dal tipo di collegamento (" + sdcte.getModelDetailClass().getSimpleName() + ")";
 					log.warn(methodName, str);
@@ -1400,4 +1469,14 @@ public class PrimaNotaDad extends ExtendedBaseDadImpl {
 		}
 		return listaPrimaNotaFiglie;
 	}
+	
+	public Ambito caricaAmbitoByPrimaNota(PrimaNota pn) {
+		 SiacDAmbito dAmbito = siacTPrimaNotaRepository.findSiacDAmbito(pn.getUid(), ente.getUid());
+		if(dAmbito == null || StringUtils.isEmpty(dAmbito.getAmbitoCode())) {
+			return null;
+		}
+		return SiacDAmbitoEnum.byCodice(dAmbito.getAmbitoCode()).getAmbito();
+		
+	}
+	
 }

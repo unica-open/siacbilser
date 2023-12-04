@@ -52,9 +52,9 @@ public class GestioneClassificatoreBilImplTest extends
 	public void testFindClassificatoriGenericiByTipoElementoBil() {
 		
 		LeggiClassificatoriGenericiByTipoElementoBil params = new LeggiClassificatoriGenericiByTipoElementoBil();
-		params.setAnno(2013);
+		params.setAnno(2019);
 		params.setIdEnteProprietario(1);
-		params.setTipoElementoBilancio("CAP-U");
+		params.setTipoElementoBilancio("CAP-UG");
 		LeggiClassificatoriGenericiByTipoElementoBilResponse res = gestioneClassificatoreBil.findClassificatoriGenericiByTipoElementoBil(params);
 		Assert.assertNull("Classificatori Generici trovati", res);
 		
@@ -67,9 +67,9 @@ public class GestioneClassificatoreBilImplTest extends
 	public void testFindClassificatoriConLivelloByTipoElementoBil() {
 		
 		LeggiClassificatoriByTipoElementoBil params = new LeggiClassificatoriByTipoElementoBil();
-		params.setAnno(2013);
-		params.setIdEnteProprietario(1);
-		params.setTipoElementoBilancio("CAP-U");
+		params.setAnno(2020);
+		params.setIdEnteProprietario(2);
+		params.setTipoElementoBilancio("CAP-UG");
 		
 		LeggiClassificatoriByTipoElementoBilResponse res = gestioneClassificatoreBil.findClassificatoriConLivelloByTipoElementoBil(params);
 		Assert.assertNull("Classificatori con livello trovati", res);

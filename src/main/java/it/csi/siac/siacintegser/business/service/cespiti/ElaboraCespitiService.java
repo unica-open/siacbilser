@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
 import it.csi.siac.siaccespser.model.Cespite;
+import it.csi.siac.siaccommon.util.fileparser.DelimitedTextFileParserExt;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Errore;
@@ -29,7 +30,6 @@ import it.csi.siac.siaccorser.model.file.File;
 import it.csi.siac.siacintegser.business.service.base.ElaboraFileBaseService;
 import it.csi.siac.siacintegser.business.service.cespiti.util.CespiteLineMapper;
 import it.csi.siac.siacintegser.business.service.cespiti.util.CespiteServiceCallGroup;
-import it.csi.siac.siacintegser.business.service.util.DelimitedTextFileParser;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFile;
 import it.csi.siac.siacintegser.frontend.webservice.msg.ElaboraFileResponse;
 
@@ -40,7 +40,7 @@ public class ElaboraCespitiService extends ElaboraFileBaseService
 	@PersistenceContext
 	protected EntityManager entityManager;
 
-	private DelimitedTextFileParser<Cespite> cespiteParser;
+	private DelimitedTextFileParserExt<Cespite> cespiteParser;
 
 	private CespiteServiceCallGroup cespiteServiceCallGroup;
 
@@ -51,7 +51,7 @@ public class ElaboraCespitiService extends ElaboraFileBaseService
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW, timeout=AsyncBaseService.TIMEOUT)
+	@Transactional(propagation = Propagation.REQUIRES_NEW, timeout=AsyncBaseService.TIMEOUT * 8)
 	public ElaboraFileResponse executeServiceTxRequiresNew(ElaboraFile serviceRequest)
 	{
 		return super.executeServiceTxRequiresNew(serviceRequest);
@@ -70,7 +70,7 @@ public class ElaboraCespitiService extends ElaboraFileBaseService
 	{
 		File file = req.getFile();
 
-		cespiteParser = new DelimitedTextFileParser<Cespite>(file.getContenuto(), "\t");
+		cespiteParser = new DelimitedTextFileParserExt<Cespite>(file.getContenuto(), "\t");
 		cespiteParser.setObjectMappingStrategy(new CespiteLineMapper());
 	}
 
@@ -92,6 +92,8 @@ public class ElaboraCespitiService extends ElaboraFileBaseService
 			throw new BusinessException(String.format("File %s - Errore: %s", getNomeFile(), t.getMessage()), Esito.FALLIMENTO);
 		}
 		
+		addMessaggio(String.format("File %s caricato", getNomeFile()));
+		
 		res.setEsito(res.hasErrori() ? Esito.FALLIMENTO : Esito.SUCCESSO);
 	}
 
@@ -100,9 +102,9 @@ public class ElaboraCespitiService extends ElaboraFileBaseService
 	{
 		Cespite cespite = iterator.next();
 		
-		for (String msg : cespiteParser.getElementMessages()) {
-			addMessaggio(msg);
-		}
+//		for (String msg : cespiteParser.getElementMessages()) {
+//			addMessaggio(msg);
+//		}
 
 		for (String err : cespiteParser.getElementErrors()) {
 			addErrore(err);
@@ -119,7 +121,7 @@ public class ElaboraCespitiService extends ElaboraFileBaseService
 			return;
 		}
 		
-		addMessaggio(String.format("cespite %s, numero inventario %s inserito correttamente", cespite.getCodice(), cespite.getNumeroInventario()));
+		//addMessaggio(String.format("cespite %s, numero inventario %s inserito correttamente", cespite.getCodice(), cespite.getNumeroInventario()));
 	}
 
 	protected boolean checkDatiObbligatori(Cespite cespite)

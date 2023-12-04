@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.utility.Utility;
+import it.csi.siac.siacbilser.integration.dad.CodificaDad;
 import it.csi.siac.siacbilser.integration.dad.OnereSpesaDad;
+import it.csi.siac.siacbilser.model.TipoCodifica;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -23,6 +25,8 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaDocumentoDiSpesaR
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.model.siopeplus.SiopeDocumentoTipo;
+import it.csi.siac.siacfinser.model.siopeplus.SiopeDocumentoTipoAnalogico;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -34,8 +38,16 @@ import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class AggiornaDocumentoDiSpesaService extends CrudDocumentoDiSpesaBaseService<AggiornaDocumentoDiSpesa, AggiornaDocumentoDiSpesaResponse> {
 	
+	//SIAC-8301
+	private static final String CODICE_TIPO_DOCUMENTO_SIOPE_ANALOGICO = "A";
+	private static final String CODICE_TIPO_DOCUMENTO_SIOPE_ELETTRONICO = "E";
+	private static final String CODICE_TIPO_DOCUMENTO_SIOPE_ANALOGICO_DOC_EQUIVALENTE = "DE";
 	@Autowired
 	private OnereSpesaDad onereSpesaDad;
+	//SIAC-8301
+	@Autowired
+	private CodificaDad codificaDad;
+	
 	
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siaccommonser.business.service.base.BaseService#checkServiceParam()
@@ -86,7 +98,7 @@ public class AggiornaDocumentoDiSpesaService extends CrudDocumentoDiSpesaBaseSer
 		checkCondition(doc.getDatiFatturaPagataIncassata() == null
 				|| (Boolean.TRUE.equals(doc.getDatiFatturaPagataIncassata().getFlagPagataIncassata()) && StringUtils.isNotBlank(doc.getDatiFatturaPagataIncassata().getNotePagamentoIncasso()) && doc.getDatiFatturaPagataIncassata().getDataOperazione() != null)
 				|| (!Boolean.TRUE.equals(doc.getDatiFatturaPagataIncassata().getFlagPagataIncassata()) && StringUtils.isBlank(doc.getDatiFatturaPagataIncassata().getNotePagamentoIncasso()) && doc.getDatiFatturaPagataIncassata().getDataOperazione() == null),
-				ErroreCore.VALORE_NON_VALIDO.getErrore("documento pagato, note, data pagamento", ": nel caso almeno uno sia valorizzato devono essere tutti valorizzati"));
+				ErroreCore.VALORE_NON_CONSENTITO.getErrore("documento pagato, note, data pagamento", ": nel caso almeno uno sia valorizzato devono essere tutti valorizzati"));
 	}
 	
 	/* (non-Javadoc)
@@ -96,6 +108,8 @@ public class AggiornaDocumentoDiSpesaService extends CrudDocumentoDiSpesaBaseSer
 	protected void init() {
 		super.init();
 		documentoSpesaDad.setLoginOperazione(loginOperazione);
+		documentoSpesaDad.setEnte(ente);
+		codificaDad.setEnte(ente);
 	}
 	
 	/* (non-Javadoc)
@@ -123,6 +137,9 @@ public class AggiornaDocumentoDiSpesaService extends CrudDocumentoDiSpesaBaseSer
 		// SIAC-6099
 		checkImportoOnere();
 		
+		//SIAC-8301
+		gestioneDefaultSiope();
+		
 		documentoSpesaDad.aggiornaAnagraficaDocumentoSpesa(doc);	
 		
 		if(req.isAggiornaStatoDocumento()) {
@@ -132,6 +149,60 @@ public class AggiornaDocumentoDiSpesaService extends CrudDocumentoDiSpesaBaseSer
 		}
 		
 		res.setDocumentoSpesa(doc);
+	}
+	
+	//SIAC-8301
+	/**
+	 * Default per il SIOPE+.
+	 * <ul>
+	 *     <li>TipoDocumentoSiope: nel caso non venisse specificato il default ad es. per l'inserimento
+	 *     dei documenti creati in automatico (ALG, etc…), &eacute; ANALOGICO</li>
+	 *     <li>TipoDocumentoAnalogicoSiope: nel caso non venisse specificato il default
+	 *     ad es. per l'inserimento dei documenti creati in automatico (ALG, etc…), &eacute; DOC_EQUIVALENTE</li>
+	 * </ul>
+	 */
+	private void gestioneDefaultSiope() {
+		final String methodName = "gestioneDefaultSiope";
+					
+		SiopeDocumentoTipo siopeDocumentoTipoDaImpostare =  estraiSiopeDocumento();
+		doc.setSiopeDocumentoTipo(siopeDocumentoTipoDaImpostare);
+					
+		String codiceSiopeTipoDocumento = doc.getSiopeDocumentoTipo().getCodice();
+				
+		if(CODICE_TIPO_DOCUMENTO_SIOPE_ELETTRONICO.equals(codiceSiopeTipoDocumento)) {
+			doc.setSiopeDocumentoTipoAnalogico(null);
+			return;
+		}
+		
+		if(CODICE_TIPO_DOCUMENTO_SIOPE_ANALOGICO.equals(codiceSiopeTipoDocumento) && (doc.getSiopeDocumentoTipoAnalogico() == null || doc.getSiopeDocumentoTipoAnalogico().getUid() == 0)) {
+			// Default per il tipo documento analogico siope
+			log.debug(methodName, "Tipo documento analogico siope non valorizzato: impostazione del default DOC_EQUIVALENTE");
+			SiopeDocumentoTipoAnalogico siopeDocumentoTipoAnalogico = codificaDad.ricercaCodifica(new TipoCodifica(SiopeDocumentoTipoAnalogico.class), CODICE_TIPO_DOCUMENTO_SIOPE_ANALOGICO_DOC_EQUIVALENTE);
+			doc.setSiopeDocumentoTipoAnalogico(siopeDocumentoTipoAnalogico);
+		}
+	}
+	
+
+	private SiopeDocumentoTipo estraiSiopeDocumento() {
+		final String methodName = "estraiSiopeDocumento";
+		SiopeDocumentoTipo siopeDocumentoFornito = doc.getSiopeDocumentoTipo();
+		boolean idTipoDocSiopeFornito = siopeDocumentoFornito!= null && siopeDocumentoFornito.getUid() != 0;
+		
+		if(!idTipoDocSiopeFornito) {			
+			SiopeDocumentoTipo siopeDocTipoDaBaseDati = documentoSpesaDad.getSiopeDocumentoTipoByDocId(doc);
+			if(siopeDocTipoDaBaseDati == null) {
+				log.debug(methodName, "Tipo documento siope non valorizzato e non presente su base dati: impostazione del default ANALOGICO");
+				siopeDocTipoDaBaseDati = codificaDad.ricercaCodifica(new TipoCodifica(SiopeDocumentoTipo.class), CODICE_TIPO_DOCUMENTO_SIOPE_ANALOGICO);
+			}
+			return siopeDocTipoDaBaseDati;
+		}
+		
+		if(StringUtils.isBlank(siopeDocumentoFornito.getCodice())) {
+			log.debug(methodName, "Fornito solo uid del tipo documento siope, carico anche il codice per definire se sia analogico o elettronico.");
+			siopeDocumentoFornito = codificaDad.ricercaCodifica(SiopeDocumentoTipo.class, doc.getSiopeDocumentoTipo().getUid());
+		}
+	
+		return siopeDocumentoFornito;
 	}
 
 	/**
@@ -175,7 +246,7 @@ public class AggiornaDocumentoDiSpesaService extends CrudDocumentoDiSpesaBaseSer
 		BigDecimal importoOneriGiaAssociati = onereSpesaDad.getMassimoImportoImponibileOneriCollegatiAlDocumento(doc.getUid());
 		
 		if(importoOneriGiaAssociati.compareTo(importoDocumento) > 0) {
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("importo", "non puo' essere minore dell'imponibile di alcuno degli oneri associati ("
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("importo", "non puo' essere minore dell'imponibile di alcuno degli oneri associati ("
 					+ "importo documento: " + Utility.formatCurrencyAsString(importoDocumento)
 					+ ", massimo degli imponibili per gli oneri associati: " + Utility.formatCurrencyAsString(importoOneriGiaAssociati) + ")"));
 		}

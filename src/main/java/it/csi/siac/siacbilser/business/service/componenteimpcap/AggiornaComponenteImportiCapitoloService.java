@@ -19,9 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaComponenteImportiCapitoloResponse;
+import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitoloModelDetail;
 import it.csi.siac.siacbilser.model.DettaglioComponenteImportiCapitolo;
+import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoDettaglioComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siacbilser.model.utils.TipoImportoCapitolo;
@@ -77,15 +80,24 @@ public class AggiornaComponenteImportiCapitoloService extends BaseGestioneCompon
 	@Override
 	protected void execute() {
 		initCapitolo(req.getCapitolo().getUid());
-		
+		//task-236
+		CategoriaCapitolo categoria = capitoloDad.findCategoriaCapitolo(Integer.valueOf(req.getCapitolo().getUid()));
+				
 		loadAndCheckComponentiImportiCapitolo();
 		
 		for(Pair<ComponenteImportiCapitolo, BigDecimal> pair : listComponentiImportoCapitolo) {
+			
 			componenteImportiCapitoloDad.aggiornaComponenteImportiCapitolo(pair.getLeft());
 			
 			// Aggiorna importo su ImportiCapitolo
 			updateImportoCapitolo(pair.getLeft().getImportiCapitolo().getAnnoCompetenza(), pair.getRight(), TipoImportoCapitolo.Values.STANZIAMENTO);
-			updateImportoCapitolo(pair.getLeft().getImportiCapitolo().getAnnoCompetenza(), pair.getRight(), TipoImportoCapitolo.Values.CASSA);
+			//SIAC-7916 si esclude applicazione dell'importo in diminuzione dello STANZIAMENTO sulla CASSA
+//			updateImportoCapitolo(pair.getLeft().getImportiCapitolo().getAnnoCompetenza(), pair.getRight(), TipoImportoCapitolo.Values.CASSA);
+			//task-236
+			if(req.getCapitolo().getTipoCapitolo().equals(TipoCapitolo.CAPITOLO_USCITA_PREVISIONE) && categoria != null && 
+					(CategoriaCapitoloEnum.FPV.getCodice().equals(categoria.getCodice()) || CategoriaCapitoloEnum.DAM.getCodice().equals(categoria.getCodice()))) { 
+				updateImportoCapitolo(pair.getLeft().getImportiCapitolo().getAnnoCompetenza(), BigDecimal.ZERO, TipoImportoCapitolo.Values.CASSA);
+			}
 			res.getListaComponenteImportiCapitolo().add(pair.getLeft());
 		}
 		componenteImportiCapitoloDad.flushAndClear();

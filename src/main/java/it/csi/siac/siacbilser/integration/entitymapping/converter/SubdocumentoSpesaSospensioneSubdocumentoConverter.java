@@ -54,9 +54,12 @@ public class SubdocumentoSpesaSospensioneSubdocumentoConverter extends ExtendedD
 		List<SiacTSubdocSospensione> siacTSubdocSospensiones = new ArrayList<SiacTSubdocSospensione>();
 		
 		for(SospensioneSubdocumento ss : src.getSospensioni()) {
-			SiacTSubdocSospensione tss = mapNotNull(ss, SiacTSubdocSospensione.class, BilMapId.SiacTSubdocSospensione_SospensioneSubdocumento);
+			// SIAC-7840
+			SiacTSubdocSospensione tss = sanifyEntity(mapNotNull(ss, SiacTSubdocSospensione.class, BilMapId.SiacTSubdocSospensione_SospensioneSubdocumento));
 			tss.setSiacTEnteProprietario(dest.getSiacTEnteProprietario());
 			tss.setSiacTSubdoc(dest);
+			// SIAC-7840
+			tss.setLoginOperazione(ifNotNull(tss.getLoginOperazione(), dest.getLoginOperazione()));
 			siacTSubdocSospensiones.add(tss);
 		}
 		dest.setSiacTSubdocSospensiones(siacTSubdocSospensiones);

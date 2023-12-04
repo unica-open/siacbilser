@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimentoResponse;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
@@ -28,15 +28,15 @@ public class TipiProvvedimentoService extends CheckedAccountBaseService<TipiProv
 	
 	/** The provvedimento dad. */
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siaccommonser.business.service.base.BaseService#init()
 	 */
 	@Override
 	protected void init() {
-		provvedimentoDad.setLoginOperazione(loginOperazione);
-		provvedimentoDad.setEnte(req.getEnte());
+		attoAmministrativoDad.setLoginOperazione(loginOperazione);
+		attoAmministrativoDad.setEnte(req.getEnte());
 	}
 	
 	 
@@ -64,7 +64,7 @@ public class TipiProvvedimentoService extends CheckedAccountBaseService<TipiProv
 	@Override
 	protected void execute() {
 		
-		res.setElencoTipi(provvedimentoDad.getElencoTipi());
+		res.setElencoTipi(attoAmministrativoDad.getElencoTipi());
 		res.setEsito(Esito.SUCCESSO);
 	}
 
@@ -73,17 +73,17 @@ public class TipiProvvedimentoService extends CheckedAccountBaseService<TipiProv
 	 *
 	 * @return the provvedimento dad
 	 */
-	public ProvvedimentoDad getProvvedimentoDad() {
-		return provvedimentoDad;
+	public AttoAmministrativoDad getAttoAmministrativoDad() {
+		return attoAmministrativoDad;
 	}
 
 	/**
 	 * Sets the provvedimento dad.
 	 *
-	 * @param provvedimentoDad the new provvedimento dad
+	 * @param attoAmministrativoDad the new provvedimento dad
 	 */
-	public void setProvvedimentoDad(ProvvedimentoDad provvedimentoDad) {
-		this.provvedimentoDad = provvedimentoDad;
+	public void setAttoAmministrativoDad(AttoAmministrativoDad attoAmministrativoDad) {
+		this.attoAmministrativoDad = attoAmministrativoDad;
 	}
 
 	

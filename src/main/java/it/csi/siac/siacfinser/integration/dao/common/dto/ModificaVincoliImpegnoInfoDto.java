@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin;
 import it.csi.siac.siacfinser.model.movgest.VincoloImpegno;
 
@@ -53,7 +53,7 @@ public class ModificaVincoliImpegnoInfoDto implements Serializable {
 		this.vincoliOld = vincoliOld;
 	}
 	public List<VincoloImpegno> getVincoliDaInserireEAggiornare() {
-		return CommonUtils.toList(vincoliDaInserire,vincoliDaAggiornare);
+		return CommonUtil.toList(vincoliDaInserire,vincoliDaAggiornare);
 	}
 	public ArrayList<MovGestInfoDto> getElencoInfoAccertamentiCoinvolti() {
 		return elencoInfoAccertamentiCoinvolti;

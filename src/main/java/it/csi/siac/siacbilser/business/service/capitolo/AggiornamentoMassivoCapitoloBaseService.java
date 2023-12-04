@@ -124,6 +124,9 @@ public abstract class AggiornamentoMassivoCapitoloBaseService<REQ extends Servic
 				TipologiaAttributo.NOTE));
 		capitoloCorrente.setFlagImpegnabile(travasaAttributoModificabile(capitoloModificato.getFlagImpegnabile(), capitoloCorrente.getFlagImpegnabile(),
 				TipologiaAttributo.FLAG_IMPEGNABILE));
+		//task-55
+		capitoloCorrente.setFlagNonInserireAllegatoA1(travasaAttributoModificabile(capitoloModificato.getFlagNonInserireAllegatoA1(), capitoloCorrente.getFlagNonInserireAllegatoA1(),
+				TipologiaAttributo.FLAG_NON_INSERIRE_ALLEGATO_A1));
 		
 		// Non aggiornabili
 		capitoloCorrente.setDataAnnullamento(capitoloCorrente.getDataAnnullamento());

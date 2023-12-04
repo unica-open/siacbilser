@@ -24,12 +24,12 @@ public final class ModelUtils{
 		
 		//step 1: filtro in base alla data di fine validita
 		Timestamp now=  new Timestamp(System.currentTimeMillis());
-		ArrayList<ModalitaPagamentoSoggetto> listaDataValida = (ArrayList<ModalitaPagamentoSoggetto>) CommonUtils.soloValidi(lista, now);
+		ArrayList<ModalitaPagamentoSoggetto> listaDataValida = (ArrayList<ModalitaPagamentoSoggetto>) CommonUtil.soloValidi(lista, now);
 		
 		//step 2: ulteriore filtro in base allo stato:
 		if(listaDataValida!= null && listaDataValida.size()>0){
 			for(ModalitaPagamentoSoggetto modPag:listaDataValida){
-				if(modPag!=null && Constanti.STATO_VALIDO.equalsIgnoreCase(modPag.getDescrizioneStatoModalitaPagamento())){
+				if(modPag!=null && CostantiFin.STATO_VALIDO.equalsIgnoreCase(modPag.getDescrizioneStatoModalitaPagamento())){
 					modPag.setDescrizioneStatoModalitaPagamento(modPag.getDescrizioneStatoModalitaPagamento().toUpperCase());
 					listMod.add(modPag);
 				}
@@ -57,7 +57,7 @@ public final class ModelUtils{
 		if(numSub!=null && listaSub!=null && listaSub.size()>0){
 			for(SubImpegno it : listaSub){
 				if(it!=null){
-					BigDecimal numSubIt = it.getNumero();
+					BigDecimal numSubIt = it.getNumeroBigDecimal();
 					if(numSubIt!=null && numSub.compareTo(numSubIt)==0){
 						subTrovato = it;
 						break;
@@ -73,7 +73,7 @@ public final class ModelUtils{
 		if(numSub!=null && listaSub!=null && listaSub.size()>0){
 			for(SubAccertamento it : listaSub){
 				if(it!=null){
-					BigDecimal numSubIt = it.getNumero();
+					BigDecimal numSubIt = it.getNumeroBigDecimal();
 					if(numSubIt!=null && numSub.compareTo(numSubIt)==0){
 						subTrovato = it;
 						break;
@@ -96,7 +96,7 @@ public final class ModelUtils{
 		if(listaSub!=null && listaSub.size()>0){
 			for(SubImpegno it : listaSub){
 				if(it!=null){
-					BigDecimal numSubIt = it.getNumero();
+					BigDecimal numSubIt = it.getNumeroBigDecimal();
 					if(numSubIt==null || numSubIt.compareTo(BigDecimal.ZERO)==0){
 						subTrovato = it;
 						break;
@@ -119,7 +119,7 @@ public final class ModelUtils{
 		if(listaSub!=null && listaSub.size()>0){
 			for(SubAccertamento it : listaSub){
 				if(it!=null){
-					BigDecimal numSubIt = it.getNumero();
+					BigDecimal numSubIt = it.getNumeroBigDecimal();
 					if(numSubIt==null || numSubIt.compareTo(BigDecimal.ZERO)==0){
 						subTrovato = it;
 						break;

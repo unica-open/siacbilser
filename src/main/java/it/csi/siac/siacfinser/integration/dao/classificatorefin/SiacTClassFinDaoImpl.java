@@ -10,19 +10,17 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siaccommonser.business.dtomapping.converter.YearDateConverter;
 import it.csi.siac.siacfinser.integration.dao.common.AbstractDao;
 import it.csi.siac.siacfinser.integration.entity.SiacCodifica;
+import it.csi.siac.siacfinser.integration.entity.SiacTClassFin;
 
 @Component
 @Transactional
-public class SiacTClassFinDaoImpl extends AbstractDao<SiacCodifica, Integer> implements SiacTClassFinDao {
-
-	protected Logger log = Logger.getLogger(this.getClass());
+public class SiacTClassFinDaoImpl extends AbstractDao<SiacTClassFin, Integer> implements SiacTClassFinDao {
 
 	/**
 	 * Ricerca i classificatori generici, quelli senza livello, per tipo
@@ -58,7 +56,7 @@ public class SiacTClassFinDaoImpl extends AbstractDao<SiacCodifica, Integer> imp
 				+ ")"
 				+ " AND c.dataCancellazione is null "
 				+ " AND now() between c.dataInizioValidita and coalesce(c.dataFineValidita,now()) "
-				//+ " AND " + DataValiditaUtils.validitaForQuery("c","startAnnoEsercizioDate","endAnnoEsercizioDate")
+				//+ " AND " + DataValiditaUtil.validitaForQuery("c","startAnnoEsercizioDate","endAnnoEsercizioDate")
 				
 				+ " order by c.tipoClassificatore.codice, c.codice";
 		
@@ -110,7 +108,7 @@ public class SiacTClassFinDaoImpl extends AbstractDao<SiacCodifica, Integer> imp
 				+ ")"
 				+ " AND c.dataCancellazione is null "
 				+ " AND now() between c.dataInizioValidita and coalesce(c.dataFineValidita,now()) "
-				//+ " AND " + DataValiditaUtils.validitaForQuery("c","startAnnoEsercizioDate","endAnnoEsercizioDate")
+				//+ " AND " + DataValiditaUtil.validitaForQuery("c","startAnnoEsercizioDate","endAnnoEsercizioDate")
 				+ " order by c.tipoClassificatore.codice";
 		
 		Query query = entityManager.createQuery(jpql);
@@ -161,7 +159,7 @@ public class SiacTClassFinDaoImpl extends AbstractDao<SiacCodifica, Integer> imp
 						+ ")" + " AND c.dataCancellazione is null "
 
 						+ " AND now() between c.dataInizioValidita and coalesce(c.dataFineValidita,now()) "
-//						+ DataValiditaUtils.validitaForQuery("c",
+//						+ DataValiditaUtil.validitaForQuery("c",
 //								"startAnnoEsercizioDate",
 //								"endAnnoEsercizioDate")
 
@@ -206,7 +204,7 @@ public class SiacTClassFinDaoImpl extends AbstractDao<SiacCodifica, Integer> imp
 						+ " c.dataCancellazione is null and "
 						+ " now() between c.dataInizioValidita and coalesce(c.dataFineValidita,now()) ");
 
-		//						+ DataValiditaUtils.validitaForQuery("c",
+		//						+ DataValiditaUtil.validitaForQuery("c",
 //								"startAnnoEsercizioDate",
 //								"endAnnoEsercizioDate"));
 
@@ -264,7 +262,7 @@ public class SiacTClassFinDaoImpl extends AbstractDao<SiacCodifica, Integer> imp
 				// .append(" c.dataInizioValidita <= :startAnnoEsercizioDate and ")
 				// .append(" (c.dataFineValidita is null or c.dataFineValidita <= :endAnnoEsercizioDate)")
 
-//				.append(DataValiditaUtils.validitaForQuery("c",
+//				.append(DataValiditaUtil.validitaForQuery("c",
 //						"startAnnoEsercizioDate", "endAnnoEsercizioDate"))
 
 				.append(" order by c.uid");

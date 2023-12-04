@@ -261,7 +261,7 @@ public class ElaboraPredocumentiEntrataService extends ElaboraPredocumentiServic
 				&& StringUtils.isNotBlank(predocumentoEntrata.getTipoProvvedimento()))
 			causaleEntrata.setAttoAmministrativo(ricercaAttoAmministrativo(predocumentoEntrata));
 
-		causaleEntrata.setSoggetto(ricercaSoggetto(predocumentoEntrata));
+		causaleEntrata.setSoggetto(ottieniSoggetto(predocumentoEntrata));
 		StrutturaAmministrativoContabile strutturaAmministrativoContabile = ricercaStrutturaAmministrativoContabile(
 				predocumentoEntrata.getStrutturaAmministrativoContabileProvvedimento());
 		causaleEntrata.setStrutturaAmministrativoContabile(strutturaAmministrativoContabile);
@@ -343,11 +343,11 @@ public class ElaboraPredocumentiEntrataService extends ElaboraPredocumentiServic
 
 	
 	@Override
-	protected Soggetto ricercaSoggetto(PredocumentoEntrata predocumento)
+	protected Soggetto ottieniSoggetto(PredocumentoEntrata predocumento)
 	{
 		try
 		{
-			return soggettoHandler.ricercaSoggetto(predocumento);
+			return soggettoHandler.cercaSoggetto(predocumento);
 		}
 		catch (SoggettoPredocumentoException e)
 		{

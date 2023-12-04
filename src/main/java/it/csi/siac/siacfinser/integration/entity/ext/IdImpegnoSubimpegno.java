@@ -12,13 +12,22 @@ public class IdImpegnoSubimpegno implements Serializable {
 	private Integer idImpegno, idImpegnoPadre;
 	private BigDecimal numero;
 	private Integer anno;
+	//SIAC-6997
+	private Integer movgestTsId;
+	private String movgestTsCode;
+	private String movgestTsTipoCode;
+	
+	
 
 	public IdImpegnoSubimpegno(Integer idImpegno, Integer idImpegnoPadre,
-			BigDecimal numero, Integer anno) {
+			BigDecimal numero, Integer anno,Integer movgestTsId,String movgestTsCode,String movgestTsTipoCode) {
 		this.idImpegno = idImpegno;
 		this.idImpegnoPadre = idImpegnoPadre;
 		this.numero = numero;
 		this.anno = anno;
+		this.movgestTsId = movgestTsId;
+		this.movgestTsCode = movgestTsCode;
+		this.movgestTsTipoCode = movgestTsTipoCode;
 	}
 
 	/**
@@ -87,5 +96,47 @@ public class IdImpegnoSubimpegno implements Serializable {
 	@Override
 	public int hashCode() {
 		return super.hashCode();
+	}
+
+	/**
+	 * @return the movgestTsId
+	 */
+	public Integer getMovgestTsId() {
+		return movgestTsId;
+	}
+
+	/**
+	 * @return the movgestTsCode
+	 */
+	public String getMovgestTsCode() {
+		return movgestTsCode;
+	}
+
+	/**
+	 * @return the movgestTsTipoCode
+	 */
+	public String getMovgestTsTipoCode() {
+		return movgestTsTipoCode;
+	}
+
+	/**
+	 * @param movgestTsId the movgestTsId to set
+	 */
+	public void setMovgestTsId(Integer movgestTsId) {
+		this.movgestTsId = movgestTsId;
+	}
+
+	/**
+	 * @param movgestTsCode the movgestTsCode to set
+	 */
+	public void setMovgestTsCode(String movgestTsCode) {
+		this.movgestTsCode = movgestTsCode;
+	}
+
+	/**
+	 * @param movgestTsTipoCode the movgestTsTipoCode to set
+	 */
+	public void setMovgestTsTipoCode(String movgestTsTipoCode) {
+		this.movgestTsTipoCode = movgestTsTipoCode;
 	}
 }

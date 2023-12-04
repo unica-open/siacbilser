@@ -34,20 +34,26 @@ public final class InvioFatturaPAFatturaFELFactory {
 		// Dati generali
 		if(datiGeneraliType != null) {
 			DatiGeneraliDocumentoType datiGeneraliDocumentoType = datiGeneraliType.getDatiGeneraliDocumento();
-			DatiRitenutaType datiRitenutaType = datiGeneraliDocumentoType.getDatiRitenuta();
+			
+			//SIAC-7557 -> TEST VIK-GIO
+			/*if(datiGeneraliDocumentoType.getDatiRitenuta()!= null && !datiGeneraliDocumentoType.getDatiRitenuta().isEmpty()){
+				DatiRitenutaType datiRitenutaType = datiGeneraliDocumentoType.getDatiRitenuta().get(0);//TEST
+				if (datiRitenutaType != null) {
+					fatturaFEL.setImportoRitenuta(BilUtilities.arrotondaAllaSecondaCifra(datiRitenutaType.getImportoRitenuta()));
+					fatturaFEL.setAliquotaRitenuta(datiRitenutaType.getAliquotaRitenuta());
+					
+					setTipoRitenuta(fatturaFEL, datiRitenutaType);
+					setCausalePagamento(fatturaFEL, datiRitenutaType);
+				}
+			}*/
+			
 			DatiBolloType datiBolloType = datiGeneraliDocumentoType.getDatiBollo();
 			
 			fatturaFEL.setNumero(datiGeneraliDocumentoType.getNumero());
 			fatturaFEL.setDivisa(datiGeneraliDocumentoType.getDivisa());
 			setData(fatturaFEL, datiGeneraliDocumentoType);
 			
-			if (datiRitenutaType != null) {
-				fatturaFEL.setImportoRitenuta(BilUtilities.arrotondaAllaSecondaCifra(datiRitenutaType.getImportoRitenuta()));
-				fatturaFEL.setAliquotaRitenuta(datiRitenutaType.getAliquotaRitenuta());
-				
-				setTipoRitenuta(fatturaFEL, datiRitenutaType);
-				setCausalePagamento(fatturaFEL, datiRitenutaType);
-			}
+			
 			
 			if (datiBolloType != null) {
 				fatturaFEL.setImportoBollo(datiBolloType.getImportoBollo());
@@ -80,18 +86,18 @@ public final class InvioFatturaPAFatturaFELFactory {
 			fatturaFEL.setData(datiGeneraliDocumentoType.getData().toGregorianCalendar().getTime());
 		}
 	}
-	
-	private static void setTipoRitenuta(FatturaFEL fatturaFEL, DatiRitenutaType datiRitenutaType) {
+	//SIAC-7557
+	/*private static void setTipoRitenuta(FatturaFEL fatturaFEL, DatiRitenutaType datiRitenutaType) {
 		if(datiRitenutaType.getTipoRitenuta() != null) {
 			fatturaFEL.setTipoRitenuta(datiRitenutaType.getTipoRitenuta().value());
 		}
-	}
-	
-	private static void setCausalePagamento(FatturaFEL fatturaFEL, DatiRitenutaType datiRitenutaType) {
+	}*/
+	//SIAC-7557	
+	/*private static void setCausalePagamento(FatturaFEL fatturaFEL, DatiRitenutaType datiRitenutaType) {
 		if(datiRitenutaType.getCausalePagamento() != null) {
 			fatturaFEL.setCausalePagamento(datiRitenutaType.getCausalePagamento().value());
 		}
-	}
+	}*/
 	
 	private static void setBolloVirtuale(FatturaFEL fatturaFEL, DatiBolloType datiBolloType) {
 		if(datiBolloType.getBolloVirtuale() != null) {

@@ -9,13 +9,13 @@ import java.util.List;
 
 import org.dozer.DozerConverter;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 
 public class ListStringListSoggettiConverter extends DozerConverter<List<String>, List<Soggetto>>
 {
 
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	@SuppressWarnings("unchecked")
 	public ListStringListSoggettiConverter()

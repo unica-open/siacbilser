@@ -61,6 +61,12 @@ SPDX-License-Identifier: EUPL-1.2
 			<b>this</b>
 		</field>
 		
+		<!-- SIAC-7192 -->
+		<field custom-converter-id="vincoloRisorseVincolateConverter">
+			<a>this</a>
+			<b>this</b> <!--.siacRVincoloRisorseVincolates[0].siacDVincoloRisorseVincolate  -->
+		</field>
+		
 	</mapping>
 	
 	
@@ -90,6 +96,21 @@ SPDX-License-Identifier: EUPL-1.2
 		<field>
 			<a>descrizione</a>
 			<b>vincoloGenDesc</b>
+		</field>
+	</mapping>
+
+	<!-- SIAC-7192 -->
+	<mapping map-id="SiacDVincoloRisorseVincolate_RisorsaVincolata" wildcard="true">
+		<class-a>it.csi.siac.siacbilser.model.RisorsaVincolata</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDVincoloRisorseVincolate</class-b>
+	
+		<field >
+			<a>codice</a>
+			<b>vincoloRisorseVincolateCode</b>
+		</field>
+		<field>
+			<a>descrizione</a>
+			<b>vincoloRisorseVincolateDesc</b>
 		</field>
 	</mapping>
 	

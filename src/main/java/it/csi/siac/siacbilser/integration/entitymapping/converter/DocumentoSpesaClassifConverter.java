@@ -62,7 +62,7 @@ public class DocumentoSpesaClassifConverter extends ExtendedDozerConverter<Docum
 				TipoImpresa tipoImpresa = tipo.getCodificaInstance();
 				map(siacTClass,tipoImpresa,BilMapId.SiacTClass_ClassificatoreGenerico);
 				dest.setTipoImpresa(tipoImpresa);
-			} else if(SiacDClassTipoEnum.CentroDiRespondabilita.equals(tipo) || SiacDClassTipoEnum.Cdc.equals(tipo)){
+			} else if(SiacDClassTipoEnum.CentroDiResponsabilita.equals(tipo) || SiacDClassTipoEnum.Cdc.equals(tipo)){
 				StrutturaAmministrativoContabile sac = tipo.getCodificaInstance();
 				map(siacTClass, sac, BilMapId.SiacTClass_ClassificatoreGerarchico);
 				dest.setStrutturaAmministrativoContabile(sac);

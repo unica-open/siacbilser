@@ -56,7 +56,7 @@ import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.enumeration.CodiceEventoEnum;
 import it.csi.siac.siacfinser.business.service.enumeration.CodiciControlloInnestiFinGenEnum;
 import it.csi.siac.siacfinser.frontend.webservice.msg.PaginazioneRequest;
@@ -478,7 +478,7 @@ public abstract class AbstractBaseServicePerVecchiaRicercaImpegno<REQ extends Se
 		impegnoRitorno = (Impegno) impegnoDad.ricercaMovimentoPk(richiedente,
 				ente, String.valueOf(bilancio.getAnno()),
 				Integer.valueOf(impegno.getAnnoMovimento()),
-				impegno.getNumero(), Constanti.MOVGEST_TIPO_IMPEGNO, false);
+				impegno.getNumeroBigDecimal(), CostantiFin.MOVGEST_TIPO_IMPEGNO, false);
 
 		return impegnoRitorno;
 
@@ -494,8 +494,8 @@ public abstract class AbstractBaseServicePerVecchiaRicercaImpegno<REQ extends Se
 				.ricercaMovimentoPk(richiedente, ente,
 						String.valueOf(bilancio.getAnno()),
 						Integer.valueOf(accertamento.getAnnoMovimento()),
-						accertamento.getNumero(),
-						Constanti.MOVGEST_TIPO_ACCERTAMENTO, false);
+						accertamento.getNumeroBigDecimal(),
+						CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, false);
 
 		return accertamentoRitorno;
 
@@ -599,7 +599,7 @@ public abstract class AbstractBaseServicePerVecchiaRicercaImpegno<REQ extends Se
 					
 					// vincoloImpegno.getAccertamento().setCapitoloEntrataGestione(capitoloEntrataGestione);
 
-					Accertamento acc = (Accertamento) accertamentoDad.ricercaMovimentoPk(richiedente,capitoloEntrataGestione.getEnte(),annoEsercizio, vincoloImpegno.getAccertamento().getAnnoMovimento(), vincoloImpegno.getAccertamento().getNumero(),Constanti.MOVGEST_TIPO_ACCERTAMENTO, false);
+					Accertamento acc = (Accertamento) accertamentoDad.ricercaMovimentoPk(richiedente,capitoloEntrataGestione.getEnte(),annoEsercizio, vincoloImpegno.getAccertamento().getAnnoMovimento(), vincoloImpegno.getAccertamento().getNumeroBigDecimal(),CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, false);
 					
 					vincoloImpegno.setAccertamento(acc);
 
@@ -619,7 +619,7 @@ public abstract class AbstractBaseServicePerVecchiaRicercaImpegno<REQ extends Se
 
 		DisponibilitaMovimentoGestioneContainer disponibilitaVincolare;
 
-		if (!impegno.getStatoOperativoMovimentoGestioneSpesa().equals(Constanti.MOVGEST_STATO_ANNULLATO)) {
+		if (!impegno.getStatoOperativoMovimentoGestioneSpesa().equals(CostantiFin.MOVGEST_STATO_ANNULLATO)) {
 			BigDecimal sommaVincoli = BigDecimal.ZERO;
 			if (impegno.getVincoliImpegno() != null) {
 				for (VincoloImpegno vincolo : impegno.getVincoliImpegno()) {
@@ -1372,7 +1372,7 @@ public abstract class AbstractBaseServicePerVecchiaRicercaImpegno<REQ extends Se
 									.toString(anno), accIt.getSiacTMovgest()
 									.getMovgestAnno(), accIt.getSiacTMovgest()
 									.getMovgestNumero(),
-									Constanti.MOVGEST_TIPO_ACCERTAMENTO, true);
+									CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, true);
 					if (accertamentoFresco != null) {
 						accertamentoFresco = completaDatiRicercaAccertamentoPk(
 								richiedente, accertamentoFresco);
@@ -1533,7 +1533,7 @@ public abstract class AbstractBaseServicePerVecchiaRicercaImpegno<REQ extends Se
 		String methodName = "gestisciRegistrazioneGENPerSubAccertamento";
 		
 		
-		Boolean flagAttivaGenStatoDefinitivo = subAccertamento.getStatoOperativoMovimentoGestioneEntrata().equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO);
+		Boolean flagAttivaGenStatoDefinitivo = subAccertamento.getStatoOperativoMovimentoGestioneEntrata().equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO);
 		
 		if(	!flagAttivaGenStatoDefinitivo || accertamento.isFlagFattura() || accertamento.isFlagCorrispettivo() ){
 			log.debug(methodName, "condizione di attivazione non soddisfatta. Non viene inserita/aggiornata la RegistrazioneMovFin.");
@@ -1742,7 +1742,7 @@ public abstract class AbstractBaseServicePerVecchiaRicercaImpegno<REQ extends Se
 			registrazioneGENServiceHelper.inserisciPrimaNotaAutomaticaAsync(registrazioniMovFinInserite);
 		
 		}else {
-			log.info(methodName, "Impossibile procedere alla registrazione dell'ordinativo con uid [" + ordinativo.getUid()+" ] , verificare il pdc finanziario del movimentoGestione con uid ["+ movimentoGestione !=null ? (movimentoGestione.getUid() + " - numero " + movimentoGestione.getNumero()) : " movimento gestione NULL" +" ] ");
+			log.info(methodName, "Impossibile procedere alla registrazione dell'ordinativo con uid [" + ordinativo.getUid()+" ] , verificare il pdc finanziario del movimentoGestione con uid ["+ movimentoGestione !=null ? (movimentoGestione.getUid() + " - numero " + movimentoGestione.getNumeroBigDecimal()) : " movimento gestione NULL" +" ] ");
 		}
 	}
 	
@@ -1818,7 +1818,7 @@ public abstract class AbstractBaseServicePerVecchiaRicercaImpegno<REQ extends Se
 		
 		Boolean flagAttivaGenDeterminaDefinitiva = false;
 		if(impegno.getAttoAmministrativo()!=null){
-			flagAttivaGenDeterminaDefinitiva = impegno.getAttoAmministrativo().getStatoOperativo().equalsIgnoreCase(Constanti.ATTO_AMM_STATO_DEFINITIVO);
+			flagAttivaGenDeterminaDefinitiva = impegno.getAttoAmministrativo().getStatoOperativo().equalsIgnoreCase(CostantiFin.ATTO_AMM_STATO_DEFINITIVO);
 		}
 		
 		Boolean	flagAttivaGenSoggettoPresente = true;
@@ -1867,7 +1867,7 @@ public abstract class AbstractBaseServicePerVecchiaRicercaImpegno<REQ extends Se
 		
 		
 		Boolean flagAttivaGenStatoDefinitivo = false;
-		flagAttivaGenStatoDefinitivo = accertamento.getStatoOperativoMovimentoGestioneEntrata().equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO);
+		flagAttivaGenStatoDefinitivo = accertamento.getStatoOperativoMovimentoGestioneEntrata().equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO);
 		
 		return flagAttivaGenStatoDefinitivo  && !(accertamento.isFlagFattura() || accertamento.isFlagCorrispettivo());
 	}

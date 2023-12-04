@@ -20,6 +20,7 @@ import it.csi.siac.siacbilser.integration.dad.PagoPADad;
 import it.csi.siac.siacbilser.integration.entity.SiacTFilePagopa;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
+import it.csi.siac.siaccommonser.util.misc.TimeoutValue;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 
@@ -38,7 +39,7 @@ public class ElaboraFlussoRiconciliazioneService extends ExtendedBaseService<Ela
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(timeout = TimeoutValue.INTERVAL_8_HOUR)
 	public ElaboraFlussoRiconciliazioneResponse executeService(ElaboraFlussoRiconciliazione serviceRequest) {
 		return super.executeService(serviceRequest);
 	}

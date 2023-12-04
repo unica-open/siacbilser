@@ -31,7 +31,7 @@ SPDX-License-Identifier: EUPL-1.2
 
 	<context:property-placeholder location="classpath:spring/bilApplication.properties" />
 	
-	<context:component-scan base-package="it.csi.siac.siacbilser, it.csi.siac.siaccorser, it.csi.siac.siacintegser, it.csi.siac.custom" />
+	<context:component-scan base-package="it.csi.siac.siaccommonser, it.csi.siac.siacbilser, it.csi.siac.siaccorser, it.csi.siac.siacintegser, it.csi.siac.custom" />
 
 	<context:annotation-config />
 	

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTAvanzovincoloFin;
@@ -31,7 +31,7 @@ public class OttimizzazioneAvanzoVincoliDto implements Serializable {
 	private List<SiacRMovgestTsStatoFin> distintiSiacRMovgestTsStatoCoinvolti ;
 	
 	/**
-	 * tipoImporto va valorizzato con Constanti.MOVGEST_TS_DET_TIPO_INIZIALE / Constanti.MOVGEST_TS_DET_TIPO_ATTUALE
+	 * tipoImporto va valorizzato con CostantiFin.MOVGEST_TS_DET_TIPO_INIZIALE / CostantiFin.MOVGEST_TS_DET_TIPO_ATTUALE
 	 * @param movgestTsId
 	 * @param tipoImporto
 	 * @return
@@ -112,7 +112,7 @@ public class OttimizzazioneAvanzoVincoliDto implements Serializable {
 				}
 			}
 		}
-		coinvolti = CommonUtils.ritornaSoloDistintiByUid(coinvolti);
+		coinvolti = CommonUtil.ritornaSoloDistintiByUid(coinvolti);
 		return coinvolti;
 	}
 	

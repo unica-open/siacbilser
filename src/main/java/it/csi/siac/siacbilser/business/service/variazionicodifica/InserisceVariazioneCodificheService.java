@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceVariazioneCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceVariazioneCodificheResponse;
+import it.csi.siac.siacbilser.processi.GestoreProcessiVariazioneBilancio;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.frontend.webservice.msg.ExecAzioneRichiesta;
 import it.csi.siac.siaccorser.frontend.webservice.msg.ExecAzioneRichiestaResponse;
@@ -86,6 +87,9 @@ public class InserisceVariazioneCodificheService extends VariazioneCodificheBase
 		Integer numeroVariazione = variazioniDad.staccaNumeroVariazione();
 		variazione.setNumero(numeroVariazione);
 
+		//SIAC-8332-REGP
+		variazione.setStatoOperativoVariazioneDiBilancio(GestoreProcessiVariazioneBilancio.getStatoAvvioProcessoVariazioneDiCodfiche());
+		
 		variazioniDad.inserisciVariazioneCodifica(variazione);
 
 
@@ -99,7 +103,9 @@ public class InserisceVariazioneCodificheService extends VariazioneCodificheBase
 
 	/**
 	 * Avvia processo variazione di bilancio.
+	 * @deprecated by SIAC-8332
 	 */
+	@Deprecated
 	private void avviaProcessoVariazioneDiBilancio() {
 		ExecAzioneRichiesta execAzioneRichiesta = new ExecAzioneRichiesta();
 		execAzioneRichiesta.setRichiedente(req.getRichiedente());

@@ -11,7 +11,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import it.csi.siac.siacfinser.integration.entity.SiacDContotesoreriaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTBilElemFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTVincoloFin;
 
 public interface SiacTBilElemFinRepository extends JpaRepository<SiacTBilElemFin, Integer> {
 	
@@ -42,6 +44,31 @@ public interface SiacTBilElemFinRepository extends JpaRepository<SiacTBilElemFin
 	public List<SiacTBilElemFin> getValidoByCodes(@Param("enteProprietarioId") Integer enteProprietarioId,@Param("anno") String  anno,@Param("dataInput") Timestamp  dataInput,
 			@Param("codeCapitolo") String codeCapitolo,@Param("codeArticolo") String codeArticolo,@Param("codeUeb") String codeUeb,
 			@Param("tipo") String tipo);
+
+
+	@Query(" SELECT vinc "
+            + "   FROM SiacTVincoloFin vinc, SiacRVincoloBilElemFin rcap "
+            + "   WHERE rcap.siacTVincolo = vinc "
+            + "   AND vinc.dataCancellazione IS NULL "
+            + "   AND rcap.dataCancellazione IS NULL "
+            + "   AND rcap.siacTBilElem.elemId = :elemId "
+            + "   AND vinc.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+            + " ) ")
+	public SiacTVincoloFin findVincoloSuCapitoloByCode(@Param("enteProprietarioId") Integer enteProprietarioId,@Param("elemId") Integer  elemId);
+
+	
+
+	@Query("SELECT stbe.elemCode, stbe.elemCode2, stbe.elemCode3 "
+			+ " FROM SiacTBilElemFin stbe"
+			+ " WHERE stbe.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			+ " AND stbe.dataCancellazione IS NULL "
+			+ " AND EXISTS ( "
+			+ " 	FROM SiacRMovgestBilElemFin srm "
+			+ " 	WHERE srm.dataCancellazione IS NULL "
+			+ "     AND srm.siacTBilElem = stbe "
+			+ "		AND srm.siacTMovgest.movgestId = :uidMovgest "
+			+ " ) ")
+	public List<Object[]> findCodesCapitoloByMovgestId(@Param("uidMovgest") Integer uidMovgest, @Param("enteProprietarioId") Integer enteProprietarioId);
 	
 	
 }

@@ -23,7 +23,8 @@ import it.csi.siac.siacbilser.business.service.progetto.CalcoloFondoPluriennaleV
 import it.csi.siac.siacbilser.business.service.progetto.CalcoloFondoPluriennaleVincolatoCronoprogrammaService;
 import it.csi.siac.siacbilser.business.service.progetto.CalcoloFondoPluriennaleVincolatoEntrataService;
 import it.csi.siac.siacbilser.business.service.progetto.CalcoloFondoPluriennaleVincolatoSpesaService;
-import it.csi.siac.siacbilser.business.service.progetto.CalcoloProspettoRiassuntivoCronoprogrammaService;
+import it.csi.siac.siacbilser.business.service.progetto.CalcoloProspettoRiassuntivoCronoprogrammaAggiornaService;
+import it.csi.siac.siacbilser.business.service.progetto.CalcoloProspettoRiassuntivoCronoprogrammaConsultaService;
 import it.csi.siac.siacbilser.business.service.progetto.CambiaFlagUsatoPerFpvCronoprogrammaService;
 import it.csi.siac.siacbilser.business.service.progetto.CancellaRigaEntrataService;
 import it.csi.siac.siacbilser.business.service.progetto.CancellaRigaSpesaService;
@@ -65,8 +66,6 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVin
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoEntrataResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoSpesa;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloFondoPluriennaleVincolatoSpesaResponse;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogramma;
-import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CambiaFlagUsatoPerFpvCronoprogramma;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CambiaFlagUsatoPerFpvCronoprogrammaResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CancellaRigaEntrata;
@@ -103,6 +102,10 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaProgetto;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaSinteticaProgettoResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipiAmbito;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaTipiAmbitoResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaAggiorna;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaAggiornaResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaConsulta;
+import it.csi.siac.siacbilser.frontend.webservice.msg.progetto.CalcoloProspettoRiassuntivoCronoprogrammaConsultaResponse;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaDeiCronoprogrammiCollegatiAlProvvedimento;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaDeiCronoprogrammiCollegatiAlProvvedimentoResponse;
 
@@ -284,12 +287,14 @@ public class ProgettoServiceImpl implements ProgettoService {
 		return BaseServiceExecutor.execute(appCtx, CancellaRigaSpesaService.class, parameters);
 	}
 
-	/* (non-Javadoc)
-	 * @see it.csi.siac.siacbilser.frontend.webservice.ProgettoService#calcoloProspettoRiassuntivoCronoprogramma(it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloProspettoRiassuntivoCronoprogramma)
-	 */
 	@Override
-	public CalcoloProspettoRiassuntivoCronoprogrammaResponse calcoloProspettoRiassuntivoCronoprogramma(CalcoloProspettoRiassuntivoCronoprogramma parameters) {
-		return BaseServiceExecutor.execute(appCtx, CalcoloProspettoRiassuntivoCronoprogrammaService.class, parameters);
+	public CalcoloProspettoRiassuntivoCronoprogrammaAggiornaResponse calcoloProspettoRiassuntivoCronoprogrammaAggiorna(CalcoloProspettoRiassuntivoCronoprogrammaAggiorna parameters) {
+		return BaseServiceExecutor.execute(appCtx, CalcoloProspettoRiassuntivoCronoprogrammaAggiornaService.class, parameters);
+	}
+
+	@Override
+	public CalcoloProspettoRiassuntivoCronoprogrammaConsultaResponse calcoloProspettoRiassuntivoCronoprogrammaConsulta(CalcoloProspettoRiassuntivoCronoprogrammaConsulta parameters) {
+		return BaseServiceExecutor.execute(appCtx, CalcoloProspettoRiassuntivoCronoprogrammaConsultaService.class, parameters);
 	}
 
 	/* (non-Javadoc)

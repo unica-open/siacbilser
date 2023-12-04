@@ -21,7 +21,6 @@ import it.csi.siac.siacbilser.business.service.cespiti.RicercaSinteticaCespiteSe
 import it.csi.siac.siacbilser.business.service.cespiti.RicercaSinteticaRegistroACespiteService;
 import it.csi.siac.siacbilser.integration.dad.CespiteDad;
 import it.csi.siac.siacbilser.integration.utility.cespite.CespiteInventarioWrapper;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 import it.csi.siac.siaccespser.frontend.webservice.msg.AggiornaCespite;
 import it.csi.siac.siaccespser.frontend.webservice.msg.AggiornaCespiteResponse;
@@ -46,6 +45,7 @@ import it.csi.siac.siaccespser.model.CespiteModelDetail;
 import it.csi.siac.siaccespser.model.ClassificazioneGiuridicaCespite;
 import it.csi.siac.siaccespser.model.DismissioneCespite;
 import it.csi.siac.siaccespser.model.TipoBeneCespite;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siacgenser.model.MovimentoDettaglio;
@@ -299,7 +299,7 @@ public class CespitiTest extends BaseJunit4TestCase {
 		req.setEntitaGeneranteScritture(create(PrimaNota.class, 24640));
 		req.setEntitaGeneranteScritture(create(DismissioneCespite.class, 19));
 //		req.setEntitaGeneranteScritture(create(DettaglioAmmortamentoAnnuoCespite.class,83));
-		req.setModelDetails(new ModelDetail[] {
+		req.setModelDetails(new ModelDetailEnum[] {
 //				PrimaNotaModelDetail.MovimentiEpModelDetail, 
 				PrimaNotaModelDetail.StatoOperativo, 
 				PrimaNotaModelDetail.StatoAccettazionePrimaNotaProvvisoria,

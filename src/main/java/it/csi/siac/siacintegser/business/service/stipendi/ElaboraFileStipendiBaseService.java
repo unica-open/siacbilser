@@ -50,7 +50,7 @@ import it.csi.siac.siacbilser.integration.dad.CapitoloUscitaGestioneDad;
 import it.csi.siac.siacbilser.integration.dad.DocumentoDad;
 import it.csi.siac.siacbilser.integration.dad.DocumentoEntrataDad;
 import it.csi.siac.siacbilser.integration.dad.DocumentoSpesaDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDAttoAmmTipoEnum;
 import it.csi.siac.siacbilser.model.Capitolo;
@@ -171,7 +171,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 	@Autowired
 	private CapitoloUscitaGestioneDad capitoloUscitaGestioneDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private DocumentoDad documentoDad;
 
@@ -418,15 +418,15 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 				sb.append("  -  ");
 				//ACCERTAMENTO SUBACCERTAMENTO
 				sb.append(s.getAccertamento()!=null ?"   "+s.getAccertamento().getAnnoMovimento():"  anno  ");
-				sb.append(s.getAccertamento()!=null ?" "+s.getAccertamento().getNumero():"  numero  ");
-				sb.append(s.getSubAccertamento()!=null ?" "+ s.getSubAccertamento().getNumero():"  sub  ");
+				sb.append(s.getAccertamento()!=null ?" "+s.getAccertamento().getNumeroBigDecimal():"  numero  ");
+				sb.append(s.getSubAccertamento()!=null ?" "+ s.getSubAccertamento().getNumeroBigDecimal():"  sub  ");
 
 				//IMPEGNO  SUBIMPEGNO
 				sb.append("    -    ");
 
 				sb.append(s.getImpegno()!=null ?"   "+s.getImpegno().getAnnoMovimento():"  anno  ");
-				sb.append(s.getImpegno()!=null ?"  "+s.getImpegno().getNumero():"  numero  ");
-				sb.append(s.getSubImpegno()!=null ?"  "+ s.getSubImpegno().getNumero():"  sub  ");
+				sb.append(s.getImpegno()!=null ?"  "+s.getImpegno().getNumeroBigDecimal():"  numero  ");
+				sb.append(s.getSubImpegno()!=null ?"  "+ s.getSubImpegno().getNumeroBigDecimal():"  sub  ");
 				log.debug(methodName, sb.toString());
 
 			}
@@ -1252,16 +1252,16 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		sb.append("Accertamento");
 		sb.append(accertamento != null ? accertamento.getAnnoMovimento() : "null");
 		sb.append("_");
-		sb.append(accertamento != null ? accertamento.getNumero() : "null");
+		sb.append(accertamento != null ? accertamento.getNumeroBigDecimal() : "null");
 		sb.append("_");
-		sb.append(subAccertamento != null ? subAccertamento.getNumero() : "null");
+		sb.append(subAccertamento != null ? subAccertamento.getNumeroBigDecimal() : "null");
 		sb.append("_");
 		sb.append("Impegno");
 		sb.append(impegno != null ? impegno.getAnnoMovimento() : "null");
 		sb.append("_");
-		sb.append(impegno != null ? impegno.getNumero() : "null");
+		sb.append(impegno != null ? impegno.getNumeroBigDecimal() : "null");
 		sb.append("_");
-		sb.append(subImpegno != null ? subImpegno.getNumero() : "null");
+		sb.append(subImpegno != null ? subImpegno.getNumeroBigDecimal() : "null");
 		sb.append("_");
 
 		return sb.toString();
@@ -1394,13 +1394,13 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 
 		boolean accertamentoValorizzatoFromInput = stipendio.getAccertamento() != null
 				&& stipendio.getAccertamento().getAnnoMovimento() > 0
-				&& !stipendio.getAccertamento().getNumero().equals(BigDecimal.ZERO);
+				&& !stipendio.getAccertamento().getNumeroBigDecimal().equals(BigDecimal.ZERO);
 		boolean subAccertamentoValorizzatoFromInput = accertamentoValorizzatoFromInput
 				&& stipendio.getSubAccertamento() !=null
-				&& !stipendio.getSubAccertamento().getNumero().equals(BigDecimal.ZERO);
+				&& !stipendio.getSubAccertamento().getNumeroBigDecimal().equals(BigDecimal.ZERO);
 		int comportamento = ACCERTAMENTO_SUB_VALIDO;
 		log.info(methodName, "anno accertamento da input : " + (stipendio.getAccertamento() != null ? stipendio.getAccertamento().getAnnoMovimento() : "null"));
-		log.info(methodName, "numero accertamento da input : " + (stipendio.getAccertamento() != null ? stipendio.getAccertamento().getNumero() : "null"));
+		log.info(methodName, "numero accertamento da input : " + (stipendio.getAccertamento() != null ? stipendio.getAccertamento().getNumeroBigDecimal() : "null"));
 		log.info(methodName, "importo di Entrata  da input: " + stipendio.getImportoEntrata());
 		Accertamento accertamentoInput = stipendio.getAccertamento();
 		SubAccertamento subAccertamentoInput =  stipendio.getSubAccertamento();
@@ -1878,13 +1878,13 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		boolean impegnoPresenteEvalido = false;
 		boolean impegnoValorizzatoFromInput = stipendio.getImpegno() != null
 				&& stipendio.getImpegno().getAnnoMovimento() > 0
-				&& !stipendio.getImpegno().getNumero().equals(BigDecimal.ZERO);
+				&& !stipendio.getImpegno().getNumeroBigDecimal().equals(BigDecimal.ZERO);
 		boolean subImpegnoValorizzatoFromInput = impegnoValorizzatoFromInput
 				&& stipendio.getSubImpegno()!=null
-				&& !stipendio.getSubImpegno().getNumero().equals(BigDecimal.ZERO);
+				&& !stipendio.getSubImpegno().getNumeroBigDecimal().equals(BigDecimal.ZERO);
 
 		log.info(methodName, "anno impegno da input : " + stipendio.getImpegno().getAnnoMovimento());
-		log.info(methodName, "numero impegno da input : " + stipendio.getImpegno().getNumero().intValue());
+		log.info(methodName, "numero impegno da input : " + stipendio.getImpegno().getNumeroBigDecimal().intValue());
 		log.info(methodName, "valore di spesa da input : " + stipendio.getImportoSpesa());
 		/** impegno **/
 		stipendio.setDaAssociareAlDocumento(true);
@@ -2032,8 +2032,8 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 	 */
 	private void popolaAttoAmministrativoFromStipendio(Stipendio stipendio) {
 		String methodName = "popolaAttoAmministrativoFromStipendio";
-		provvedimentoDad.setEnte(ente);
-		List<TipoAtto> listaTipoAtto = provvedimentoDad.getElencoTipi();
+		attoAmministrativoDad.setEnte(ente);
+		List<TipoAtto> listaTipoAtto = attoAmministrativoDad.getElencoTipi();
 		if (listaTipoAtto == null || listaTipoAtto.isEmpty()) {
 			log.debug(methodName, "lista tipo atto vuota ");
 			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Tipo Atto","codice MIN"), Esito.FALLIMENTO);
@@ -2188,7 +2188,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		StringBuilder keyMovimento = new StringBuilder()
 			.append(impegno.getAnnoMovimento())
 			.append("/")
-			.append(impegno.getNumero().toPlainString());
+			.append(impegno.getNumeroBigDecimal().toPlainString());
 		
 		RicercaAttributiMovimentoGestioneOttimizzato attributiMovimentoGestioneOttimizzato = new RicercaAttributiMovimentoGestioneOttimizzato();
 		attributiMovimentoGestioneOttimizzato.setCaricaSub(true);
@@ -2212,7 +2212,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		boolean subimpegnoValidoDef = Boolean.TRUE;
 
 		if ((subImpegno != null && subImpegno.getUid() != 0) && !StatoOperativoMovimentoGestione.DEFINITIVO.getCodice().equals(subImpegno.getStatoOperativoMovimentoGestioneSpesa())) {
-			String keySubImpegno = subImpegno.getAnnoMovimento() + "/" + subImpegno.getNumero();
+			String keySubImpegno = subImpegno.getAnnoMovimento() + "/" + subImpegno.getNumeroBigDecimal();
 			sendMessaggioConNumeroStipendioInElaborazione(ErroreFin.SUBIMPEGNO_NON_IN_STATO_DEFINITIVO.getErrore(keySubImpegno).getDescrizione(), stipendio, true);
 			stipendio.setDaAssociareAlDocumento(false);
 			log.info(methodName, ErroreFin.SUBIMPEGNO_NON_IN_STATO_DEFINITIVO.getErrore(keySubImpegno).getDescrizione());
@@ -2227,7 +2227,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 			subimpegnoValidoDef = Boolean.TRUE;
 		} else {
 			log.info(methodName, "SubImpegno non ha disponibilita sufficiente ");
-			String key = "Movimento : " + stipendio.getImpegno().getAnnoMovimento() + "/" + stipendio.getImpegno().getNumero() + "/" + stipendio.getSubImpegno().getNumero();
+			String key = "Movimento : " + stipendio.getImpegno().getAnnoMovimento() + "/" + stipendio.getImpegno().getNumeroBigDecimal() + "/" + stipendio.getSubImpegno().getNumeroBigDecimal();
 			String msg = "(nome file: " + nomeFile + ") " + ErroreFin.DISPONIBILITA_INSUFFICIENTE_IMPEGNO.getErrore(key).getTesto();
 
 			log.info(methodName, msg);
@@ -2239,7 +2239,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		}
 
 		keyMovimento.append("-")
-			.append(subImpegno.getNumero().toPlainString());
+			.append(subImpegno.getNumeroBigDecimal().toPlainString());
 
 		Soggetto soggettoCollegatoAlDocumento = stipendio.getSoggetto();
 		Soggetto soggettoCollegatoAlSubImpegno = subImpegno.getSoggetto();
@@ -2304,7 +2304,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		mgscg.setBilancio(stipendio.getBilancio());
 		mgscg.setEnte(stipendio.getEnte());
 		Impegno impegno = stipendio.getImpegno();
-		String keyMovimento = impegno.getAnnoMovimento() + "/" + impegno.getNumero().toPlainString();
+		String keyMovimento = impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal().toPlainString();
 		String keySoggetto = " (codice soggetto " + stipendio.getSoggetto().getCodiceSoggetto() + ")";
 		String keySoggettoDocumento = " (codice soggetto " + stipendio.getSoggetto().getCodiceSoggetto() + ")";
 		RicercaAttributiMovimentoGestioneOttimizzato attributiMovimentoGestioneOttimizzato = new RicercaAttributiMovimentoGestioneOttimizzato();
@@ -2330,7 +2330,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 
 		// impegno valorizzato ma non subimpegno o impegno non ha subimpegni
 		if (!StatoOperativoMovimentoGestione.DEFINITIVO.getCodice().equals(impegno.getStatoOperativoMovimentoGestioneSpesa())) {
-			String keyImpegno = impegno.getAnnoMovimento() + "/" + impegno.getNumero();
+			String keyImpegno = impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal();
 			sendMessaggioConNumeroStipendioInElaborazione(ErroreFin.IMPEGNO_NON_IN_STATO_DEFINITIVO.getErrore(keyImpegno).getDescrizione(), stipendio, true);
 			stipendio.setDaAssociareAlDocumento(false);
 			log.info(methodName, ErroreFin.IMPEGNO_NON_IN_STATO_DEFINITIVO.getErrore(keyImpegno).getDescrizione());
@@ -2342,7 +2342,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 			keySoggetto = " (codice soggetto " + stipendio.getImpegno().getSoggetto().getCodiceSoggetto() + ")";
 			impegnoValidoDef = Boolean.TRUE;
 		} else {
-			String key = "Movimento : " + impegno.getAnnoMovimento() + "/" + impegno.getNumero();
+			String key = "Movimento : " + impegno.getAnnoMovimento() + "/" + impegno.getNumeroBigDecimal();
 			String msg = "(nome file: " + nomeFile + ") " + ErroreFin.DISPONIBILITA_INSUFFICIENTE_IMPEGNO.getErrore(key).getTesto();
 
 			log.info(methodName, msg);
@@ -2420,7 +2420,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		StringBuilder keyMovimento = new StringBuilder()
 				.append(accertamento.getAnnoMovimento())
 				.append("/")
-				.append(accertamento.getNumero().toPlainString());
+				.append(accertamento.getNumeroBigDecimal().toPlainString());
 
 		mgscg.setBilancio(stipendio.getBilancio());
 		mgscg.setEnte(stipendio.getEnte());
@@ -2446,7 +2446,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		if ((subAccertamento != null && subAccertamento.getUid() != 0)
 				&& !StatoOperativoMovimentoGestione.DEFINITIVO.getCodice().equals(subAccertamento.getStatoOperativoMovimentoGestioneEntrata())) {
 
-			String keySubAccertamento = subAccertamento.getAnnoMovimento() + "/" + subAccertamento.getNumero();
+			String keySubAccertamento = subAccertamento.getAnnoMovimento() + "/" + subAccertamento.getNumeroBigDecimal();
 			sendMessaggioConNumeroStipendioInElaborazione(ErroreFin.SUBACCERTAMENTO_NON_IN_STATO_DEFINITIVO.getErrore(keySubAccertamento).getDescrizione(), stipendio, true);
 			log.debug(methodName, ErroreFin.SUBACCERTAMENTO_NON_IN_STATO_DEFINITIVO.getErrore(keySubAccertamento).getDescrizione());
 			stipendio.setDaAssociareAlDocumento(Boolean.FALSE);
@@ -2460,7 +2460,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		log.debug(methodName, "soggettoDelloStipendio UID Soggetto : " + (soggettoCollegatoAlDocumento != null ? soggettoCollegatoAlDocumento.getUid() : "null"));
 
 		keyMovimento.append("-")
-			.append(subAccertamento.getNumero().toPlainString());
+			.append(subAccertamento.getNumeroBigDecimal().toPlainString());
 
 		if (soggettoCollegatoAlDocumento !=null && soggettoCollegatoAlDocumento.getUid() != 0 && (soggettoCollegatoAlDocumento.getUid() != soggettoCollegatoAlDocumento.getUid())) {
 			StringBuilder sb = new StringBuilder();
@@ -2529,7 +2529,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		log.info(methodName, "Verifico accertamento");
 		Accertamento accertamento = stipendio.getAccertamento();
 		int returnType = ACCERTAMENTO_SUB_VALIDO;
-		String keyMovimento = accertamento.getAnnoMovimento() + "/" + accertamento.getNumero().toPlainString();
+		String keyMovimento = accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal().toPlainString();
 		String keySoggetto = " (codice soggetto " + stipendio.getSoggetto().getCodiceSoggetto() + ")";
 		String keySoggettoDocumento = " (codice soggetto " + stipendio.getSoggetto().getCodiceSoggetto() + ")";
 
@@ -2552,7 +2552,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		log.info(methodName, "codice stato operativo accertamento : " + accertamento.getStatoOperativoMovimentoGestioneEntrata());
 		if (!StatoOperativoMovimentoGestione.DEFINITIVO.getCodice().equals(accertamento.getStatoOperativoMovimentoGestioneEntrata())) {
 
-			String keyAccertamento = accertamento.getAnnoMovimento() + "/" + accertamento.getNumero();
+			String keyAccertamento = accertamento.getAnnoMovimento() + "/" + accertamento.getNumeroBigDecimal();
 			sendMessaggioConNumeroStipendioInElaborazione(ErroreFin.ACCERTAMENTO_NON_IN_STATO_DEFINITIVO.getErrore(keyAccertamento).getDescrizione(), stipendio, true);
 			log.debug(methodName, ErroreFin.ACCERTAMENTO_NON_IN_STATO_DEFINITIVO.getErrore(keyAccertamento).getDescrizione());
 			stipendio.setDaAssociareAlDocumento(false);
@@ -2658,7 +2658,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		for (Accertamento accertamento : listaAccertamenti) {
 			// prendo il primo che
 			if (isAccertamentoValido(accertamento, stipendio)) {
-				log.info(methodName, "Accertamento trovato con numero : " + accertamento.getNumero());
+				log.info(methodName, "Accertamento trovato con numero : " + accertamento.getNumeroBigDecimal());
 				stipendio.setSubAccertamento(null);
 				return accertamento;
 			}
@@ -2749,7 +2749,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 
 			// prendo il primo che
 			if (impegnoValido && impegno.getTipoImpegno() != null && !"MUT".equals(impegno.getTipoImpegno().getCodice())) {
-				log.info(methodName, "impegno trovato con numero : " + impegno.getNumero());
+				log.info(methodName, "impegno trovato con numero : " + impegno.getNumeroBigDecimal());
 				stipendio.setSubImpegno(null);
 				return impegno;
 			}
@@ -3327,7 +3327,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		StringBuilder sb = new StringBuilder();
 		sb.append(impegno.getAnnoMovimento());
 		sb.append("_");
-		sb.append(impegno.getNumero());
+		sb.append(impegno.getNumeroBigDecimal());
 		sb.append("_");
 		sb.append(impegno.getUid());
 		sb.append("_");
@@ -3346,7 +3346,7 @@ public abstract class ElaboraFileStipendiBaseService extends ElaboraFileBaseServ
 		StringBuilder sb = new StringBuilder();
 		sb.append(accertamento.getAnnoMovimento());
 		sb.append("_");
-		sb.append(accertamento.getNumero());
+		sb.append(accertamento.getNumeroBigDecimal());
 		sb.append("_");
 		sb.append(accertamento.getUid());
 		sb.append("_");

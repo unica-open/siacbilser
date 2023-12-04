@@ -88,6 +88,14 @@ SPDX-License-Identifier: EUPL-1.2
 			<b>sirfelTCassaPrevidenziales</b>
 		</field>
 		
+		<!-- SIAC-7557 -->
+		<field map-id="SirfelTDatiRitenuta_RitenutaFEL">
+			<a>ritenute</a>
+			<b>sirfelTDatiRitenutas</b>
+		</field>
+		
+		
+		
 		<field>
 			<a>fattureCollegate</a>
 			<b>sirfelTFattureCollegates</b>

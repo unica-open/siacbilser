@@ -17,7 +17,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.AggiornaAttributiBilancioR
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaAttributiBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaAttributiBilancioResponse;
 import it.csi.siac.siacbilser.model.AttributiBilancio;
-import it.csi.siac.siacbilser.model.TipoMediaPrescelta;
+import it.csi.siac.siacbilser.model.fcde.TipoMediaPrescelta;
 import it.csi.siac.siacbilser.test.BaseJunit4TestCase;
 
 /**

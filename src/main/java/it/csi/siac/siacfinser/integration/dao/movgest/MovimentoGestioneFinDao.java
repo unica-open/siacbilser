@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
-import it.csi.siac.siaccommonser.integration.dao.base.BaseDao;
+import it.csi.siac.siaccommonser.integration.dao.base.Dao;
 import it.csi.siac.siaccommonser.integration.entity.SiacTBase;
 import it.csi.siac.siacfinser.integration.dao.common.dto.MovgestPkDto;
 import it.csi.siac.siacfinser.integration.entity.SiacRModificaStatoFin;
@@ -33,7 +33,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacTVincoloFin;
 import it.csi.siac.siacfinser.integration.entity.base.SiacConModificaStato;
 
 
-public interface MovimentoGestioneFinDao extends BaseDao {
+public interface MovimentoGestioneFinDao extends Dao<SiacTMovgestFin, Integer> {
 	
 	
 	public List<SiacTMovgestFin> ricercaSiacTMovgestPkMassive(Integer enteUid, List<MovgestPkDto> chiavi);
@@ -50,6 +50,8 @@ public interface MovimentoGestioneFinDao extends BaseDao {
 	public List<SiacRVincoloAttrFin> ricercaSiacRVincoloAttrFinMassive(List<SiacTVincoloFin> listaInput);
 	
 	public List<SiacTMovgestFin> ricercaSiacTMovgestPerIN(String clausolaIN);
+	//SIAC-6997
+	public List<SiacTMovgestTsFin> ricercaSiacTMovgestTsPerIN(String clausolaIN);
 	
 	public boolean flagTrasferimentiVincolati(Integer idCapitoloUscitaGest);
 	
@@ -67,7 +69,7 @@ public interface MovimentoGestioneFinDao extends BaseDao {
 	public List<SiacRMovgestTsSogModFin> ricercaSiacRMovgestTsSogModFinBySiacRModificaStatoFinMassive(List<SiacRModificaStatoFin> listaSiacRModificaStatoFin, Boolean validi);
 	public List<SiacRMovgestTsSogclasseModFin> ricercaSiacRMovgestTsSogclasseModFinBySiacRModificaStatoFinMassive(List<SiacRModificaStatoFin> listaSiacRModificaStatoFin, Boolean validi);
 	
-	public List<SiacRMovgestTsFin> ricercaBySiacTMovgestTsFinMassive(List<SiacTMovgestTsFin> listaSiacTMovgestTsFin, Boolean validi);
+	public List<SiacRMovgestTsFin> ricercaBySiacTMovgestTsFinMassive(List<SiacTMovgestTsFin> listaSiacTMovgestTsFin, Boolean soloRelazioniValide, Boolean escludiMovgestBAnnullati);
 
 	public List<SiacTMovgestTsFin> ricercaSubCoinvoltiMassive(List<Integer> listaMovgestTsIds, Boolean validi);
 	public List<SiacTMovgestTsFin> ricercaSiacTMovgestTsFinBySiacTMovgestMassive(List<Integer> listaMovgestIds, Boolean validi);
@@ -102,5 +104,7 @@ public interface MovimentoGestioneFinDao extends BaseDao {
 	public List<Integer> getIdsSiacRLiquidazioneMovgestFinByMovGestTsMassive(List<SiacTMovgestTsFin> listaInput);
 	
 	public List<String> gestisciRelazioneModificaImportoEVincoli(Integer idModifica, String loginOperazione, String tipoOperazione) ;
+	//SIAC-6997
+	public List<SiacTMovgestTsFin> ricercaSiacTMovgestTsPerAnnoEsercizioUid(Integer enteUid, Integer annoBilancio, BigDecimal numero, int anno, String tipoMovGest);
 	
 }

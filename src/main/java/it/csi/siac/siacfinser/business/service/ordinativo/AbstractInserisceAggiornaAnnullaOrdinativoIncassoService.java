@@ -6,22 +6,25 @@ package it.csi.siac.siacfinser.business.service.ordinativo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
+import it.csi.siac.siacbilser.model.Progetto;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Errore;
+import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseServiceRicercaOrdinativo;
 import it.csi.siac.siacfinser.integration.dao.common.dto.AccertamentoPerDoppiaGestioneInfoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.CapitoliInfoDto;
@@ -75,7 +78,7 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 	protected boolean controlloValiditaAccertamentiSubAccertamenti(OrdinativoIncasso ordinativoDiIncasso, Bilancio bilancio,
 			OrdinativoInInserimentoInfoDto datiInserimento,DatiOperazioneDto datiOperazione,SubOrdinativoInModificaInfoDto subOrdinativoInModificaInfoDto){
 		String annoEsercizio =Integer.toString(bilancio.getAnno());
-		String tipoMovimento = Constanti.MOVGEST_TIPO_ACCERTAMENTO;
+		String tipoMovimento = CostantiFin.MOVGEST_TIPO_ACCERTAMENTO;
 		Integer idEnte = datiOperazione.getSiacTEnteProprietario().getUid();
 		if(ordinativoDiIncasso.getElencoSubOrdinativiDiIncasso()!=null && ordinativoDiIncasso.getElencoSubOrdinativiDiIncasso().size()>0){
 			HashMap<Integer, MovimentoGestioneLigthDto> mappaAccertamentiRicevuti = new HashMap<Integer, MovimentoGestioneLigthDto>();
@@ -89,17 +92,17 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 					if(subOrdinativoInModificaInfoDto==null){
 						//siamo dal servizio di inserimento, il controllo e' obbligato
 						controlloStatoDefinitivo = true;
-					} else if(CommonUtils.contenutoInLista(subOrdinativoInModificaInfoDto.getSubOrdinativiDaModificarePerImportoAumentato(), subIt.getUid())){
+					} else if(CommonUtil.contenutoInLista(subOrdinativoInModificaInfoDto.getSubOrdinativiDaModificarePerImportoAumentato(), subIt.getUid())){
 						//in caso di importo aumentato il controllo ci vuole
 						controlloStatoDefinitivo = true;
-					} else if(CommonUtils.contenutoInLista(subOrdinativoInModificaInfoDto.getSubOrdinativiDaInserire(), subIt.getUid())){
+					} else if(CommonUtil.contenutoInLista(subOrdinativoInModificaInfoDto.getSubOrdinativiDaInserire(), subIt.getUid())){
 						//in caso di nuovo subordinativo (da caso d'uso aggiorna) e' comunque il caso di fare il controllo
 						controlloStatoDefinitivo = true;
 					}
 					
 					//dati dell'accertamento:
 					Accertamento accertIt = subIt.getAccertamento();
-					BigDecimal numeroMovimento = accertIt.getNumero();
+					BigDecimal numeroMovimento = accertIt.getNumeroBigDecimal();
 					Integer annoMovimento = accertIt.getAnnoMovimento();
 					List<ModificaMovimentoGestioneEntrata>  listaModificheMovimentoGestioneEntrata = accertIt.getListaModificheMovimentoGestioneEntrata();
 					//dati del sub accertamento:
@@ -107,7 +110,7 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 					SubAccertamento subAccertIt = null;
 					if(accertIt instanceof SubAccertamento){
 						subAccertIt = (SubAccertamento) accertIt;
-						numeroSub = subAccertIt.getNumero();
+						numeroSub = subAccertIt.getNumeroBigDecimal();
 						numeroMovimento = subAccertIt.getNumeroAccertamentoPadre();
 						annoMovimento=subAccertIt.getAnnoAccertamentoPadre();
 					}
@@ -123,7 +126,7 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 							return false;
 						} else {
 							//esiste il sub accertamento assicuriamoci sia definitivo
-							if(controlloStatoDefinitivo && !Constanti.MOVGEST_STATO_DEFINITIVO.equals(subInfo.getStatoCode())){
+							if(controlloStatoDefinitivo && !CostantiFin.MOVGEST_STATO_DEFINITIVO.equals(subInfo.getStatoCode())){
 								addErroreFin(ErroreFin.ACCERTAMENTO_STATO_OPERATIVO_NON_AMMESSO_PER_OPERAZIONE, "Accertamento / sub-accertamento", "definitivo", "non puo' essere incassato");
 								return false;
 							}
@@ -138,7 +141,7 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 							return false;
 						} else {
 							//esiste assicuriamoci sia definitivo
-							if(controlloStatoDefinitivo && !Constanti.MOVGEST_STATO_DEFINITIVO.equals(movInfo.getStatoCode())){
+							if(controlloStatoDefinitivo && !CostantiFin.MOVGEST_STATO_DEFINITIVO.equals(movInfo.getStatoCode())){
 								//accertamento in stato diverso da definitivo lanciare errore
 								addErroreFin(ErroreFin.ACCERTAMENTO_STATO_OPERATIVO_NON_AMMESSO_PER_OPERAZIONE, "Accertamento / sub-accertamento", "definitivo", "non puo' essere incassato");
 								return false;
@@ -152,8 +155,8 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 			}
 			
 			//riepilogo dei DISTINTI acc e dei DISTINTI sub acc ricevuti con le QUOTE
-			ArrayList<MovimentoGestioneLigthDto> listaDistintiAccertamentiRicevuti = StringUtils.hashMapToArrayList(mappaAccertamentiRicevuti);
-			ArrayList<MovimentoGestioneSubLigthDto> listaDistintiSubAccertamentiRicevuti = StringUtils.hashMapToArrayList(mappaSubAccertamentiRicevuti);
+			ArrayList<MovimentoGestioneLigthDto> listaDistintiAccertamentiRicevuti = StringUtilsFin.hashMapToArrayList(mappaAccertamentiRicevuti);
+			ArrayList<MovimentoGestioneSubLigthDto> listaDistintiSubAccertamentiRicevuti = StringUtilsFin.hashMapToArrayList(mappaSubAccertamentiRicevuti);
 			datiInserimento.setListaDistintiAccertamentiAssociatiAQuote(listaDistintiAccertamentiRicevuti);
 			datiInserimento.setListaDistintiSubAccertamentiAssociatiAQuote(listaDistintiSubAccertamentiRicevuti);
 			////////////////////////////////////////////////////////////////////////////
@@ -166,7 +169,7 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 		if(listaDistintiAccertamentiAssociatiAQuoteInput!=null && listaDistintiAccertamentiAssociatiAQuoteInput.size()>0){
 			for(M accIt : listaDistintiAccertamentiAssociatiAQuoteInput){
 				if(accIt!=null){
-					List<ModificaMovimentoGestioneEntrata> soloModificheDaCreare = CommonUtils.soloConIdZero(accIt.getListaModificheMovimentoGestioneEntrata());
+					List<ModificaMovimentoGestioneEntrata> soloModificheDaCreare = CommonUtil.soloConIdZero(accIt.getListaModificheMovimentoGestioneEntrata());
 					if(soloModificheDaCreare!=null && soloModificheDaCreare.size()>0){
 						M cloned = clone(accIt);
 						cloned.setListaModificheMovimentoGestioneEntrata(soloModificheDaCreare);
@@ -229,7 +232,7 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 						
 						for(MovimentoGestioneSubLigthDto subIt : subDelloStessoAcc){
 							if(subIt!=null){
-								ModificaMovimentoGestioneEntrata modGest = CommonUtils.getFirst(subIt.getListaModificheMovimentoGestioneEntrata());
+								ModificaMovimentoGestioneEntrata modGest = CommonUtil.getFirst(subIt.getListaModificheMovimentoGestioneEntrata());
 								if(modGest!=null){
 									BigDecimal modificaSubIt = modGest.getImportoNew();
 									totModifiche = totModifiche.add(modificaSubIt);
@@ -257,7 +260,7 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 				}
 			}
 			
-			ModificaMovimentoGestioneEntrata modGest = CommonUtils.getFirst(accIt.getListaModificheMovimentoGestioneEntrata());
+			ModificaMovimentoGestioneEntrata modGest = CommonUtil.getFirst(accIt.getListaModificheMovimentoGestioneEntrata());
 			
 			if(modGest!=null && !modGest.isRiepilogoAutomatiche()){
 				//abbiamo riveuto da front end l'indicazione di inserire una modifica movimento gestione
@@ -297,7 +300,8 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 				
 				numeroModifiche = numeroModifiche + 1;
 				//problema produzione 15/05
-				accertamentoOttimizzatoDad.aggiornaModificheMovimentoGestioneEntrata(movimento, uIdAccertamento, idEnte, datiOperazione, numeroModifiche);
+				//SIAC-7505
+				accertamentoOttimizzatoDad.aggiornaModificheMovimentoGestioneEntrata(movimento, uIdAccertamento, idEnte, datiOperazione);
 			}
 		}
 		
@@ -328,12 +332,12 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 					numeroAccertamento = ((SubAccertamento)subOrdinativoIncasso.getAccertamento()).getNumeroAccertamentoPadre();
 				}else{
 				
-					numeroAccertamento = subOrdinativoIncasso.getAccertamento().getNumero();
+					numeroAccertamento = subOrdinativoIncasso.getAccertamento().getNumeroBigDecimal();
 				}
 				
 				
 				Accertamento accertamento = (Accertamento) accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, 
-						annoEsercizio, annoAccertamento, numeroAccertamento, Constanti.MOVGEST_TIPO_ACCERTAMENTO, true);
+						annoEsercizio, annoAccertamento, numeroAccertamento, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, true, false);
 				
 				if(accertamento!=null){
 					List<SubAccertamento> subAccs = accertamento.getSubAccertamenti();
@@ -382,6 +386,8 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 			
 			int annoBilancio = bil.getAnno();
 			int annoBilancioSuccessivo = annoBilancio +1;
+			Bilancio bilancioAnnoSuccessivo = commonDad.buildBilancioAnnoSuccessivo(bil, datiOperazione);
+
 			
 			for(AccertamentoPerDoppiaGestioneInfoDto accertamento : listaAccertamenti){
 				//SIAC-6681
@@ -396,12 +402,28 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 				Integer chiaveCapitolo = accertamento.getAccertamento().getChiaveCapitoloEntrataGestione();
 				Integer chiaveCapitoloResiduo = 
 						accertamentoOttimizzatoDad.getChiaveCapitoloAccertamentoResiduo(datiOperazione, accertamento.getAccertamento().getAnnoMovimento(), 
-								accertamento.getAccertamento().getNumero().intValue(), annoBilancio);
+								accertamento.getAccertamento().getNumeroBigDecimal().intValue(), annoBilancio);
 				
 				HashMap<Integer, CapitoloEntrataGestione> capitoliDaServizio = 
 						caricaCapitolEntrataGestioneEResiduo(richiedente, chiaveCapitolo, chiaveCapitoloResiduo);
 				CapitoliInfoDto capitoliInfo = new CapitoliInfoDto();
 				capitoliInfo.setCapitoliDaServizioEntrata(capitoliDaServizio);
+				
+				//SIAC-8894
+				if (accertamento.getAccertamento().getProgetto() != null && !isEmpty(accertamento.getAccertamento().getProgetto().getCodice())) {
+					Progetto progettoAnnoSucc = accertamentoOttimizzatoDad.verificaProgrammaAnnoSuccessivo(accertamento.getAccertamento().getProgetto(), bilancioAnnoSuccessivo, ente);
+					//se non ho trovato il progetto anno successivo allora errore
+					if (progettoAnnoSucc == null) {
+						List<Errore> errorsProgetto = new ArrayList<Errore>();
+						errorsProgetto.add(ErroreFin.PROGETTO_NONTROVATO_DOPPIAGESTIONE_ACCERTAMENTO.getErrore(accertamento.getAccertamento().getProgetto().getCodice()));
+						esito.setListaErrori(errorsProgetto);
+						return esito;
+					} else {
+						accertamento.getAccertamento().setProgetto(progettoAnnoSucc);			
+					}
+				}
+				
+				//task-78 no su accertamento				
 				
 				List<Errore> errors = accertamentoOttimizzatoDad.aggiornamentoInDoppiaGestioneAccertamento(richiedente, ente, bil, accertamento.getAccertamento(), datiOperazione,capitoliInfo);
 				if(!isEmpty(errors)){
@@ -419,14 +441,14 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 		if(ordinativo!=null){
 			if(!isEmpty(ordinativo.getDescrizione()) && ordinativo.getDescrizione().length()>500){
 				String lunghezza = "(" + ordinativo.getDescrizione().length() + " catteri, massimo ammesso 500" + ")";
-				checkCondition(false, ErroreCore.VALORE_NON_VALIDO.getErrore("Descrizione ordinativo", "Descrizione troppo lunga"+lunghezza));
+				checkCondition(false, ErroreCore.VALORE_NON_CONSENTITO.getErrore("Descrizione ordinativo", "Descrizione troppo lunga"+lunghezza));
 				descrizioniOk = false;
 			}
 			if(!isEmpty(ordinativo.getElencoSubOrdinativiDiIncasso())){
 				for(SubOrdinativoIncasso it: ordinativo.getElencoSubOrdinativiDiIncasso()){
 					if(it!=null && !isEmpty(it.getDescrizione()) && it.getDescrizione().length()>500){
 						String lunghezza = "(" + it.getDescrizione().length() + " catteri, massimo ammesso 500" + ")";
-						checkCondition(false, ErroreCore.VALORE_NON_VALIDO.getErrore("Descrizione Quota", " - Descrizione troppo lunga "+lunghezza));
+						checkCondition(false, ErroreCore.VALORE_NON_CONSENTITO.getErrore("Descrizione Quota", " - Descrizione troppo lunga "+lunghezza));
 						descrizioniOk = false;
 					}
 				}
@@ -436,6 +458,21 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoIncassoService <
 		//mi aspetto che il chiamante controlli e lanci gia' un errore specifico per ordinativo nullo
 		return descrizioniOk;
 	}
+
+	//SIAC-8017-CMTO
+	protected BigDecimal extractImportoOrdinativo(OrdinativoIncasso ordinativoDiPagamento) {
+		List<SubOrdinativoIncasso> elencoSubOrdinativi = ordinativoDiPagamento.getElencoSubOrdinativiDiIncasso();
+		BigDecimal importo = BigDecimal.ZERO; 
+		if(elencoSubOrdinativi == null) {
+			return importo;
+		}
+		for (SubOrdinativoIncasso sub : elencoSubOrdinativi) {
+			BigDecimal importoSub = sub.getImportoAttuale() != null? sub.getImportoAttuale() :  BigDecimal.ZERO;
+			importo = importo.add(importoSub);
+		}
+		return importo;
+	}
+
 
 	
 }

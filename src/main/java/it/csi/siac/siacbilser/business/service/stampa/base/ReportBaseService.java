@@ -11,9 +11,9 @@ import org.springframework.context.ApplicationContext;
 import it.csi.siac.siacbilser.business.service.base.ExtendedBaseService;
 import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
+import it.csi.siac.siaccorser.frontend.webservice.msg.report.ReportServiceRequest;
+import it.csi.siac.siaccorser.frontend.webservice.msg.report.ReportServiceResponse;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.ReportServiceRequest;
-import it.csi.siac.siacfin2ser.frontend.webservice.msg.ReportServiceResponse;
 
 
 
@@ -28,7 +28,9 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.ReportServiceResponse;
  * @param <RES> the ReportServiceResponse generic type
  * @param <RH> the BaseReportHandler generic type
  */
-public abstract class ReportBaseService<REQ extends ReportServiceRequest,RES extends ReportServiceResponse,RH extends BaseReportHandler> extends ExtendedBaseService<REQ, RES> {
+public abstract class 
+	ReportBaseService<REQ extends ReportServiceRequest, RES extends ReportServiceResponse, RH extends BaseReportHandler> 
+	extends ExtendedBaseService<REQ, RES> {
 
 	@Autowired
 	protected ApplicationContext appCtx;

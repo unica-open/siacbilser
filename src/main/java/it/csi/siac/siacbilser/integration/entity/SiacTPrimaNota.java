@@ -117,6 +117,10 @@ public class SiacTPrimaNota extends SiacTEnteBaseExt {
 	@OneToMany(mappedBy="siacTPrimaNota", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
 	private List<SiacRGsaClassifPrimaNota> siacRGsaClassifPrimaNotas;
 
+	//bi-directional many-to-one association to SiacRPrimaNotaClass
+	@OneToMany(mappedBy="siacTPrimaNota", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
+	private List<SiacRPrimaNotaClass> siacRPrimaNotaClasses;
+
 	public SiacTPrimaNota() {
 	}
 
@@ -466,6 +470,46 @@ public class SiacTPrimaNota extends SiacTEnteBaseExt {
 	public void setSiacRCespitiDismissioniPrimaNota(
 			List<SiacRCespitiDismissioniPrimaNota> siacRCespitiDismissioniPrimaNota) {
 		this.siacRCespitiDismissioniPrimaNota = siacRCespitiDismissioniPrimaNota;
+	}
+
+	/**
+	 * @return the siacRPrimaNotaClasses
+	 */
+	public List<SiacRPrimaNotaClass> getSiacRPrimaNotaClasses() {
+		return siacRPrimaNotaClasses;
+	}
+
+	/**
+	 * @param siacRPrimaNotaClasses the siacRPrimaNotaClasses to set
+	 */
+	public void setSiacRPrimaNotaClasses(List<SiacRPrimaNotaClass> siacRPrimaNotaClasses) {
+		this.siacRPrimaNotaClasses = siacRPrimaNotaClasses;
+	}
+	
+	/**
+	 * Adds the siac r prima nota class.
+	 *
+	 * @param siacRPrimaNotaClass the siac r prima nota class
+	 * @return the siac r prima nota class
+	 */
+	public SiacRPrimaNotaClass addSiacRPrimaNotaClass(SiacRPrimaNotaClass siacRPrimaNotaClass) {
+		getSiacRPrimaNotaClasses().add(siacRPrimaNotaClass);
+		siacRPrimaNotaClass.setSiacTPrimaNota(this);
+
+		return siacRPrimaNotaClass;
+	}
+
+	/**
+	 * Removes the siac r prima nota class.
+	 *
+	 * @param siacRPrimaNotaClass the siac r prima nota class
+	 * @return the siac r prima nota class
+	 */
+	public SiacRPrimaNotaClass removeSiacRPrimaNotaClass(SiacRPrimaNotaClass siacRPrimaNotaClass) {
+		getSiacRPrimaNotaClasses().remove(siacRPrimaNotaClass);
+		siacRPrimaNotaClass.setSiacTPrimaNota(null);
+
+		return siacRPrimaNotaClass;
 	}
 
 	@Override

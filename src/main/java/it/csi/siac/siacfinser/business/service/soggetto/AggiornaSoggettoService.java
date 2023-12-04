@@ -19,8 +19,8 @@ import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.DocumentoSpesaService;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaSoggetto;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaSoggettoResponse;
 import it.csi.siac.siacfinser.integration.dad.SoggettoFinDad;
@@ -80,7 +80,7 @@ public class AggiornaSoggettoService extends AbstractSoggettoService<AggiornaSog
 		String codiceAmbito = req.getCodificaAmbito();
 		
 		if (org.apache.commons.lang.StringUtils.isEmpty(codiceAmbito))
-			codiceAmbito = Constanti.AMBITO_FIN;
+			codiceAmbito = CostantiFin.AMBITO_FIN;
 
 		
 		DatiOperazioneDto datiOperazioneDto = commonDad.inizializzaDatiOperazione(ente, richiedente, Operazione.MODIFICA, codiceAmbito, null);
@@ -102,11 +102,11 @@ public class AggiornaSoggettoService extends AbstractSoggettoService<AggiornaSog
 			String ambitoDaService = req.getCodificaAmbito();
 			
 			if(org.apache.commons.lang.StringUtils.isEmpty(ambitoDaService))
-				ambitoDaService = Constanti.AMBITO_FIN;
+				ambitoDaService = CostantiFin.AMBITO_FIN;
 			
 			
 			// Se FIN allora devo far partire i controlli
-			if(null!=ambitoDaService && ambitoDaService.equals(Constanti.AMBITO_FIN)){
+			if(null!=ambitoDaService && ambitoDaService.equals(CostantiFin.AMBITO_FIN)){
 				//Occorre verificare che non ci siano legami con altri oggetti che ci impediscono di procedere con l'annullamento:
 				List<Errore> listaErroriLegami = controlliDipendenzaEntita(idQuery, ente, richiedente, Operazione.ANNULLA);
 				if(listaErroriLegami!=null && listaErroriLegami.size()>0){
@@ -164,7 +164,7 @@ public class AggiornaSoggettoService extends AbstractSoggettoService<AggiornaSog
 					
 					for (SedeSecondariaSoggetto sedeSecondariaSoggetto : soggettoReload.getSediSecondarie()) {
 						if(sedeSecondariaSoggetto.getStatoOperativoSedeSecondaria().equals(StatoOperativoSedeSecondaria.IN_MODIFICA)){				
-							sedeSecondariaSoggetto.setDescrizioneStatoOperativoSedeSecondaria(Constanti.STATO_IN_MODIFICA_no_underscore);
+							sedeSecondariaSoggetto.setDescrizioneStatoOperativoSedeSecondaria(CostantiFin.STATO_IN_MODIFICA_no_underscore);
 						}
 					}
 				} 
@@ -222,7 +222,7 @@ public class AggiornaSoggettoService extends AbstractSoggettoService<AggiornaSog
 			
 			for (SedeSecondariaSoggetto sedeSecondariaSoggetto : soggettoReload.getSediSecondarie()) {
 				if(sedeSecondariaSoggetto.getStatoOperativoSedeSecondaria().equals(StatoOperativoSedeSecondaria.IN_MODIFICA)){				
-					sedeSecondariaSoggetto.setDescrizioneStatoOperativoSedeSecondaria(Constanti.STATO_IN_MODIFICA_no_underscore);
+					sedeSecondariaSoggetto.setDescrizioneStatoOperativoSedeSecondaria(CostantiFin.STATO_IN_MODIFICA_no_underscore);
 				}
 			}
 		} 
@@ -285,7 +285,7 @@ public class AggiornaSoggettoService extends AbstractSoggettoService<AggiornaSog
 
 			//		b.	Se l'attributo Soggetto.residenteEstero = FALSE verificare che sia stato valorizzato Soggetto.codiceFiscale 
 			//		e in caso Soggetto.residenteEstero = FALSE verificare che sia valorizzato il CF estero.
-			if(StringUtils.isEmpty(soggettoInput.getCodiceFiscale()) && StringUtils.isEmpty(soggettoInput.getCodiceFiscaleEstero())){
+			if(StringUtilsFin.isEmpty(soggettoInput.getCodiceFiscale()) && StringUtilsFin.isEmpty(soggettoInput.getCodiceFiscaleEstero())){
 				checkNotNull(null, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Codice Fiscale"));
 			}
 
@@ -296,7 +296,7 @@ public class AggiornaSoggettoService extends AbstractSoggettoService<AggiornaSog
 				confronto = (soggettoInput.getTipoSoggetto().getSoggettoTipoCode() != null) ? soggettoInput.getTipoSoggetto().getSoggettoTipoCode().trim().toUpperCase() : "";
 			}
 
-			if(Constanti.PERSONA_FISICA.equals(confronto) || Constanti.PERSONA_FISICA_I.equals(confronto)){
+			if(CostantiFin.PERSONA_FISICA.equals(confronto) || CostantiFin.PERSONA_FISICA_I.equals(confronto)){
 				//			c.	Se Soggetto.TipoNaturaGiuridica = 'Persona Fisica' o 'Persona Fisica con PIVA' verificare che siano stati
 				//			valorizzati i campi  Soggetto.nome, Soggetto.cognome, Soggetto.sesso, Soggetto.dataNascita, Soggetto.Comune di tipo TipoComune = 'Nascita'.
 				checkNotNull(soggettoInput.getCognome(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Cognome"));
@@ -304,14 +304,14 @@ public class AggiornaSoggettoService extends AbstractSoggettoService<AggiornaSog
 				checkNotNull(soggettoInput.getComuneNascita(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Comune Nascita"));
 				checkNotNull(soggettoInput.getSesso(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Sesso"));
 				checkNotNull(soggettoInput.getDataNascita(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Data Nascita"));
-			} else if(Constanti.PERSONA_GIURIDICA.equals(confronto) || Constanti.PERSONA_GIURIDICA_I.equals(confronto)){
+			} else if(CostantiFin.PERSONA_GIURIDICA.equals(confronto) || CostantiFin.PERSONA_GIURIDICA_I.equals(confronto)){
 				//			d.	Se Soggetto.TipoNaturaGiuridica = 'Persona Giuridica o 'Persona Giuridica senza PIVA' verificare che siano stati valorizzati
 				//			i campi  Soggetto.ragioneSociale e Soggetto.NaturaGiuridicaSoggetto; 
 				checkNotNull(soggettoInput.getDenominazione(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Ragione Sociale"));
 				checkNotNull(soggettoInput.getNaturaGiuridicaSoggetto(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Natura giuridica"));
 			}
 
-			if(Constanti.PERSONA_FISICA_I.equals(confronto) || Constanti.PERSONA_GIURIDICA_I.equals(confronto)){
+			if(CostantiFin.PERSONA_FISICA_I.equals(confronto) || CostantiFin.PERSONA_GIURIDICA_I.equals(confronto)){
 				//			e.	Se Soggetto.TipoNaturaGiuridica = 'Persona Fisica con PIVA'  o 'Persona Giuridica' verificare che sia stato valorizzato Soggetto.partitaIVA
 				checkNotNull(soggettoInput.getPartitaIva(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Partita iva"));
 			}

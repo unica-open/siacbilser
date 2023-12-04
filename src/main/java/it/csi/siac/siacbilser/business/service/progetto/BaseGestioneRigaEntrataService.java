@@ -10,6 +10,7 @@ import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.integration.dad.CapitoloEntrataPrevisioneDad;
 import it.csi.siac.siacbilser.integration.dad.CronoprogrammaDad;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.DettaglioEntrataCronoprogramma;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
@@ -84,7 +85,7 @@ public abstract class BaseGestioneRigaEntrataService<REQ extends ServiceRequest,
 		}
 		CategoriaCapitolo categoriaCapitolo = capitoloEntrataPrevizioneDad.findCategoriaCapitolo(dett.getCapitolo().getUid());
 		
-		return categoriaCapitolo != null && "AAM".equalsIgnoreCase(categoriaCapitolo.getCodice());
+		return categoriaCapitolo != null && CategoriaCapitoloEnum.AAM.getCodice().equalsIgnoreCase(categoriaCapitolo.getCodice());
 	}
 
 	/**

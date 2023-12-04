@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.dozer.DozerConverter;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.model.soggetto.Contatto;
 import it.csi.siac.siacintegser.model.integ.Contatti;
 
@@ -17,7 +17,7 @@ import it.csi.siac.siacintegser.model.integ.Contatti;
 public class ContattiListContattoConverter extends DozerConverter<Contatti, List<Contatto>> {
 	
 
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 	@SuppressWarnings("unchecked")
 	public ContattiListContattoConverter() {

@@ -96,6 +96,8 @@ public interface DocumentoDao extends Dao<SiacTDoc, Integer> {
 										String registroRepertorio, 
 										Boolean contabilizzaGenPcc,
 										String statoSDI,
+										//SIAC-6780
+										String numeroPreDoc,
 										Pageable pageable);
 	
 	/**
@@ -154,6 +156,8 @@ public interface DocumentoDao extends Dao<SiacTDoc, Integer> {
 										String registroRepertorio, 
 										Boolean contabilizzaGenPcc,
 										String statoSDI,
+										//SIAC-6780
+										String numeroPreDoc,
 										Pageable pageable);
 	
 

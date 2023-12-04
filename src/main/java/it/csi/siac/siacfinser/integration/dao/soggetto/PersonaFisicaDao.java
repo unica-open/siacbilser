@@ -4,8 +4,9 @@
 */
 package it.csi.siac.siacfinser.integration.dao.soggetto;
 
-import it.csi.siac.siaccommonser.integration.dao.base.BaseDao;
+import it.csi.siac.siaccommonser.integration.dao.base.Dao;
+import it.csi.siac.siacfinser.integration.entity.SiacTPersonaFisicaFin;
 
-public interface PersonaFisicaDao extends BaseDao {
+public interface PersonaFisicaDao extends Dao<SiacTPersonaFisicaFin, Integer> {
 	
 }

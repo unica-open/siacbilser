@@ -6,8 +6,10 @@ package it.csi.siac.siacfinser.business.service.ordinativo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -18,16 +20,19 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import it.csi.siac.siacattser.frontend.webservice.ProvvedimentoService;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimentoResponse;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
+import it.csi.siac.siacbilser.integration.dad.ContoTesoreriaDad;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
+import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.LiquidazioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaOrdinativoIncasso;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaOrdinativoIncassoResponse;
@@ -44,9 +49,13 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaOrdinativoPerChi
 import it.csi.siac.siacfinser.integration.dao.common.dto.SubOrdinativoInModificaInfoDto;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.model.Accertamento;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
+import it.csi.siac.siacfinser.model.messaggio.MessaggioFin;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoIncasso;
+import it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento;
 import it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoIncasso;
+import it.csi.siac.siacfinser.model.ordinativo.Ordinativo.TipoAssociazioneEmissione;
 import it.csi.siac.siacfinser.model.ric.RicercaOrdinativoIncassoK;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
 import it.csi.siac.siacfinser.model.soggetto.sedesecondaria.SedeSecondariaSoggetto;
@@ -71,6 +80,10 @@ public class AggiornaOrdinativoIncassoService extends AbstractInserisceAggiornaA
 	
 	@Autowired
 	CommonDad commonDad;
+	
+
+	@Autowired
+	private ContoTesoreriaDad contoTesoreriaDad;
 	
 	@Override
 	@Transactional
@@ -119,6 +132,10 @@ public class AggiornaOrdinativoIncassoService extends AbstractInserisceAggiornaA
 		
 		//6. Gestione (eventuali) modifiche movimento di entrata:
 		modificheDiAccertamentoESub(ordinativoDiIncasso, datiOperazione, datiModifica);
+		
+		//SIAC-8017-CMTO
+		//va messo prima della gestione delle modifiche in quanto se l'operazione viene bloccata non deve rimanere appesa la modifica
+		impostaDatiPerContoVincolato(ordinativoDiIncasso,datiOperazione, datiPerChiave);
 		
 		//7. aggiornamento ordinativo di incasso (si invoca il metodo "core" rispetto all'operazione di aggiornamento di un ordinativo):
 		OrdinativoIncasso ordinativoIncassoUpdated = (OrdinativoIncasso) ordinativoIncassoDad.aggiornaOrdinativo(ordinativoDiIncasso, datiModifica, datiOperazione, bilancio,richiedente,ente);
@@ -293,7 +310,7 @@ public class AggiornaOrdinativoIncassoService extends AbstractInserisceAggiornaA
 	 */
 	private boolean controlloStatoOperativoOrdinativoDiIncasso(OrdinativoIncasso ordinativoDiIncasso,Ente ente, Richiedente richiedente,OrdinativoInModificaInfoDto datiModifica){
 		OrdinativoIncasso caricatoDaDb = datiModifica.getDatiOrdinativo().getOrdinativoIncasso();
-		if(Constanti.D_ORDINATIVO_STATO_ANNULLATO.equalsIgnoreCase(Constanti.statoOperativoOrdinativoEnumToString(caricatoDaDb.getStatoOperativoOrdinativo()))){
+		if(CostantiFin.D_ORDINATIVO_STATO_ANNULLATO.equalsIgnoreCase(CostantiFin.statoOperativoOrdinativoEnumToString(caricatoDaDb.getStatoOperativoOrdinativo()))){
 			addErroreFin(ErroreFin.OPERAZIONE_NON_POSSIBILE, "AGGIORNAMENTO ORDINATIVO");
 			return false;
 		}
@@ -322,10 +339,10 @@ public class AggiornaOrdinativoIncassoService extends AbstractInserisceAggiornaA
 	private boolean controlloSedeSoggetto(OrdinativoIncasso ordinativoDiIncasso,Ente ente, Richiedente richiedente,OrdinativoInModificaInfoDto datiModifica){
 		Integer idEnte = ente.getUid();
 		OrdinativoIncasso caricatoDaDb = datiModifica.getDatiOrdinativo().getOrdinativoIncasso();
-		SedeSecondariaSoggetto sedeDaFrontEnd = CommonUtils.getFirst(ordinativoDiIncasso.getSoggetto().getSediSecondarie());
+		SedeSecondariaSoggetto sedeDaFrontEnd = CommonUtil.getFirst(ordinativoDiIncasso.getSoggetto().getSediSecondarie());
 		if(sedeDaFrontEnd!=null){
-			SedeSecondariaSoggetto sedeSulDb = CommonUtils.getFirst(caricatoDaDb.getSoggetto().getSediSecondarie());
-			if(sedeSulDb==null || !StringUtils.sonoUguali(sedeDaFrontEnd.getCodiceSedeSecondaria(), sedeSulDb.getCodiceSedeSecondaria())){
+			SedeSecondariaSoggetto sedeSulDb = CommonUtil.getFirst(caricatoDaDb.getSoggetto().getSediSecondarie());
+			if(sedeSulDb==null || !StringUtilsFin.sonoUguali(sedeDaFrontEnd.getCodiceSedeSecondaria(), sedeSulDb.getCodiceSedeSecondaria())){
 				//se la sede e' cambiata bisogna assicurarsi che sia valida
 				
 				Soggetto soggettoDb = caricatoDaDb.getSoggetto();
@@ -536,7 +553,7 @@ public class AggiornaOrdinativoIncassoService extends AbstractInserisceAggiornaA
 //				}	
 //			}
 
-			if(ordinativoDiIncasso.getContoTesoreria()==null || (ordinativoDiIncasso.getContoTesoreria()!=null && StringUtils.isEmpty(ordinativoDiIncasso.getContoTesoreria().getCodice()))){
+			if(ordinativoDiIncasso.getContoTesoreria()==null || (ordinativoDiIncasso.getContoTesoreria()!=null && StringUtilsFin.isEmpty(ordinativoDiIncasso.getContoTesoreria().getCodice()))){
 				if(elencoParamentriNonInizializzati.length() > 0){
 					elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", CONTO_DI_TESORERIA";
 				}else{
@@ -544,7 +561,7 @@ public class AggiornaOrdinativoIncassoService extends AbstractInserisceAggiornaA
 				}	
 			}
 
-			if(ordinativoDiIncasso.getCodiceBollo()==null || (ordinativoDiIncasso.getCodiceBollo()!=null && StringUtils.isEmpty(ordinativoDiIncasso.getCodiceBollo().getCodice()))){
+			if(ordinativoDiIncasso.getCodiceBollo()==null || (ordinativoDiIncasso.getCodiceBollo()!=null && StringUtilsFin.isEmpty(ordinativoDiIncasso.getCodiceBollo().getCodice()))){
 				if(elencoParamentriNonInizializzati.length() > 0){
 					elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", BOLLO";
 				}else{
@@ -623,8 +640,111 @@ public class AggiornaOrdinativoIncassoService extends AbstractInserisceAggiornaA
 			}
 		}
 
-		if(!StringUtils.isEmpty(elencoParamentriNonInizializzati)){
+		if(!StringUtilsFin.isEmpty(elencoParamentriNonInizializzati)){
 			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(elencoParamentriNonInizializzati));
 		}	
 	}
+	
+	//SIAC-8017-CMTO
+	private void impostaDatiPerContoVincolato(OrdinativoIncasso ordinativoDiIncasso,DatiOperazioneDto datiOperazione, RicercaOrdinativoPerChiaveDto datiPerChiave) {
+		final String methodName = "checkCapienzaContoVincolato";
+		//devo ricaricarlo, viene passato solo il codice da front-end!!!!
+		ContoTesoreria contoTesoreriaOrdinativo = ordinativoDiIncasso.getContoTesoreria();
+		if(contoTesoreriaOrdinativo != null && StringUtils.isNotBlank(contoTesoreriaOrdinativo.getCodice())) {
+			contoTesoreriaOrdinativo = contoTesoreriaDad.findContoTesoreriaByEnteCodice(ente, ordinativoDiIncasso.getContoTesoreria().getCodice());
+		}
+		CapitoloEntrataGestione capitoloEntrataGestione = ordinativoDiIncasso.getCapitoloEntrataGestione();
+		
+		if(!isCondizioniGestioneContoVincolatoSoddisfatte(contoTesoreriaOrdinativo, capitoloEntrataGestione)) {
+			return;
+		}
+		
+		BigDecimal disponibilitaIncassareSottoConto = ordinativoIncassoDad.getDisponibilitaIncassareSottoContoVincolato(contoTesoreriaOrdinativo, capitoloEntrataGestione, ente, datiOperazione);
+		if(disponibilitaIncassareSottoConto == null) {
+			throw new BusinessException(ErroreCore.ERRORE_DI_SISTEMA.getErrore("impossibile caricare la disponibilita' sul conto vincolato."));
+		}
+		
+		String codiceContoTesoreriaPrecedente = ordinativoIncassoDad.caricaCodiceContoTesoreriaSenzaCapienzaCollegatoAdOrdinativo(datiPerChiave.getOrdinativoIncasso(), ente);
+		if(StringUtils.isNotBlank(codiceContoTesoreriaPrecedente) && StringUtils.equals(contoTesoreriaOrdinativo.getCodice(), codiceContoTesoreriaPrecedente)) {
+			//devo adeguare la disponibilita'
+			BigDecimal importoOrdinativoSudb = extractImportoOrdinativo(datiPerChiave.getOrdinativoIncasso());
+			disponibilitaIncassareSottoConto = disponibilitaIncassareSottoConto.subtract(importoOrdinativoSudb); 
+		}
+		
+		if(disponibilitaIncassareSottoConto.signum()>= 0) {
+			log.info(methodName, "disponibilita' a incassare sul sottoconto sufficiente a procedere.");
+			return;
+		}
+		
+		
+		
+		
+		BigDecimal  dispIncassareSottocontoAbs = disponibilitaIncassareSottoConto.abs();
+		BigDecimal importoOrdinativo = extractImportoOrdinativo(ordinativoDiIncasso);
+		log.info(methodName, "La disponibilita a incassare del conto " + contoTesoreriaOrdinativo.getCodice() + " sul capitolo  " + capitoloEntrataGestione.getNumeroCapitolo() + " e' di " + disponibilitaIncassareSottoConto  + ", mentre l'importo ordinativo di " + importoOrdinativo);
+		
+		ordinativoDiIncasso.setContoTesoreriaSenzaCapienza(contoTesoreriaOrdinativo);
+		ContoTesoreria contoRipianamento = ordinativoIncassoDad.caricaContoTesoreriaPerRipianamento(ente);
+		ordinativoDiIncasso.setContoTesoreria(contoRipianamento);
+		log.info(methodName, "disponibilita' ad incassaee sul sottoconto insufficiente. Utilizzo il conto per ripianamento invece che quello indicato e valuto se modificare l'imporot dell'ordinativo.");
+		
+		
+		
+		String disp = CommonUtil.convertiBigDecimalToImporto(disponibilitaIncassareSottoConto);
+		String dispAbs = CommonUtil.convertiBigDecimalToImporto(dispIncassareSottocontoAbs);
+		String impord = CommonUtil.convertiBigDecimalToImporto(importoOrdinativo);
+		//SIAC-8784
+		String differenza = CommonUtil.convertiBigDecimalToImporto(importoOrdinativo.subtract(dispIncassareSottocontoAbs));
+		
+		
+		log.info(methodName, "La disponibilita a incassare del conto " + contoTesoreriaOrdinativo.getCodice() + " sul capitolo  " + capitoloEntrataGestione.getNumeroCapitolo() + " e' di " + disponibilitaIncassareSottoConto  + ", mentre l'importo ordinativo di " + importoOrdinativo);
+		
+		if((importoOrdinativo != null && importoOrdinativo.compareTo(dispIncassareSottocontoAbs) <= 0) ||  BigDecimal.ZERO.compareTo(disponibilitaIncassareSottoConto) ==0) {
+			log.info(methodName, "valore assoluto della disponibilita ad incassare maggiore o uguale all'importo ortdinativo. Mantengo l'importo ordinativo.");
+			res.addMessaggio(MessaggioFin.SOSTITUITO_CONTO_PER_MANCATA_CAPIENZA.getMessaggio(contoTesoreriaOrdinativo.getCodice(), disp, impord, contoRipianamento.getCodice()));
+			return;
+		}
+		
+		List<SubOrdinativoIncasso> elencoSubOrdinativiDiIncasso = ordinativoDiIncasso.getElencoSubOrdinativiDiIncasso();
+		if(elencoSubOrdinativiDiIncasso!= null && elencoSubOrdinativiDiIncasso.size() >1) {
+			Collections.sort(elencoSubOrdinativiDiIncasso, new SortByImportoSubdordinativoDesc());
+		}
+		boolean esistonoQuoteOrdinativoForzateAdImportoZero = false;
+		for (SubOrdinativoIncasso sub : elencoSubOrdinativiDiIncasso) {
+			
+			checkModificheImportoContoVincolatoPossibili(contoTesoreriaOrdinativo, disp, dispAbs, impord, sub, ordinativoDiIncasso.getTipoAssociazioneEmissione());
+			
+			BigDecimal importoAttuale = sub.getImportoAttuale();
+			if(importoAttuale.compareTo(dispIncassareSottocontoAbs) < 0) {
+				//importo dell'ordinativo e' minore della disponibilita', lascio l'importo cos' come e'
+				//ma adeguo la disponibilita' che sto considerando in quanto se ne rimane un po' la devo sottrarre alle altre quote
+				dispIncassareSottocontoAbs = dispIncassareSottocontoAbs.subtract(importoAttuale);
+				continue;
+			}
+			sub.setImportoIniziale(dispIncassareSottocontoAbs);
+			sub.setImportoAttuale(dispIncassareSottocontoAbs);
+			dispIncassareSottocontoAbs = dispIncassareSottocontoAbs.subtract(importoAttuale).signum() > 0? dispIncassareSottocontoAbs.subtract(importoAttuale) : BigDecimal.ZERO;
+			if(!esistonoQuoteOrdinativoForzateAdImportoZero && sub.getImportoAttuale().compareTo(BigDecimal.ZERO) == 0) {
+				res.addMessaggio(MessaggioFin.MESSAGGIO_GENERICO.getMessaggio("Alcune quote dell'ordinativo presentano importo pari a zero a causa del ripianamento effettuato."));
+				esistonoQuoteOrdinativoForzateAdImportoZero= true;
+			}
+			
+		}
+		//SIAC-8784 
+		//SIAC-8856
+		res.addMessaggio(MessaggioFin.SOSTITUITO_CONTO_PER_MANCATA_CAPIENZA_CON_RIPIANAMENTO_MANUALE.getMessaggio(contoTesoreriaOrdinativo.getCodice(), disp, impord, contoRipianamento.getCodice(), dispAbs, differenza, contoTesoreriaOrdinativo.getCodice()));
+	}
+	
+	protected void checkModificheImportoContoVincolatoPossibili(ContoTesoreria contoTesoreriaOrdinativo, String disp,	String dispAbs, String impord, SubOrdinativoIncasso sub, TipoAssociazioneEmissione tipoAssociazioneEmissione) {
+		if(sub.getSubDocumentoEntrata() == null  || sub.getSubDocumentoEntrata().getUid() == 0) {
+			return;
+		}
+		//ritenute
+		if(tipoAssociazioneEmissione != null &&  TipoAssociazioneEmissione.RIT_ORD.equals(tipoAssociazioneEmissione)) {
+			throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("ripianamento per sottoconto incapiente per ritenute documento."));
+		}
+		throw new BusinessException(ErroreFin.RIPIANAMENTO_SU_ORDINATIVO_IMPOSSIBILE_PER_PRESENZA_SUBDOCUMENTI.getErrore(contoTesoreriaOrdinativo.getCodice(), disp, impord, dispAbs));
+		
+	}
+
 }

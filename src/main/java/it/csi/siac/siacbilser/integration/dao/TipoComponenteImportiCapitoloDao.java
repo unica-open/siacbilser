@@ -16,7 +16,8 @@ public interface TipoComponenteImportiCapitoloDao extends Dao<SiacDBilElemDetCom
 	
 	List<SiacDBilElemDetCompTipo> ricercaTipoComponenteImportiCapitolo(
 			Integer enteProprietarioId, 
-			Boolean tipoGestioneSoloAutomatica,
+			//SIAC-7349
+			//Boolean tipoGestioneSoloAutomatica,
 			String descrizione, 
 			String codiceMacroTipo,
 			String codiceSottoTipo,
@@ -24,17 +25,23 @@ public interface TipoComponenteImportiCapitoloDao extends Dao<SiacDBilElemDetCom
 			String codiceTipoFonte,
 			String codiceTipoFase,
 			String codiceTipoDef,
+			//SIAC-7349
+			String codiceTipoImp,
 			String codiceTipoStato,
 			Integer anno, 
 			Integer annoBilancio,
 			Boolean soloValidiPerAnnoBilancio,
 			List<String> codiciMacroTipoDaEscludere,
 			List<String> codiciSottoTipoDaEscludere, 
-			List<String> propostaDefaultComponenteImportiCapitoloDaEscludere);
+			List<String> propostaDefaultComponenteImportiCapitoloDaEscludere,
+			//SIAC-7349
+			List<String> impegnabileComponenteImportiCapitoloDaEscludere
+			);
 
 	Page<SiacDBilElemDetCompTipo> ricercaPaginataTipoComponenteImportiCapitolo(
 			Integer enteProprietarioId, 
-			Boolean tipoGestioneSoloAutomatica,
+			//SIAC-7349
+			//Boolean tipoGestioneSoloAutomatica,
 			String descrizione, 
 			String codiceMacroTipo,
 			String codiceSottoTipo,
@@ -42,12 +49,18 @@ public interface TipoComponenteImportiCapitoloDao extends Dao<SiacDBilElemDetCom
 			String codiceTipoFonte,
 			String codiceTipoFase,
 			String codiceTipoDef,
+			//SIAC-7349
+			String codiceTipoImp,
 			String codiceTipoStato,
+			//SIAC-7873
+			boolean saltaControlloSuDateValidita,
 			Integer anno,
 			Integer annoBilancio,
 			Boolean soloValidiPerAnnoBilancio,
 			List<String> codiciMacroTipoDaEscludere,
 			List<String> codiciSottoTipoDaEscludere,
 			List<String> propostaDefaultComponenteImportiCapitoloDaEscludere,
+			//SIAC-7349
+			List<String> impegnabileComponenteImportiCapitoloDaEscludere,
 			Pageable pageable);
 }

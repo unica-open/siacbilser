@@ -71,7 +71,7 @@ public interface SiacTBilElemDetRepository extends JpaRepository<SiacTBilElemDet
 			" AND s.dataInizioValidita < CURRENT_TIMESTAMP" +
 			" AND (s.dataFineValidita IS NULL OR s.dataFineValidita > CURRENT_TIMESTAMP) "
 			)
-	SiacTBilElemDet findBilElemDetsByBilElemIdAndAnnoAndTipo(@Param("bilElemId")Integer bilElemId, @Param("annoCompetenza") String annoCompetenza, @Param("elemDetTipoCode") String elemDetTipoCode);
+	List<SiacTBilElemDet> findBilElemDetsByBilElemIdAndAnnoAndTipo(@Param("bilElemId")Integer bilElemId, @Param("annoCompetenza") String annoCompetenza, @Param("elemDetTipoCode") String elemDetTipoCode);
 	
 	
 	/**
@@ -106,5 +106,16 @@ public interface SiacTBilElemDetRepository extends JpaRepository<SiacTBilElemDet
 			" AND (s.dataFineValidita IS NULL OR s.dataFineValidita > CURRENT_TIMESTAMP) "
 			)
 	Long countBilElemDetsByBilElemIdAndAnno(@Param("bilElemId") Integer bilElemId,@Param("annoCompetenza") String annoCompetenza);
+	
+	@Query( " SELECT s.elemDetImporto" + 
+			" FROM SiacTBilElemDet s " +
+			" WHERE s.siacTBilElem.elemId = :bilElemId " +
+			" AND s.siacTPeriodo.anno = :annoCompetenza " +
+			" AND s.siacDBilElemDetTipo.elemDetTipoCode = :elemDetTipoCode " +
+			" AND s.dataCancellazione IS NULL " +
+			" AND s.dataInizioValidita < CURRENT_TIMESTAMP " +
+			" AND (s.dataFineValidita IS NULL OR s.dataFineValidita > CURRENT_TIMESTAMP) "			
+			)
+	BigDecimal findElemDetImportoByBilElemIdAndAnno(@Param("bilElemId") Integer bilElemId,@Param("annoCompetenza") String annoCompetenza, @Param("elemDetTipoCode") String elemDetTipoCode);
 	
 }

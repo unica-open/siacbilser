@@ -21,7 +21,5 @@ public interface SiacTOrdinativoBilRepository extends JpaRepository<SiacTOrdinat
 			+ " WHERE r.dataCancellazione IS NULL "
 			+"  AND r.siacTOrdinativo.ordId = :ordId ")
 	int findIdCapitoloByOrdinativo(@Param("ordId") Integer ordId);
-	
-	
-	
+
 }

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+ 
+	<!-- VINCOLO ACCERTAMENTO -->
+    <mapping map-id="VincoloAccertamento_SiacRMovgestTsFin_Base_ModelDetail" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.VincoloAccertamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin</class-b>
+
+		<field>
+			<a>importo</a>
+			<b>movgestTsImporto</b>
+		</field>
+		
+	</mapping>
+
+	<!-- VINCOLO IMPEGNO -->
+    <mapping map-id="VincoloImpegno_SiacRMovgestTsFin_Base_ModelDetail" wildcard="true">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.VincoloImpegno</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin</class-b>
+
+		<field>
+			<a>importo</a>
+			<b>movgestTsImporto</b>
+		</field>
+		
+	</mapping>
+	
+	<!-- AVANZO VINCOLO -->
+  	<mapping map-id="SiacTAvanzovincoloFin_Avanzovincolo_Complete">
+		<class-a>it.csi.siac.siacfinser.model.Avanzovincolo</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacTAvanzovincoloFin</class-b>
+
+		<field>
+			<a>tipoAvanzovincolo.uid</a>
+			<b>siacDAvanzovincoloTipo.uid</b>
+		</field>
+
+		<field>
+			<a>tipoAvanzovincolo.codice</a>
+			<b>siacDAvanzovincoloTipo.avavTipoCode</b>
+		</field>
+		
+		<field>
+			<a>tipoAvanzovincolo.descrizione</a>
+			<b>siacDAvanzovincoloTipo.avavTipoDesc</b>
+		</field>
+		
+  	</mapping>
+  	
+ 	<!-- MAPPER IMPEGNO CON ANNO BILANCIO -->
+  	<mapping map-id="SiacRMovgestTsFin_VincoloAccertamento_Impegno_Base" >
+  		<class-a>it.csi.siac.siacfinser.model.movgest.VincoloAccertamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin</class-b>
+
+		<field>
+			<a>impegno.uid</a>
+			<b>siacTMovgestTsB.siacTMovgest.movgestId</b>
+		</field>
+
+		<field>
+			<a>impegno.annoMovimento</a>
+			<b>siacTMovgestTsB.siacTMovgest.movgestAnno</b>
+		</field>
+
+		<field>
+			<a>impegno.numeroBigDecimal</a>
+			<b>siacTMovgestTsB.siacTMovgest.movgestNumero</b>
+		</field>
+		
+		<field>
+			<a>impegno.descrizione</a>
+			<b>siacTMovgestTsB.siacTMovgest.movgestDesc</b>
+		</field>
+		
+  	</mapping>
+  	
+   	<!-- MAPPER ACCERTAMENTO CON ANNO BILANCIO -->
+	<mapping map-id="SiacRMovgestTsFin_VincoloImpegno_Accertamento_Base">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.VincoloImpegno</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin</class-b>
+
+		<field>
+			<a>accertamento.uid</a>
+			<b>siacTMovgestTsA.siacTMovgest.movgestId</b>
+		</field>
+
+		<field>
+			<a>accertamento.annoMovimento</a>
+			<b>siacTMovgestTsA.siacTMovgest.movgestAnno</b>
+		</field>
+		
+		<field>
+			<a>accertamento.numeroBigDecimal</a>
+			<b>siacTMovgestTsA.siacTMovgest.movgestNumero</b>
+		</field>
+		
+		<field>
+			<a>accertamento.descrizione</a>
+			<b>siacTMovgestTsA.siacTMovgest.movgestDesc</b>
+		</field>
+
+  	</mapping>  
+  	
+	<!-- BILANCIO IMPEGNO VINCOLO ACCERTAMENTO -->
+ 	<mapping map-id="SiacRMovgestTsFin_VincoloAccertamento_Impegno_Bilancio">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.VincoloAccertamento</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin</class-b>
+
+		<field>
+			<a>impegno.bilancio.uid</a>
+			<b>siacTMovgestTsB.siacTMovgest.siacTBil.bilId</b>
+		</field>
+
+		<field>
+			<a>impegno.bilancio.anno</a>
+			<b>siacTMovgestTsB.siacTMovgest.siacTBil.siacTPeriodo.anno</b>
+		</field>
+
+  	</mapping>  
+
+	<!-- BILANCIO ACCERTAMENTO VINCOLO IMPEGNO -->
+	<mapping map-id="SiacRMovgestTsFin_VincoloImpegno_Accertamento_Bilancio">
+  		<class-a>it.csi.siac.siacfinser.model.movgest.VincoloImpegno</class-a>
+		<class-b>it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsFin</class-b>
+
+		<field>
+			<a>accertamento.bilancio.uid</a>
+			<b>siacTMovgestTsA.siacTMovgest.siacTBil.bilId</b>
+		</field>
+
+		<field>
+			<a>accertamento.bilancio.anno</a>
+			<b>siacTMovgestTsA.siacTMovgest.siacTBil.siacTPeriodo.anno</b>
+		</field>
+
+  	</mapping>  
+
+</mappings>

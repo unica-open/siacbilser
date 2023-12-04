@@ -25,6 +25,7 @@ import it.csi.siac.siacbilser.integration.dad.ImpegnoBilDad;
 import it.csi.siac.siacbilser.integration.dad.PreDocumentoSpesaDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
+import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.DefiniscePreDocumentoSpesaPerElenco;
@@ -188,10 +189,10 @@ public class DefiniscePreDocumentoSpesaPerElencoService extends CheckedAccountBa
 				.append(" Impegno ")
 				.append(impegno.getAnnoMovimento())
 				.append("/")
-				.append(impegno.getNumero().toPlainString());
+				.append(impegno.getNumeroBigDecimal().toPlainString());
 		if(entitaConUid(subImpegno)) {
 			sb.append("-")
-				.append(subImpegno.getNumero().toPlainString());
+				.append(subImpegno.getNumeroBigDecimal().toPlainString());
 		}
 		sb.append(" disponibile a liquidare ")
 			.append(Utility.formatCurrency(disponibilitaLiquidare != null ? disponibilitaLiquidare : BigDecimal.ZERO));
@@ -210,10 +211,9 @@ public class DefiniscePreDocumentoSpesaPerElencoService extends CheckedAccountBa
 				subImpegno,
 				disponibilitaLiquidare);
 		helperExecutor.executeHelperTxRequiresNew(helper);
-		List<Messaggio> messaggiHelper = helper.getMessaggi();
-		for(Messaggio messaggio : messaggiHelper) {
-			res.addMessaggio(messaggio.getCodice(), messaggio.getDescrizione());
-		}
+
+		addMessaggi(helper.getMessaggi());
+		addErrori(helper.getErrori());
 	}
 	
 	/**
@@ -230,9 +230,21 @@ public class DefiniscePreDocumentoSpesaPerElencoService extends CheckedAccountBa
 				impegno,
 				subImpegno);
 		helperExecutor.executeHelperTxRequiresNew(helper);
-		List<Messaggio> messaggiHelper = helper.getMessaggi();
-		for(Messaggio messaggio : messaggiHelper) {
+
+		addMessaggi(helper.getMessaggi());
+		addErrori(helper.getErrori());
+	}
+
+	private void addMessaggi(List<Messaggio> messaggi) {
+		for(Messaggio messaggio : messaggi) {
 			res.addMessaggio(messaggio.getCodice(), messaggio.getDescrizione());
 		}
 	}
+
+	private void addErrori(List<Errore> errori) {
+		for(Errore errore : errori) { 
+			res.addErrore(errore);
+		}
+	}
+
 }

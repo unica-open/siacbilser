@@ -71,7 +71,8 @@ public class RicercaVincoloService extends CheckedAccountBaseService<RicercaVinc
 	@Override
 	protected void execute() {
 		caricaBilancio();
-		ListaPaginata<VincoloCapitoli> vincoli = vincoloCapitoliDad.ricercaSinteticaVincoloCapitoli(req.getVincolo(), req.getCapitolo() , req.getTipiCapitolo(), bilancio, req.getParametriPaginazione());
+		//task-52 aggiunto req.isRicercaCodiceLike()
+		ListaPaginata<VincoloCapitoli> vincoli = vincoloCapitoliDad.ricercaSinteticaVincoloCapitoli(req.getVincolo(), req.getCapitolo() , req.getTipiCapitolo(), bilancio, req.isRicercaCodiceLike(), req.getParametriPaginazione());
 		res.setVincoloCapitoli(vincoli);
 		res.setCardinalitaComplessiva(vincoli.size());
 	}

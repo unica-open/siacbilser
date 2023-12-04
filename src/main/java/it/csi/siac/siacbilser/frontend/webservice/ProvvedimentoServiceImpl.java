@@ -19,6 +19,8 @@ import it.csi.siac.siacattser.frontend.webservice.msg.InserisceProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.InserisceProvvedimentoResponse;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaProvvedimentoResponse;
+import it.csi.siac.siacattser.frontend.webservice.msg.RicercaPuntualeProvvedimento;
+import it.csi.siac.siacattser.frontend.webservice.msg.RicercaPuntualeProvvedimentoResponse;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaSinteticaProvvedimento;
 import it.csi.siac.siacattser.frontend.webservice.msg.RicercaSinteticaProvvedimentoResponse;
 import it.csi.siac.siacattser.frontend.webservice.msg.TipiProvvedimento;
@@ -28,7 +30,9 @@ import it.csi.siac.siacattser.frontend.webservice.msg.VerificaAnnullabilitaProvv
 import it.csi.siac.siacbilser.business.service.base.BaseServiceExecutor;
 import it.csi.siac.siacbilser.business.service.provvedimento.AggiornaProvvedimentoService;
 import it.csi.siac.siacbilser.business.service.provvedimento.InserisceProvvedimentoService;
+import it.csi.siac.siacbilser.business.service.provvedimento.RicercaProvvedimentoConParametriService;
 import it.csi.siac.siacbilser.business.service.provvedimento.RicercaProvvedimentoService;
+import it.csi.siac.siacbilser.business.service.provvedimento.RicercaPuntualeProvvedimentoService;
 import it.csi.siac.siacbilser.business.service.provvedimento.RicercaSinteticaProvvedimentoService;
 import it.csi.siac.siacbilser.business.service.provvedimento.TipiProvvedimentoService;
 import it.csi.siac.siacbilser.business.service.provvedimento.VerificaAnnullabilitaProvvedimentoService;
@@ -68,6 +72,11 @@ public class ProvvedimentoServiceImpl implements ProvvedimentoService {
 	public RicercaProvvedimentoResponse ricercaProvvedimento(RicercaProvvedimento parameters) {
 		return BaseServiceExecutor.execute(appCtx, RicercaProvvedimentoService.class, parameters);
 	}
+	
+	@Override
+	public RicercaProvvedimentoResponse ricercaProvvedimentoConParametri(RicercaProvvedimento parameters) {
+		return BaseServiceExecutor.execute(appCtx, RicercaProvvedimentoConParametriService.class, parameters);
+	}
 
 	@Override
 	public VerificaAnnullabilitaProvvedimentoResponse verificaAnnullabilitaProvvedimento(VerificaAnnullabilitaProvvedimento parameters) {
@@ -82,5 +91,10 @@ public class ProvvedimentoServiceImpl implements ProvvedimentoService {
 	@Override
 	public RicercaSinteticaProvvedimentoResponse ricercaSinteticaProvvedimento(RicercaSinteticaProvvedimento parameters) {
 		return BaseServiceExecutor.execute(appCtx, RicercaSinteticaProvvedimentoService.class, parameters);
+	}
+
+	@Override
+	public RicercaPuntualeProvvedimentoResponse ricercaPuntualeProvvedimento(RicercaPuntualeProvvedimento parameters) {
+		return BaseServiceExecutor.execute(appCtx, RicercaPuntualeProvvedimentoService.class, parameters);
 	}
 }

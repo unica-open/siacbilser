@@ -9,12 +9,12 @@ import java.util.List;
 
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.business.utility.Utility;
-import it.csi.siac.siacbilser.integration.dao.SiacTModificaBilRepository;
+import it.csi.siac.siacbilser.integration.dad.ModificaMovimentoGestioneBilDad;
 import it.csi.siac.siacbilser.integration.dao.SiacTMovgestTRepository;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTsDetTipoEnum;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -34,18 +34,19 @@ import it.csi.siac.siacgenser.model.RegistrazioneMovFin;
  * @author Domenico
  */
 public class ModificaMovimentoGestioneSpesaMovimentoHandler extends MovimentoHandler<ModificaMovimentoGestioneSpesa> {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private SiacTMovgestTRepository siacTMovgestTRepository;
-	private SiacTModificaBilRepository siacTModificaRepository;
-	
+	private ModificaMovimentoGestioneBilDad modificaMovimentoGestioneDad;
 	
 
 	public ModificaMovimentoGestioneSpesaMovimentoHandler(ServiceExecutor serviceExecutor, Richiedente richiedente, Ente ente, Bilancio bilancio) {
 		super(serviceExecutor, richiedente, ente, bilancio);
 		
 		this.siacTMovgestTRepository = Utility.getBeanViaDefaultName(serviceExecutor.getAppCtx(), SiacTMovgestTRepository.class);
-		this.siacTModificaRepository = Utility.getBeanViaDefaultName(serviceExecutor.getAppCtx(), SiacTModificaBilRepository.class);
+		
+		this.modificaMovimentoGestioneDad = serviceExecutor.getAppCtx().getBean(ModificaMovimentoGestioneBilDad.class);		
+		modificaMovimentoGestioneDad.setEnte(ente);
 	}
 
 	@Override
@@ -104,9 +105,9 @@ public class ModificaMovimentoGestioneSpesaMovimentoHandler extends MovimentoHan
 	private BigDecimal ottieniImporto(ModificaMovimentoGestioneSpesa modifica) {
 		final String methodName = "ottieniImporto";
 		
-		BigDecimal importoModifica = siacTModificaRepository.findMovgestTsDetImportoModByModIdAndMovgestTsDetTipoCode(modifica.getUid(), SiacDMovgestTsDetTipoEnum.Attuale.getCodice());
+		BigDecimal importoModifica = modificaMovimentoGestioneDad.estraiImportoAttualeModifica(modifica);//siacTModificaRepository.findMovgestTsDetImportoModByModIdAndMovgestTsDetTipoCode(modifica.getUid(), SiacDMovgestTsDetTipoEnum.Attuale.getCodice());
 		if(importoModifica!=null){
-			log.debug(methodName, "importoModifica: "+importoModifica);
+			log.info(methodName, "importoModifica: "+importoModifica);
 			return importoModifica;
 		}
 		
@@ -148,7 +149,9 @@ public class ModificaMovimentoGestioneSpesaMovimentoHandler extends MovimentoHan
 	public Soggetto getSoggetto(RegistrazioneMovFin registrazioneMovFin) { 
 		Entita movimento = registrazioneMovFin.getMovimento();
 		ModificaMovimentoGestioneSpesa modifica = (ModificaMovimentoGestioneSpesa) movimento;
-		return modifica.getSoggetto();
+		//SIAC-7497
+		Soggetto soggettoModifica = modificaMovimentoGestioneDad.estraiSoggettoDellaModifica(modifica);
+		return soggettoModifica;
 	}
 
 	@Override

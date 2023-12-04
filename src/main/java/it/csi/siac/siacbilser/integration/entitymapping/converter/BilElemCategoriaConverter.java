@@ -17,7 +17,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacDBilElemCategoria;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemCategoria;
 import it.csi.siac.siacbilser.integration.entity.SiacTBilElem;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,7 +27,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class BilElemCategoriaConverter extends DozerConverter<CategoriaCapitolo, SiacTBilElem > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

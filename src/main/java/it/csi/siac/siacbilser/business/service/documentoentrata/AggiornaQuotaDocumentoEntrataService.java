@@ -62,7 +62,7 @@ public class AggiornaQuotaDocumentoEntrataService extends CrudDocumentoDiEntrata
 				 ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero provvisorio di cassa") );
 		
 		checkCondition(subdoc.getAccertamento()==null || subdoc.getAccertamento().getUid()== 0 ||
-				(subdoc.getAccertamento().getAnnoMovimento()!=0 && subdoc.getAccertamento().getNumero()!=null), 
+				(subdoc.getAccertamento().getAnnoMovimento()!=0 && subdoc.getAccertamento().getNumeroBigDecimal()!=null), 
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero accertamento")); 
 		
 		checkCondition(subdoc.getAttoAmministrativo()==null || subdoc.getAttoAmministrativo().getUid() != 0,

@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.csi.siac.siacbilser.business.service.capitolo.AggiornaStanziamentiCapitoliVariatiService;
 import it.csi.siac.siacbilser.business.service.capitolo.CalcolaTotaliStanziamentiDiPrevisioneService;
 import it.csi.siac.siacbilser.business.service.capitolo.CalcoloDisponibilitaDiUnCapitoloService;
+import it.csi.siac.siacbilser.business.service.capitolo.LeggiSottoContiVincolatiCapitoloBySubdocService;
 import it.csi.siac.siacbilser.business.service.capitolo.ControllaDisponibilitaCassaCapitoloByMovimentoService;
+import it.csi.siac.siacbilser.business.service.capitolo.ControllaDisponibilitaCassaContoVincolatoCapitoloService;
 import it.csi.siac.siacbilser.business.service.capitolo.RicercaSinteticaVariazioniSingoloCapitoloService;
 import it.csi.siac.siacbilser.business.service.capitolo.RicercaVariazioniCapitoloService;
 import it.csi.siac.siacbilser.business.service.capitoloentratagestione.RicercaDisponibilitaCapitoloEntrataGestioneService;
@@ -39,8 +41,12 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.CalcolaTotaliStanziamentiD
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcolaTotaliStanziamentiDiPrevisioneResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloDisponibilitaDiUnCapitolo;
 import it.csi.siac.siacbilser.frontend.webservice.msg.CalcoloDisponibilitaDiUnCapitoloResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiSottoContiVincolatiCapitoloBySubdoc;
+import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiSottoContiVincolatiCapitoloBySubdocResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaDisponibilitaCassaCapitoloByMovimento;
 import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaDisponibilitaCassaCapitoloByMovimentoResponse;
+import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaDisponibilitaCassaContoVincolatoCapitolo;
+import it.csi.siac.siacbilser.frontend.webservice.msg.ControllaDisponibilitaCassaContoVincolatoCapitoloResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioModulareCapitoloUscitaGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDettaglioModulareCapitoloUscitaGestioneResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaDisponibilitaCapitoloEntrataGestione;
@@ -88,6 +94,7 @@ import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siacfin2ser.model.CapitoloUscitaGestioneModelDetail;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -124,6 +131,10 @@ public class CapitoloTest extends BaseJunit4TestCase {
 	private AnnullaCapitoloUscitaPrevisioneService annullaCapitoloUscitaPrevisioneService;
 	@Autowired
 	private ControllaDisponibilitaCassaCapitoloByMovimentoService controllaDisponibilitaCassaCapitoloByMovimentoService;
+	@Autowired
+	private ControllaDisponibilitaCassaContoVincolatoCapitoloService controllaDisponibilitaCassaContoVincolatoCapitoloService;
+	@Autowired
+	private LeggiSottoContiVincolatiCapitoloBySubdocService caricaSottoContiVincolatiCapitoloService;
 	
 	@Autowired
 	private CapitoloDad capitoloDad;
@@ -336,6 +347,8 @@ public class CapitoloTest extends BaseJunit4TestCase {
 		cug.setExArticolo(1);
 		cug.setExUEB(1);
 		cug.setFlagImpegnabile(Boolean.FALSE);
+		//task-55
+		cug.setFlagNonInserireAllegatoA1(Boolean.FALSE);
 		cug.setNumeroCapitolo(10000);
 		cug.setNumeroArticolo(0);
 		cug.setNumeroUEB(100642004);
@@ -546,7 +559,7 @@ public class CapitoloTest extends BaseJunit4TestCase {
 				,55073
 		};
 		//capitoloDad.findCapitoliBySubdoc(Arrays.asList(uidSubdoc));
-		capitoloDad.findCapitoliByElenco(Arrays.asList(2));
+		capitoloDad.findCapitoliSpesaGestioneByElenco(Arrays.asList(2));
 	}
 	
 	@Test
@@ -560,17 +573,7 @@ public class CapitoloTest extends BaseJunit4TestCase {
 	public void testControllaDisponibilitaCassaCapitoloByMovimentoService() {
 		Integer[] uidSubdocs = new Integer[] {
 				
-				68082
-				,68944
-				,70716
-				,58919
-				,70626
-				,58913
-				,58916
-				,60596
-				,59593
-				,64778
-				,61227
+				314268
 				
 				/*STESSO CAPITOLO
 				 64635
@@ -584,12 +587,12 @@ public class CapitoloTest extends BaseJunit4TestCase {
 				,64640
 				,64638*/
 		};
-		Integer[] uidsElenco = new Integer[] {9420};
+		Integer[] uidsElenco = new Integer[] {96886};
 		ControllaDisponibilitaCassaCapitoloByMovimento req = new ControllaDisponibilitaCassaCapitoloByMovimento();
-		req.setRichiedente(getRichiedenteByProperties("forn2", "crp"));
+		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
 		req.setBilancio(getBilancioTest(143, 2017));
-		//req.setIdsSubdocumentiSpesa(Arrays.asList(uidSubdocs));
-		req.setIdsElenchi(Arrays.asList(uidsElenco));
+		req.setIdsSubdocumentiSpesa(Arrays.asList(uidSubdocs));
+//		req.setIdsElenchi(Arrays.asList(uidsElenco));
 		ControllaDisponibilitaCassaCapitoloByMovimentoResponse executeService = controllaDisponibilitaCassaCapitoloByMovimentoService.executeService(req);
 		/*select siactsubdo8_.subdoc_id, 
 		 siacrmovge0_.elem_id as col_0_0_,
@@ -622,5 +625,54 @@ public class CapitoloTest extends BaseJunit4TestCase {
 		order by siacrmovge0_.elem_id
 		limit 10
 			 * */
+	}
+	
+	@Test
+	public void testControllaDisponibilitaCassaContoVincolatoCapitoloService() {
+		ControllaDisponibilitaCassaContoVincolatoCapitolo req = new ControllaDisponibilitaCassaContoVincolatoCapitolo();
+		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
+		req.setAnnoBilancio(2022);
+		req.setContoTesoreria(new ContoTesoreria());
+		req.getContoTesoreria().setUid(5);
+		
+		Integer[] uidsSpesa = new Integer[] {314608}; 
+		
+		Integer[] uidsEntrata = new Integer[] {314595};
+		req.setIdsSubdocumentiEntrata(Arrays.asList(uidsEntrata)); 
+		
+//		req.setIdsSubdocumentiSpesa(Arrays.asList(uidsSpesa));
+		//
+//		req.setCapitoloEntrataGestione(new CapitoloEntrataGestione());
+//		req.getCapitoloEntrataGestione().setUid(153556);
+//		req.getCapitoloEntrataGestione().setNumeroCapitolo(8017);
+//		req.getCapitoloEntrataGestione().setNumeroArticolo(0);
+//		//*/
+//		req.setCapitoloUscitaGestione(new CapitoloUscitaGestione());
+//		req.getCapitoloUscitaGestione().setUid(153557);
+//		req.getCapitoloEntrataGestione().setNumeroCapitolo(8017);
+//		req.getCapitoloEntrataGestione().setNumeroArticolo(0);
+		
+//		req.setIdsElenchi(Arrays.asList(uidsElenco));
+		ControllaDisponibilitaCassaContoVincolatoCapitoloResponse res = controllaDisponibilitaCassaContoVincolatoCapitoloService.executeService(req);
+		log.info("entrata", res.getDisponibilitaContoVincolatoEntrata());
+		log.info("spesa", res.getDisponibilitaContoVincolatoSpesa());
+		
+	}
+	
+	@Test
+	public void testCaricaSottoContiVincolatiCapitoloService() {
+		LeggiSottoContiVincolatiCapitoloBySubdoc req = new LeggiSottoContiVincolatiCapitoloBySubdoc();
+		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
+		req.setAnnoBilancio(2022);
+		
+		Integer[] uidsSpesa = new Integer[] {314608}; 
+		
+		Integer[] uidsEntrata = new Integer[] {209987, 314671, 314661};
+		req.setIdsSubdocumenti(Arrays.asList(uidsEntrata)); 
+		
+//		req.setIdsSubdocumentiSpesa(Arrays.asList(uidsSpesa));
+//		req.setIdsSubdocumentiSpesa(Arrays.asList(uidsSpesa));
+		LeggiSottoContiVincolatiCapitoloBySubdocResponse res = caricaSottoContiVincolatiCapitoloService.executeService(req);
+		
 	}
 }

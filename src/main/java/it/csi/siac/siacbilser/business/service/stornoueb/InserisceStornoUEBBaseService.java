@@ -17,7 +17,7 @@ import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceStornoUEB;
 import it.csi.siac.siacbilser.frontend.webservice.msg.InserisceStornoUEBResponse;
 import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.VariazioniDad;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
@@ -41,7 +41,7 @@ public abstract class InserisceStornoUEBBaseService extends CheckedAccountBaseSe
 	
 	/** The provvedimento dad. */
 	@Autowired
-	protected ProvvedimentoDad provvedimentoDad;
+	protected AttoAmministrativoDad attoAmministrativoDad;
 	
 	/** The importi capitolo dad. */
 	@Autowired

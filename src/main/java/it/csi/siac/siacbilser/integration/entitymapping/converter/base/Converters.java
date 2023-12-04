@@ -4,6 +4,7 @@
 */
 package it.csi.siac.siacbilser.integration.entitymapping.converter.base;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -69,13 +70,30 @@ import it.csi.siac.siacbilser.integration.entitymapping.converter.componenteimpo
 import it.csi.siac.siacbilser.integration.entitymapping.converter.componenteimporticapitolo.DettaglioVariazioneComponenteImportoCapitoloComponenteImportiCapitoloConverter;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.componenteimporticapitolo.DettaglioVariazioneComponenteImportoCapitoloDettaglioVariazioneImportiCapitoloConverter;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.componenteimporticapitolo.DettaglioVariazioneComponenteImportoCapitoloFlagConverter;
-import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilitaModelDetail;
-import it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilitaRendicontoModelDetail;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioBilancioConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioStatoConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioTipoConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaBaseAttributiBilancioConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaCapitoloConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaGestioneCapitoloConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaGestioneStanziamentiCapitoloConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaGestioneTipoMediaConfrontoConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaRendicontoCapitoloConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaRendicontoStanziamentiCapitoloConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaStanziamentiCapitoloConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaTipoConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.fcde.AccantonamentoFondiDubbiaEsigibilitaTipoMediaConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.visibilita.VisibilitaAzioneConverter;
+import it.csi.siac.siacbilser.integration.entitymapping.converter.visibilita.VisibilitaTipoCampoConverter;
 import it.csi.siac.siacbilser.model.ComponenteImportiCapitoloModelDetail;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitoloModelDetail;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siacbilser.model.QuadroEconomicoModelDetail;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitoloModelDetail;
+import it.csi.siac.siacbilser.model.fcde.modeldetail.AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetail;
+import it.csi.siac.siacbilser.model.fcde.modeldetail.AccantonamentoFondiDubbiaEsigibilitaGestioneModelDetail;
+import it.csi.siac.siacbilser.model.fcde.modeldetail.AccantonamentoFondiDubbiaEsigibilitaModelDetail;
+import it.csi.siac.siacbilser.model.fcde.modeldetail.AccantonamentoFondiDubbiaEsigibilitaRendicontoModelDetail;
+import it.csi.siac.siacbilser.model.visibilita.modeldetail.VisibilitaModelDetail;
 import it.csi.siac.siaccecser.model.RichiestaEconomaleModelDetail;
 import it.csi.siac.siaccecser.model.StampeCassaFileModelDetail;
 import it.csi.siac.siaccespser.model.AmmortamentoAnnuoCespiteModelDetail;
@@ -86,6 +104,8 @@ import it.csi.siac.siaccespser.model.DettaglioAnteprimaAmmortamentoAnnuoCespiteM
 import it.csi.siac.siaccespser.model.DismissioneCespiteModelDetail;
 import it.csi.siac.siaccespser.model.TipoBeneCespiteModelDetail;
 import it.csi.siac.siaccespser.model.VariazioneCespiteModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
+import it.csi.siac.siaccommonser.integration.entitymapping.Converter;
 import it.csi.siac.siacfin2ser.model.AccertamentoModelDetail;
 import it.csi.siac.siacfin2ser.model.AllegatoAttoModelDetail;
 import it.csi.siac.siacfin2ser.model.CapitoloEntrataGestioneModelDetail;
@@ -117,8 +137,8 @@ import it.csi.siac.siacgenser.model.ProgettoModelDetail;
 import it.csi.siac.siacgenser.model.RegistrazioneMovFinModelDetail;
 
 /**
- * Mapping tra i ModelDetail e i Converter di Dozer.
- * Permette di ottenere il converter associato ad un ModelDetail.
+ * Mapping tra i ModelDetailEnum e i Converter di Dozer.
+ * Permette di ottenere il converter associato ad un ModelDetailEnum.
  * 
  * 
  * @author Domenico
@@ -170,6 +190,7 @@ public enum Converters implements Converter   {
 	CapitoloEntrataGestioneAttiDiLegge(CapitoloAttiDiLeggeConverter.class, CapitoloEntrataGestioneModelDetail.AttoDiLegge),
 	CapitoloEntrataGestioneAttributi(CapitoloEntrataGestioneAttrConverter.class, CapitoloEntrataGestioneModelDetail.Attributi),
 	CapitoloEntrataGestioneBilancio(CapitoloAttiDiLeggeConverter.class, CapitoloEntrataGestioneModelDetail.Bilancio),
+	CapitoloEntrataGestioneAnnoCreazione(CapitoloAnnoCreazioneConverter.class, CapitoloEntrataGestioneModelDetail.AnnoCreazione),
 	CapitoloEntrataGestioneCapitoloEquivalente(CapitoloEntrataGestioneCapitoloEquivalenteConverter.class, CapitoloEntrataGestioneModelDetail.CapitoloEquivalente),
 	CapitoloEntrataGestioneCategoria(CapitoloCategoriaConverter.class, CapitoloEntrataGestioneModelDetail.Categoria),
 	CapitoloEntrataGestioneClassif(NoopConverter.class, CapitoloEntrataGestioneModelDetail.Classificatori),
@@ -178,11 +199,14 @@ public enum Converters implements Converter   {
 	CapitoloEntrataGestioneExCapitolo(CapitoloExCapitoloConverter.class, CapitoloEntrataGestioneModelDetail.ExCapitolo),
 	CapitoloEntrataGestioneImporti(NoopConverter.class, CapitoloEntrataGestioneModelDetail.Importi),
 	CapitoloEntrataGestioneStato(BilElemStatoConverter.class, CapitoloEntrataGestioneModelDetail.Stato),
+	// SIAC-7858
+	CapitoloEntrataGestioneTitoloTipologiaCategoriaSAC(CapitoloEntrataGestioneTitoloTipologiaCategoriaSACConverter.class, CapitoloEntrataGestioneModelDetail.TitoloTipologiaCategoriaSAC),
 	
 	//CAPITOLI ENTRATA PREVISIONE
 	CapitoloEntrataPrevisioneAttiDiLegge(CapitoloAttiDiLeggeConverter.class, CapitoloEntrataPrevisioneModelDetail.AttoDiLegge),
 	CapitoloEntrataPrevisioneAttributi(CapitoloEntrataPrevisioneAttrConverter.class, CapitoloEntrataPrevisioneModelDetail.Attributi),
 	CapitoloEntrataPrevisioneBilancio(CapitoloBilancioConverter.class, CapitoloEntrataPrevisioneModelDetail.Bilancio),
+	CapitoloEntrataPrevisioneAnnoCreazione(CapitoloAnnoCreazioneConverter.class, CapitoloEntrataPrevisioneModelDetail.AnnoCreazione),
 	CapitoloEntrataPrevisioneCapitoloEquivalente(CapitoloEntrataPrevisioneCapitoloEquivalenteConverter.class, CapitoloEntrataPrevisioneModelDetail.CapitoloEquivalente),
 	CapitoloEntrataPrevisioneCategoria(CapitoloCategoriaConverter.class, CapitoloEntrataPrevisioneModelDetail.Categoria),
 	CapitoloEntrataPrevisioneClassif(NoopConverter.class, CapitoloEntrataPrevisioneModelDetail.Classificatori),
@@ -191,11 +215,14 @@ public enum Converters implements Converter   {
 	CapitoloEntrataPrevisioneExCapitolo(CapitoloExCapitoloConverter.class, CapitoloEntrataPrevisioneModelDetail.ExCapitolo),
 	CapitoloEntrataPrevisioneImporti(NoopConverter.class, CapitoloEntrataPrevisioneModelDetail.Importi),
 	CapitoloEntrataPrevisioneStato(BilElemStatoConverter.class, CapitoloEntrataPrevisioneModelDetail.Stato),
+	// SIAC-7858
+	CapitoloEntrataPrevisioneTitoloTipologiaCategoriaSAC(CapitoloEntrataPrevisioneTitoloTipologiaCategoriaSACConverter.class, CapitoloEntrataPrevisioneModelDetail.TitoloTipologiaCategoriaSAC),
 	
 	//CAPITOLI USCITA GESTIONE
 	CapitoloUscitaGestioneAttiDiLegge(CapitoloAttiDiLeggeConverter.class, CapitoloUscitaGestioneModelDetail.AttoDiLegge),
 	CapitoloUscitaGestioneAttributi(CapitoloUscitaGestioneAttrConverter.class, CapitoloUscitaGestioneModelDetail.Attributi),
 	CapitoloUscitaGestioneBilancio(CapitoloBilancioConverter.class, CapitoloUscitaGestioneModelDetail.Bilancio),
+	CapitoloUscitaGestioneAnnoCreazione(CapitoloAnnoCreazioneConverter.class, CapitoloUscitaGestioneModelDetail.AnnoCreazione),
 	CapitoloUscitaGestioneCapitoloEquivalente(CapitoloUscitaGestioneCapitoloEquivalenteConverter.class, CapitoloUscitaGestioneModelDetail.CapitoloEquivalente),
 	CapitoloUscitaGestioneCategoria(CapitoloCategoriaConverter.class, CapitoloUscitaGestioneModelDetail.Categoria),
 	CapitoloUscitaGestioneClassif(NoopConverter.class, CapitoloUscitaGestioneModelDetail.Classificatori),
@@ -209,6 +236,7 @@ public enum Converters implements Converter   {
 	CapitoloUscitaPrevisioneAttiDiLegge(CapitoloAttiDiLeggeConverter.class, CapitoloUscitaPrevisioneModelDetail.AttoDiLegge),
 	CapitoloUscitaPrevisioneAttributi(CapitoloUscitaPrevisioneAttrConverter.class, CapitoloUscitaPrevisioneModelDetail.Attributi),
 	CapitoloUscitaPrevisioneBilancio(CapitoloBilancioConverter.class, CapitoloUscitaPrevisioneModelDetail.Bilancio),
+	CapitoloUscitaPrevisioneAnnoCreazione(CapitoloAnnoCreazioneConverter.class, CapitoloUscitaPrevisioneModelDetail.AnnoCreazione),
 	CapitoloUscitaPrevisioneCapitoloEquivalente(CapitoloUscitaPrevisioneCapitoloEquivalenteConverter.class, CapitoloUscitaPrevisioneModelDetail.CapitoloEquivalente),
 	CapitoloUscitaPrevisioneCategoria(CapitoloCategoriaConverter.class, CapitoloUscitaPrevisioneModelDetail.Categoria),
 	CapitoloUscitaPrevisioneClassif(NoopConverter.class, CapitoloUscitaPrevisioneModelDetail.Classificatori),
@@ -282,6 +310,7 @@ public enum Converters implements Converter   {
 	DocumentoEntrataTotaliImportiRilevantiIvaQuote(DocumentoTotaliImportiRilevantiIvaQuoteConverter.class, DocumentoEntrataModelDetail.TotaliImportiRilevantiIvaQuote),
 	DocumentoEntrataEsisteQuotaRilevanteIva(DocumentoEsisteQuotaRilevanteIvaConverter.class, DocumentoEntrataModelDetail.EsisteQuotaRilevanteIva),
 	DocumentoEntrataEsisteNCDCollegataADocumento(DocumentoEsisteNCDCollegataADocumentoConverter.class, DocumentoEntrataModelDetail.EsisteNCDCollegataADocumento),
+	DocumentoEntrataOrdini(DocumentoEntrataOrdiniConverter.class, DocumentoSpesaModelDetail.Ordini),
 	
 	//SubdocumentoSpesa
 	SubdocumentoSpesaAttoAmm(SubdocumentoSpesaAttoAmmConverter.class, SubdocumentoSpesaModelDetail.AttoAmm),
@@ -307,7 +336,6 @@ public enum Converters implements Converter   {
 	SubdocumentoSpesaSedeSecondariaSoggetto(SubdocumentoSpesaSedeSecondariaSoggettoConverter.class, SubdocumentoSpesaModelDetail.SedeSecondariaSoggetto),
 	SubdocumentoSpesaSubdocumentoIva(SubdocumentoSpesaSubdocumentoIvaConverter.class, SubdocumentoSpesaModelDetail.SubdocumentoIva),
 	SubdocumentoSpesaTipoIvaSplitReverse(SubdocumentoSpesaTipoIvaSplitReverseConverter.class, SubdocumentoSpesaModelDetail.TipoIvaSplitReverse),
-	SubdocumentoSpesaVoceMutuo(SubdocumentoSpesaVoceMutuoConverter.class, SubdocumentoSpesaModelDetail.VoceMutuo),
 	SubdocumentoSpesaSiopeTipoDebito(SubdocumentoSpesaSiopeTipoDebitoConverter.class, SubdocumentoSpesaModelDetail.SiopeTipoDebito),
 	SubdocumentoSpesaSiopeAssenzaMotivazione(SubdocumentoSpesaSiopeAssenzaMotivazioneConverter.class, SubdocumentoSpesaModelDetail.SiopeAssenzaMotivazione),
 	SubdocumentoSpesaSiopeScadenzaMotivo(SubdocumentoSpesaSiopeScadenzaMotivoConverter.class, SubdocumentoSpesaModelDetail.SiopeScadenzaMotivo),
@@ -315,7 +343,9 @@ public enum Converters implements Converter   {
 	SubdocumentoSpesaNoteTesoriere(SubdocumentoSpesaNoteTesoriereConverter.class, SubdocumentoSpesaModelDetail.NoteTesoriere),
 	SubdocumentoSpesaContoTesoreria(SubdocumentoSpesaContoTesoreriaConverter.class, SubdocumentoSpesaModelDetail.ContoTesoreria),
 	SubdocumentoSpesaDocPadreModelDetail(SubdocumentoSpesaDocPadreModelDetailConverter.class, SubdocumentoSpesaModelDetail.DocPadreModelDetail),
-
+	//SIAC-8153
+	SubdocumentoSpesaStrutturaCompetenteQuota(SubdocumentoSpesaStrutturaCompetenteQuotaConverter.class, SubdocumentoSpesaModelDetail.StrutturaCompetenteQuota),
+	
 	//SubdocumentoEntrata
 	SubdocumentoEntrataAccertamentoSubaccertamento(SubdocumentoEntrataAccertamentoSubaccertamentoConverter.class, SubdocumentoEntrataModelDetail.AccertamentoSubaccertamento),
 	SubdocumentoEntrataAccertamentoSubaccertamentoPdc(SubdocumentoEntrataAccertamentoSubaccertamentoPdcConverter.class, SubdocumentoEntrataModelDetail.AccertamentoSubaccertamentoPdc),
@@ -397,13 +427,20 @@ public enum Converters implements Converter   {
 	LiquidazionePianoDeiConti(LiquidazionePianoDeiContiConverter.class, LiquidazioneModelDetail.PianoDeiConti),
 	LiquidazioneSoggetto(LiquidazioneSoggettoConverter.class, LiquidazioneModelDetail.Soggetto),
 	LiquidazioneStato(LiquidazioneStatoConverter.class, LiquidazioneModelDetail.Stato),
+	//SIAC-7142
+	LiquidazioneAttoAmm(LiquidazioneAttoAmmConverter.class, LiquidazioneModelDetail.AttoAmm),
 	LiquidazioneSiopeTipoDebito(LiquidazioneSiopeTipoDebitoConverter.class, LiquidazioneModelDetail.SiopeTipoDebito),
 	LiquidazioneSiopeAssenzaMotivazione(LiquidazioneSiopeAssenzaMotivazioneConverter.class, LiquidazioneModelDetail.SiopeAssenzaMotivazione),
 	
 	//BilElemStato(BilElemStatoConverter.class, AllegatoAttoModelDetail.ElencoDocumenti),
 	
 	// SIAC-4088
+	// SIAC-7858
 	AccantonamentoFondiDubbiaEsigibilitaCapitoloEntrataPrevisione(AccantonamentoFondiDubbiaEsigibilitaCapitoloConverter.class, AccantonamentoFondiDubbiaEsigibilitaModelDetail.CapitoloEntrataPrevisione),
+	AccantonamentoFondiDubbiaEsigibilitaTipoMedia(AccantonamentoFondiDubbiaEsigibilitaTipoMediaConverter.class, AccantonamentoFondiDubbiaEsigibilitaModelDetail.TipoMedia),
+	AccantonamentoFondiDubbiaEsigibilitaMedia(AccantonamentoFondiDubbiaEsigibilitaTipoConverter.class, AccantonamentoFondiDubbiaEsigibilitaModelDetail.Tipo),
+	AccantonamentoFondiDubbiaEsigibilitaStanziamentiCapitolo(AccantonamentoFondiDubbiaEsigibilitaStanziamentiCapitoloConverter.class, AccantonamentoFondiDubbiaEsigibilitaModelDetail.StanziamentiCapitolo),
+	AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio(AccantonamentoFondiDubbiaEsigibilitaBaseAttributiBilancioConverter.class, AccantonamentoFondiDubbiaEsigibilitaModelDetail.AttributiBilancio),
 	
 	// StampeCassaFile
 	StampeCassaFileCassaEconomale(StampeCassaFileCassaEconomaleConverter.class, StampeCassaFileModelDetail.CassaEconomale),
@@ -418,6 +455,22 @@ public enum Converters implements Converter   {
 	
 	// SIAC-4422
 	AccantonamentoFondiDubbiaEsigibilitaRendicontoCapitoloEntrataGestione(AccantonamentoFondiDubbiaEsigibilitaRendicontoCapitoloConverter.class, AccantonamentoFondiDubbiaEsigibilitaRendicontoModelDetail.CapitoloEntrataGestione),
+	AccantonamentoFondiDubbiaEsigibilitaRendicontoTipoMedia(AccantonamentoFondiDubbiaEsigibilitaTipoMediaConverter.class, AccantonamentoFondiDubbiaEsigibilitaRendicontoModelDetail.TipoMedia),
+	AccantonamentoFondiDubbiaEsigibilitaRendicontoMedia(AccantonamentoFondiDubbiaEsigibilitaTipoConverter.class, AccantonamentoFondiDubbiaEsigibilitaRendicontoModelDetail.Tipo),
+	AccantonamentoFondiDubbiaEsigibilitaRendicontoStanziamentiCapitolo(AccantonamentoFondiDubbiaEsigibilitaRendicontoStanziamentiCapitoloConverter.class, AccantonamentoFondiDubbiaEsigibilitaRendicontoModelDetail.StanziamentiCapitolo),
+	AccantonamentoFondiDubbiaEsigibilitaRendicontoAttributiBilancio(AccantonamentoFondiDubbiaEsigibilitaBaseAttributiBilancioConverter.class, AccantonamentoFondiDubbiaEsigibilitaRendicontoModelDetail.AttributiBilancio),
+	// SIAC-7858
+	AccantonamentoFondiDubbiaEsigibilitaGestioneCapitoloEntrataGestione(AccantonamentoFondiDubbiaEsigibilitaGestioneCapitoloConverter.class, AccantonamentoFondiDubbiaEsigibilitaGestioneModelDetail.CapitoloEntrataGestione),
+	AccantonamentoFondiDubbiaEsigibilitaGestioneTipoMedia(AccantonamentoFondiDubbiaEsigibilitaTipoMediaConverter.class, AccantonamentoFondiDubbiaEsigibilitaGestioneModelDetail.TipoMedia),
+	AccantonamentoFondiDubbiaEsigibilitaGestioneMedia(AccantonamentoFondiDubbiaEsigibilitaTipoConverter.class, AccantonamentoFondiDubbiaEsigibilitaGestioneModelDetail.Tipo),
+	AccantonamentoFondiDubbiaEsigibilitaGestioneStanziamentiCapitolo(AccantonamentoFondiDubbiaEsigibilitaGestioneStanziamentiCapitoloConverter.class, AccantonamentoFondiDubbiaEsigibilitaGestioneModelDetail.StanziamentiCapitolo),
+	AccantonamentoFondiDubbiaEsigibilitaGestioneTipoMediaConfronto(AccantonamentoFondiDubbiaEsigibilitaGestioneTipoMediaConfrontoConverter.class, AccantonamentoFondiDubbiaEsigibilitaGestioneModelDetail.TipoMediaConfronto),
+	AccantonamentoFondiDubbiaEsigibilitaGestioneAttributiBilancio(AccantonamentoFondiDubbiaEsigibilitaBaseAttributiBilancioConverter.class, AccantonamentoFondiDubbiaEsigibilitaGestioneModelDetail.AttributiBilancio),
+	
+	// SIAC-7858
+	AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioBilancio(AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioBilancioConverter.class, AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetail.Bilancio),
+	AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioStato(AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioStatoConverter.class, AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetail.Stato),
+	AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioTipo(AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioTipoConverter.class, AccantonamentoFondiDubbiaEsigibilitaAttributiBilancioModelDetail.Tipo),
 	
 	//RichiestaEconomale
 	RichiestaEconomaleCassaEconomale(RichiestaEconomaleCassaEconomaleConverter.class, RichiestaEconomaleModelDetail.CassaEconomale),
@@ -457,7 +510,6 @@ public enum Converters implements Converter   {
 	PreDocumentoSpesaSogg(PreDocumentoSoggConverter.class, PreDocumentoSpesaModelDetail.Sogg),
 	PreDocumentoSpesaStato(PreDocumentoStatoConverter.class, PreDocumentoSpesaModelDetail.Stato),
 	PreDocumentoSpesaSubDocumento(PreDocumentoSpesaSubDocumentoConverter.class, PreDocumentoSpesaModelDetail.SubDocumento),
-	PreDocumentoSpesaVoceMutuo(PreDocumentoSpesaVoceMutuoConverter.class, PreDocumentoSpesaModelDetail.VoceMutuo),
 	
 	// PreDocumentoEntrata
 	PreDocumentoEntrataAccertamento(PreDocumentoEntrataAccertamentoConverter.class, PreDocumentoEntrataModelDetail.Accertamento),
@@ -510,6 +562,7 @@ public enum Converters implements Converter   {
 	PrimaNotaContoInventario(PrimaNotaContoInventarioConverter.class, PrimaNotaModelDetail.ContoInventario),
 	PrimaNotaPrimaNotaInventario(PrimaNotaPrimaNotaInventarioConverter.class, PrimaNotaModelDetail.PrimaNotaInventario),
 	PrimaNotaSoggetto(PrimaNotaSoggettoConverter.class, PrimaNotaModelDetail.Soggetto),
+	PrimaNotaStrutturaCompetente(PrimaNotaStrutturaCompententeConverter.class, PrimaNotaModelDetail.PrimaNotaStrutturaCompetente),
 	
 	MovimentoEpCausaleEPModelDetailModelDetail(MovimentoEPCausaleEPModelDetailConverter.class, MovimentoEPModelDetail.CausaleEPModelDetail),
 	MovimentoEpMovimentoDettaglioModelDetail(MovimentoEPMovimentoDettaglioContoConverter.class, MovimentoEPModelDetail.MovimentoDettaglio),
@@ -519,7 +572,9 @@ public enum Converters implements Converter   {
 	
 	RegistrazioneMovFinAmbitoModelDetail(RegistrazioneMovFinAmbitoConverter.class, RegistrazioneMovFinModelDetail.Ambito),                       
 	RegistrazioneMovFinEventoMovimentoModelDetail(RegistrazioneMovFinEventoMovimentoConverter.class, RegistrazioneMovFinModelDetail.EventoMovimento),             
-	RegistrazioneMovFinEventoMovimentoLightModelDetail(RegistrazioneMovFinEventoMovimentoLightConverter.class, RegistrazioneMovFinModelDetail.EventoMovimentoLight),        
+	RegistrazioneMovFinEventoMovimentoLightModelDetail(RegistrazioneMovFinEventoMovimentoLightConverter.class, RegistrazioneMovFinModelDetail.EventoMovimentoLight),
+	//SIAC-7142
+	RegistrazioneMovFinEventoMovimentoModelDetailMultiplo(RegistrazioneMovFinEventoMovimentoModelDetailConverter.class, RegistrazioneMovFinModelDetail.EventoMovimentoModelDetail),
 	RegistrazioneMovFinIsCollegataAMovimentoResiduoModelDetail(RegistrazioneMovFinIsCollegataAMovimentoResiduoConverter.class, RegistrazioneMovFinModelDetail.IsCollegataAMovimentoResiduo),
 	RegistrazioneMovFinMovimentiEPModelDetail(RegistrazioneMovFinMovimentiEPConverter.class, RegistrazioneMovFinModelDetail.MovimentiEP),                 
 	RegistrazioneMovFinStatoModelDetail(RegistrazioneMovFinStatoConverter.class, RegistrazioneMovFinModelDetail.Stato),  
@@ -619,7 +674,10 @@ public enum Converters implements Converter   {
 	TipoComponenteImportiCapitoloSottotipoComponenteImportiCapitoloModelDetail(TipoComponenteImportiCapitoloSottotipoComponenteImportiCapitoloConverter.class, TipoComponenteImportiCapitoloModelDetail.SottotipoComponenteImportiCapitolo),
 	TipoComponenteImportiCapitoloMomentoComponenteImportiCapitoloModelDetail(TipoComponenteImportiCapitoloMomentoComponenteImportiCapitoloConverter.class, TipoComponenteImportiCapitoloModelDetail.MomentoComponenteImportiCapitolo),
 	TipoComponenteImportiCapitoloPropostaDefaultComponenteImportiCapitoloModelDetail(TipoComponenteImportiCapitoloPropostaDefaultComponenteImportiCapitoloConverter.class, TipoComponenteImportiCapitoloModelDetail.PropostaDefaultComponenteImportiCapitolo),
-	TipoComponenteImportiCapitoloTipoGestioneComponenteImportiCapitoloModelDetail(TipoComponenteImportiCapitoloTipoGestioneComponenteImportiCapitoloConverter.class, TipoComponenteImportiCapitoloModelDetail.TipoGestioneComponenteImportiCapitolo),
+	//SIAC-7349
+	//TipoComponenteImportiCapitoloTipoGestioneComponenteImportiCapitoloModelDetail(TipoComponenteImportiCapitoloTipoGestioneComponenteImportiCapitoloConverter.class, TipoComponenteImportiCapitoloModelDetail.TipoGestioneComponenteImportiCapitolo),
+	TipoComponenteImportiCapitoloImpegnabileComponenteImportiCapitoloModelDetail(TipoComponenteImportiCapitoloImpegnabileComponenteImportiCapitoloConverter.class, TipoComponenteImportiCapitoloModelDetail.ImpegnabileComponenteImportiCapitolo),
+
 	TipoComponenteImportiCapitoloDettaglioComponenteImportiCapitoloModelDetail(TipoComponenteImportiCapitoloDettaglioComponenteImportiCapitoloConverter.class, TipoComponenteImportiCapitoloModelDetail.DettaglioComponenteImportiCapitolo),
 	TipoComponenteImportiCapitoloStatoTipoComponenteImportiCapitoloModelDetail(TipoComponenteImportiCapitoloStatoTipoComponenteImportiCapitoloConverter.class, TipoComponenteImportiCapitoloModelDetail.StatoTipoComponenteImportiCapitolo),
 	TipoComponenteImportiCapitoloCollegatoACapitoliModelDetail(TipoComponenteImportiCapitoloCollegatoACapitoliConverter.class, TipoComponenteImportiCapitoloModelDetail.CollegatoACapitoli),
@@ -627,15 +685,19 @@ public enum Converters implements Converter   {
 	DettaglioVariazioneComponenteImportoCapitoloFlagModelDetail(DettaglioVariazioneComponenteImportoCapitoloFlagConverter.class, DettaglioVariazioneComponenteImportoCapitoloModelDetail.Flag),
 	DettaglioVariazioneComponenteImportoCapitoloComponenteImportiCapitoloModelDetail(DettaglioVariazioneComponenteImportoCapitoloComponenteImportiCapitoloConverter.class, DettaglioVariazioneComponenteImportoCapitoloModelDetail.ComponenteImportiCapitolo),
 	DettaglioVariazioneComponenteImportoCapitoloDettaglioVariazioneImportiCapitoloModelDetail(DettaglioVariazioneComponenteImportoCapitoloDettaglioVariazioneImportiCapitoloConverter.class, DettaglioVariazioneComponenteImportoCapitoloModelDetail.DettaglioVariazioneImportiCapitolo),
+	
+	// SIAC-7858
+	VisibilitaTipoCampoModelDetail(VisibilitaTipoCampoConverter.class, VisibilitaModelDetail.TipoCampo),
+	VisibilitaAzioneModelDetail(VisibilitaAzioneConverter.class, VisibilitaModelDetail.Azione),
 	;
 	
 	
 	private final Class<? extends CustomConverter> converterClass;
-	private final ModelDetail modelDetail;
+	private final ModelDetailEnum modelDetailEnum;
 	
-	private  Converters(Class<? extends CustomConverter> converterClass, ModelDetail modelDetail){
+	private  Converters(Class<? extends CustomConverter> converterClass, ModelDetailEnum modelDetailEnum){
 		this.converterClass = converterClass;
-		this.modelDetail = modelDetail;
+		this.modelDetailEnum = modelDetailEnum;
 	}
 	
 	
@@ -648,19 +710,19 @@ public enum Converters implements Converter   {
 	/**
 	 * @return the allegatoAttoModelDetail
 	 */
-	public ModelDetail getModelDetail() {
-		return modelDetail;
+	public ModelDetailEnum getModelDetail() {
+		return modelDetailEnum;
 	}
 	
 	
-	public static Converters byModelDetail(ModelDetail modelDetail){
+	public static Converters byModelDetail(ModelDetailEnum modelDetailEnum){
 		for(Converters e : Converters.values()){
-			if(e.getModelDetail().equals(modelDetail)){
+			if(e.getModelDetail().equals(modelDetailEnum)){
 				return e;
 			}
 		}
 		
-		throw new IllegalStateException("Impossibile trovare un enum Converters con modelDetail: "+modelDetail);
+		throw new IllegalStateException("Impossibile trovare un enum Converters con modelDetailEnum: "+modelDetailEnum);
 		
 	}
 	
@@ -671,17 +733,35 @@ public enum Converters implements Converter   {
 	 * @param modelDetails
 	 * @return elenco dei Converters
 	 */
-	public static Converters[] byModelDetails(ModelDetail... modelDetails) {
+	public static Converters[] byModelDetails(ModelDetailEnum... modelDetails) {
 		Set<Converters> enums = EnumSet.noneOf(Converters.class);
 		
 		if(modelDetails!=null){
-			for(ModelDetail modelDetail: modelDetails){
-				enums.add(byModelDetail(modelDetail));
+			for(ModelDetailEnum modelDetailEnum: modelDetails){
+				enums.add(byModelDetail(modelDetailEnum));
 			}
 		}
 		
 		return enums.toArray(new Converters[enums.size()]);
+	}
+	
+	/**
+	 * Restituisce l'elenco dei Converter associati ai modelDetails passati come parametro.
+	 * L'elenco restituito viene pulito dai duplicati ed ordinato in base all'ordine di dichiarazione dei field nell'Enum.
+	 * 
+	 * @param modelDetailEnums
+	 * @return elenco dei Converters
+	 */
+	public static Converters[] byModelDetails(Collection<? extends ModelDetailEnum> modelDetailEnums) {
+		Set<Converters> enums = EnumSet.noneOf(Converters.class);
 		
+		if(modelDetailEnums!=null){
+			for(ModelDetailEnum modelDetailEnum: modelDetailEnums){
+				enums.add(byModelDetail(modelDetailEnum));
+			}
+		}
+		
+		return enums.toArray(new Converters[enums.size()]);
 	}
 	
 	/**

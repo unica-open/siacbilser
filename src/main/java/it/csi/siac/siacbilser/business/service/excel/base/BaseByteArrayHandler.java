@@ -6,7 +6,7 @@ package it.csi.siac.siacbilser.business.service.excel.base;
 
 import java.io.IOException;
 
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * Handler di base per la creazione di un Report.
@@ -16,7 +16,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
  */
 public abstract class BaseByteArrayHandler {
 	
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 		
 	protected byte[] bytes;
 

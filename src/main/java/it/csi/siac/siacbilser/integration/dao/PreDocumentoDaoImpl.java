@@ -26,7 +26,6 @@ import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.integration.dao.base.ExtendedJpaDao;
 import it.csi.siac.siacbilser.integration.entity.SiacDPredocStato;
 import it.csi.siac.siacbilser.integration.entity.SiacRElencoDocPredoc;
-import it.csi.siac.siacbilser.integration.entity.SiacRMutuoVocePredoc;
 import it.csi.siac.siacbilser.integration.entity.SiacRPredocAttoAmm;
 import it.csi.siac.siacbilser.integration.entity.SiacRPredocBilElem;
 import it.csi.siac.siacbilser.integration.entity.SiacRPredocCausale;
@@ -41,6 +40,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTAttoAmm;
 import it.csi.siac.siacbilser.integration.entity.SiacTMovgestT;
 import it.csi.siac.siacbilser.integration.entity.SiacTPredoc;
 import it.csi.siac.siacbilser.integration.entity.SiacTPredocAnagr;
+import it.csi.siac.siacbilser.integration.entity.SiacTProvCassa;
 import it.csi.siac.siacbilser.integration.entity.SiacTSoggetto;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDDocFamTipoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDPredocStatoEnum;
@@ -126,14 +126,7 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 			}
 		}
 		
-		if(e.getSiacRMutuoVocePredocs()!=null){
-			for(SiacRMutuoVocePredoc r : e.getSiacRMutuoVocePredocs()){
-				r.setDataModificaInserimento(now);
-				r.setUid(null);
-			}
-		}
-		
-		// SIAC-5001
+	// SIAC-5001
 		if(e.getSiacRElencoDocPredocs() != null) {
 			for(SiacRElencoDocPredoc r : e.getSiacRElencoDocPredocs()){
 				r.setDataModificaInserimento(now);
@@ -222,12 +215,6 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 			}
 		}
 		
-		if(eAttuale.getSiacRMutuoVocePredocs()!=null){
-			for(SiacRMutuoVocePredoc r : eAttuale.getSiacRMutuoVocePredocs()){
-				r.setDataCancellazioneIfNotSet(now);
-			}
-		}
-		
 		entityManager.flush();
 		
 		//inserimento elementi nuovi		
@@ -296,15 +283,7 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 				r.setDataModificaInserimento(now);
 			}
 		}
-		
-		if(e.getSiacRMutuoVocePredocs()!=null){
-			for(SiacRMutuoVocePredoc r : e.getSiacRMutuoVocePredocs()){
-				r.setDataModificaInserimento(now);
-				r.setUid(null);
-			}
-		}
-		
-		// SIAC-5001: non aggiorno l'elenco
+				// SIAC-5001: non aggiorno l'elenco
 		e.setSiacRElencoDocPredocs(eAttuale.getSiacRElencoDocPredocs());
 		
 		
@@ -356,6 +335,7 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 			Integer eldocId,
 			Integer eldocAnno,
 			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
 			// SIAC-5250
 			Collection<SiacTPredocOrderByEnum> siacTPredocOrderByEnums,
 			Pageable pageable) {
@@ -371,7 +351,9 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 				 causaleSpesaMancante,contotesId,contoTesoreriaMancante, predocStatoCode, elemId, movgestId, movgestTsId,
 				 soggettoId, soggettoMancante,provCassaId, attoammId, attoAmmMancante, docAnno, docNumero, docTipoId,
 				//Boolean  estraiNonPagato,Boolean  estraiNonIncassato
-				 contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero, eldocId, eldocAnno, eldocNumero
+				 contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero, eldocId, eldocAnno, eldocNumero,
+				 //SIAC-6780
+				 listUidDaFiltrare
 				);
 		
 		orderQuery(jpql, "CAST(d.predocNumero AS int)", Arrays.asList("d", "tpa"), siacTPredocOrderByEnums);
@@ -422,7 +404,8 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 			// SIAC-5001
 			Integer eldocId,
 			Integer eldocAnno,
-			Integer eldocNumero
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare
 			) {
 		
 		final String methodName = "ricercaSinteticaPreDocumentoImportoTotale";
@@ -437,7 +420,7 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 				 predocanCodiceFiscale, predocanPartitaIva,predocPeriodoCompetenza, predocImporto, predocDataCompetenzaDa,predocDataCompetenzaA,predocDataTrasmissioneDa,predocDataTrasmissioneA,struttId,causId,causTipoId,
 				 causaleSpesaMancante,contotesId,contoTesoreriaMancante, predocStatoCode, elemId, movgestId, movgestTsId,
 				 soggettoId, soggettoMancante,provCassaId, attoammId, attoAmmMancante, docAnno, docNumero, docTipoId, contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero,
-				 eldocId, eldocAnno, eldocNumero
+				 eldocId, eldocAnno, eldocNumero, listUidDaFiltrare
 				);
 		
 		Query query = createQuery(jpql.toString(), param);
@@ -489,6 +472,7 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 	 * @param eldocId the eldoc id
 	 * @param eldocAnno the eldoc anno
 	 * @param eldocNumero the eldoc numero
+	 * @param listUidDaFiltrare 
 	 */
 	private void componiQueryRicercaSinteticaPreDocumento(StringBuilder jpql, Map<String, Object> param,
 			int enteProprietarioId, 
@@ -533,11 +517,15 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 			BigDecimal ordNumero,
 			Integer eldocId,
 			Integer eldocAnno,
-			Integer eldocNumero
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare
 			) {
 		
 		
-		jpql.append("FROM SiacTPredoc d, SiacTPredocAnagr tpa ");
+		jpql.append(" FROM SiacTPredoc d, SiacTPredocAnagr tpa ");
+		
+		//SIAC-6780
+		
 		jpql.append(" WHERE d.dataCancellazione IS NULL ");
 		jpql.append(" AND tpa.dataCancellazione IS NULL ");
 		jpql.append(" AND d.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ");
@@ -548,6 +536,70 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 		param.put("enteProprietarioId", enteProprietarioId);
 		param.put("docFamTipoCode", docFamTipoEnum.getCodice());
 		
+		appendiFiltriRicercaSintetica(jpql, param, predocNumero, predocanRagioneSociale, predocanCognome, predocanNome,
+				predocanCodiceFiscale, predocanPartitaIva, predocPeriodoCompetenza, predocImporto,
+				predocDataCompetenzaDa, predocDataCompetenzaA, predocDataTrasmissioneDa, predocDataTrasmissioneA,
+				struttId, causId, causTipoId, causaleMancante, contotesId, contoTesoreriaMancante, predocStatoCode,
+				elemId, movgestId, movgestTsId, soggettoId, soggettoMancante, provCassaId, attoammId, attoAmmMancante,
+				docAnno, docNumero, docTipoId, contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero,
+				eldocId, eldocAnno, eldocNumero, listUidDaFiltrare);
+		
+	}
+
+	/**
+	 * @param jpql
+	 * @param param
+	 * @param predocNumero
+	 * @param predocanRagioneSociale
+	 * @param predocanCognome
+	 * @param predocanNome
+	 * @param predocanCodiceFiscale
+	 * @param predocanPartitaIva
+	 * @param predocPeriodoCompetenza
+	 * @param predocImporto
+	 * @param predocDataCompetenzaDa
+	 * @param predocDataCompetenzaA
+	 * @param predocDataTrasmissioneDa
+	 * @param predocDataTrasmissioneA
+	 * @param struttId
+	 * @param causId
+	 * @param causTipoId
+	 * @param causaleMancante
+	 * @param contotesId
+	 * @param contoTesoreriaMancante
+	 * @param predocStatoCode
+	 * @param elemId
+	 * @param movgestId
+	 * @param movgestTsId
+	 * @param soggettoId
+	 * @param soggettoMancante
+	 * @param provCassaId
+	 * @param attoammId
+	 * @param attoAmmMancante
+	 * @param docAnno
+	 * @param docNumero
+	 * @param docTipoId
+	 * @param contoCorrenteId
+	 * @param contoCorrenteMancante
+	 * @param nonAnnullati
+	 * @param ordAnno
+	 * @param ordNumero
+	 * @param eldocId
+	 * @param eldocAnno
+	 * @param eldocNumero
+	 * @param listUidDaFiltrare
+	 */
+	private void appendiFiltriRicercaSintetica(StringBuilder jpql, Map<String, Object> param, String predocNumero,
+			String predocanRagioneSociale, String predocanCognome, String predocanNome, String predocanCodiceFiscale,
+			String predocanPartitaIva, String predocPeriodoCompetenza, BigDecimal predocImporto,
+			Date predocDataCompetenzaDa, Date predocDataCompetenzaA, Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA, Integer struttId, Integer causId, Integer causTipoId, Boolean causaleMancante,
+			Integer contotesId, Boolean contoTesoreriaMancante, String predocStatoCode, Integer elemId,
+			Integer movgestId, Integer movgestTsId, Integer soggettoId, Boolean soggettoMancante, Integer provCassaId,
+			Integer attoammId, Boolean attoAmmMancante, Integer docAnno, String docNumero, Integer docTipoId,
+			Integer contoCorrenteId, Boolean contoCorrenteMancante, Boolean nonAnnullati, Integer ordAnno,
+			BigDecimal ordNumero, Integer eldocId, Integer eldocAnno, Integer eldocNumero,
+			List<Integer> listUidDaFiltrare) {
 		if(!StringUtils.isEmpty(predocNumero)){
 			jpql.append(" AND " + Utility.toJpqlSearchLike("d.predocNumero", "CONCAT('%', :predocNumero, '%')") + " ");
 			param.put("predocNumero", predocNumero);
@@ -815,6 +867,11 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 			param.put("eldocNumero", eldocNumero);
 		}
 		
+		//SIAC-6780
+		if(listUidDaFiltrare != null && !listUidDaFiltrare.isEmpty()) {
+			jpql.append(" AND d.predocId IN (:uids) ");
+			param.put("uids", listUidDaFiltrare);
+		}
 	}
 
 	@Override
@@ -976,9 +1033,14 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 		return stp.getSiacRPredocSogs() != null && !stp.getSiacRPredocSogs().isEmpty() ? stp.getSiacRPredocSogs().get(0).getSiacTSoggetto() : null;
 	}
 
+	private SiacTProvCassa estraiSiacTProvvCassa(SiacTPredoc stp) {
+		return stp.getSiacRPredocProvCassas() != null && !stp.getSiacRPredocProvCassas().isEmpty() ? stp.getSiacRPredocProvCassas().get(0).getSiacTProvCassa() : null;
+	}
+
 	@Override
-	public List<SiacTPredoc> associaMovgestSoggettoAttoAmmByDataCompetenzaCausIdAndPredocStato(SiacTPredoc template, Integer enteProprietarioId, Integer causId, Date dataCompetenzaDa, Date dataCompetenzaA, Collection<String> predocStatoCodes) {
-		final String methodName = "associaMovgestSoggettoAttoAmmByDataCompetenzaCausIdAndPredocStato";
+	public List<SiacTPredoc> associaMovgestSoggettoAttoAmmByIds(SiacTPredoc template, Integer enteProprietarioId, List<Integer> uidPredocDaFiltrare,
+			List<String> predocStatoCodes) {
+		final String methodName = "associaMovgestSoggettoAttoAmmByIds";
 		final Date now = new Date();
 		
 		final SiacTMovgestT siacTMovgestT = estraiSiacTMovgestT(template);
@@ -986,8 +1048,11 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 		final SiacTAttoAmm siacTAttoAmm = estraiSiacTAttoAmm(template);
 		final SiacTSoggetto siacTSoggetto = estraiSiacTSoggetto(template);
 		
-		//List<SiacTPredoc> siacTPredocs = findByEldocIdAndPredocStato(eldocId, null, null, predocStatoCodes);
-		List<SiacTPredoc> siacTPredocs = findByEnteCausIdDataCompetenzaDaAPredocStato(enteProprietarioId, template.getSiacDDocFamTipo().getDocFamTipoCode(), causId, dataCompetenzaDa, dataCompetenzaA, predocStatoCodes);
+		//SIAC-6780
+		final SiacTProvCassa siacTProvCassa = estraiSiacTProvvCassa(template);
+		
+		List<SiacTPredoc> siacTPredocs = findByEnteCausIdDataCompetenzaDaAPredocStato(enteProprietarioId, template.getSiacDDocFamTipo().getDocFamTipoCode(), null, null, null, 
+				null, uidPredocDaFiltrare, predocStatoCodes);
 		
 		for(SiacTPredoc siacTPredoc : siacTPredocs) {
 			// Cancello i vecchi collegamenti
@@ -1039,6 +1104,40 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 				siacTPredoc.getSiacRPredocAttoAmms().add(rpaa);
 			}
 			
+			//SIAC-7472
+			//devo controllare che il predocumento abbia almeno una relazione valida con la r
+			boolean rPredocProvvCassaValida = false;
+			List<SiacRPredocProvCassa> siacRPredocProvvCassa = siacTPredoc.getSiacRPredocProvCassas();
+			
+			if(siacRPredocProvvCassa != null && !siacRPredocProvvCassa.isEmpty()) {
+				for(SiacRPredocProvCassa rPredocProvCassa : siacRPredocProvvCassa) {
+					if(rPredocProvCassa.getDataCancellazione() == null 
+							&& rPredocProvCassa.getDataFineValidita() == null) {
+						rPredocProvvCassaValida = true;
+					}
+				}
+			}
+			
+			if(siacTProvCassa != null && !rPredocProvvCassaValida) {
+
+				//SIAC-7472
+				//se non ha collegamenti validi sulla r non serve cancellarli
+				//SIAC-6780
+					//setDataCancellazione(siacTPredoc.getSiacRPredocProvCassas(), now);
+				//
+				
+				SiacRPredocProvCassa rppc = new SiacRPredocProvCassa();
+				rppc.setDataModificaInserimento(now);
+				rppc.setSiacTPredoc(siacTPredoc);
+				rppc.setSiacTEnteProprietario(siacTPredoc.getSiacTEnteProprietario());
+				rppc.setSiacTProvCassa(siacTProvCassa);
+				rppc.setLoginOperazione(template.getLoginOperazione());
+				
+				siacTPredoc.getSiacRPredocProvCassas().add(rppc);
+				//
+			}
+			//
+			
 			log.debug(methodName, "Associato movimento di gestione al predoc " + siacTPredoc.getPredocId() + " e aggiornato stato");
 		}
 		
@@ -1047,7 +1146,7 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 
 	@Override
 	public List<SiacTPredoc> findByEnteCausIdDataCompetenzaDaAPredocStato(Integer enteProprietarioId, String docFamTipoCode,
-			Integer causId, Date dataCompetenzaDa, Date dataCompetenzaA, Collection<String> predocStatoCodes) {
+			Integer causId, Date dataCompetenzaDa, Date dataCompetenzaA, Integer uidContoCorrente, List<Integer> uidPredocDaFiltrare, Collection<String> predocStatoCodes) {
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> params = new HashMap<String, Object>();
 		
@@ -1084,18 +1183,84 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 			params.put("predocStatoCodes", predocStatoCodes);
 		}
 		
+		//SIAC-6780
+		if(uidContoCorrente != null && uidContoCorrente.intValue() != 0) {
+			jpql.append(" AND EXISTS ( ");
+			jpql.append("     FROM tp.siacRPredocClasses rpc ");
+			jpql.append("     WHERE rpc.dataCancellazione IS NULL ");
+			jpql.append("     AND rpc.siacTClass.classifId = :classifId ");
+			jpql.append(" ) ");
+			params.put("classifId", uidContoCorrente);
+		}
+		
+		if(uidPredocDaFiltrare != null && !uidPredocDaFiltrare.isEmpty()) {
+			jpql.append(" AND tp.predocId IN (:uids) ");
+			params.put("uids", uidPredocDaFiltrare);
+		}
+		
 		TypedQuery<SiacTPredoc> query = createQuery(jpql.toString(), params, SiacTPredoc.class);
 		return query.getResultList();
 	}
 
 	@Override
-	public Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStato(Integer enteProprietarioId, String docFamTipoCode, Date predocDataCompetenzaDa, Date predocDataCompetenzaA, Integer causId, List<String> predocStatoCodes) {
+	public Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStato(Integer enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes) {
 		
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> param = new HashMap<String, Object>();
 		
 		jpql.append(" SELECT rps.siacDPredocStato.predocStatoCode, COALESCE(SUM(rps.siacTPredoc.predocImporto), 0) ");
-		componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(jpql, param, enteProprietarioId, docFamTipoCode, predocDataCompetenzaDa, predocDataCompetenzaA, causId, predocStatoCodes);
+		
+		componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(jpql, param, enteProprietarioId,docFamTipoEnum, predocNumero,predocanRagioneSociale,
+				predocanCognome, predocanNome, predocanCodiceFiscale, predocanPartitaIva, predocPeriodoCompetenza, predocImporto, predocDataCompetenzaDa,
+				predocDataCompetenzaA, predocDataTrasmissioneDa, predocDataTrasmissioneA, struttId, causId, causTipoId, causaleMancante, contotesId,
+				contoTesoreriaMancante, predocStatoCode,elemId, movgestId, movgestTsId, soggettoId, soggettoMancante, provCassaId, attoammId, attoAmmMancante,
+				docAnno, docNumero, docTipoId, contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero, eldocId, eldocAnno, eldocNumero,
+				listUidDaFiltrare, false, predocStatoCodes);
+		
 		jpql.append(" GROUP BY rps.siacDPredocStato.predocStatoCode ");
 		
 		Query query = createQuery(jpql.toString(), param);
@@ -1111,14 +1276,62 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 	}
 
 	@Override
-	public Map<String, Long> countByPredocDataCompetenzaDaAAndCausaleEpAndPredocStato(Integer enteProprietarioId, String docFamTipoCode, Date predocDataCompetenzaDa,
-			Date predocDataCompetenzaA, Integer causId, List<String> predocStatoCodes) {
+	public Map<String, Long> countByPredocDataCompetenzaDaAAndCausaleEpAndPredocStato(Integer enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes) {
 		
 		StringBuilder jpql = new StringBuilder();
 		Map<String, Object> param = new HashMap<String, Object>();
 		
 		jpql.append(" SELECT rps.siacDPredocStato.predocStatoCode, COALESCE(COUNT(rps.siacTPredoc), 0) ");
-		componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(jpql, param, enteProprietarioId, docFamTipoCode, predocDataCompetenzaDa, predocDataCompetenzaA, causId, predocStatoCodes);
+		componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(jpql, param, enteProprietarioId,docFamTipoEnum, predocNumero,predocanRagioneSociale,
+				predocanCognome, predocanNome, predocanCodiceFiscale, predocanPartitaIva, predocPeriodoCompetenza, predocImporto, predocDataCompetenzaDa,
+				predocDataCompetenzaA, predocDataTrasmissioneDa, predocDataTrasmissioneA, struttId, causId, causTipoId, causaleMancante, contotesId,
+				contoTesoreriaMancante, predocStatoCode,elemId, movgestId, movgestTsId, soggettoId, soggettoMancante, provCassaId, attoammId, attoAmmMancante,
+				docAnno, docNumero, docTipoId, contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero, eldocId, eldocAnno, eldocNumero,
+				listUidDaFiltrare, false, predocStatoCodes);
 		jpql.append(" GROUP BY rps.siacDPredocStato.predocStatoCode ");
 		
 		Query query = createQuery(jpql.toString(), param);
@@ -1133,24 +1346,396 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 		return res;
 	}
 	
-	private void componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(StringBuilder jpql, Map<String, Object> param, Integer enteProprietarioId, String docFamTipoCode,
-			Date predocDataCompetenzaDa, Date predocDataCompetenzaA, Integer causId, Collection<String> predocStatoCodes) {
-		jpql.append(" FROM SiacRPredocStato rps ")
-			.append(" WHERE rps.dataCancellazione IS NULL ")
+	//SIAC-6780
+	@Override
+	public Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoRiepilogo(
+			Integer enteProprietarioId, SiacDDocFamTipoEnum docFamTipoEnum, String predocNumero,
+			String predocanRagioneSociale, String predocanCognome, String predocanNome, String predocanCodiceFiscale,
+			String predocanPartitaIva, String predocPeriodoCompetenza, BigDecimal predocImporto,
+			Date predocDataCompetenzaDa, Date predocDataCompetenzaA, Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA, Integer struttId, Integer causId, Integer causTipoId, Boolean causaleMancante,
+			Integer contotesId, Boolean contoTesoreriaMancante, String predocStatoCode, Integer elemId,
+			Integer movgestId, Integer movgestTsId, Integer soggettoId, Boolean soggettoMancante, Integer provCassaId,
+			Integer attoammId, Boolean attoAmmMancante, Integer docAnno, String docNumero, Integer docTipoId,
+			Integer contoCorrenteId, Boolean contoCorrenteMancante, Boolean nonAnnullati, Integer ordAnno,
+			BigDecimal ordNumero, Integer eldocId, Integer eldocAnno, Integer eldocNumero,
+			List<Integer> listUidDaFiltrare, Collection<String> predocStatoCodes) {
+		// TODO Auto-generated method stub
+	/*
+			Integer enteProprietarioId, String docFamTipoCode,
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			boolean filtraPerProvCassa,
+			Collection<String> predocStatoCodes
+			) {*/
+		
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append(" SELECT rps.siacDPredocStato.predocStatoCode, COALESCE(SUM(rps.siacTPredoc.predocImporto), 0) ");
+		componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(jpql, param, enteProprietarioId,docFamTipoEnum, predocNumero,predocanRagioneSociale,
+				predocanCognome, predocanNome, predocanCodiceFiscale, predocanPartitaIva, predocPeriodoCompetenza, predocImporto, predocDataCompetenzaDa,
+				predocDataCompetenzaA, predocDataTrasmissioneDa, predocDataTrasmissioneA, struttId, causId, causTipoId, causaleMancante, contotesId,
+				contoTesoreriaMancante, predocStatoCode,elemId, movgestId, movgestTsId, soggettoId, soggettoMancante, provCassaId, attoammId, attoAmmMancante,
+				docAnno, docNumero, docTipoId, contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero, eldocId, eldocAnno, eldocNumero,
+				listUidDaFiltrare, false, predocStatoCodes);
+		jpql.append(" GROUP BY rps.siacDPredocStato.predocStatoCode ");
+		
+		Query query = createQuery(jpql.toString(), param);
+		@SuppressWarnings("unchecked")
+		List<Object[]> resultList = query.getResultList();
+		
+		Map<String, BigDecimal> res = new HashMap<String, BigDecimal>();
+		
+		for(Object[] line : resultList) {
+			res.put((String)line[0], (BigDecimal)line[1]);
+		}
+		return res;
+		
+	}
+
+	@Override
+	public Map<String, Long> countByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoRiepilogo(Integer enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes) {
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append(" SELECT rps.siacDPredocStato.predocStatoCode, COALESCE(COUNT(rps.siacTPredoc), 0) ");
+		componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(jpql, param, enteProprietarioId,docFamTipoEnum, predocNumero,predocanRagioneSociale,
+				predocanCognome, predocanNome, predocanCodiceFiscale, predocanPartitaIva, predocPeriodoCompetenza, predocImporto, predocDataCompetenzaDa,
+				predocDataCompetenzaA, predocDataTrasmissioneDa, predocDataTrasmissioneA, struttId, causId, causTipoId, causaleMancante, contotesId,
+				contoTesoreriaMancante, predocStatoCode,elemId, movgestId, movgestTsId, soggettoId, soggettoMancante, provCassaId, attoammId, attoAmmMancante,
+				docAnno, docNumero, docTipoId, contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero, eldocId, eldocAnno, eldocNumero,
+				listUidDaFiltrare, false, predocStatoCodes);
+		jpql.append(" GROUP BY rps.siacDPredocStato.predocStatoCode ");
+		
+		Query query = createQuery(jpql.toString(), param);
+		@SuppressWarnings("unchecked")
+		List<Object[]> resultList = query.getResultList();
+		
+		Map<String, Long> res = new HashMap<String, Long>();
+		
+		for(Object[] line : resultList) {
+			res.put((String)line[0], (Long)line[1]);
+		}
+		return res;
+	}
+	
+	@Override
+	public Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoNoCassa(Integer enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes) {
+		
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append(" SELECT rps.siacDPredocStato.predocStatoCode, COALESCE(SUM(rps.siacTPredoc.predocImporto), 0) ");
+		componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(jpql, param, enteProprietarioId,docFamTipoEnum, predocNumero,predocanRagioneSociale,
+				predocanCognome, predocanNome, predocanCodiceFiscale, predocanPartitaIva, predocPeriodoCompetenza, predocImporto, predocDataCompetenzaDa,
+				predocDataCompetenzaA, predocDataTrasmissioneDa, predocDataTrasmissioneA, struttId, causId, causTipoId, causaleMancante, contotesId,
+				contoTesoreriaMancante, predocStatoCode,elemId, movgestId, movgestTsId, soggettoId, soggettoMancante, provCassaId, attoammId, attoAmmMancante,
+				docAnno, docNumero, docTipoId, contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero, eldocId, eldocAnno, eldocNumero,
+				listUidDaFiltrare, true, predocStatoCodes);
+		jpql.append(" GROUP BY rps.siacDPredocStato.predocStatoCode ");
+		
+		Query query = createQuery(jpql.toString(), param);
+		@SuppressWarnings("unchecked")
+		List<Object[]> resultList = query.getResultList();
+		
+		Map<String, BigDecimal> res = new HashMap<String, BigDecimal>();
+		
+		for(Object[] line : resultList) {
+			res.put((String)line[0], (BigDecimal)line[1]);
+		}
+		return res;
+	}
+	
+	@Override
+	public Map<String, Long> countByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoNoCassa(Integer enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			Collection<String> predocStatoCodes) {
+		
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append(" SELECT rps.siacDPredocStato.predocStatoCode, COALESCE(COUNT(rps.siacTPredoc), 0) ");
+		componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(jpql, param, enteProprietarioId,docFamTipoEnum, predocNumero,predocanRagioneSociale,
+				predocanCognome, predocanNome, predocanCodiceFiscale, predocanPartitaIva, predocPeriodoCompetenza, predocImporto, predocDataCompetenzaDa,
+				predocDataCompetenzaA, predocDataTrasmissioneDa, predocDataTrasmissioneA, struttId, causId, causTipoId, causaleMancante, contotesId,
+				contoTesoreriaMancante, predocStatoCode,elemId, movgestId, movgestTsId, soggettoId, soggettoMancante, provCassaId, attoammId, attoAmmMancante,
+				docAnno, docNumero, docTipoId, contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero, eldocId, eldocAnno, eldocNumero,
+				listUidDaFiltrare, true, predocStatoCodes);
+		jpql.append(" GROUP BY rps.siacDPredocStato.predocStatoCode ");
+		
+		Query query = createQuery(jpql.toString(), param);
+		@SuppressWarnings("unchecked")
+		List<Object[]> resultList = query.getResultList();
+		
+		Map<String, Long> res = new HashMap<String, Long>();
+		
+		for(Object[] line : resultList) {
+			res.put((String)line[0], (Long)line[1]);
+		}
+		return res;
+	}
+	//
+	private void componiQueryPredocByPredocDataCompetenzaDaACausIdPredocStatos(
+			StringBuilder jpql, 
+			Map<String, Object> param,
+			int enteProprietarioId, 
+			SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero,
+			String predocanRagioneSociale,
+			String predocanCognome,
+			String predocanNome,
+			String predocanCodiceFiscale,
+			String predocanPartitaIva,
+			String predocPeriodoCompetenza,
+			BigDecimal predocImporto,
+			Date predocDataCompetenzaDa,
+			Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA,
+			Integer struttId,
+			Integer causId,
+			Integer causTipoId,
+			Boolean causaleMancante,
+			Integer contotesId,
+			Boolean contoTesoreriaMancante,
+			String predocStatoCode,
+			Integer elemId, 
+			Integer movgestId,
+			Integer movgestTsId,
+			Integer soggettoId,
+			Boolean soggettoMancante,
+			Integer provCassaId,
+			Integer attoammId,
+			Boolean attoAmmMancante,
+			//Integer ContoCorrenteId, Boolean ContoCorrenteMancante
+			Integer docAnno,
+			String docNumero,
+			Integer docTipoId,
+			//Boolean  estraiNonPagato,
+			//Boolean  estraiNonIncassato,
+			Integer contoCorrenteId,
+			Boolean contoCorrenteMancante,
+			Boolean nonAnnullati,
+			Integer ordAnno,
+			BigDecimal ordNumero,
+			Integer eldocId,
+			Integer eldocAnno,
+			Integer eldocNumero,
+			List<Integer> listUidDaFiltrare,
+			boolean filtraPerProvCassa,
+			Collection<String> predocStatoCodes
+			
+			) {
+		jpql.append(" FROM SiacRPredocStato rps ");
+		
+		jpql.append(" WHERE rps.dataCancellazione IS NULL ")
+			.append(" AND rps.dataFineValidita IS NULL ")
 			.append(" AND rps.siacDPredocStato.predocStatoCode IN (:predocStatoCodes) ")
-			.append(" AND rps.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId ")
-			.append(" AND rps.siacTPredoc.siacDDocFamTipo.docFamTipoCode = :docFamTipoCode ");
+			.append(" AND rps.siacTPredoc.dataCancellazione IS NULL ");
 		param.put("predocStatoCodes", predocStatoCodes);
-		param.put("enteProprietarioId", enteProprietarioId);
-		param.put("docFamTipoCode", docFamTipoCode);
+		
+		jpql.append( " AND rps.siacTPredoc.predocId IN ( ")
+		.append( " SELECT DISTINCT(d.predocId) ");
+		componiQueryRicercaSinteticaPreDocumento( jpql, param, enteProprietarioId, docFamTipoEnum, predocNumero, predocanRagioneSociale,predocanCognome,predocanNome,
+				 predocanCodiceFiscale, predocanPartitaIva,predocPeriodoCompetenza, predocImporto, predocDataCompetenzaDa,predocDataCompetenzaA,predocDataTrasmissioneDa,predocDataTrasmissioneA,struttId,causId,causTipoId,
+				 causaleMancante,contotesId,contoTesoreriaMancante, predocStatoCode, elemId, movgestId, movgestTsId,
+				 soggettoId, soggettoMancante,provCassaId, attoammId, attoAmmMancante, docAnno, docNumero, docTipoId,
+				//Boolean  estraiNonPagato,Boolean  estraiNonIncassato
+				 contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero, eldocId, eldocAnno, eldocNumero,
+				 //SIAC-6780
+				 listUidDaFiltrare
+				);
+		jpql.append( " ) ");
+		
+		
+		/*
+		if(listUidDaFiltrare != null && listaUidSelezionati.size() > 0) {
+			jpql.append("AND rps.siacTPredoc.predocId IN (:listaUidSelezionati)");
+			param.put("listaUidSelezionati", listaUidSelezionati);
+		}
 		
 		if(causId != null && causId.intValue() != 0) {
-			jpql.append(" AND EXISTS ( ");
-			jpql.append("     FROM SiacRPredocCausale rpc ");
-			jpql.append("     WHERE rpc.dataCancellazione IS NULL ");
-			jpql.append("     AND rpc.siacTPredoc = rps.siacTPredoc ");
-			jpql.append("     AND rpc.siacDCausale.causId = :causId ");
-			jpql.append(" ) ");
+			jpql.append(" AND EXISTS ( ")
+				.append("     FROM SiacRPredocCausale rpc ")
+				.append("     WHERE rpc.dataCancellazione IS NULL ")
+				.append("     AND rpc.dataFineValidita IS NULL ")
+				.append("     AND rpc.siacTPredoc = rps.siacTPredoc ")
+				.append("     AND rpc.siacDCausale.causId = :causId ")
+				.append("	  AND rpc.siacDCausale.dataCancellazione IS NULL	")
+				.append("	  AND rpc.siacDCausale.dataFineValidita IS NULL	")
+				.append(" ) ");
 			param.put("causId", causId);
 		}
 		if(predocDataCompetenzaDa != null) {
@@ -1161,6 +1746,72 @@ public class PreDocumentoDaoImpl extends ExtendedJpaDao<SiacTPredoc, Integer> im
 			jpql.append(" AND rps.siacTPredoc.predocDataCompetenza <= :predocDataCompetenzaA ");
 			param.put("predocDataCompetenzaA", predocDataCompetenzaA);
 		}
+		if(predocDataCompetenzaDa != null || predocDataCompetenzaA != null) {
+			jpql.append(" AND rps.siacTPredoc.dataCancellazione IS NULL	");
+			jpql.append(" AND rps.siacTPredoc.dataFineValidita IS NULL	");
+		}
+		
+		//SIAC-6780
+		if(contoCorrente != null && contoCorrente.getUid() != 0) {
+			jpql.append(" AND classes.siacTClass.classifId = :classifId	");
+			jpql.append(" AND classes.siacTClass.dataCancellazione IS NULL	");
+			jpql.append(" AND classes.siacTClass.dataFineValidita IS NULL	");
+			param.put("classifId", contoCorrente.getUid());
+		}
+		*/
+		if(filtraPerProvCassa) {
+			jpql.append(" AND NOT EXISTS (")
+				.append("	SELECT 1")
+				.append("	FROM SiacRPredocProvCassa rppc")
+				.append("	WHERE rppc.siacTPredoc = rps.siacTPredoc")
+				.append(")");
+		}
+		//
 	}
-	
+
+	@Override
+	public Map<String, BigDecimal> findImportiByPredocDataCompetenzaDaAAndCausaleEpAndPredocStatoRiepilogo(
+			Integer enteProprietarioId, String docFamTipoCode, SiacDDocFamTipoEnum docFamTipoEnum, String predocNumero,
+			String predocanRagioneSociale, String predocanCognome, String predocanNome, String predocanCodiceFiscale,
+			String predocanPartitaIva, String predocPeriodoCompetenza, BigDecimal predocImporto,
+			Date predocDataCompetenzaDa, Date predocDataCompetenzaA, Date predocDataTrasmissioneDa,
+			Date predocDataTrasmissioneA, Integer struttId, Integer causId, Integer causTipoId, Boolean causaleMancante,
+			Integer contotesId, Boolean contoTesoreriaMancante, String predocStatoCode, Integer elemId,
+			Integer movgestId, Integer movgestTsId, Integer soggettoId, Boolean soggettoMancante, Integer provCassaId,
+			Integer attoammId, Boolean attoAmmMancante, Integer docAnno, String docNumero, Integer docTipoId,
+			Integer contoCorrenteId, Boolean contoCorrenteMancante, Boolean nonAnnullati, Integer ordAnno,
+			BigDecimal ordNumero, Integer eldocId, Integer eldocAnno, Integer eldocNumero,
+			List<Integer> listUidDaFiltrare, boolean filtraPerProvCassa, Collection<String> predocStatoCodes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Integer> ricercaSinteticaPredocumentoUid(int enteProprietarioId, SiacDDocFamTipoEnum docFamTipoEnum,
+			String predocNumero, String predocanRagioneSociale, String predocanCognome, String predocanNome,
+			String predocanCodiceFiscale, String predocanPartitaIva, String predocPeriodoCompetenza,
+			BigDecimal predocImporto, Date predocDataCompetenzaDa, Date predocDataCompetenzaA,
+			Date predocDataTrasmissioneDa, Date predocDataTrasmissioneA, Integer struttId, Integer causId,
+			Integer causTipoId, Boolean causaleMancante, Integer contotesId, Boolean contoTesoreriaMancante,
+			String predocStatoCode, Integer elemId, Integer movgestId, Integer movgestTsId, Integer soggettoId,
+			Boolean soggettoMancante, Integer provCassaId, Integer attoammId, Boolean attoAmmMancante, Integer docAnno,
+			String docNumero, Integer docTipoId, Integer contoCorrenteId, Boolean contoCorrenteMancante,
+			Boolean nonAnnullati, Integer ordAnno, BigDecimal ordNumero, Integer eldocId, Integer eldocAnno,
+			Integer eldocNumero, List<Integer> listUidDaFiltrare) {
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append(" SELECT DISTINCT(d.predocId) ");
+		
+		componiQueryRicercaSinteticaPreDocumento( jpql, param, enteProprietarioId, docFamTipoEnum, predocNumero, predocanRagioneSociale,predocanCognome,predocanNome,
+				 predocanCodiceFiscale, predocanPartitaIva,predocPeriodoCompetenza, predocImporto, predocDataCompetenzaDa,predocDataCompetenzaA,predocDataTrasmissioneDa,predocDataTrasmissioneA,struttId,causId,causTipoId,
+				 causaleMancante,contotesId,contoTesoreriaMancante, predocStatoCode, elemId, movgestId, movgestTsId,
+				 soggettoId, soggettoMancante,provCassaId, attoammId, attoAmmMancante, docAnno, docNumero, docTipoId, contoCorrenteId, contoCorrenteMancante, nonAnnullati, ordAnno, ordNumero,
+				 eldocId, eldocAnno, eldocNumero, listUidDaFiltrare
+				);
+		
+		return getList(jpql.toString(), param);
+
+	}
+
 }

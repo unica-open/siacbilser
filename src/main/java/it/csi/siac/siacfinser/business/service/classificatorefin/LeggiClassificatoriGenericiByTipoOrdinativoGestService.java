@@ -21,8 +21,8 @@ import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.LeggiClassificatoriGenericiByTipoOrdinativoGest;
 import it.csi.siac.siacfinser.frontend.webservice.msg.LeggiClassificatoriGenericiByTipoOrdinativoGestResponse;
@@ -43,8 +43,8 @@ public class LeggiClassificatoriGenericiByTipoOrdinativoGestService extends Abst
 	
 	static {
 		Map<String, String> tmp = new HashMap<String, String>();
-		tmp.put(Constanti.D_ORDINATIVO_TIPO_INCASSO,Constanti.CLASS_RITENUTE_STIPENDI);
-		tmp.put(Constanti.D_ORDINATIVO_TIPO_PAGAMENTO,Constanti.CLASS_STIPENDI);
+		tmp.put(CostantiFin.D_ORDINATIVO_TIPO_INCASSO,CostantiFin.CLASS_RITENUTE_STIPENDI);
+		tmp.put(CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO,CostantiFin.CLASS_STIPENDI);
 		
 		MAPPA_CLASS_STIPENDI = Collections.unmodifiableMap(tmp);
 	}
@@ -54,12 +54,12 @@ public class LeggiClassificatoriGenericiByTipoOrdinativoGestService extends Abst
 		checkCondition(req.getAnno() > 0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno"), false);
 		checkCondition(req.getIdEnteProprietario() > 0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Ente Proprietario"), false);
 
-		if(StringUtils.isEmpty(req.getCodiceTipoOrdinativoGestione())){
+		if(StringUtilsFin.isEmpty(req.getCodiceTipoOrdinativoGestione())){
 			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Codice Tipo Ordinativo"), false);
 		}else{
-			if(!req.getCodiceTipoOrdinativoGestione().equalsIgnoreCase(Constanti.D_ORDINATIVO_TIPO_INCASSO) &&
-			   !req.getCodiceTipoOrdinativoGestione().equalsIgnoreCase(Constanti.D_ORDINATIVO_TIPO_PAGAMENTO)){
-				String tipiOrdinativoAmmessi = Constanti.D_ORDINATIVO_TIPO_INCASSO + " o " + Constanti.D_ORDINATIVO_TIPO_PAGAMENTO;
+			if(!req.getCodiceTipoOrdinativoGestione().equalsIgnoreCase(CostantiFin.D_ORDINATIVO_TIPO_INCASSO) &&
+			   !req.getCodiceTipoOrdinativoGestione().equalsIgnoreCase(CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO)){
+				String tipiOrdinativoAmmessi = CostantiFin.D_ORDINATIVO_TIPO_INCASSO + " o " + CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO;
 				checkCondition(false, ErroreCore.PARAMETRO_ERRATO.getErrore("Codice Tipo Ordinativo", req.getCodiceTipoOrdinativoGestione(), tipiOrdinativoAmmessi), false);
 			}	
 		}		

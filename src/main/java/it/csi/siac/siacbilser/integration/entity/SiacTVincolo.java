@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -78,6 +79,11 @@ public class SiacTVincolo extends SiacTEnteBase {
 	@ManyToOne
 	@JoinColumn(name="periodo_id")
 	private SiacTPeriodo siacTPeriodo;
+	
+	//SIAC-7129
+	//bi-directional many-to-one association to SiacRVincoloRisorseVincolate
+	@OneToMany(mappedBy="siacTVincolo", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
+	private List<SiacRVincoloRisorseVincolate> siacRVincoloRisorseVincolates;
 
 	/**
 	 * Instantiates a new siac t vincolo.
@@ -343,6 +349,20 @@ public class SiacTVincolo extends SiacTEnteBase {
 	@Override
 	public void setUid(Integer uid) {
 		this.vincoloId = uid;
+	}
+
+	/**
+	 * @return the siacDVincoloRisorseVincolate
+	 */
+	public List<SiacRVincoloRisorseVincolate> getSiacRVincoloRisorseVincolates() {
+		return siacRVincoloRisorseVincolates;
+	}
+
+	/**
+	 * @param siacDVincoloRisorseVincolate the siacDVincoloRisorseVincolate to set
+	 */
+	public void setSiacRVincoloRisorseVincolates(List<SiacRVincoloRisorseVincolate> siacRVincoloRisorseVincolates) {
+		this.siacRVincoloRisorseVincolates = siacRVincoloRisorseVincolates;
 	}
 
 }

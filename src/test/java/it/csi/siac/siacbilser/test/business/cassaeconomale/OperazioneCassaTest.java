@@ -16,7 +16,7 @@ import it.csi.siac.siaccecser.model.CassaEconomale;
 import it.csi.siac.siaccecser.model.OperazioneCassa;
 import it.csi.siac.siaccecser.model.StatoOperativoOperazioneCassa;
 import it.csi.siac.siaccecser.model.TipoOperazioneCassa;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
@@ -26,7 +26,7 @@ public class OperazioneCassaTest extends BaseJunit4TestCase {
 	private OperazioneDiCassaDad operazioneDiCassaDad;
 	
 	
-	private LogUtil log = new LogUtil(getClass());
+	private LogSrvUtil log = new LogSrvUtil(getClass());
 	/**
 	 * Ottiene il bilancio 2014 con id 6.
 	 *

@@ -77,7 +77,7 @@ public class AggiornaQuotaDocumentoSpesaService extends CrudDocumentoDiSpesaBase
 				 ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero provvisorio di cassa") );
 		
 		checkCondition(subdoc.getImpegno()==null || subdoc.getImpegno().getUid()== 0 ||
-				(subdoc.getImpegno().getAnnoMovimento()!=0 && subdoc.getImpegno().getNumero()!=null), 
+				(subdoc.getImpegno().getAnnoMovimento()!=0 && subdoc.getImpegno().getNumeroBigDecimal()!=null), 
 				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno o numero impegno")); 
 		
 		checkCondition(subdoc.getAttoAmministrativo()==null || subdoc.getAttoAmministrativo().getUid() != 0,
@@ -125,6 +125,9 @@ public class AggiornaQuotaDocumentoSpesaService extends CrudDocumentoDiSpesaBase
 		caricaProvvisorioDiCassa();
 		checkProvvisorio();
 
+		//SIAC-8153
+		caricaStrutturaCompetenteQuota();
+
 		impostaFlagOrdinativo();
 		
 		gestisciNumeroRegistrazioneIva();
@@ -145,6 +148,7 @@ public class AggiornaQuotaDocumentoSpesaService extends CrudDocumentoDiSpesaBase
 		}
 		
 		gestisciComunicazioniPCC();
+		
 		
 		res.setSubdocumentoSpesa(subdoc);
 	}

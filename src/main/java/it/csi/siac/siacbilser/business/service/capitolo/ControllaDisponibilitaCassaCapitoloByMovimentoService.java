@@ -174,11 +174,11 @@ public class ControllaDisponibilitaCassaCapitoloByMovimentoService
 	private void caricaCapitoliMovimenti() {
 		if(req.getIdsSubdocumentiSpesa() != null && !req.getIdsSubdocumentiSpesa().isEmpty()) {
 			//sto ricercando un elenco di subdocumenti: popolo la mappa chiamando il metodo del dad
-			this.findCapitoliBySubdoc = capitoloDad.findCapitoliBySubdoc(req.getIdsSubdocumentiSpesa());
+			this.findCapitoliBySubdoc = capitoloDad.findCapitoliSpesaGestioneBySubdoc(req.getIdsSubdocumentiSpesa());
 		}
 		if(req.getIdsElenchi() != null && !req.getIdsElenchi().isEmpty()) {
 			//sto ricercando un elenco di elenchi: popolo la mappa chiamando il metodo del dad
-			this.findCapitoliBySubdoc = capitoloDad.findCapitoliByElenco(req.getIdsElenchi());
+			this.findCapitoliBySubdoc = capitoloDad.findCapitoliSpesaGestioneByElenco(req.getIdsElenchi());
 		}
 		
 		if(this.findCapitoliBySubdoc == null) {

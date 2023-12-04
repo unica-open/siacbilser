@@ -557,6 +557,7 @@ public class InserisceElencoConDocumentiConQuoteService extends InserisceElencoB
 			subdoc.setCausaleOrdinativo(causaleOrdinativo);
 			subdoc.setAttoAmministrativo(allegatoAtto.getAttoAmministrativo());
 			subdoc.setCommissioniDocumento(CommissioniDocumento.BENEFICIARIO);
+			
 		}
 		
 		// Devo staccare il numero di registro unico (se ne sarebbe occupato il servizio di inserimento)

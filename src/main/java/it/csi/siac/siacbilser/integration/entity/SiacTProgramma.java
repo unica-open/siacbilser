@@ -107,6 +107,10 @@ public class SiacTProgramma extends SiacTEnteBase {
 	@JoinColumn(name="programma_tipo_id")
 	private SiacDProgrammaTipo siacDProgrammaTipo;
 	
+
+
+	@OneToMany(mappedBy="siacTProgramma")
+	private List<SiacRMutuoProgramma> siacRMutuoProgramma;	
 	/**
 	 * Instantiates a new siac t programma.
 	 */
@@ -547,6 +551,13 @@ public class SiacTProgramma extends SiacTEnteBase {
 		this.siacDProgrammaTipo = siacDProgrammaTipo;
 	}
 
+	public List<SiacRMutuoProgramma> getSiacRMutuoProgramma() {
+		return siacRMutuoProgramma;
+	}
+
+	public void setSiacRMutuoProgramma(List<SiacRMutuoProgramma> siacRMutuoProgramma) {
+		this.siacRMutuoProgramma = siacRMutuoProgramma;
+	}
 
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siaccommonser.integration.entity.SiacTBase#getUid()

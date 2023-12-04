@@ -26,10 +26,10 @@ import it.csi.siac.siacbilser.integration.entity.SiacTPrimaNota;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDOperazioneEpEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.CespMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
-import it.csi.siac.siacbilser.model.ModelDetail;
 import it.csi.siac.siaccespser.model.AnteprimaAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.DettaglioAnteprimaAmmortamentoAnnuoCespite;
 import it.csi.siac.siaccespser.model.DettaglioAnteprimaAmmortamentoAnnuoCespiteModelDetail;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -111,7 +111,7 @@ public class AnteprimaAmmortamentoAnnuoCespiteDad extends ExtendedBaseDadImpl {
 	 * @param modelDetails the model details
 	 * @return the list
 	 */
-	public List<DettaglioAnteprimaAmmortamentoAnnuoCespite> caricaListaDettagliAnteprimaSegno(AnteprimaAmmortamentoAnnuoCespite anteprimaAmmortamentoAnnuoCespite, OperazioneSegnoConto operazione, ModelDetail... modelDetails){
+	public List<DettaglioAnteprimaAmmortamentoAnnuoCespite> caricaListaDettagliAnteprimaSegno(AnteprimaAmmortamentoAnnuoCespite anteprimaAmmortamentoAnnuoCespite, OperazioneSegnoConto operazione, ModelDetailEnum... modelDetails){
 		if(anteprimaAmmortamentoAnnuoCespite == null) {
 			return null;
 		}
@@ -126,7 +126,7 @@ public class AnteprimaAmmortamentoAnnuoCespiteDad extends ExtendedBaseDadImpl {
 	 * @param modelDetails the model details
 	 * @return the dettaglio anteprima ammortamento annuo cespite
 	 */
-	public DettaglioAnteprimaAmmortamentoAnnuoCespite caricaDettaglioAmmortamentoAvereCollegato(DettaglioAnteprimaAmmortamentoAnnuoCespite dettaglioDare, ModelDetail... modelDetails) {
+	public DettaglioAnteprimaAmmortamentoAnnuoCespite caricaDettaglioAmmortamentoAvereCollegato(DettaglioAnteprimaAmmortamentoAnnuoCespite dettaglioDare, ModelDetailEnum... modelDetails) {
 		SiacTCespitiElabAmmortamentiDett siacTCespitiElabAmmortamentiDett = siacRCespitiCespitiElabAmmortamentiDettRepository.findElabDettCollegatoAvere(dettaglioDare.getUid(), ente.getUid());
 		DettaglioAnteprimaAmmortamentoAnnuoCespite a=  mapNotNull(siacTCespitiElabAmmortamentiDett, DettaglioAnteprimaAmmortamentoAnnuoCespite.class, CespMapId.SiacTCespitiElabAmmortamentiDett_DettaglioAnteprimaAmmortamentoAnnuoCespite_ModelDetail, Converters.byModelDetails(modelDetails));
 		return a;

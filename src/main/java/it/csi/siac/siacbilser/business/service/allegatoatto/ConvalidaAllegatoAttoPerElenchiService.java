@@ -5,6 +5,7 @@
 package it.csi.siac.siacbilser.business.service.allegatoatto;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
@@ -96,10 +98,31 @@ public class ConvalidaAllegatoAttoPerElenchiService extends ConvalidaAllegatoAtt
 		res.setAllegatoAtto(req.getAllegatoAtto());
 		this.allegatoAtto = caricaAllegatoAtto(req.getAllegatoAtto().getUid());
 		//SIAC-6261
-		checkDatiDurc();
+		// task-30
+		List<Integer> elencoDocAllegatiIds = new ArrayList<Integer>(); 
+		for(ElencoDocumentiAllegato elencoDocumentiAllegati : req.getAllegatoAtto().getElenchiDocumentiAllegato()){
+			elencoDocAllegatiIds.add(elencoDocumentiAllegati.getUid());
+		}
+		checkDatiDurc(elencoDocAllegatiIds);
+		
 		stampaDettaglioOperazione();
 		checkStatoOperativoAllegatoAttoCompletato(allegatoAtto);
 			
+		checkElenchiDocumentiAllegato();
+		
+		aggiornaStatoOperativoAllegatoAtto(allegatoAtto);
+		
+		//SIAC-4752 - Aggiunto messaggio di fine elaborazione (TODO migliorabile)
+		res.addMessaggio("CONV_INFO_RIEP", "Totale elenchi elaborati: " + req.getAllegatoAtto().getElenchiDocumentiAllegato().size()
+				+ ", di cui scartati: " + res.getElenchiScartati().size()
+				+ ", totale quote in elenco convalidate: " + res.getCountQuoteConvalidate()
+			);
+
+	}
+
+	private void checkElenchiDocumentiAllegato() {
+		final String methodName = "checkElenchiDocumentiAllegato";
+		
 		//Per ogni elenco passato...
 		for(ElencoDocumentiAllegato elencoDocumentiAllegatoReq : req.getAllegatoAtto().getElenchiDocumentiAllegato()){
 			ElencoDocumentiAllegato elencoDocumentiAllegato = caricaElencoDocumentiAllegato(elencoDocumentiAllegatoReq.getUid());
@@ -152,15 +175,6 @@ public class ConvalidaAllegatoAttoPerElenchiService extends ConvalidaAllegatoAtt
 					);
 			}
 		}
-		
-		aggiornaStatoOperativoAllegatoAtto(allegatoAtto);
-		
-		//SIAC-4752 - Aggiunto messaggio di fine elaborazione (TODO migliorabile)
-		res.addMessaggio("CONV_INFO_RIEP", "Totale elenchi elaborati: " + req.getAllegatoAtto().getElenchiDocumentiAllegato().size()
-				+ ", di cui scartati: " + res.getElenchiScartati().size()
-				+ ", totale quote in elenco convalidate: " + res.getCountQuoteConvalidate()
-			);
-
 	}
 	
 	protected Boolean getDefaultFlagConvalidaManuale() {
@@ -229,8 +243,15 @@ public class ConvalidaAllegatoAttoPerElenchiService extends ConvalidaAllegatoAtt
 	 * “DURC scaduto soggetto XXXX, operazione di completa Atto bloccata” oppure “DURC scaduto soggetto XXXX ricevente incasso del soggetto YYYYY, operazione di completa Atto bloccata” 
 	 * In questo caso il completamento non va a buon fine.
 	 */
-	private void checkDatiDurc() {
-		List<Integer> uidsSubdocConConfermaDurc = allegatoAttoDad.getUidsSubdocWithImpegnoConfermaDurc(allegatoAtto);
+	private void checkDatiDurc(List<Integer> idElenchiDocumentiAllegato) {
+		List<Integer> uidsSubdocConConfermaDurc = 
+			 	CollectionUtil.isEmpty(idElenchiDocumentiAllegato) ? 
+				allegatoAttoDad.getUidsSubdocWithImpegnoConfermaDurc(allegatoAtto) :
+				allegatoAttoDad.getUidsSubdocWithImpegnoConfermaDurc(allegatoAtto, idElenchiDocumentiAllegato);
+		checkDatiDurcSubdoc(uidsSubdocConConfermaDurc);
+	}
+
+	private void checkDatiDurcSubdoc(List<Integer> uidsSubdocConConfermaDurc) {
 		if(uidsSubdocConConfermaDurc == null || uidsSubdocConConfermaDurc.isEmpty()) {
 			return;
 		}

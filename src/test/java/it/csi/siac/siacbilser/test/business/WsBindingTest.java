@@ -34,7 +34,7 @@ import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siacbilser.model.TipoFondo;
 import it.csi.siac.siacbilser.model.ric.RicercaDettaglioCapitoloUPrev;
 import it.csi.siac.siacbilser.model.ric.RicercaSinteticaCapitoloUPrev;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.frontend.webservice.ClassificatoreService;
 import it.csi.siac.siaccorser.frontend.webservice.CoreService;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -55,7 +55,7 @@ import junit.framework.TestCase;
 @ContextConfiguration(locations = {"/spring/bilServiceClientContext-test.xml"})
 public class WsBindingTest  extends TestCase  {
 	
-	private final LogUtil log = new LogUtil(getClass());
+	private final LogSrvUtil log = new LogSrvUtil(getClass());
 	
 	 //@Resource(name="capitoloUscitaPrevisioneService")
 	 /** The capitolo uscita previsione service. */

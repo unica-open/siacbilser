@@ -1029,7 +1029,7 @@ public class AggiornaStatoDocumentoDiEntrataService extends CheckedAccountBaseSe
 	 */
 	private List<DocumentoEntrata> getListaNoteCreditoEntrataCollegateEsclusivamenteAlDocumento() {
 		if(noteCreditoEntrata == null){
-			noteCreditoEntrata = documentoEntrataDad.ricercaNoteCreditoEntrataCollegateEsclusivamenteAlDocumento(doc.getUid()); //TODO Specificare i ModelDetail che servono!
+			noteCreditoEntrata = documentoEntrataDad.ricercaNoteCreditoEntrataCollegateEsclusivamenteAlDocumento(doc.getUid()); //TODO Specificare i ModelDetailEnum che servono!
 		}
 		return noteCreditoEntrata;
 	}
@@ -1041,7 +1041,7 @@ public class AggiornaStatoDocumentoDiEntrataService extends CheckedAccountBaseSe
 	 */
 	private List<DocumentoEntrata> getListaNoteCreditoEntrataCollegateEsclusivamenteAlDocumentoOld() {
 		if(noteCreditoEntrataOld == null) {
-			noteCreditoEntrataOld = documentoEntrataDad.ricercaNoteCreditoEntrataCollegateEsclusivamenteAlDocumentoTxRequiresNew(doc.getUid()); //TODO Specificare i ModelDetail che servono!
+			noteCreditoEntrataOld = documentoEntrataDad.ricercaNoteCreditoEntrataCollegateEsclusivamenteAlDocumentoTxRequiresNew(doc.getUid()); //TODO Specificare i ModelDetailEnum che servono!
 		}
 		return noteCreditoEntrataOld;
 	}
@@ -1151,7 +1151,7 @@ public class AggiornaStatoDocumentoDiEntrataService extends CheckedAccountBaseSe
 	private Integer findUidMovgestByAnnoNumeroBilancio(Accertamento accertamento, Bilancio bilancioAnnoPrecedente) {
 		return accertamentoBilDad.findUidMovgestByAnnoNumeroBilancio(
 				accertamento.getAnnoMovimento(), 
-				accertamento.getNumero(),
+				accertamento.getNumeroBigDecimal(),
 				Accertamento.class, 
 				bilancioAnnoPrecedente.getUid());
 	}
@@ -1159,8 +1159,8 @@ public class AggiornaStatoDocumentoDiEntrataService extends CheckedAccountBaseSe
 	private Integer findUidMovgestByAnnoNumeroBilancio(Accertamento accertamento, SubAccertamento subAccertamento, Bilancio bilancioAnnoPrecedente) {
 		return accertamentoBilDad.findUidMovgestTsByAnnoNumeroBilancio(
 				accertamento.getAnnoMovimento(), 
-				accertamento.getNumero(), 
-				String.valueOf(subAccertamento.getNumero()),
+				accertamento.getNumeroBigDecimal(), 
+				String.valueOf(subAccertamento.getNumeroBigDecimal()),
 				Accertamento.class,
 				bilancioAnnoPrecedente.getUid());
 	}

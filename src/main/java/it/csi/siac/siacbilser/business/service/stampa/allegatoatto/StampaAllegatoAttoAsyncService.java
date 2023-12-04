@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.stampa.base.AsyncReportBaseService;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.integration.dad.AllegatoAttoDad;
 import it.csi.siac.siacbilser.integration.dad.AzioneDad;
 import it.csi.siac.siaccecser.frontend.webservice.msg.StampaAllegatoAtto;
@@ -27,6 +26,7 @@ import it.csi.siac.siaccorser.frontend.webservice.msg.InserisciOperazioneAsincRe
 import it.csi.siac.siaccorser.model.Azione;
 import it.csi.siac.siaccorser.model.AzioneRichiesta;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.model.AllegatoAtto;
 import it.csi.siac.siacfin2ser.model.TipoStampaAllegatoAtto;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
@@ -116,7 +116,7 @@ public class StampaAllegatoAttoAsyncService extends AsyncReportBaseService<Stamp
 		
 		// TODO: qui solo per sicurezza
 		azioneDad.setEnte(req.getEnte());
-		String nomeAzione = AzioniConsentite.ALLEGATO_ATTO_STAMPA.getNomeAzione();
+		String nomeAzione = AzioneConsentitaEnum.ALLEGATO_ATTO_STAMPA.getNomeAzione();
 		log.debug(methodName, "Caricamento azione per nome " + nomeAzione);
 		Azione azione = azioneDad.getAzioneByNome(nomeAzione);
 		log.debug(methodName, "Azione caricata per nome " + nomeAzione + ": " + (azione != null ? azione.getUid() : "null"));

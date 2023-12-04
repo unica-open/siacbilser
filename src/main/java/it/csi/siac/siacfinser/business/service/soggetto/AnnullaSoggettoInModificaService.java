@@ -16,7 +16,7 @@ import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamErr
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaSoggettoInModifica;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaSoggettoInModificaResponse;
@@ -60,13 +60,13 @@ public class AnnullaSoggettoInModificaService extends AbstractBaseService<Annull
 		String ambitoDaService = null;
 		if(null==req.getCodificaAmbito() || "".equals(req.getCodificaAmbito())){
 			// se non c'e' assumo di default che sia FIN
-			ambitoDaService = Constanti.AMBITO_FIN;
+			ambitoDaService = CostantiFin.AMBITO_FIN;
 		}
 		
 		
 		boolean controlloCompatibilitaStatoEntita = true;
 		// Se FIN allora devo far partire i controlli
-		if(null!=ambitoDaService && ambitoDaService.equals(Constanti.AMBITO_FIN)){
+		if(null!=ambitoDaService && ambitoDaService.equals(CostantiFin.AMBITO_FIN)){
 			//2. Bisogna verificare che lo stato del soggetto indicato sia compatibile con l'operazione richiesta:		
 			controlloCompatibilitaStatoEntita = soggettoDad.controlloCompatibilitaStatoSoggettoInModifica(soggettoDaModificare);
 			if (controlloCompatibilitaStatoEntita == false) {

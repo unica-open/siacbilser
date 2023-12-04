@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -19,19 +20,23 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.StatoOperativoAtti;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.ImportiCapitoloUG;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
+import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceOrdinativoPagamento;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceOrdinativoPagamentoResponse;
 import it.csi.siac.siacfinser.integration.dad.CommonDad;
 import it.csi.siac.siacfinser.integration.dad.ImpegnoOttimizzatoDad;
+import it.csi.siac.siacfinser.integration.dad.LiquidazioneDad;
 import it.csi.siac.siacfinser.integration.dad.OrdinativoPagamentoDad;
 import it.csi.siac.siacfinser.integration.dad.SoggettoFinDad;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
@@ -40,11 +45,13 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.OrdinativoInInserimento
 import it.csi.siac.siacfinser.integration.dao.common.dto.SiopePlusDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.SubOrdinativoInModificaInfoDto;
 import it.csi.siac.siacfinser.integration.util.Operazione;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione.StatoOperativoLiquidazione;
+import it.csi.siac.siacfinser.model.messaggio.MessaggioFin;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento;
 import it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoPagamento;
 import it.csi.siac.siacfinser.model.ric.RicercaLiquidazioneK;
@@ -64,6 +71,9 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 	
 	@Autowired
 	ImpegnoOttimizzatoDad impegnoOttimizzatoDad;
+	
+	@Autowired
+	private LiquidazioneDad liquidazioneDad;
 	
 	@Autowired
 	CommonDad commonDad;
@@ -100,13 +110,18 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 		OrdinativoInInserimentoInfoDto ordinativoInInserimentoInfoDto = new OrdinativoInInserimentoInfoDto();
 		ordinativoInInserimentoInfoDto.setBilancio(req.getBilancio());
 		ordinativoInInserimentoInfoDto.setOrdinativo(ordinativoDiPagamento);
+		//SIAC-8589
+		ricaricaCapitoloByLiquidazione(ordinativoDiPagamento, datiOperazione);
 		
 		//4. Vengono eseguiti i vari controlli di merito previsti da analisi:
 		boolean verificaCondizioniInserimento = verificaCondizioniPerInserimentoOrdinativoDiPagamento(datiOperazione);
 		if(!verificaCondizioniInserimento){
 			return;
 		}
-				
+		
+		//SIAC-8017-CMTO
+		impostaDatiPerContoVincolato(ordinativoDiPagamento, datiOperazione);
+		
 		//5. inserimento ordinativo di pagamento (si invoca il metodo "core" rispetto all'operazione di inserimento di un nuovo ordinativo):
 		OrdinativoPagamento ordinativoPagamentoInserito = (OrdinativoPagamento) ordinativoPagamentoDad.inserisciOrdinativoPagamento(ordinativoDiPagamento, ordinativoInInserimentoInfoDto, datiOperazione, req.isUsaDatiLoginOrig());
 
@@ -116,7 +131,7 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 			//	solo i subordinativi "da inserire", dato che siamo nel servizio di inserisce ordinativo saranno tutti "da inserire"
 			//  infoSub e' quindi un dto di comodo per la doppia gestione
 			SubOrdinativoInModificaInfoDto infoSub = ordinativoPagamentoDad.valutaSubOrdinativi(ordinativoDiPagamento.getElencoSubOrdinativiDiPagamento(), null, datiOperazione,
-					bilancio,richiedente, Constanti.ORDINATIVO_TIPO_PAGAMENTO, ente);
+					bilancio,richiedente, CostantiFin.ORDINATIVO_TIPO_PAGAMENTO, ente);
 			
 			//2. Routine di doppia gestione (dentro viene eseguita solo se siamo in doppia gestione):
 			EsitoControlliDto resDg = operazioniPerDoppiaGestione(ordinativoDiPagamento, bilancio, richiedente, ente, datiOperazione,infoSub,Operazione.INSERIMENTO);
@@ -156,7 +171,70 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 		}
 	}
 	
-	
+	//SIAC-8589
+	private void ricaricaCapitoloByLiquidazione(OrdinativoPagamento ordinativoDiPagamento, DatiOperazioneDto datiOperazione) {
+		final String methodName ="ricaricaCapitoloByLiquidazione";
+		Liquidazione liq = null;
+		for (SubOrdinativoPagamento sub : ordinativoDiPagamento.getElencoSubOrdinativiDiPagamento()) {
+			liq = sub.getLiquidazione();
+			break;
+		}
+		if(liq == null) {
+			StringBuilder sb1 = new StringBuilder()
+					.append("Impossibile reperire una liquidazione per l'ordinativo ")
+					.append(ordinativoDiPagamento.getAnno() != null? ordinativoDiPagamento.getAnno() : "null" )
+					.append("/")
+					.append(ordinativoDiPagamento.getNumero() != null? ordinativoDiPagamento.getNumero() : "null");
+			log.error(methodName, sb1.toString());
+		}
+		Integer idCap = liquidazioneDad.caricaIdCapitoloAssociatoALiquidazione(liq, datiOperazione);
+		if(idCap == null || idCap.intValue() == 0) {
+			StringBuilder sb2 = new StringBuilder()
+					.append("Impossibile reperire un capitolo associato alla liquidazione ")
+					.append(liq.getAnnoLiquidazione() != null? liq.getAnnoLiquidazione() : "null" )
+					.append("/")
+					.append(liq.getNumeroLiquidazione() != null? liq.getNumeroLiquidazione() : "null" )
+					.append(" per l'ordinativo ")
+					.append(ordinativoDiPagamento.getAnno() != null? ordinativoDiPagamento.getAnno() : "null" )
+					.append("/")
+					.append(ordinativoDiPagamento.getNumero() != null? ordinativoDiPagamento.getNumero() : "null");
+			log.error(methodName, sb2.toString());
+			return;
+		}
+		CapitoloUscitaGestione capitoloCaricato = caricaCapitoloModulare(req.getRichiedente(), idCap, bilancio);
+		ordinativoDiPagamento.setCapitoloUscitaGestione(capitoloCaricato);
+	}
+
+	private void impostaDatiPerContoVincolato(OrdinativoPagamento ordinativoDiPagamento,DatiOperazioneDto datiOperazione) {
+		final String methodName = "checkCapienzaContoVincolato";
+		ContoTesoreria contoTesoreriaOrdinativo = ordinativoDiPagamento.getContoTesoreria();
+		CapitoloUscitaGestione capitoloUscitaGestione = ordinativoDiPagamento.getCapitoloUscitaGestione();
+		
+		if(!isCondizioniGestioneContoVincolatoSoddisfatte(contoTesoreriaOrdinativo, capitoloUscitaGestione)) {
+			return;
+		}
+		
+		BigDecimal disponibilitaPagareSottoConto = caricaDisponibilitaPagareSottoCointoVincolato(datiOperazione,contoTesoreriaOrdinativo, capitoloUscitaGestione);
+		BigDecimal importoOrdinativo = extractImportoOrdinativo(ordinativoDiPagamento);
+		
+		log.info(methodName, "La disponibilita a pagare del conto " + contoTesoreriaOrdinativo.getCodice() + " sul capitolo  " + capitoloUscitaGestione.getNumeroCapitolo() + " e' di " + disponibilitaPagareSottoConto  + ", mentre l'importo ordinativo di " + importoOrdinativo);
+		if(importoOrdinativo != null && importoOrdinativo.compareTo(disponibilitaPagareSottoConto) <= 0) {
+			log.info(methodName, "disponibilita' a pagare sul sottoconto sufficiente a procedere.");
+			return;
+		}
+		log.info(methodName, "disponibilita' a pagare sul sottoconto insufficiente. Utilizzo il conto per ripianamento invece che quello indicato.");
+		
+		ordinativoDiPagamento.setContoTesoreriaSenzaCapienza(contoTesoreriaOrdinativo);
+		
+		ContoTesoreria contoRipianamento = ordinativoPagamentoDad.caricaContoTesoreriaPerRipianamento(ente);
+		ordinativoDiPagamento.setContoTesoreria(contoRipianamento);
+		
+		String disp = CommonUtil.convertiBigDecimalToImporto(disponibilitaPagareSottoConto);
+		String impord = CommonUtil.convertiBigDecimalToImporto(importoOrdinativo);
+		res.addMessaggio(MessaggioFin.SOSTITUITO_CONTO_PER_MANCATA_CAPIENZA.getMessaggio(contoTesoreriaOrdinativo.getCodice(), disp, impord, contoRipianamento.getCodice()));
+		
+	}
+
 	private boolean verificaCondizioniPerInserimentoOrdinativoDiPagamento(DatiOperazioneDto datiOperazione){
 		
 		String methodName = "verificaCondizioniPerInserimentoOrdinativoDiPagamento";
@@ -169,7 +247,7 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 		Bilancio bilancio = req.getBilancio();
 		
 		// Soggetto: Verifica che il soggetto sia VALIDO o SOSPESO
-		Soggetto soggettoCheck = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), soggetto.getCodiceSoggetto(), false, true);
+		Soggetto soggettoCheck = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), soggetto.getCodiceSoggetto(), false, true);
 		if(null==soggettoCheck){
 			addErroreFin(ErroreFin.SOGGETTO_NON_VALIDO);
 			return false;
@@ -291,7 +369,7 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 					BigDecimal disponibilitaALiquidareMovimentoGestione = BigDecimal.ZERO;
 					String stato = null;
 					
-					boolean impegnoInStatoDefinitivo = liquidazione.getImpegno().getStatoOperativoMovimentoGestioneSpesa().equalsIgnoreCase(Constanti.MOVGEST_STATO_DEFINITIVO);
+					boolean impegnoInStatoDefinitivo = liquidazione.getImpegno().getStatoOperativoMovimentoGestioneSpesa().equalsIgnoreCase(CostantiFin.MOVGEST_STATO_DEFINITIVO);
 					
 					if(!impegnoInStatoDefinitivo && liquidazione.getImpegno().getElencoSubImpegni()!=null &&
 							!liquidazione.getImpegno().getElencoSubImpegni().isEmpty()){
@@ -304,7 +382,7 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 						
 						disponibilitaALiquidareMovimentoGestione = impegnoOttimizzatoDad.ottieniDisponibilitaLiquidare(null, sub);
 							
-						log.debug(methodName, "stato movimento numero [ "+ sub.getNumero() +"] : " + stato );
+						log.debug(methodName, "stato movimento numero [ "+ sub.getNumeroBigDecimal() +"] : " + stato );
 						
 					}else{
 						Impegno impegno = liquidazione.getImpegno();
@@ -316,14 +394,14 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 						
 						disponibilitaALiquidareMovimentoGestione = impegnoOttimizzatoDad.ottieniDisponibilitaLiquidare(impegno, null);
 						
-						log.debug(methodName, "stato movimento numero [ "+ impegno.getNumero() +"] : " + stato );
+						log.debug(methodName, "stato movimento numero [ "+ impegno.getNumeroBigDecimal() +"] : " + stato );
 					}
 					
 					
 					
 					log.debug(methodName,"Calcolata disponibilitaALiquidareMovimentoGestione  : " + disponibilitaALiquidareMovimentoGestione);
 					
-					if(!stato.equalsIgnoreCase(Constanti.MOVGEST_STATO_ANNULLATO)){
+					if(!stato.equalsIgnoreCase(CostantiFin.MOVGEST_STATO_ANNULLATO)){
 						if(disponibilitaALiquidareMovimentoGestione.compareTo(BigDecimal.ZERO) < 0){
 							addErroreFin(ErroreFin.DISPONIBILITA_INSUFFICIENTE_MOVIMENTO_GESTIONE, "INSERISCI ORDINATIVO DI PAGAMENTO");
 							return false;
@@ -352,8 +430,16 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 		
 		//Al suo posto uso questi importi ricaricati sul momento sfruttando il servizio ricercaDettaglioModulareCapitoloUscitaGestione:
 		int chiaveCapitolo = capitoloUscitaGestione.getUid();
-		List<ImportiCapitoloUG>  listaImportiCapitoloUG = caricaListaImportiCapitoloUG(richiedente, chiaveCapitolo, bilancio);
-		//
+		//SIAC-8589, il caricamento e' stato spostato precedentemente
+		List<ImportiCapitoloUG>  listaImportiCapitoloUG = new ArrayList<ImportiCapitoloUG>();
+		
+		if(capitoloUscitaGestione.getImportiCapitoloUG()!=null){
+			listaImportiCapitoloUG.add(capitoloUscitaGestione.getImportiCapitoloUG());
+		}
+		
+		if(!it.csi.siac.siacfinser.StringUtilsFin.isEmpty(capitoloUscitaGestione.getListaImportiCapitoloUG())){
+			listaImportiCapitoloUG.addAll(capitoloUscitaGestione.getListaImportiCapitoloUG());
+		}
 		
 		if(null!=listaImportiCapitoloUG && listaImportiCapitoloUG.size() > 0) {
 			for(ImportiCapitoloUG importoCapitoloUG : listaImportiCapitoloUG) {
@@ -366,7 +452,7 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 			}				
 		}
 		
-		if(ordinativoPagamentoDad.isBilancioInStato(bilancio, Constanti.BIL_FASE_OPERATIVA_ESERCIZIO_PROVVISORIO, datiOperazione) &&
+		if(ordinativoPagamentoDad.isBilancioInStato(bilancio, CostantiFin.BIL_FASE_OPERATIVA_ESERCIZIO_PROVVISORIO, datiOperazione) &&
 				annoMovimenti==bilancio.getAnno() &&
 				tuttiImpegniFrazionabili){
 			BigDecimal dispDodicesimi = ordinativoPagamentoDad.calcolaDisponibilitaAPagarePerDodicesimi(capitoloUscitaGestione.getUid());
@@ -378,7 +464,7 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 		
 		//CONTROLLI DATI SIOPE PLUS:
 		List<Errore> errSiopePlus = ordinativoPagamentoDad.controlliSiopePlusPerOrdPag(ordinativoDiPagamento, datiOperazione);
-		if(!StringUtils.isEmpty(errSiopePlus)){
+		if(!StringUtilsFin.isEmpty(errSiopePlus)){
 			res.setErrori(errSiopePlus);
 			res.setEsito(Esito.FALLIMENTO);
 			return false;
@@ -462,7 +548,7 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 			}
 
 			// CR - 3746 il siope diventa obbligatorio
-			if(StringUtils.isEmpty(ordinativoDiPagamento.getCodSiope())){
+			if(StringUtilsFin.isEmpty(ordinativoDiPagamento.getCodSiope())){
 				
 				if(elencoParamentriNonInizializzati.length() > 0){
 					elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", SIOPE";
@@ -471,7 +557,7 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 				}	
 			}
 
-			if(ordinativoDiPagamento.getCodiceBollo()==null || (ordinativoDiPagamento.getCodiceBollo()!=null && StringUtils.isEmpty(ordinativoDiPagamento.getCodiceBollo().getCodice()))){
+			if(ordinativoDiPagamento.getCodiceBollo()==null || (ordinativoDiPagamento.getCodiceBollo()!=null && StringUtilsFin.isEmpty(ordinativoDiPagamento.getCodiceBollo().getCodice()))){
 				if(elencoParamentriNonInizializzati.length() > 0){
 					elencoParamentriNonInizializzati = elencoParamentriNonInizializzati + ", BOLLO";
 				}else{
@@ -558,7 +644,7 @@ public class InserisceOrdinativoPagamentoService extends AbstractInserisceAggior
 			}
 		}
 
-		if(!StringUtils.isEmpty(elencoParamentriNonInizializzati)){
+		if(!StringUtilsFin.isEmpty(elencoParamentriNonInizializzati)){
 			checkCondition(false, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore(elencoParamentriNonInizializzati));
 		}	
 	}	

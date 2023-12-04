@@ -21,13 +21,12 @@ import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.service.base.ServiceInvoker;
 import it.csi.siac.siacbilser.business.service.capitoloentratagestione.RicercaPuntualeCapitoloEntrataGestioneService;
 import it.csi.siac.siacbilser.business.service.documento.MovimentoGestioneServiceCallGroup;
-import it.csi.siac.siacbilser.business.utility.AzioniConsentite;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloEntrataGestione;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloEntrataGestioneResponse;
 import it.csi.siac.siacbilser.integration.dad.AllegatoAttoDad;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
 import it.csi.siac.siacbilser.integration.dad.DocumentoEntrataDad;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.integration.dad.ProvvisorioBilDad;
 import it.csi.siac.siacbilser.integration.dad.SoggettoDad;
 import it.csi.siac.siacbilser.integration.dad.SubdocumentoEntrataDad;
@@ -46,6 +45,7 @@ import it.csi.siac.siaccorser.model.ServiceResponse;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.AggiornaStatoDocumentoDiEntrataResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaPuntualeDocumentoEntrata;
@@ -58,7 +58,7 @@ import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoIvaEntrata;
 import it.csi.siac.siacfin2ser.model.TipoRelazione;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.ProvvisorioService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
@@ -104,7 +104,7 @@ public abstract class CrudDocumentoDiEntrataBaseService<REQ extends ServiceReque
 	@Autowired
 	protected SoggettoDad soggettoDad;
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	@Autowired
 	private ProvvisorioBilDad provvisorioBilDad;
 	@Autowired
@@ -246,22 +246,22 @@ public abstract class CrudDocumentoDiEntrataBaseService<REQ extends ServiceReque
 		
 		Accertamento accertamento = ricercaAccertamentoPerChiaveOttimizzato();
 		accertamento.setElencoSubAccertamenti(filtraSubAccertamentiDefinitivi(accertamento.getElencoSubAccertamenti()));
-		log.debug("caricaAccertamentoESubAccertamento", "trovato accertamento con uid: " + accertamento.getUid() + " e numero: " + accertamento.getNumero());
+		log.debug("caricaAccertamentoESubAccertamento", "trovato accertamento con uid: " + accertamento.getUid() + " e numero: " + accertamento.getNumeroBigDecimal());
 		subdoc.setAccertamento(accertamento);
 		
 		if(subdoc.getSubAccertamento()!= null && subdoc.getSubAccertamento().getUid()!=0){
 			if(accertamento.getSubAccertamenti() == null){
-				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", subdoc.getSubAccertamento().getNumero()+""), Esito.FALLIMENTO);
+				throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", subdoc.getSubAccertamento().getNumeroBigDecimal()+""), Esito.FALLIMENTO);
 			}else{
 				SubAccertamento subAccertamento = null;
 				for(SubAccertamento subAcc: accertamento.getSubAccertamenti()){
 		    		if(subAcc.getUid()==subdoc.getSubAccertamento().getUid()){
 		    			subAccertamento = subAcc;
-						log.debug("caricaAccertamentoESubAccertamento", "trovato subaccertamento con uid: " + subAccertamento.getUid() + " e numero: " + subAccertamento.getNumero());
+						log.debug("caricaAccertamentoESubAccertamento", "trovato subaccertamento con uid: " + subAccertamento.getUid() + " e numero: " + subAccertamento.getNumeroBigDecimal());
 		    		}
 		    	}
 				if(subAccertamento == null){
-					throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", subdoc.getSubAccertamento().getNumero()+""), Esito.FALLIMENTO);
+					throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("subaccertamento", subdoc.getSubAccertamento().getNumeroBigDecimal()+""), Esito.FALLIMENTO);
 				}else{
 					subdoc.setSubAccertamento(subAccertamento);
 				}
@@ -288,7 +288,7 @@ public abstract class CrudDocumentoDiEntrataBaseService<REQ extends ServiceReque
 		
 		RicercaAttributiMovimentoGestioneOttimizzato parametri = new RicercaAttributiMovimentoGestioneOttimizzato();
 		parametri.setEscludiSubAnnullati(true);
-		parametri.setCaricaSub(subdoc.getSubAccertamento()!=null && subdoc.getSubAccertamento().getNumero() != null);
+		parametri.setCaricaSub(subdoc.getSubAccertamento()!=null && subdoc.getSubAccertamento().getNumeroBigDecimal() != null);
 				
 		DatiOpzionaliElencoSubTuttiConSoloGliIds parametriElencoIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
 		parametriElencoIds.setEscludiAnnullati(true);
@@ -304,7 +304,7 @@ public abstract class CrudDocumentoDiEntrataBaseService<REQ extends ServiceReque
 		Accertamento accertamento = resRAPC.getAccertamento();
 		if(accertamento==null) {
 			res.addErrori(resRAPC.getErrori());
-			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", subdoc.getAccertamento().getNumero()+""+ subdoc.getAccertamento().getAnnoMovimento()+""), Esito.FALLIMENTO);
+			throw new BusinessException(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", subdoc.getAccertamento().getNumeroBigDecimal()+""+ subdoc.getAccertamento().getAnnoMovimento()+""), Esito.FALLIMENTO);
 		}
 		return accertamento;
 	}
@@ -358,7 +358,7 @@ public abstract class CrudDocumentoDiEntrataBaseService<REQ extends ServiceReque
 	 * @return true, if is possibile sfondare accertamento
 	 */
 	protected boolean isDSIAbilitatoASfondareAccertamento() {
-		return !isAzioneConsentita(AzioniConsentite.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA.getNomeAzione());
+		return !isAzioneConsentita(AzioneConsentitaEnum.PREDOCUMENTO_ENTRATA_MODIFICA_ACC_NON_AMMESSA.getNomeAzione());
 	}
 	
 	/**
@@ -457,14 +457,14 @@ public abstract class CrudDocumentoDiEntrataBaseService<REQ extends ServiceReque
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(accertamento.getAnnoMovimento());
-		if(accertamento.getNumero() != null) {
+		if(accertamento.getNumeroBigDecimal() != null) {
 			sb.append("/");
-			sb.append(accertamento.getNumero().toPlainString());
+			sb.append(accertamento.getNumeroBigDecimal().toPlainString());
 		}
 		
-		if(subaccertamento != null && subaccertamento.getNumero() != null) {
+		if(subaccertamento != null && subaccertamento.getNumeroBigDecimal() != null) {
 			sb.append("-");
-			sb.append(subaccertamento.getNumero().toPlainString());
+			sb.append(subaccertamento.getNumeroBigDecimal().toPlainString());
 		}
 		return sb.toString();
 	}
@@ -475,7 +475,7 @@ public abstract class CrudDocumentoDiEntrataBaseService<REQ extends ServiceReque
     	if (subdoc.getAttoAmministrativo()==null || subdoc.getAttoAmministrativo().getUid()==0){
 			return;
 		}
-    	AttoAmministrativo attoAmministrativo = provvedimentoDad.findProvvedimentoById(subdoc.getAttoAmministrativo().getUid());
+    	AttoAmministrativo attoAmministrativo = attoAmministrativoDad.findProvvedimentoById(subdoc.getAttoAmministrativo().getUid());
     	
     	if (attoAmministrativo==null){
     		throw new BusinessException(ErroreAtt.PROVVEDIMENTO_INESISTENTE.getErrore(), Esito.FALLIMENTO);
@@ -498,7 +498,7 @@ public abstract class CrudDocumentoDiEntrataBaseService<REQ extends ServiceReque
     	}
     	
 //    	controllo sul tipo eliminato in seguito alla CR del 11/03/2015
-//    	String codiceTipoDeterminaDiIncasso = provvedimentoDad.getCodiceTipoDeterminaDiIncasso();
+//    	String codiceTipoDeterminaDiIncasso = attoAmministrativoDad.getCodiceTipoDeterminaDiIncasso();
 //    	
 //    	if (!codiceTipoDeterminaDiIncasso.equals(subdoc.getAttoAmministrativo().getTipoAtto().getCodice())){
 //    		throw new BusinessException(ErroreFin.TIPO_PROVVEDIMENTO_INCONGRUENTE.getErrore(""), Esito.FALLIMENTO);
@@ -1051,9 +1051,9 @@ public abstract class CrudDocumentoDiEntrataBaseService<REQ extends ServiceReque
 		modificaMovimentoGestioneEntrata.setImportoNew(importoAlNettoDellaModifica);
 		modificaMovimentoGestioneEntrata.setImportoOld(importoModifica);
 		
-		modificaMovimentoGestioneEntrata.setTipoMovimento(subacc!=null&&subacc.getUid()!=0?Constanti.MODIFICA_TIPO_SAC:Constanti.MODIFICA_TIPO_ACC); // ACCERTAMENTO
+		modificaMovimentoGestioneEntrata.setTipoMovimento(subacc!=null&&subacc.getUid()!=0?CostantiFin.MODIFICA_TIPO_SAC:CostantiFin.MODIFICA_TIPO_ACC); // ACCERTAMENTO
 		// SIAC-5219: portata a costante la descrizione (serve nelle ricerche)
-		modificaMovimentoGestioneEntrata.setDescrizione(Constanti.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
+		modificaMovimentoGestioneEntrata.setDescrizione(CostantiFin.MODIFICA_AUTOMATICA_PREDISPOSIZIONE_INCASSO);
 		modificaMovimentoGestioneEntrata.setTipoModificaMovimentoGestione("ALT"); //ALTRO
 	
 		return modificaMovimentoGestioneEntrata;

@@ -36,7 +36,7 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneCodificaCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoVariazione;
 import it.csi.siac.siacbilser.model.VariazioneCodificaCapitolo;
@@ -189,7 +189,7 @@ public class VariazioniCodificheTest extends BaseJunit4TestCase {
 						
 			vi.setListaDettaglioVariazioneCodifica(listaDettaglioVariazioneImporto);
 			
-			vi.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.BOZZA);
+			vi.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneBilancio.BOZZA);
 			
 			req.setVariazioneCodificaCapitolo(vi);
 			
@@ -308,7 +308,7 @@ public class VariazioniCodificheTest extends BaseJunit4TestCase {
 						
 			vi.setListaDettaglioVariazioneCodifica(listaDettaglioVariazioneImporto);
 			
-			vi.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneDiBilancio.DEFINITIVA);
+			vi.setStatoOperativoVariazioneDiBilancio(StatoOperativoVariazioneBilancio.DEFINITIVA);
 			
 			req.setVariazioneCodificaCapitolo(vi);
 			

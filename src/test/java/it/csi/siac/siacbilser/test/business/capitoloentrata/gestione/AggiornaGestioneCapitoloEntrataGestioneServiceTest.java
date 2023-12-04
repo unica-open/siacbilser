@@ -359,6 +359,7 @@ public class AggiornaGestioneCapitoloEntrataGestioneServiceTest extends Capitolo
 	 * Inizializza uid capitolo.
 	 */
 	private void inizializzaUidCapitolo() {
+		final String methodName = "inizializzaUidCapitolo";
 		
 		RicercaPuntualeCapitoloEntrataGestioneResponse ricercaPuntualeResponse = ricercaPuntuale(capitoloEntrataGestioneService);
 		/*String msgCapNonEsiste = "Capitolo da aggiornare non trovato! Il capitolo deve esistere per poter testare l'aggiornamento!";
@@ -368,7 +369,7 @@ public class AggiornaGestioneCapitoloEntrataGestioneServiceTest extends Capitolo
 		if (ricercaPuntualeResponse.getCapitoloEntrataGestione() != null)
 		{
 			this.uidCapi = ricercaPuntualeResponse.getCapitoloEntrataGestione().getUid();
-			log.debug("Capitolo da aggiornare trovato con uid: "+this.uidCapi);
+			log.debug(methodName, "Capitolo da aggiornare trovato con uid: "+this.uidCapi);
 		}
 		else this.uidCapi = 1;
 	}

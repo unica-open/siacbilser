@@ -93,25 +93,25 @@ public class StipendioFactory {
 		//Impegno
 		Impegno impegno = new Impegno();
 		impegno.setAnnoMovimento(parseInt("anno movimento", line.substring(153, 153 + 4)));
-		impegno.setNumero(new BigDecimal(parseInt("anno movimento", line.substring(157, 157 + 6))));
+		impegno.setNumeroBigDecimal(new BigDecimal(parseInt("anno movimento", line.substring(157, 157 + 6))));
 		s.setImpegno(impegno);
 
 		//SubImpegno
 		SubImpegno subImpegno = new SubImpegno();
 		subImpegno.setAnnoMovimento(parseInt("anno movimento", line.substring(153, 153 + 4)));
-		subImpegno.setNumero(new BigDecimal(parseInt("anno movimento", line.substring(163, 163 + 3))));
+		subImpegno.setNumeroBigDecimal(new BigDecimal(parseInt("anno movimento", line.substring(163, 163 + 3))));
 		s.setSubImpegno(subImpegno);
 
 		//Accertamento
 		Accertamento accertamento = new Accertamento();
 		accertamento.setAnnoMovimento(parseInt("anno movimento entrata", line.substring(166, 166 + 4)));
-		accertamento.setNumero(new BigDecimal(parseInt("anno movimento entrata", line.substring(170, 170 + 6))));
+		accertamento.setNumeroBigDecimal(new BigDecimal(parseInt("anno movimento entrata", line.substring(170, 170 + 6))));
 		s.setAccertamento(accertamento);
 
 		//SubAcertamento
 		SubAccertamento subAccertamento = new SubAccertamento();
 		subAccertamento.setAnnoMovimento(parseInt("anno movimento entrata", line.substring(166, 166 + 4)));
-		subAccertamento.setNumero(new BigDecimal(parseInt("anno movimento entrata", line.substring(176, 176 + 3))));
+		subAccertamento.setNumeroBigDecimal(new BigDecimal(parseInt("anno movimento entrata", line.substring(176, 176 + 3))));
 		s.setSubAccertamento(subAccertamento);
 		
 		//Soggetto

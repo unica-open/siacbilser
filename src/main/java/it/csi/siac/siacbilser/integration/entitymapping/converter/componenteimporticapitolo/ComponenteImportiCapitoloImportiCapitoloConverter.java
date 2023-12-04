@@ -5,6 +5,7 @@
 package it.csi.siac.siacbilser.integration.entitymapping.converter.componenteimporticapitolo;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -71,11 +72,11 @@ public class ComponenteImportiCapitoloImportiCapitoloConverter extends ExtendedD
 		}
 		
 		// FIXME [ComponenteImportiCapitolo]: solo STANZIAMENTO
-		SiacTBilElemDet siacTBilElemDet = siacTBilElemDetRepository.findBilElemDetsByBilElemIdAndAnnoAndTipo(
+		List<SiacTBilElemDet> siacTBilElemDet = siacTBilElemDetRepository.findBilElemDetsByBilElemIdAndAnnoAndTipo(
 				capitolo.getUid(),
 				src.getImportiCapitolo().getAnnoCompetenza().toString(),
 				SiacDBilElemDetTipoEnum.Stanziamento.getCodice());
-		dest.setSiacTBilElemDet(siacTBilElemDet);
+		dest.setSiacTBilElemDet(siacTBilElemDet != null && !siacTBilElemDet.isEmpty() ? siacTBilElemDet.get(0) : null);
 		
 		return dest;
 	}

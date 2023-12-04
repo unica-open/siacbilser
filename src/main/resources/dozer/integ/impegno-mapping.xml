@@ -68,7 +68,7 @@ SPDX-License-Identifier: EUPL-1.2
 			<b>annoImpegno</b>
 		</field>
 		
-		<field custom-converter="it.csi.siac.siaccommonser.util.dozer.converter.BigDecimalToIntegerConverter">
+		<field>
 			<a>numero</a>
 			<b>numeroImpegno</b>
 		</field>

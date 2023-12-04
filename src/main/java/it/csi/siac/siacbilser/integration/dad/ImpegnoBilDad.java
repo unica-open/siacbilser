@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.csi.siac.siacbilser.integration.dad.mapper.movimentogestione.SiacTMovgestImpegnoMapper;
 import it.csi.siac.siacbilser.integration.dao.BackofficeModificaCigDao;
 import it.csi.siac.siacbilser.integration.entity.SiacDSiopeAssenzaMotivazione;
 import it.csi.siac.siacbilser.integration.entity.SiacTClass;
@@ -33,7 +34,6 @@ import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfinser.integration.dad.datacontainer.DisponibilitaMovimentoGestioneContainer;
 import it.csi.siac.siacfinser.integration.helper.DisponibilitaLiquidareImpegnoHelper;
 import it.csi.siac.siacfinser.model.Impegno;
-import it.csi.siac.siacfinser.model.SubAccertamento;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeAssenzaMotivazione;
 import it.csi.siac.siacfinser.model.siopeplus.SiopeTipoDebito;
@@ -52,6 +52,8 @@ public class ImpegnoBilDad extends MovimentoGestioneBilDad<Impegno>  {
 	
 	@Autowired
 	protected BackofficeModificaCigDao backofficeModificaCigDao;
+	
+	@Autowired SiacTMovgestImpegnoMapper siacTMovgestImpegnoMapper;
 	
 	public Impegno findMiniminalImpegnoDataByUid(Integer uid) {
 		SiacTMovgestT siacTMovgestT = findTestataByUidMovimento(uid);
@@ -135,7 +137,7 @@ public class ImpegnoBilDad extends MovimentoGestioneBilDad<Impegno>  {
 		Impegno impegno = new Impegno();
 		impegno.setUid(siacTMovgest.getUid());
 		impegno.setAnnoMovimento(siacTMovgest.getMovgestAnno());
-		impegno.setNumero(siacTMovgest.getMovgestNumero());
+		impegno.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 		log.debug(methodName, " impegno trovato: " + impegno.getUid());
 		return impegno;
 	}
@@ -150,7 +152,7 @@ public class ImpegnoBilDad extends MovimentoGestioneBilDad<Impegno>  {
 		SubImpegno subimpegno = new SubImpegno();
 		subimpegno.setUid(siacTMovgestTs.getUid());
 		subimpegno.setAnnoMovimento(siacTMovgestTs.getSiacTMovgest().getMovgestAnno());
-		subimpegno.setNumero(siacTMovgestTs.getSiacTMovgest().getMovgestNumero());
+		subimpegno.setNumeroBigDecimal(siacTMovgestTs.getSiacTMovgest().getMovgestNumero());
 		log.debug(methodName, " subimpegno trovato: " + subimpegno.getUid());
 		return subimpegno;
 	}
@@ -339,4 +341,8 @@ public class ImpegnoBilDad extends MovimentoGestioneBilDad<Impegno>  {
     public Integer modificaCigLiquidazioniSenzaOrdinativiCollegati(int uid, Integer uidTipoDebito, String cig, Integer uidMotivazioneAssenzaCig, String numeroRemedy) {
 		return backofficeModificaCigDao.backofficeModificaCigCollegati(uid, uidTipoDebito, cig, uidMotivazioneAssenzaCig, numeroRemedy);
 	}
+    
+	public Impegno ricercaDettaglioImpegno(Impegno impegno, ImpegnoModelDetail... impegnoModelDetails) {
+		return siacTMovgestImpegnoMapper.map(movimentoGestioneDao.findById(impegno.getUid()), mapperDecoratorHelper.getDecoratorsFromModelDetails(impegnoModelDetails));		
+	}    
 }

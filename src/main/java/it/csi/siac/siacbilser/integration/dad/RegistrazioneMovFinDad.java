@@ -593,7 +593,7 @@ public class RegistrazioneMovFinDad extends ExtendedBaseDadImpl {
 	 * @param uidMovimentoGestione
 	 */
 	public List<RegistrazioneMovFin> findRegistrazioniCollegateAdAccertamentiCollegatiAdImpegno(Integer uidMovimentoGestione) {
-		//verificato che per ora in SiacRMovgestTs si trovano gli accertamenti nella colonna siacTMovgestT2 e gli impegni nella colonna siacTMovgestT1
+		//verificato che per ora in SiacRMovgestT si trovano gli accertamenti nella colonna siacTMovgestT2 e gli impegni nella colonna siacTMovgestT1
 		List<SiacTRegMovfin> siacTRegMovfins = siacTRegMovfinRepository.findRegistrazioniCollegateAdAccertamentiCollegatiAdImpegno(uidMovimentoGestione);
 		return convertiLista(siacTRegMovfins, RegistrazioneMovFin.class, GenMapId.SiacTRegMovfin_RegistrazioneMovFin);
 	}

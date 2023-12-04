@@ -20,6 +20,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
+
 /**
  * The persistent class for the siac_t_operazione_asincrona database table.
  * 
@@ -61,6 +62,11 @@ public class SiacTOperazioneAsincrona extends SiacTEnteBase {
 	@JoinColumn(name="azione_id")
 	private SiacTAzione siacTAzione;
 
+	@ManyToOne
+	@JoinColumn(name = "variazione_id")
+	private SiacTVariazione siacTVariazione;
+
+	
 	//bi-directional many-to-one association to SiacTOperazioneAsincronaDet
 	@OneToMany(mappedBy="siacTOperazioneAsincrona")
 	private List<SiacTOperazioneAsincronaDet> siacTOperazioneAsincronaDets;
@@ -126,6 +132,16 @@ public class SiacTOperazioneAsincrona extends SiacTEnteBase {
 
 	public SiacTAzione getSiacTAzione() {
 		return this.siacTAzione;
+	}
+	
+	
+
+	public SiacTVariazione getSiacTVariazione() {
+		return siacTVariazione;
+	}
+
+	public void setSiacTVariazione(SiacTVariazione siacTVariazione) {
+		this.siacTVariazione = siacTVariazione;
 	}
 
 	public void setSiacTAzione(SiacTAzione siacTAzione) {

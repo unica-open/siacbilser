@@ -27,7 +27,9 @@ import it.csi.siac.siacbilser.integration.entity.SiacRProgrammaStato;
 import it.csi.siac.siacbilser.integration.entity.SiacTProgramma;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDProgrammaStatoEnum;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
+import it.csi.siac.siacbilser.model.StatoOperativoProgetto;
 import it.csi.siac.siacbilser.model.TipoProgetto;
+import it.csi.siac.siaccommon.util.number.NumberUtil;
 import it.csi.siac.siaccommonser.integration.dao.base.JpaDao;
 
 // TODO: Auto-generated Javadoc
@@ -305,11 +307,11 @@ public class ProgettoDaoImpl extends JpaDao<SiacTProgramma, Integer> implements 
 	 * 
 	 */
 	@Override
-	public List<Object[]> calcoloProspettoRiassuntivoCronoprogrammaDiGestione(Integer uidProgetto, String anno) {
+	public List<Object[]> calcoloProspettoRiassuntivoCronoprogrammaDiGestioneAggiorna(Integer uidProgetto, String anno) {
 		
 		final String methodName ="calcoloProspettoRiassuntivoCronoprogrammaDiGestione";
 
-		 String functionName="fnc_siac_cronoprogramma_spesa_entrata";
+		 String functionName="fnc_siac_programma_spesa_entrata";
 		
 		log.debug(methodName, "Calling functionName: "+ functionName + " for uidProgetto: "+ uidProgetto +", anno:  "+ anno);
 		String sql = "SELECT * FROM "+ functionName + "(:uidProgetto,:anno)";
@@ -322,6 +324,112 @@ public class ProgettoDaoImpl extends JpaDao<SiacTProgramma, Integer> implements 
 		@SuppressWarnings("unchecked")
 		List<Object[]> result = (List<Object[]>) query.getResultList();
 		return result;
+	}
+
+	@Override
+	public List<Object[]> calcoloProspettoRiassuntivoCronoprogrammaDiGestioneConsulta(Integer uidProgetto, String anno) {
+		
+		final String methodName = "calcoloProspettoRiassuntivoCronoprogrammaDiGestione";
+
+		String functionName = "fnc_siac_cronoprogramma_spesa_entrata";
+		
+		log.debug(methodName, "Calling functionName: "+ functionName + " for uidProgetto: "+ uidProgetto +", anno:  "+ anno);
+		String sql = "SELECT * FROM "+ functionName + "(:uidProgetto,:anno)";
+		
+		Query query = entityManager.createNativeQuery(sql);
+		
+		query.setParameter("uidProgetto", uidProgetto);
+		query.setParameter("anno", anno);		
+		
+		@SuppressWarnings("unchecked")
+		List<Object[]> result = (List<Object[]>) query.getResultList();
+		return result;
+	}
+
+	@Override
+	public Page<SiacTProgramma> ricercaProgettiMutuo(Integer enteProprietarioId, Integer mutuoId, String codiceProgetto,
+			Integer annoBilancio
+			, Integer attoammId
+			, Integer attoammAnno
+			, Integer attoammNumero
+			, Integer attoammTipoId
+			, Integer attoammSacId
+			, Integer tipoAmbitoId
+			, Pageable pageable) {
+		
+		final String methodName = "ricercaProgettiMutuo";
+		
+		StringBuilder jpql = new StringBuilder();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		jpql.append("FROM SiacTProgramma p ");
+		jpql.append(" WHERE ");
+		jpql.append(" p.siacDProgrammaTipo.programmaTipoCode=:programmaTipoCode ");
+		param.put("programmaTipoCode", "G");// voglio usare una enum se c'è			
+		
+		jpql.append(getDateValiditaCancellazioneClauses("p"));
+		
+		jpql.append(getEnteClause("p"));
+		param.put("enteProprietarioId", enteProprietarioId);	
+		
+		jpql.append(" AND NOT EXISTS (FROM p.siacRProgrammaStatos rStato WHERE rStato.siacDProgrammaStato.programmaStatoCode=:programmaStatoCode " );
+		jpql.append(getDateValiditaCancellazioneClauses("rStato"));
+		jpql.append(" )");
+		param.put("programmaStatoCode", StatoOperativoProgetto.ANNULLATO.getCodice());
+		
+		
+		if(StringUtils.isNotBlank(codiceProgetto)) {
+			jpql.append(" AND " + Utility.toJpqlSearchLike("p.programmaCode", "CONCAT('%', :programmaCode, '%')"));
+			param.put("programmaCode", codiceProgetto);			
+		}
+		
+		if (NumberUtil.isValidAndGreaterThanZero(attoammId) || NumberUtil.isValidAndGreaterThanZero(attoammAnno) || NumberUtil.isValidAndGreaterThanZero(attoammNumero) || NumberUtil.isValidAndGreaterThanZero(attoammTipoId) || NumberUtil.isValidAndGreaterThanZero(attoammSacId)) {
+			jpql.append(" AND EXISTS (FROM p.siacRProgrammaAttoAmms rAtto WHERE 1=1 ");
+			
+			if(NumberUtil.isValidAndGreaterThanZero(attoammId)) {
+				jpql.append(" AND rAtto.siacTAttoAmm.attoammId=:attoammId ");
+				param.put("attoammId", attoammId);
+			}
+			if(NumberUtil.isValidAndGreaterThanZero(attoammAnno)) {
+				jpql.append(" AND rAtto.siacTAttoAmm.attoammAnno= CAST(:attoammAnno AS string) ");
+				param.put("attoammAnno", attoammAnno);
+			}
+			if(NumberUtil.isValidAndGreaterThanZero(attoammNumero)) {
+				jpql.append(" AND rAtto.siacTAttoAmm.attoammNumero=:attoammNumero ");
+				param.put("attoammNumero", attoammNumero);
+			}
+			
+			if (NumberUtil.isValidAndGreaterThanZero(attoammTipoId)) {
+				jpql.append(" AND rAtto.siacTAttoAmm.siacDAttoAmmTipo.attoammTipoId = :attoammTipoId");
+				param.put("attoammTipoId", attoammTipoId);
+			}
+			if (NumberUtil.isValidAndGreaterThanZero(attoammSacId)) {
+				jpql.append(" AND EXISTS (select 1 from  rAtto.siacTAttoAmm.siacRAttoAmmClasses raac where raac.siacTClass.classifId = :attoammSacId ")
+				.append(getDateValiditaCancellazioneClauses("raac"))
+				.append(")");
+				param.put("attoammSacId", attoammSacId);
+			}
+			
+			jpql.append(getDateValiditaCancellazioneClauses("rAtto"));
+			jpql.append(" )");
+		}
+		
+		if (NumberUtil.isValidAndGreaterThanZero(tipoAmbitoId)) {
+			jpql.append(" AND EXISTS (FROM p.siacRProgrammaClasses rClass WHERE rClass.siacTClass.classifId=:tipoAmbitoId " );
+			jpql.append(getDateValiditaCancellazioneClauses("rClass"));
+			jpql.append(" )");
+			param.put("tipoAmbitoId", tipoAmbitoId);
+		}		
+		
+		jpql.append(" AND CAST(p.siacTBil.siacTPeriodo.anno AS integer) = :annoBilancio");
+		param.put("annoBilancio", annoBilancio);
+		
+		jpql.append(" ORDER BY p.programmaCode ");
+		
+		String jpqlString = jpql.toString();
+		log.debug(methodName, jpqlString);
+		
+		return getPagedList(jpqlString, param, pageable);	
 	}
 	
 	

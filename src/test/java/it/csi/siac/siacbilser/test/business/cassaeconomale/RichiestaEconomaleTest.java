@@ -559,7 +559,7 @@ public class RichiestaEconomaleTest extends BaseJunit4TestCase {
 		
 		SubImpegno subImpegno = new SubImpegno();
 		subImpegno.setUid(94152);
-		subImpegno.setNumero(new BigDecimal("7"));
+		subImpegno.setNumeroBigDecimal(new BigDecimal("7"));
 		richiestaEconomale.setSubImpegno(subImpegno);
 		
 		CassaEconomale cassaEconomale = new CassaEconomale();

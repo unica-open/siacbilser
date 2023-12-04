@@ -17,7 +17,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTAttoAmm;
 import it.csi.siac.siacbilser.integration.entity.SiacTCronop;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.model.Cronoprogramma;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,7 +27,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class CronoprogrammaAttoAmministrativoConverter extends ExtendedDozerConverter<Cronoprogramma, SiacTCronop > {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

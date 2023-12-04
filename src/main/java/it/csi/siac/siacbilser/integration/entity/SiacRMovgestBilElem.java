@@ -47,6 +47,12 @@ public class SiacRMovgestBilElem extends SiacTEnteBase {
 	@ManyToOne
 	@JoinColumn(name="movgest_id")
 	private SiacTMovgest siacTMovgest;
+	
+	//SIAC-7349
+	@ManyToOne
+	@JoinColumn(name="elem_det_comp_tipo_id")
+	private SiacDBilElemDetCompTipo siacDBilElemDetCompTipo;
+	
 
 	/**
 	 * Instantiates a new siac r movgest bil elem.
@@ -122,6 +128,20 @@ public class SiacRMovgestBilElem extends SiacTEnteBase {
 	@Override
 	public void setUid(Integer uid) {
 		movgestAttoAmmId = uid;
+	}
+
+	/**
+	 * @return the siacDBilElemDetCompTipo
+	 */
+	public SiacDBilElemDetCompTipo getSiacDBilElemDetCompTipo() {
+		return siacDBilElemDetCompTipo;
+	}
+
+	/**
+	 * @param siacDBilElemDetCompTipo the siacDBilElemDetCompTipo to set
+	 */
+	public void setSiacDBilElemDetCompTipo(SiacDBilElemDetCompTipo siacDBilElemDetCompTipo) {
+		this.siacDBilElemDetCompTipo = siacDBilElemDetCompTipo;
 	}
 
 }

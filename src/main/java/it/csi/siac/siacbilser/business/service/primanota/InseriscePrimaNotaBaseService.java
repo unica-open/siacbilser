@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.integration.dad.ContoDad;
 import it.csi.siac.siacbilser.integration.dad.PrimaNotaDad;
 import it.csi.siac.siacbilser.integration.dad.RegistrazioneMovFinDad;
@@ -21,17 +20,14 @@ import it.csi.siac.siacgenser.model.MovimentoDettaglio;
 import it.csi.siac.siacgenser.model.MovimentoEP;
 import it.csi.siac.siacgenser.model.OperazioneSegnoConto;
 import it.csi.siac.siacgenser.model.PrimaNota;
-import it.csi.siac.siacgenser.model.TipoCausale;
 
 /**
  * Servizio base di inserimento di una PrimaNota
  * @author Marchino Alessandro
  * @version 1.0.0 - 13/12/2017
  */
-public abstract class InseriscePrimaNotaBaseService<REQ extends InseriscePrimaNota, RES extends InseriscePrimaNotaResponse> extends CheckedAccountBaseService<REQ, RES> {
+public abstract class InseriscePrimaNotaBaseService<REQ extends InseriscePrimaNota, RES extends InseriscePrimaNotaResponse> extends PrimaNotaBaseService<REQ, RES> {
 
-	protected PrimaNota primaNota;
-	
 	@Autowired
 	protected PrimaNotaDad primaNotaDad;
 	@Autowired
@@ -89,10 +85,6 @@ public abstract class InseriscePrimaNotaBaseService<REQ extends InseriscePrimaNo
 	}
 	
 
-	protected boolean isPrimaNotaIntegrata() {
-		return TipoCausale.Integrata.equals(primaNota.getTipoCausale());
-	}
-	
 	protected void checkImportiDareAvere() {
 		if(primaNota.getListaMovimentiEP() == null){
 			return;
@@ -136,6 +128,5 @@ public abstract class InseriscePrimaNotaBaseService<REQ extends InseriscePrimaNo
 			mov.setNumero(numero);
 		}
 	}
-
 
 }

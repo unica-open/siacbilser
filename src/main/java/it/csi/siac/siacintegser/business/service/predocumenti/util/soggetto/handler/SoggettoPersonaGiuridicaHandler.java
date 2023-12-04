@@ -27,13 +27,14 @@ public abstract class SoggettoPersonaGiuridicaHandler<P extends Predocumento> ex
 	}
 	
 	@Override
-	protected ParametroRicercaSoggetto buildParametroRicercaSoggetto(P predocumento)
+	protected ParametroRicercaSoggetto buildParametroRicercaSoggetto(String partitaIva)
 	{
 		ParametroRicercaSoggetto parametroRicercaSoggetto = new ParametroRicercaSoggetto();
-		parametroRicercaSoggetto.setPartitaIva(predocumento.getCodiceFiscale());
+		parametroRicercaSoggetto.setPartitaIva(partitaIva);
 		
 		return parametroRicercaSoggetto;
 	}
+	
 	
 	protected Soggetto buildSoggettoInserimento(P predocumento) throws SoggettoPredocumentoException
 	{

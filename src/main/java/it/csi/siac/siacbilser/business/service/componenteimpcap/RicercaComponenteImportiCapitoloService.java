@@ -34,8 +34,13 @@ public class RicercaComponenteImportiCapitoloService extends BaseGestioneCompone
 	@Override
 	protected void execute() {
 		initCapitolo(req.getCapitolo().getUid());
-		
-		loadComponentiImportiCapitolo();
+		//SIAC-7349 - START - SR90 - MR - Retrocompoatibilita, chiamo il servizio con il calcolo della disponibilita a impegnare
+		if(req.isAbilitaCalcoloDisponibilita()){
+			loadComponentiImportiCapitoloAbilitaDisponibilita();
+		}else{
+			loadComponentiImportiCapitolo();			
+		}
+		//SIAC-7349 - FINE
 	}
 
 }

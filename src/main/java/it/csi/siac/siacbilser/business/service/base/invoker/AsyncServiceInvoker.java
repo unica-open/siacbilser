@@ -9,8 +9,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.business.service.base.ServiceInvoker;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.ResponseHandler;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
 
@@ -25,7 +26,7 @@ import it.csi.siac.siaccorser.model.ServiceResponse;
  * @param <RES> the generic type
  */
 public class AsyncServiceInvoker<REQ extends ServiceRequest, RES extends ServiceResponse> implements ServiceInvoker<REQ, RES> {
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	protected AsyncTaskExecutor asyncTaskExecutor;
 	
@@ -66,7 +67,7 @@ public class AsyncServiceInvoker<REQ extends ServiceRequest, RES extends Service
 	
 	protected static class AsyncRunnable<REQ extends ServiceRequest, RES extends ServiceResponse> implements Runnable {
 		
-		private final LogUtil log = new LogUtil(this.getClass());
+		private final LogSrvUtil log = new LogSrvUtil(this.getClass());
 
 		private final REQ req;
 		private final AsyncTaskExecutor asyncTaskExecutor;
@@ -85,6 +86,8 @@ public class AsyncServiceInvoker<REQ extends ServiceRequest, RES extends Service
 		
 		@Override
 		public void run() {
+			log.initializeUserSessionInfo(req.getUserSessionInfo());
+			
 			startTimeoutWorkaround();
 			
 			RES externalServiceResponse = null;

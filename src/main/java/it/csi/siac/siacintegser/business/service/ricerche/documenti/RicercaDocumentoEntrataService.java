@@ -12,14 +12,13 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import it.csi.siac.siacbilser.business.service.documento.RicercaTipoDocumentoService;
 import it.csi.siac.siacbilser.business.service.documentoentrata.RicercaSinteticaDocumentoEntrataService;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaDocumentoEntrata;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaSinteticaDocumentoEntrataResponse;
 import it.csi.siac.siacfin2ser.model.TipoDocumento;
 import it.csi.siac.siacfin2ser.model.TipoFamigliaDocumento;
 import it.csi.siac.siacfinser.model.soggetto.Soggetto;
-import it.csi.siac.siacintegser.business.service.ServiceHelper;
+import it.csi.siac.siacintegser.business.service.helper.SoggettoServiceHelper;
 import it.csi.siac.siacintegser.business.service.util.converter.IntegMapId;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.RicercaDocumentoEntrata;
 import it.csi.siac.siacintegser.frontend.webservice.msg.documenti.RicercaDocumentoEntrataResponse;
@@ -33,11 +32,7 @@ public class RicercaDocumentoEntrataService extends
 		BaseRicercaDocumentoService<RicercaDocumentoEntrata, RicercaDocumentoEntrataResponse>
 {
 
-	@Autowired
-	RicercaTipoDocumentoService ricercaTipoDocumentoService;
-	
-	@Autowired
-	ServiceHelper serviceHelper;
+	@Autowired private SoggettoServiceHelper soggettoServiceHelper;
 	
 	@Override
 	protected RicercaDocumentoEntrataResponse execute(RicercaDocumentoEntrata ireq)
@@ -54,7 +49,7 @@ public class RicercaDocumentoEntrataService extends
 		}
 		
 		if(!StringUtils.isEmpty(ireq.getCodiceSoggetto())){
-			Soggetto soggetto = serviceHelper.ricercaSoggetto(ireq.getCodiceSoggetto(), richiedente);
+			Soggetto soggetto = soggettoServiceHelper.findSoggetto(ireq.getCodiceSoggetto(), richiedente);
 			if(null== soggetto){
 				addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, " tipo soggetto con codice " + ireq.getCodiceSoggetto() + " non esiste");
 				return ires;
@@ -62,7 +57,7 @@ public class RicercaDocumentoEntrataService extends
 		}
 		
 		RicercaSinteticaDocumentoEntrataResponse res = appCtx.getBean(RicercaSinteticaDocumentoEntrataService.class).executeService(req);
-		checkBusinessServiceResponse(res);
+		checkServiceResponse(res);
 		
 		if(res.getDocumenti()==null || res.getDocumenti().isEmpty()){
 			addMessaggio(MessaggioInteg.NESSUN_RISULTATO_TROVATO, " nessun filtro di ricerca soddisfatto");

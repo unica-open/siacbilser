@@ -237,11 +237,11 @@ public class InserisceStornoUEBEntrataService extends InserisceStornoUEBBaseServ
 	@Override
 	protected void checkTipoCapitolo() {
 		if(!capitoloUscitaPrevisioneDad.isTipoEntrataGestione(stornoUEB.getCapitoloSorgente().getUid())){
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("uid capitolo sorgente","Deve essere un capitolo di entrata gestione."));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("uid capitolo sorgente","Deve essere un capitolo di entrata gestione."));
 		}
 		
 		if(!capitoloUscitaPrevisioneDad.isTipoEntrataGestione(stornoUEB.getCapitoloDestinazione().getUid())){
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("uid capitolo destinazione","Deve essere un capitolo di entrata gestione."));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("uid capitolo destinazione","Deve essere un capitolo di entrata gestione."));
 		}		
 	}
 	

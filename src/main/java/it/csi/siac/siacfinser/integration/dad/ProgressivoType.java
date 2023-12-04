@@ -15,8 +15,6 @@ public enum ProgressivoType {
 	SOGGETTO("sog"),
 	IMPEGNO("imp"),
 	ACCERTAMENTO("acc"),
-	MUTUO("mut"),
-	VOCE_MUTUO("voce"),
 	LIQUIDAZIONE("liq"),
 	ORDINATIVO_DI_PAGAMENTO("ord_u"),
 	ORDINATIVO_DI_INCASSO("ord_e"),

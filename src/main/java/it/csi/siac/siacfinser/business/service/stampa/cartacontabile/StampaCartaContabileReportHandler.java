@@ -29,9 +29,9 @@ import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.Valuta;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.TimingUtils;
 import it.csi.siac.siacfinser.business.service.stampa.cartacontabile.model.CapitoloReportModel;
 import it.csi.siac.siacfinser.business.service.stampa.cartacontabile.model.CartaContabileReportModel;
@@ -47,7 +47,7 @@ import it.csi.siac.siacfinser.business.service.stampa.cartacontabile.model.SubDo
 import it.csi.siac.siacfinser.business.service.stampa.model.CodificaModel;
 import it.csi.siac.siacfinser.integration.dad.AccountFinDad;
 import it.csi.siac.siacfinser.integration.dad.SoggettoFinDad;
-import it.csi.siac.siacfinser.model.ContoTesoreria;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
 import it.csi.siac.siacfinser.model.carta.CartaContabile;
@@ -110,8 +110,8 @@ public class StampaCartaContabileReportHandler extends
 		
 		//FIRMA 1 e FIRMA 2:
 		Ente ente = accountFinDad.findEnteAssocciatoAdAccount(richiedente.getAccount().getUid());
-		String firma1 = CommonUtils.getCodiceLivelloByTipo(TipologiaGestioneLivelli.FIRMA_CARTA_1, ente);
-		String firma2 = CommonUtils.getCodiceLivelloByTipo(TipologiaGestioneLivelli.FIRMA_CARTA_2, ente);
+		String firma1 = CommonUtil.getCodiceLivelloByTipo(TipologiaGestioneLivelli.FIRMA_CARTA_1, ente);
+		String firma2 = CommonUtil.getCodiceLivelloByTipo(TipologiaGestioneLivelli.FIRMA_CARTA_2, ente);
 		cartaContabileReportModel.setFirma1(firma1);
 		cartaContabileReportModel.setFirma2(firma2);
 		//
@@ -128,7 +128,7 @@ public class StampaCartaContabileReportHandler extends
 		}
 		cartaContabileReportModel.setDivisa(valutaDefault.getCodice());
 		cartaContabileReportModel.setImporto(importoCarta);
-		cartaContabileReportModel.setImportoInLettere(CommonUtils.convertiNumeroInLettere(importoCarta));
+		cartaContabileReportModel.setImportoInLettere(CommonUtil.convertiNumeroInLettere(importoCarta));
 		result.setValutaDefault(valutaDefault);
 		//
 		
@@ -202,13 +202,13 @@ public class StampaCartaContabileReportHandler extends
 			moduloEstero.setIstruzioni(cartaEstera.getIstruzioni());
 			moduloEstero.setDiversoTitolare(cartaEstera.getDiversoTitolare());
 			
-			PreDocumentoCarta preDoc = CommonUtils.getFirst(cartaContabile.getListaPreDocumentiCarta());
+			PreDocumentoCarta preDoc = CommonUtil.getFirst(cartaContabile.getListaPreDocumentiCarta());
 			if(preDoc!=null){
 				Soggetto soggetto = preDoc.getSoggetto();
 				moduloEstero.setDenominazioneSoggetto(soggetto.getDenominazione());
 				IndirizzoSoggetto indirizzoPrincipale = findPrincipale(soggetto);
 				moduloEstero.setIndirizzoSoggetto(indirizzoPrincipale.getIndirizzoFormattato());
-				ModalitaPagamentoSoggetto modPag = CommonUtils.getFirst(soggetto.getModalitaPagamentoList());
+				ModalitaPagamentoSoggetto modPag = CommonUtil.getFirst(soggetto.getModalitaPagamentoList());
 				if(modPag!=null){
 					moduloEstero.setIbanOConto(modPag.getIban());
 					moduloEstero.setBic(modPag.getBic());
@@ -231,7 +231,7 @@ public class StampaCartaContabileReportHandler extends
 	private List<SubDocumentoReportModel> popolaListaSubDoccumentiReportModel(PreDocumentoCarta preDocIt) {
 		List<SubdocumentoSpesa> subDocs = preDocIt.getListaSubDocumentiSpesaCollegati();
 		List<SubDocumentoReportModel> listaSubDoc = new ArrayList<SubDocumentoReportModel>();
-		if(!StringUtils.isEmpty(subDocs)){
+		if(!StringUtilsFin.isEmpty(subDocs)){
 			for(SubdocumentoSpesa it: subDocs){
 				SubDocumentoReportModel reportIt = buildSubDocumentoReportModel(it);
 				listaSubDoc.add(reportIt);
@@ -287,10 +287,10 @@ public class StampaCartaContabileReportHandler extends
 				//IMPORTO E VALUTA:
 				if(getCartaEstera()!=null){
 					preDocModel.setImporto(preDocIt.getImportoValutaEstera());
-					preDocModel.setImportoInLettere(CommonUtils.convertiNumeroInLettere(preDocIt.getImportoValutaEstera()));
+					preDocModel.setImportoInLettere(CommonUtil.convertiNumeroInLettere(preDocIt.getImportoValutaEstera()));
 				} else {
 					preDocModel.setImporto(preDocIt.getImporto());
-					preDocModel.setImportoInLettere(CommonUtils.convertiNumeroInLettere(preDocIt.getImporto()));
+					preDocModel.setImportoInLettere(CommonUtil.convertiNumeroInLettere(preDocIt.getImporto()));
 				}
 				preDocModel.setValuta(valutaDefault.getCodice());
 				//////////////////////////////
@@ -353,13 +353,13 @@ public class StampaCartaContabileReportHandler extends
 		if(impegno!=null){
 			
 			impegnoModel.setAnno(Integer.toString(impegno.getAnnoMovimento()));
-			if(impegno.getNumero()!=null){
-				impegnoModel.setNumero(impegno.getNumero().toString());
+			if(impegno.getNumeroBigDecimal()!=null){
+				impegnoModel.setNumero(impegno.getNumeroBigDecimal().toString());
 			}
 			
 			SubImpegno subImpegno = preDocIt.getSubImpegno();
-			if(subImpegno!=null && subImpegno.getNumero()!=null){
-				impegnoModel.setNumeroSub(subImpegno.getNumero().toString());
+			if(subImpegno!=null && subImpegno.getNumeroBigDecimal()!=null){
+				impegnoModel.setNumeroSub(subImpegno.getNumeroBigDecimal().toString());
 			}
 			
 			//CIG E CUP:
@@ -548,7 +548,7 @@ public class StampaCartaContabileReportHandler extends
 					if(it.getModalitaPagamentoSoggetto()!=null && it.getModalitaPagamentoSoggetto().getSoggettoCessione()!=null){
 						Soggetto soggettoIt = it.getModalitaPagamentoSoggetto().getSoggettoCessione();
 						String codiceSoggetto = soggettoIt.getCodiceSoggetto();
-						Soggetto soggettoCessione = soggettoFinDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), codiceSoggetto, false, true);
+						Soggetto soggettoCessione = soggettoFinDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), codiceSoggetto, false, true);
 						it.getModalitaPagamentoSoggetto().setSoggettoCessione(soggettoCessione);
 						listaPreDocRicostruita.add(it);
 					}
@@ -570,14 +570,14 @@ public class StampaCartaContabileReportHandler extends
 					if(it.getModalitaPagamentoSoggetto()!=null && it.getModalitaPagamentoSoggetto().getSoggettoCessione()!=null){
 						Soggetto soggettoIt = it.getModalitaPagamentoSoggetto().getSoggettoCessione();
 						
-						if(!StringUtils.isEmpty(soggettoIt.getIndirizzi())){
+						if(!StringUtilsFin.isEmpty(soggettoIt.getIndirizzi())){
 							//se un giorno verranno gia caricati dal ricerca carta passera' da qui
 							listaPreDocRicostruita.add(indirizziPrincipaliPerPrimi(soggettoIt, it));
 						} else {
 							//ma ad oggi il ricerca carta non li carica e li carichiamo al volo:
 							String codiceSoggetto = soggettoIt.getCodiceSoggetto();
-							IndirizzoSoggetto indirizzoPrincipale = soggettoFinDad.getIndizzoPrincipaleSoggetto(ente.getUid(), codiceSoggetto , Constanti.AMBITO_FIN, null, true);
-							soggettoIt.setIndirizzi(CommonUtils.toList(indirizzoPrincipale));
+							IndirizzoSoggetto indirizzoPrincipale = soggettoFinDad.getIndizzoPrincipaleSoggetto(ente.getUid(), codiceSoggetto , CostantiFin.AMBITO_FIN, null, true);
+							soggettoIt.setIndirizzi(CommonUtil.toList(indirizzoPrincipale));
 							it.getModalitaPagamentoSoggetto().setSoggettoCessione(soggettoIt);
 							listaPreDocRicostruita.add(it);
 						}
@@ -596,7 +596,7 @@ public class StampaCartaContabileReportHandler extends
 		List<IndirizzoSoggetto> indirizzoPrincipale = new ArrayList<IndirizzoSoggetto>();
 		 
 		 for(IndirizzoSoggetto indirizzoIt : indirizzi){
-			 if(StringUtils.isTrue(indirizzoIt.getPrincipale())){
+			 if(StringUtilsFin.isTrue(indirizzoIt.getPrincipale())){
 				 indirizzoPrincipale.add(indirizzoIt);
 			 } else {
 				 indirizziGenerici.add(indirizzoIt);
@@ -622,7 +622,7 @@ public class StampaCartaContabileReportHandler extends
 		IndirizzoSoggetto principale = null;
 		if(indirizzi!=null && indirizzi.size()>0){
 			for(IndirizzoSoggetto indirizzoIterato : indirizzi){
-				if(StringUtils.isTrue(indirizzoIterato.getPrincipale())){
+				if(StringUtilsFin.isTrue(indirizzoIterato.getPrincipale())){
 					principale = indirizzoIterato;
 					break;
 				}

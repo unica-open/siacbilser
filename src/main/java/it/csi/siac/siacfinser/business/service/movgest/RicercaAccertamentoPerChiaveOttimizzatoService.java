@@ -5,6 +5,7 @@
 package it.csi.siac.siacfinser.business.service.movgest;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -18,8 +19,8 @@ import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.CommonUtils;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CommonUtil;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.common.RicercaAttributiMovimentoGestioneOttimizzatoService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliCapitoli;
 import it.csi.siac.siacfinser.frontend.webservice.msg.DatiOpzionaliElencoSubTuttiConSoloGliIds;
@@ -29,7 +30,7 @@ import it.csi.siac.siacfinser.integration.dad.AccertamentoOttimizzatoDad;
 import it.csi.siac.siacfinser.integration.dad.StoricoImpegnoAccertamentoDad;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoRicercaMovimentoPkDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.PaginazioneSubMovimentiDto;
-import it.csi.siac.siacfinser.integration.util.ObjectStreamerHandler;
+//import it.csi.siac.siacfinser.integration.util.ObjectStreamerHandler;
 import it.csi.siac.siacfinser.model.Accertamento;
 ;
 
@@ -43,8 +44,8 @@ public class RicercaAccertamentoPerChiaveOttimizzatoService extends RicercaAttri
 	@Autowired
 	private StoricoImpegnoAccertamentoDad storicoImpegnoAccertamentoDad;
 
-	@Autowired
-	private ObjectStreamerHandler objectStreamerHandler;
+//	@Autowired
+//	private ObjectStreamerHandler objectStreamerHandler;
 	
 	@Override
 	protected void init() {
@@ -54,7 +55,7 @@ public class RicercaAccertamentoPerChiaveOttimizzatoService extends RicercaAttri
 	
 	
 	@Override
-	@Transactional(timeout=60, readOnly=true)
+	@Transactional(readOnly=true)
 	public RicercaAccertamentoPerChiaveOttimizzatoResponse executeService(RicercaAccertamentoPerChiaveOttimizzato serviceRequest) {
 		return super.executeService(serviceRequest);
 	}
@@ -80,7 +81,9 @@ public class RicercaAccertamentoPerChiaveOttimizzatoService extends RicercaAttri
 		long startUno = System.currentTimeMillis();
 
 		//2. Si richiama il metodo interno di ricerca per chiave per impegni o accertamenti:
-		EsitoRicercaMovimentoPkDto esitoRicerca = accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, annoEsercizio, annoAccertamento, numeroAccertamento,paginazioneSubMovimentiDto,caricaDatiOpzionaliDto, Constanti.MOVGEST_TIPO_ACCERTAMENTO, true);
+		EsitoRicercaMovimentoPkDto esitoRicerca = accertamentoOttimizzatoDad.ricercaMovimentoPk(
+				richiedente, ente, annoEsercizio, annoAccertamento, numeroAccertamento, paginazioneSubMovimentiDto, caricaDatiOpzionaliDto,
+				CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, true, req.isCaricalistaModificheCollegate());
 		
 		long endUno = System.currentTimeMillis();
 		long startDue = System.currentTimeMillis();
@@ -110,6 +113,12 @@ public class RicercaAccertamentoPerChiaveOttimizzatoService extends RicercaAttri
 				res.setHasStoricizzazioneNellBilancio(count != null && count.intValue() != 0);
 			}
 			
+			//SIAC-8142
+			if(req.isCaricaAnnoAccertamentiConStessoNumeroNelBilancio()) {
+				List<Integer> anniAccertamentiConStessoNumeroNelBilancio = accertamentoOttimizzatoDad.caricaAnniAccertamentiConStessoNumeroNelBilancio(accertamento, annoEsercizio, ente);
+				res.setAnniAccertamentiConStessoNumeroNelBilancio(anniAccertamentiConStessoNumeroNelBilancio);
+			}
+			
 			
 			//componiamo la respose esito positivo:
 			res.setAccertamento(accertamento);
@@ -123,7 +132,7 @@ public class RicercaAccertamentoPerChiaveOttimizzatoService extends RicercaAttri
 			long totUno = endUno - startUno;
 			long totDue = endDue - startDue;
 			
-			CommonUtils.println("totUno: " + totUno + " - totDue: " + totDue);
+			CommonUtil.println("totUno: " + totUno + " - totDue: " + totDue);
 			
 		} else {
 			//componiamo la respose esito negativo:
@@ -137,7 +146,7 @@ public class RicercaAccertamentoPerChiaveOttimizzatoService extends RicercaAttri
 	
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {		
-		final String methodName = "RicercaAccertamentoPerChiaveOttimizzatoService : checkServiceParam()";
+//		final String methodName = "RicercaAccertamentoPerChiaveOttimizzatoService : checkServiceParam()";
 	
 		//dati di input presi da request:
 		Integer annoEsercizio = req.getpRicercaAccertamentoK().getAnnoEsercizio();

@@ -18,6 +18,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.InserisciDettaglioVariazio
 import it.csi.siac.siacbilser.model.ApplicazioneVariazione;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
@@ -70,8 +71,10 @@ public class InserisciDettaglioVariazioneImportoCapitoloService extends Variazio
 		}
 		
 		checkCoerenzaTipoCapitoloApplicazioneVariazione();
-		
-		checkDisponibilitaVariareCapitolo();
+		//SIAC-7972-revert
+//		checkDisponibilitaVariareCapitolo();
+		//SIAC-7972
+		checkDisponibilitaVariareCapitoloInDiminuzione();
 		
 		variazioniDad.inserisciDettaglioVariazioneImportoCapitolo(dettaglioVariazioneImportoCapitolo);
 		res.setDettaglioVariazioneImportoCapitolo(dettaglioVariazioneImportoCapitolo);
@@ -96,6 +99,7 @@ public class InserisciDettaglioVariazioneImportoCapitoloService extends Variazio
 	private void popolaDatiCapitolo() {
 		Capitolo<?,?> capitolo = capitoloDad.findOne(dettaglioVariazioneImportoCapitolo.getCapitolo().getUid());
 		dettaglioVariazioneImportoCapitolo.setCapitolo(capitolo);
+		//SIAC-7658
 		caricaDettaglioImportiCapitolo(dettaglioVariazioneImportoCapitolo);
 	}
 
@@ -117,13 +121,34 @@ public class InserisciDettaglioVariazioneImportoCapitoloService extends Variazio
 		
 		checkBusinessCondition(!capitoloPresenteInVariazione, ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Capitolo gia' associato alla variazione"));
 	}
-	
+	@Deprecated
 	private void checkDisponibilitaVariareCapitolo() {
 		// SIAC-6883: verifica per tutti gli anni
 		Map<String, BigDecimal> mappaImportiVariazione = variazioniDad.findStanziamentoVariazioneByUidCapitoloAndUidVariazione(Arrays.asList(dettaglioVariazioneImportoCapitolo.getCapitolo().getUid()), variazione.getUid());
 		//SIAC-7267: ritengo valido il flag fondino SE  e SOLO SE ho ricevuto in input la richiesta di non caricare i dati del cpaitolo
 		boolean gestioneCapitoloFondino = req.isSkipLoadCapitolo() && req.isCapitoloFondino();
 		checkVariazioneImporti(dettaglioVariazioneImportoCapitolo, mappaImportiVariazione, gestioneCapitoloFondino);	
+	}
+	
+	//SIAC-7972
+	private void checkDisponibilitaVariareCapitoloInDiminuzione() {
+		Integer uidCapitolo = dettaglioVariazioneImportoCapitolo.getCapitolo().getUid();
+		boolean isCapitoloFondino = capitoloDad.isCapitoloFondino(uidCapitolo);
+		if(isCapitoloFondino) {
+			return;
+		}
+		
+		controllaStanziamentiEComponenti(dettaglioVariazioneImportoCapitolo);
+	}
+	
+	@Override
+	protected boolean isAdeguaImporto(StatoOperativoVariazioneBilancio statoAttuale, Integer uidCapitolo) {
+		return false; 
+	}
+
+	@Override
+	protected boolean isAnnullamentoVariazione() {
+		return false;
 	}
 
 }

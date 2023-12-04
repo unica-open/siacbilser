@@ -54,6 +54,9 @@ public class SiacTDoc extends SiacTEnteBaseExt {
 	@Column(name="doc_data_emissione")
 	private Date docDataEmissione;
 
+	@Column(name="data_stato_sdi")
+	private Date dataCambioStatoFel;
+	
 	@Column(name="doc_data_scadenza")
 	private Date docDataScadenza;
 
@@ -1050,5 +1053,12 @@ public class SiacTDoc extends SiacTEnteBaseExt {
 	public void setDocNumeroPrimaAutoIva(String docNumeroPrimaAutoIva) {
 		this.docNumeroPrimaAutoIva = docNumeroPrimaAutoIva;
 	}
-	
+
+	public Date getDataCambioStatoFel() {
+		return dataCambioStatoFel;
+	}
+
+	public void setDataCambioStatoFel(Date dataCambioStatoFel) {
+		this.dataCambioStatoFel = dataCambioStatoFel;
+	}
 }

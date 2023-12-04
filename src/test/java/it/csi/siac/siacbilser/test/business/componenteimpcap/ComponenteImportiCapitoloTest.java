@@ -47,8 +47,8 @@ public class ComponenteImportiCapitoloTest extends BaseJunit4TestCase {
 		RicercaComponenteImportiCapitolo req = new RicercaComponenteImportiCapitolo();
 		req.setDataOra(new Date());
 		req.setRichiedente(getRichiedenteByProperties("consip", "regp"));
-		req.setAnnoBilancio(Integer.valueOf(2019));
-		req.setCapitolo(create(CapitoloUscitaGestione.class, 122094));
+		req.setAnnoBilancio(Integer.valueOf(2020));
+		req.setCapitolo(create(CapitoloUscitaGestione.class, 180589));
 		
 		RicercaComponenteImportiCapitoloResponse res = ricercaComponenteImportiCapitoloService.executeService(req);
 		assertNotNull(res);
@@ -191,4 +191,24 @@ public class ComponenteImportiCapitoloTest extends BaseJunit4TestCase {
 		assertNotNull(res);
 		
 	}
+	
+	@Test
+	public void findImpegniAssociati() {
+		Integer uidCapitolo = 159720;
+		
+		RicercaComponenteImportiCapitolo requestRicerca = new RicercaComponenteImportiCapitolo();
+		requestRicerca.setDataOra(new Date());
+		requestRicerca.setAnnoBilancio(Integer.valueOf(2020));
+		requestRicerca.setRichiedente(getRichiedenteByProperties("consip", "regp"));
+		requestRicerca.setCapitolo(create(CapitoloUscitaPrevisione.class, uidCapitolo));
+		
+		RicercaComponenteImportiCapitoloResponse response = ricercaComponenteImportiCapitoloService.executeService(requestRicerca);
+		
+		assertNotNull(response);
+		assertTrue(response.getErrori().isEmpty());
+		assertNotNull(response.getListaImportiCapitolo());
+		assertTrue(!response.getListaImportiCapitolo().isEmpty());
+		
+	}
+	
 }

@@ -163,6 +163,10 @@ public class SubdocumentoIvaDaoImpl extends JpaDao<SiacTSubdocIva, Integer> impl
 			}
 		}
 		
+		//SIAC-8173
+		//invalido il vecchio dato settando le date cancellazione
+		//in modo da mantenere uno storico delle modifiche
+		super.update(dAttuale);
 		
 		//inserimento elementi nuovi		
 		if(d.getSiacRDocIva()!=null){
@@ -214,10 +218,10 @@ public class SubdocumentoIvaDaoImpl extends JpaDao<SiacTSubdocIva, Integer> impl
 			}
 		}
 		
-		
-		
-		super.update(d);
-		return d;
+		//SIAC-8173
+		//inserisco il nuovo record
+		d.setUid(null);
+		return super.create(d);
 	}
 
 	
@@ -554,6 +558,8 @@ public class SubdocumentoIvaDaoImpl extends JpaDao<SiacTSubdocIva, Integer> impl
 			SiacDSubdocIvaStatoEnum siacDSubdocIvaStatoEnum,
 			Date subdocivaDataProtProvDa, Date subdocivaDataProtProvA,
 			Date subdocivaDataProtDefDa, Date subdocivaDataProtDefA,
+			//SIAC-7516
+			Date docDataOperazioneDa, Date docDataOperazioneA,
 			Integer registroId) {
 		final String methodName = "ricercaSinteticaSubdocumentoIva";
 		
@@ -573,15 +579,7 @@ public class SubdocumentoIvaDaoImpl extends JpaDao<SiacTSubdocIva, Integer> impl
 		jpql.append("     AND  f.siacDRelazTipo.relazTipoCode = 'QPID' ");
 		jpql.append(" ) ");
 		
-		if(siacDDocFamTipoEnums != null) {
-			jpql.append(SiacTSubdocIvaRepository.SIACTSUBDOCIIVA_DOC_FAM_TIPO_CODES_FILTER);
-			Collection<String> docFamTipoCodes = new HashSet<String>();
-			for(SiacDDocFamTipoEnum siacDDocFamTipoEnum : siacDDocFamTipoEnums) {
-				docFamTipoCodes.add(siacDDocFamTipoEnum.getCodice());
-			}
-			
-			param.put("docFamTipoCodes", docFamTipoCodes);
-		}
+		appendFilterOnSiacTDocCollegato(jpql, param, siacDDocFamTipoEnums, docDataOperazioneDa, docDataOperazioneA);
 		
 		if(StringUtils.isNotBlank(subdocivaAnno)) {
 			jpql.append(" AND d.subdocivaAnno = :subdocivaAnno ");
@@ -636,6 +634,94 @@ public class SubdocumentoIvaDaoImpl extends JpaDao<SiacTSubdocIva, Integer> impl
 		Query query = createQuery(jpql.toString(), param);
 		
 		return query.getResultList();
+	}
+
+	
+	private String getAndConditionDocFamTipoCodes(boolean applicaFiltro, String aliasSiacTDoc) {
+		if(!applicaFiltro) {
+			return "";
+		}
+		return  new StringBuilder().append(" AND ").append(aliasSiacTDoc).append(".siacDDocTipo.siacDDocFamTipo.docFamTipoCode IN (:docFamTipoCodes) ").toString();
+	}
+	
+	private String getAndConditionDataOperazione(boolean applicaFiltro, String aliasSiacTDoc, String comparison, String aliasData) {
+		if(!applicaFiltro) {
+			return "";
+		}
+		return  new StringBuilder().append(" AND ").append(aliasSiacTDoc)
+				.append(".docDataOperazione ").append(comparison).append(" :").append(aliasData).toString();
+	}
+	
+	/**
+	 * @param jpql
+	 * @param jpql
+	 * @param siacDDocFamTipoEnums
+	 * @param docDataOperazioneA 
+	 * @param docDataOperazioneDa 
+	 */
+	private void appendFilterOnSiacTDocCollegato(StringBuilder jpql, Map<String, Object> param, Collection<SiacDDocFamTipoEnum> siacDDocFamTipoEnums, Date docDataOperazioneDa, Date docDataOperazioneA) {
+		boolean filtroPerDocTipo = siacDDocFamTipoEnums != null && !siacDDocFamTipoEnums.isEmpty();
+		boolean filtroPerDocDataOperazioneDa = docDataOperazioneDa != null;
+		boolean filtroPerDocDataOperazioneA = docDataOperazioneA != null;
+		if(jpql == null || (!filtroPerDocTipo && !filtroPerDocDataOperazioneDa && !filtroPerDocDataOperazioneA)) {
+			return;
+		}
+		
+		
+		jpql.append(" AND ( ");
+		jpql.append("     EXISTS( ");
+		jpql.append("         FROM d.siacRSubdocSubdocIvas r ");
+		jpql.append("         WHERE r.dataCancellazione IS NULL " );
+		jpql.append(getAndConditionDocFamTipoCodes(filtroPerDocTipo, "r.siacTSubdoc.siacTDoc"));
+		jpql.append(getAndConditionDataOperazione(filtroPerDocDataOperazioneDa, "r.siacTSubdoc.siacTDoc", ">=", "docDataOperazioneDa"));
+		jpql.append(getAndConditionDataOperazione(filtroPerDocDataOperazioneA, "r.siacTSubdoc.siacTDoc", "<=", "docDataOperazioneA"));
+//		jpql.append("         AND r.siacTSubdoc.siacTDoc.siacDDocTipo.siacDDocFamTipo.docFamTipoCode IN (:docFamTipoCodes) ");
+		jpql.append("     ) " );
+		jpql.append("     OR EXISTS( " );
+		jpql.append("         FROM d.siacRDocIva r " );
+		jpql.append("         WHERE r.dataCancellazione IS NULL ");
+		jpql.append(getAndConditionDocFamTipoCodes(filtroPerDocTipo, "r.siacTDoc"));
+
+		jpql.append(getAndConditionDataOperazione(filtroPerDocDataOperazioneDa, "r.siacTDoc", ">=", "docDataOperazioneDa"));
+		jpql.append(getAndConditionDataOperazione(filtroPerDocDataOperazioneA, "r.siacTDoc", "<=", "docDataOperazioneA"));
+//		jpql.append("         AND r.siacTDoc.siacDDocTipo.siacDDocFamTipo.docFamTipoCode IN(:docFamTipoCodes) ");
+		jpql.append("     ) ");
+		jpql.append("     OR EXISTS( " );
+		jpql.append("         FROM d.siacRSubdocIvasFiglio si " );
+		jpql.append("         WHERE EXISTS( " );
+		jpql.append("             FROM si.siacTSubdocIvaPadre.siacRSubdocSubdocIvas r " );
+		jpql.append("             WHERE r.dataCancellazione IS NULL " );
+		jpql.append(getAndConditionDocFamTipoCodes(filtroPerDocTipo, "r.siacTSubdoc.siacTDoc"));
+		jpql.append(getAndConditionDataOperazione(filtroPerDocDataOperazioneDa, "r.siacTSubdoc.siacTDoc", ">=", "docDataOperazioneDa"));
+		jpql.append(getAndConditionDataOperazione(filtroPerDocDataOperazioneA, "r.siacTSubdoc.siacTDoc", "<=", "docDataOperazioneA"));
+//		jpql.append("             AND r.siacTSubdoc.siacTDoc.siacDDocTipo.siacDDocFamTipo.docFamTipoCode IN(:docFamTipoCodes) " );
+		jpql.append("         ) " );
+		jpql.append("         OR EXISTS( ");
+		jpql.append("             FROM si.siacTSubdocIvaPadre.siacRDocIva r ");
+		jpql.append("             WHERE r.dataCancellazione IS NULL " );
+		jpql.append(getAndConditionDocFamTipoCodes(filtroPerDocTipo, "r.siacTDoc"));
+		jpql.append(getAndConditionDataOperazione(filtroPerDocDataOperazioneDa, "r.siacTDoc", ">=", "docDataOperazioneDa"));
+		jpql.append(getAndConditionDataOperazione(filtroPerDocDataOperazioneA, "r.siacTDoc", "<=", "docDataOperazioneA"));
+//		jpql.append("             AND r.siacTDoc.siacDDocTipo.siacDDocFamTipo.docFamTipoCode IN(:docFamTipoCodes) " );
+		jpql.append("         ) ");
+		jpql.append("     ) ");
+		jpql.append(" ) ");
+		
+		if(filtroPerDocTipo) {
+			Collection<String> docFamTipoCodes = new HashSet<String>();
+			for(SiacDDocFamTipoEnum siacDDocFamTipoEnum : siacDDocFamTipoEnums) {
+				docFamTipoCodes.add(siacDDocFamTipoEnum.getCodice());
+			}
+			
+			param.put("docFamTipoCodes", docFamTipoCodes);
+		}
+		if(filtroPerDocDataOperazioneDa) {
+			param.put("docDataOperazioneDa", docDataOperazioneDa);
+		}
+		
+		if(filtroPerDocDataOperazioneA) {
+			param.put("docDataOperazioneA", docDataOperazioneA);
+		}
 	}
 
 	/* (non-Javadoc)

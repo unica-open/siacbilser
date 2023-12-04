@@ -10,12 +10,14 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
+import it.csi.siac.siaccommonser.util.dozer.MapId;
 
 
 // TODO: Auto-generated Javadoc
@@ -27,22 +29,22 @@ import it.csi.siac.siacbilser.model.TipoCapitolo;
 @EnumEntity(entityName="SiacDBilElemTipo", idPropertyName="elemTipoId", codePropertyName="elemTipoCode")
 public enum SiacDBilElemTipoEnum {
 		
-	CapitoloEntrataGestione("CAP-EG", TipoCapitolo.CAPITOLO_ENTRATA_GESTIONE, CapitoloEntrataGestione.class, TipoCapitolo.CAPITOLO_ENTRATA_GESTIONE),
-	CapitoloUscitaGestione("CAP-UG", TipoCapitolo.CAPITOLO_USCITA_GESTIONE, CapitoloUscitaGestione.class, TipoCapitolo.CAPITOLO_USCITA_GESTIONE),
-	CapitoloEntrataPrevisione("CAP-EP", TipoCapitolo.CAPITOLO_ENTRATA_PREVISIONE, CapitoloEntrataPrevisione.class, TipoCapitolo.CAPITOLO_ENTRATA_GESTIONE),
-	CapitoloUscitaPrevisione("CAP-UP", TipoCapitolo.CAPITOLO_USCITA_PREVISIONE, CapitoloUscitaPrevisione.class, TipoCapitolo.CAPITOLO_USCITA_GESTIONE),
+	CapitoloEntrataGestione("CAP-EG", TipoCapitolo.CAPITOLO_ENTRATA_GESTIONE, CapitoloEntrataGestione.class, TipoCapitolo.CAPITOLO_ENTRATA_GESTIONE, BilMapId.SiacTBilElem_CapitoloEntrataGestione_ModelDetail),
+	CapitoloUscitaGestione("CAP-UG", TipoCapitolo.CAPITOLO_USCITA_GESTIONE, CapitoloUscitaGestione.class, TipoCapitolo.CAPITOLO_USCITA_GESTIONE, BilMapId.SiacTBilElem_CapitoloUscitaGestione_ModelDetail),
+	CapitoloEntrataPrevisione("CAP-EP", TipoCapitolo.CAPITOLO_ENTRATA_PREVISIONE, CapitoloEntrataPrevisione.class, TipoCapitolo.CAPITOLO_ENTRATA_GESTIONE, BilMapId.SiacTBilElem_CapitoloEntrataPrevisione_ModelDetail),
+	CapitoloUscitaPrevisione("CAP-UP", TipoCapitolo.CAPITOLO_USCITA_PREVISIONE, CapitoloUscitaPrevisione.class, TipoCapitolo.CAPITOLO_USCITA_GESTIONE, BilMapId.SiacTBilElem_CapitoloUscitaPrevisione_ModelDetail),
 	
 
-	ArticoloEntrataPrevisione("ART-EP", null, null, null),
-	ArticoloUscitaPrevisione("ART-UP", null, null, null),
-	ArticoloEntrataGestione("ART-EG", null, null, null),
-	ArticoloUscitaGestione("ART-UG", null, null, null),
+	ArticoloEntrataPrevisione("ART-EP", null, null, null, null),
+	ArticoloUscitaPrevisione("ART-UP", null, null, null, null),
+	ArticoloEntrataGestione("ART-EG", null, null, null, null),
+	ArticoloUscitaGestione("ART-UG", null, null, null, null),
 	
 
-	UnitaElementareBilancioEntrataPrevisione("UEB-EP", null, null, null),
-	UnitaElementareBilancioUscitaPrevisione("UEB-UP", null, null, null),
-	UnitaElementareBilancioEntrataGestione("UEB-EG", null, null, null),
-	UnitaElementareBilancioUscitaGestione("UEB-UG", null, null, null);
+	UnitaElementareBilancioEntrataPrevisione("UEB-EP", null, null, null, null),
+	UnitaElementareBilancioUscitaPrevisione("UEB-UP", null, null, null, null),
+	UnitaElementareBilancioEntrataGestione("UEB-EG", null, null, null, null),
+	UnitaElementareBilancioUscitaGestione("UEB-UG", null, null, null, null);
 
 	
 	/** The codice. */
@@ -55,6 +57,8 @@ public enum SiacDBilElemTipoEnum {
 	private final Class<?> capitoloClass;
 
 	private final TipoCapitolo tipoCapitoloEx;
+	
+	private final MapId mapIdModelDetail;
 
 	/**
 	 * Instantiates a new siac d bil elem tipo enum.
@@ -63,11 +67,12 @@ public enum SiacDBilElemTipoEnum {
 	 * @param tipoCapitolo the tipo capitolo
 	 * @param capitoloClass the capitolo class
 	 */
-	SiacDBilElemTipoEnum(String codice, TipoCapitolo tipoCapitolo, Class<? extends Capitolo<?, ?>> capitoloClass, TipoCapitolo tipoCapitoloEx){		
+	SiacDBilElemTipoEnum(String codice, TipoCapitolo tipoCapitolo, Class<? extends Capitolo<?, ?>> capitoloClass, TipoCapitolo tipoCapitoloEx, MapId mapIdModelDetail){		
 		this.codice = codice;
 		this.tipoCapitolo = tipoCapitolo;
 		this.capitoloClass = capitoloClass;
 		this.tipoCapitoloEx = tipoCapitoloEx;
+		this.mapIdModelDetail = mapIdModelDetail;
 	}
 
 	/**
@@ -106,6 +111,13 @@ public enum SiacDBilElemTipoEnum {
 	 */
 	public Class<?> getCapitoloClass() {
 		return capitoloClass;
+	}
+
+	/**
+	 * @return the mapIdModelDetail
+	 */
+	public MapId getMapIdModelDetail() {
+		return this.mapIdModelDetail;
 	}
 
 	/**
@@ -157,6 +169,22 @@ public enum SiacDBilElemTipoEnum {
 		}
 		
 		throw new IllegalArgumentException("Il tipo capitolo "+ tipoCapitolo + " non ha un mapping corrispondente in SiacDBilElemTipoEnum");
+	}
+	
+	/**
+	 * By tipo capitolo.
+	 *
+	 * @param tipoCapitolo the tipo capitolo
+	 * @return the siac d bil elem tipo enum
+	 */
+	public static SiacDBilElemTipoEnum byCapitoloClass(Class<? extends Capitolo<?, ?>> clazz){
+		for(SiacDBilElemTipoEnum e : SiacDBilElemTipoEnum.values()){
+			if(clazz.equals(e.getCapitoloClass())) {
+				return e;
+			}
+		}
+		
+		throw new IllegalArgumentException("La classe capitolo "+ clazz.getSimpleName() + " non ha un mapping corrispondente in SiacDBilElemTipoEnum");
 	}
 	
 	/**

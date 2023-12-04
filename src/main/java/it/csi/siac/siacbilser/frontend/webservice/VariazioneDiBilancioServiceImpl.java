@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import it.csi.siac.siacbilser.business.service.base.BaseServiceExecutor;
-import it.csi.siac.siacbilser.business.service.excel.variazionidibilancio.StampaExcelVariazioneDiBilancioService;
 import it.csi.siac.siacbilser.business.service.variazionibilancio.AggiornaAnagraficaVariazioneBilancioAsyncService;
 import it.csi.siac.siacbilser.business.service.variazionibilancio.AggiornaAnagraficaVariazioneBilancioService;
 import it.csi.siac.siacbilser.business.service.variazionibilancio.AggiornaDettaglioVariazioneImportoCapitoloService;
@@ -29,6 +28,7 @@ import it.csi.siac.siacbilser.business.service.variazionibilancio.RicercaDettagl
 import it.csi.siac.siacbilser.business.service.variazionibilancio.RicercaDettaglioVariazioneComponenteImportoCapitoloService;
 import it.csi.siac.siacbilser.business.service.variazionibilancio.RicercaSingoloDettaglioVariazioneImportoCapitoloNellaVariazioneService;
 import it.csi.siac.siacbilser.business.service.variazionibilancio.RicercaVariazioneBilancioService;
+import it.csi.siac.siacbilser.business.service.variazionibilancio.report.excel.VariazioneBilancioExcelReportService;
 import it.csi.siac.siacbilser.business.service.variazionicodifica.AggiornaVariazioneCodificheService;
 import it.csi.siac.siacbilser.business.service.variazionicodifica.DefinisceVariazioneCodificheService;
 import it.csi.siac.siacbilser.business.service.variazionicodifica.InserisceVariazioneCodificheService;
@@ -74,8 +74,8 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBilancio;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneBilancioResponse;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneCodifiche;
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaVariazioneCodificheResponse;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancio;
-import it.csi.siac.siaccecser.frontend.webservice.msg.StampaExcelVariazioneDiBilancioResponse;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReport;
+import it.csi.siac.siaccecser.frontend.webservice.msg.VariazioneBilancioExcelReportResponse;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceRequestWrapper;
 import it.csi.siac.siaccorser.frontend.webservice.msg.AsyncServiceResponse;
 import it.csi.siac.siaccorser.model.Esito;
@@ -242,8 +242,8 @@ public class VariazioneDiBilancioServiceImpl implements VariazioneDiBilancioServ
 	}
 
 	@Override
-	public StampaExcelVariazioneDiBilancioResponse stampaExcelVariazioneDiBilancio(StampaExcelVariazioneDiBilancio parameters) {
-		return appCtx.getBean(Utility.toDefaultBeanName(StampaExcelVariazioneDiBilancioService.class), StampaExcelVariazioneDiBilancioService.class).executeService(parameters);
+	public VariazioneBilancioExcelReportResponse variazioneBilancioExcelReport(VariazioneBilancioExcelReport parameters) {
+		return appCtx.getBean(Utility.toDefaultBeanName(VariazioneBilancioExcelReportService.class), VariazioneBilancioExcelReportService.class).executeService(parameters);
 	}
 
 	// SIAC-6881

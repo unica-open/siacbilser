@@ -13,7 +13,7 @@ import it.csi.siac.siacbilser.integration.dao.SiacTMovgestTRepository;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDMovgestTsDetTipoEnum;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
@@ -33,7 +33,7 @@ import it.csi.siac.siacgenser.model.RegistrazioneMovFin;
  * @author Domenico
  */
 public class AccertamentoMovimentoHandler extends MovimentoHandler<Accertamento> {
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	private SiacTMovgestTRepository siacTMovgestTRepository;
 	private SoggettoDad soggettoDad;
@@ -53,8 +53,8 @@ public class AccertamentoMovimentoHandler extends MovimentoHandler<Accertamento>
 		BigDecimal importoIniziale = siacTMovgestTRepository.findImportoByMovgestId(accertamento.getUid(), SiacDMovgestTsDetTipoEnum.Iniziale.getCodice());
 		accertamento.setImportoIniziale(importoIniziale);
 		
-		// SIAC-5605
-		if(accertamento.getSoggetto() == null) {
+		// SIAC-5605 e SIAC-7497
+		if(accertamento.getSoggetto() == null || accertamento.getSoggetto().getUid() == 0) {
 			// Carico il soggetto per tutelarmi
 			Soggetto soggetto = soggettoDad.findSoggettoByIdMovimentoGestione(accertamento.getUid());
 			// Il soggetto potrebbe essere null. Ignoro
@@ -113,7 +113,7 @@ public class AccertamentoMovimentoHandler extends MovimentoHandler<Accertamento>
 		Entita movimento = registrazioneMovFin.getMovimento();
 		Accertamento accertamento = (Accertamento) movimento;
 		String descrizione = accertamento.getDescrizione() != null ? accertamento.getDescrizione() : "";
-		return String.format("Acc %s %s", accertamento.getNumero(), descrizione);
+		return String.format("Acc %s %s", accertamento.getNumeroBigDecimal(), descrizione);
 	}
 
 	@Override

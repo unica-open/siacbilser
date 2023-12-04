@@ -4,7 +4,9 @@
 */
 package it.csi.siac.siacbilser.business.service.documentoentrata.fatturaXml;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -16,30 +18,35 @@ import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 
 import it.csi.siac.fattura.xml.FatturaElettronicaType;
-import it.csi.siac.siaccommon.util.log.LogUtil;
-import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
-import it.csi.siac.siacfin2ser.model.SubdocumentoIvaEntrata;
-import it.csi.siac.siacfinser.model.soggetto.IndirizzoSoggetto;
-import it.csi.siac.siacfinser.model.soggetto.Soggetto;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
+/**
+ * The Class CreaXml.
+ */
 public class CreaXml {
 	
-	private LogUtil log = new LogUtil(getClass());
+	private LogSrvUtil log = new LogSrvUtil(getClass());
 	
-	public String elabora(DocumentoEntrata doc, Soggetto sog, SubdocumentoIvaEntrata docIva, IndirizzoSoggetto soggEnte, String partitaIvaFEL) {
+	/**
+	 * Elabora la fattura, restuituendone l'xml da inviare.
+	 *
+	 * @param fat the fat
+	 * @param codiceFiscale the codice fiscale
+	 * @param chiaveDoc the chiave doc
+	 * @return the string
+	 */
+	public String elabora(FatturaElettronicaType fat, String codiceFiscale, Integer chiaveDoc) {
+        final String methodName="elabora";
 		
-		CopiaBean cp = new CopiaBean();
-		cp.creaFattura(doc, sog, docIva, soggEnte, partitaIvaFEL);
-
 		String encode64=null;
-		FatturaElettronicaType fat = cp.getFattura();
 		try {
 			ByteArrayOutputStream file=	exportXml(fat);
 			if(file != null) {
 
-				ByteArrayOutputStream zip=convertToZip(file, doc.getSoggetto().getCodiceFiscale(), new Integer(doc.getUid()).toString());
+				ByteArrayOutputStream zip=convertToZip(file, codiceFiscale, chiaveDoc.toString());
 				encode64=new String(Base64.encodeBase64(zip.toByteArray()));
 				
 				// Salvataggio del file in locale
@@ -52,7 +59,7 @@ public class CreaXml {
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			log.error("elabora", e.getMessage());
+			log.error(methodName, e.getMessage());
 		} /*catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
@@ -64,8 +71,9 @@ public class CreaXml {
 
 	
 	private ByteArrayOutputStream exportXml(FatturaElettronicaType fat) throws JAXBException {
+		final String methodName ="exportXml";
 
-		log.info("exportXml","Inizio generazione xml");
+		log.info(methodName,"Inizio generazione xml");
 		
 		ByteArrayOutputStream baos = null;
 		
@@ -86,18 +94,22 @@ public class CreaXml {
 	        baos = new ByteArrayOutputStream();
 	        m.marshal(jaxbElement, baos);
 	        
-	        log.debug("faturaFelDaInviare", baos.toString());
+	        log.debug(methodName, "Xml: " +  baos.toString());
+	        //metodo per creare un file con l'xml, data la frequenza con cui questa necessita' si propone, 
+	        //lascio la chiamata commentata.
+//	        salvaXmlInFile(baos, fat);
 	        
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			log.error("exportXml", e.getMessage());
+			log.error(methodName, e.getMessage());
 		}
 		
-		log.info("exportXml","fine generazione xml");
+		log.info(methodName,"fine generazione xml");
 
 		return baos;
 	}
 	
+
 	private ByteArrayOutputStream convertToZip(ByteArrayOutputStream file, String codFis, String id) {
 		
 		ByteArrayOutputStream output =new ByteArrayOutputStream();
@@ -124,6 +136,51 @@ public class CreaXml {
 		
 	}
 	
-
+	private void salvaXmlInFile(ByteArrayOutputStream baos, FatturaElettronicaType fat) throws IOException {
+		String fatIdentifier = fat.getFatturaElettronicaBody() != null && !fat.getFatturaElettronicaBody().isEmpty()
+				&& fat.getFatturaElettronicaBody().get(0) != null && fat.getFatturaElettronicaBody().get(0).getDatiGenerali() != null
+				&& fat.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento() != null && fat.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero() != null ?
+						fat.getFatturaElettronicaBody().get(0).getDatiGenerali().getDatiGeneraliDocumento().getNumero()
+						: "fattura_in_emissione";
+						
+		fatIdentifier = fatIdentifier.replace("/", "-");
+//		String basePath="";
+		String basePath="/tmp/xml_fel/";
+		String fileName=basePath 
+				+ fatIdentifier
+				+ ".xml";
+		byte[] bytes = baos.toByteArray();
+		
+		java.io.File f = new java.io.File(fileName);
+		ByteArrayInputStream bais = null;
+		FileOutputStream fos = null;
+		
+		 
+		try {
+			bais = new ByteArrayInputStream(bytes);
+			fos = new FileOutputStream(f, false);
+			
+			fos.write(bytes);
+		} finally {
+			
+			if(fos!=null) {
+				try {
+					fos.close();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+			fos = null;
+			f = null;
+			if(bais!=null){
+				try {
+					bais.close();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+			bais = null;
+		}
+	}
 	
 }

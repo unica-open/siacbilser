@@ -37,7 +37,7 @@ import it.csi.siac.siacbilser.model.ElabKeys;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccecser.model.TipoRichiestaEconomale;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.ResponseHandler;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Bilancio;
@@ -72,7 +72,7 @@ import it.csi.siac.siacgenser.model.TipoCollegamento;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class RegistrazioneGENServiceHelper extends ServiceHelper {
 	
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	//Services
 	@Autowired

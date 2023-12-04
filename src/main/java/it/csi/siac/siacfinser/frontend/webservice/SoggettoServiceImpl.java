@@ -277,7 +277,7 @@ public class SoggettoServiceImpl extends AbstractService implements SoggettoServ
 			@Override
 			AggiornaSoggettoProvvisorioResponse executeService(AggiornaSoggettoProvvisorio request) {
 				// SIAC-6847
-				log.debug("REQUEST-AGGIORNASOGGETTOPROVVISORIO", JAXBUtility.marshall(request));
+		//		log.debug("REQUEST-AGGIORNASOGGETTOPROVVISORIO", JAXBUtility.marshall(request));
 				return appCtx.getBean(AggiornaSoggettoProvvisorioService.class).executeService(request);
 			}
 		}.execute(request);

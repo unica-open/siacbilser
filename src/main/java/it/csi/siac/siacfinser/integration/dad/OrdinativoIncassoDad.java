@@ -9,24 +9,27 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.integration.dao.common.dto.AnnullaOrdinativoIncassoInfoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.EsitoAggiornamentoMovimentoGestioneDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OrdinativoInInserimentoInfoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneOrdinativoPagamentoDto;
+import it.csi.siac.siacfinser.integration.entity.SiacDContotesoreriaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDOrdinativoStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRMovgestTsAttrFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoProvCassaFin;
@@ -38,10 +41,11 @@ import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTsDetFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTProvCassaFin;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.EntityOrdinativiToModelOrdinativiConverter;
 import it.csi.siac.siacfinser.integration.util.Operazione;
 import it.csi.siac.siacfinser.model.Accertamento;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.ordinativo.Ordinativo.StatoOperativoOrdinativo;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoIncasso;
 import it.csi.siac.siacfinser.model.ordinativo.RegolarizzazioneProvvisorio;
@@ -209,7 +213,7 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 				for (SubOrdinativoIncasso subOrdinativoIt : elencoSubOrdinativiIncasso) {
 					if (siacTOrdinativoT.getOrdTsId().intValue()==subOrdinativoIt.getUid()) {
 						//CREDITORE/DEBITORE
-						Soggetto creditore = componiSoggettoDiOrdinativo(siacTOrdinativoT.getSiacTOrdinativo(), Constanti.AMBITO_FIN, idEnte,datiOperazioneDto,datiOttimizzazione);
+						Soggetto creditore = componiSoggettoDiOrdinativo(siacTOrdinativoT.getSiacTOrdinativo(), CostantiFin.AMBITO_FIN, idEnte,datiOperazioneDto,datiOttimizzazione);
 						subOrdinativoIt.getOrdinativoIncasso().setSoggetto(creditore);
 						
 						//IMPORTI DEL SUB:
@@ -247,13 +251,15 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 		Integer annoEsercizio = bilancio.getAnno();
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 		SiacDOrdinativoStatoFin siacDOrdinativoStato = new SiacDOrdinativoStatoFin();
-		siacDOrdinativoStato = siacDOrdinativoStatoRepository.findDOrdinativoStatoValidoByEnteAndCode(idEnte, Constanti.statoOperativoOrdinativoEnumToString(StatoOperativoOrdinativo.ANNULLATO), datiOperazioneDto.getTs());
+		siacDOrdinativoStato = siacDOrdinativoStatoRepository.findDOrdinativoStatoValidoByEnteAndCode(idEnte, CostantiFin.statoOperativoOrdinativoEnumToString(StatoOperativoOrdinativo.ANNULLATO), datiOperazioneDto.getTs());
 
-		SiacTOrdinativoFin siacTOrdinativo = siacTOrdinativoRepository.findOrdinativoValidoByAnnoAndNumeroAndTipo(idEnte, annoOrdinativoIncasso, BigDecimal.valueOf(numeroOrdinativoIncasso), Constanti.D_ORDINATIVO_TIPO_INCASSO, datiOperazioneDto.getTs());
+		SiacTOrdinativoFin siacTOrdinativo = siacTOrdinativoRepository.findOrdinativoValidoByAnnoAndNumeroAndTipo(idEnte, annoOrdinativoIncasso, BigDecimal.valueOf(numeroOrdinativoIncasso), CostantiFin.D_ORDINATIVO_TIPO_INCASSO, datiOperazioneDto.getTs());
 
 		//Annulla Ordinativo
 		if (siacTOrdinativo!=null) {
-			setDaTrasmettere(siacTOrdinativo.getUid(), Boolean.TRUE);
+			
+//			TASK-264
+//			setDaTrasmettere(siacTOrdinativo.getUid(), Boolean.TRUE);
 			
 			Timestamp tsAnnulla = datiOperazioneDto.getTs();
 			
@@ -264,14 +270,14 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 				
 				//GENNAIO 2018 - In passato non veniva settata la data cancellazione,
 				//per mettermi al riparo da questa situzione do una bonificata:
-				listaRelOrdinativo = DatiOperazioneUtils.bonificaDataCancellazione(listaRelOrdinativo, siacROrdinativoStatoRepository, datiOperazioneCancella);
+				listaRelOrdinativo = DatiOperazioneUtil.bonificaDataCancellazione(listaRelOrdinativo, siacROrdinativoStatoRepository, datiOperazioneCancella);
 				//
 				
 				boolean invalidatoVecchioStato = false;
 				for(SiacROrdinativoStatoFin itStati : listaRelOrdinativo){
-					if(DatiOperazioneUtils.isValido(itStati, tsAnnulla)){
+					if(DatiOperazioneUtil.isValido(itStati, tsAnnulla)){
 						//CANCELLO LOGICAMENTE IL LEGAME CON IL VECCHIO STATO:
-						itStati = DatiOperazioneUtils.cancellaRecord(itStati, siacROrdinativoStatoRepository, datiOperazioneCancella, siacTAccountRepository);
+						itStati = DatiOperazioneUtil.cancellaRecord(itStati, siacROrdinativoStatoRepository, datiOperazioneCancella, siacTAccountRepository);
 						//
 						//ok ho trovato il vecchio stato ed e' stato invalidato:
 						invalidatoVecchioStato = true;
@@ -287,7 +293,7 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 					SiacROrdinativoStatoFin siacROrdinativoStato = new SiacROrdinativoStatoFin();
 					DatiOperazioneDto datiOperazioneInserimento = new DatiOperazioneDto(tsAnnulla.getTime(), Operazione.INSERIMENTO, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
 
-					siacROrdinativoStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoStato, datiOperazioneInserimento, siacTAccountRepository);
+					siacROrdinativoStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoStato, datiOperazioneInserimento, siacTAccountRepository);
 					siacROrdinativoStato.setSiacTOrdinativo(siacTOrdinativo);;
 					siacROrdinativoStato.setSiacDOrdinativoStato(siacDOrdinativoStato);
 					siacROrdinativoStatoRepository.saveAndFlush(siacROrdinativoStato);
@@ -315,7 +321,8 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 												String.valueOf(annoEsercizio),
 												siacTMovgest.getMovgestAnno(),
 												siacTMovgest.getMovgestNumero(),
-												Constanti.MOVGEST_TIPO_ACCERTAMENTO,
+												CostantiFin.MOVGEST_TIPO_ACCERTAMENTO,
+												false,
 												false);
 
 										//Annullare acc se automatico 
@@ -325,12 +332,12 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 											for (SiacRMovgestTsAttrFin siacRMovgestTsAttr : listaSiacRMovgestTsAttr) {
 												if (siacRMovgestTsAttr.getSiacTAttr()!=null && 
 														siacRMovgestTsAttr.getSiacTAttr().getAttrCode()!=null && 
-														siacRMovgestTsAttr.getSiacTAttr().getAttrCode().equalsIgnoreCase(Constanti.T_ATTR_CODE_ACC_AUTO)) {
-													if (siacRMovgestTsAttr.getBoolean_()!=null && siacRMovgestTsAttr.getBoolean_().equalsIgnoreCase(Constanti.TRUE)) {
+														siacRMovgestTsAttr.getSiacTAttr().getAttrCode().equalsIgnoreCase(CostantiFin.T_ATTR_CODE_ACC_AUTO)) {
+													if (siacRMovgestTsAttr.getBoolean_()!=null && siacRMovgestTsAttr.getBoolean_().equalsIgnoreCase(CostantiFin.TRUE)) {
 														DatiOperazioneDto datiOperazioneAnnulla = commonDad.inizializzaDatiOperazione(ente, richiedente, Operazione.ANNULLA, null);
 														//Modificato per doppia gestione su annulla movimento
-//															Accertamento accertamentoAnnullato = (Accertamento) accertamentoOttimizzatoDad.annullaMovimento(ente, richiedente, accertamento, Constanti.MOVGEST_TIPO_ACCERTAMENTO, datiOperazioneAnnulla,bilancio);
-														EsitoAggiornamentoMovimentoGestioneDto esitoAnnullaMovimento = accertamentoOttimizzatoDad.annullaMovimento(ente, richiedente, accertamento, Constanti.MOVGEST_TIPO_ACCERTAMENTO, datiOperazioneAnnulla,bilancio);
+//															Accertamento accertamentoAnnullato = (Accertamento) accertamentoOttimizzatoDad.annullaMovimento(ente, richiedente, accertamento, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, datiOperazioneAnnulla,bilancio);
+														EsitoAggiornamentoMovimentoGestioneDto esitoAnnullaMovimento = accertamentoOttimizzatoDad.annullaMovimento(ente, richiedente, accertamento, CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, datiOperazioneAnnulla,bilancio);
 														Accertamento accertamentoAnnullato = (Accertamento)esitoAnnullaMovimento.getMovimentoGestione();
 //															break;
 													}
@@ -351,7 +358,7 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 			List<SiacROrdinativoProvCassaFin> listaSiacROrdinativoProvCassa = siacROrdinativoProvCassaRepository.findROrdinativoProvCassaByIdOrdinativo(idEnte, siacTOrdinativo.getOrdId(), datiOperazioneDto.getTs());
 			for(SiacROrdinativoProvCassaFin siacROrdinativoProvCassa : listaSiacROrdinativoProvCassa){
 				if (siacROrdinativoProvCassa.getDataCancellazione()==null) {
-					siacROrdinativoProvCassa = DatiOperazioneUtils.cancellaRecord(siacROrdinativoProvCassa, siacROrdinativoProvCassaRepository, datiOperazioneCancella, siacTAccountRepository);
+					siacROrdinativoProvCassa = DatiOperazioneUtil.cancellaRecord(siacROrdinativoProvCassa, siacROrdinativoProvCassaRepository, datiOperazioneCancella, siacTAccountRepository);
 				}
 			}
 			
@@ -364,7 +371,7 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 					if(siacTOrdinativoTFin.getSiacRSubdocOrdinativoTs()!=null && siacTOrdinativoTFin.getSiacRSubdocOrdinativoTs().size()> 0){
 						SiacRSubdocOrdinativoTFin siacRSubdocOrdinativoTFin = siacTOrdinativoTFin.getSiacRSubdocOrdinativoTs().get(0);
 						DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(getCurrentMillisecondsTrentaMaggio2017(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
-						siacRSubdocOrdinativoTFin = DatiOperazioneUtils.cancellaRecord(siacRSubdocOrdinativoTFin, siacRSubdocOrdinativoTFinRepository, datiOperazioneCancella, siacTAccountRepository);
+						siacRSubdocOrdinativoTFin = DatiOperazioneUtil.cancellaRecord(siacRSubdocOrdinativoTFin, siacRSubdocOrdinativoTFinRepository, datiOperazioneCancella, siacTAccountRepository);
 						
 					}
 				}
@@ -400,7 +407,7 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 					ProvvisorioDiCassa provvisorioDiCassa = regProvvIt.getProvvisorioDiCassa();
 					BigDecimal numero = new BigDecimal(provvisorioDiCassa.getNumero());
 					Integer anno = provvisorioDiCassa.getAnno();
-					SiacTProvCassaFin siacTProvCassa = siacTProvCassaRepository.findProvvisorioDiCassaValidoByAnnoNumero(idEnte, anno, numero, now, Constanti.PROVCASSA_TIPO_ENTRATA);
+					SiacTProvCassaFin siacTProvCassa = siacTProvCassaRepository.findProvvisorioDiCassaValidoByAnnoNumero(idEnte, anno, numero, now, CostantiFin.PROVCASSA_TIPO_ENTRATA);
 					if(siacTProvCassa==null || siacTProvCassa.getProvcDataAnnullamento()!=null){
 						//TODO errore
 						return listaErrori;
@@ -480,4 +487,18 @@ public class OrdinativoIncassoDad extends OrdinativoDad<OrdinativoIncasso,SubOrd
 		return ordinativo;
 		
 	}
+
+	public BigDecimal getDisponibilitaIncassareSottoContoVincolato(ContoTesoreria conto, CapitoloEntrataGestione capitolo, Ente ente, DatiOperazioneDto datiOperazione) {
+			final String methodName ="getDisponibilitaPagareSottoContoVincolato";
+			if(conto.getUid() == 0 && StringUtils.isNotBlank(conto.getCodice())) {
+				SiacDContotesoreriaFin found = siacDContotesoreriaRepository.findContotesoreriaByCode(ente.getUid(), conto.getCodice(), datiOperazione.getTs());
+				int uidConto = found != null? found.getUid() : 0;
+				conto.setUid(uidConto);
+			}
+			if(conto.getUid() == 0 || capitolo.getUid() == 0) {
+				log.error(methodName, "impossibile reperire la disponibilita senza uid del conto e del capitolo.");
+				return null;
+			}
+			return ordinativoDao.findDisponibilitaIncassareSottoContoVincolato(conto.getUid(), capitolo.getUid(), ente.getUid());
+		}
 }

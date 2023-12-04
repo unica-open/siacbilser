@@ -261,7 +261,6 @@ public class DefiniscePreDocumentoSpesaService extends CheckedAccountBaseService
 		
 //		subDoc.setCommissioniDocumento(CommissioniDocumento.BENEFICIARIO);
 		subDoc.setProvvisorioCassa(preDoc.getProvvisorioDiCassa());
-		subDoc.setVoceMutuo(preDoc.getVoceMutuo());
 		subDoc.setDocumento(doc);
 		subDoc.setEnte(ente);
 		subDoc.setFlagConvalidaManuale(this.flagConvalidaManuale);
@@ -554,9 +553,6 @@ public class DefiniscePreDocumentoSpesaService extends CheckedAccountBaseService
 				PreDocumentoSpesaModelDetail.ProvvisorioDiCassa,
 				PreDocumentoSpesaModelDetail.Sogg,
 				PreDocumentoSpesaModelDetail.Stato,
-				PreDocumentoSpesaModelDetail.VoceMutuo,
-				//SIAC-6784
-				PreDocumentoSpesaModelDetail.ElencoDocumentiAllegato,
 				
 				ImpegnoModelDetail.CigCup,
 				ImpegnoModelDetail.SiopeAssenzaMotivazione,

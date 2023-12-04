@@ -23,5 +23,22 @@ public interface SiacRMovgestTsRepository extends JpaRepository<SiacRMovgestTsFi
 	public List<SiacRMovgestTsFin> findVincoliByImpegno(@Param("enteProprietarioId") Integer enteProprietarioId,
 												  	 @Param("impegnoTsId") Integer impegnoTsId,
 												  	 @Param("dataInput") Timestamp  dataInput);
+
+	//SIAC-7779
+	@Query(value=" SELECT srmt.* " + 
+			" FROM siac_r_movgest_ts srmt " + 
+			" JOIN siac_r_modifica_vincolo srmv ON srmv.movgest_ts_r_id = srmt.movgest_ts_r_id and srmv.modvinc_tipo_operazione = 'INSERIMENTO' " + 
+			" JOIN siac_t_modifica stm ON stm.mod_id = srmv.mod_id " + 
+			" JOIN siac_r_movgest_aggiudicazione srma ON stm.mod_id = srma.mod_id " + 
+			" JOIN siac_t_ente_proprietario step ON srmt.ente_proprietario_id = step.ente_proprietario_id AND step.ente_proprietario_id = :enteProprietarioId " + 
+			" WHERE srmt.movgest_ts_b_id = :impegnoTsId " + 
+			" AND srmv.data_cancellazione is NULL " + 
+			" AND ( srmv.validita_fine is NULL OR srmt.validita_fine < CURRENT_TIMESTAMP ) " + 
+			" AND srmt.data_cancellazione is NULL " + 
+			" AND ( srmt.validita_fine is NULL OR srmt.validita_fine < CURRENT_TIMESTAMP ) " + 
+			" AND srma.data_cancellazione is NULL " + 
+			" AND ( srma.validita_fine is NULL OR srma.validita_fine < CURRENT_TIMESTAMP ) ", nativeQuery = true)
+	public List<SiacRMovgestTsFin> findVincoliByImpegno(@Param("enteProprietarioId") Integer enteProprietarioId,
+			@Param("impegnoTsId") Integer impegnoTsId);
 	
 }

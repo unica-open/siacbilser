@@ -105,11 +105,6 @@ public class SiacTLiquidazione extends SiacTEnteBase {
 	@OneToMany(mappedBy="siacTLiquidazione",cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
 	private List<SiacRLiquidazioneStato> siacRLiquidazioneStatos;
 
-	//bi-directional many-to-one association to SiacRMutuoVoceLiquidazione
-	/** The siac r mutuo voce liquidaziones. */
-	@OneToMany(mappedBy="siacTLiquidazione")
-	private List<SiacRMutuoVoceLiquidazione> siacRMutuoVoceLiquidaziones;
-
 	//bi-directional many-to-one association to SiacRSubdocLiquidazione
 	/** The siac r subdoc liquidaziones. */
 	@OneToMany(mappedBy="siacTLiquidazione")
@@ -614,50 +609,7 @@ public class SiacTLiquidazione extends SiacTEnteBase {
 		return siacRLiquidazioneStato;
 	}
 
-	/**
-	 * Gets the siac r mutuo voce liquidaziones.
-	 *
-	 * @return the siac r mutuo voce liquidaziones
-	 */
-	public List<SiacRMutuoVoceLiquidazione> getSiacRMutuoVoceLiquidaziones() {
-		return this.siacRMutuoVoceLiquidaziones;
-	}
-
-	/**
-	 * Sets the siac r mutuo voce liquidaziones.
-	 *
-	 * @param siacRMutuoVoceLiquidaziones the new siac r mutuo voce liquidaziones
-	 */
-	public void setSiacRMutuoVoceLiquidaziones(List<SiacRMutuoVoceLiquidazione> siacRMutuoVoceLiquidaziones) {
-		this.siacRMutuoVoceLiquidaziones = siacRMutuoVoceLiquidaziones;
-	}
-
-	/**
-	 * Adds the siac r mutuo voce liquidazione.
-	 *
-	 * @param siacRMutuoVoceLiquidazione the siac r mutuo voce liquidazione
-	 * @return the siac r mutuo voce liquidazione
-	 */
-	public SiacRMutuoVoceLiquidazione addSiacRMutuoVoceLiquidazione(SiacRMutuoVoceLiquidazione siacRMutuoVoceLiquidazione) {
-		getSiacRMutuoVoceLiquidaziones().add(siacRMutuoVoceLiquidazione);
-		siacRMutuoVoceLiquidazione.setSiacTLiquidazione(this);
-
-		return siacRMutuoVoceLiquidazione;
-	}
-
-	/**
-	 * Removes the siac r mutuo voce liquidazione.
-	 *
-	 * @param siacRMutuoVoceLiquidazione the siac r mutuo voce liquidazione
-	 * @return the siac r mutuo voce liquidazione
-	 */
-	public SiacRMutuoVoceLiquidazione removeSiacRMutuoVoceLiquidazione(SiacRMutuoVoceLiquidazione siacRMutuoVoceLiquidazione) {
-		getSiacRMutuoVoceLiquidaziones().remove(siacRMutuoVoceLiquidazione);
-		siacRMutuoVoceLiquidazione.setSiacTLiquidazione(null);
-
-		return siacRMutuoVoceLiquidazione;
-	}
-
+	
 	/**
 	 * Gets the siac r subdoc liquidaziones.
 	 *

@@ -15,7 +15,7 @@ import it.csi.siac.siacbilser.integration.dad.CapitoloDad;
 import it.csi.siac.siacbilser.integration.dad.ImportiCapitoloDad;
 import it.csi.siac.siacbilser.model.Capitolo;
 import it.csi.siac.siacbilser.model.StatoOperativo;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.ServiceRequest;
@@ -74,11 +74,11 @@ public abstract class VerificaEliminabilitaCapitoloBaseService<REQ extends Servi
 	}
 	
 	protected void checkVariazioniImporti(CAP cap) {
-		checkLongValue(capitoloDad.countVariazioniImportiCapitolo(cap, EnumSet.allOf(StatoOperativoVariazioneDiBilancio.class)), "Variazioni importi presenti.");
+		checkLongValue(capitoloDad.countVariazioniImportiCapitolo(cap, EnumSet.allOf(StatoOperativoVariazioneBilancio.class)), "Variazioni importi presenti.");
 	}
 	
 	protected void checkVariazioniCodifiche(CAP cap) {
-		checkLongValue(capitoloDad.countVariazioniCodificheCapitolo(cap, EnumSet.allOf(StatoOperativoVariazioneDiBilancio.class)), "Variazioni codifiche presenti.");
+		checkLongValue(capitoloDad.countVariazioniCodificheCapitolo(cap, EnumSet.allOf(StatoOperativoVariazioneBilancio.class)), "Variazioni codifiche presenti.");
 	}
 	
 	protected void checkDocumentiSpesa(CAP cap) {

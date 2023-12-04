@@ -45,8 +45,7 @@ public interface SiacTClassRepository extends JpaRepository<SiacTClass, Integer>
 	 */
 	@Query("SELECT c.siacDClassTipo.classifTipoCode " +
 			"FROM  SiacTClass c " +
-			"WHERE c.classifId = :classifId " 
-			
+			"WHERE c.classifId = :classifId "
 			)	
 	 String findCodiceTipoClassificatoreByClassifId(@Param("classifId") Integer classifId);
 	
@@ -146,6 +145,19 @@ public interface SiacTClassRepository extends JpaRepository<SiacTClass, Integer>
 			)
 	SiacTClass findVLivelloPdcByAMovgest(@Param("movgestId") Integer movgestId);
 	
+	//SIAC-7892 cerco i figli per uid del padre e per anno di bilancio
+	@Query(value = " SELECT DISTINCT stc.*, srcft.* " + 
+			" FROM siac_t_class stc  " + 
+			" JOIN siac_r_class_fam_tree srcft ON stc.classif_id = srcft.classif_id " + 
+			" WHERE srcft.classif_id_padre = :classifIdPadre " + 
+			" AND srcft.data_cancellazione is NULL " + 
+			" AND ( srcft.validita_inizio is not NULL AND srcft.validita_inizio <= DATE_TRUNC('day',TO_TIMESTAMP(CONCAT(:anno, ' 01 01'), 'YYYY MM DD') ) ) " + 
+			" AND ( srcft.validita_fine is NULL or srcft.validita_fine >= DATE_TRUNC('day',TO_TIMESTAMP(CONCAT(:anno, ' 12 31'), 'YYYY MM DD') ) ) " + 
+			" AND stc.data_cancellazione is NULL " + 
+			" AND ( stc.validita_inizio is not NULL AND stc.validita_inizio <= DATE_TRUNC('day',TO_TIMESTAMP(CONCAT(:anno, ' 01 01'), 'YYYY MM DD') ) ) " + 
+			" AND ( stc.validita_fine is NULL or stc.validita_fine >= DATE_TRUNC('day',TO_TIMESTAMP(CONCAT(:anno, ' 12 31'), 'YYYY MM DD') ) ) " + 
+			" ORDER BY srcft.ordine ", nativeQuery = true)
+	List<SiacTClass> findChildByParentUid(@Param("classifIdPadre") Integer classifIdPadre, @Param("anno") Integer anno); 
 
 	@Query(" FROM SiacDClassTipo dct "
 			+ " WHERE dct.dataCancellazione IS NULL "
@@ -187,5 +199,57 @@ public interface SiacTClassRepository extends JpaRepository<SiacTClass, Integer>
 			)
 	List<SiacDClassTipo> findSiacDClassTipoByEnteProprietarioIdAndClassifTipoCodesAndAnnoAndElemTipoCodeAndExistsSiacTClass(
 			@Param("enteProprietarioId") Integer enteProprietarioId, @Param("classifTipoCodes") Collection<String> classifTipoCodes, @Param("anno") Integer anno, @Param("elemTipoCode") String elemTipoCode);
+	
+	//task-133
+	@Query("SELECT t.classifId "
+			+ " FROM SiacTClass t "
+			+ " WHERE t.classifCode = :classifCode "
+			+ " AND t.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			+ " AND t.siacDClassTipo.classifTipoCode = 'CATEGORIA' "
+			+ " AND t.dataCancellazione IS NULL "
+			)
+	 List<Integer> findClassifIdTipoClassificatoreByCodiceCategoria(@Param("classifCode") String codice, @Param("enteProprietarioId") Integer enteProprietarioId);
+	
+	//task-133
+	@Query(value = " SELECT ccategoria.classif_id "
+			+ "FROM siac_r_class_fam_tree  r,siac_t_class c,siac_d_class_fam fam ,siac_t_class_fam_tree tree,siac_d_class_tipo tipo, "
+			+ "     siac_t_class ccategoria, siac_d_class_tipo tipoCategoria "
+			+ "WHERE  fam.ente_proprietario_id = :ente_proprietario_id "
+			+ "AND    fam.classif_fam_id = tree.classif_fam_id "
+			+ "AND    r.classif_fam_tree_id = tree.classif_fam_tree_id "
+			+ "AND    c.classif_id = r.classif_id_padre "
+			+ "AND    tipo.classif_tipo_id = c.classif_tipo_id "
+			+ "AND    tipo.classif_tipo_code ='TIPOLOGIA' "
+			+ "AND    c.classif_code= :codiceTipologia "
+			+ "AND    cCategoria.classif_id = r.classif_id "
+			+ "AND    tipoCategoria.classif_tipo_id = cCategoria.classif_tipo_id "
+			+ "AND    tipoCategoria.classif_tipo_code = 'CATEGORIA' "
+			+ "AND    r.data_cancellazione is null "
+			+ "AND    c.data_cancellazione is null "
+			+ "AND    tree.data_cancellazione is null "
+			+ "AND    fam.data_cancellazione is null "
+			+ "AND    ccategoria.data_cancellazione is null " 
+			, nativeQuery = true)	
+	 List<Integer> findClassifIdTipoClassificatoreByCodiceTipologia(@Param("codiceTipologia") String codiceTipologia, @Param("ente_proprietario_id") Integer enteProprietarioId);
+
+	//task-138
+	@Query("SELECT t.classifId "
+			+ " FROM SiacTClass t "
+			+ " WHERE t.classifCode = :classifCode "
+			+ " AND t.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			+ " AND t.siacDClassTipo.classifTipoCode = 'PROGRAMMA' "
+			+ " AND t.dataCancellazione IS NULL "
+			)
+	 List<Integer> findClassifIdTipoClassificatoreByCodiceProgramma(@Param("classifCode") String codice, @Param("enteProprietarioId") Integer enteProprietarioId);
+	
+	//task-138
+	@Query("SELECT t.classifId "
+			+ " FROM SiacTClass t "
+			+ " WHERE t.classifCode = :classifCode "
+			+ " AND t.siacTEnteProprietario.enteProprietarioId = :enteProprietarioId "
+			+ " AND t.siacDClassTipo.classifTipoCode = 'MACROAGGREGATO' "
+			+ " AND t.dataCancellazione IS NULL "
+			)	
+	 List<Integer> findClassifIdTipoClassificatoreByCodiceMacroaggregato(@Param("classifCode") String codice, @Param("enteProprietarioId") Integer enteProprietarioId);
 	
 }

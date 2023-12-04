@@ -29,8 +29,6 @@ public class RicercaLiquidazioneParamDto implements Serializable {
 	private Integer uidProvvedimento;
 	private Integer annoLiquidazione;
 	private BigDecimal numeroLiquidazione;
-	private BigDecimal numeroMutuo;
-	private BigDecimal numeroMutuoImpegno;
 	private String tipoRicerca;
 	
 	private Integer uidStrutturaAmministrativaProvvedimento;
@@ -157,14 +155,6 @@ public class RicercaLiquidazioneParamDto implements Serializable {
 		this.numeroLiquidazione = numeroLiquidazione;
 	}
 
-	public BigDecimal getNumeroMutuo() {
-		return numeroMutuo;
-	}
-
-	public void setNumeroMutuo(BigDecimal numeroMutuo) {
-		this.numeroMutuo = numeroMutuo;
-	}
-
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -199,14 +189,6 @@ public class RicercaLiquidazioneParamDto implements Serializable {
 
 	public void setAnnoCapitolo(Integer annoCapitolo) {
 		this.annoCapitolo = annoCapitolo;
-	}
-
-	public BigDecimal getNumeroMutuoImpegno() {
-		return numeroMutuoImpegno;
-	}
-
-	public void setNumeroMutuoImpegno(BigDecimal numeroMutuoImpegno) {
-		this.numeroMutuoImpegno = numeroMutuoImpegno;
 	}
 
 	public BigDecimal getNumeroSubImpegno() {

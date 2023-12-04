@@ -55,6 +55,7 @@ import it.csi.siac.siacbilser.model.CapitoloEntrataPrevisione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.CategoriaTipologiaTitolo;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEP;
@@ -170,9 +171,11 @@ public class GestioneCapitoloUscitaPrevisioneImpl2Test extends BaseJunit4TestCas
 		capitoloUscitaPrevisione.setNote("PIO PIIIIIIIOOOOOOOOOOOO");
 		
 		CategoriaCapitolo cc = new CategoriaCapitolo();
-		cc.setCodice("FPV");
+		cc.setCodice(CategoriaCapitoloEnum.FPV.getCodice());
 		capitoloUscitaPrevisione.setCategoriaCapitolo(cc);
 		capitoloUscitaPrevisione.setFlagImpegnabile(Boolean.TRUE);
+		//task-55
+		capitoloUscitaPrevisione.setFlagNonInserireAllegatoA1(Boolean.FALSE);
 
 		Ente ente = getEnteTest();
 
@@ -638,6 +641,8 @@ public class GestioneCapitoloUscitaPrevisioneImpl2Test extends BaseJunit4TestCas
 		c.setElementoPianoDeiConti(create(ElementoPianoDeiConti.class, 127581));
 		c.setEnte(req.getRichiedente().getAccount().getEnte());
 		c.setFlagImpegnabile(Boolean.TRUE);
+		//task-55
+		c.setFlagNonInserireAllegatoA1(Boolean.FALSE);
 		c.setFlagRilevanteIva(Boolean.TRUE);
 		c.setImportiCapitolo(creaImportiCapitoloEP(Integer.valueOf(2017), new BigDecimal("5000")));
 		c.getListaImportiCapitolo().add(creaImportiCapitoloEP(Integer.valueOf(2017), new BigDecimal("5000")));

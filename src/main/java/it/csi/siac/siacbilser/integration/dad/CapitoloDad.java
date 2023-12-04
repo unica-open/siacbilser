@@ -16,6 +16,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.persistence.Tuple;
+
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.integration.dao.EnumEntityFactory;
+import it.csi.siac.siacbilser.integration.dao.SiacDContotesoreriaRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacRBilElemTipoAttrIdElemCodeRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacRBilElemTipoClassTipElemCodeRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacTBilElemRepository;
@@ -37,6 +40,7 @@ import it.csi.siac.siacbilser.integration.dao.elementobilancio.CapitoloDao;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemCategoria;
 import it.csi.siac.siacbilser.integration.entity.SiacDBilElemStato;
 import it.csi.siac.siacbilser.integration.entity.SiacDClassTipo;
+import it.csi.siac.siacbilser.integration.entity.SiacDContotesoreria;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemAttr;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemClass;
 import it.csi.siac.siacbilser.integration.entity.SiacRBilElemStato;
@@ -57,9 +61,11 @@ import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
 import it.csi.siac.siacbilser.integration.utility.CompareOperator;
 import it.csi.siac.siacbilser.model.Capitolo;
+import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
 import it.csi.siac.siacbilser.model.ClassificazioneCofog;
+import it.csi.siac.siacbilser.model.ComponenteImpegnatoPerAnno;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.Macroaggregato;
@@ -70,11 +76,12 @@ import it.csi.siac.siacbilser.model.PoliticheRegionaliUnitarie;
 import it.csi.siac.siacbilser.model.Programma;
 import it.csi.siac.siacbilser.model.RicorrenteEntrata;
 import it.csi.siac.siacbilser.model.RicorrenteSpesa;
+import it.csi.siac.siacbilser.model.RisorsaAccantonata;
 import it.csi.siac.siacbilser.model.SiopeEntrata;
 import it.csi.siac.siacbilser.model.SiopeSpesa;
 import it.csi.siac.siacbilser.model.StatoOperativo;
 import it.csi.siac.siacbilser.model.StatoOperativoElementoDiBilancio;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoFinanziamento;
 import it.csi.siac.siacbilser.model.TipoFondo;
@@ -82,6 +89,9 @@ import it.csi.siac.siacbilser.model.TipologiaAttributo;
 import it.csi.siac.siacbilser.model.TitoloSpesa;
 import it.csi.siac.siacbilser.model.TransazioneUnioneEuropeaEntrata;
 import it.csi.siac.siacbilser.model.TransazioneUnioneEuropeaSpesa;
+import it.csi.siac.siacbilser.model.VincoliCapitoloUEGest;
+import it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio;
+import it.csi.siac.siaccommon.model.ModelDetailEnum;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.ClassificatoreGenerico;
 import it.csi.siac.siaccorser.model.ClassificatoreGerarchico;
@@ -90,29 +100,26 @@ import it.csi.siac.siaccorser.model.StrutturaAmministrativoContabile;
 import it.csi.siac.siaccorser.model.TipoClassificatore;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siacfin2ser.model.CapitoloModelDetail;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
+import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
+import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
+//
 import it.csi.siac.siacfinser.model.Impegno;
 
-/*
-			 _____             _ _        _      ______          _ 
-			/  __ \           (_) |      | |     |  _  \        | |
-			| /  \/ __ _ _ __  _| |_ ___ | | ___ | | | |__ _  __| |
-welcome to	| |    / _` | '_ \| | __/ _ \| |/ _ \| | | / _` |/ _` |
-			| \__/\ (_| | |_) | | || (_) | | (_) | |/ / (_| | (_| |
-			 \____/\__,_| .__/|_|\__\___/|_|\___/|___/ \__,_|\__,_|
-			            | |                                        
-			            |_|                                        
- */
 
-/**
- * The Class CapitoloDad.
- */
+
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Transactional
 @Primary
 public class CapitoloDad extends ExtendedBaseDadImpl {
+	
+	
+	private static final String CATEGORIA_CODE_CAPITOLO_FONDINO = "STD";
+	private static final String CLASSIF_TIPO_CODE_CAPITOLO_FONDINO = "CLASSIFICATORE_3";
+	private static final String CLASSIF_CODE_CAPITOLO_FONDINO = "01";
 	
 	/** The bilancio. */
 	protected Bilancio bilancio;
@@ -123,11 +130,21 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 	
 	/** The siac t bil elem repository. */
 	@Autowired
-	private SiacTBilElemRepository siacTBilElemRepository;
+	protected SiacTBilElemRepository siacTBilElemRepository;
+	
+	//SIAC-7930
+	//SIAC-7349 - START - SR90 - MR - 03/2020 - Inject del repository FIN
+	/** The siac t bil elem fin repository. */
+//	@Autowired
+//	private SiacTBilElemFinRepository siacTBilElemFinRepository;
+	//SIAC-7349 FINE
 	
 	/** The siac t class repository. */
 	@Autowired
 	private SiacTClassRepository siacTClassRepository;
+	
+	@Autowired
+	private SiacDContotesoreriaRepository siacDContotesoreriaRepository;
 	
 	/** The siac r bil elem tipo class tip elem code repository. */
 	@Autowired
@@ -139,7 +156,7 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 	
 	/** The classificatori dad. */
 	@Autowired
-	private ClassificatoriDad classificatoriDad;
+	protected ClassificatoriDad classificatoriDad;
 	
 	/** The siac t class dao. */
 	@Autowired
@@ -171,6 +188,41 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 		
 		return c;
 	}
+	
+	//SIAC-7349 - START - SR90 - MR - 03/2020 - Funzione che calcola l'impegnato utilizzando l'entity
+	//FIXME - forse tramite function
+	/**
+	 * Ottiene le informazioni di base di un capitolo a partire dal suo Uid:
+	 * Anno,numero,articolo,ueb, tipoCapitolo, .
+	 *
+	 * @param uid the uid
+	 * @return the capitolo
+	 */
+	public List<ComponenteImpegnatoPerAnno> findImpegniAssociati(Integer uid, int anno){
+		final String methodName = "findImpegniAssociati";		
+		log.debug(methodName, "uid: "+ uid);
+		List<ComponenteImpegnatoPerAnno> componentiImpegnatiPerAnno = new ArrayList<ComponenteImpegnatoPerAnno>();
+		SiacTBilElem bilElem = siacTBilElemRepository.findOne(uid);
+		
+		if(bilElem == null){
+			throw new IllegalArgumentException("Capitolo con uid: "+ uid +" non trovato.");
+		}
+		
+		//SIAC-8012
+		List<Tuple> listaImportiComponenti = capitoloDao.findImpegnatoComponentiByCapitoloUid(uid, anno);
+		
+		for (Tuple tuple : listaImportiComponenti) {
+			ComponenteImpegnatoPerAnno cipa = new ComponenteImpegnatoPerAnno();
+			cipa.setIdComponente(tuple.get(0, Integer.class));
+	        cipa.setAnnoComponente(anno);
+			cipa.setImportoImpegnato(tuple.get(1, BigDecimal.class));
+			componentiImpegnatiPerAnno.add(cipa);
+		}
+		//
+		
+		return componentiImpegnatiPerAnno;
+	}
+	//SIAC-7349 - FINE
 	
 	/**
 	 * Ottiene le informazioni minime di un capitolo a partire dal suo Uid
@@ -292,7 +344,7 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 	 * @param tipoClassificatore the tipo classificatore
 	 * @return the t
 	 */
-	protected <T extends Codifica> T ricercaClassificatoreByClassFamAndUid(Integer uid, SiacDClassFamEnum tipoClassificatore) {
+	public <T extends Codifica> T ricercaClassificatoreByClassFamAndUid(Integer uid, SiacDClassFamEnum tipoClassificatore) {
 		final String methodName = "ricercaClassificatoreByTipoAndUid";		
 		
 		List<SiacTClass> classes = siacTBilElemRepository.ricercaClassificatoriByClassFam(uid,tipoClassificatore.getCodice());		
@@ -347,7 +399,7 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 	 * @param uidCap the uid cap
 	 * @return the struttura amministrativo contabile
 	 */
-	protected StrutturaAmministrativoContabile ricercaClassificatoreStrutturaAmministrativaContabileCapitolo(Integer uidCap) {
+	public StrutturaAmministrativoContabile ricercaClassificatoreStrutturaAmministrativaContabileCapitolo(Integer uidCap) {
 		StrutturaAmministrativoContabile sac =  ricercaClassificatoreByClassFamAndUid(uidCap, SiacDClassFamEnum.StrutturaAmministrativaContabile);
 		if(sac!=null){
 			String assessorato = ricercaAttributoTestoClassificatore(sac.getUid(), "assessorato");
@@ -516,6 +568,16 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 	 */
 	public PoliticheRegionaliUnitarie ricercaClassificatorePoliticheRegionaliUnitarie(Integer uidCap) {
 		return ricercaClassificatoreGenericoByClassTipoAndUid(uidCap, SiacDClassTipoEnum.PoliticheRegionaliUnitarie);		
+	}
+	
+	/**
+	 * Ricerca classificatore politiche regionali unitarie.
+	 *
+	 * @param uidCap the uid cap
+	 * @return the politiche regionali unitarie
+	 */
+	public RisorsaAccantonata ricercaClassificatoreRisorsaAccantonata(Integer uidCap) {
+		return ricercaClassificatoreGenericoByClassTipoAndUid(uidCap, SiacDClassTipoEnum.RisorsaAccantonata);		
 	}
 	
 	/**
@@ -762,7 +824,14 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 			
 			SiacRBilElemAttr attr = new SiacRBilElemAttr();
 			attr.setSiacTAttr(tipoAttr);
-			setFieldAttrValue(fieldName, fieldValue,/*, tipoAttr*/ attr, tipoAttrEnum);		
+			//task-55
+			if(!"flagNonInserireAllegatoA1".equals(fieldName)) {
+				setFieldAttrValue(fieldName, fieldValue,/*, tipoAttr*/ attr, tipoAttrEnum);		
+			}else {
+				if(fieldValue != null) {
+					setFieldAttrValue(fieldName, fieldValue,/*, tipoAttr*/ attr, tipoAttrEnum);
+				}
+			}
 			
 			attr.setSiacTBilElem(bilElem);
 			attr.setSiacTEnteProprietario(siacTEnteProprietario);
@@ -1472,18 +1541,23 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 		return siacTBilElemRepository.countSiacTVincoloNonAnnullatiByBilElemId(Arrays.asList(cap.getUid()), codes);
 	}
 	
-	public Long countVariazioniImportiCapitolo(Capitolo<?, ?> cap, Collection<StatoOperativoVariazioneDiBilancio> statiVariazione){
+	//SIAC-8856
+	public List<VincoliCapitoloUEGest> codiceVincolo(Capitolo<?, ?> cap, ContoTesoreria conto) {
+		return siacTBilElemRepository.codiceVincolo(cap.getUid(),conto.getCodice());
+	}
+	
+	public Long countVariazioniImportiCapitolo(Capitolo<?, ?> cap, Collection<StatoOperativoVariazioneBilancio> statiVariazione){
 		Collection<String> codes = new ArrayList<String>();
-		for(StatoOperativoVariazioneDiBilancio sovdb : statiVariazione) {
+		for(StatoOperativoVariazioneBilancio sovdb : statiVariazione) {
 			codes.add(SiacDVariazioneStatoEnum.byStatoOperativoVariazioneDiBilancio(sovdb).getCodice());
 		}
 		
 		return siacTBilElemRepository.countSiacTVariazioniImportiByBilElemIdAndStatoCodes(Arrays.asList(cap.getUid()), codes);
 	}
 	
-	public Long countVariazioniCodificheCapitolo(Capitolo<?, ?> cap, Collection<StatoOperativoVariazioneDiBilancio> statiVariazione){
+	public Long countVariazioniCodificheCapitolo(Capitolo<?, ?> cap, Collection<StatoOperativoVariazioneBilancio> statiVariazione){
 		Collection<String> codes = new ArrayList<String>();
-		for(StatoOperativoVariazioneDiBilancio sovdb : statiVariazione) {
+		for(StatoOperativoVariazioneBilancio sovdb : statiVariazione) {
 			codes.add(SiacDVariazioneStatoEnum.byStatoOperativoVariazioneDiBilancio(sovdb).getCodice());
 		}
 		return siacTBilElemRepository.countSiacTVariazioniCodificheByBilElemIdAndStatoCodes(Arrays.asList(cap.getUid()), codes);
@@ -1509,16 +1583,38 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 				mapToString(numeroCapitolo, null),
 				mapToString(numeroArticolo, null),
 				mapToString(numeroUEB, null),
-				SiacDBilElemStatoEnum.byStatoOperativoElementoDiBilancio(getStatoOperativoElementoDiBilancio).getCodice(),
+				getStatoOperativoElementoDiBilancio != null? SiacDBilElemStatoEnum.byStatoOperativoElementoDiBilancio(getStatoOperativoElementoDiBilancio).getCodice() : null,
 				new PageRequest(0, 1));
 		if(result.getNumberOfElements() == 0) {
 			log.warn(methodName, "Nessun elemento corrispondente ai criteri di ricerca");
 			return null;
 		}
-		
 		return result.getContent().get(0).getUid();
 	}
 
+	public List<Integer> ricercaIdByChiaveLogicaCapitolo(TipoCapitolo tipoCapitolo, Integer annoCapitolo, Integer numeroCapitolo, Integer numeroArticolo, Integer numeroUEB) {
+		final String methodName = "ricercaIdByChiaveLogicaCapitolo";
+		
+		Page<SiacTBilElem> result = siacTBilElemRepository.ricercaPuntualeCapitolo(ente.getUid(),
+				mapToString(annoCapitolo, null),
+				SiacDBilElemTipoEnum.byTipoCapitolo(tipoCapitolo).getCodice(),
+				mapToString(numeroCapitolo, null),
+				mapToString(numeroArticolo, null),
+				mapToString(numeroUEB, null),
+				null,
+				new PageRequest(0, 2));
+		if(result.getNumberOfElements() == 0) {
+			log.warn(methodName, "Nessun elemento corrispondente ai criteri di ricerca");
+			return null;
+		}
+		List<Integer> uids = new ArrayList<Integer>();
+		for(SiacTBilElem a : result.getContent() ) {
+			uids.add(a.getUid());
+		}
+		
+		return uids;
+	}
+	
 	public StatoOperativoElementoDiBilancio findStatoOperativoCapitolo(Integer idCapitolo) {
 		List<SiacDBilElemStato> siacDBilElemStatos = siacTBilElemRepository.findSiacDBilElemStatosByElemId(idCapitolo);
 		for(SiacDBilElemStato sdbes : siacDBilElemStatos) {
@@ -1649,9 +1745,11 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 	
 	
 	// SIAC-6899 
-	public BigDecimal computeTotaleImportidaAvanzodaFPVNonAnnullatiCapitoloByAnno(List<Integer> elemIds, Integer anno, CompareOperator compareOperator,List<String>  avavincoloTipoCode) {
+	// SIAC-8839 aggiunto il parametro ente.getUid()
+	public BigDecimal computeTotaleImportidaAvanzodaFPVNonAnnullatiCapitoloByAnno(Integer enteProprietarioId, List<Integer> elemIds, Integer anno, CompareOperator compareOperator,List<String>  avavincoloTipoCode) {
 		String methodName = "computeTotaleImportiFinanziatodaAvanzoNonAnnullatiCapitoloByAnno";
 		BigDecimal result = BigDecimal.ZERO;
+		
 		
 		if (elemIds == null || elemIds.isEmpty() || anno == null) {
 			log.debug(methodName, "Nessun capitolo trovato in stato valido. Returning 0.");
@@ -1659,12 +1757,26 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 		}
 		
 		log.debug(methodName, "elemIds: " + elemIds);
-		result = capitoloDao.sumMovgestImportoFinanziatodaAvanzodaFPVNonAnnullatiByBilElemIdsAndMovgestAnnoAndOperator(elemIds, anno, compareOperator,avavincoloTipoCode);
+		result = capitoloDao.sumMovgestImportoFinanziatodaAvanzodaFPVNonAnnullatiByBilElemIdsAndMovgestAnnoAndOperator(enteProprietarioId, elemIds, anno, compareOperator,avavincoloTipoCode);
 		log.info(methodName, "result: " + result);
 		return result;	
 	}
 	
-	 
+	 //SIAC-8838
+	public BigDecimal computeTotaleImportiModificheNegativeEdEconbCapitoloByAnno (List<Integer> elemIds, String function) {
+		String methodName = "computeTotaleImportiModificheNegativeEdEconbCapitoloByAnno";
+		BigDecimal result = BigDecimal.ZERO;
+		
+		if (elemIds == null || elemIds.isEmpty()) {
+			log.debug(methodName, "Nessun capitolo trovato in stato valido. Returning 0.");
+			return result;
+		}
+		
+		log.debug(methodName, "elemIds: " + elemIds);
+		result = capitoloDao.computeTotaleImportiModificheNegativeEdEconbCapitoloByAnno(elemIds, function);
+		log.info(methodName, "result: " + result);
+		return result;	
+	}
 	
 	public BigDecimal computeTotaleImportiDaPrenotazioneMovimentiNonAnnullatiCapitoloByAnno(List<Integer> elemIds, Integer anno, CompareOperator compareOperator) {
 		String methodName = "computeTotaleImportiDaPrenotazioneMovimentiNonAnnullatiCapitoloByAnno";
@@ -1744,9 +1856,11 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 	 * @param subdocIds
 	 * @return mappa la mappa capitolo subdoc
 	 */
-	public Map<CapitoloUscitaGestione, List<SubdocumentoSpesa>> findCapitoliBySubdoc(List<Integer> subdocIds){
-		
-		List<Object[]> datiCapitoliSubdoc = capitoloDao.findCapitoliBySubdocIds(subdocIds);
+	public Map<CapitoloUscitaGestione, List<SubdocumentoSpesa>> findCapitoliSpesaGestioneBySubdoc(List<Integer> subdocIds){
+		//SIAC-8363
+		SiacDBilElemTipoEnum byTipoCapitolo = SiacDBilElemTipoEnum.byTipoCapitolo(TipoCapitolo.CAPITOLO_USCITA_GESTIONE);
+		List<String> codes = byTipoCapitolo != null? Arrays.asList(byTipoCapitolo.getCodice()) : null;
+		List<Object[]> datiCapitoliSubdoc = capitoloDao.findCapitoliBySubdocIds(subdocIds, codes);
 		if(datiCapitoliSubdoc == null || datiCapitoliSubdoc.isEmpty()) {
 			//non ho trovato capitoli corrispondenti agli id cercati
 			return null;	
@@ -1762,9 +1876,11 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 	 * @param subdocIds
 	 * @return mappa la mappa capitolo subdoc
 	 */
-	public Map<CapitoloUscitaGestione, List<SubdocumentoSpesa>> findCapitoliByElenco(List<Integer> subdocIds){
-		
-		List<Object[]> datiCapitoliSubdoc = capitoloDao.findCapitoliByElenco(subdocIds);
+	public Map<CapitoloUscitaGestione, List<SubdocumentoSpesa>> findCapitoliSpesaGestioneByElenco(List<Integer> subdocIds){
+		//SIAC-8363
+		SiacDBilElemTipoEnum byTipoCapitolo = SiacDBilElemTipoEnum.byTipoCapitolo(TipoCapitolo.CAPITOLO_USCITA_GESTIONE);
+		List<String> codes = byTipoCapitolo != null? Arrays.asList(byTipoCapitolo.getCodice()) : null;
+		List<Object[]> datiCapitoliSubdoc = capitoloDao.findCapitoliByElenco(subdocIds, codes);
 		if(datiCapitoliSubdoc == null || datiCapitoliSubdoc.isEmpty()) {
 			//non ho trovato capitoli corrispondenti agli id cercati
 			return null;	
@@ -1824,6 +1940,54 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 		return mappa;
 	}
 
+	/**
+	 * @param datiCapitoliSubdoc
+	 * @return
+	 */
+	private Map<CapitoloEntrataGestione, List<SubdocumentoEntrata>> popolaMappaCapitoloEntrataSubdocs(List<Object[]> datiCapitoliSubdoc) {
+		Map<CapitoloEntrataGestione, List<SubdocumentoEntrata>> mappa = 
+				new TreeMap<CapitoloEntrataGestione, List<SubdocumentoEntrata>>(new Comparator<CapitoloEntrataGestione>() {
+
+					@Override
+					public int compare(CapitoloEntrataGestione o1, CapitoloEntrataGestione o2) {
+						if (o1 == o2)
+							return 0;
+
+						if (o1 == null)
+							return -1;
+
+						if (o2 == null)
+							return 1;
+
+						return Integer.valueOf(o1.getUid()).compareTo(o2.getUid());
+					}
+				});
+		
+		for (Object[] o : datiCapitoliSubdoc) {
+			CapitoloEntrataGestione cug = new CapitoloEntrataGestione();
+			cug.setUid((Integer)o[0]);
+			cug.setAnnoCapitolo((Integer)o[1]);
+			cug.setNumeroCapitolo((Integer)o[2]);
+			cug.setNumeroArticolo((Integer)o[3]);
+			cug.setNumeroUEB((Integer)o[4]);
+			if(mappa.get(cug) == null) {
+				mappa.put(cug, new ArrayList<SubdocumentoEntrata>());
+			}
+			SubdocumentoEntrata ss = new SubdocumentoEntrata();
+			ss.setUid((Integer)o[5]);
+			DocumentoEntrata ds = new DocumentoEntrata();
+			ds.setAnno((Integer)o[6]);
+			ds.setNumero((String)o[7]);
+			ss.setDocumento(ds);
+			ss.setNumero((Integer)o[8]);
+			ss.setImporto((BigDecimal)o[9]);
+			ss.setImportoDaDedurre((BigDecimal)o[10]);
+			mappa.get(cug).add(ss);
+			
+		}
+		return mappa;
+	}
+
 	
 	/**
 	 * Gets the tipo capitolo ex capitolo.
@@ -1844,7 +2008,92 @@ public class CapitoloDad extends ExtendedBaseDadImpl {
 	 * @return true, if is capitolo fondino
 	 */
 	public boolean isCapitoloFondino(int uidCapitolo) {
-		SiacTBilElem tbe = siacTBilElemRepository.findCapitoloByCategoriaEClassificatoreGenerico(uidCapitolo, "STD", "CLASSIFICATORE_3", "01"); 
-		return tbe != null;
+		List<Integer> objs = siacTBilElemRepository.findCapitoloByCategoriaEClassificatoreGenerico(Arrays.asList(uidCapitolo), CATEGORIA_CODE_CAPITOLO_FONDINO,CLASSIF_TIPO_CODE_CAPITOLO_FONDINO, CLASSIF_CODE_CAPITOLO_FONDINO); 
+		return objs != null && !objs.isEmpty();
 	}
+	
+	public List<Integer> caricaListUidsCapitoliFondinoByUidsGruppoCapitoli(List<Integer> uidsCapitoli) {
+		if(uidsCapitoli == null || uidsCapitoli.isEmpty()) {
+			return new ArrayList<Integer>();
+		}
+		List<Integer> uidFiltrati = siacTBilElemRepository.findCapitoloByCategoriaEClassificatoreGenerico(uidsCapitoli, CATEGORIA_CODE_CAPITOLO_FONDINO,CLASSIF_TIPO_CODE_CAPITOLO_FONDINO, CLASSIF_CODE_CAPITOLO_FONDINO); 
+		return uidFiltrati != null? uidFiltrati : new ArrayList<Integer>();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <C extends Capitolo<?, ?>> List<C> getCapitoliNonCollegatiFCDE(AccantonamentoFondiDubbiaEsigibilitaAttributiBilancio attributiBilancioVersione, Class<C> capitoloClazz, ModelDetailEnum... modelDetails) {
+		SiacDBilElemTipoEnum siacDBilElemTipoEnum = SiacDBilElemTipoEnum.byCapitoloClass(capitoloClazz);
+		
+		List<SiacTBilElem> siacTBilElems = siacTBilElemRepository
+			.findCollegabiliFCDENative(
+				attributiBilancioVersione.getBilancio().getUid(), 
+				siacDBilElemTipoEnum.getCodice(), 
+				attributiBilancioVersione.getVersione(), 
+				attributiBilancioVersione.getTipoAccantonamentoFondiDubbiaEsigibilita().getCodice(),
+				SiacTAttrEnum.FlagEntrataDubbiaEsigFCDE.getCodice()
+		);
+		
+		return (List<C>) convertiLista(siacTBilElems, siacDBilElemTipoEnum.getCapitoloClass(), siacDBilElemTipoEnum.getMapIdModelDetail(), Converters.byModelDetails(modelDetails));
+	}
+	
+	protected Map<Integer, BigDecimal> toMapAnnoImporto(List<Object[]> importiPerAnno) {
+		Map<Integer, BigDecimal> res = new HashMap<Integer, BigDecimal>();
+		if(importiPerAnno == null) {
+			return res;
+		}
+		for(Object[] row : importiPerAnno) {
+			res.put(Integer.valueOf((String)row[0]), (BigDecimal)row[1]);
+		}
+		return res;
+	}
+	
+	public BigDecimal caricaDisponibilitaIncassareSottoContoVincolato(ContoTesoreria contoTesoreria, CapitoloEntrataGestione capitolo) {
+		if(contoTesoreria == null || contoTesoreria.getUid() == 0 || capitolo == null || capitolo.getUid() == 0) {
+			return null;
+		}
+		return capitoloDao.findDisponibilitaIncassareSottoContoVincolato(contoTesoreria.getUid(), capitolo.getUid(), ente.getUid());
+	}
+	
+	public BigDecimal caricaDisponibilitaPagareSottoContoVincolato(ContoTesoreria contoTesoreria, CapitoloUscitaGestione capitolo) {
+		if(contoTesoreria == null || contoTesoreria.getUid() == 0 || capitolo == null || capitolo.getUid() == 0) {
+			return null;
+		}
+		return capitoloDao.findDisponibilitaPagareSottoContoVincolato(contoTesoreria.getUid(), capitolo.getUid(), ente.getUid());
+	}
+
+	public Map<CapitoloEntrataGestione, List<SubdocumentoEntrata>> findCapitoliEntrataGestioneBySubdoc(List<Integer> idsSubdocumentiEntrata) {
+		//SIAC-8363
+		SiacDBilElemTipoEnum byTipoCapitolo = SiacDBilElemTipoEnum.byTipoCapitolo(TipoCapitolo.CAPITOLO_ENTRATA_GESTIONE);
+		List<String> codes = byTipoCapitolo != null? Arrays.asList(byTipoCapitolo.getCodice()) : null;
+		List<Object[]> datiCapitoliSubdoc = capitoloDao.findCapitoliBySubdocIds(idsSubdocumentiEntrata, codes);
+		if(datiCapitoliSubdoc == null || datiCapitoliSubdoc.isEmpty()) {
+			//non ho trovato capitoli corrispondenti agli id cercati
+			return null;	
+		}
+		
+		Map<CapitoloEntrataGestione, List<SubdocumentoEntrata>> mappa = popolaMappaCapitoloEntrataSubdocs(datiCapitoliSubdoc);
+		
+		return mappa;
+	}
+
+	public List<Integer> caricaIdsContoTesoreriaCapitoliBySubdoc(List<Integer> idsSubdocumentiSpesa) {
+		List<Integer> uids = capitoloDao.findIdsContoTesoreriaCapitoliBySubdocIds(idsSubdocumentiSpesa);
+		return uids;
+	}
+
+	public ContoTesoreria getContoTesoreriaCapitolo(CapitoloUscitaGestione capitolo) {
+		if (capitolo == null) {
+			return null;
+		}
+		
+		SiacDContotesoreria siacDContotesoreria = siacDContotesoreriaRepository.findContotesoreriaByCapitolo(capitolo.getUid());
+		return siacDContotesoreria == null ? null : new it.csi.siac.siacfin2ser.model.ContoTesoreria(siacDContotesoreria.getContotesCode(), siacDContotesoreria.getContotesDesc()); 
+	}
+	
+	//task-86
+	public Integer getPropostaNumeroCapitolo(Integer limiteNumerazioneAutomaticaCapitolo){
+		Integer propostaNumeroCapitolo = siacTBilElemRepository.getPropostaNumeroCapitolo(ente.getUid(), limiteNumerazioneAutomaticaCapitolo);
+		return propostaNumeroCapitolo < limiteNumerazioneAutomaticaCapitolo ? propostaNumeroCapitolo : null;
+	}
+	
 }

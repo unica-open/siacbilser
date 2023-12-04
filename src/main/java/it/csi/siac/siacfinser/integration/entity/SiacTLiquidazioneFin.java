@@ -78,10 +78,6 @@ public class SiacTLiquidazioneFin extends SiacTEnteBase {
 	@JoinColumn(name="siope_tipo_debito_id")
 	private SiacDSiopeTipoDebitoFin siacDSiopeTipoDebitoFin;
 	
-	//bi-directional many-to-one association to SiacRMutuoVoceLiquidazioneFin
-	@OneToMany(mappedBy="siacTLiquidazione")
-	private List<SiacRMutuoVoceLiquidazioneFin> siacRMutuoVoceLiquidaziones;
-
 	//bi-directional many-to-one association to SiacRLiquidazioneAttoAmmFin
 	@OneToMany(mappedBy="siacTLiquidazione")
 	private List<SiacRLiquidazioneAttoAmmFin> siacRLiquidazioneAttoAmms;
@@ -388,19 +384,12 @@ public class SiacTLiquidazioneFin extends SiacTEnteBase {
 		return siacTBil;
 	}
 
-	public List<SiacRMutuoVoceLiquidazioneFin> getSiacRMutuoVoceLiquidaziones() {
-		return siacRMutuoVoceLiquidaziones;
-	}
 
 	public void setSiacTBil(SiacTBilFin siacTBil) {
 		this.siacTBil = siacTBil;
 	}
 
-	public void setSiacRMutuoVoceLiquidaziones(
-			List<SiacRMutuoVoceLiquidazioneFin> siacRMutuoVoceLiquidaziones) {
-		this.siacRMutuoVoceLiquidaziones = siacRMutuoVoceLiquidaziones;
-	}
-
+	
 	public List<SiacRLiquidazioneOrdFin> getSiacRLiquidazioneOrds() {
 		return this.siacRLiquidazioneOrds;
 	}

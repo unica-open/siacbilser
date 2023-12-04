@@ -36,7 +36,7 @@ import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 
 /**
  * The Class VariazioneImportiCapitoloConverter.
@@ -47,7 +47,7 @@ import it.csi.siac.siaccommon.util.log.LogUtil;
 public class VariazioneImportiCapitoloConverter extends DozerConverter<VariazioneImportoCapitolo, SiacTVariazione>  {
 	
 	/** The log util */
-	private final LogUtil log = new LogUtil(getClass());
+	private final LogSrvUtil log = new LogSrvUtil(getClass());
 	/** The eef. */
 	@Autowired
 	private EnumEntityFactory eef;

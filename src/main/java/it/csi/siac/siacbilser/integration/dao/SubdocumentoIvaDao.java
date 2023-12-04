@@ -119,7 +119,8 @@ public interface SubdocumentoIvaDao extends Dao<SiacTSubdocIva, Integer> {
 		
 		Date subdocivaDataProtProvDa, Date subdocivaDataProtProvA,
 		Date subdocivaDataProtDefDa, Date subdocivaDataProtDefA,
-		
+		//SIAC-7516
+		Date docDataOperazioneDa, Date docDataOperazioneA,
 		Integer registroId);
 
 	/**

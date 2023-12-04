@@ -14,7 +14,6 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemTipoEnu
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDVincoloTipoEnum;
 import it.csi.siac.siaccommonser.integration.dao.base.Dao;
 
-
 /**
  * The Interface VincoloCapitoliDao.
  */
@@ -56,10 +55,13 @@ public interface VincoloCapitoliDao extends Dao<SiacTVincolo, Integer> {
 	 * @param numeroUEB the numero ueb
 	 * @param vincoloGenId the vincolo gen id
 	 * @param bilAnno the bil anno
+	 * @param isRicercaCodiceLike the ricerca per codice in like - task-52
 	 * @param pageable the pageable
 	 * @return la lista paginata di SiacTVincolo trovata
 	 */
+	
 	Page<SiacTVincolo> ricercaSinteticaVincoloCapitoli(Integer enteProprietarioId, String codiceVincolo, SiacDVincoloTipoEnum siacDVincoloTipoEnum, String descrizioneVincolo,
 			Boolean flagTrasferimentiVincolatiVincolo, Integer uidCapitolo, SiacDBilElemTipoEnum siacDBilElemTipoEnum, List<SiacDBilElemTipoEnum> siacDBilElemTipoEnums, String annoCapitolo, String bilancioAnnoCapitolo,
-			String numeroCapitolo, String numeroArticolo, String numeroUEB, Integer vincoloGenId, String bilAnno, Pageable pageable);
+			String numeroCapitolo, String numeroArticolo, String numeroUEB, Integer vincoloGenId, Integer vincoloRisorsaVincolataId, String bilAnno, boolean isRicercaCodiceLike, Pageable pageable);
+	
 }

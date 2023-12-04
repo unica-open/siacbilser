@@ -7,7 +7,7 @@ SPDX-License-Identifier: EUPL-1.2
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping map-id="SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilita_ModelDetail" wildcard="true">
-		<class-a>it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita</class-a>
+		<class-a>it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilita</class-a>
 		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAccFondiDubbiaEsig</class-b>
 		<field>
 			<a>percentualeAccantonamentoFondi</a>
@@ -29,20 +29,165 @@ SPDX-License-Identifier: EUPL-1.2
 			<a>percentualeAccantonamentoFondi4</a>
 			<b>percAccFondi4</b>
 		</field>
+		<!-- SIAC-7858 -->
 		<field>
-			<a>percentualeDelta</a>
-			<b>percDelta</b>
+			<a>numeratore</a>
+			<b>accFdeNumeratore</b>
+		</field>
+		<field>
+			<a>numeratore1</a>
+			<b>accFdeNumeratore1</b>
+		</field>
+		<field>
+			<a>numeratore2</a>
+			<b>accFdeNumeratore2</b>
+		</field>
+		<field>
+			<a>numeratore3</a>
+			<b>accFdeNumeratore3</b>
+		</field>
+		<field>
+			<a>numeratore4</a>
+			<b>accFdeNumeratore4</b>
+		</field>
+		<field>
+			<a>denominatore</a>
+			<b>accFdeDenominatore</b>
+		</field>
+		<field>
+			<a>denominatore1</a>
+			<b>accFdeDenominatore1</b>
+		</field>
+		<field>
+			<a>denominatore2</a>
+			<b>accFdeDenominatore2</b>
+		</field>
+		<field>
+			<a>denominatore3</a>
+			<b>accFdeDenominatore3</b>
+		</field>
+		<field>
+			<a>denominatore4</a>
+			<b>accFdeDenominatore4</b>
+		</field>
+		<field>
+			<a>mediaSempliceTotali</a>
+			<b>accFdeMediaSempliceTotali</b>
+		</field>
+		<field>
+			<a>mediaSempliceRapporti</a>
+			<b>accFdeMediaSempliceRapporti</b>
+		</field>
+		<field>
+			<a>mediaPonderataTotali</a>
+			<b>accFdeMediaPonderataTotali</b>
+		</field>
+		<field>
+			<a>mediaPonderataRapporti</a>
+			<b>accFdeMediaPonderataRapporti</b>
+		</field>
+		<field>
+			<a>mediaUtente</a>
+			<b>accFdeMediaUtente</b>
+		</field>
+		<field>
+			<a>note</a>
+			<b>accFdeNote</b>
+		</field>
+		<field>
+			<a>numeratoreOriginale</a>
+			<b>accFdeMetaNumeratoreOriginale</b>
+		</field>
+		<field>
+			<a>numeratore1Originale</a>
+			<b>accFdeMetaNumeratore1Originale</b>
+		</field>
+		<field>
+			<a>numeratore2Originale</a>
+			<b>accFdeMetaNumeratore2Originale</b>
+		</field>
+		<field>
+			<a>numeratore3Originale</a>
+			<b>accFdeMetaNumeratore3Originale</b>
+		</field>
+		<field>
+			<a>numeratore4Originale</a>
+			<b>accFdeMetaNumeratore4Originale</b>
+		</field>
+		<field>
+			<a>denominatoreOriginale</a>
+			<b>accFdeMetaDenominatoreOriginale</b>
+		</field>
+		<field>
+			<a>denominatore1Originale</a>
+			<b>accFdeMetaDenominatore1Originale</b>
+		</field>
+		<field>
+			<a>denominatore2Originale</a>
+			<b>accFdeMetaDenominatore2Originale</b>
+		</field>
+		<field>
+			<a>denominatore3Originale</a>
+			<b>accFdeMetaDenominatore3Originale</b>
+		</field>
+		<field>
+			<a>denominatore4Originale</a>
+			<b>accFdeMetaDenominatore4Originale</b>
+		</field>
+		<field>
+			<a>mediaUtenteOriginale</a>
+			<b>accFdeMetaMediaUtenteOriginale</b>
+		</field>
+		<field>
+			<a>accantonamento</a>
+			<b>accFdeAccantonamento</b>
+		</field>
+		<field>
+			<a>accantonamento1</a>
+			<b>accFdeAccantonamento1</b>
+		</field>
+		<field>
+			<a>accantonamento2</a>
+			<b>accFdeAccantonamento2</b>
+		</field>
+		<field>
+			<a>accantonamentoOriginale</a>
+			<b>accFdeMetaAccantonamentoOriginale</b>
+		</field>
+		<field>
+			<a>accantonamento1Originale</a>
+			<b>accFdeMetaAccantonamento1Originale</b>
+		</field>
+		<field>
+			<a>accantonamento2Originale</a>
+			<b>accFdeMetaAccantonamento2Originale</b>
 		</field>
 	</mapping>
 	
 	<mapping map-id="SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilita" wildcard="true">
-		<class-a>it.csi.siac.siacbilser.model.AccantonamentoFondiDubbiaEsigibilita</class-a>
+		<class-a>it.csi.siac.siacbilser.model.fcde.AccantonamentoFondiDubbiaEsigibilita</class-a>
 		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTAccFondiDubbiaEsig</class-b>
 		<field map-id="SiacTAccFondiDubbiaEsig_AccantonamentoFondiDubbiaEsigibilita_ModelDetail">
 			<a>this</a>
 			<b>this</b>
 		</field>
 		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaTipoMediaConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaTipoConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaStanziamentiCapitoloConverter">
+			<a>this</a>
+			<b>this</b>
+		</field>
+		<field custom-converter-id="accantonamentoFondiDubbiaEsigibilitaBaseAttributiBilancioConverter">
 			<a>this</a>
 			<b>this</b>
 		</field>

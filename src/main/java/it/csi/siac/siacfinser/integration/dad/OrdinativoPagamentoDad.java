@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -17,16 +18,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
+import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.integration.dao.common.dto.AnnullaOrdinativoPagamentoInfoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.DatiOperazioneDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.OttimizzazioneOrdinativoPagamentoDto;
 import it.csi.siac.siacfinser.integration.dao.common.dto.RicercaEstesaOrdinativiDiPagamentoDto;
 import it.csi.siac.siacfinser.integration.dao.ordinativo.OrdinativoDao;
+import it.csi.siac.siacfinser.integration.entity.SiacDContotesoreriaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDOrdinativoStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacDRelazTipoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneMovgestFin;
@@ -35,6 +39,7 @@ import it.csi.siac.siacfinser.integration.entity.SiacRLiquidazioneStatoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoProvCassaFin;
 import it.csi.siac.siacfinser.integration.entity.SiacROrdinativoStatoFin;
+import it.csi.siac.siacfinser.integration.entity.SiacTBilElemFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTEnteProprietarioFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTLiquidazioneFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoFin;
@@ -42,13 +47,13 @@ import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTOrdinativoTsDetFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTProvCassaFin;
 import it.csi.siac.siacfinser.integration.entity.mapping.FinMapId;
-import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtils;
+import it.csi.siac.siacfinser.integration.util.DatiOperazioneUtil;
 import it.csi.siac.siacfinser.integration.util.EntityOrdinativiToModelOrdinativiConverter;
 import it.csi.siac.siacfinser.integration.util.Operazione;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
-import it.csi.siac.siacfinser.model.mutuo.Mutuo;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
+import it.csi.siac.siacfinser.model.ordinativo.Ordinativo;
 import it.csi.siac.siacfinser.model.ordinativo.Ordinativo.StatoOperativoOrdinativo;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento;
 import it.csi.siac.siacfinser.model.ordinativo.RicercaEstesaOrdinativoDiPagamento;
@@ -149,16 +154,11 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 												if (siacRLiquidazioneOrd.getSiacTLiquidazione() != null){
 													// JIRA 1838
 													//&& siacRLiquidazioneOrd.getSiacTLiquidazione().getLiqConvalidaManuale()!=null 
-													//&& siacRLiquidazioneOrd.getSiacTLiquidazione().getLiqConvalidaManuale().equalsIgnoreCase(Constanti.LIQUIDAZIONE_MAUALE_CODE)) {
+													//&& siacRLiquidazioneOrd.getSiacTLiquidazione().getLiqConvalidaManuale().equalsIgnoreCase(CostantiFin.LIQUIDAZIONE_MAUALE_CODE)) {
 													Liquidazione liquidazioneT = map(siacRLiquidazioneOrd.getSiacTLiquidazione(), Liquidazione.class, FinMapId.SiacTLiquidazione_Liquidazione);
-													Liquidazione liquidazione = liquidazioneDad.ricercaLiquidazionePerChiave(liquidazioneT,Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE,
-															 richiedente, prop.getAnnoEsercizio(), Constanti.AMBITO_FIN, richiedente.getAccount().getEnte(),datiOperazione);
-													for(VoceMutuo voceMutuo : liquidazione.getImpegno().getListaVociMutuo()) {
-														int i = 0;
-														Mutuo mutuo = ricercaMutuo(idEnte, voceMutuo.getNumeroMutuo(), now);
-														liquidazione.getImpegno().getListaVociMutuo().get(i).setMutuo(mutuo);
-														i++;
-													}
+													Liquidazione liquidazione = liquidazioneDad.ricercaLiquidazionePerChiave(liquidazioneT,CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE,
+															 richiedente, prop.getAnnoEsercizio(), CostantiFin.AMBITO_FIN, richiedente.getAccount().getEnte(),datiOperazione);
+
 													SubOrdinativoPagamento subOrdinativoPagamento = new SubOrdinativoPagamento();
 													subOrdinativoPagamento.setLiquidazione(liquidazione);
 													
@@ -282,7 +282,7 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 				for (SubOrdinativoPagamento subOrdinativoIt : elencoSubOrdinativiPagamento) {
 					if (siacTOrdinativoT.getOrdTsId().intValue()==subOrdinativoIt.getUid()) {
 						//CREDITORE/DEBITORE
-						Soggetto creditore = componiSoggettoDiOrdinativo(siacTOrdinativoT.getSiacTOrdinativo(), Constanti.AMBITO_FIN, idEnte,datiOperazioneDto,datiOttimizzazione);
+						Soggetto creditore = componiSoggettoDiOrdinativo(siacTOrdinativoT.getSiacTOrdinativo(), CostantiFin.AMBITO_FIN, idEnte,datiOperazioneDto,datiOttimizzazione);
 						subOrdinativoIt.getOrdinativoPagamento().setSoggetto(creditore);
 						
 						//IMPORTI DEL SUB:
@@ -400,7 +400,7 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 								impegno.setUid(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getUid());
 								impegno.setAnnoMovimento(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestAnno());
 								impegno.setDescrizione(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestDesc());
-								impegno.setNumero(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
+								impegno.setNumeroBigDecimal(rLiquidazioneMovgest.getSiacTMovgestTs().getSiacTMovgest().getMovgestNumero());
 									
 
 								liquidazione.setImpegno(impegno);
@@ -434,14 +434,15 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 		Integer idEnte = datiOperazioneDto.getSiacTEnteProprietario().getEnteProprietarioId();
 
 		SiacDOrdinativoStatoFin siacDOrdinativoStato = new SiacDOrdinativoStatoFin();
-		siacDOrdinativoStato = siacDOrdinativoStatoRepository.findDOrdinativoStatoValidoByEnteAndCode(idEnte, Constanti.statoOperativoOrdinativoEnumToString(StatoOperativoOrdinativo.ANNULLATO), datiOperazioneDto.getTs());
+		siacDOrdinativoStato = siacDOrdinativoStatoRepository.findDOrdinativoStatoValidoByEnteAndCode(idEnte, CostantiFin.statoOperativoOrdinativoEnumToString(StatoOperativoOrdinativo.ANNULLATO), datiOperazioneDto.getTs());
 
-		SiacTOrdinativoFin siacTOrdinativo = siacTOrdinativoRepository.findOrdinativoValidoByAnnoAndNumeroAndTipo(idEnte, annoOrdinativoPagamento, BigDecimal.valueOf(numeroOrdinativoPagamento), Constanti.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneDto.getTs());
+		SiacTOrdinativoFin siacTOrdinativo = siacTOrdinativoRepository.findOrdinativoValidoByAnnoAndNumeroAndTipo(idEnte, annoOrdinativoPagamento, BigDecimal.valueOf(numeroOrdinativoPagamento), CostantiFin.D_ORDINATIVO_TIPO_PAGAMENTO, datiOperazioneDto.getTs());
 		
 		//Annulla Ordinativo
 		if (siacTOrdinativo!=null) {
-			
-			setDaTrasmettere(siacTOrdinativo.getUid(), Boolean.TRUE);
+
+//			TASK-264
+//			setDaTrasmettere(siacTOrdinativo.getUid(), Boolean.TRUE);
 			
 			Timestamp tsAnnulla = datiOperazioneDto.getTs();
 			DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(tsAnnulla.getTime(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
@@ -451,14 +452,14 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 				
 				//GENNAIO 2018 - In passato non veniva settata la data cancellazione,
 				//per mettermi al riparo da questa situzione do una bonificata:
-				listaRelOrdinativo = DatiOperazioneUtils.bonificaDataCancellazione(listaRelOrdinativo, siacROrdinativoStatoRepository, datiOperazioneCancella);
+				listaRelOrdinativo = DatiOperazioneUtil.bonificaDataCancellazione(listaRelOrdinativo, siacROrdinativoStatoRepository, datiOperazioneCancella);
 				//
 				
 				boolean invalidatoVecchioStato = false;
 				for(SiacROrdinativoStatoFin itStati : listaRelOrdinativo){
-					if(DatiOperazioneUtils.isValido(itStati, tsAnnulla)){
+					if(DatiOperazioneUtil.isValido(itStati, tsAnnulla)){
 						//CANCELLO LOGICAMENTE IL LEGAME CON IL VECCHIO STATO:
-						itStati = DatiOperazioneUtils.cancellaRecord(itStati, siacROrdinativoStatoRepository, datiOperazioneCancella, siacTAccountRepository);
+						itStati = DatiOperazioneUtil.cancellaRecord(itStati, siacROrdinativoStatoRepository, datiOperazioneCancella, siacTAccountRepository);
 						//
 						//ok ho trovato il vecchio stato ed e' stato invalidato:
 						invalidatoVecchioStato = true;
@@ -474,7 +475,7 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 					SiacROrdinativoStatoFin siacROrdinativoStato = new SiacROrdinativoStatoFin();
 					DatiOperazioneDto datiOperazioneInserimento = new DatiOperazioneDto(tsAnnulla.getTime(), Operazione.INSERIMENTO, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
 
-					siacROrdinativoStato = DatiOperazioneUtils.impostaDatiOperazioneLogin(siacROrdinativoStato, datiOperazioneInserimento, siacTAccountRepository);
+					siacROrdinativoStato = DatiOperazioneUtil.impostaDatiOperazioneLogin(siacROrdinativoStato, datiOperazioneInserimento, siacTAccountRepository);
 					siacROrdinativoStato.setSiacTOrdinativo(siacTOrdinativo);;
 					siacROrdinativoStato.setSiacDOrdinativoStato(siacDOrdinativoStato);
 					siacROrdinativoStatoRepository.saveAndFlush(siacROrdinativoStato);
@@ -485,7 +486,7 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 			List<SiacROrdinativoProvCassaFin> listaSiacROrdinativoProvCassa = siacROrdinativoProvCassaRepository.findROrdinativoProvCassaByIdOrdinativo(idEnte, siacTOrdinativo.getOrdId(), datiOperazioneDto.getTs());
 			for(SiacROrdinativoProvCassaFin siacROrdinativoProvCassa : listaSiacROrdinativoProvCassa){
 				if (siacROrdinativoProvCassa.getDataCancellazione()==null) {
-					siacROrdinativoProvCassa = DatiOperazioneUtils.cancellaRecord(siacROrdinativoProvCassa, siacROrdinativoProvCassaRepository, datiOperazioneCancella, siacTAccountRepository);
+					siacROrdinativoProvCassa = DatiOperazioneUtil.cancellaRecord(siacROrdinativoProvCassa, siacROrdinativoProvCassaRepository, datiOperazioneCancella, siacTAccountRepository);
 				}
 			}
 			
@@ -497,7 +498,7 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 					if(siacTOrdinativoTFin.getSiacRSubdocOrdinativoTs()!=null && siacTOrdinativoTFin.getSiacRSubdocOrdinativoTs().size()> 0){
 						SiacRSubdocOrdinativoTFin siacRSubdocOrdinativoTFin = siacTOrdinativoTFin.getSiacRSubdocOrdinativoTs().get(0);
 						DatiOperazioneDto datiOperazioneCancella = new DatiOperazioneDto(tsAnnulla.getTime(), Operazione.CANCELLAZIONE_LOGICA_RECORD, datiOperazioneDto.getSiacTEnteProprietario(), richiedente.getAccount().getId());
-						siacRSubdocOrdinativoTFin = DatiOperazioneUtils.cancellaRecord(siacRSubdocOrdinativoTFin, siacRSubdocOrdinativoTFinRepository, datiOperazioneCancella, siacTAccountRepository);
+						siacRSubdocOrdinativoTFin = DatiOperazioneUtil.cancellaRecord(siacRSubdocOrdinativoTFin, siacRSubdocOrdinativoTFinRepository, datiOperazioneCancella, siacTAccountRepository);
 					}
 				}
 			}*/
@@ -526,7 +527,7 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 				if(null != siacTOrdinativoT && siacTOrdinativoT.getDataFineValidita() == null){
 
 					BigDecimal importoAttualeSubOrdPag=BigDecimal.ZERO;
-					List<SiacTOrdinativoTsDetFin> importoCaricato = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, datiOperazioneDto.getTs(), Constanti.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, siacTOrdinativoT.getOrdTsId());
+					List<SiacTOrdinativoTsDetFin> importoCaricato = siacTOrdinativoTsDetRepository.findValidoByTipo(idEnte, datiOperazioneDto.getTs(), CostantiFin.D_ORDINATIVO_TS_DET_TIPO_IMPORTO_ATTUALE, siacTOrdinativoT.getOrdTsId());
 					if(importoCaricato!=null && importoCaricato.size()>0){
 						importoAttualeSubOrdPag = importoCaricato.get(0).getOrdTsDetImporto();
 					}
@@ -540,14 +541,14 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 								if (siacRLiquidazioneOrd.getSiacTLiquidazione() != null) {
 //									Liquidazione liquidazioneT = map(siacRLiquidazioneOrd.getSiacTLiquidazione(), Liquidazione.class, FinMapId.SiacTLiquidazione_Liquidazione);
 									
-//									Liquidazione liquidazione = liquidazioneDad.ricercaLiquidazionePerChiave(liquidazioneT, Constanti.TIPO_RICERCA_DA_LIQUIDAZIONE,
-//											 richiedente, annoEsercizio, Constanti.AMBITO_FIN, richiedente.getAccount().getEnte(),datiOperazioneDto);
+//									Liquidazione liquidazione = liquidazioneDad.ricercaLiquidazionePerChiave(liquidazioneT, CostantiFin.TIPO_RICERCA_DA_LIQUIDAZIONE,
+//											 richiedente, annoEsercizio, CostantiFin.AMBITO_FIN, richiedente.getAccount().getEnte(),datiOperazioneDto);
 									
 									
 									// sganciare la chiamata alla ricerca liqudazione 
 									SiacTLiquidazioneFin siacTLiquidazione = siacRLiquidazioneOrd.getSiacTLiquidazione();
 									
-									if(siacTLiquidazione.getLiqConvalidaManuale()!=null && siacTLiquidazione.getLiqConvalidaManuale().equalsIgnoreCase(Constanti.LIQUIDAZIONE_AUTOMATICA_CODE)){
+									if(siacTLiquidazione.getLiqConvalidaManuale()!=null && siacTLiquidazione.getLiqConvalidaManuale().equalsIgnoreCase(CostantiFin.LIQUIDAZIONE_AUTOMATICA_CODE)){
 												
 										String codiceStatoLiquidazione = "";
 										if(siacTLiquidazione.getSiacRLiquidazioneStatos()!=null && !siacTLiquidazione.getSiacRLiquidazioneStatos().isEmpty()){
@@ -568,7 +569,7 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 										// DISPONIBILITA A PAGARE
 										// jira 1538, va calcolata solo se la liquidazione non è annullata o porvvisoria
 										BigDecimal disponibilitaPagare = BigDecimal.ZERO;
-										if(codiceStatoLiquidazione.equalsIgnoreCase(Constanti.D_LIQUIDAZIONE_STATO_VALIDO)){
+										if(codiceStatoLiquidazione.equalsIgnoreCase(CostantiFin.D_LIQUIDAZIONE_STATO_VALIDO)){
 											Ente ente = new Ente();
 											ente.setUid(idEnte);
 											disponibilitaPagare = liquidazioneDad.calcolaDisponibiltaPagare(ente,siacTLiquidazione);
@@ -580,7 +581,7 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 										}
 									}
 									
-//									if (liquidazione!=null && liquidazione.getLiqManuale()!=null && liquidazione.getLiqManuale().equalsIgnoreCase(Constanti.LIQUIDAZIONE_AUTOMATICA_CODE)) {
+//									if (liquidazione!=null && liquidazione.getLiqManuale()!=null && liquidazione.getLiqManuale().equalsIgnoreCase(CostantiFin.LIQUIDAZIONE_AUTOMATICA_CODE)) {
 //										if ((liquidazione.getImportoLiquidazione().subtract(liquidazione.getDisponibilitaPagare())).compareTo(importoAttualeSubOrdPag)==0) {
 //											liquidazioneDad.annullaLiquidazione(liquidazione.getAnnoLiquidazione(), liquidazione.getNumeroLiquidazione(), String.valueOf(annoEsercizio), datiOperazioneDto, richiedente);
 //										}
@@ -671,5 +672,30 @@ public class OrdinativoPagamentoDad extends OrdinativoDad<OrdinativoPagamento,Su
 
 			siacROrdinativoRepository.saveAndFlush(siacROrdinativo);
 		}
+	}
+	
+	public BigDecimal getDisponibilitaPagareSottoContoVincolato(ContoTesoreria conto, CapitoloUscitaGestione capitolo, Ente ente, DatiOperazioneDto datiOperazione) {
+		final String methodName ="getDisponibilitaPagareSottoContoVincolato";
+		if(StringUtils.isNotBlank(conto.getCodice())) {
+			SiacDContotesoreriaFin found = siacDContotesoreriaRepository.findContotesoreriaByCode(ente.getUid(), conto.getCodice(), datiOperazione.getTs());
+			int uidConto = found != null? found.getUid() : 0;
+			conto.setUid(uidConto);
+		}
+		if(conto.getUid() == 0 || capitolo.getUid() == 0) {
+			log.error(methodName, "impossibile reperire la disponibilita senza uid del conto e del capitolo.");
+			return null;
+		}
+		return ordinativoDao.findDisponibilitaPagareSottoContoVincolato(conto.getUid(), capitolo.getUid(), ente.getUid());
+	}
+	
+	//SIAC-8589
+	public CapitoloUscitaGestione caricaCapitoloAssociatoAdOrdinativo(Ordinativo ordinativoDiPagamento, DatiOperazioneDto datiOperazione) {
+		List<SiacTBilElemFin> bilElems = siacTOrdinativoRepository.caricaCapitoloAssociatoAdOrdinativo(ordinativoDiPagamento.getUid(), datiOperazione.getSiacTEnteProprietario().getEnteProprietarioId());
+		if(bilElems == null || bilElems.isEmpty()) {
+			return null;
+		}
+		SiacTBilElemFin bilElem = bilElems.get(0);
+		
+		return mapNotNull(bilElem, CapitoloUscitaGestione.class, FinMapId.SiacTBilElemFin_CapitoloUscitaGestione_ModelDetail);
 	}
 }

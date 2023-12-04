@@ -21,7 +21,7 @@ import it.csi.siac.siaccommonser.business.service.base.cache.KeyAdapter;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.frontend.webservice.MovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaAccertamento;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaAccertamentoResponse;
@@ -81,7 +81,7 @@ public class MovimentoGestioneServiceCallGroup extends ServiceCallGroup {
 	public RicercaImpegnoPerChiaveResponse ricercaImpegnoPerChiave(int annoMovimento, BigDecimal numero, String... codiciErroreDaEscludere) {
 		Impegno impegno = new Impegno();
 		impegno.setAnnoMovimento(annoMovimento);
-		impegno.setNumero(numero);
+		impegno.setNumeroBigDecimal(numero);
 		return ricercaImpegnoPerChiave(impegno, codiciErroreDaEscludere);
 
 	}
@@ -107,7 +107,7 @@ public class MovimentoGestioneServiceCallGroup extends ServiceCallGroup {
 		RicercaImpegnoK pRicercaImpegnoK = new RicercaImpegnoK();
 		pRicercaImpegnoK.setAnnoEsercizio(bilancio.getAnno());
 		pRicercaImpegnoK.setAnnoImpegno(impegno.getAnnoMovimento());
-		pRicercaImpegnoK.setNumeroImpegno(impegno.getNumero());
+		pRicercaImpegnoK.setNumeroImpegno(impegno.getNumeroBigDecimal());
 
 		reqRIPC.setpRicercaImpegnoK(pRicercaImpegnoK);
 		return reqRIPC;
@@ -179,7 +179,7 @@ public class MovimentoGestioneServiceCallGroup extends ServiceCallGroup {
 
 	private RicercaImpegnoPerChiaveOttimizzato createRequestRicercaImpegnoPerChiaveOttimizzato(Impegno impegno, RicercaAttributiMovimentoGestioneOttimizzato ricercaAttributiMovimentoGestioneOttimizzato, DatiOpzionaliCapitoli datiOpzionaliCapitoli, SubImpegno subImpegno) {
 		RicercaImpegnoPerChiaveOttimizzato reqRIPCO = createRequestRicercaImpegnoPerChiaveOttimizzato(impegno,ricercaAttributiMovimentoGestioneOttimizzato,datiOpzionaliCapitoli);
-		reqRIPCO.getpRicercaImpegnoK().setNumeroSubDaCercare(subImpegno != null? subImpegno.getNumero() : null);
+		reqRIPCO.getpRicercaImpegnoK().setNumeroSubDaCercare(subImpegno != null? subImpegno.getNumeroBigDecimal() : null);
 		return reqRIPCO;
 	}
 
@@ -194,7 +194,7 @@ public class MovimentoGestioneServiceCallGroup extends ServiceCallGroup {
 		RicercaImpegnoK pRicercaImpegnoK = new RicercaImpegnoK();
 		pRicercaImpegnoK.setAnnoEsercizio(bilancio.getAnno());
 		pRicercaImpegnoK.setAnnoImpegno(impegno.getAnnoMovimento());
-		pRicercaImpegnoK.setNumeroImpegno(impegno.getNumero());
+		pRicercaImpegnoK.setNumeroImpegno(impegno.getNumeroBigDecimal());
 
 
 		reqRIPCO.setpRicercaImpegnoK(pRicercaImpegnoK);
@@ -250,7 +250,7 @@ public class MovimentoGestioneServiceCallGroup extends ServiceCallGroup {
 	public RicercaAccertamentoPerChiaveResponse ricercaAccertamentoPerChiave(int annoMovimento, BigDecimal numero, String... codiciErroreDaEscludere) {
 		Accertamento accertamento = new Accertamento();
 		accertamento.setAnnoMovimento(annoMovimento);
-		accertamento.setNumero(numero);
+		accertamento.setNumeroBigDecimal(numero);
 		return ricercaAccertamentoPerChiave(accertamento, codiciErroreDaEscludere);
 
 	}
@@ -274,7 +274,7 @@ public class MovimentoGestioneServiceCallGroup extends ServiceCallGroup {
 		RicercaAccertamentoK pRicercaAccertamentoK = new RicercaAccertamentoK();
 		pRicercaAccertamentoK.setAnnoEsercizio(bilancio.getAnno());
 		pRicercaAccertamentoK.setAnnoAccertamento(accertamento.getAnnoMovimento());
-		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
+		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 
 		reqRIPC.setpRicercaAccertamentoK(pRicercaAccertamentoK);
 		return reqRIPC;
@@ -429,7 +429,7 @@ public class MovimentoGestioneServiceCallGroup extends ServiceCallGroup {
 	//AccertamentoPerChiaveOttimizzato - creaRequest
 	private RicercaAccertamentoPerChiaveOttimizzato createRequestRicercaAccertamentoPerChiaveOttimizzato(Accertamento accertamento, RicercaAttributiMovimentoGestioneOttimizzato ricercaAttributiMovimentoGestioneOttimizzato, DatiOpzionaliCapitoli datiOpzionaliCapitoli, SubAccertamento subAccertamento ) {
 		RicercaAccertamentoPerChiaveOttimizzato reqRAPCO = createRequestRicercaAccertamentoPerChiaveOttimizzato(accertamento, ricercaAttributiMovimentoGestioneOttimizzato, datiOpzionaliCapitoli);
-		reqRAPCO.getpRicercaAccertamentoK().setNumeroSubDaCercare(subAccertamento != null? subAccertamento.getNumero() : null);
+		reqRAPCO.getpRicercaAccertamentoK().setNumeroSubDaCercare(subAccertamento != null? subAccertamento.getNumeroBigDecimal() : null);
 		return reqRAPCO;
 	}
 
@@ -443,7 +443,7 @@ public class MovimentoGestioneServiceCallGroup extends ServiceCallGroup {
 		RicercaAccertamentoK pRicercaAccertamentoK = new RicercaAccertamentoK();
 		pRicercaAccertamentoK.setAnnoEsercizio(bilancio.getAnno());
 		pRicercaAccertamentoK.setAnnoAccertamento(accertamento.getAnnoMovimento());
-		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
+		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumeroBigDecimal());
 
 
 		reqRAPCO.setpRicercaAccertamentoK(pRicercaAccertamentoK);
@@ -558,7 +558,7 @@ public class MovimentoGestioneServiceCallGroup extends ServiceCallGroup {
 		modificaMovimentoGestioneEntrata.setImportoNew(importoAlNettoDellaModifica);
 		modificaMovimentoGestioneEntrata.setImportoOld(importoModifica);
 		
-		modificaMovimentoGestioneEntrata.setTipoMovimento(subacc != null && subacc.getUid() != 0 ? Constanti.MODIFICA_TIPO_SAC : Constanti.MODIFICA_TIPO_ACC);
+		modificaMovimentoGestioneEntrata.setTipoMovimento(subacc != null && subacc.getUid() != 0 ? CostantiFin.MODIFICA_TIPO_SAC : CostantiFin.MODIFICA_TIPO_ACC);
 		// SIAC-5219: portata a costante la descrizione (serve nelle ricerche)
 		modificaMovimentoGestioneEntrata.setDescrizione(descrizioneModifica);
 		modificaMovimentoGestioneEntrata.setTipoModificaMovimentoGestione("ALT");

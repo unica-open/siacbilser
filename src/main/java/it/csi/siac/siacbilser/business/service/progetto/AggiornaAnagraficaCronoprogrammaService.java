@@ -125,7 +125,17 @@ public class AggiornaAnagraficaCronoprogrammaService extends CronoprogrammaBaseS
 				dett = cancellaDettaglioUscita(dett);
 			} else if(dett.getUid()!=0 && dett.getDataFineValidita()==null){
 				checkDettaglioUscita(dett);
-				dett = aggiornaDettaglioUscita(dett);
+				//SIAC-8791
+				//sono nel caso di aggiornamento da capitolo esistente a non esistente 
+				if(dett.getNumeroUEB() != null && dett.getNumeroUEB()==-1) {
+					cancellaRelazioneDettaglioUscita(dett);
+					dett.setUid(0);
+					dett.setNumeroUEB(null);
+					dett.setCapitolo(null);
+					dett = inserisciDettaglioUscita(dett);
+				} else {
+					dett = aggiornaDettaglioUscita(dett);
+				}
 			}
 		}
 	}
@@ -137,18 +147,35 @@ public class AggiornaAnagraficaCronoprogrammaService extends CronoprogrammaBaseS
 	 * Inserisce tutti i dettagli di entrata del cronoprogramma.
 	 */
 	private void aggiornaDettagliEntrataCronoprogramma() {		
-		for (DettaglioEntrataCronoprogramma dett : cronoprogramma.getCapitoliEntrata()) {			
+		for (DettaglioEntrataCronoprogramma dett : cronoprogramma.getCapitoliEntrata()) {
 			if(dett.getUid()==0 && dett.getDataFineValidita() == null) {
+				//cancellaDettagliEntrataPrecedenti(cronoprogramma.getUid());
 				dett = inserisciDettaglioEntrata(dett);
 			} else if(dett.getUid()!=0 && dett.getDataFineValidita()!=null){
 				dett = cancellaDettaglioEntrata(dett);
 			} else if(dett.getUid()!=0 && dett.getDataFineValidita()==null){
-				dett = aggiornaDettaglioEntrata(dett);
+				//SIAC-8791
+				//sono nel caso di aggiornamento da capitolo esistente a non esistente 
+				if(dett.getNumeroUEB() != null && dett.getNumeroUEB()==-1) {
+					cancellaRelazioneDettaglioEntrata(dett);
+					dett.setUid(0);
+					dett.setNumeroUEB(null);
+					dett.setCapitolo(null);
+					dett = inserisciDettaglioEntrata(dett);
+				} else {
+					dett = aggiornaDettaglioEntrata(dett);
+				}
 			}		
 			
 		}
 	}
-	
+	/*
+	private void cancellaDettagliEntrataPrecedenti(int cronoprogrammaId) {
+		cronoprogrammaDad.cancellaDettagliCronoprogramma(cronoprogrammaId);
+		
+	}*/
+
+
 	/**
 	 * UN cronoprogramma e' aggiornabile solo se e' valido e non e' stato usato per calcolo fpv
 	 */

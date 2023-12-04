@@ -38,7 +38,10 @@ public class RicercaOrdiniDocumentoService extends CheckedAccountBaseService<Ric
 	 */
 	@Override
 	protected void checkServiceParam() throws ServiceParamError {
-		checkEntita(req.getDocumento(), "documento spesa");
+		if(req.getDocumentoEntrata() == null)
+			checkEntita(req.getDocumento(), "documento spesa");
+		else if(req.getDocumento() == null)
+			checkEntita(req.getDocumentoEntrata(), "documento entrata");
 	}
 	
 	/* (non-Javadoc)
@@ -66,8 +69,12 @@ public class RicercaOrdiniDocumentoService extends CheckedAccountBaseService<Ric
 	 */
 	@Override
 	protected void execute() {
-		
-		List<Ordine> ordini = ordineDad.ricercaOrdiniDocumento(req.getDocumento());
+		//SIAC-7557
+		List<Ordine> ordini = null;
+		if(req.getDocumento() != null)
+			ordini = ordineDad.ricercaOrdiniDocumento(req.getDocumento());
+		else if(req.getDocumentoEntrata() != null)
+			ordini = ordineDad.ricercaOrdiniDocumento(req.getDocumentoEntrata());
 		res.setOrdini(ordini);
 	}
 

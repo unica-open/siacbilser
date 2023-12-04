@@ -8,15 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.integration.dad.FileDad;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommon.util.MimeType;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccorser.frontend.webservice.ReportService;
 import it.csi.siac.siaccorser.frontend.webservice.msg.report.GeneraReport;
 import it.csi.siac.siaccorser.frontend.webservice.msg.report.GeneraReportResponse;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Richiedente;
+import it.csi.siac.siaccorser.model.TipologiaGestioneLivelli;
 import it.csi.siac.siaccorser.model.file.File;
 import it.csi.siac.siaccorser.model.file.StatoFile.CodiceStatoFile;
-import it.csi.siac.siaccorser.model.file.TipoFile;
+import it.csi.siac.siaccorser.model.file.TipoFileEnum;
 
 /**
  * Handler di base per la creazione di un Report.
@@ -26,7 +28,7 @@ import it.csi.siac.siaccorser.model.file.TipoFile;
  */
 public abstract class BaseReportHandler {
 	
-	protected LogUtil log = new LogUtil(this.getClass());
+	protected LogSrvUtil log = new LogSrvUtil(this.getClass());
 	protected Ente ente;
 	protected Richiedente richiedente;
 	
@@ -85,7 +87,7 @@ public abstract class BaseReportHandler {
 		//			if(e instanceof ReportElaborationException){
 		//				throw (ReportElaborationException)e;
 		//			}
-		String msg = "Errore durante l'elaborazione del report ";
+		String msg = "Errore durante l'elaborazione del report";
 		log.error(methodName, msg, e);
 		throw new ReportElaborationException(msg, e);
 	}
@@ -110,7 +112,9 @@ public abstract class BaseReportHandler {
 	/**
 	 * Elabora i dati necessari a costruire il Report
 	 */	
-	protected abstract void elaborateData();
+	protected void elaborateData() {
+		
+	}
 	
 	/**
 	 * Ottiene i dati del report in formato xml
@@ -163,7 +167,7 @@ public abstract class BaseReportHandler {
 		if(prepersistReportXml) {
 			xmlFileUid = persistXml(codiceTemplate, reportXml);
 		}
-		
+		// org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File("C:/tmp/report.xml"), reportXml);
 		generaReportResponse = generaReport(codiceTemplate, reportXml, xmlFileUid);
 
 		log.debug(methodName, "Fine generazione report.");
@@ -175,19 +179,43 @@ public abstract class BaseReportHandler {
 	 * @param reportXml il report da persistere
 	 * @return l'uid
 	 */
-	protected Integer persistXml(String codiceTemplate, String reportXml) {
+	protected Integer persistXml(String codiceTemplate, String reportXml) { 
+		return persistFile(
+			codiceTemplate, 
+			reportXml, 
+			TipoFileEnum.REPORT_XML, 
+			String.format("XML-%s", codiceTemplate), 
+			String.format("%s.xml", codiceTemplate),
+			MimeType.XML
+		);
+	}
+
+	protected Integer persistPdf(String codiceTemplate, byte[] pdf) { 
+		return persistFile(
+			codiceTemplate, 
+			pdf, 
+			TipoFileEnum.REPORT_PDF, 
+			String.format("PDF-%s", codiceTemplate), 
+			String.format("%s.pdf", codiceTemplate),
+			MimeType.PDF
+		);
+	}
+
+	protected Integer persistFile(String codiceTemplate, String contenuto, TipoFileEnum tipoFile, String codice, String nome, MimeType mimeType) { 
+		return persistFile(codiceTemplate, contenuto != null ? contenuto.getBytes() : null, tipoFile, codice, nome, mimeType);
+	}
+	
+	protected Integer persistFile(String codiceTemplate, byte[] contenuto, TipoFileEnum tipoFile, String codice, String nome, MimeType mimeType) { 
 		fileDad.setEnte(ente);
 		fileDad.setLoginOperazione(richiedente.getOperatore().getCodiceFiscale());
 		
-		TipoFile tipoFile = fileDad.ricercaTipoFileByCodice("REPORT_XML");
-		
 		File file = new File();
-		file.setCodice(String.format("XML-%s", codiceTemplate));
-		file.setNome(String.format("%s.xml", codiceTemplate));
-		file.setMimeType("text/xml");
-		file.setContenuto(reportXml);
+		file.setCodice(codice);
+		file.setNome(nome);
+		file.setMimeType(mimeType);
+		file.setContenuto(contenuto);
 		file.setStatoFile(CodiceStatoFile.CARICATO);
-		file.setTipo(tipoFile);
+		file.setTipo(fileDad.ricercaTipoFileByCodice(tipoFile.getCodice()));
 		
 		fileDad.inserisciFile(file);
 		
@@ -320,6 +348,27 @@ public abstract class BaseReportHandler {
 		//implementazione di default vuota.
 	}
 	
+	/**
+	 * Ottiene, per l'ente dell'account attuale, il livello di gestione 
+	 * del tipo specificato come parametro.
+	 *
+	 * @param tipologiaGestioneLivelli the tipologia gestione livelli
+	 * @return the gestione livello
+	 * 
+	 * @see TipologiaGestioneLivelli
+	 */
+	protected String getGestioneLivello(TipologiaGestioneLivelli tipologiaGestioneLivelli) {
+		return ente.getGestioneLivelli() == null ? null : ente.getGestioneLivelli().get(tipologiaGestioneLivelli);
+	}
 	
+	/**
+	 * Controlla se l'ente sia abilitato alla gestione delle UEB.
+	 *
+	 * @return true, se l'ente gestisce le UEB.
+	 */
+	protected boolean isGestioneUEB() {
+		String livelloGestioneBilancio = getGestioneLivello(TipologiaGestioneLivelli.LIVELLO_GESTIONE_BILANCIO);
+		return "GESTIONE_UEB".equals(livelloGestioneBilancio);
+	}
 	
 }

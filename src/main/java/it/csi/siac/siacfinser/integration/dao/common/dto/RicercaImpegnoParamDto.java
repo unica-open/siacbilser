@@ -26,6 +26,8 @@ public class RicercaImpegnoParamDto implements Serializable{
 	private String cup;
 	private String progetto; //codiceProgetto
 	private String flagDaRiaccertamento;
+	//SIAC-6997
+	private String flagDaReanno;
 	private Integer annoProvvedimento;
 	private Integer numeroProvvedimento;
 	private String tipoProvvedimento;
@@ -124,6 +126,18 @@ public class RicercaImpegnoParamDto implements Serializable{
 	}
 	public void setProgetto(String progetto) {
 		this.progetto = progetto;
+	}
+	/**
+	 * @return the flagDaReanno
+	 */
+	public String getFlagDaReanno() {
+		return flagDaReanno;
+	}
+	/**
+	 * @param flagDaReanno the flagDaReanno to set
+	 */
+	public void setFlagDaReanno(String flagDaReanno) {
+		this.flagDaReanno = flagDaReanno;
 	}
 	public String getFlagDaRiaccertamento() {
 		return flagDaRiaccertamento;

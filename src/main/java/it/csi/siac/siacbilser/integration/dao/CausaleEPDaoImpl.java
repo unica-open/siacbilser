@@ -516,7 +516,28 @@ public class CausaleEPDaoImpl extends JpaDao<SiacTCausaleEp, Integer> implements
 		
 	}
 
-
+	/**
+	 * SIAC-8169  
+	 * A seguito della SIAC-4596 e'stato deprecato ed invalidato il legame tra 
+	 * la SiacTCausaleEp e SiacRConciliazioneClasseCausaleEp, come collegamento
+	 * tra le due tabelle e' stata aggiunta la tabella SiacRCausaleEpPdceConto
+	 * 
+	 * @param jpql
+	 * @param param
+	 * @param enteProprietarioId
+	 * @param anno
+	 * @param siacDAmbito
+	 * @param causaleEpCode
+	 * @param causaleEpDesc
+	 * @param siacDCausaleEpTipoEnum
+	 * @param siacDCausaleEpStatoEnum
+	 * @param pdceContoId
+	 * @param eventoTipoId
+	 * @param eventoId
+	 * @param elementoPianoDeiContiId
+	 * @param soggettoId
+	 * @param siacDConciliazioneClasse
+	 */
 	private void componiQueryRicercaSinteticaCausale(StringBuilder jpql, Map<String, Object> param,
 			Integer enteProprietarioId,
 			Integer anno,
@@ -642,14 +663,18 @@ public class CausaleEPDaoImpl extends JpaDao<SiacTCausaleEp, Integer> implements
 			
 			param.put("soggettoId", soggettoId);
 		}
-		
+		//SIAC-8169 aggiunta la join con la SiacRCausaleEpPdceConto
 		if(siacDConciliazioneClasse != null && siacDConciliazioneClasse.getCodice() != null) {
 			jpql.append(" AND EXISTS ( ");
-			jpql.append("     FROM tce.siacRConciliazioneClasseCausaleEps rcec ");
+			jpql.append("     FROM SiacRConciliazioneClasseCausaleEp rcec ");
+			jpql.append("     JOIN rcec.siacRCausaleEpPdceConto rpdceconto ");
 			jpql.append("     WHERE rcec.dataCancellazione IS NULL ");
+			jpql.append("     AND rpdceconto.dataCancellazione IS NULL ");
+			jpql.append("     AND rpdceconto.siacTCausaleEp = tce ");
 			jpql.append("     AND rcec.siacDConciliazioneClasse.concclaCode = :concclaCode ");
 				
 			appendFilterDataInizioFineValidita(jpql, param, "rcec", anno);
+			appendFilterDataInizioFineValidita(jpql, param, "rpdceconto", anno);
 			
 			jpql.append(" ) ");
 			

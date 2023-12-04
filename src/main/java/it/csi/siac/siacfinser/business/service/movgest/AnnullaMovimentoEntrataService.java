@@ -23,7 +23,7 @@ import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaMovimentoEntrata;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AnnullaMovimentoEntrataResponse;
@@ -103,18 +103,22 @@ public class AnnullaMovimentoEntrataService extends AbstractBaseService<AnnullaM
 		accertamento = impegnoOttimizzatoDad.caricaAttoAmministrativoSeNonValorizzato(accertamento);
 		//
 		
-		String tipoMovimento = Constanti.MOVGEST_TIPO_ACCERTAMENTO;
+		String tipoMovimento = CostantiFin.MOVGEST_TIPO_ACCERTAMENTO;
 		boolean inserireDoppiaGestione = accertamentoOttimizzatoDad.inserireDoppiaGestione(bilancio, (Accertamento)accertamento, datiOperazione);
 		Accertamento accertamentoCaricatoPerDoppiaGestione = null;
 		if(inserireDoppiaGestione){
 			String annoEsercizio = Integer.toString(bilancio.getAnno());
 			Integer annoMovimento = accertamento.getAnnoMovimento();
-			BigDecimal numeroMovimento = accertamento.getNumero();
+			BigDecimal numeroMovimento = accertamento.getNumeroBigDecimal();
 			accertamentoCaricatoPerDoppiaGestione = ricaricaMovimentoPerAnnullaModifica(richiedente, numeroMovimento, annoEsercizio, annoMovimento, tipoMovimento);
 		}
 		
 		//4. Si invoca il metodo che esegue l'operazione "core" di annullamento di impegni o accertamenti:
 		EsitoAggiornamentoMovimentoGestioneDto esitoAnnullaMovimento = accertamentoOttimizzatoDad.annullaMovimento(ente, richiedente, accertamento, tipoMovimento, datiOperazione,bilancio,capitoliInfo,accertamentoInModificaInfoDto,accertamentoCaricatoPerDoppiaGestione);
+	
+		if (req.isVerificaImportiDopoAnnullamentoModifica()) { // SIAC-8090
+			accertamentoOttimizzatoDad.verificaImportiDopoAnnullamentoModifica(ente.getUid(), req.getBilancio().getUid(), "A", accertamento.getAnnoMovimento(), accertamento.getNumeroBigDecimal());
+		}
 		
 		//5. Costruzione response:
 		if ( (esitoAnnullaMovimento.getListaErrori()!=null && esitoAnnullaMovimento.getListaErrori().size()>0) || esitoAnnullaMovimento.getMovimentoGestione()==null) {
@@ -132,11 +136,13 @@ public class AnnullaMovimentoEntrataService extends AbstractBaseService<AnnullaM
 			TransactionAspectSupport.currentTransactionStatus().flush();
 			//String annoEsercizio = Integer.toString(bilancio.getAnno());
 			Integer annoAccertamento = accertamento.getAnnoMovimento();
-			BigDecimal numeroAccertamento = accertamento.getNumero();
+			BigDecimal numeroAccertamento = accertamento.getNumeroBigDecimal();
 			if(annoAccertamento != null && annoAccertamento.intValue()>0 && numeroAccertamento!=null && numeroAccertamento.intValue()>0){
 				
 				//ricarico i dati puliti del movimento annullato per restituirlo in output al servizio:
-				Accertamento accertamentoReload = (Accertamento) accertamentoOttimizzatoDad.ricercaMovimentoPk(richiedente, ente, Integer.toString(annoBilancioRequest), annoAccertamento, numeroAccertamento, Constanti.MOVGEST_TIPO_ACCERTAMENTO, true);
+				Accertamento accertamentoReload = (Accertamento) accertamentoOttimizzatoDad.ricercaMovimentoPk(
+						richiedente, ente, Integer.toString(annoBilancioRequest), annoAccertamento, numeroAccertamento,
+						CostantiFin.MOVGEST_TIPO_ACCERTAMENTO, true, false);
 				accertamentoReload = completaDatiRicercaAccertamentoPk(richiedente, accertamentoReload);
 				
 				res.setAccertamento(accertamentoReload);

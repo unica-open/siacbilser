@@ -118,6 +118,8 @@ public class SubdocumentoIvaDad extends ExtendedBaseDadImpl {
 			SI subdocIva,
 			Date protocolloProvvisorioDa, Date protocolloProvvisorioA,
 			Date protocolloDefinitivoDa, Date protocolloDefinitivoA,
+			//SIA-7516
+			Date dataOperazioneDocumentoDa, Date dataOperazioneDocumentoA,			
 			SiacDSubdocIvaStatoEnum siacDSubdocIvaStatoEnum, Collection<SiacDDocFamTipoEnum> siacDDocFamTipoEnums) {
 		return subdocumentoIvaDao.ricercaSubdocumentoIva(subdocIva.getEnte().getUid(),
 				siacDDocFamTipoEnums,
@@ -128,6 +130,10 @@ public class SubdocumentoIvaDad extends ExtendedBaseDadImpl {
 				protocolloProvvisorioA,
 				protocolloDefinitivoDa,
 				protocolloDefinitivoA,
+				//SIAC-7516
+				dataOperazioneDocumentoDa,
+				//SIAC-7516
+				dataOperazioneDocumentoA,
 				subdocIva.getRegistroIva() != null ? mapToUidIfNotZero(subdocIva.getRegistroIva()) : null);
 	}
 	

@@ -25,7 +25,8 @@ public class RicercaSoggettoParamDto implements Serializable {
 	private String formaGiuridica;
 	private String sesso;
 	private String comuneNascita;
-	private String statoSoggetto;
+	private String idStatoSoggetto;
+	private String codiceStatoSoggetto;
 	private String idNazione;
 	
 	private String matricola;
@@ -99,11 +100,11 @@ public class RicercaSoggettoParamDto implements Serializable {
 	public void setClasse(String classe) {
 		this.classe = classe;
 	}
-	public String getStatoSoggetto() {
-		return statoSoggetto;
+	public String getIdStatoSoggetto() {
+		return idStatoSoggetto;
 	}
-	public void setStatoSoggetto(String statoSoggetto) {
-		this.statoSoggetto = statoSoggetto;
+	public void setIdStatoSoggetto(String idStatoSoggetto) {
+		this.idStatoSoggetto = idStatoSoggetto;
 	}
 	public String getFormaGiuridica() {
 		return formaGiuridica;
@@ -151,6 +152,12 @@ public class RicercaSoggettoParamDto implements Serializable {
 	}
 	public void setCodDestinatario(String codDestinatario) {
 		this.codDestinatario = codDestinatario;
+	}
+	public String getCodiceStatoSoggetto() {
+		return codiceStatoSoggetto;
+	}
+	public void setCodiceStatoSoggetto(String codiceStatoSoggetto) {
+		this.codiceStatoSoggetto = codiceStatoSoggetto;
 	}
 	
 }

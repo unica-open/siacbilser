@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -23,13 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
 import it.csi.siac.siacbilser.business.service.documentoentrata.RicercaQuoteDaEmettereEntrataService;
+import it.csi.siac.siacbilser.integration.dad.SubdocumentoDad;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
 import it.csi.siac.siaccorser.model.paginazione.ParametriPaginazione;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiIncassoDaElenco;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativiDiIncassoDaElencoResponse;
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.EmetteOrdinativoDiIncassoMultiplo;
@@ -40,6 +45,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereEnt
 import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuoteDaEmettereEntrataResponse;
 import it.csi.siac.siacfin2ser.model.DocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.ElencoDocumentiAllegato;
+import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoIncasso;
@@ -65,6 +71,8 @@ public class EmetteOrdinativiDiIncassoDaElencoService extends EmetteOrdinativiDa
 	private EmetteOrdinativoDiIncassoSingoloService emetteOrdinativoDiIncassoSingoloService;
 	@Autowired
 	private EmetteOrdinativoDiIncassoMultiploService emetteOrdinativoDiIncassoMultiploService;
+	@Autowired
+	private SubdocumentoDad subdocumentoDad;
 	
 	
 	@Override
@@ -92,6 +100,50 @@ public class EmetteOrdinativiDiIncassoDaElencoService extends EmetteOrdinativiDa
 				checkEntita(subdoc, "subdoc");
 			}
 		}
+	}
+	
+	/**
+	 * SIAC-8195
+	 * 
+	 * @param List<SubdocumentoEntrata> quoteDaEmettere
+	 * @throws BusinessException
+	 */
+	private void controlloBloccoRORAttivoQuote(List<SubdocumentoEntrata> quoteDaEmettere) {
+		if(isBloccoRORAttivo()){
+			if(CollectionUtils.isNotEmpty(quoteDaEmettere)){
+				for(SubdocumentoEntrata s : quoteDaEmettere){
+					List<Subdocumento<?,?>> listaSubdocAmmessi = subdocumentoDad.cercaSubdocNonResiduioResiduiConModificheRORM(
+							s.getUid(), req.getBilancio().getAnno());
+					
+					//se non ho risultati validi per l'emissione lancio l'eccezione
+					if(CollectionUtils.isEmpty(listaSubdocAmmessi)){
+						//TODO restituire le chiavi o solo <anno>/<numero> per un errore piu' parlante?
+						throw new BusinessException(ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("Accertamento/sub accertamento residuo non utilizzabile"));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * SIAC-8195 
+	 * Spostato il controllo sulla parte sincrona dell'emissione con adeguamento dell'azione 
+	 * di un probabile refuso da:
+	 *  
+	 * BLOCCO_SU_LIQ_IMP_RESIDUI => ("OP-COM-insAllegatoAttoNoResImp")
+	 * 
+	 * a 
+	 * 
+	 * BLOCCO_SU_INCASSI_RESIDUI => ("OP-COM-insAllegatoAttoNoResAcc")
+	 * 
+	 * come da analisi, in quanto il servizio e' relativo all'emissione delle quote di incasso
+	 * 
+	 * @return boolean
+	 */
+	//SIAC-7470
+	protected boolean isBloccoRORAttivo(){
+		List<String> codiciAzioniConsentite = accountDad.findCodiciAzioniConsentite(req.getRichiedente().getAccount().getUid());
+		return codiciAzioniConsentite.indexOf(AzioneConsentitaEnum.BLOCCO_SU_INCASSI_RESIDUI.getNomeAzione())!=-1;
 	}
 	
 	
@@ -122,7 +174,7 @@ public class EmetteOrdinativiDiIncassoDaElencoService extends EmetteOrdinativiDa
 	public EmetteOrdinativiDiIncassoDaElencoResponse executeService(EmetteOrdinativiDiIncassoDaElenco serviceRequest) {
 		return super.executeService(serviceRequest);
 	}
-	
+		
 	@Override
 	protected void execute() {
 		caricaBilancio();
@@ -135,6 +187,10 @@ public class EmetteOrdinativiDiIncassoDaElencoService extends EmetteOrdinativiDa
 		
 		// Step5: Ricerca documenti da incassare
 		List<SubdocumentoEntrata> quoteDaEmettere = caricaQuoteDaEmettere();
+		
+		//SIAC-8195 si sposta il controllo sulla parte sincrona dell'emissione
+		//SIAC-7470: prima di verificare il bloccoROR devo caricare i dati dall'elenco tramite i subdocumenti - vedi "EmetteOrdinativiDiIncassoDaElencoService"
+		controlloBloccoRORAttivoQuote(quoteDaEmettere);
 		
 		startElaborazioneQuote(quoteDaEmettere);
 		try {
@@ -152,7 +208,7 @@ public class EmetteOrdinativiDiIncassoDaElencoService extends EmetteOrdinativiDa
 		}
 		
 	}
-	
+
 	
 	
 	/*-----------------------------------------------------------------------------------------------------------------------*/
@@ -495,8 +551,8 @@ public class EmetteOrdinativiDiIncassoDaElencoService extends EmetteOrdinativiDa
 		
 		EmetteOrdinativoDiIncassoSingoloResponse emetteOrdinativoDiIncassoSingoloResponse = emetteOrdinativoDiIncassoSingoloService.executeServiceTxRequiresNew(emetteOrdinativoDiIncassoSingolo);
 		
-		if(emetteOrdinativoDiIncassoSingoloResponse.getMessaggio() != null){
-			res.addMessaggio(emetteOrdinativoDiIncassoSingoloResponse.getMessaggio());
+		if(emetteOrdinativoDiIncassoSingoloResponse.getMessaggi() != null && !emetteOrdinativoDiIncassoSingoloResponse.getMessaggi().isEmpty()){
+			res.addMessaggi(emetteOrdinativoDiIncassoSingoloResponse.getMessaggi());
 		}
 		if(emetteOrdinativoDiIncassoSingoloResponse.getSubdocumentoScartato() != null){
 			res.getSubdocumentiScartati().add(emetteOrdinativoDiIncassoSingoloResponse.getSubdocumentoScartato());
@@ -543,7 +599,9 @@ public class EmetteOrdinativiDiIncassoDaElencoService extends EmetteOrdinativiDa
 		EmetteOrdinativoDiIncassoMultiploResponse emetteOrdinativoDiIncassoMultiploResponse = emetteOrdinativoDiIncassoMultiploService.executeServiceTxRequiresNew(emetteOrdinativoDiIncassoMultiplo);
 		
 		if(emetteOrdinativoDiIncassoMultiploResponse.getMessaggi() != null && !emetteOrdinativoDiIncassoMultiploResponse.getMessaggi().isEmpty()){
-			res.addMessaggi(emetteOrdinativoDiIncassoMultiploResponse.getMessaggi());
+			for(Messaggio mm : emetteOrdinativoDiIncassoMultiploResponse.getMessaggi()){
+				res.addMessaggio(new Messaggio(mm.getCodice(), "Emissione ordinativo per gruppo di quote con chiave " + StringUtils.replace(chiave, "_", " ")+ ": "+  mm.getDescrizione()));
+			}
 		}
 		if(emetteOrdinativoDiIncassoMultiploResponse.getSubdocumentiScartati() != null && !emetteOrdinativoDiIncassoMultiploResponse.getSubdocumentiScartati().isEmpty()){
 			res.getSubdocumentiScartati().addAll(emetteOrdinativoDiIncassoMultiploResponse.getSubdocumentiScartati());
@@ -564,8 +622,95 @@ public class EmetteOrdinativiDiIncassoDaElencoService extends EmetteOrdinativiDa
 		
 	}
 
-     
- 	
+	@Override
+	//SIAC-8017-CMTO
+	protected void impostaMessaggiInResponse(List<Messaggio> messaggi) {
+		res.addMessaggi(messaggi);
+	}
+
+//	//SIAC-8195 si sposta il controllo sulla parte sincrona dell'emissione
+//	//SIAC-7470
+//	private boolean escludiAccertamentoPerBloccoROR(Accertamento accertamento, Integer annoEsercizio){
+//		boolean escludiXBloccoROR = false;
+//		if(isBloccoRORAttivo() && (accertamento.getAnnoMovimento() > 0 && annoEsercizio != null && accertamento.getAnnoMovimento() < annoEsercizio)){
+//			escludiXBloccoROR = true;
+//			if(accertamento.getListaModificheMovimentoGestioneEntrata() != null && !accertamento.getListaModificheMovimentoGestioneEntrata().isEmpty()){
+//				for(int j = 0; j < accertamento.getListaModificheMovimentoGestioneEntrata().size(); j++){
+//					ModificaMovimentoGestione mmg = accertamento.getListaModificheMovimentoGestioneEntrata().get(j);
+//					if(mmg.getTipoModificaMovimentoGestione() != null && mmg.getTipoModificaMovimentoGestione().equalsIgnoreCase(ModificaMovimentoGestione.CODICE_ROR_DA_MANTENERE) &&
+//						mmg.getAttoAmministrativo() != null && mmg.getAttoAmministrativo().getStatoOperativo() != null && mmg.getStatoOperativoModificaMovimentoGestione() != null &&
+//						mmg.getAttoAmministrativo().getStatoOperativo().equals(StatoOperativoAtti.DEFINITIVO.name()) && 
+//						!(mmg.getStatoOperativoModificaMovimentoGestione().name().equals(StatoOperativoModificaMovimentoGestione.ANNULLATO.name()))){
+//							escludiXBloccoROR = false;
+//							break;
+//					}
+//				}
+//			}
+//		}
+//		return escludiXBloccoROR;
+//	}
+//
+//	//SIAC-8195 si sposta il controllo sulla parte sincrona dell'emissione
+//	//SIAC-7470
+//	protected Accertamento ricercaAccertamentoPerChiave(Accertamento accertamento) {
+//		final String methodName = "ricercaAccertamentoPerChiave";
+//		if(accertamento == null) {
+//			log.debug(methodName, "Accertamento null");
+//			return null;
+//		}
+//		final String key = accertamento.getAnnoMovimento() + "/" + accertamento.getNumero();
+//		RicercaAccertamentoPerChiaveOttimizzato reqRAPCO = popolaCampiComuniRequestRicercaAccertamentoPerChiaveOttimizzato(accertamento);
+//		reqRAPCO.setCaricaSub(false);
+//		return ottieniAccertamentoDaServizio(key, reqRAPCO);
+//	}
+//	
+//	//SIAC-8195 si sposta il controllo sulla parte sincrona dell'emissione
+//	//SIAC-7470
+//	private Accertamento ottieniAccertamentoDaServizio(String key, RicercaAccertamentoPerChiaveOttimizzato reqRAPCO) {
+//		final String methodName="ottieniAccertamentoDaServizio";
+//		RicercaAccertamentoPerChiaveOttimizzatoResponse resRA = movimentoGestioneService.ricercaAccertamentoPerChiaveOttimizzato(reqRAPCO);
+//		if(!resRA.isFallimento() && resRA.hasErrori()) {
+//			log.debug(methodName, "Errori nella response senza impostare il FALLIMENTO per la chiave " + key + ": impostazione del dato a mano");
+//			resRA.setEsito(Esito.FALLIMENTO);
+//		}
+//		if(!resRA.isFallimento() && resRA.getAccertamento() == null) {
+//			log.debug(methodName, "Nessun dato trovato per la chiave " + key + ". Aggiungo l'errore nella response");
+//			resRA.addErrore(ErroreCore.ENTITA_NON_TROVATA.getErrore("Accertamento", key));
+//			resRA.setEsito(Esito.FALLIMENTO);
+//		}
+//		checkServiceResponseFallimento(resRA);
+//		Accertamento accertamentoRes = resRA.getAccertamento();
+//		log.debug(methodName, "Data la chiave " + key + " trovata accertamento " + accertamentoRes.getUid());
+//		//SIAC-5712
+//		if(!reqRAPCO.isCaricaSub() && resRA.getElencoSubAccertamentiTuttiConSoloGliIds() != null) {
+//			//non ho richiesto di caricare i subma ho comunque dei dati minimi in piu'
+//			accertamentoRes.setSubAccertamenti(resRA.getElencoSubAccertamentiTuttiConSoloGliIds());
+//		}
+//		return accertamentoRes;
+//	}
+//	
+//	//SIAC-8195 si sposta il controllo sulla parte sincrona dell'emissione
+//	//SIAC-7470
+//	private RicercaAccertamentoPerChiaveOttimizzato popolaCampiComuniRequestRicercaAccertamentoPerChiaveOttimizzato(Accertamento accertamento) {
+//		RicercaAccertamentoPerChiaveOttimizzato reqRAPCO = new RicercaAccertamentoPerChiaveOttimizzato();
+//		reqRAPCO.setRichiedente(req.getRichiedente());
+//		reqRAPCO.setEnte(req.getRichiedente().getAccount().getEnte());
+//		DatiOpzionaliElencoSubTuttiConSoloGliIds parametriElencoIds = new DatiOpzionaliElencoSubTuttiConSoloGliIds();
+//		parametriElencoIds.setEscludiAnnullati(true);
+//		//SIAC-5712
+//		parametriElencoIds.setCaricaFlagAttivaGsa(true);
+//		DatiOpzionaliCapitoli datiOpzionaliCapitoli = new DatiOpzionaliCapitoli();
+//		datiOpzionaliCapitoli.setImportiDerivatiRichiesti(EnumSet.noneOf(ImportiCapitoloEnum.class));
+//		RicercaAccertamentoK pRicercaAccertamentoK = new RicercaAccertamentoK();
+//		pRicercaAccertamentoK.setAnnoEsercizio(req.getBilancio().getAnno());
+//		pRicercaAccertamentoK.setAnnoAccertamento(accertamento.getAnnoMovimento());
+//		pRicercaAccertamentoK.setNumeroAccertamento(accertamento.getNumero());
+//		reqRAPCO.setpRicercaAccertamentoK(pRicercaAccertamentoK);
+//		reqRAPCO.setDatiOpzionaliElencoSubTuttiConSoloGliIds(parametriElencoIds);
+//		reqRAPCO.setDatiOpzionaliCapitoli(datiOpzionaliCapitoli);
+//		reqRAPCO.setEscludiSubAnnullati(true);
+//		return reqRAPCO;
+//	}
 
 
 }

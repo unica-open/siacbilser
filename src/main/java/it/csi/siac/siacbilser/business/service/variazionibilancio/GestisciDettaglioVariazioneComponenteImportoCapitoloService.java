@@ -47,6 +47,7 @@ import it.csi.siac.siacbilser.model.ImportiCapitolo;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
 import it.csi.siac.siacbilser.model.MacrotipoComponenteImportiCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
+import it.csi.siac.siacbilser.model.errore.ErroreBil;
 import it.csi.siac.siaccommon.util.cache.Cache;
 import it.csi.siac.siaccommon.util.cache.CacheElementInitializer;
 import it.csi.siac.siaccommon.util.cache.MapCache;
@@ -54,6 +55,7 @@ import it.csi.siac.siaccommon.util.cache.initializer.MapCacheElementInitializer;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
+import it.csi.siac.siaccorser.util.AzioneConsentitaEnum;
 import it.csi.siac.siacfin2ser.model.CapitoloModelDetail;
 
 /**
@@ -201,7 +203,8 @@ public class GestisciDettaglioVariazioneComponenteImportoCapitoloService extends
 //			return;
 //		}
 		capitoloFondino = capitoloDad.isCapitoloFondino(req.getDettaglioVariazioneImportoCapitolo().getCapitolo().getUid());
-		if(!capitoloFondino){
+		//SIAC-7786 INIZIO
+		/*if(!capitoloFondino){
 			return;
 		}
 		
@@ -209,9 +212,18 @@ public class GestisciDettaglioVariazioneComponenteImportoCapitoloService extends
 		
 		if(Long.valueOf(0).compareTo(numeroTipiComponentiNonFresco)!=0) {
 			log.error(methodName, "numero di componenti con macrotipo diverso da quello indicato:" + numeroTipiComponentiNonFresco);
-			throw new BusinessException(ErroreCore.VALORE_NON_VALIDO.getErrore("lista tipo componenti", ": sono presenti componenti con macrotipo diverso da " + MacrotipoComponenteImportiCapitolo.FRESCO.getDescrizione()));
+			throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("lista tipo componenti", ": sono presenti componenti con macrotipo diverso da " + MacrotipoComponenteImportiCapitolo.FRESCO.getDescrizione()));
+		}*/
+		if((isAzioneConsentita(AzioneConsentitaEnum.LIMITA_COMP_VAR_DEC.getNomeAzione()) && isAzioneConsentita(AzioneConsentitaEnum.INSERISCI_VARIAZIONE_DECENTRATA.getNomeAzione())) || capitoloFondino){
+			Long numeroTipiComponentiNonFresco = tipoComponenteImportiCapitoloDad.countTipoComponenteWithMacrotipoDiversoDa(getListaUidTipoComponente(), MacrotipoComponenteImportiCapitolo.FRESCO);
+			if(Long.valueOf(0).compareTo(numeroTipiComponentiNonFresco)!=0) {
+				log.error(methodName, "numero di componenti con macrotipo diverso da quello indicato:" + numeroTipiComponentiNonFresco);
+				//throw new BusinessException(ErroreCore.VALORE_NON_CONSENTITO.getErrore("lista tipo componenti", ": sono presenti componenti con macrotipo diverso da " + MacrotipoComponenteImportiCapitolo.FRESCO.getDescrizione()));
+				//CONTABILIA-380
+				throw new BusinessException(ErroreBil.SOLO_MACROTIPO_FRESCO.getErrore(MacrotipoComponenteImportiCapitolo.FRESCO.getDescrizione()));
+			}
 		}
-		
+		//SIAC-7786 FINE
 	}
 
 	private List<Integer> getListaUidTipoComponente() {
@@ -328,10 +340,11 @@ public class GestisciDettaglioVariazioneComponenteImportoCapitoloService extends
 		final String methodName = "initComponenteImportoCapitolo";
 		ComponenteImportiCapitolo cic = dettaglio.getComponenteImportiCapitolo();
 		if(cic.getUid() != 0) {
-			log.debug(methodName, "Componente su indice " + index + ", delta " + delta + " con uid " + cic.getUid() + " - verifica esistenza dato...");
-			cic = componenteImportiCapitoloDad.findComponenteImportiCapitoloByUid(cic.getUid(), ComponenteImportiCapitoloModelDetail.TipoComponenteImportiCapitolo);
+			int uidCicInput = cic.getUid();
+			log.debug(methodName, "Componente su indice " + index + ", delta " + delta + " con uid " + uidCicInput + " - verifica esistenza dato...");
+			cic = componenteImportiCapitoloDad.findComponenteImportiCapitoloByUid(uidCicInput, ComponenteImportiCapitoloModelDetail.TipoComponenteImportiCapitolo);
 			// Controllo di esistenza della componente per dato uid
-			checkBusinessCondition(cic != null, ErroreCore.ENTITA_INESISTENTE.getErrore("Componente", "uid " + cic.getUid()));
+			checkBusinessCondition(cic != null, ErroreCore.ENTITA_INESISTENTE.getErrore("Componente", "uid " + uidCicInput));
 			// Controllo coerenza del capitolo
 			checkBusinessCondition(mappaComponentiImportoCapitoloCollegateCapitoloEVariazionePerComponente.containsKey(cic.getUid()), ErroreCore.OPERAZIONE_NON_CONSENTITA.getErrore("componente " + cic.getUid() + " non collegata al capitolo"));
 			dettaglio.setComponenteImportiCapitolo(cic);
@@ -449,11 +462,18 @@ public class GestisciDettaglioVariazioneComponenteImportoCapitoloService extends
 	private void initDettaglioVariazioneImportoCapitolo() {
 		final String methodName = "initDettaglioVariazioneImportoCapitolo";
 		// Calcolo il dettaglio relativo al capitolo
+		/*
+		 * SIAC-8360: lascio il controllo per implementazione automatica salvataggio
 		dettaglioVariazioneImportoCapitolo = variazioniDad.findSingoloDettaglioVariazioneImportoCapitoloByUidVariazioneAndUidCapitolo(
 				req.getDettaglioVariazioneImportoCapitolo().getVariazioneImportoCapitolo().getUid(),
 				capitolo.getUid());
-		
 		if(dettaglioVariazioneImportoCapitolo != null) {
+		*/
+		
+		if(isDettaglioDaAggiornare()) {
+			dettaglioVariazioneImportoCapitolo = variazioniDad.findSingoloDettaglioVariazioneImportoCapitoloByUidVariazioneAndUidCapitolo(
+					req.getDettaglioVariazioneImportoCapitolo().getVariazioneImportoCapitolo().getUid(),
+					capitolo.getUid());
 			// Dettaglio gia' inizializzato
 			log.debug(methodName, "Dettaglio gia' presente: effettuo l'aggiornamento del dato");
 			dettaglioVariazioneImportoCapitolo.setStanziamento(initStanziamento(req.getDettaglioVariazioneImportoCapitolo().getListaDettaglioVariazioneComponenteImportoCapitolo()));
@@ -480,6 +500,11 @@ public class GestisciDettaglioVariazioneComponenteImportoCapitoloService extends
 		
 		insertDettaglioVariazioneImportoCapitolo();
 	}
+	private boolean isDettaglioDaAggiornare() {
+		// SIAC-8360
+		return Boolean.FALSE.equals(req.getDettaglioInInserimento());
+	}
+
 	/**
 	 * Aggiornamento del dettaglio variazione importo capitolo
 	 */

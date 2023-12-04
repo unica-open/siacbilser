@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.base.ExtendedBaseService;
@@ -60,8 +61,8 @@ public class RicercaSinteticaDocumentoEntrataService extends
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siaccommonser.business.service.base.BaseService#executeService(it.csi.siac.siaccorser.model.ServiceRequest)
 	 */
-	@Override
-	@Transactional(readOnly = true)
+	@Override //SIAC-8254 propagation = Propagation.REQUIRES_NEW
+	@Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
 	public RicercaSinteticaDocumentoEntrataResponse executeService(RicercaSinteticaDocumentoEntrata serviceRequest) {
 		return super.executeService(serviceRequest);
 	}
@@ -72,15 +73,15 @@ public class RicercaSinteticaDocumentoEntrataService extends
 	@Override
 	protected void execute() {
 		
-		String reqXML = JAXBUtility.marshall(req);
-		log.error("EXECUTE_TEST", reqXML);
+//		String reqXML = JAXBUtility.marshall(req);
+//		log.error("EXECUTE_TEST", reqXML);
 		
 		//Ricerca dei documenti
-		ListaPaginata<DocumentoEntrata> listaDocumentoEntrata = documentoEntrataDad.ricercaSinteticaDocumentoEntrata(doc, req.getAttoAmministrativo(), req.getAccertamento(), req.getRilevanteIva(), req.getElencoDocumenti(), req.getContabilizzaGenPcc(), req.getParametriPaginazione());
+		ListaPaginata<DocumentoEntrata> listaDocumentoEntrata = documentoEntrataDad.ricercaSinteticaDocumentoEntrata(doc, req.getAttoAmministrativo(), req.getAccertamento(), req.getRilevanteIva(), req.getElencoDocumenti(), req.getContabilizzaGenPcc(), req.getPreDocumentoEntrata(), req.getParametriPaginazione());
 		res.setDocumenti(listaDocumentoEntrata);
 		
 		//Calcolo del totale importo dei documenti filtrati per gli stessi parametri della ricerca.
-		BigDecimal importoTotale = documentoEntrataDad.ricercaSinteticaDocumentoEntrataImportoTotale(doc, req.getAttoAmministrativo(), req.getAccertamento(), req.getRilevanteIva(),req.getElencoDocumenti(), req.getContabilizzaGenPcc(), req.getParametriPaginazione());		
+		BigDecimal importoTotale = documentoEntrataDad.ricercaSinteticaDocumentoEntrataImportoTotale(doc, req.getAttoAmministrativo(), req.getAccertamento(), req.getRilevanteIva(),req.getElencoDocumenti(), req.getContabilizzaGenPcc(), req.getPreDocumentoEntrata(), req.getParametriPaginazione());		
 		res.setImportoTotale(importoTotale);
 
 	}

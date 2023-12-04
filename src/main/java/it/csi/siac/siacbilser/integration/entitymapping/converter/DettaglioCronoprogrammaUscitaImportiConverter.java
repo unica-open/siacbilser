@@ -29,7 +29,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacDBilElemDetTipo
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.model.DettaglioUscitaCronoprogramma;
 import it.csi.siac.siacbilser.model.QuadroEconomico;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Esito;
 
@@ -42,7 +42,7 @@ public class DettaglioCronoprogrammaUscitaImportiConverter extends ExtendedDozer
 	
 
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	/** The eef. */
 	@Autowired

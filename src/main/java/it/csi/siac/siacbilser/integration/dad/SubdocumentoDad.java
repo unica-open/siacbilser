@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -391,6 +392,84 @@ public class SubdocumentoDad extends ExtendedBaseDadImpl {
 		
 	}
 	
+	//SIAC-6780	
+	public ListaPaginata<Subdocumento<?, ?>> ricercaSubdocumentiDaAssociarePerCollegaDocumento(
+			Ente ente, 
+			TipoFamigliaDocumento tipoFamigliaDocumento,
+			TipoDocumento tipoDocumento,
+			Integer annoDocumento,
+			String numeroDocumento,
+			Soggetto soggetto,
+			List<StatoOperativoDocumento> statiOperativoDocumento,
+			BigDecimal predocImporto,
+			BigDecimal numeroProvvisorio,
+			ParametriPaginazione parametriPaginazione
+			) {
+		
+		Set<SiacDDocFamTipoEnum> enumSet = null;
+		SiacDProvCassaTipoEnum siacDProvCassaTipoEnum = null;
+		if(tipoFamigliaDocumento != null && tipoFamigliaDocumento.isEntrata()){
+			enumSet = EnumSet.of(SiacDDocFamTipoEnum.Entrata, SiacDDocFamTipoEnum.IvaEntrata);
+			siacDProvCassaTipoEnum = SiacDProvCassaTipoEnum.Entrata;
+		}
+		
+		Page<SiacTSubdoc> lista = subdocumentoDao.ricercaSinteticaSubdocumentiDaAssociarePerCollegaDocumento(
+				ente.getUid(), 
+				enumSet,
+				siacDProvCassaTipoEnum,
+				tipoDocumento!=null?tipoDocumento.getUid():null,
+				annoDocumento,
+				numeroDocumento,
+				predocImporto,
+				numeroProvvisorio,
+				soggetto!=null?soggetto.getCodiceSoggetto():null,
+				SiacDDocStatoEnum.byStatiOperativi(statiOperativoDocumento),
+				toPageable(parametriPaginazione)	
+				);
+		
+		return toListaPaginataEntrataSpesa(lista);
+	}
+	
+	
+	public BigDecimal ricercaSubdocumentiDaAssociareTotaleImportiPerCollegaDocumento(
+			Ente ente, 
+			TipoFamigliaDocumento tipoFamigliaDocumento,
+			TipoDocumento tipoDocumento,
+			Integer annoDocumento,
+			String numeroDocumento,
+			Soggetto soggetto,
+			List<StatoOperativoDocumento> statiOperativoDocumento,
+			BigDecimal predocImporto,
+			BigDecimal numeroProvvisorio,
+			ParametriPaginazione parametriPaginazione
+			) {
+		
+		
+		Set<SiacDDocFamTipoEnum> enumSet = null;
+		SiacDProvCassaTipoEnum siacDProvCassaTipoEnum = null;
+		if(tipoFamigliaDocumento != null && tipoFamigliaDocumento.isEntrata()){
+			enumSet = EnumSet.of(SiacDDocFamTipoEnum.Entrata, SiacDDocFamTipoEnum.IvaEntrata);
+			siacDProvCassaTipoEnum = SiacDProvCassaTipoEnum.Entrata;
+		}
+		
+		BigDecimal totale = subdocumentoDao.ricercaSinteticaSubdocumentiDaAssociareTotaleImportiPerCollegaDocumento(
+				ente.getUid(), 
+				enumSet,
+				siacDProvCassaTipoEnum,
+				tipoDocumento!=null?tipoDocumento.getUid():null,
+				annoDocumento,
+				numeroDocumento,
+				predocImporto,
+				numeroProvvisorio,
+ 				soggetto!=null?soggetto.getCodiceSoggetto():null,
+				SiacDDocStatoEnum.byStatiOperativi(statiOperativoDocumento),
+				toPageable(parametriPaginazione)		 
+				);
+		
+		return totale;
+	}
+	//
+	
 	private ListaPaginata<Subdocumento<?,?>> toListaPaginataEntrataSpesa(Page<SiacTSubdoc> pagedList){
 		
 		ListaPaginataImpl<Subdocumento<?,?>> list = new ListaPaginataImpl<Subdocumento<?,?>>();
@@ -526,4 +605,44 @@ public class SubdocumentoDad extends ExtendedBaseDadImpl {
 //		
 //	}
 
+	
+	public List<Subdocumento<?, ?>> cercaSubdocNonResiduioResiduiConModificheRORM(Integer subDocUid, Integer annoEsercizio){
+		List<SiacTSubdoc> listSiacTSubdoc = null;
+		List<Subdocumento<?, ?>> list = new ListaPaginataImpl<Subdocumento<?, ?>>();
+		
+		//cerco i subdoc senza un residuo se ho un risultato posso andare ad emissione
+		listSiacTSubdoc = subdocumentoDao.cercaSubdocSenzaResiduo(subDocUid, annoEsercizio);
+		
+		//se non ho risultati quindi e' possibile che sia un residuo
+		if(CollectionUtils.isEmpty(listSiacTSubdoc)) {
+			//se ho dei risultati vuol dire che il residuo possiede una modifica RORM quindi posso emettere
+			listSiacTSubdoc = subdocumentoDao.cercaSubdocConModificheRORM(subDocUid, annoEsercizio);
+		}
+		
+		for (SiacTSubdoc siacTSubdoc : listSiacTSubdoc){
+			if(SiacDSubdocTipoEnum.Spesa.getCodice().equals(siacTSubdoc.getSiacDSubdocTipo().getSubdocTipoCode())){
+				list.add(map(siacTSubdoc, SubdocumentoSpesa.class, BilMapId.SiacTSubdoc_SubdocumentoSpesa_Allegato));
+			}else{
+				list.add(map(siacTSubdoc, SubdocumentoEntrata.class, BilMapId.SiacTSubdoc_SubdocumentoEntrata_Allegato));
+			}
+		}
+		
+		return list;
+	}
+
+	public List<Subdocumento<?, ?>> cercaSubdocsConModificheRORM(List<Integer> subDocUids, Integer annoEsercizio){
+		List<Subdocumento<?, ?>> list = new ListaPaginataImpl<Subdocumento<?, ?>>();
+		
+		List<SiacTSubdoc> listSiacTSubdoc = subdocumentoDao.cercaSubdocsConModificheRORM(subDocUids, annoEsercizio);
+		
+		for (SiacTSubdoc siacTSubdoc : listSiacTSubdoc){
+			if(SiacDSubdocTipoEnum.Spesa.getCodice().equals(siacTSubdoc.getSiacDSubdocTipo().getSubdocTipoCode())){
+				list.add(map(siacTSubdoc, SubdocumentoSpesa.class, BilMapId.SiacTSubdoc_SubdocumentoSpesa_Allegato));
+			}else{
+				list.add(map(siacTSubdoc, SubdocumentoEntrata.class, BilMapId.SiacTSubdoc_SubdocumentoEntrata_Allegato));
+			}
+		}
+		
+		return list;
+	}
 }

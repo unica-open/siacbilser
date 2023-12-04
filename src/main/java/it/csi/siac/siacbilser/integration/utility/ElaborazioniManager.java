@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.integration.dad.ElaborazioniDad;
 import it.csi.siac.siacbilser.integration.exception.ElaborazioneAttivaException;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.BaseService;
 import it.csi.siac.siaccorser.model.Ente;
 
@@ -31,7 +31,7 @@ import it.csi.siac.siaccorser.model.Ente;
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ElaborazioniManager {
-	protected static LogUtil log = new LogUtil(ElaborazioniManager.class);
+	protected static LogSrvUtil log = new LogSrvUtil(ElaborazioniManager.class);
 	
 	@Autowired
 	private ElaborazioniDad elaborazioniDad;
@@ -240,7 +240,7 @@ public class ElaborazioniManager {
 	 *
 	 */
 	private static final class SynchronizedStarter {
-		private static LogUtil log = new LogUtil(SynchronizedStarter.class);
+		private static LogSrvUtil log = new LogSrvUtil(SynchronizedStarter.class);
 		private static final ConcurrentMap<String, Lock> LOCKS = new ConcurrentHashMap<String, Lock>();
 		
 		/** Costruttore privato */

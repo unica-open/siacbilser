@@ -111,6 +111,9 @@ public class InserisceCapitoloDiUscitaGestioneService
 
 	@Override
 	protected void execute() {
+		//SIAC-7722 Pulisco le descrizioni da eventuali "a capo"
+		req.setCapitoloUscitaGestione(pulisciDescrizioni(req.getCapitoloUscitaGestione()));
+		
 		//SIAC-5007
 		checkCapitoloUscitaGestioneSeFPV(req.getCapitoloUscitaGestione());
 		checkCapitoloUscitaGestioneSeStandard(req.getCapitoloUscitaGestione());

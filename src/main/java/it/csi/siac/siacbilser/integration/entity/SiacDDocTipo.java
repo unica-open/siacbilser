@@ -46,6 +46,15 @@ public class SiacDDocTipo extends SiacTEnteBase {
 	/** The doc tipo desc. */
 	@Column(name="doc_tipo_desc")
 	private String docTipoDesc;
+	
+	
+	//SIAC-7557 inizio FL
+	@OneToMany(mappedBy="siacDDocTipoE")
+	private List<SirfelDTipoDocumento> siacDDocTipoEs;
+
+	@OneToMany(mappedBy="siacDDocTipoS")
+	private List<SirfelDTipoDocumento> siacDDocTipoSs;
+	//SIAC-7557 fine FL
 
 	//bi-directional many-to-one association to SiacDDocFamTipo
 	/** The siac d doc fam tipo. */
@@ -287,5 +296,41 @@ public class SiacDDocTipo extends SiacTEnteBase {
 	public void setUid(Integer uid) {
 		this.docTipoId = uid;		
 	}
+
+	/**
+	 * @return the siacDDocTipoEs
+	 */
+	public List<SirfelDTipoDocumento> getSiacDDocTipoEs()
+	{
+		return siacDDocTipoEs;
+	}
+
+	/**
+	 * @param siacDDocTipoEs the siacDDocTipoEs to set
+	 */
+	public void setSiacDDocTipoEs(List<SirfelDTipoDocumento> siacDDocTipoEs)
+	{
+		this.siacDDocTipoEs = siacDDocTipoEs;
+	}
+
+	/**
+	 * @return the siacDDocTipoSs
+	 */
+	public List<SirfelDTipoDocumento> getSiacDDocTipoSs()
+	{
+		return siacDDocTipoSs;
+	}
+
+	/**
+	 * @param siacDDocTipoSs the siacDDocTipoSs to set
+	 */
+	public void setSiacDDocTipoSs(List<SirfelDTipoDocumento> siacDDocTipoSs)
+	{
+		this.siacDDocTipoSs = siacDDocTipoSs;
+	}
+
+ 
+	
+	
 
 }

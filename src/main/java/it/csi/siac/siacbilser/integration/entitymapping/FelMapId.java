@@ -40,6 +40,8 @@ public enum FelMapId implements MapId {
 	SirfelTDatiGestionali_DatiGestionaliFEL,
 	SirfelTPortaleFatture_PortaleFattureFEL,
 	SirfelTProtocollo_ProtocolloFEL,
+	//SIAC-7557
+	SirfelTDatiRitenuta_RitenutaFEL
 	
 	;
 	

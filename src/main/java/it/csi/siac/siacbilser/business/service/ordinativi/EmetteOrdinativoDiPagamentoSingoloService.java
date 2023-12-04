@@ -44,7 +44,7 @@ import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceAccertamenti;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceAccertamentiResponse;
 import it.csi.siac.siacfinser.model.Accertamento;
-import it.csi.siac.siacfinser.model.ContoTesoreria;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Distinta;
 import it.csi.siac.siacfinser.model.SubAccertamento;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
@@ -232,7 +232,7 @@ public class EmetteOrdinativoDiPagamentoSingoloService extends EmetteOrdinativiD
 			}catch(BusinessException be){
 				log.info(methodName, "subdocumento scartato! uid:"+ subdocumentoSpesa.getUid() + ". Errore: "+ (be.getErrore()!=null? be.getErrore().getTesto():"null"));
 				Messaggio messaggio = new Messaggio("QUOTA_SCARTATA", be.getErrore().getTesto());
-				res.setMessaggio(messaggio);
+				res.addMessaggio(messaggio);
 				res.setSubdocumentoScartato(subdocumentoSpesa);
 				return false; //Il subdocumento viene scartato. Si continua con il prossimo.
 			}
@@ -854,25 +854,26 @@ public class EmetteOrdinativoDiPagamentoSingoloService extends EmetteOrdinativiD
 	}
 	
 	private ModificaMovimentoGestioneEntrata creaModifica(Accertamento acc, BigDecimal importoDaEmettere) {
+		BigDecimal disponibilitaIncassare = acc.getDisponibilitaIncassare() != null && acc.getDisponibilitaIncassare().signum()>= 0? acc.getDisponibilitaIncassare() : BigDecimal.ZERO ;
 		ModificaMovimentoGestioneEntrata modifica = new ModificaMovimentoGestioneEntrata();
-		modifica.setDescrizione("Modifica contestuale all'inserimento dell'ordinativo"); //TODO utilizzare Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO
+		modifica.setDescrizione("Modifica contestuale all'inserimento dell'ordinativo"); //TODO utilizzare CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO
 		modifica.setParereFinanziario(Boolean.FALSE);
 		modifica.setImportoOld(acc.getImportoAttuale());
-		modifica.setImportoNew(importoDaEmettere.subtract(acc.getDisponibilitaIncassare()));
+		modifica.setImportoNew(importoDaEmettere.subtract(disponibilitaIncassare));
 		modifica.setAttoAmministrativo(acc.getAttoAmministrativo());
-		modifica.setDescrizioneModificaMovimentoGestione("Modifica contestuale all'inserimento dell'ordinativo"); //TODO utilizzare Constanti.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO
+		modifica.setDescrizioneModificaMovimentoGestione("Modifica contestuale all'inserimento dell'ordinativo"); //TODO utilizzare CostantiFin.MODIFICA_CONTESTUALE_INSERIMENTO_ORDINATIVO
 		if(acc instanceof SubAccertamento){
 			modifica.setTipoMovimento("SAC");
 			SubAccertamento s = new SubAccertamento();
 			s.setUid(acc.getUid());
-			s.setNumero(acc.getNumero());
+			s.setNumeroBigDecimal(acc.getNumeroBigDecimal());
 			modifica.setSubAccertamento(s);
 			
 		}else{
 			modifica.setTipoMovimento("ACC");
 			Accertamento a = new Accertamento();
 			a.setUid(acc.getUid());
-			a.setNumero(acc.getNumero());
+			a.setNumeroBigDecimal(acc.getNumeroBigDecimal());
 			modifica.setAccertamento(a);
 		}
 		
@@ -945,8 +946,14 @@ public class EmetteOrdinativoDiPagamentoSingoloService extends EmetteOrdinativiD
 		Accertamento accertamentoDaServizio = resIA.getElencoAccertamentiInseriti().get(0);
 		log.debug(methodName, "Inserito accertamento automatico " + accertamentoDaServizio.getUid());
 		accertamento.setUid(accertamentoDaServizio.getUid());
-		accertamento.setNumero(accertamentoDaServizio.getNumero());
+		accertamento.setNumeroBigDecimal(accertamentoDaServizio.getNumeroBigDecimal());
 		return accertamento;
+	}
+	
+	@Override
+	//SIAC-8017-CMTO
+	protected void impostaMessaggiInResponse(List<Messaggio> messaggi) {
+		res.addMessaggi(messaggi);
 	}
 		
 }

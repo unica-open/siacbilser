@@ -19,15 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
+import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.business.service.enumeration.CodiceEventoEnum;
 import it.csi.siac.siacfinser.frontend.webservice.msg.InserisceImpegni;
@@ -57,7 +59,7 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 	private StoricoImpegnoAccertamentoDad storicoImpegnoAccertamentoDad;
 	
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	
 	private Impegno impegno;
 	private Impegno impegnoDaRegistrare ;
@@ -89,6 +91,8 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 			
 		setBilancio(req.getBilancio());
 		
+		// SIAC-8865
+		checkPdcImpegnoCoerenteConPdcCapitolo();
 		
 		//SIAC-6929
 		if(req.getPrimoImpegnoDaInserire() != null && req.getPrimoImpegnoDaInserire().getAttoAmministrativo()!= null
@@ -96,10 +100,10 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 			
 			RicercaAtti ricercaAtti = new RicercaAtti();
 			ricercaAtti.setUid(req.getPrimoImpegnoDaInserire().getAttoAmministrativo().getUid());
-			provvedimentoDad.setLoginOperazione(loginOperazione);
-			provvedimentoDad.setEnte(req.getEnte());
-			List<AttoAmministrativo> listaAtti = provvedimentoDad.ricerca(ricercaAtti);
-			if(listaAtti!= null && !listaAtti.isEmpty()){
+			attoAmministrativoDad.setLoginOperazione(loginOperazione);
+			attoAmministrativoDad.setEnte(req.getEnte());
+			List<AttoAmministrativo> listaAtti = attoAmministrativoDad.ricerca(ricercaAtti);
+			if(listaAtti != null && !listaAtti.isEmpty()){
 				AttoAmministrativo atto = listaAtti.get(0);
 				if(atto.getBloccoRagioneria()!= null && atto.getBloccoRagioneria().booleanValue()){
 					res.setErrori(Arrays.asList(ErroreFin.OGGETTO_BLOCCATO_DALLA_RAGIONERIA.getErrore("Numero Provvedimento " + 
@@ -116,6 +120,9 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 		
 		Impegno impegnoDaInserire = req.getPrimoImpegnoDaInserire();
 		
+		
+		
+		
 		Integer annoScritturaEconomicoPatrimoniale = impegnoDaInserire.getAnnoScritturaEconomicoPatrimoniale();
 		
 		List<Impegno> altriImpegniDaInserire = req.getAltriImpegniDaInserire();
@@ -130,7 +137,7 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 		CapitoloUscitaGestione capUG = new CapitoloUscitaGestione();
 
 		
-		if(null!=listaCapitoliRestituita && listaCapitoliRestituita.size()>0){
+		if(listaCapitoliRestituita != null && listaCapitoliRestituita.size() > 0){
 			
 			if(listaCapitoliRestituita.size()>1){
 				// errore piu di un capitolo
@@ -138,7 +145,7 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 				res.setElencoImpegniInseriti(null);
 				res.setEsito(Esito.FALLIMENTO);
 				return;
-			}else{
+			} else {
 				// trovato un solo capitolo in maniera corretta
 				// travaso il dato nell'impegno (il primo e unico elemento di capitolo)
 				capUG = listaCapitoliRestituita.get(0);
@@ -156,6 +163,25 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 		if(inserireDoppiaGestione){
 			infoVincoliValutati = caricaInfoAccVincoliPerDoppiaGest(bilancio,datiOperazione,null,impegnoDaInserire);
 			infoIns.setElencoInfoAccertamentiCoinvolti(infoVincoliValutati.getElencoInfoAccertamentiCoinvolti());
+			
+			if (impegnoDaInserire.getProgetto() != null && !isEmpty(impegnoDaInserire.getProgetto().getCodice())) {					
+				//SIAC-8894: se non ho trovato il progetto anno successivo allora errore
+				if(!esisteProgettoAnnoSuccPerDoppiaGestione(bilancio,datiOperazione,impegnoDaInserire, null)) {
+					res.setErrori(Arrays.asList(ErroreFin.PROGETTO_NONTROVATO_DOPPIAGESTIONE.getErrore(impegnoDaInserire.getProgetto().getCodice())));
+					res.setEsito(Esito.FALLIMENTO);
+					return;
+				}
+			}
+			
+			if (impegnoDaInserire.getIdCronoprogramma() != null) {					
+				//task-78: se non ho trovato il cronoprogramma anno successivo allora errore
+				if(!esisteCronoprogrammaAnnoSuccPerDoppiaGestione(bilancio,datiOperazione,impegnoDaInserire, null)) {
+					res.setErrori(Arrays.asList(ErroreFin.CRONOP_NONTROVATO_DOPPIAGESTIONE.getErrore()));
+					res.setEsito(Esito.FALLIMENTO);
+					return;
+				}
+			}
+			
 		}
 		
 		
@@ -177,13 +203,13 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 		//3. Si invoca il metodo che esegue l'operazione interna di inserimento di impegni o accertamenti:
 		
 		Integer numeroImpegno = null;
-		if(impegnoDaInserire.getNumero()!=null && impegnoDaInserire.getNumero().intValue()>0){
-			numeroImpegno = impegnoDaInserire.getNumero().intValue();
+		if(impegnoDaInserire.getNumeroBigDecimal() != null && impegnoDaInserire.getNumeroBigDecimal().intValue() > 0){
+			numeroImpegno = impegnoDaInserire.getNumeroBigDecimal().intValue();
 		}
 		
 		EsitoInserimentoMovimentoGestioneDto esitoOperazioneInterna = impegnoOttimizzatoDad.operazioneInternaInserisceImpegno(req.getRichiedente(), ente, bilancio, impegnoDaInserire, datiOperazione,numeroImpegno,infoIns);
 		
-		if(esitoOperazioneInterna.getListaErrori()!=null && esitoOperazioneInterna.getListaErrori().size()>0){
+		if(esitoOperazioneInterna.getListaErrori() != null && esitoOperazioneInterna.getListaErrori().size() > 0){
 			//Se l'operazione intera riporte degli errori il servizio termina qui con esito negativo.
 			res.setErrori(esitoOperazioneInterna.getListaErrori());
 			res.setEsito(Esito.FALLIMENTO);
@@ -195,7 +221,7 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 		effettuaOperazioniSuStoricoImpegnoAccertamento(impegnoDaInserire, datiOperazione);
 		
 		//eventuali messaggi non blocanti da comunicare al front-end:
-		res.setErrori(CommonUtils.addAll(res.getErrori(), esitoOperazioneInterna.getListaWarning()));
+		res.setErrori(CommonUtil.addAll(res.getErrori(), esitoOperazioneInterna.getListaWarning()));
 		
 		//aggiungo l'impegno inserito alla lista di riepilogo degli impegni inseriti:
 		impegno = (Impegno)esitoOperazioneInterna.getMovimentoGestione();
@@ -205,7 +231,7 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 		
 				
 		//Il servizio e' predisposto per poter inserire anche degli altri movimenti oltre a quello principale:
-		if(null!=impegno && altriImpegniDaInserire!=null && altriImpegniDaInserire.size()>0){
+		if(impegno != null && altriImpegniDaInserire != null && altriImpegniDaInserire.size() > 0){
 			
 			for(Impegno altroImpegnoDaInserire : altriImpegniDaInserire){
 				// riprendo il capitolo del impegno dal quale siamo partiti per trovare poi le disponibilita
@@ -213,7 +239,7 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 				
 				//per ognuno di essi si invoca la routine di operazione interna inserimento:
 				EsitoInserimentoMovimentoGestioneDto esitoOperazioneInternaCiclo = impegnoOttimizzatoDad.operazioneInternaInserisceImpegno(req.getRichiedente(), ente, bilancio, altroImpegnoDaInserire, datiOperazione,null,null);
-				if(esitoOperazioneInternaCiclo.getListaErrori()!=null && esitoOperazioneInternaCiclo.getListaErrori().size()>0){
+				if(esitoOperazioneInternaCiclo.getListaErrori() != null && esitoOperazioneInternaCiclo.getListaErrori().size()>0){
 					//in caso di errore il servizio termina qui (tutto il resto e' ovviamente rollbackato perche' siamo ancora in transactional)
 					res.setErrori(esitoOperazioneInternaCiclo.getListaErrori());
 					return;
@@ -267,6 +293,25 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 	}
 
 	
+	private void checkPdcImpegnoCoerenteConPdcCapitolo() {
+
+		Impegno primoImpegnoDaInserire = req.getPrimoImpegnoDaInserire();
+		if (primoImpegnoDaInserire == null) {
+			return;
+		}
+		
+		CapitoloUscitaGestione capitoloUscitaGestione = primoImpegnoDaInserire.getCapitoloUscitaGestione();
+		if (capitoloUscitaGestione == null) {
+			return;
+		}
+
+		Errore err = impegnoOttimizzatoDad.checkPdcImpegnoCoerenteConPdcCapitolo(req.getEnte().getUid(), capitoloUscitaGestione.getUid(), primoImpegnoDaInserire.getCodPdc());
+		if (err != null) {
+			throw new BusinessException(err);
+		}
+	}
+
+
 	private void effettuaOperazioniSuStoricoImpegnoAccertamento(Impegno impegnoInserito, DatiOperazioneDto datiOperazione) {
 		final String methodName = "effettuaOperazioniSuStoricoImpegnoAccertamento";
 		if(impegnoInserito.getNumeroRiaccertato() == null || BigDecimal.ZERO.compareTo(impegnoInserito.getNumeroRiaccertato()) == 0 || impegnoInserito.getAnnoRiaccertato() == 0) {
@@ -301,7 +346,7 @@ public class InserisceImpegniService extends AbstractBaseService<InserisceImpegn
 		parametroRicercaStoricoImpegnoAccertamento.setStoricoImpegnoAccertamento(new StoricoImpegnoAccertamento());
 		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().setImpegno(new Impegno());
 		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().getImpegno().setAnnoMovimento(annoRiaccertato);
-		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().getImpegno().setNumero(numeroRiaccertato);
+		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().getImpegno().setNumeroBigDecimal(numeroRiaccertato);
 		parametroRicercaStoricoImpegnoAccertamento.getStoricoImpegnoAccertamento().setEnte(req.getEnte());
 		return storicoImpegnoAccertamentoDad.ricercaSinteticaStorico(ente, parametroRicercaStoricoImpegnoAccertamento, 0, Integer.MAX_VALUE);
 	}

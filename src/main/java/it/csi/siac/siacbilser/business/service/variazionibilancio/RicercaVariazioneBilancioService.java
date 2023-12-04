@@ -70,6 +70,7 @@ public class RicercaVariazioneBilancioService extends CheckedAccountBaseService<
 				variazione,
 				req.getTipiCapitolo(),
 				req.getAttoAmministrativo(),
+				req.isLimitaRisultatiDefinitiveODecentrate(),
 				req.getParametriPaginazione());
 		
 		res.setVariazioniDiBilancio(variazioniTrovate);

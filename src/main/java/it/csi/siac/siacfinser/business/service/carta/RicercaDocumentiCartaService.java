@@ -31,7 +31,7 @@ import it.csi.siac.siacfin2ser.frontend.webservice.msg.RicercaQuotaSpesaResponse
 import it.csi.siac.siacfin2ser.model.DocumentoSpesa;
 import it.csi.siac.siacfin2ser.model.StatoOperativoDocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
-import it.csi.siac.siacfinser.CommonUtils;
+import it.csi.siac.siacfinser.CommonUtil;
 import it.csi.siac.siacfinser.business.service.AbstractBaseService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaDocumentiCarta;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaDocumentiCartaResponse;
@@ -390,7 +390,7 @@ public class RicercaDocumentiCartaService extends AbstractBaseService<RicercaDoc
 	
 	private boolean hasImpegno(SubdocumentoSpesa it){
 		boolean hasImpegno = false;
-		if(it!=null && it.getImpegno()!=null && it.getImpegno().getNumero()!=null){
+		if(it!=null && it.getImpegno()!=null && it.getImpegno().getNumeroBigDecimal()!=null){
 			hasImpegno = true;
 		}
 		return hasImpegno;
@@ -409,9 +409,9 @@ public class RicercaDocumentiCartaService extends AbstractBaseService<RicercaDoc
 	private List<SubdocumentoSpesa> rimuoviCollegatiACarte(List<SubdocumentoSpesa> lista){
 		List<SubdocumentoSpesa> nonCollegatiACarte = null;
 		if(lista!=null && lista.size()>0){
-			List<Integer> subdocIdList = CommonUtils.getIdList(lista);
+			List<Integer> subdocIdList = CommonUtil.getIdList(lista);
 			List<Integer> subdocIdListNonCollegatiACarte = cartaContabileDad.soloSubDocNonCollegatiACarte(subdocIdList);
-			nonCollegatiACarte = (ArrayList<SubdocumentoSpesa>) CommonUtils.filtraByIds(lista, subdocIdListNonCollegatiACarte);
+			nonCollegatiACarte = (ArrayList<SubdocumentoSpesa>) CommonUtil.filtraByIds(lista, subdocIdListNonCollegatiACarte);
 		}
 		return nonCollegatiACarte;
 	}

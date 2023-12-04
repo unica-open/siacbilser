@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: Copyright 2020 | CSI Piemonte
+SPDX-License-Identifier: EUPL-1.2
+-->
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<mapping map-id="PagopaTElaborazioneFlusso_Elaborazione" wildcard="true">
+		<class-a>it.csi.siac.pagopa.model.Elaborazione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.PagopaTElaborazioneFlusso</class-b>
+		
+		<field>
+			<a>numeroProvvisorio</a>
+			<b>pagopaElabFlussoNumProvvisorio</b>
+		</field>
+		
+		<field>
+<!-- 			<a>dataEmissioneProvvisorioStr</a> -->
+<!-- 			<b>pagopaElabRicFlussoData</b> -->
+			<a>dataEmissioneProvvisorio</a>
+			<b>dataEmissioneProv</b>
+		</field>
+		
+		<field>
+			<a>versante</a>
+			<b>pagopaElabFlussoNomeMittente</b>
+		</field>
+		
+		<field>
+			<a>flusso</a>
+			<b>pagopaElabRicFlussoId</b>
+		</field>
+		
+		<field>
+			<a>importoProvvisorio</a>
+			<b>pagopaElabFlussoTotPagam</b>
+		</field>
+				
+		<field>
+			<a>dataElaborazione</a>
+			<b>pagopaElabFlussoData</b>
+		</field>
+		
+		<field>
+			<a>esitoElaborazione</a>
+			<b>esitoElaborazione</b>
+		</field>
+		
+		<field map-id="PagopaDElaborazioneStato_StatoElaborazione">
+			<a>statoElaborazione</a>
+			<b>pagopaTElaborazione.pagopaDElaborazioneStato</b>
+		</field>
+		
+	</mapping> 
+	
+	
+	<mapping map-id="PagopaDElaborazioneStato_StatoElaborazione" wildcard="true">
+		<class-a>it.csi.siac.pagopa.model.StatoElaborazione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.PagopaDElaborazioneStato</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>pagopaElabStatoCode</b>
+		</field>
+		
+			<field>
+			<a>descrizione</a>
+			<b>pagopaElabStatoDesc</b>
+		</field>
+		
+	</mapping>
+	
+	<mapping map-id="PagopaTRiconciliazione_Riconciliazione" wildcard="true">
+		<class-a>it.csi.siac.pagopa.model.Riconciliazione</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.PagopaTRiconciliazione</class-b>
+		
+		<field>
+			<a>ricId</a>
+			<b>pagopaRicId</b>
+		</field>
+		
+		<field>
+			<a>codiceVoce</a>
+			<b>pagopaRicFlussoVoceCode</b>
+		</field>
+		
+		<field>
+			<a>descrizioneVoce</a>
+			<b>pagopaRicFlussoVoceDesc</b>
+		</field>
+		
+		<field>
+			<a>codiceSottovoce</a>
+			<b>pagopaRicFlussoSottovoceCode</b>
+		</field>
+		
+		<field>
+			<a>anno</a>
+			<b>pagopaRicFlussoAnnoAccertamento</b>
+		</field>
+		
+		<field>
+			<a>numeroAccertamento</a>
+			<b>pagopaRicFlussoNumAccertamento</b>
+		</field>
+				
+		<field>
+			<a>importoRigaRiconciliazione</a>
+			<b>pagopaRicFlussoSottovoceImporto</b>
+		</field> 
+		
+		<field map-id="pagopaDRiconciliazioneErrore_Errore">
+			<a>errore</a>
+			<b>pagopaDRiconciliazioneErrore</b>
+		</field>
+		
+		<!-- SIAC-8046 CM task 2.1 19/03/2021 Inizio -->
+		<field map-id="siacTFilePagopa_File">
+			<a>file</a>
+			<b>siacTFilePagopa</b>
+		</field>
+		<!-- SIAC-8046 CM task 2.1 19/03/2021 Fine -->
+		
+	</mapping> 
+	
+	
+	
+	<mapping map-id="pagopaDRiconciliazioneErrore_Errore" wildcard="true">
+		<class-a>it.csi.siac.pagopa.model.Errore</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.PagopaDRiconciliazioneErrore</class-b>
+		
+		<field>
+			<a>codice</a>
+			<b>pagopaRicErroreCode</b>
+		</field>
+		
+		<field>
+			<a>descrizione</a>
+			<b>pagopaRicErroreDesc</b>
+		</field>
+	</mapping>
+	
+	<!-- SIAC-8046 CM task 2.1 19/03/2021 Inizio -->
+	<mapping map-id="siacTFilePagopa_File" wildcard="true">
+		<class-a>it.csi.siac.pagopa.model.FilePagopa</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacTFilePagopa</class-b>
+		
+		<field>
+			<a>filePagopaId</a>
+			<b>filePagopaId</b>
+		</field>
+		
+		<field>
+			<a>filePagopaCode</a>
+			<b>filePagopaCode</b>
+		</field>
+		
+		<field>
+			<a>filePagopaSize</a>
+			<b>filePagopaSize</b>
+		</field>
+		
+		<field>
+			<a>filePagopaAnno</a>
+			<b>filePagopaAnno</b>
+		</field>
+		
+		<field>
+			<a>filePagopaIdPsp</a>
+			<b>filePagopaIdPsp</b>
+		</field>
+		
+		<field>
+			<a>filePagopaIdFlusso</a>
+			<b>filePagopaIdFlusso</b>
+		</field>
+		
+		<field map-id="siacDFilePagopaStato_StatoFile">
+			<a>statoFile</a>
+			<b>siacDFilePagopaStato</b>
+		</field>
+	</mapping>
+	
+	<mapping map-id="siacDFilePagopaStato_StatoFile" wildcard="true">
+		<class-a>it.csi.siac.pagopa.model.FilePagopaStato</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.SiacDFilePagopaStato</class-b>
+		
+		<field>
+			<a>filePagopaStatoId</a>
+			<b>filePagopaStatoId</b>
+		</field>
+		
+		<field>
+			<a>filePagopaStatoCode</a>
+			<b>filePagopaStatoCode</b>
+		</field>
+		
+		<field>
+			<a>filePagopaStatoDesc</a>
+			<b>filePagopaStatoDesc</b>
+		</field>
+	</mapping>
+	<!-- SIAC-8046 CM task 2.1 19/03/2021 Fine -->
+	
+	<mapping map-id="PagopaTRiconciliazioneDoc_RiconciliazioneDoc" wildcard="true">
+		<class-a>it.csi.siac.pagopa.model.RiconciliazioneDoc</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.PagopaTRiconciliazioneDoc</class-b>
+		
+		<field>
+			<a>codiceVoce</a>
+			<b>pagopaRicDocVoceCode</b>
+		</field>
+		
+		<field>
+			<a>descrizioneVoce</a>
+			<b>pagopaRicDocVoceDesc</b>
+		</field>
+		
+		<field>
+			<a>codiceSottovoce</a>
+			<b>pagopaRicDocSottovoceCode</b>
+		</field>
+		
+		<field>
+			<a>anno</a>
+			<b>pagopaRicDocAnnoAccertamento</b>
+		</field>
+		
+		<field>
+			<a>numeroAccertamento</a>
+			<b>pagopaRicDocNumAccertamento</b>
+		</field>
+		
+	   <field>
+			<a>importoRigaRiconciliazione</a>
+			<b>pagopaRicDocSottovoceImporto</b>
+		</field>
+		
+		<field map-id="PagopaTElaborazioneFlusso_Elaborazione">
+			<a>elaborazione</a>
+			<b>pagopaTElaborazioneFlusso</b>
+		</field>
+		
+		<field>
+			<a>codiceFiscale</a>
+			<b>pagopaRicDocCodfiscBenef</b>
+		</field>
+		
+		<field>
+			<a>ragioneSociale</a>
+			<b>pagopaRicDocRagsocBenef</b>
+		</field>
+		
+		<field>
+			<a>Importo</a>
+			<b>pagopaRicDocSottovoceImporto</b>
+		</field>
+		
+		<field>
+			<a>IUV</a>
+			<b>pagopaRicDocIuv</b>
+		</field>
+		
+		<field>
+			<a>riconciliazioneDocTipoCode</a>
+			<b>pagopaRicDocTipoCode</b>
+		</field>
+		
+		<field map-id="SiacDDocTipo_TipoDocumento">
+			<a>tipoDocumento</a>
+			<b>siacDDocTipo</b>
+		</field>
+		
+		<field map-id="PagopaTRiconciliazione_Riconciliazione">
+			<a>riconciliazione</a>
+			<b>pagopaTRiconciliazione</b>
+		</field>
+		
+		<field map-id="pagopaDRiconciliazioneErrore_Errore">
+			<a>errore</a>
+			<b>pagopaDRiconciliazioneErrore</b>
+		</field>
+		
+	</mapping> 
+	
+	<mapping map-id="PagopaTRiconciliazioneDocConDettagli" wildcard="true">
+		<class-a>it.csi.siac.pagopa.model.RiconciliazioneDoc</class-a>
+		<class-b>it.csi.siac.siacbilser.integration.entity.PagopaTRiconciliazioneDoc</class-b>
+		
+		<field>
+			<a>erroreDettaglio</a>
+			<b>erroreDettaglio</b>
+		</field>
+		
+		<field>
+			<a>messaggioErrore</a>
+			<b>messaggioErrore</b>
+		</field>
+		
+		<!-- SIAC-8123 CM 29/04/2021 Intervento 2 Inizio -->
+		<field>
+			<a>ricDocDettagliElaboratiDiAggregato</a>
+			<b>ricDocDettagliElaboratiDiAggregato</b>
+		</field>
+		<!-- SIAC-8123 CM 29/04/2021 Intervento 2 Fine -->
+		
+		<field>
+			<a>subDocId</a>
+			<b>pagopaRicDocSubdocId</b>
+		</field>
+		
+		<field>
+			<a>codiceVoce</a>
+			<b>pagopaRicDocVoceCode</b>
+		</field>
+		
+		<field>
+			<a>descrizioneVoce</a>
+			<b>pagopaRicDocVoceDesc</b>
+		</field>
+		
+		<field>
+			<a>codiceSottovoce</a>
+			<b>pagopaRicDocSottovoceCode</b>
+		</field>
+		
+		<field>
+			<a>anno</a>
+			<b>pagopaRicDocAnnoAccertamento</b>
+		</field>
+		
+		<field>
+			<a>numeroAccertamento</a>
+			<b>pagopaRicDocNumAccertamento</b>
+		</field>
+		
+	   <field>
+			<a>importoRigaRiconciliazione</a>
+			<b>pagopaRicDocSottovoceImporto</b>
+		</field>
+		
+		<field map-id="PagopaTElaborazioneFlusso_Elaborazione">
+			<a>elaborazione</a>
+			<b>pagopaTElaborazioneFlusso</b>
+		</field>
+		
+		<field>
+			<a>codiceFiscale</a>
+			<b>pagopaRicDocCodfiscBenef</b>
+		</field>
+		
+		<field>
+			<a>ragioneSociale</a>
+			<b>pagopaRicDocRagsocBenef</b>
+		</field>
+		
+		<field>
+			<a>Importo</a>
+			<b>pagopaRicDocSottovoceImporto</b>
+		</field>
+		
+		<field>
+			<a>IUV</a>
+			<b>pagopaRicDocIuv</b>
+		</field>
+		
+		<!-- SIAC-8123 CM 29/04/2021 Intervento 2 Inizio -->
+		<field>
+			<a>riconciliazioneDocFlagConDett</a>
+			<b>pagopaRicDocFlagConDett</b>
+		</field>
+		<!-- SIAC-8123 CM 29/04/2021 Intervento 2 Fine -->
+		
+		<field>
+			<a>riconciliazioneDocTipoCode</a>
+			<b>pagopaRicDocTipoCode</b>
+		</field>
+		
+		<field map-id="SiacDDocTipo_TipoDocumento">
+			<a>tipoDocumento</a>
+			<b>siacDDocTipo</b>
+		</field>
+		
+		<field map-id="PagopaTRiconciliazione_Riconciliazione">
+			<a>riconciliazione</a>
+			<b>pagopaTRiconciliazione</b>
+		</field>
+		
+		<field map-id="pagopaDRiconciliazioneErrore_Errore">
+			<a>errore</a>
+			<b>pagopaDRiconciliazioneErrore</b>
+		</field>
+		
+	</mapping> 
+	
+	
+	
+</mappings>

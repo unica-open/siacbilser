@@ -100,9 +100,12 @@ public class RicercaSinteticaPrimaNotaIntegrataService extends CheckedAccountBas
 		} catch(DadException de) {
 			// Ignoro l'errore
 			// TODO: loggare qualcosa?
+			log.error("execute", de);
 			res.addErrore(ErroreBil.ERRORE_GENERICO.getErrore(de.getMessage()));
 			return;
 		}
+		
+		log.info("execute", "List Size: " + list.size());
 		res.setPrimeNote(list);
 	}
 	

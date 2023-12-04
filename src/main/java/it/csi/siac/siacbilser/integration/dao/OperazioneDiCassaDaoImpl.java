@@ -260,7 +260,8 @@ public class OperazioneDiCassaDaoImpl extends JpaDao<SiacTCassaEconOperaz, Integ
 		jpql.append(" AND oc.siacTCassaEcon.cassaeconId = :cassaEconomaleUid ");
 		jpql.append(" AND oc.siacTBil.bilId = :bilancioId ");
 		jpql.append(" AND oc.dataInizioValidita >= :dataPeriodoInizio ");
-		jpql.append(" AND oc.dataInizioValidita < :dataPeriodoFine ");
+		//SIAC-7937
+		jpql.append(" AND oc.dataInizioValidita <= :dataPeriodoFine ");
 		
 		jpql.append(" AND EXISTS ( FROM oc.siacRCassaEconOperazTipos toc ");
 		jpql.append("              WHERE toc.dataCancellazione IS NULL ");

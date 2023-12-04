@@ -7,15 +7,19 @@ package it.csi.siac.siacfinser.business.service.ordinativo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import it.csi.siac.siacbilser.model.CapitoloUscitaGestione;
+import it.csi.siac.siacbilser.model.Progetto;
+import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Ente;
 import it.csi.siac.siaccorser.model.Errore;
+import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.ServiceRequest;
 import it.csi.siac.siaccorser.model.ServiceResponse;
@@ -36,8 +40,10 @@ import it.csi.siac.siacfinser.integration.dao.common.dto.SubOrdinativoInModifica
 import it.csi.siac.siacfinser.integration.entity.SiacTBilElemFin;
 import it.csi.siac.siacfinser.integration.util.ChiamanteDoppiaGestImpegno;
 import it.csi.siac.siacfinser.integration.util.Operazione;
+import it.csi.siac.siacfin2ser.model.ContoTesoreria;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
+import it.csi.siac.siacfinser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.model.liquidazione.Liquidazione;
 import it.csi.siac.siacfinser.model.ordinativo.OrdinativoPagamento;
 import it.csi.siac.siacfinser.model.ordinativo.SubOrdinativoPagamento;
@@ -180,7 +186,7 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoPagamentoService
 		
 		EsitoControlliDto esito = new EsitoControlliDto();
 		int annoBilancio = bil.getAnno();
-		
+		Bilancio bilancioAnnoSuccessivo = commonDad.buildBilancioAnnoSuccessivo(bil, datiOperazione);
 
 		ArrayList<ImpegnoPerDoppiaGestioneInfoDto> listaImpegni = dto.getImpegni();
 		if(listaImpegni!=null && listaImpegni.size()>0){
@@ -201,6 +207,36 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoPagamentoService
 					}
 				}
 				
+				//SIAC-8894				
+				Integer idProgettoAnnoSucc = null;
+				if (impegno.getImpegno().getProgetto() != null && !isEmpty(impegno.getImpegno().getProgetto().getCodice())) {
+					Progetto progettoAnnoSucc = impegnoOttimizzatoDad.verificaProgrammaAnnoSuccessivo(impegno.getImpegno().getProgetto(),bilancioAnnoSuccessivo,ente);
+					//se non ho trovato il progetto anno successivo allora errore
+					if (progettoAnnoSucc == null) {
+						List<Errore> errorsProgetto = new ArrayList<Errore>();
+						errorsProgetto.add(ErroreFin.PROGETTO_NONTROVATO_DOPPIAGESTIONE_IMPEGNO.getErrore(impegno.getImpegno().getProgetto().getCodice()));
+						esito.setListaErrori(errorsProgetto);
+						return esito;
+					} else {
+						impegno.getImpegno().setProgetto(progettoAnnoSucc);
+						idProgettoAnnoSucc = progettoAnnoSucc.getUid(); 
+					} 
+				}
+				
+				//task-78: se non ho trovato il progetto anno successivo (e impostato) allora errore
+				if (impegno.getImpegno().getIdCronoprogramma() != null && idProgettoAnnoSucc != null) {					
+					//task-78: se non ho trovato il cronoprogramma anno successivo allora errore
+					Integer idCronoAnnoSucc = impegnoOttimizzatoDad.verificaCronoprogrammaAnnoSuccessivo(impegno.getImpegno().getIdCronoprogramma(), idProgettoAnnoSucc, bilancioAnnoSuccessivo, ente);
+					if(idCronoAnnoSucc == null) {
+						List<Errore> errorsCrono = new ArrayList<Errore>();
+						errorsCrono.add(ErroreFin.CRONOP_NONTROVATO_DOPPIAGESTIONE.getErrore());
+						esito.setListaErrori(errorsCrono);
+						return esito;
+					} else {
+						impegno.getImpegno().setIdCronoprogramma(idCronoAnnoSucc);
+					}
+				}
+								
 				ArrayList<LiquidazionePerDoppiaGestioneInfoDto> listaLiquidazioni = impegno.getAllLiquidazioni();
 				if(listaLiquidazioni!=null && listaLiquidazioni.size()>0){
 					for(LiquidazionePerDoppiaGestioneInfoDto liquidazione : listaLiquidazioni){
@@ -240,7 +276,7 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoPagamentoService
 	 */
 	private CapitoliInfoDto caricaCapitoliInfo(ImpegnoPerDoppiaGestioneInfoDto impegno,DatiOperazioneDto datiOperazione,Richiedente richiedente,int annoBilancio){
 		Integer chiaveCapitolo = impegno.getImpegno().getChiaveCapitoloUscitaGestione();
-		Integer chiaveCapitoloResiduo = impegnoOttimizzatoDad.getChiaveCapitoloImpegnoResiduo(datiOperazione, impegno.getImpegno().getAnnoMovimento(), impegno.getImpegno().getNumero().intValue(),annoBilancio);
+		Integer chiaveCapitoloResiduo = impegnoOttimizzatoDad.getChiaveCapitoloImpegnoResiduo(datiOperazione, impegno.getImpegno().getAnnoMovimento(), impegno.getImpegno().getNumeroBigDecimal().intValue(),annoBilancio);
 		
 		HashMap<Integer, CapitoloUscitaGestione> capitoliDaServizio = caricaCapitoloUscitaGestioneEResiduo(richiedente, chiaveCapitolo, chiaveCapitoloResiduo);
 		
@@ -250,15 +286,11 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoPagamentoService
 		if(chiaveCapitoloResiduo==null){
 			
 			
-			log.info("caricaCapitoliInfo", "ENTRO IN chiaveCapitoloResiduo==null");
-			
 			//Si tratta del caso in cui l'impegno residuo non esiste, dobbiamo recuperare il capitolo in un altro modo
 			
 			CapitoloUscitaGestione capitolo = capitoliInfo.getCapitoliDaServizioUscita().get(chiaveCapitolo);
 			
 			if(capitolo!=null){
-				
-				log.info("caricaCapitoliInfo", "ENTRO IN capitolo!=null");
 				
 				Integer numeroArticolo = capitolo.getNumeroArticolo();
 				Integer numeroCapitolo = capitolo.getNumeroCapitolo();
@@ -268,17 +300,12 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoPagamentoService
 				
 				if(capitoloResiduo!=null){
 					
-					log.info("caricaCapitoliInfo", "ENTRO IN capitoloResiduo!=null");
-					log.info("caricaCapitoliInfo", "capitoloResiduo.getUid(): " + capitoloResiduo.getUid());
-					
 					chiaveCapitoloResiduo = capitoloResiduo.getElemId();
 					
 					//CERCO IL CAPITOLO DA SERVIZIO:
 					CapitoloUscitaGestione capRes = caricaCapitoloUscitaGestione(richiedente, chiaveCapitoloResiduo, true);
 					
 					if(capRes!=null){
-						
-						log.info("caricaCapitoliInfo", "ENTRO IN capRes!=null");
 						
 						//LO AGGIUNGO DOVE MI ATTEDO CHE CI SIA DA QUI IN POI:
 						capitoliDaServizio.put(chiaveCapitoloResiduo, capRes);
@@ -311,14 +338,14 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoPagamentoService
 		if(ordinativo!=null){
 			if(!isEmpty(ordinativo.getDescrizione()) && ordinativo.getDescrizione().length()>500){
 				String lunghezza = "(" + ordinativo.getDescrizione().length() + " catteri, massimo ammesso 500" + ")";
-				checkCondition(false, ErroreCore.VALORE_NON_VALIDO.getErrore("Descrizione ordinativo", "Descrizione troppo lunga"+lunghezza));
+				checkCondition(false, ErroreCore.VALORE_NON_CONSENTITO.getErrore("Descrizione ordinativo", "Descrizione troppo lunga"+lunghezza));
 				descrizioniOk = false;
 			}
 			if(!isEmpty(ordinativo.getElencoSubOrdinativiDiPagamento())){
 				for(SubOrdinativoPagamento it: ordinativo.getElencoSubOrdinativiDiPagamento()){
 					if(it!=null && !isEmpty(it.getDescrizione()) && it.getDescrizione().length()>500){
 						String lunghezza = "(" + it.getDescrizione().length() + " catteri, massimo ammesso 500" + ")";
-						checkCondition(false, ErroreCore.VALORE_NON_VALIDO.getErrore("Descrizione Quota", " - Descrizione troppo lunga "+lunghezza));
+						checkCondition(false, ErroreCore.VALORE_NON_CONSENTITO.getErrore("Descrizione Quota", " - Descrizione troppo lunga "+lunghezza));
 						descrizioniOk = false;
 					}
 				}
@@ -329,6 +356,26 @@ public abstract class AbstractInserisceAggiornaAnnullaOrdinativoPagamentoService
 		return descrizioniOk;
 	}
 	
+	//SIAC-8017-CMTO
+	protected BigDecimal extractImportoOrdinativo(OrdinativoPagamento ordinativoDiPagamento) {
+		List<SubOrdinativoPagamento> elencoSubOrdinativiDiPagamento = ordinativoDiPagamento.getElencoSubOrdinativiDiPagamento();
+		BigDecimal importo = BigDecimal.ZERO; 
+		if(elencoSubOrdinativiDiPagamento == null) {
+			return importo;
+		}
+		for (SubOrdinativoPagamento subOrdinativoPagamento : elencoSubOrdinativiDiPagamento) {
+			BigDecimal importoSub = subOrdinativoPagamento.getImportoAttuale() != null? subOrdinativoPagamento.getImportoAttuale() :  BigDecimal.ZERO;
+			importo = importo.add(importoSub);
+		}
+		return importo;
+	}
 	
+	protected BigDecimal caricaDisponibilitaPagareSottoCointoVincolato(DatiOperazioneDto datiOperazione, ContoTesoreria contoTesoreriaOrdinativo, CapitoloUscitaGestione capitoloUscitaGestione) {
+		BigDecimal disponibilitaPagareSottoConto = ordinativoPagamentoDad.getDisponibilitaPagareSottoContoVincolato(contoTesoreriaOrdinativo, capitoloUscitaGestione, ente, datiOperazione);
+		if(disponibilitaPagareSottoConto == null) {
+			throw new BusinessException(ErroreCore.ERRORE_DI_SISTEMA.getErrore("impossibile caricare la disponibilita' sul conto vincolato."));
+		}
+		return disponibilitaPagareSottoConto;
+	}
 	
 }

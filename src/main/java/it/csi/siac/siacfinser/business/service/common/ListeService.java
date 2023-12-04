@@ -75,9 +75,9 @@ public class ListeService extends AbstractBaseService<Liste, ListeResponse> {
 		
 		if (req.getTipi().length > 0) {
 			Ente ente = req.getRichiedente().getAccount().getEnte();
-			for (TipiLista current : req.getTipi()) {
-				if (current != null) {
-					switch (current) {
+			for (TipiLista tipo : req.getTipi()) {
+				if (tipo != null) {
+					switch (tipo) {
 					case NAZIONI:
 						setLista(TipiLista.NAZIONI, commonDad.findNazioni(ente));
 						break;
@@ -118,19 +118,20 @@ public class ListeService extends AbstractBaseService<Liste, ListeResponse> {
 						setLista(TipiLista.TIPO_IMPEGNO, commonDad.findTipoImpegno(ente));
 						break;
 					case TIPO_MOTIVO:
-						setLista(TipiLista.TIPO_MOTIVO, commonDad.findTipoMotivo(ente));
+						setLista(TipiLista.TIPO_MOTIVO, commonDad.findTipoMotivoByCodiceApplicazione(ente, "GEN"));
 						break;
 					case TIPO_MOTIVO_ROR:
-						setLista(TipiLista.TIPO_MOTIVO_ROR, commonDad.findTipoMotivoROR(ente));
+						setLista(TipiLista.TIPO_MOTIVO_ROR, commonDad.findTipoMotivoByCodiceApplicazione(ente, "ROR"));
 						break;
-					case TIPO_MUTUO:
-						setLista(TipiLista.TIPO_MUTUO,  commonDad.findTipoMutuo(ente));
+					case TIPO_MOTIVO_AGG:
+						setLista(TipiLista.TIPO_MOTIVO_AGG, commonDad.findTipoMotivoByCodiceApplicazione(ente, "AGG-RID"));
 						break;
 					case DISTINTA:
 						setLista(TipiLista.DISTINTA,  commonDad.findDistintaTipoS(ente));
 						break;
 					case CONTO_TESORERIA:
-						setLista(TipiLista.CONTO_TESORERIA,  commonDad.findContoTesoreria(ente));
+						res.setContoTesoreria(commonDad.findContoTesoreria(ente)); 					
+						res.addTipiLista(tipo);
 						break;
 					case CODICE_BOLLO:
 						setLista(TipiLista.CODICE_BOLLO,  commonDad.findCodiceBollo(ente));

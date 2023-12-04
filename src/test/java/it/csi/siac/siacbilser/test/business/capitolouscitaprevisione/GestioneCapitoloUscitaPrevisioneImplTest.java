@@ -27,6 +27,7 @@ import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloUsc
 import it.csi.siac.siacbilser.frontend.webservice.msg.RicercaPuntualeCapitoloUscitaPrevisioneResponse;
 import it.csi.siac.siacbilser.model.CapitoloUscitaPrevisione;
 import it.csi.siac.siacbilser.model.CategoriaCapitolo;
+import it.csi.siac.siacbilser.model.CategoriaCapitoloEnum;
 import it.csi.siac.siacbilser.model.ClassificazioneCofogProgramma;
 import it.csi.siac.siacbilser.model.ElementoPianoDeiConti;
 import it.csi.siac.siacbilser.model.ImportiCapitoloEnum;
@@ -476,7 +477,7 @@ public class GestioneCapitoloUscitaPrevisioneImplTest extends BaseJunit4TestCase
 			a.setNumeroArticolo(23423424);
 			a.setNumeroUEB(1);
 			CategoriaCapitolo categoriaCapitolo = new CategoriaCapitolo();
-			categoriaCapitolo.setCodice("FPV");
+			categoriaCapitolo.setCodice(CategoriaCapitoloEnum.FPV.getCodice());
 			categoriaCapitolo.setUid(8);
 			a.setCategoriaCapitolo(categoriaCapitolo);
 			
@@ -533,7 +534,7 @@ public class GestioneCapitoloUscitaPrevisioneImplTest extends BaseJunit4TestCase
 			log.info("testAggiornaCapitoloDiUscitaPrevisioneService", "2");	
 			
 			CategoriaCapitolo categoriaCapitolo = new CategoriaCapitolo();
-			categoriaCapitolo.setCodice("FPV");
+			categoriaCapitolo.setCodice(CategoriaCapitoloEnum.FPV.getCodice());
 			categoriaCapitolo.setUid(8);
 			a.setCategoriaCapitolo(categoriaCapitolo);
 			

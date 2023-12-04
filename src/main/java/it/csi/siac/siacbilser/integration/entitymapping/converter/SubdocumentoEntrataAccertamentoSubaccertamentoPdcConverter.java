@@ -64,7 +64,7 @@ public class SubdocumentoEntrataAccertamentoSubaccertamentoPdcConverter extends 
 		SiacTMovgest siacTMovgest = siacTMovgestT.getSiacTMovgest();
 		Accertamento accertamento = new Accertamento();
 		accertamento.setUid(siacTMovgest.getUid());
-		accertamento.setNumero(siacTMovgest.getMovgestNumero());
+		accertamento.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 		accertamento.setDescrizione(siacTMovgest.getMovgestDesc());
 		accertamento.setAnnoMovimento(siacTMovgest.getMovgestAnno());
 		accertamento.setDataEmissione(siacTMovgestT.getDataCreazione());
@@ -81,7 +81,7 @@ public class SubdocumentoEntrataAccertamentoSubaccertamentoPdcConverter extends 
 		s.setUid(siacTMovgestT.getUid());
 		
 		try{
-			s.setNumero(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
+			s.setNumeroBigDecimal(new BigDecimal(siacTMovgestT.getMovgestTsCode()));
 		} catch(RuntimeException re) {
 			log.error(methodName, "Impssibile ottenere un BigDecimal a partire dalla stringa: \"" + siacTMovgestT.getMovgestTsCode() + "\". Returning null!", re);
 		}

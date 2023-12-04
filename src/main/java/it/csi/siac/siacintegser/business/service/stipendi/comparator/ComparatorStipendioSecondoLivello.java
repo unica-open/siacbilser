@@ -101,14 +101,14 @@ public final class ComparatorStipendioSecondoLivello implements Comparator<Stipe
 				.append("m1 : ")
 				.append(m1.getAnnoMovimento())
 				.append(" / ")
-				.append(m1.getNumero() != null? m1.getNumero() : "null")
+				.append(m1.getNumeroBigDecimal() != null? m1.getNumeroBigDecimal() : "null")
 				.append(" e m2 : ")
 				.append(m2.getAnnoMovimento())
 				.append(" / ")
-				.append(m2.getNumero() != null? m2.getNumero() : "null");
+				.append(m2.getNumeroBigDecimal() != null? m2.getNumeroBigDecimal() : "null");
 		CompareToBuilder compareToBuilder = new CompareToBuilder();
 		compareToBuilder.append(m1.getAnnoMovimento(), m2.getAnnoMovimento())
-		  				.append(m1.getNumero(),m2.getNumero());
+		  				.append(m1.getNumeroBigDecimal(),m2.getNumeroBigDecimal());
 		int comparison = compareToBuilder.toComparison();
 		if(comparison!=0) {
 			return comparison;
@@ -125,7 +125,7 @@ public final class ComparatorStipendioSecondoLivello implements Comparator<Stipe
 			return 1;
 		}
 		
-		return compareToBuilder.append(sm1.getNumero(),sm2.getNumero())
+		return compareToBuilder.append(sm1.getNumeroBigDecimal(),sm2.getNumeroBigDecimal())
 				.toComparison();
 	}
 }

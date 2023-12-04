@@ -27,55 +27,8 @@ import it.csi.siac.siacfin2ser.model.Subdocumento;
  */
 @Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class RicercaQuoteDaAssociareService extends CheckedAccountBaseService<RicercaQuoteDaAssociare, RicercaQuoteDaAssociareResponse> {
+public class RicercaQuoteDaAssociareService extends BaseRicercaQuoteDaAssociareService<RicercaQuoteDaAssociare, RicercaQuoteDaAssociareResponse> {
 
-	@Autowired
-	private SubdocumentoDad subdocumentoDad;
-	
-	
-	@Override
-	protected void checkServiceParam() throws ServiceParamError {
-		
-		checkNotNull(req.getEnte(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("ente"));
-		checkCondition(req.getEnte().getUid()!=0, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("uid ente"));
-		
-		boolean altriCampiNull = (req.getUidElenco() == null || req.getUidElenco() == 0) && req.getAnnoElenco() == null && req.getNumeroElenco() == null 
-				&& req.getAnnoProvvisorio() == null && req.getNumeroProvvisorio() == null && req.getDataProvvisorio() == null
-				&& req.getAnnoDocumento() == null && (req.getNumeroDocumento() == null || StringUtils.isBlank(req.getNumeroDocumento())) && req.getNumeroQuota() == null
-				&& req.getNumeroMovimento() == null && req.getAnnoMovimento() == null
-				&& (req.getUidProvvedimento() == null || req.getUidProvvedimento() == 0) && req.getAnnoProvvedimento() == null && req.getNumeroProvvedimento() == null
-				&& req.getTipoAtto() == null && req.getStruttAmmContabile() == null;
-//				&& (req.getStatiOperativoDocumento() == null || req.getStatiOperativoDocumento().isEmpty());
-		
-		boolean soloDataOSoggettoOTipoValorizzatoONessuno = (req.getDataEmissioneDocumento() != null && req.getSoggetto() == null && req.getTipoDocumento() == null) || 
-				(req.getTipoDocumento() != null && req.getSoggetto() == null &&  req.getDataEmissioneDocumento() == null) ||
-				(req.getSoggetto() != null && req.getTipoDocumento() == null && req.getDataEmissioneDocumento() == null) ||
-				(req.getSoggetto() == null && req.getTipoDocumento() == null && req.getDataEmissioneDocumento() == null);
-		
-//		checkCondition(!(soloDataOSoggettoOTipoValorizzatoONessuno && altriCampiNull), ErroreCore.RICERCA_TROPPO_ESTESA.getErrore());
-
-		checkCondition(!(req.getNumeroProvvedimento() == null ^ req.getAnnoProvvedimento() == null),
-				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno provvedimento o numero provvedimento"));
-		checkCondition(!(req.getAnnoElenco() == null ^ req.getNumeroElenco() == null),
-				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno elenco o numero elenco"));
-		checkCondition(!(req.getAnnoDocumento() == null ^ (req.getNumeroDocumento() == null || StringUtils.isBlank(req.getNumeroDocumento()))),
-				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno documento o numero documento"));
-		checkCondition(!(req.getNumeroMovimento() == null ^ req.getAnnoMovimento() == null),
-				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno movimento gestione o numero movimento gestione"));
-		
-		checkCondition((req.getNumeroProvvisorio() != null && req.getAnnoProvvisorio() != null && req.getDataProvvisorio() != null) ||
-				(req.getNumeroProvvisorio() == null && req.getAnnoProvvisorio() == null && req.getDataProvvisorio() == null) ||
-				(req.getNumeroProvvisorio() != null && req.getAnnoProvvisorio() != null) ||
-				(req.getNumeroProvvisorio() != null && req.getDataProvvisorio() != null),
-				ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("anno, numero o data provvedimento"));
-		
-		checkParametriPaginazione(req.getParametriPaginazione());
-		
-		if(Boolean.TRUE.equals(req.getCollegatoAMovimentoDelloStessoBilancio())){
-			checkEntita(req.getBilancio(), "bilancio");
-		}
-		
-	}
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -86,7 +39,9 @@ public class RicercaQuoteDaAssociareService extends CheckedAccountBaseService<Ri
 	
 	@Override
 	protected void execute() {
-		
+		//se la request non e' per collegaDocumento lascio invariato il giro per allegato atto
+		//altrimenti passo alla ricerca delle quote per la predisposizione d'incasso
+		//ALLEGATO ATTO
 		ListaPaginata<Subdocumento<?,?>> listaSubdocumenti = subdocumentoDad.ricercaSubdocumentiDaAssociare(
 				req.getEnte(),
 				req.getBilancio(),
@@ -153,7 +108,5 @@ public class RicercaQuoteDaAssociareService extends CheckedAccountBaseService<Ri
 				);
 		
 		res.setTotaleImporti(totaleImporti);
-		
 	}
-
 }

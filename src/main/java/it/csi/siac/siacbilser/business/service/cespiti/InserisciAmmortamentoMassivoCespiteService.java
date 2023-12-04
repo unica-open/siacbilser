@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.csi.siac.siacbilser.business.service.base.AsyncBaseService;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.business.service.cespiti.utility.AmmortamentoAnnuoCespiteFactory;
 import it.csi.siac.siacbilser.business.utility.Utility;
@@ -75,12 +77,19 @@ public class InserisciAmmortamentoMassivoCespiteService extends CheckedAccountBa
 		dettaglioAmmortamentoAnnuoCespiteDad.setLoginOperazione(loginOperazione);
 	}
 
-	@Transactional
+	@Transactional(timeout=AsyncBaseService.TIMEOUT * 4)
 	@Override
 	public InserisciAmmortamentoMassivoCespiteResponse executeService(InserisciAmmortamentoMassivoCespite serviceRequest) {
 		return super.executeService(serviceRequest);
 	}
 
+	
+	@Transactional(propagation=Propagation.REQUIRES_NEW, timeout=AsyncBaseService.TIMEOUT * 4)
+	@Override
+	public InserisciAmmortamentoMassivoCespiteResponse executeServiceTxRequiresNew(InserisciAmmortamentoMassivoCespite serviceRequest) {
+		return super.executeService(serviceRequest);
+	}
+	
 	@Override
 	protected void execute() {
 		

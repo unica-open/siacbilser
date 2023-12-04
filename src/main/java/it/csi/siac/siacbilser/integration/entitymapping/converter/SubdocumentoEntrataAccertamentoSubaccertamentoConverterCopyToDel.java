@@ -26,7 +26,7 @@ import it.csi.siac.siacbilser.integration.entity.SiacTSubdoc;
 import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.model.CapitoloEntrataGestione;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfinser.model.Accertamento;
 import it.csi.siac.siacfinser.model.SubAccertamento;
@@ -39,7 +39,7 @@ import it.csi.siac.siacfinser.model.SubAccertamento;
 public class SubdocumentoEntrataAccertamentoSubaccertamentoConverterCopyToDel extends ExtendedDozerConverter<SubdocumentoEntrata, SiacTSubdoc> {
 	
 	/** The log. */
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 //	@Autowired
 //	private EnumEntityFactory eef;
@@ -105,7 +105,7 @@ public class SubdocumentoEntrataAccertamentoSubaccertamentoConverterCopyToDel ex
 		SubAccertamento s = new SubAccertamento();
 		//s.setNumero(siacTMovgestT.getSiacTMovgest().getMovgestNumero());
 		try{
-			s.setNumero(new BigDecimal(siacTMovgestT.getMovgestTsCode()));		
+			s.setNumeroBigDecimal(new BigDecimal(siacTMovgestT.getMovgestTsCode()));		
 		} catch(RuntimeException re) {
 			log.error(methodName, "Impssibile ottenere un BigDecimal a partire dalla stringa: \"" + siacTMovgestT.getMovgestTsCode() + "\". Returning null!",re);	
 			return null;
@@ -125,7 +125,7 @@ public class SubdocumentoEntrataAccertamentoSubaccertamentoConverterCopyToDel ex
 	private Accertamento toAccertamento(SiacTMovgestT siacTMovgestT) {
 		SiacTMovgest siacTMovgest = siacTMovgestT.getSiacTMovgest(); //Legame con l'impegno.
 		Accertamento accertamento = new Accertamento();
-		accertamento.setNumero(siacTMovgest.getMovgestNumero());
+		accertamento.setNumeroBigDecimal(siacTMovgest.getMovgestNumero());
 		String anno = siacTMovgest.getSiacTBil().getSiacTPeriodo().getAnno();
 		accertamento.setAnnoMovimento(Integer.parseInt(anno));
 		

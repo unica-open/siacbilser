@@ -19,8 +19,8 @@ import it.csi.siac.siaccorser.model.Errore;
 import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
-import it.csi.siac.siacfinser.StringUtils;
+import it.csi.siac.siacfinser.CostantiFin;
+import it.csi.siac.siacfinser.StringUtilsFin;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaSoggettoProvvisorio;
 import it.csi.siac.siacfinser.frontend.webservice.msg.AggiornaSoggettoProvvisorioResponse;
 import it.csi.siac.siacfinser.integration.dad.SoggettoFinDad;
@@ -54,7 +54,7 @@ public class AggiornaSoggettoProvvisorioService extends AbstractSoggettoService<
 	public AggiornaSoggettoProvvisorioResponse executeService(
 			AggiornaSoggettoProvvisorio serviceRequest) {
 		// SIAC-6847
-		log.debug("WAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA EXECUTESERVICE REQUEST", JAXBUtility.marshall(serviceRequest));
+	//	log.debug("WAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA EXECUTESERVICE REQUEST", JAXBUtility.marshall(serviceRequest));
 		return super.executeService(serviceRequest);
 	}
 	
@@ -78,10 +78,10 @@ public class AggiornaSoggettoProvvisorioService extends AbstractSoggettoService<
 		String codiceAmbito = req.getCodificaAmbito();
 		
 		if (codiceAmbito == null)
-			codiceAmbito = Constanti.AMBITO_FIN;
+			codiceAmbito = CostantiFin.AMBITO_FIN;
 
 		//2. Ricarichiamo il soggetto per confronto dei dati prima della modifica:
-		Soggetto soggettoMaster = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, req.getEnte().getUid(), soggettoRicevuto.getCodiceSoggetto(),true, true);
+		Soggetto soggettoMaster = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, req.getEnte().getUid(), soggettoRicevuto.getCodiceSoggetto(),true, true);
 		Integer idSoggetto = soggettoMaster.getUid();
 		
 		DatiOperazioneDto datiOperazioneDto = commonDad.inizializzaDatiOperazione(ente, richiedente, Operazione.MODIFICA, codiceAmbito, null);
@@ -108,7 +108,7 @@ public class AggiornaSoggettoProvvisorioService extends AbstractSoggettoService<
 		
 		// Ricarico il soggetto prima di restituirlo (cosi il chiamante puo' risparmiarsi di richiamare il servizio di ricerca per chiave)
 		boolean includeModifica = true;
-		Soggetto soggettoReload = soggettoDad.ricercaSoggetto(Constanti.AMBITO_FIN, ente.getUid(), soggettoRicevuto.getCodiceSoggetto(), includeModifica, true);
+		Soggetto soggettoReload = soggettoDad.ricercaSoggetto(CostantiFin.AMBITO_FIN, ente.getUid(), soggettoRicevuto.getCodiceSoggetto(), includeModifica, true);
 		//vengono vestiti dei dati accessori:
 		soggettoReload = completaInformazioni(soggettoReload, codiceAmbito, ente.getUid(), soggettoRicevuto.getCodiceSoggetto(), includeModifica, richiedente,datiOperazioneDto);
 		
@@ -118,7 +118,7 @@ public class AggiornaSoggettoProvvisorioService extends AbstractSoggettoService<
 		if(soggettoReload.getSediSecondarie()!=null && soggettoReload.getSediSecondarie().size()>0){
 			for (SedeSecondariaSoggetto sedeSecondariaSoggetto : soggettoReload.getSediSecondarie()) {
 				if(sedeSecondariaSoggetto.getStatoOperativoSedeSecondaria().equals(StatoOperativoSedeSecondaria.IN_MODIFICA)){				
-					sedeSecondariaSoggetto.setDescrizioneStatoOperativoSedeSecondaria(Constanti.STATO_IN_MODIFICA_no_underscore);
+					sedeSecondariaSoggetto.setDescrizioneStatoOperativoSedeSecondaria(CostantiFin.STATO_IN_MODIFICA_no_underscore);
 				}
 			}
 		} 
@@ -154,8 +154,8 @@ public class AggiornaSoggettoProvvisorioService extends AbstractSoggettoService<
 		
 		// Verifico se il codice_fiscale / partita_iva e cambiato rispetto al soggetto "master" sulla tabella siac_t_soggetto
 		//Codice fiscale e partita iva vanno controllati solo se sono diversi e valorizzati:
-		boolean controllaCodiceFiscale = StringUtils.valorizzatiAndDiversi(soggettoRicevuto.getCodiceFiscale(), soggettoMaster.getCodiceFiscale());
-		boolean controllaPartitaIva = StringUtils.valorizzatiAndDiversi(soggettoRicevuto.getPartitaIva(), soggettoMaster.getPartitaIva());
+		boolean controllaCodiceFiscale = StringUtilsFin.valorizzatiAndDiversi(soggettoRicevuto.getCodiceFiscale(), soggettoMaster.getCodiceFiscale());
+		boolean controllaPartitaIva = StringUtilsFin.valorizzatiAndDiversi(soggettoRicevuto.getPartitaIva(), soggettoMaster.getPartitaIva());
 		
 		
 		boolean[] listaControlloDuplicazione = soggettoDad.controlloDuplicazioneCodice(soggettoRicevuto.getCodiceSoggetto(), soggettoRicevuto.getCodiceFiscale(), soggettoRicevuto.getPartitaIva(), ente);
@@ -231,17 +231,17 @@ public class AggiornaSoggettoProvvisorioService extends AbstractSoggettoService<
 		checkNotNull(soggettoInput.getTipoSoggetto(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Tipo Natura giuridica"));
 		
 		// Se Soggetto.ResidenteEstero = 'N' Soggetto.CodiceFiscale e' obbligatorio
-		if(StringUtils.isEmpty(soggettoInput.getCodiceFiscale()) && null!=soggettoInput.getResidenteEsteroStringa() && soggettoInput.getResidenteEsteroStringa().equalsIgnoreCase(Constanti.FALSE)){
+		if(StringUtilsFin.isEmpty(soggettoInput.getCodiceFiscale()) && null!=soggettoInput.getResidenteEsteroStringa() && soggettoInput.getResidenteEsteroStringa().equalsIgnoreCase(CostantiFin.FALSE)){
 			checkNotNull(null, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Codice Fiscale"));
 		}
 
 		// Se Soggetto.ResidenteEstero = 'S' Soggetto.CodiceFiscaleEstero e' obbligatorio
-		if(StringUtils.isEmpty(soggettoInput.getCodiceFiscaleEstero()) && null!=soggettoInput.getResidenteEsteroStringa() && soggettoInput.getResidenteEsteroStringa().equalsIgnoreCase(Constanti.TRUE)){
+		if(StringUtilsFin.isEmpty(soggettoInput.getCodiceFiscaleEstero()) && null!=soggettoInput.getResidenteEsteroStringa() && soggettoInput.getResidenteEsteroStringa().equalsIgnoreCase(CostantiFin.TRUE)){
 			checkNotNull(null, ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Codice Fiscale Estero"));
 		}
 		
 		String confronto = soggettoInput.getTipoSoggetto().getSoggettoTipoCode().trim().toUpperCase();
-		if(Constanti.PERSONA_FISICA.equals(confronto) || Constanti.PERSONA_FISICA_I.equals(confronto)){
+		if(CostantiFin.PERSONA_FISICA.equals(confronto) || CostantiFin.PERSONA_FISICA_I.equals(confronto)){
 			// Se Soggetto.TipoNaturaGiuridica = 'Persona Fisica' o 'Persona Fisica con PIVA'
 			// Soggetto.nome, Soggetto.cognome, Soggetto.sesso, Soggetto.dataNascita sono obbligatori
 			// Soggetto.TipoComune deve essere di tipo 'Nascita'
@@ -250,7 +250,7 @@ public class AggiornaSoggettoProvvisorioService extends AbstractSoggettoService<
 			checkNotNull(soggettoInput.getComuneNascita(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Comune Nascita"));
 			checkNotNull(soggettoInput.getSesso(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Sesso"));
 			checkNotNull(soggettoInput.getDataNascita(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Data Nascita"));
-		} else if(Constanti.PERSONA_GIURIDICA.equals(confronto) || Constanti.PERSONA_GIURIDICA_I.equals(confronto)){
+		} else if(CostantiFin.PERSONA_GIURIDICA.equals(confronto) || CostantiFin.PERSONA_GIURIDICA_I.equals(confronto)){
 			// Se Soggetto.TipoNaturaGiuridica = 'Persona Giuridica' o 'Persona Giuridica senza PIVA'
 			// Soggetto.RagioneSociale e Soggetto.NaturaGiuridicaSoggetto sono obbligatori 
 			checkNotNull(soggettoInput.getDenominazione(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Ragione Sociale"));
@@ -259,7 +259,7 @@ public class AggiornaSoggettoProvvisorioService extends AbstractSoggettoService<
 		
 		// Se Soggetto.TipoNaturaGiuridica = 'Persona Fisica con PIVA'  o 'Persona Giuridica'
 		// Soggetto.partitaIVA e' obbligatorio
-		if(Constanti.PERSONA_FISICA_I.equals(confronto) || Constanti.PERSONA_GIURIDICA.equals(confronto)){
+		if(CostantiFin.PERSONA_FISICA_I.equals(confronto) || CostantiFin.PERSONA_GIURIDICA.equals(confronto)){
 			checkNotNull(soggettoInput.getPartitaIva(), ErroreCore.PARAMETRO_NON_INIZIALIZZATO.getErrore("Partita iva"));
 		}
 		

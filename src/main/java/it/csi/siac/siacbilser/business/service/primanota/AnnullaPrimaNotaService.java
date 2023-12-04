@@ -15,9 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
 import it.csi.siac.siacbilser.integration.dad.BilancioDad;
 import it.csi.siac.siacbilser.integration.dad.PrimaNotaDad;
+import it.csi.siac.siacbilser.model.Ambito;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
-import it.csi.siac.siaccorser.model.FaseEStatoAttualeBilancio.FaseBilancio;
+import it.csi.siac.siaccorser.model.FaseBilancio;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AnnullaPrimaNota;
 import it.csi.siac.siacgenser.frontend.webservice.msg.AnnullaPrimaNotaResponse;
 import it.csi.siac.siacgenser.model.PrimaNota;
@@ -83,9 +84,16 @@ public class AnnullaPrimaNotaService extends CheckedAccountBaseService<AnnullaPr
 	}
 
 	private void checkBilancio() {
-		if(FaseBilancio.CHIUSO.equals(primaNota.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio())){
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		if(FaseBilancio.CHIUSO.equals(primaNota.getBilancio().getFaseEStatoAttualeBilancio().getFaseBilancio()) && !isPrimaNotaGSA()){
 			throw new BusinessException(ErroreGEN.MOVIMENTO_CONTABILE_NON_ELIMINABILE.getErrore("fase di bilancio incongruente."));
 		}
+	}
+	
+	private boolean isPrimaNotaGSA(){
+		//SIAC-8323: elimino la fase di bilancio chiuso come condizione escludente per la sola GSA
+		Ambito ambito = primaNotaDad.caricaAmbitoByPrimaNota(primaNota);
+		return ambito != null && Ambito.AMBITO_GSA.equals(ambito);
 	}
 
 	private void caricaStatoOperativo() {

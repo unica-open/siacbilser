@@ -28,6 +28,7 @@ import it.csi.siac.siacbilser.integration.dao.AllegatoAttoDao;
 import it.csi.siac.siacbilser.integration.dao.ControlloImportiImpegniVincolatiDao;
 import it.csi.siac.siacbilser.integration.dao.EnumEntityFactory;
 import it.csi.siac.siacbilser.integration.dao.LiquidazioneDao;
+import it.csi.siac.siacbilser.integration.dao.SiacDAttoAllegatoChecklistRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacRAttoAllegatoElencoDocRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacRAttoAllegatoSogRepository;
 import it.csi.siac.siacbilser.integration.dao.SiacRElencoDocSubdocRepository;
@@ -55,6 +56,7 @@ import it.csi.siac.siacbilser.integration.entity.enumeration.SiacTAttrEnum;
 import it.csi.siac.siacbilser.integration.entitymapping.BilMapId;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.AllegatoAttoStatoConverter;
 import it.csi.siac.siacbilser.integration.entitymapping.converter.base.Converters;
+import it.csi.siac.siacbilser.integration.entitymapping.mapper.SiacDAttoAllegatoChecklistAllegatoAttoChecklistMapper;
 import it.csi.siac.siaccorser.model.Bilancio;
 import it.csi.siac.siaccorser.model.Messaggio;
 import it.csi.siac.siaccorser.model.paginazione.ListaPaginata;
@@ -67,6 +69,7 @@ import it.csi.siac.siacfin2ser.model.StatoOperativoAllegatoAtto;
 import it.csi.siac.siacfin2ser.model.Subdocumento;
 import it.csi.siac.siacfin2ser.model.SubdocumentoEntrata;
 import it.csi.siac.siacfin2ser.model.SubdocumentoSpesa;
+import it.csi.siac.siacfin2ser.model.allegatoattochecklist.Checklist;
 import it.csi.siac.siacfin2ser.model.errore.ErroreFin;
 import it.csi.siac.siacfinser.model.Impegno;
 import it.csi.siac.siacfinser.model.SubImpegno;
@@ -109,6 +112,9 @@ public class AllegatoAttoDad extends ExtendedBaseDadImpl {
 	private SiacTAttoAllegatoRepository siacTAttoAllegatoRepository;
 	
 	@Autowired
+	private SiacDAttoAllegatoChecklistRepository siacDAttoAllegatoCheclistRepository;
+	
+	@Autowired
 	private SiacRSubdocAttoAmmRepository siacRSubdocAttoAmmRepository;
 	
 	@Autowired
@@ -116,6 +122,11 @@ public class AllegatoAttoDad extends ExtendedBaseDadImpl {
 	
 	@Autowired
 	private SiacRElencoDocSubdocRepository siacRElencoDocSubdocRepository;
+	
+	
+	@Autowired
+	private SiacDAttoAllegatoChecklistAllegatoAttoChecklistMapper siacDAttoAllegatoChecklistAllegatoAttoChecklistMapper;
+	
 	
 	/** The eef. */
 	@Autowired
@@ -1022,6 +1033,11 @@ public class AllegatoAttoDad extends ExtendedBaseDadImpl {
 	public List<Integer> getUidsSubdocWithImpegnoConfermaDurc(AllegatoAtto allegatoAtto) {
 		return siacTAttoAllegatoRepository.getUidsSubdocWithImpegniWithBooleanAttrCodeAndValueByAttoalId(allegatoAtto.getUid(), SiacTAttrEnum.FlagSoggettoDurc.getCodice(), "S");
 	}
+	
+	//task-30
+	public List<Integer> getUidsSubdocWithImpegnoConfermaDurc(AllegatoAtto allegatoAtto, List<Integer> idElenchiDocumentiAllegato) {
+		return siacTAttoAllegatoRepository.getUidsSubdocWithImpegniWithBooleanAttrCodeAndValueByAttoalIdAndElenchiDocId(allegatoAtto.getUid(),idElenchiDocumentiAllegato, SiacTAttrEnum.FlagSoggettoDurc.getCodice(), "S");
+	}
 
 	
 	
@@ -1097,6 +1113,17 @@ public class AllegatoAttoDad extends ExtendedBaseDadImpl {
 			.append(subdocNumero != null? subdocNumero : nullString).toString();
 		listaSubdocumentiCollegati.add(chiaveSubdoc);
 		mappaAccertamentiSubdocumenti.put(key, listaSubdocumentiCollegati);
+	}
+
+	public Checklist leggiChecklist() {
+		Checklist allegatoAttoChecklist = new Checklist();
+		
+		siacDAttoAllegatoChecklistAllegatoAttoChecklistMapper.map(
+				siacDAttoAllegatoCheclistRepository.findAllAttoAllegatoChecklist(ente.getUid()), 
+				allegatoAttoChecklist
+		);
+		
+		return allegatoAttoChecklist;
 	}
 	
 

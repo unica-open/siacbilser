@@ -62,7 +62,8 @@ import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitolo
 import it.csi.siac.siacbilser.model.DettaglioVariazioneComponenteImportoCapitoloModelDetail;
 import it.csi.siac.siacbilser.model.DettaglioVariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.RiepilogoDatiVariazioneImportoCapitoloAnno;
-import it.csi.siac.siacbilser.model.StatoOperativoVariazioneDiBilancio;
+import it.csi.siac.siacbilser.model.RiepilogoDatiVariazioneStatoIdVariazione;
+import it.csi.siac.siacbilser.model.StatoOperativoVariazioneBilancio;
 import it.csi.siac.siacbilser.model.StornoUEB;
 import it.csi.siac.siacbilser.model.TipoCapitolo;
 import it.csi.siac.siacbilser.model.TipoVariazione;
@@ -72,6 +73,8 @@ import it.csi.siac.siacbilser.model.VariazioneImportoCapitolo;
 import it.csi.siac.siacbilser.model.VariazioneImportoCapitoloModelDetail;
 import it.csi.siac.siacbilser.model.VariazioneImportoSingoloCapitolo;
 import it.csi.siac.siacbilser.model.ric.SegnoImporti;
+import it.csi.siac.siacbilser.model.utils.WrapperComponenteImportiCapitoloVariatiInVariazione;
+import it.csi.siac.siacbilser.model.utils.WrapperImportiCapitoloVariatiInVariazione;
 import it.csi.siac.siaccommon.util.cache.Cache;
 import it.csi.siac.siaccommon.util.cache.CacheElementInitializer;
 import it.csi.siac.siaccommon.util.cache.MapCache;
@@ -95,7 +98,7 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 	/** The siac t variazione repository. */
 	@Autowired
 	private SiacTVariazioneRepository siacTVariazioneRepository;
-	
+	//
 	/** The siac t variazione num repository. */
 	@Autowired
 	private SiacTVariazioneNumRepository siacTVariazioneNumRepository;
@@ -420,7 +423,7 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 	}
 	
 	
-	public StatoOperativoVariazioneDiBilancio findStatoOperativoVariazioneDiBilancio(VariazioneImportoCapitolo variazione) {
+	public StatoOperativoVariazioneBilancio findStatoOperativoVariazioneDiBilancio(VariazioneImportoCapitolo variazione) {
 		final String methodName = "findStatoOperativoVariazioneDiBilancio";
 		
 		SiacTVariazione siacTVariazione = siacTVariazioneRepository.findOne(variazione.getUid());
@@ -431,11 +434,11 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 			}
 			
 			String variazioneStatoTipoCode = siacRVariazioneStato.getSiacDVariazioneStato().getVariazioneStatoTipoCode();
-			log.debug(methodName, "VariazioneImportoCapitolo con uid: "+variazione.getUid() + " returning StatoOperativoVariazioneDiBilancio: "+variazioneStatoTipoCode);
+			log.debug(methodName, "VariazioneImportoCapitolo con uid: "+variazione.getUid() + " returning StatoOperativoVariazioneBilancio: "+variazioneStatoTipoCode);
 			return SiacDVariazioneStatoEnum.byCodice(variazioneStatoTipoCode).getStatoOperativoVariazioneDiBilancio();
 		}
 		
-		throw new IllegalStateException("Impossibile trovare lo StatoOperativoVariazioneDiBilancio associato alla VariazioneImportoCapitolo con uid: "+variazione.getUid());
+		throw new IllegalStateException("Impossibile trovare lo StatoOperativoVariazioneBilancio associato alla VariazioneImportoCapitolo con uid: "+variazione.getUid());
 		
 	}
 	
@@ -510,6 +513,7 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 				//attoamministrativo variazione di bilancio
 				null,
 				null,
+				false,
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(siacTVariazioni,StornoUEB.class, BilMapId.SiacTVariazione_StornoUEB);
@@ -523,7 +527,7 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 	 * @return the lista paginata
 	 */
 	public ListaPaginata<VariazioneImportoCapitolo> ricercaSinteticaVariazioneImportoCapitolo(Capitolo<?, ?> capitolo, ParametriPaginazione parametriPaginazione) {
-		return ricercaSinteticaVariazioneImportoCapitolo(new VariazioneImportoCapitolo(), capitolo, null, null, parametriPaginazione, BilMapId.SiacTVariazione_VariazioneImportoCapitolo);
+		return ricercaSinteticaVariazioneImportoCapitolo(new VariazioneImportoCapitolo(), capitolo, null, null,false, parametriPaginazione, BilMapId.SiacTVariazione_VariazioneImportoCapitolo);
 	}
 		
 	
@@ -533,17 +537,18 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 	 * @param variazione the variazione
 	 * @param capitolo the capitolo
 	 * @param tipiCapitolo the tipi capitolo
+	 * @param limitaRisultatiDefinitiveODecentrate 
 	 * @param parametriPaginazione the parametri paginazione
 	 * @return the lista paginata
 	 */
-	public ListaPaginata<VariazioneImportoCapitolo> ricercaSinteticaVariazioneImportoCapitolo(VariazioneImportoCapitolo variazione, List<TipoCapitolo> tipiCapitolo, AttoAmministrativo attoAmministrativo, ParametriPaginazione parametriPaginazione) {
-		return ricercaSinteticaVariazioneImportoCapitolo(variazione, null, tipiCapitolo, attoAmministrativo, parametriPaginazione, BilMapId.SiacTVariazione_VariazioneImportoCapitolo_Base);
+	public ListaPaginata<VariazioneImportoCapitolo> ricercaSinteticaVariazioneImportoCapitolo(VariazioneImportoCapitolo variazione, List<TipoCapitolo> tipiCapitolo, AttoAmministrativo attoAmministrativo, boolean limitaRisultatiDefinitiveODecentrate, ParametriPaginazione parametriPaginazione) {
+		return ricercaSinteticaVariazioneImportoCapitolo(variazione, null, tipiCapitolo, attoAmministrativo, limitaRisultatiDefinitiveODecentrate, parametriPaginazione, BilMapId.SiacTVariazione_VariazioneImportoCapitolo_Base_Asincrone);
 	}
 	
 	
 	
 	private ListaPaginata<VariazioneImportoCapitolo> ricercaSinteticaVariazioneImportoCapitolo(VariazioneImportoCapitolo variazione, Capitolo<?, ?> capitolo, List<TipoCapitolo> tipiCapitolo,
-			AttoAmministrativo attoAmministrativo, ParametriPaginazione parametriPaginazione, BilMapId siacTVariazione_VariazioneImportoCapitolo) {
+			AttoAmministrativo attoAmministrativo, boolean limitaRisultatiDefinitiveODecentrate, ParametriPaginazione parametriPaginazione, BilMapId siacTVariazione_VariazioneImportoCapitolo) {
 		SiacDVariazioneTipoEnum tipoVariazione = SiacDVariazioneTipoEnum.byTipoVariazioneEvenNull(variazione.getTipoVariazione());
 		Collection<SiacDVariazioneTipoEnum> sdvtes = new ArrayList<SiacDVariazioneTipoEnum>();
 		if(tipoVariazione != null) {
@@ -570,6 +575,7 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 				null,
 				mapToUidIfNotZero(variazione.getAttoAmministrativoVariazioneBilancio()),
 				mapToUidIfNotZero(attoAmministrativo),
+				limitaRisultatiDefinitiveODecentrate,
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(siacTVariazioni,VariazioneImportoCapitolo.class, siacTVariazione_VariazioneImportoCapitolo);
@@ -622,6 +628,7 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 				null,
 				null, //atto amministrativo varbil presente solo per variazioni di bilancio
 				null,
+				false,
 				toPageable(parametriPaginazione));
 		
 		return toListaPaginata(siacTVariazioni,VariazioneCodificaCapitolo.class, BilMapId.SiacTVariazione_VariazioneCodificaCapitolo);
@@ -673,6 +680,45 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 		
 		for(Object[] o : objs){
 			mappa.put(o[1] + "_" + o[0] + "_" + o[2], (BigDecimal)o[3]);
+		}
+		return mappa;
+	}
+	
+	/** dv.siacTBilElem.elemId, dv.siacTPeriodo.anno, dv.siacDBilElemDetTipo.elemDetTipoCode,dv.siacTBilElem.siacDBilElemTipo.elemTipoCode, dv.elemDetImporto 
+	 * Find stanziamento variazione in diminuzione uid variazione. La mappa ritornata ha una chiave cosi' formata:
+	 * <br>
+	 * idCapitolo_annoVariato_tipoStanziamento_tipoCapitolo
+	 * <br>
+	 * Ad esempio il capitolo di spesa gestione con uid 1456 per cui la variazione nel 2022 apporta una modifica di +100 sullo stanziamnto avra' questa chiave:
+	 * <br>
+	 * 1456_CAP-UG_2022_STA
+	 * 
+	 *
+	 * @param idVariazione the id variazione
+	 * @param idCapitoliDaEscludere the id capitoli da escludere
+	 * @return the map
+	 */
+//	public Map<String, BigDecimal> findStanziamentoVariazioneInDiminuzioneUidVariazione(Integer idVariazione, Collection<Integer> idCapitoliDaEscludere) {
+//	Map<String,BigDecimal> mappa = new HashMap<String,BigDecimal>();
+	public Map<Integer, List<WrapperImportiCapitoloVariatiInVariazione>> findStanziamentoVariazioneInDiminuzioneUidVariazione(Integer idVariazione, Collection<Integer> idCapitoliDaEscludere) {
+		Map<Integer, List<WrapperImportiCapitoloVariatiInVariazione>> mappa = new HashMap<Integer, List<WrapperImportiCapitoloVariatiInVariazione>>();
+		
+		List<Object[]> objs = variazioneImportiCapitoloDao.findStanziamentoCapitoloInVariazioneInDiminuzione(idVariazione,idCapitoliDaEscludere);
+		// 0 => elem_id
+		// 1 => anno
+		// 2 => elem_det_tipo_code
+		// 3 => importo
+		if(objs == null) {
+			return mappa;
+		}
+		
+		for(Object[] o : objs){
+//			mappa.put(o[1] + "_" + o[2] + "_" + o[3] + "_" + o[4], (BigDecimal)o[4]);
+			Integer uidCapitolo = (Integer) o[0];
+			if(mappa.get(uidCapitolo) == null) {
+				mappa.put(uidCapitolo, new ArrayList<WrapperImportiCapitoloVariatiInVariazione>());
+			}
+			mappa.get(uidCapitolo).add(new WrapperImportiCapitoloVariatiInVariazione((String) o[1], (String) o[2], (String) o[3], (BigDecimal) o[4]));
 		}
 		return mappa;
 	}
@@ -729,7 +775,6 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 			siacTBilElem.setSiacTBilElemDetVars(siacTBilElemDetVars);
 		}
 		return toListaPaginata(siacTBilElems, DettaglioVariazioneImportoCapitolo.class, BilMapId.SiacTBilElem_DettaglioVariazioneImportoCapitolo);
-		
 	}
 	
 	/**
@@ -1035,6 +1080,27 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 		return res;
 	}
 	
+	// CONTABILIA-285 - INIZIO
+	/**
+	 * Ottiene i dati delle variazioni di importo per anno, con importi positivi
+	 * @param capitolo il capitolo
+	 * @param bilancioVariazione il bilancio
+	 * @return i dati delle variazioni
+	 */
+	public RiepilogoDatiVariazioneImportoCapitoloAnno findDatiVariazioneImportoCapitoloByAnnoNeutre(Capitolo<?, ?> capitolo, Bilancio bilancioVariazione) {
+		RiepilogoDatiVariazioneImportoCapitoloAnno res = new RiepilogoDatiVariazioneImportoCapitoloAnno();
+		
+		List<Object[]> objs = siacTVariazioneRepository.findTotaleNeutreGroupedByImportoCapitolo(capitolo.getUid(), bilancioVariazione.getUid());
+		map(objs, res, BilMapId.ListOfObjectArrayTotale_RiepilogoDatiVariazioneImportoCapitoloAnno);
+		
+		objs = siacTVariazioneRepository.findCountNeutreGroupedByImportoCapitolo(capitolo.getUid(), bilancioVariazione.getUid());
+		map(objs, res, BilMapId.ListOfObjectArrayCount_RiepilogoDatiVariazioneImportoCapitoloAnno);
+		
+		return res;
+	}
+	// CONTABILIA-285 - FINE
+	
+	
 	/**
 	 * Ottiene i dati delle variazioni di importo per anno, con importi negativi
 	 * @param capitolo il capitolo
@@ -1087,6 +1153,7 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 				segnoVariazioneImporti != null ? segnoVariazioneImporti.getOperatore() : null,
 				null, // atto amministrativo variazione di bilancio
 				null,
+				false,
 				toPageable(parametriPaginazione));
 		
 		VariazioneImportoSingoloCapitolo template = new VariazioneImportoSingoloCapitolo();
@@ -1283,4 +1350,107 @@ public class VariazioniDad extends ExtendedBaseDadImpl {
 		return capitoli != null && Long.valueOf(0L).compareTo(capitoli) <0;
 	}
 	
+	
+	//CONTABILIA-285
+	/**
+	 * Ottiene i dati di variazione importo per singolo capitolo
+	 * @param capitolo il capitolo
+	 * @param bilancioVariazione il bilancio
+	 * @param enteVariazione l'ente
+	 * @param segnoVariazioneImporti il segno della variazione
+	 * @param parametriPaginazione  i parametri di paginazione
+	 * @return una lista paginata di dati di variazione per il capitolo fornito
+	 */
+	public ListaPaginata<VariazioneImportoSingoloCapitolo> ricercaSinteticaVariazioneNeutreImportoSingoloCapitolo(Capitolo<?, ?> capitolo, Bilancio bilancioVariazione, Ente enteVariazione,
+			SegnoImporti segnoVariazioneImporti, ParametriPaginazione parametriPaginazione) {
+		Collection<SiacDVariazioneTipoEnum> tipiVariazione = EnumSet.allOf(SiacDVariazioneTipoEnum.class);
+		tipiVariazione.remove(SiacDVariazioneTipoEnum.VariazioneCodifica);
+		
+		Page<SiacTVariazione> siacTVariazioni = variazioneImportiCapitoloDao.ricercaSinteticaVariazioneNeutreDiBilancio(tipiVariazione,
+				Integer.valueOf(enteVariazione.getUid()),
+				Integer.toString(bilancioVariazione.getAnno()),
+				null,
+				null,
+				// SIAC-6884
+				null, //dataAperturaProposta
+				null, //dataChiusuraProposta
+				null, //direzioneProponenteId
+				null,
+				null,
+				Integer.valueOf(capitolo.getUid()),
+				null,
+				null,
+				null,
+				SiacDBilElemTipoEnum.byTipoCapitoloListEvenNull(capitolo.getTipoCapitolo()),
+				null,
+				segnoVariazioneImporti != null ? segnoVariazioneImporti.getOperatore() : null,
+				null, // atto amministrativo variazione di bilancio
+				null,
+				toPageable(parametriPaginazione));
+		
+		VariazioneImportoSingoloCapitolo template = new VariazioneImportoSingoloCapitolo();
+		template.setCapitolo(capitolo);
+		
+		return toListaPaginata(siacTVariazioni, template, BilMapId.SiacTVariazione_VariazioneImportoSingoloCapitolo);
+	}
+	
+	
+	/*
+	 * SIAC-7735
+	 */
+	public List<RiepilogoDatiVariazioneStatoIdVariazione> findDatiVariazioneImportoCapitoloByAnnoNeutreVarId(Capitolo<?, ?> capitolo, Bilancio bilancioVariazione) {
+		List<RiepilogoDatiVariazioneStatoIdVariazione> resList = new ArrayList<RiepilogoDatiVariazioneStatoIdVariazione>();
+		
+		List<Object[]> objs = siacTVariazioneRepository.findTotaleNeutreGroupedByImportoCapitoloVarId(capitolo.getUid(), bilancioVariazione.getUid());
+		if(objs!= null && !objs.isEmpty()){
+			for(Object o : objs){
+				
+				try{
+					Object[] arr = (Object[]) o;
+					if((arr[0] instanceof String)
+							&& (arr[1] instanceof String)
+							&& (arr[3] instanceof Integer)) {
+						RiepilogoDatiVariazioneStatoIdVariazione res = new RiepilogoDatiVariazioneStatoIdVariazione();
+						res.setAnno( (String)arr[0]);
+						res.setTipo((String) arr[1]);
+						res.setIdVariazione((Integer) arr[3]);
+						resList.add(res);
+					}
+				}catch(Exception e){
+					log.error("findDatiVariazioneImportoCapitoloByAnnoNeutreVarId", e.getMessage());
+				}
+			}
+		}
+		return resList;
+	}
+
+	public Map<Integer, List<WrapperComponenteImportiCapitoloVariatiInVariazione>> findStanziamentoComponentiVariazioneInDiminuzioneUidVariazione(int idVariazione, List<Integer> idCapitolispesa) {
+		Map<Integer, List<WrapperComponenteImportiCapitoloVariatiInVariazione>> mappa = new HashMap<Integer, List<WrapperComponenteImportiCapitoloVariatiInVariazione>>();
+		
+		List<Object[]> objs = variazioneImportiCapitoloDao.findStanziamentoComponenteCapitoloInVariazioneInDiminuzione(idVariazione,idCapitolispesa);
+		// 0 => elem_id
+		// 1 => anno
+		// 2 => elem_det_tipo_code
+		// 3 => importo
+		if(objs == null) {
+			return mappa;
+		}
+		
+		for(Object[] o : objs){
+//			mappa.put(o[1] + "_" + o[2] + "_" + o[3] + "_" + o[4], (BigDecimal)o[4]);
+			Integer uidCapitolo = (Integer) o[0];
+			if(mappa.get(uidCapitolo) == null) {
+				mappa.put(uidCapitolo, new ArrayList<WrapperComponenteImportiCapitoloVariatiInVariazione>());
+			}
+			mappa.get(uidCapitolo).add(new WrapperComponenteImportiCapitoloVariatiInVariazione((Integer) o[2],(String) o[1],  (String) o[4], (String) o[5], (BigDecimal) o[6], (String) o[3]));
+		}
+		return mappa;
+	}
+	
+	public BigDecimal getSingoloDettaglioImporto(Integer uidCapitolo, Integer uidVariazione, String anno, String elemDetTipoCode) {
+		return siacTVariazioneRepository.findSingoloStanziamentoCapitoloInVariazione(uidCapitolo, uidVariazione, anno, elemDetTipoCode);
+	}
+	
+	
+
 }

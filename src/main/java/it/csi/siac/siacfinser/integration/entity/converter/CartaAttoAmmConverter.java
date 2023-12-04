@@ -8,7 +8,7 @@ import org.dozer.DozerConverter;
 import org.springframework.stereotype.Component;
 
 import it.csi.siac.siacattser.model.AttoAmministrativo;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siacfinser.integration.entity.SiacTAttoAmmFin;
 import it.csi.siac.siacfinser.integration.entity.SiacTCartacontFin;
 import it.csi.siac.siacfinser.integration.util.EntityToModelConverter;
@@ -16,7 +16,7 @@ import it.csi.siac.siacfinser.integration.util.EntityToModelConverter;
 @Component
 public class CartaAttoAmmConverter extends DozerConverter<AttoAmministrativo, SiacTCartacontFin> {
 
-	private LogUtil log = new LogUtil(this.getClass());
+	private LogSrvUtil log = new LogSrvUtil(this.getClass());
 	
 	public CartaAttoAmmConverter() {
 		super(AttoAmministrativo.class, SiacTCartacontFin.class);

@@ -35,7 +35,7 @@ import it.csi.siac.siacbilser.business.utility.Utility;
 import it.csi.siac.siacbilser.frontend.webservice.msg.LeggiClassificatoreGerarchicoByCodiceAndTipoAndAnnoResponse;
 import it.csi.siac.siacbilser.integration.dad.CodificaDad;
 import it.csi.siac.siaccommon.util.JAXBUtility;
-import it.csi.siac.siaccommon.util.log.LogUtil;
+import it.csi.siac.siaccommonser.util.log.LogSrvUtil;
 import it.csi.siac.siaccommonser.business.service.base.ResponseHandler;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
@@ -148,7 +148,7 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 	}
 	
 	@Override
-	@Transactional(propagation=Propagation.REQUIRES_NEW, timeout=AsyncBaseService.TIMEOUT /* NON supportato dal driver 9.1 di postgresql! */)
+	@Transactional(propagation=Propagation.REQUIRES_NEW, timeout=AsyncBaseService.TIMEOUT)
 	public ElaboraFileResponse executeServiceTxRequiresNew(ElaboraFile serviceRequest) {
 		return super.executeServiceTxRequiresNew(serviceRequest);
 	}
@@ -329,10 +329,9 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 		if(!referenceMap.containsKey(uid)) { 
 			referenceMap.put(uid, entita);
 			return entita;
-		} else {
-			//In questo modo mi assicuro di restituire sempre la stessa reference per ogni elemento della lista ed assicurare quindi che ognuno abbia i dati completi:
-			return referenceMap.get(uid); //Queste Entita referenzia lo stessa presente nel primo tag.
 		}
+		//In questo modo mi assicuro di restituire sempre la stessa reference per ogni elemento della lista ed assicurare quindi che ognuno abbia i dati completi:
+		return referenceMap.get(uid); //Queste Entita referenzia lo stessa presente nel primo tag.
 		
 	}
 	
@@ -979,7 +978,7 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 		//uid impegno, modalitaPagamento e sede secondaria solo se valorizzati
 		if(subdocumentoSpesa.getImpegno() != null
 				&& subdocumentoSpesa.getImpegno().getAnnoMovimento() != 0
-				&& subdocumentoSpesa.getImpegno().getNumero() != null){
+				&& subdocumentoSpesa.getImpegno().getNumeroBigDecimal() != null){
 			log.debug(methodName, "Caricamento dell'uid dell'impegno");
 			//servizio ottimizzato
 			initImpegnoSubImpegnoUids(subdocumentoSpesa);
@@ -1017,7 +1016,7 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 	private void initImpegnoSubImpegnoUids(SubdocumentoSpesa subdocumentoSpesa){
 		final String methodName = "initImpegnoSubImpegnoUids";
 		RicercaAttributiMovimentoGestioneOttimizzato attributiMovimentoGestioneOttimizzato = new RicercaAttributiMovimentoGestioneOttimizzato();
-		boolean isSubDaRicercare = subdocumentoSpesa.getSubImpegno() != null && subdocumentoSpesa.getSubImpegno().getNumero() != null;
+		boolean isSubDaRicercare = subdocumentoSpesa.getSubImpegno() != null && subdocumentoSpesa.getSubImpegno().getNumeroBigDecimal() != null;
 		
 		attributiMovimentoGestioneOttimizzato.setCaricaSub(isSubDaRicercare);
 		attributiMovimentoGestioneOttimizzato.setEscludiSubAnnullati(isSubDaRicercare);
@@ -1027,7 +1026,7 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 		Impegno impegnoTrovato = response.getImpegno();
 		if(impegnoTrovato==null){
 			throw new BusinessException(ErroreCore.ENTITA_INESISTENTE.getErrore("Impegno",
-				"con chiave " + subdocumentoSpesa.getImpegno().getAnnoMovimento() + "/" + subdocumentoSpesa.getImpegno().getNumero()));
+				"con chiave " + subdocumentoSpesa.getImpegno().getAnnoMovimento() + "/" + subdocumentoSpesa.getImpegno().getNumeroBigDecimal()));
 		}
 		//impegno trovato 
 		subdocumentoSpesa.setImpegno(impegnoTrovato);
@@ -1036,7 +1035,7 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 		if (isSubDaRicercare) {
 			if (impegnoTrovato.getElencoSubImpegni() == null || impegnoTrovato.getElencoSubImpegni().isEmpty() ) {
 				throw new BusinessException(ErroreCore.ENTITA_INESISTENTE.getErrore("SubImpegno", "con chiave " + subdocumentoSpesa.getImpegno().getAnnoMovimento() + "/"
-						+ subdocumentoSpesa.getImpegno().getNumero() + "-" + subdocumentoSpesa.getSubImpegno().getNumero()));
+						+ subdocumentoSpesa.getImpegno().getNumeroBigDecimal() + "-" + subdocumentoSpesa.getSubImpegno().getNumeroBigDecimal()));
 			}
 			subdocumentoSpesa.setSubImpegno(impegnoTrovato.getElencoSubImpegni().get(0));
 			log.debugUidEntita(methodName, "subImpegno", impegnoTrovato.getElencoSubImpegni().get(0));
@@ -1112,7 +1111,7 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 		
 		if(subdocumentoEntrata.getAccertamento() != null
 				&& subdocumentoEntrata.getAccertamento().getAnnoMovimento() != 0
-				&& subdocumentoEntrata.getAccertamento().getNumero() != null){
+				&& subdocumentoEntrata.getAccertamento().getNumeroBigDecimal() != null){
 			initAccertamentoSubAccertamentoUids(subdocumentoEntrata);
 		}
 		
@@ -1141,7 +1140,7 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 	private void initAccertamentoSubAccertamentoUids(SubdocumentoEntrata subdocumentoEntrata){
 		final String methodName = "initAccertamentoSubAccertamentoUids";
 		RicercaAttributiMovimentoGestioneOttimizzato attributiMovimentoGestioneOttimizzato = new RicercaAttributiMovimentoGestioneOttimizzato();
-		boolean isSubDaRicercare = subdocumentoEntrata.getSubAccertamento() != null && subdocumentoEntrata.getSubAccertamento().getNumero() != null;
+		boolean isSubDaRicercare = subdocumentoEntrata.getSubAccertamento() != null && subdocumentoEntrata.getSubAccertamento().getNumeroBigDecimal() != null;
 		
 		attributiMovimentoGestioneOttimizzato.setCaricaSub(isSubDaRicercare);
 		attributiMovimentoGestioneOttimizzato.setEscludiSubAnnullati(isSubDaRicercare);
@@ -1151,7 +1150,7 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 		Accertamento accertamentoTrovato = response.getAccertamento();
 		if(accertamentoTrovato==null){
 			throw new BusinessException(ErroreCore.ENTITA_INESISTENTE.getErrore("Accertamento",
-				"con chiave " + subdocumentoEntrata.getAccertamento().getAnnoMovimento() + "/" + subdocumentoEntrata.getAccertamento().getNumero()));
+				"con chiave " + subdocumentoEntrata.getAccertamento().getAnnoMovimento() + "/" + subdocumentoEntrata.getAccertamento().getNumeroBigDecimal()));
 		}
 		subdocumentoEntrata.setAccertamento(accertamentoTrovato);
 		log.debugUidEntita(methodName, "accertamento", accertamentoTrovato);
@@ -1159,8 +1158,8 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 		if (isSubDaRicercare) {
 			if (accertamentoTrovato.getElencoSubAccertamenti()== null || accertamentoTrovato.getElencoSubAccertamenti().isEmpty()) {
 				throw new BusinessException(ErroreCore.ENTITA_INESISTENTE.getErrore("SubAccertamento",
-						"con chiave " + subdocumentoEntrata.getAccertamento().getAnnoMovimento() + "/" + subdocumentoEntrata.getAccertamento().getNumero()
-						+ "-" + subdocumentoEntrata.getSubAccertamento().getNumero()));
+						"con chiave " + subdocumentoEntrata.getAccertamento().getAnnoMovimento() + "/" + subdocumentoEntrata.getAccertamento().getNumeroBigDecimal()
+						+ "-" + subdocumentoEntrata.getSubAccertamento().getNumeroBigDecimal()));
 			}
 			subdocumentoEntrata.setSubAccertamento(accertamentoTrovato.getElencoSubAccertamenti().get(0));
 			log.debugUidEntita(methodName, "subAccertamento", accertamentoTrovato.getElencoSubAccertamenti().get(0));
@@ -1606,7 +1605,7 @@ public class ElaboraFileDocumentiService extends ElaboraFileBaseService {
 /**
  * Estende il loggin interno di questo servizio.
  */
-class LogUtilInner extends LogUtil{
+class LogUtilInner extends LogSrvUtil{
 
 	public LogUtilInner(Class<?> clazz) {
 		super(clazz);

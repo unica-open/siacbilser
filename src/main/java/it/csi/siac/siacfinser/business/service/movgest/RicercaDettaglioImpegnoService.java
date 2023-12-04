@@ -5,14 +5,7 @@
 package it.csi.siac.siacfinser.business.service.movgest;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -28,24 +21,17 @@ import it.csi.siac.siaccorser.model.Esito;
 import it.csi.siac.siaccorser.model.Richiedente;
 import it.csi.siac.siaccorser.model.TipologiaClassificatore;
 import it.csi.siac.siaccorser.model.errore.ErroreCore;
-import it.csi.siac.siacfinser.Constanti;
+import it.csi.siac.siacfinser.CostantiFin;
 import it.csi.siac.siacfinser.business.service.common.RicercaAttributiMovimentoGestioneService;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaDettaglioImpegno;
 import it.csi.siac.siacfinser.frontend.webservice.msg.RicercaDettaglioImpegnoResponse;
-import it.csi.siac.siacfinser.integration.dad.MutuoDad;
 import it.csi.siac.siacfinser.model.Impegno;
-import it.csi.siac.siacfinser.model.SubImpegno;
-import it.csi.siac.siacfinser.model.mutuo.Mutuo;
-import it.csi.siac.siacfinser.model.mutuo.VoceMutuo;
 
 
 @Deprecated
-@Service
+@Service("RicercaDettaglioImpegnoFinService")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class RicercaDettaglioImpegnoService extends RicercaAttributiMovimentoGestioneService<RicercaDettaglioImpegno,RicercaDettaglioImpegnoResponse> {
-	
-	@Autowired
-	MutuoDad mutuoDad;
 	
 	@Override
 	protected void init() {
@@ -75,7 +61,7 @@ public class RicercaDettaglioImpegnoService extends RicercaAttributiMovimentoGes
 		Impegno impegno = null;
 
 		//2. Si richiama il metodo interno di ricerca per chiave per impegni o accertamenti:
-		impegno = (Impegno) impegnoDad.ricercaImpegnoDettaglio(richiedente, ente, annoEsercizio, annoImpegno, numeroImpegno, Constanti.MOVGEST_TIPO_IMPEGNO, true, false);
+		impegno = (Impegno) impegnoDad.ricercaImpegnoDettaglio(richiedente, ente, annoEsercizio, annoImpegno, numeroImpegno, CostantiFin.MOVGEST_TIPO_IMPEGNO, true, false);
 		
 		if(null!=impegno){
 			//si invoca il metodo completaDatiRicercaImpegnoPk che si occupa di vestire i dati ottenuti:
@@ -101,24 +87,8 @@ public class RicercaDettaglioImpegnoService extends RicercaAttributiMovimentoGes
 			capitolo = response.getCapitoli().get(0);
 			
 			impegno.setCapitoloUscitaGestione(capitolo);
-			
-			
-			// completo con i MUTUI
-			if(impegno.getListaVociMutuo()!=null && !impegno.getListaVociMutuo().isEmpty()){
-				List<String> listaNumeriMutuo =  listaNumeriMutuo(impegno.getListaVociMutuo());
-				impegno.setElencoMutui(getListaMutuiAssociati(listaNumeriMutuo));
-			}		
-			
-			//Jira 1887 se il mutuo non è associato all'impegno 
-			if(impegno.getElencoSubImpegni()!=null && !impegno.getElencoSubImpegni().isEmpty()){
-				
-				for (int i=0; i < impegno.getElencoSubImpegni().size(); i++) {
 
-					List<String> listaNumeriMutuo =  listaNumeriMutuo(((SubImpegno)impegno.getElencoSubImpegni().get(i)).getListaVociMutuo());
-					((SubImpegno)impegno.getElencoSubImpegni().get(i)).setElencoMutui(getListaMutuiAssociati(listaNumeriMutuo));
-				
-				}
-			}	
+
 			
 			//componiamo la respose esito positivo:
 			res.setImpegno(impegno);
@@ -156,37 +126,4 @@ public class RicercaDettaglioImpegnoService extends RicercaAttributiMovimentoGes
 	}	
 	
 	
-	private List<Mutuo> getListaMutuiAssociati(List<String> listaNumeriMutuo){
-		
-		List<Mutuo> elencoMutui = new ArrayList<Mutuo>();
-		if(null!=listaNumeriMutuo && !listaNumeriMutuo.isEmpty()){
-			
-			for (String numeroMutuo : listaNumeriMutuo) {
-				elencoMutui.add(mutuoDad.ricercaMutuo(req.getEnte().getUid(), numeroMutuo, getNow()));
-			}
-		}
-		
-		return elencoMutui;	
-	}
-	
-	private List<String> listaNumeriMutuo(List<VoceMutuo> vociMutuo){
-		List<String> listaNumeriMutuo = new ArrayList<String>();
-		HashMap<String, String> mappa = new HashMap<String, String>();
-		
-		for (VoceMutuo voceMutuo : vociMutuo) {
-		   mappa.put(voceMutuo.getNumeroMutuo(), voceMutuo.getNumeroMutuo());	
-		}
-		
-		Set<Entry<String, String>> setMappa = mappa.entrySet();
-		Iterator<Entry<String, String>> itMappa = setMappa.iterator();
-		
-		while(itMappa.hasNext()){
-			
-			Entry<String, String> hm = itMappa.next();
-			listaNumeriMutuo.add((String)hm.getKey());
-		}
-		
-		return listaNumeriMutuo;
-		
-	}
 }

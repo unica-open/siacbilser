@@ -20,6 +20,8 @@ import javax.persistence.Table;
  * The persistent class for the siac_r_bil_elem_acc_fondi_dubbia_esig database table.
  * 
  */
+//SIAC-7858
+@Deprecated
 @Entity
 @Table(name="siac_r_bil_elem_acc_fondi_dubbia_esig")
 @NamedQuery(name="SiacRBilElemAccFondiDubbiaEsig.findAll", query="SELECT s FROM SiacRBilElemAccFondiDubbiaEsig s")

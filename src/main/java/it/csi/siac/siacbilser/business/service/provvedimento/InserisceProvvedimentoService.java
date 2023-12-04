@@ -20,7 +20,7 @@ import it.csi.siac.siacattser.model.AttoAmministrativo;
 import it.csi.siac.siacattser.model.TipoAtto;
 import it.csi.siac.siacattser.model.ric.RicercaAtti;
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
-import it.csi.siac.siacbilser.integration.dad.ProvvedimentoDad;
+import it.csi.siac.siacbilser.integration.dad.AttoAmministrativoDad;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccommonser.business.service.base.exception.ServiceParamError;
 import it.csi.siac.siaccorser.model.Esito;
@@ -35,7 +35,7 @@ public class InserisceProvvedimentoService extends CheckedAccountBaseService<Ins
 	
 	/** The provvedimento dad. */
 	@Autowired
-	private ProvvedimentoDad provvedimentoDad;
+	private AttoAmministrativoDad attoAmministrativoDad;
 	
 	/** The ricerca provvedimento. */
 	@Autowired
@@ -43,8 +43,8 @@ public class InserisceProvvedimentoService extends CheckedAccountBaseService<Ins
 	
 	@Override
 	protected void init() {
-		provvedimentoDad.setLoginOperazione(loginOperazione);
-		provvedimentoDad.setEnte(req.getEnte());
+		attoAmministrativoDad.setLoginOperazione(loginOperazione);
+		attoAmministrativoDad.setEnte(req.getEnte());
 	}
 	
 	@Override
@@ -78,7 +78,7 @@ public class InserisceProvvedimentoService extends CheckedAccountBaseService<Ins
 		
 		if (!esisteProvvedimento()) {
 			
-			AttoAmministrativo attoAmministrativoInserito = provvedimentoDad.create(req.getAttoAmministrativo(), req.getStrutturaAmministrativoContabile(), req.getTipoAtto());
+			AttoAmministrativo attoAmministrativoInserito = attoAmministrativoDad.create(req.getAttoAmministrativo(), req.getStrutturaAmministrativoContabile(), req.getTipoAtto());
 			
 			res.setAttoAmministrativoInserito(attoAmministrativoInserito);
 			
@@ -92,7 +92,7 @@ public class InserisceProvvedimentoService extends CheckedAccountBaseService<Ins
 	private void checkNumeroProvvedimentoSeNonMovimentoInterno() {
 		final String methodName = "checkNumeroProvvedimentoSeNonMovimentoInterno";
 		final Integer uidTipoAtto = req.getTipoAtto().getUid();
-		TipoAtto tipoAttoDaDatabase = provvedimentoDad.findTipoAttoByUid(uidTipoAtto);
+		TipoAtto tipoAttoDaDatabase = attoAmministrativoDad.findTipoAttoByUid_DEPRECATED(uidTipoAtto);
 		// Se non ho il tipo atto su db, lancio un errore
 		if(tipoAttoDaDatabase == null) {
 			log.info(methodName, "Nessun tipo atto con uid " + uidTipoAtto + " presente su database");

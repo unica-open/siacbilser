@@ -18,6 +18,7 @@ import it.csi.siac.siacbilser.business.service.base.ServiceCallGroup;
 import it.csi.siac.siacbilser.business.service.base.ServiceExecutor;
 import it.csi.siac.siacbilser.business.service.provvedimento.RicercaProvvedimentoService;
 import it.csi.siac.siacbilser.business.service.provvedimento.TipiProvvedimentoService;
+import it.csi.siac.siaccommon.util.collections.CollectionUtil;
 import it.csi.siac.siaccommonser.business.service.base.cache.KeyAdapter;
 import it.csi.siac.siaccommonser.business.service.base.exception.BusinessException;
 import it.csi.siac.siaccorser.model.Ente;
@@ -60,15 +61,17 @@ public class ProvvedimentoServiceCallGroup extends ServiceCallGroup {
 	public AttoAmministrativo ricercaProvvedimentoSingolo(AttoAmministrativo attoAmministrativo) {
 		List<AttoAmministrativo> listaAttiAmministrativi = ricercaProvvedimento(attoAmministrativo);
 
-		int size = listaAttiAmministrativi.size();
-		if (size > 1) {
-			throw new BusinessException("Trovati "+size+" provvedimenti per "+attoAmministrativo.getAnno()+"/" +attoAmministrativo.getNumero()+ (attoAmministrativo.getTipoAtto()!=null?"("+attoAmministrativo.getTipoAtto().getCodice()+")":"") + " . Deve essercene uno solo.");
+		try {
+			return CollectionUtil.getOneOnly(listaAttiAmministrativi);
 		}
-		if(size==0){
-			return null;
+		catch (IllegalArgumentException e) {
+			throw new BusinessException("Trovati " + listaAttiAmministrativi.size() + " provvedimenti per "
+					+ attoAmministrativo.getAnno() + "/" + attoAmministrativo.getNumero()
+					+ (attoAmministrativo.getTipoAtto() != null
+							? "(" + attoAmministrativo.getTipoAtto().getCodice() + ")"
+							: "")
+					+ " . Deve essercene uno solo.");
 		}
-
-		return listaAttiAmministrativi.get(0);
 	}
 	
 	private String computeKey(AttoAmministrativo attoAmministrativo) {

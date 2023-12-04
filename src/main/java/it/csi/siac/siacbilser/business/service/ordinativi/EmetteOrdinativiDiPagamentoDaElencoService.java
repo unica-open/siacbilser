@@ -652,8 +652,9 @@ public class EmetteOrdinativiDiPagamentoDaElencoService extends EmetteOrdinativi
 		eodps.setClassificatoreStipendi(classificatoreStipendi);
 		EmetteOrdinativoDiPagamentoSingoloResponse eodpsRes = emetteOrdinativoDiPagamentoSingoloService.executeServiceTxRequiresNew(eodps);
 		
-		if(eodpsRes.getMessaggio() != null){
-			res.addMessaggio(eodpsRes.getMessaggio());
+		if(eodpsRes.getMessaggi() != null && !eodpsRes.getMessaggi().isEmpty()){
+			//SIAC-8017-CMTO: possono essere piu' di un messaggio
+			res.addMessaggi(eodpsRes.getMessaggi());
 		}
 		if(eodpsRes.getSubdocumentoScartato() != null){
 			res.getSubdocumentiScartati().add(eodpsRes.getSubdocumentoScartato());
@@ -704,7 +705,9 @@ public class EmetteOrdinativiDiPagamentoDaElencoService extends EmetteOrdinativi
 		EmetteOrdinativoDiPagamentoMultiploResponse eodpmRes = emetteOrdinativoDiPagamentoMultiploService.executeServiceTxRequiresNew(eodpm);
 		
 		if(eodpmRes.getMessaggi() != null && !eodpmRes.getMessaggi().isEmpty()){
-			res.addMessaggi(eodpmRes.getMessaggi());
+			for(Messaggio mm : eodpmRes.getMessaggi()){
+				res.addMessaggio(new Messaggio(mm.getCodice(), "Emissione ordinativo per gruppo di quote con chiave " + chiave + ": "+  mm.getDescrizione()));
+			}
 		}
 		if(eodpmRes.getSubdocumentiScartati() != null && !eodpmRes.getSubdocumentiScartati().isEmpty()){
 			res.getSubdocumentiScartati().addAll(eodpmRes.getSubdocumentiScartati());
@@ -722,6 +725,12 @@ public class EmetteOrdinativiDiPagamentoDaElencoService extends EmetteOrdinativi
 			liquidazioniCache = eodpmRes.getLiquidazioniCache();
 			return eodpmRes.getOrdinativo();
 		}
+	}
+	
+	@Override
+	//SIAC-8017-CMTO
+	protected void impostaMessaggiInResponse(List<Messaggio> messaggi) {
+		res.addMessaggi(messaggi);
 	}
 	
 	

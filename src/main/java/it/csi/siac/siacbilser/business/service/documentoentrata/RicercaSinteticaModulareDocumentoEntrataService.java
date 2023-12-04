@@ -76,13 +76,14 @@ public class RicercaSinteticaModulareDocumentoEntrataService extends
 				req.getAccertamento(), 
 				req.getRilevanteIva(), 
 				req.getElencoDocumenti(), 
-				req.getContabilizzaGenPcc(), 
+				req.getContabilizzaGenPcc(),
+				req.getPreDocumentoEntrata(),
 				req.getParametriPaginazione(),
 				req.getDocumentoEntrataModelDetails());
 		res.setDocumenti(listaDocumentoEntrata);
 		
 		//Calcolo del totale importo dei documenti filtrati per gli stessi parametri della ricerca.
-		BigDecimal importoTotale = documentoEntrataDad.ricercaSinteticaDocumentoEntrataImportoTotale(doc, req.getAttoAmministrativo(), req.getAccertamento(), req.getRilevanteIva(),req.getElencoDocumenti(), req.getContabilizzaGenPcc(), req.getParametriPaginazione());		
+		BigDecimal importoTotale = documentoEntrataDad.ricercaSinteticaDocumentoEntrataImportoTotale(doc, req.getAttoAmministrativo(), req.getAccertamento(), req.getRilevanteIva(),req.getElencoDocumenti(), req.getContabilizzaGenPcc(),req.getPreDocumentoEntrata(), req.getParametriPaginazione());		
 		res.setImportoTotale(importoTotale);
 
 	}

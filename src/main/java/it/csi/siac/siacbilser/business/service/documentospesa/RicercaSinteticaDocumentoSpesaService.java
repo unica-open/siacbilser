@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.csi.siac.siacbilser.business.service.base.CheckedAccountBaseService;
@@ -65,8 +66,8 @@ public class RicercaSinteticaDocumentoSpesaService extends CheckedAccountBaseSer
 	/* (non-Javadoc)
 	 * @see it.csi.siac.siaccommonser.business.service.base.BaseService#executeService(it.csi.siac.siaccorser.model.ServiceRequest)
 	 */
-	@Override
-	@Transactional(readOnly=true)
+	@Override //SIAC-8254 propagation = Propagation.REQUIRES_NEW
+	@Transactional(readOnly=true, propagation = Propagation.REQUIRES_NEW)
 	public RicercaSinteticaDocumentoSpesaResponse executeService(RicercaSinteticaDocumentoSpesa serviceRequest) {
 		return super.executeService(serviceRequest);
 	}
@@ -78,11 +79,11 @@ public class RicercaSinteticaDocumentoSpesaService extends CheckedAccountBaseSer
 	@Override
 	protected void execute() {
 		//Ricerca dei documenti
-		ListaPaginata<DocumentoSpesa> listaDocumentoSpesa = documentoSpesaDad.ricercaSinteticaDocumentoSpesa(doc, req.getAttoAmministrativo(), req.getImpegno(), req.getRilevanteIva(), req.getElencoDocumenti(), req.getLiquidazione(), req.getBilancioLiquidazione(), req.getCollegatoCEC(), req.getContabilizzaGenPcc(), req.getParametriPaginazione());
+		ListaPaginata<DocumentoSpesa> listaDocumentoSpesa = documentoSpesaDad.ricercaSinteticaDocumentoSpesa(doc, req.getAttoAmministrativo(), req.getImpegno(), req.getRilevanteIva(), req.getElencoDocumenti(), req.getLiquidazione(), req.getBilancioLiquidazione(), req.getCollegatoCEC(), req.getContabilizzaGenPcc(), req.getPredocumentoSpesa(), req.getParametriPaginazione());
 		res.setDocumenti(listaDocumentoSpesa);
 		
 		//Calcolo del totale importo dei documenti filtrati per gli stessi parametri della ricerca.
-		BigDecimal importoTotale = documentoSpesaDad.ricercaSinteticaDocumentoSpesaImportoTotale(doc, req.getAttoAmministrativo(), req.getImpegno(), req.getRilevanteIva(), req.getElencoDocumenti(), req.getLiquidazione(), req.getBilancioLiquidazione(), req.getCollegatoCEC(), req.getContabilizzaGenPcc(), req.getParametriPaginazione());
+		BigDecimal importoTotale = documentoSpesaDad.ricercaSinteticaDocumentoSpesaImportoTotale(doc, req.getAttoAmministrativo(), req.getImpegno(), req.getRilevanteIva(), req.getElencoDocumenti(), req.getLiquidazione(), req.getBilancioLiquidazione(), req.getCollegatoCEC(), req.getContabilizzaGenPcc(), req.getPredocumentoSpesa(), req.getParametriPaginazione());
 		res.setImportoTotale(importoTotale);		
 		
 		
